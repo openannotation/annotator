@@ -1,0 +1,3 @@
+[submodule "jsload"]
+	path = jsload
+	url = git://github.com/nickstenning/jsload.git
