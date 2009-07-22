@@ -3,7 +3,46 @@
   <head>
     <meta charset="utf-8">
     <title>JS annotation test</title>
+    
+    <script src="./jsload/jsload.js"></script>
+    <script>
+      var jsAnnot = {};
+    
+      jsAnnot.tags = [
+        { name : "http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js" },
+        { name : "jquery",
+          tagOnly : true,
+          requires : ["http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"] },
+        { name : "sji" },
+        { name : "annotator",
+          requires : ["jquery", "sji"]}
+      ];
+      
+      jsAnnot.loader = new JSLoad(jsAnnot.tags, "./js/");
+    </script>
+
     <style type="text/css">
+      img {
+        border: none;
+      }
+    
+      #noteLink {
+        position: absolute;
+        display: none;
+      }
+      
+      #unable {
+        display: none;
+        position: fixed;
+        background: white;
+        font-weight: bold;
+        text-align: right;
+        padding: 0.6em 1em;
+        top: 0em;
+        right: 0em;
+        color: #D95520;
+      }
+      
       .hilight {
         background: rgba(255, 255, 10, 0.3);
       }
@@ -45,24 +84,19 @@
     
     <footer>
     </footer>
+    
+    <div id="noteLink">
+      <a href="#"><img src='img/note.png' /></a>
+    </div>
+    
+    <div id="unable">
+      Yeah, I'm afraid I'm unable to do that kind of highlight yet. Bummer.
+    </div>
 
-    <script src="http://www.google.com/jsapi"></script>
     <script>
-      var a;
-
-      google.load("jquery", "1.3");
-
-      var runAnnotator = function () {
-        $.getScript('annotator.js', function () {
-          a = new Annotator();
-          
-          $('body').mouseup(function () {
-            a.update();
-          });
-        });
-      };
-
-      google.setOnLoadCallback(runAnnotator);
+      jsAnnot.loader.load(["annotator"], function () {
+        new Annotator();
+      });
     </script> 
   </body>
 

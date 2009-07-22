@@ -1,4 +1,5 @@
 // John Resig's Simple Javascript Inheritance.
+
 // Inspired by base2 and Prototype
 (function(){
   var initializing = false, fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
@@ -60,39 +61,17 @@
   };
 })();
 
-
-// selection and range creation reference for the following code:
-// http://www.quirksmode.org/dom/range_intro.html
-var Annotator = Class.extend({
-    init: function () { },
+var DelegatorClass = Class.extend({
+    events: {},
     
-    update: function () {
-        var span = $('<span class="hilight"></span>');
-        this.range = this.getCurrentRange();
+    init: function () {
+        var __obj = this;
         
-        this.range.surroundContents(span[0]);
-    },
-
-    // Return either a W3C Range object (first branch) or a Microsoft TextRange object,
-    // dependent on browser support. NB: they are totally incompatible objects.
-    getCurrentRange: function () {
-        var sel, range;
-
-        // These branches must stay in this order, as Opera supports both window.getSelection 
-        // and document.selection, but we'd much rather interaction with the former.
-        if (window.getSelection) {
-            sel = window.getSelection();
-            if (sel.getRangeAt) {
-                return sel.getRangeAt(0);
-            } else { // Safari <= 1.3
-                var range = document.createRange();
-                range.setStart(sel.anchorNode, sel.anchorOffset);
-                range.setEnd(sel.focusNode, sel.focusOffset);
-                return range;
-            }
-        } else if (document.selection) {
-            return document.selection.createRange();
-        }
+        $.each(this.events, function (sel, fn) {
+            var ary = sel.split(' ');
+            $(ary.slice(0, -1).join(' ')).live(ary.slice(-1), function () {
+                return __obj[fn].apply(__obj, arguments);
+            });
+        });
     }
 });
-
