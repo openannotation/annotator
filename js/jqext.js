@@ -69,9 +69,46 @@ var DelegatorClass = Class.extend({
         
         $.each(this.events, function (sel, fn) {
             var ary = sel.split(' ');
-            $(ary.slice(0, -1).join(' ')).live(ary.slice(-1), function () {
+            $(ary.slice(0, -1).join(' ')).live(ary.slice(-1)[0], function () {
                 return __obj[fn].apply(__obj, arguments);
             });
         });
     }
 });
+
+
+(function($){
+    $.extend({        
+        inject: function(object, acc, iterator) {
+            $.each(object, function (idx, val) {
+                acc = iterator(acc, val, idx);
+            }); 
+            return acc;
+        },
+         
+        flatten: function(ary) {
+            var isArray = function (object) {
+                return object != null && typeof object == "object" &&
+                       'splice' in object && 'join' in object;
+            };
+             
+            return $.inject(ary, [], function(array, value) {
+                return array.concat(isArray(value) ? $.flatten(value) : value);
+            });
+        }
+    });
+    
+    $.fn.textNodes = function () {
+        var nodes = this.contents().map(function () {
+            if (this.nodeType !== Node.TEXT_NODE) {
+                return $(this).textNodes();
+            } else {
+                return this;
+            }
+        });
+        return $.flatten(nodes);
+    }
+})(jQuery);
+
+
+

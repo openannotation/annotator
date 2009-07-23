@@ -15,25 +15,11 @@ var Annotator = DelegatorClass.extend({
         $.data(document.body, 'annotator', this);
     },
     
-    update: function () {
-        var span = $('<span class="hilight"></span>');
-                
-        this.selection = this.getSelection();
+    update: function () {            
+        // TODO: add support for multirange selections
+        this.range = window.getSelection().getRangeAt(0);
         
-        if (this.selection.isCollapsed) {
-            this.selection = null;
-            this.anchor = null;
-            this.focus = null;
-        } else {
-            this.anchor = [this.selection.anchorNode.parentNode, this.selection.anchorOffset];
-            this.focus = [this.selection.focusNode.parentNode, this.selection.focusOffset];
-        }
-    },
-    
-    getSelection: function () {
-        if (window.getSelection) {
-            return window.getSelection();
-        }
+        if (this.range.collapsed) { this.range = null; }
     },
     
     showNoteIcon: function (e) {
@@ -48,7 +34,7 @@ var Annotator = DelegatorClass.extend({
 
         if (this.noteLink) { this.noteLink.hide(); }
 
-        if (this.selection) {
+        if (this.range) {
             this.noteLink = $('#noteLink').show().css({
                 top: e.pageY - 25,
                 left: e.pageX + 3
@@ -58,13 +44,37 @@ var Annotator = DelegatorClass.extend({
     
     createNote: function (e) {
         this.ignoreMouseup = true;
-        try {
-            this.selection.getRangeAt(0).surroundContents($('<span class="hilight"></span>').get(0));  
-        } catch(err) {
-            $('#unable').fadeIn(500);
-            setTimeout("$('#unable').fadeOut(500)", 2000);
-        }
+        this.hilight(); 
         this.noteLink.hide();
         return false;
+    },
+    
+    hilight: function () {
+        var r = this.range;
+        var s = r.startContainer, e = r.endContainer,
+            sOff = r.startOffset, eOff = r.endOffset;
+            
+        var hl = '<span class="hilight"></span>';
+                        
+        if (s !== e) {
+            var towrap = $(r.commonAncestorContainer).textNodes();
+
+            towrap = towrap.slice(towrap.indexOf(s), towrap.indexOf(e) + 1);
+            towrap.unshift(towrap.shift().splitText(sOff));
+            towrap.slice(-1)[0].splitText(eOff);
+
+            $.each(towrap, function () {
+                $(this).wrap(hl);
+            });
+        } else {
+            if (s.nodeType === Node.ELEMENT_NODE) {
+                $(s).wrapInner(hl);
+            } else {
+                var selection = s.splitText(sOff);
+                selection.splitText(eOff - sOff);
+
+                $(selection).wrap(hl);
+            }   
+        }
     }
 });
