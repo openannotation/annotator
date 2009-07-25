@@ -10,11 +10,6 @@ var Annotator = DelegatorClass.extend({
         '#noteLink img mousedown': 'createNote'
     },
     
-    init: function () {
-        this._super();
-        $.data(document.body, 'annotator', this);
-    },
-    
     update: function () {            
         // TODO: add support for multirange selections
         this.range = window.getSelection().getRangeAt(0);
@@ -44,37 +39,60 @@ var Annotator = DelegatorClass.extend({
     
     createNote: function (e) {
         this.ignoreMouseup = true;
-        this.hilight(); 
+        this.hilightRange(this.range); 
         this.noteLink.hide();
         return false;
     },
     
-    hilight: function () {
-        var r = this.range;
-        var s = r.startContainer, e = r.endContainer,
-            sOff = r.startOffset, eOff = r.endOffset;
+    hilightRange: function (range) {
+        var r = {
+            s:  range.startContainer, 
+            e:  range.endContainer,
+            so: range.startOffset,
+            eo: range.endOffset
+        };
             
         var hl = '<span class="hilight"></span>';
-                        
-        if (s !== e) {
-            var towrap = $(r.commonAncestorContainer).textNodes();
 
-            towrap = towrap.slice(towrap.indexOf(s), towrap.indexOf(e) + 1);
-            towrap.unshift(towrap.shift().splitText(sOff));
-            towrap.slice(-1)[0].splitText(eOff);
+        $.each(['s', 'e'], function (idx, p) {
+            var node = r[p], offset = r[p + 'o'];
+            var newOffset = offset;
+
+            if(node.nodeType === Node.ELEMENT_NODE) {
+                while(node.nodeType !== Node.TEXT_NODE) { node = node.firstChild; }
+                for(var i = 0; i < offset; i += 1) {
+                    if (node.nextSibling) {
+                       node = node.nextSibling;
+                       newOffset = 0;
+                    } else {
+                       newOffset = node.textContent.length;
+                       break;
+                    } 
+                }
+            }
+
+            r[p] = node;
+            r[p + 'o'] = newOffset;
+        });
+
+        if (r.s !== r.e) {
+            // textNodes() returns a jQuery object, so use flatten to turn it
+            // into a plain ol' list.
+            var towrap = $.flatten( $(range.commonAncestorContainer).textNodes() );
+            
+            towrap = towrap.slice(towrap.indexOf(r.s), towrap.indexOf(r.e) + 1);
+            towrap.unshift(towrap.shift().splitText(r.so));
+            towrap.slice(-1)[0].splitText(r.eo);
 
             $.each(towrap, function () {
                 $(this).wrap(hl);
             });
         } else {
-            if (s.nodeType === Node.ELEMENT_NODE) {
-                $(s).wrapInner(hl);
-            } else {
-                var selection = s.splitText(sOff);
-                selection.splitText(eOff - sOff);
+            var selection = r.s.splitText(r.so);
+            selection.splitText(r.eo - r.so);
 
-                $(selection).wrap(hl);
-            }   
+            $(selection).wrap(hl);
         }
     }
 });
+

@@ -99,16 +99,35 @@ var DelegatorClass = Class.extend({
     });
     
     $.fn.textNodes = function () {
-        var nodes = this.contents().map(function () {
-            if (this.nodeType !== Node.TEXT_NODE) {
-                return $(this).textNodes();
+        function getTextNodes(node) {
+            if (node.nodeType !== Node.TEXT_NODE) {
+                var contents = $(node).contents().map(function () {
+                    return getTextNodes(this);
+                });
+                return $.flatten(contents);
             } else {
-                return this;
+                return [node];
             }
+        }
+        return this.map(function () {
+            return getTextNodes(this);
         });
-        return $.flatten(nodes);
+                 
+    },
+    
+    $.fn.xpath = function () {
+        return this.map(function () {
+            var path = '';
+            for (var elem = this; 
+                 elem && elem.nodeType == Node.ELEMENT_NODE; 
+                 elem = elem.parentNode) {
+                var idx = $(elem.parentNode).children(elem.tagName).index(elem) + 1;
+                idx > 1 ? (idx='[' + idx + ']') : (idx = '');
+                path = '/' + elem.tagName.toLowerCase() + idx + path;
+            }
+            return path;
+        });
     }
+        
 })(jQuery);
-
-
 
