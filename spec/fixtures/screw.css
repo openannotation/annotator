@@ -1,0 +1,90 @@
+html {
+  padding: 0.5em;
+  font-family: Georgia, serif;
+  background: #EDEBD5;
+}
+
+  li {
+    list-style-type: none;
+  }
+
+  .focused {
+    background-color: #F4F2E4;
+  }
+
+    .focused * {
+      opacity: 1.0;
+    }
+
+  h1, h2, p {
+    opacity: 0.4;
+  }
+
+  .describes {
+    padding-left: 0;
+  }
+
+    .describes h1 {
+      font-size: 1.1em;
+      color: #877C21;
+      line-height: 1.8em;
+      margin: 0pt 0pt 0.6em;
+      border-bottom: 1px solid transparent;
+    }
+
+      .describes h1:hover {
+        cursor: pointer;
+        color: #000;
+        background-color: #F4F2E4;
+        border-bottom: 1px solid #9A8E51;
+      }
+
+    .describes .describe {
+      margin-left: 0.6em;
+      padding-left: 0.6em;
+      border: 1px dashed #999;
+    }
+
+      .describes .describe .its {}
+
+        .describes .describe .its .it {
+          list-style-type: lower-roman;
+          list-style-position: outside;
+        }
+
+          .describes .describe .its .it h2 {
+            font-weight: normal;
+            font-style: italic;
+            padding-left: 0.5em;
+            font-size: 1.0em;
+            color: #877C21;
+            line-height: 1.8em;
+            margin: 0 0 0.5em;
+            border-bottom: 1px solid transparent;
+          }
+          
+          .describes .describe .its .it.enqueued h2 {
+            background-color: #CC6600;
+            color: white !important;
+          }
+
+          .describes .describe .its .it.passed h2 {
+            background-color: #5A753D;
+            color: white !important;
+          }
+
+          .describes .describe .its .it.failed h2 {
+            background-color: #993300;
+            color: white !important;
+          }
+
+          .describes .describe .its .it.failed p {
+            margin-left: 1em;
+            color: #993300;
+          }
+          
+          .describes .describe .its .it h2:hover {
+            cursor: pointer;
+            color: #000 !important;
+            border-bottom: 1px solid #9A8E51;
+          }
