@@ -10,16 +10,18 @@
     
       jsAnnot.tags = [
         { name : "http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js" },
+        { name : "jquery-1.3.min" },
         { name : "jquery",
           tagOnly : true,
-          requires : ["http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"] },
+          // requires : ["http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"] },
+          requires : ["jquery-1.3.min"] },
         { name : "jqext",
           requires : ["jquery"] },
         { name : "annotator",
           requires : ["jquery", "jqext"] }
       ];
       
-      jsAnnot.loader = new JSLoad(jsAnnot.tags, "./js/");
+      jsAnnot.loader = new JSLoad(jsAnnot.tags, "./js/", Math.random());
     </script>
 
     <style type="text/css">
