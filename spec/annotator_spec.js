@@ -13,7 +13,11 @@ Screw.Unit(function() {
                 endContainer: node,
                 endOffset: 27
             },
-            sel = { getRangeAt: function (i) { return range; } };
+            sel = { 
+                rangeCount: 1,
+                isCollapsed: false,
+                getRangeAt: function (i) { return range; }
+            };
 
         before(function () {
             a = new Annotator();
@@ -21,15 +25,15 @@ Screw.Unit(function() {
         });
         
         it("checks to see if a selection has been made on mouseup", function() {
-            expect(a.range).to(equal, null);
+            expect(a.selection).to(equal, null);
             $('body').mouseup();
-            expect(a.range).to(equal, range);
+            expect(a.selection).to(equal, sel);
         });
 
         it("highlights the selected text when the annotate icon is clicked on", function() {
             expect($(node.parentNode)).to(match_selector, "strong");
             expect(node.nodeValue.length).to(equal, 37);
-            $('#noteLink img').mousedown();
+            $('#noteIcon img').mousedown();
             expect($(node.nextSibling)).to(match_selector, "span.highlight");
             expect(node.nodeValue.length).to(equal, 0);
         });

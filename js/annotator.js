@@ -5,54 +5,99 @@
 // for the moment, having no means of testing it.
 
 var Annotator = DelegatorClass.extend({
+    annotations: [
+        // { id: 1,
+        //   text: "My annotation",
+        //   ranges: [
+        //     { uri: "http://www.example.com/my/resource/identifier",
+        //       start: "/html/body/div/p[2]",
+        //       startOffset: 32,
+        //       end: "/html/body/div/p[3]",
+        //       endOffset: 47
+        //     },
+        //     { uri: "http://...", ... } 
+        //   ]
+        // },
+    ],
+    
     events: {
-        'body mouseup': 'showNoteIcon',
-        '#noteLink img mousedown': 'createNote'
+        'body mouseup': 'mouseup',
+        '#noteIcon img mousedown': 'createAnnotation'
     },
-    
-    update: function () {            
-        // TODO: add support for multirange selections
-        this.range = window.getSelection().getRangeAt(0);
-        
-        if (this.range.collapsed) { this.range = null; }
+
+    init: function () {
+        this._super();
+        this.noteIcon = $('#noteIcon');
     },
-    
-    showNoteIcon: function (e) {
-        // We seem to need to attach createNote to mouseDown, and this prevents
-        // the note image from jumping away on the following mouseUp.
+
+    mouseup: function (e) {
+        // This prevents the note image from jumping away on the mouseup
+        // of a click on icon.
         if (this.ignoreMouseup) {
             this.ignoreMouseup = false;
             return;
         }
 
-        this.update();
+        this.loadSelection();
 
-        if (this.noteLink) { this.noteLink.hide(); }
-
-        if (this.range) {
-            this.noteLink = $('#noteLink').show().css({
+        if (this.validSelection()) {
+            this.noteIcon.show().css({
                 top: e.pageY - 25,
                 left: e.pageX + 3
             });
+        } else {
+            this.noteIcon.hide();
         }
+
     },
     
-    createNote: function (e) {
+    loadSelection: function () {
+        // TODO: fail gracefully in IE. 
+        this.selection = window.getSelection(); 
+        this.selectedRanges = []; 
+        for(var i = 0; i < this.selection.rangeCount; i += 1) {
+            this.selectedRanges.push(this.selection.getRangeAt(i));
+        }
+    },
+
+    validSelection: function () {
+        return this.selection && 
+               this.selection.rangeCount > 0 && 
+              !this.selection.isCollapsed;
+    },
+
+    createAnnotation: function (e) {
+        var annotator = this;
+
+        $.each(this.selectedRanges, function () {
+            // FIXME: this currently won't DTRT if multiple ranges
+            // share containers.
+            var highlightedRange = annotator.highlightRange(this);    
+
+            // TODO: append this.serializeRange(highlightedRange) to registry
+        });
+
         this.ignoreMouseup = true;
-        this.highlightRange(this.range); 
-        this.noteLink.hide();
+        this.noteIcon.hide();
         return false;
     },
     
-    highlightRange: function (range) {
+    // normaliseRange: this works around the fact that browsers don't generate 
+    // ranges/selections in a consistent manner. Some (Safari) will create 
+    // ranges that have (say) a TextNode startContainer and ElementNode 
+    // endContainer. Others (Firefox) seem to only ever generate 
+    // TextNode/TextNode or ElementNode/ElementNode pairs. 
+    //
+    // This will normalise any combination of the above into an object with
+    // properties {s, so, e, eo} (for startContainer, startOffset, 
+    // endContainer, endOffset respectively).
+    normaliseRange: function (range) {
         var r = {
             s:  range.startContainer, 
-            e:  range.endContainer,
             so: range.startOffset,
+            e:  range.endContainer,
             eo: range.endOffset
         };
-            
-        var hl = '<span class="highlight"></span>';
 
         $.each(['s', 'e'], function (idx, p) {
             var node = r[p], offset = r[p + 'o'];
@@ -75,6 +120,13 @@ var Annotator = DelegatorClass.extend({
             r[p + 'o'] = newOffset;
         });
 
+        return r;
+    },
+
+    highlightRange: function (range) {
+        var r = this.normaliseRange(range); 
+        var towrap = []; 
+
         if (r.s !== r.e) {
             // textNodes() returns a jQuery object, so use flatten to turn it
             // into a plain ol' list.
@@ -83,16 +135,31 @@ var Annotator = DelegatorClass.extend({
             towrap = towrap.slice(towrap.indexOf(r.s), towrap.indexOf(r.e) + 1);
             towrap.unshift(towrap.shift().splitText(r.so));
             towrap.slice(-1)[0].splitText(r.eo);
-
-            $.each(towrap, function () {
-                $(this).wrap(hl);
-            });
         } else {
             var selection = r.s.splitText(r.so);
             selection.splitText(r.eo - r.so);
 
-            $(selection).wrap(hl);
+            towrap.push(selection);
         }
+        
+        $.each(towrap, function () {
+            $(this).wrap('<span class="highlight jsannotate"></span>');
+        });
+
+        return {
+            s: towrap[0],
+            e: towrap.slice(-1)[0]
+        };
+    },
+
+    serializeRange: function (highlightRangeOutput) {
+        var r = {};
+        r.start = $(highlightRangeOutput.s.parentNode).xpath4jsannotate().get(0);
+        r.end   = $(highlightRangeOutput.e.parentNode).xpath4jsannotate().get(0);
+
+        // TODO: calculate real offsets, ignoring jsannotate-generated <spans>
+
+        return r;
     }
 });
 

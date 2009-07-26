@@ -1,7 +1,7 @@
 // John Resig's Simple Javascript Inheritance.
 
 // Inspired by base2 and Prototype
-(function(){
+(function(){//{{{
   var initializing = false, fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
 
   // The base Class implementation (does nothing)
@@ -59,7 +59,7 @@
    
     return Class;
   };
-})();
+})();//}}}
 
 var DelegatorClass = Class.extend({
     events: {},
@@ -115,19 +115,40 @@ var DelegatorClass = Class.extend({
                  
     },
     
-    $.fn.xpath = function () {
+    $.fn.xpath = function (filterFn) {
+        if (typeof filterFn !== "function") {
+            filterFn = function () { return true; };
+        }
+
         return this.map(function () {
             var path = '';
             for (var elem = this; 
                  elem && elem.nodeType == Node.ELEMENT_NODE; 
                  elem = elem.parentNode) {
-                var idx = $(elem.parentNode).children(elem.tagName).index(elem) + 1;
-                idx > 1 ? (idx='[' + idx + ']') : (idx = '');
-                path = '/' + elem.tagName.toLowerCase() + idx + path;
+
+                if (filterFn(elem)) {
+                    var idx = $(elem.parentNode).children(elem.tagName)
+                                                .filter(filterFn)
+                                                .index(elem) + 1;
+
+                    idx > 1 ? (idx='[' + idx + ']') : (idx = '');
+
+                    path = '/' + elem.tagName.toLowerCase() + idx + path;
+                }
             }
             return path;
         });
+    },
+    
+    // This (and the filterFn code above) was implemented in order to 
+    // generate an XPath to an element ignoring any nodes created by
+    // jsannotate. 
+    $.fn.xpath4jsannotate = function () {
+        return this.xpath(function (elem) {
+            return !$(elem).hasClass('jsannotate');
+        }); 
     }
         
 })(jQuery);
 
+// vim:fdm=marker:et:
