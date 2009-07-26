@@ -65,7 +65,7 @@ var Annotator = DelegatorClass.extend({
                        node = node.nextSibling;
                        newOffset = 0;
                     } else {
-                       newOffset = node.textContent.length;
+                       newOffset = node.nodeValue.length;
                        break;
                     } 
                 }
