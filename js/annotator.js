@@ -18,14 +18,14 @@ var Annotator = DelegatorClass.extend({
     },
     
     showNoteIcon: function (e) {
-        this.update();
-        
         // We seem to need to attach createNote to mouseDown, and this prevents
         // the note image from jumping away on the following mouseUp.
         if (this.ignoreMouseup) {
             this.ignoreMouseup = false;
             return;
         }
+
+        this.update();
 
         if (this.noteLink) { this.noteLink.hide(); }
 
