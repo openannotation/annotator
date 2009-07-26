@@ -30,7 +30,7 @@ Screw.Unit(function() {
             expect($(node.parentNode)).to(match_selector, "strong");
             expect(node.nodeValue.length).to(equal, 37);
             $('#noteLink img').mousedown();
-            expect($(node.nextSibling)).to(match_selector, "span.hilight");
+            expect($(node.nextSibling)).to(match_selector, "span.highlight");
             expect(node.nodeValue.length).to(equal, 0);
         });
     });

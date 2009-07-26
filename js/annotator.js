@@ -39,12 +39,12 @@ var Annotator = DelegatorClass.extend({
     
     createNote: function (e) {
         this.ignoreMouseup = true;
-        this.hilightRange(this.range); 
+        this.highlightRange(this.range); 
         this.noteLink.hide();
         return false;
     },
     
-    hilightRange: function (range) {
+    highlightRange: function (range) {
         var r = {
             s:  range.startContainer, 
             e:  range.endContainer,
@@ -52,7 +52,7 @@ var Annotator = DelegatorClass.extend({
             eo: range.endOffset
         };
             
-        var hl = '<span class="hilight"></span>';
+        var hl = '<span class="highlight"></span>';
 
         $.each(['s', 'e'], function (idx, p) {
             var node = r[p], offset = r[p + 'o'];
