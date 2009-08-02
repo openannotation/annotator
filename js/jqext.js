@@ -115,38 +115,22 @@ var DelegatorClass = Class.extend({
                  
     },
     
-    $.fn.xpath = function (filterFn) {
-        if (typeof filterFn !== "function") {
-            filterFn = function () { return true; };
-        }
-
+    $.fn.xpath = function () {
         return this.map(function () {
             var path = '';
             for (var elem = this; 
                  elem && elem.nodeType == Node.ELEMENT_NODE; 
                  elem = elem.parentNode) {
 
-                if (filterFn(elem)) {
-                    var idx = $(elem.parentNode).children(elem.tagName)
-                                                .filter(filterFn)
-                                                .index(elem) + 1;
+                var idx = $(elem.parentNode).children(elem.tagName)
+                                            .index(elem) + 1;
 
-                    idx > 1 ? (idx='[' + idx + ']') : (idx = '');
+                idx > 1 ? (idx='[' + idx + ']') : (idx = '');
 
-                    path = '/' + elem.tagName.toLowerCase() + idx + path;
-                }
+                path = '/' + elem.tagName.toLowerCase() + idx + path;
             }
             return path;
         });
-    },
-    
-    // This (and the filterFn code above) was implemented in order to 
-    // generate an XPath to an element ignoring any nodes created by
-    // jsannotate. 
-    $.fn.xpath4jsannotate = function () {
-        return this.xpath(function (elem) {
-            return !$(elem).hasClass('jsannotate');
-        }); 
     }
         
 })(jQuery);

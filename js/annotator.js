@@ -48,7 +48,6 @@ var Annotator = DelegatorClass.extend({
         } else {
             this.noteIcon.hide();
         }
-
     },
     
     loadSelection: function () {
@@ -67,19 +66,30 @@ var Annotator = DelegatorClass.extend({
     },
 
     createAnnotation: function (e) {
-        var annotator = this;
+        var annotator = this,
+            annotation = this.register({});
 
         $.each(this.selectedRanges, function () {
             // FIXME: this currently won't DTRT if multiple ranges
             // share containers.
-            var highlightedRange = annotator.highlightRange(this);    
-
-            // TODO: append this.serializeRange(highlightedRange) to registry
+            var newRange = annotator.highlightRange(this);    
+             
+            annotation.ranges.push(
+                annotator.serializeRange(newRange.start, newRange.end)
+            );
         });
 
         this.ignoreMouseup = true;
         this.noteIcon.hide();
         return false;
+    },
+
+
+    register: function (annotation) {
+        this.annotations.push(annotation);
+        annotation.text = annotation.text || "";
+        annotation.ranges = annotation.ranges || [];
+        return annotation;
     },
     
     // normaliseRange: this works around the fact that browsers don't generate 
@@ -87,20 +97,16 @@ var Annotator = DelegatorClass.extend({
     // ranges that have (say) a TextNode startContainer and ElementNode 
     // endContainer. Others (Firefox) seem to only ever generate 
     // TextNode/TextNode or ElementNode/ElementNode pairs. 
-    //
-    // This will normalise any combination of the above into an object with
-    // properties {s, so, e, eo} (for startContainer, startOffset, 
-    // endContainer, endOffset respectively).
     normaliseRange: function (range) {
         var r = {
-            s:  range.startContainer, 
-            so: range.startOffset,
-            e:  range.endContainer,
-            eo: range.endOffset
+            start: range.startContainer, 
+            startOffset: range.startOffset,
+            end: range.endContainer,
+            endOffset: range.endOffset
         };
 
-        $.each(['s', 'e'], function (idx, p) {
-            var node = r[p], offset = r[p + 'o'];
+        $.each(['start', 'end'], function (idx, p) {
+            var node = r[p], offset = r[p + 'Offset'];
             var newOffset = offset;
 
             if(node.nodeType === Node.ELEMENT_NODE) {
@@ -117,7 +123,7 @@ var Annotator = DelegatorClass.extend({
             }
 
             r[p] = node;
-            r[p + 'o'] = newOffset;
+            r[p + 'Offset'] = newOffset;
         });
 
         return r;
@@ -127,17 +133,15 @@ var Annotator = DelegatorClass.extend({
         var r = this.normaliseRange(range); 
         var towrap = []; 
 
-        if (r.s !== r.e) {
-            // textNodes() returns a jQuery object, so use flatten to turn it
-            // into a plain ol' list.
-            var towrap = $.flatten( $(range.commonAncestorContainer).textNodes() );
+        if (r.start !== r.end) {
+            var towrap = $(range.commonAncestorContainer).textNodes().get();
             
-            towrap = towrap.slice(towrap.indexOf(r.s), towrap.indexOf(r.e) + 1);
-            towrap.unshift(towrap.shift().splitText(r.so));
-            towrap.slice(-1)[0].splitText(r.eo);
+            towrap = towrap.slice(towrap.indexOf(r.start), towrap.indexOf(r.end) + 1);
+            towrap.unshift(towrap.shift().splitText(r.startOffset));
+            towrap.slice(-1)[0].splitText(r.endOffset);
         } else {
-            var selection = r.s.splitText(r.so);
-            selection.splitText(r.eo - r.so);
+            var selection = r.start.splitText(r.startOffset);
+            selection.splitText(r.endOffset - r.startOffset);
 
             towrap.push(selection);
         }
@@ -147,19 +151,38 @@ var Annotator = DelegatorClass.extend({
         });
 
         return {
-            s: towrap[0],
-            e: towrap.slice(-1)[0]
+            start: towrap[0],
+            end: towrap.slice(-1)[0]
         };
     },
 
-    serializeRange: function (highlightRangeOutput) {
-        var r = {};
-        r.start = $(highlightRangeOutput.s.parentNode).xpath4jsannotate().get(0);
-        r.end   = $(highlightRangeOutput.e.parentNode).xpath4jsannotate().get(0);
+    serializeRange: function (start, end) {
+        var serialization = function (node, isEnd) { 
+            var origParent = $(node).parents(':not(.jsannotate)').eq(0),
+                xpath = origParent.xpath().get(0),
+                textNodes = origParent.textNodes(),
+                //
+                // Calculate real offset as the combined length of all the 
+                // preceding textNode siblings. We include the length of the 
+                // node if it's the end node.
+                offset = $.inject(textNodes.slice(0, textNodes.index(node)), 0,
+                function (acc, tn) {
+                    return acc + tn.nodeValue.length;
+                });
 
-        // TODO: calculate real offsets, ignoring jsannotate-generated <spans>
+            return isEnd ? [xpath, offset + node.nodeValue.length] : [xpath, offset];
+        },
 
-        return r;
+        start = serialization(start),
+        end   = serialization(end, true);
+
+        return {
+            start: start[0],
+            startOffset: start[1],
+            end: end[0],
+            endOffset: end[1]
+        };
     }
 });
+
 
