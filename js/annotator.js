@@ -53,7 +53,7 @@ var Annotator = DelegatorClass.extend({
     loadSelection: function () {
         // TODO: fail gracefully in IE. 
         this.selection = window.getSelection(); 
-        this.selectedRanges = []; 
+        this.selectedRanges = [];
         for(var i = 0; i < this.selection.rangeCount; i += 1) {
             this.selectedRanges.push(this.selection.getRangeAt(i));
         }
