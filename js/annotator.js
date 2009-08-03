@@ -38,7 +38,7 @@ var Annotator = DelegatorClass.extend({
             return;
         }
 
-        this.loadSelection();
+        this.getSelection();
 
         if (this.validSelection()) {
             this.noteIcon.show().css({
@@ -50,7 +50,7 @@ var Annotator = DelegatorClass.extend({
         }
     },
     
-    loadSelection: function () {
+    getSelection: function () {
         // TODO: fail gracefully in IE. 
         this.selection = window.getSelection(); 
         this.selectedRanges = [];
@@ -72,10 +72,11 @@ var Annotator = DelegatorClass.extend({
         $.each(this.selectedRanges, function () {
             // FIXME: this currently won't DTRT if multiple ranges
             // share containers.
-            var newRange = annotator.highlightRange(this);    
-             
+            var normedRange = annotator.normRange(this);    
+
+            annotator.highlightRange(normedRange); 
             annotation.ranges.push(
-                annotator.serializeRange(newRange.start, newRange.end)
+                annotator.serializeRange(normedRange)
             );
         });
 
@@ -84,7 +85,6 @@ var Annotator = DelegatorClass.extend({
         return false;
     },
 
-
     register: function (annotation) {
         this.annotations.push(annotation);
         annotation.text = annotation.text || "";
@@ -92,14 +92,20 @@ var Annotator = DelegatorClass.extend({
         return annotation;
     },
     
-    // normaliseRange: this works around the fact that browsers don't generate 
+    // normRange: works around the fact that browsers don't generate 
     // ranges/selections in a consistent manner. Some (Safari) will create 
-    // ranges that have (say) a TextNode startContainer and ElementNode 
+    // ranges that have (say) a textNode startContainer and elementNode 
     // endContainer. Others (Firefox) seem to only ever generate 
-    // TextNode/TextNode or ElementNode/ElementNode pairs. 
-    normaliseRange: function (range) {
+    // textNode/textNode or elementNode/elementNode pairs. 
+    //
+    // This will return a (start, end, commonAncestor) triple, where start and 
+    // end are textNodes, and commonAncestor is an elementNode.
+    //
+    // NB: This method may well split textnodes (i.e. alter the DOM) to 
+    // achieve this.
+    normRange: function (range) {
         var r = {
-            start: range.startContainer, 
+            start: range.startContainer,
             startOffset: range.startOffset,
             end: range.endContainer,
             endOffset: range.endOffset
@@ -126,42 +132,46 @@ var Annotator = DelegatorClass.extend({
             r[p + 'Offset'] = newOffset;
         });
 
-        return r;
-    },
-
-    highlightRange: function (range) {
-        var r = this.normaliseRange(range); 
-        var towrap = []; 
-
-        if (r.start !== r.end) {
-            var towrap = $(range.commonAncestorContainer).textNodes().get();
-            
-            towrap = towrap.slice(towrap.indexOf(r.start), towrap.indexOf(r.end) + 1);
-            towrap.unshift(towrap.shift().splitText(r.startOffset));
-            towrap.slice(-1)[0].splitText(r.endOffset);
-        } else {
-            var selection = r.start.splitText(r.startOffset);
-            selection.splitText(r.endOffset - r.startOffset);
-
-            towrap.push(selection);
-        }
+        var start, end;
         
-        $.each(towrap, function () {
-            $(this).wrap('<span class="highlight jsannotate"></span>');
-        });
+        if (r.start !== r.end) {
+            start = r.start.splitText(r.startOffset);
+            r.end.splitText(r.endOffset);
+            end = r.end;
+        } else {
+            start = r.start.splitText(r.startOffset);
+            start.splitText(r.endOffset - r.startOffset);
+            end = start;
+        }
 
         return {
-            start: towrap[0],
-            end: towrap.slice(-1)[0]
+            start: start, 
+            end: end,
+            commonAncestor: range.commonAncestorContainer
         };
     },
 
-    serializeRange: function (start, end) {
-        var serialization = function (node, isEnd) { 
-            var origParent = $(node).parents(':not(.jsannotate)').eq(0),
+    highlightRange: function (normedRange) {
+        var textNodes = $(normedRange.commonAncestor).textNodes();
+
+        textNodes.slice(textNodes.index(normedRange.start), 
+                        textNodes.index(normedRange.end) + 1)
+                 .each(function () {
+                      $(this).wrap('<span class="highlight jsannotate"></span>');
+                  });
+    },
+
+
+    // serializeRange: takes a normedRange and turns it into a 
+    // serializedRange, which is two pairs of (xpath, character offset), which 
+    // can be easily stored in a database and loaded through 
+    // #loadAnnotations/#deserializeRange.
+    serializeRange: function (normedRange) {
+        var serialization = function (node, isEnd) { var origParent = 
+            $(node).parents(':not(.jsannotate)').eq(0),
                 xpath = origParent.xpath().get(0),
                 textNodes = origParent.textNodes(),
-                //
+                
                 // Calculate real offset as the combined length of all the 
                 // preceding textNode siblings. We include the length of the 
                 // node if it's the end node.
@@ -173,15 +183,62 @@ var Annotator = DelegatorClass.extend({
             return isEnd ? [xpath, offset + node.nodeValue.length] : [xpath, offset];
         },
 
-        start = serialization(start),
-        end   = serialization(end, true);
+        start = serialization(normedRange.start),
+        end   = serialization(normedRange.end, true);
 
         return {
+            // XPath strings
             start: start[0],
-            startOffset: start[1],
             end: end[0],
+            // Character offsets (integer)
+            startOffset: start[1],
             endOffset: end[1]
         };
+    },
+
+    deserializeRange: function (serializedRange) {
+        var nodeFromXPath = function (xpath) {
+            return document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
+                           .singleNodeValue;
+        };
+
+        var startAncestry = serializedRange.start.split("/"),
+            endAncestry   = serializedRange.end.split("/"),
+            common = [],
+            range = {};
+
+        // Crudely find a near common ancestor by walking down the XPath from 
+        // the root until the segments no longer match.
+        for (var ii = 0; ii < startAncestry.length; ii += 1) {
+            if (startAncestry[ii] === endAncestry[ii]) {
+                common.push(startAncestry[ii]);
+            } else {
+                break;
+            }
+        };
+
+        range.commonAncestorContainer = nodeFromXPath(common.join("/"));
+
+        // Unfortunately, we *can't* guarantee only one textNode per 
+        // elementNode, so we have to walk along the element's textNodes until 
+        // the combined length of the textNodes to that point exceeds or 
+        // matches the value of the offset.
+        $.each(['start', 'end'], function () {
+            var which = this, length = 0;
+            $(nodeFromXPath(serializedRange[this])).textNodes().each(function () {
+                if (length + this.nodeValue.length >= serializedRange[which + 'Offset']) {
+                    range[which + 'Container'] = this;
+                    range[which + 'Offset'] = serializedRange[which + 'Offset'] - length;
+                    return false;
+                } else {
+                    length += this.nodeValue.length;
+                }
+            });
+        });
+        
+        console.log(range);
+        return this.normRange(range);
+
     }
 });
 
