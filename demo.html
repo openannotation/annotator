@@ -18,7 +18,7 @@
         display: none;
       }
       
-      .jsannotate {
+      .jsannotate.highlight {
         background: rgba(255, 255, 10, 0.3);
       }
     </style>
@@ -65,10 +65,8 @@
     </div>
 
     <script>
-      var jsannotator;
-
       jQuery(function () {
-        jsannotator = new Annotator();
+        window.jsannotator = new Annotator();
       });
     </script> 
   </body>
