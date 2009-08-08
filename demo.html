@@ -8,6 +8,9 @@
     <script src="lib/jqext.js"></script>
     <script src="lib/annotator.js"></script>
 
+    <!-- not required, used only for this demo -->
+    <script src="lib/vendor/jquery.json-1.3.min.js"></script>
+
     <style type="text/css">
       img {
         border: none;
@@ -55,6 +58,13 @@
         height: 80px; 
       }
       </code></pre>
+
+      <div id="serialize">
+        <button class="clear">Clear all</button>
+        <button class="dump">Dump annotations</button>
+        <button class="load">Load annotations</button><br />
+        <textarea cols="80" rows="15"></textarea>
+      </div>
     </div>
     
     <footer>
@@ -67,6 +77,22 @@
     <script>
       jQuery(function () {
         window.jsannotator = new Annotator();
+
+        $('#serialize button.load').live('click', function () {
+          window.jsannotator.loadAnnotations(
+            $.evalJSON($('#serialize textarea').val())
+          );
+        });
+
+        $('#serialize button.dump').live('click', function () {
+          $('#serialize textarea').val(
+            $.toJSON(window.jsannotator.dumpAnnotations())
+          );
+        });
+
+        $('#serialize button.clear').live('click', function () {
+          window.jsannotator.clearAll();
+        });
       });
     </script> 
   </body>
