@@ -1,0 +1,12 @@
+.jsa-adder img {
+  border: none;
+}
+
+.jsa-adder {
+  position: absolute;
+  display: none;
+}
+
+.jsa-highlighter {
+  background: rgba(255, 255, 10, 0.3);
+}
