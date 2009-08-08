@@ -77,8 +77,8 @@ JSpec.describe('Annotator', function () {
         stub(window, 'getSelection').and_return(testSelection(0));
         a.checkForSelection();
         a.createAnnotation();
-        expect(fix).to(have_one, 'span.' + a.className);
-        expect(fix.find('span.' + a.className).text()).to(eql, "habitant morbi");
+        expect(fix).to(have_one, 'span.' + a.classPrefix + '-highlighter');
+        expect(fix.find('span.' + a.classPrefix + '-highlighter').text()).to(eql, "habitant morbi");
     });
 
     it('adds a serialized description of the selection to its registry', function () {

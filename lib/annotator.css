@@ -1,0 +1,32 @@
+.jsa-adder img {
+    border: none;
+}
+
+.jsa-adder {
+    position: absolute;
+    display: none;
+}
+
+.jsa-highlighter {
+    background: rgba(255, 255, 10, 0.3);
+}
+
+.jsa-creater {
+    position: absolute;
+    width: 10em;
+    height: 4em;
+    opacity: 0.95;
+}
+
+.jsa-creater textarea {
+    border: none;
+    background: #fdf5d8;
+    border: 1px solid #e1be94;
+    -moz-border-radius: 0.3em;
+    -webkit-border-radius: 0.3em;
+    margin: 0;
+    padding: 0.4em;
+    width: 100%;
+    height: 100%;
+}
+    
