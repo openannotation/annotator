@@ -4,18 +4,19 @@
 JSpec
 .requires('jQuery', 'when using jspec.jquery.js')
 .include({
+  name: 'jQuery',
   
   // --- Initialize
   
   init : function() {
-    jQuery.ajaxSetup({ async : false })
+    jQuery.ajaxSetup({ async: false })
   },
   
   // --- Utilities
   
   utilities : {
-    element : jQuery,
-    elements : jQuery,
+    element:  jQuery,
+    elements: jQuery,
     sandbox : function() {
       return jQuery('<div class="sandbox"></div>')
     }

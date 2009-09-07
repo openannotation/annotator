@@ -1,5 +1,6 @@
 // NB: Rhino tests not yet working. Need to pull in env.js.
-load('lib/vendor/jquery-1.3.min.js')
+load('lib/vendor/jquery.min.js')
+load('lib/vendor/jquery.json.min.js')
 load('spec/jspec/jspec.js')
 load('spec/jspec/jspec.jquery.js')
 load('lib/jqext.js')

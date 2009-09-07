@@ -5,7 +5,7 @@
 
   JSpec = {
 
-    version   : '2.8.4',
+    version   : '2.11.0',
     cache     : {},
     suites    : [],
     modules   : [],
@@ -13,8 +13,8 @@
     matchers  : {},
     stubbed   : [],
     request   : 'XMLHttpRequest' in this ? XMLHttpRequest : null,
-    stats     : { specs : 0, assertions : 0, failures : 0, passes : 0, specsFinished : 0, suitesFinished : 0 },
-    options   : { profile : false },
+    stats     : { specs: 0, assertions: 0, failures: 0, passes: 0, specsFinished: 0, suitesFinished: 0 },
+    options   : { profile: false },
 
     /**
      * Default context in which bodies are evaluated.
@@ -81,6 +81,46 @@
     // --- Objects
     
     formatters : {
+      
+      /**
+       * Report to server.
+       * 
+       * Options:
+       *  - uri           specific uri to report to.
+       *  - verbose       weither or not to output messages
+       *  - failuresOnly  output failure messages only
+       *
+       * @api public
+       */
+      
+      Server : function(results, options) {
+        var uri = options.uri || 'http://' + window.location.host + '/results'
+        JSpec.post(uri, {
+          stats: JSpec.stats,
+          options: options,
+          results: map(results.allSuites, function(suite) {
+            if (suite.hasSpecs())
+              return {
+                description: suite.description,
+                specs: map(suite.specs, function(spec) {
+                  return {
+                    description: spec.description,
+                    message: !spec.passed() ? spec.failure().message : null,
+                    status: spec.requiresImplementation() ? 'pending' :
+                              spec.passed() ? 'pass' :
+                                'fail',
+                    assertions: map(spec.assertions, function(assertion){
+                      return {
+                        passed: assertion.passed  
+                      }
+                    })
+                  }
+                })
+              }
+          })
+        })
+  			if ('close' in main) main.close()
+      },
 
       /**
        * Default formatter, outputting to the DOM.
@@ -98,48 +138,33 @@
         var failuresOnly = option('failuresOnly')
         var classes = results.stats.failures ? 'has-failures' : ''
         if (!report) throw 'JSpec requires the element #' + id + ' to output its reports'
-
-        var markup =
-        '<div id="jspec-report" class="' + classes + '"><div class="heading">           \
-        <span class="passes">Passes: <em>' + results.stats.passes + '</em></span>       \
-        <span class="failures">Failures: <em>' + results.stats.failures + '</em></span> \
-        </div><table class="suites">'
         
-        bodyContents = function(body) {
+        function bodyContents(body) {
           return JSpec.
             escape(JSpec.contentsOf(body)).
             replace(/^ */gm, function(a){ return (new Array(Math.round(a.length / 3))).join(' ') }).
             replace("\n", '<br/>')
         }
         
-        renderSuite = function(suite) {
+        report.innerHTML = '<div id="jspec-report" class="' + classes + '"><div class="heading"> \
+        <span class="passes">Passes: <em>' + results.stats.passes + '</em></span>                \
+        <span class="failures">Failures: <em>' + results.stats.failures + '</em></span>          \
+        </div><table class="suites">' + map(results.allSuites, function(suite) {
           var displaySuite = failuresOnly ? suite.ran && !suite.passed() : suite.ran
-          if (displaySuite && suite.hasSpecs()) {
-            markup += '<tr class="description"><td colspan="2">' + escape(suite.description) + '</td></tr>'
-            each(suite.specs, function(i, spec){
-              markup += '<tr class="' + (i % 2 ? 'odd' : 'even') + '">'
-              if (spec.requiresImplementation())
-                markup += '<td class="requires-implementation" colspan="2">' + escape(spec.description) + '</td>'
-              else if (spec.passed() && !failuresOnly)
-                markup += '<td class="pass">' + escape(spec.description)+ '</td><td>' + spec.assertionsGraph() + '</td>'
-              else if(!spec.passed())
-                markup += '<td class="fail">' + escape(spec.description) + ' <em>' + spec.failure().message + '</em>' + '</td><td>' + spec.assertionsGraph() + '</td>'
-              markup += '<tr class="body"><td colspan="2"><pre>' + bodyContents(spec.body) + '</pre></td></tr>'
-            })
-            markup += '</tr>'
-          }
-        }  
-        
-        renderSuites = function(suites) {
-          each(suites, function(suite){
-            renderSuite(suite)
-            if (suite.hasSuites()) renderSuites(suite.suites)
-          })
-        }
-        
-        renderSuites(results.suites)
-        markup += '</table></div>'
-        report.innerHTML = markup
+          if (displaySuite && suite.hasSpecs())
+            return '<tr class="description"><td colspan="2">' + escape(suite.description) + '</td></tr>' +
+              map(suite.specs, function(i, spec) {
+                return '<tr class="' + (i % 2 ? 'odd' : 'even') + '">' +
+                  (spec.requiresImplementation() ?
+                    '<td class="requires-implementation" colspan="2">' + escape(spec.description) + '</td>' :
+                      (spec.passed() && !failuresOnly) ?
+                        '<td class="pass">' + escape(spec.description)+ '</td><td>' + spec.assertionsGraph() + '</td>' :
+                          !spec.passed() ?
+                            '<td class="fail">' + escape(spec.description) + ' <em>' + escape(spec.failure().message) + '</em>' + '</td><td>' + spec.assertionsGraph() + '</td>' :
+                              '') +
+                  '<tr class="body"><td colspan="2"><pre>' + bodyContents(spec.body) + '</pre></td></tr>'
+              }).join('') + '</tr>'
+        }).join('') + '</table></div>'
       },
       
       /**
@@ -153,42 +178,33 @@
          print(color("\n Passes: ", 'bold') + color(results.stats.passes, 'green') + 
               color(" Failures: ", 'bold') + color(results.stats.failures, 'red') + "\n")
               
-         indent = function(string) {
+         function indent(string) {
            return string.replace(/^(.)/gm, '  $1')
          }
-
-         renderSuite = function(suite) {
-           displaySuite = failuresOnly ? suite.ran && !suite.passed() : suite.ran
-           if (displaySuite && suite.hasSpecs()) {
-             print(color(' ' + suite.description, 'bold'))
-             each(suite.specs, function(spec){
-               var assertionsGraph = inject(spec.assertions, '', function(graph, assertion){
-                 return graph + color('.', assertion.passed ? 'green' : 'red')
-               })
-               if (spec.requiresImplementation())
-                 print(color('  ' + spec.description, 'blue') + assertionsGraph)
-               else if (spec.passed() && !failuresOnly)
-                 print(color('  ' + spec.description, 'green') + assertionsGraph)
-               else if (!spec.passed())
-                 print(color('  ' + spec.description, 'red') + assertionsGraph + 
-                       "\n" + indent(spec.failure().message) + "\n")
-             })
-             print("")
-           }          
-         }
-
-         renderSuites = function(suites) {
-           each(suites, function(suite){
-             renderSuite(suite)
-             if (suite.hasSuites()) renderSuites(suite.suites)
-           })
-         }
-
-         renderSuites(results.suites)
+         
+         each(results.allSuites, function(suite) {
+           var displaySuite = failuresOnly ? suite.ran && !suite.passed() : suite.ran
+            if (displaySuite && suite.hasSpecs()) {
+              print(color(' ' + suite.description, 'bold'))
+              each(suite.specs, function(spec){
+                var assertionsGraph = inject(spec.assertions, '', function(graph, assertion){
+                  return graph + color('.', assertion.passed ? 'green' : 'red')
+                })
+                if (spec.requiresImplementation())
+                  print(color('  ' + spec.description, 'blue') + assertionsGraph)
+                else if (spec.passed() && !failuresOnly)
+                  print(color('  ' + spec.description, 'green') + assertionsGraph)
+                else if (!spec.passed())
+                  print(color('  ' + spec.description, 'red') + assertionsGraph + 
+                        "\n" + indent(spec.failure().message) + "\n")
+              })
+              print("")
+            }
+         })
        },
 
       /**
-       * Console formatter, tested with Firebug and Safari 4.
+       * Console formatter.
        *
        * @api public
        */
@@ -196,8 +212,7 @@
       Console : function(results, options) {
         console.log('')
         console.log('Passes: ' + results.stats.passes + ' Failures: ' + results.stats.failures)
-        
-        renderSuite = function(suite) {
+        each(results.allSuites, function(suite) {
           if (suite.ran) {
             console.group(suite.description)
             each(suite.specs, function(spec){
@@ -210,28 +225,19 @@
                 console.error(assertionCount + ' ' + spec.description + ', ' + spec.failure().message)
             })
             console.groupEnd()
-          }          
-        }
-        
-        renderSuites = function(suites) {
-          each(suites, function(suite){
-            renderSuite(suite)
-            if (suite.hasSuites()) renderSuites(suite.suites)
-          })
-        }
-        
-        renderSuites(results.suites)
+          }
+        })
       }
     },
     
     Assertion : function(matcher, actual, expected, negate) {
       extend(this, {
-        message : '',
-        passed : false,
-        actual : actual,
-        negate : negate,
-        matcher : matcher,
-        expected : expected,
+        message: '',
+        passed: false,
+        actual: actual,
+        negate: negate,
+        matcher: matcher,
+        expected: expected,
         
         // Report assertion results
         
@@ -269,18 +275,18 @@
       // Times
       
       this.times = {
-        'once'  : 1,
-        'twice' : 2
+        once  : 1,
+        twice : 2
       }[times] || times || 1
       
       extend(this, {
-        calls : [],
-        message : '',
-        defer : true,
-        passed : false,
-        negate : negate,
-        object : object,
-        method : method,
+        calls: [],
+        message: '',
+        defer: true,
+        passed: false,
+        negate: negate,
+        object: object,
+        method: method,
         
         // Proxy return value
         
@@ -370,7 +376,7 @@
         // Report assertion results
         
         report : function() {
-          this.passed ? JSpec.stats.passes++ : JSpec.stats.failures++
+          this.passed ? ++JSpec.stats.passes : ++JSpec.stats.failures
           return this
         },
         
@@ -380,7 +386,7 @@
           var methodString = 'expected ' + object.toString() + '.' + method + '()' + (negate ? ' not' : '' )
           
           function times(n) {
-            return n > 2 ?  n + ' times' : { 1 : 'once', 2 : 'twice' }[n]
+            return n > 2 ?  n + ' times' : { 1: 'once', 2: 'twice' }[n]
           }
           
           if (this.expectedResult != null && (negate ? this.anyResultsPass() : this.anyResultsFail()))
@@ -488,21 +494,21 @@
 
     Spec : function(description, body) {
       extend(this, {
-        body : body,
-        description : description,
-        assertions : [],
+        body: body,
+        description: description,
+        assertions: [],
         
         // Add passing assertion
         
         pass : function(message) {
-          this.assertions.push({ passed : true, message : message })
+          this.assertions.push({ passed: true, message: message })
           ++JSpec.stats.passes
         },
         
         // Add failing assertion
         
         fail : function(message) {
-          this.assertions.push({ passed : false, message : message })
+          this.assertions.push({ passed: false, message: message })
           ++JSpec.stats.failures
         },
                 
@@ -554,6 +560,63 @@
     
     Module : function(methods) {
       extend(this, methods)
+    },
+    
+    JSON : {
+      
+      /**
+       * Generic sequences.
+       */
+      
+      meta : {
+        '\b' : '\\b',
+        '\t' : '\\t',
+        '\n' : '\\n',
+        '\f' : '\\f',
+        '\r' : '\\r',
+        '"'  : '\\"',
+        '\\' : '\\\\'
+      },
+      
+      /**
+       * Escapable sequences.
+       */
+      
+      escapable : /[\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+      
+      /**
+       * JSON encode _object_.
+       *
+       * @param  {mixed} object
+       * @return {string}
+       * @api private
+       */
+       
+      encode : function(object) {
+        var self = this
+        if (object == undefined || object == null) return 'null'
+        if (object === true) return 'true'
+        if (object === false) return 'false'
+        switch (typeof object) {
+          case 'number': return object
+          case 'string': return this.escapable.test(object) ?
+            '"' + object.replace(this.escapable, function (a) {
+              return typeof self.meta[a] === 'string' ? self.meta[a] :
+                '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4)
+            }) + '"' :
+            '"' + object + '"'
+          case 'object':  
+            if (object.constructor == Array)
+              return '[' + map(object, function(val){
+                return self.encode(val)
+              }).join(', ') + ']'
+            else if (object)
+              return '{' + map(object, function(key, val){
+                return self.encode(key) + ':' + self.encode(val)
+              }).join(', ') + '}'
+        }
+        return 'null'
+      }
     },
     
     // --- DSLs
@@ -623,6 +686,7 @@
       if ('init' in module) module.init()
       if ('utilities' in module) extend(this.defaultContext, module.utilities)
       if ('matchers' in module) this.addMatchers(module.matchers)
+      if ('formatters' in module) extend(this.formatters, module.formatters)
       if ('DSLs' in module)
         each(module.DSLs, function(name, methods){
           JSpec.DSLs[name] = JSpec.DSLs[name] || {}
@@ -820,10 +884,10 @@
         case String:
           if (captures = body.match(/^alias (\w+)/)) return JSpec.matchers[last(captures)]
           if (body.length < 4) body = 'actual ' + body + ' expected'
-          return { match : function(actual, expected) { return eval(body) }}  
+          return { match: function(actual, expected) { return eval(body) }}  
           
         case Function:
-          return { match : body }
+          return { match: body }
           
         default:
           return body
@@ -856,7 +920,7 @@
     hash : function(object) {
       if (object == null) return 'null'
       if (object == undefined) return 'undefined'
-      serialize = function(prefix) {
+      function serialize(prefix) {
         return inject(object, prefix + ':', function(buffer, key, value){
           return buffer += hash(value)
         })
@@ -905,13 +969,13 @@
       if (object === false) return 'false'
       if (object.an_instance_of) return 'an instance of ' + object.an_instance_of.name
       if (object.jquery && object.selector.length > 0) return 'selector ' + puts(object.selector) + ''
-      if (object.jquery) return escape(object.html())
-      if (object.nodeName) return escape(object.outerHTML)
+      if (object.jquery) return object.html()
+      if (object.nodeName) return object.outerHTML
       switch (object.constructor) {
-        case String: return "'" + escape(object) + "'"
+        case String: return "'" + object + "'"
         case Number: return object
         case Function: return object.name || object 
-        case Array : 
+        case Array: 
           return inject(object, '[', function(b, v){
             return b + ', ' + puts(v)
           }).replace('[,', '[') + ' ]'
@@ -920,7 +984,7 @@
             return b + ', ' + puts(k) + ' : ' + puts(v)
           }).replace('{,', '{') + ' }'
         default: 
-          return escape(object.toString())
+          return object.toString()
       }
     },
 
@@ -933,11 +997,11 @@
      */
 
      escape : function(html) {
-       return html.toString().
-         replace(/&/gmi, '&amp;').
-         replace(/"/gmi, '&quot;').
-         replace(/>/gmi, '&gt;').
-         replace(/</gmi, '&lt;')
+       return html.toString()
+         .replace(/&/gmi, '&amp;')
+         .replace(/"/gmi, '&quot;')
+         .replace(/>/gmi, '&gt;')
+         .replace(/</gmi, '&lt;')
      },
      
      /**
@@ -1288,6 +1352,7 @@
      */
 
     preprocess : function(input) {
+      if (typeof input != 'string') return
       input = hookImmutable('preprocessing', input)
       return input.
         replace(/([\w\.]+)\.(stub|destub)\((.*?)\)$/gm, '$2($1, $3)').
@@ -1467,32 +1532,19 @@
     /**
      * Ad-hoc POST request for JSpec server usage.
      *
-     * @param  {string} url
+     * @param  {string} uri
      * @param  {string} data
      * @api private
      */
     
-    post : function(url, data) {
-      if (any(hook('posting', url, data), haveStopped)) return
+    post : function(uri, data) {
+      if (any(hook('posting', uri, data), haveStopped)) return
       var request = this.xhr()
-      request.open('POST', url, false)
-      request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
-      request.send(data)
+      request.open('POST', uri, false)
+      request.setRequestHeader('Content-Type', 'application/json')
+      request.send(JSpec.JSON.encode(data))
     },
 
-    /**
-     * Report to server with statistics.
-     *
-     * @param  {string} url
-     * @api private
-     */
-    
-    reportToServer : function(url) {
-      if (any(hook('reportingToServer', url), haveStopped)) return
-      JSpec.post(url || 'http://localhost:4444', 'passes=' + JSpec.stats.passes + '&failures=' + JSpec.stats.failures)
-			if ('close' in main) main.close()
-    },
-    
     /**
      * Instantiate an XMLHttpRequest.
      *
@@ -1546,7 +1598,10 @@
         var request = this.xhr()
         request.open('GET', file, false)
         request.send(null)
-        if (request.readyState == 4) return request.responseText
+        if (request.readyState == 4 && 
+           (request.status == 0 || 
+            parseInt(request.status.toString()[0]) == 2)) 
+          return request.responseText
       }
       else
         error("failed to load `" + file + "'")
