@@ -32,7 +32,7 @@ JSpec.describe('DelegatorClass', function () {
         fix.eq(1).append("<li>Hi there, I'm new round here.</li>"); 
         fix.find("li").click();
 
-        expect(d.returns).should(eql, ["one", "two", "one", "two", "one", "two"]); 
+        expect(d.returns).should(eql, ["two", "one", "two", "one", "two", "one"]); 
     });
 
 });
