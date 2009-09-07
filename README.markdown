@@ -3,6 +3,47 @@ JS Annotate
 
 A wee playground to see what can be done with a Javascript annotation system.
 
+Usage
+-----
+
+To use the annotator, you'll probably want to set up some kind of back end 
+that can save and load your annotations to a database. An example of a page 
+that talks to such a backend might look like:
+
+    <html>
+      <head>
+        <link rel="stylesheet" src="jsannotator.min.css">
+        <script src="jsannotator.min.js"></script>
+      </head>
+      <body>
+        <p>Lorem ipsum dolor sit .....</p>
+
+        <button id="load">Load annotations</button>
+        <button id="save">Save annotations!</button>
+
+        <script>
+          jQuery(document).ready(function($) {
+            window.jsannotator = new Annotator();
+
+            $('button#load').click(function () {
+              $.getJSON('/resource/annotations', function (data) {
+                window.jsannotator.loadAnnotations(data);
+              });
+            });
+
+            $('button#save').click(function () {
+              $.post('/resource/annotations', window.jsannotator.dumpAnnotations());
+            });
+          });
+        </script>
+      </body>
+    </html>
+
+This is obviously a very basic example, with no error checking/handling, but 
+it gets the idea across. The Annotator dumpAnnotations/loadAnnotations methods 
+return/accept native javascript objects, not JSON strings, and this is 
+reflected above.
+
 Development
 -----------
 
