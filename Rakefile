@@ -37,6 +37,16 @@ task :fetch_vendor do
   end
 end
 
+desc "Make a release tag"
+task :release => :package do |t|
+  abort "Specify a tag: `TAG=0.1 rake release`" unless ENV['TAG']
+  tag = ENV['TAG'].strip
+  sh "git add -f pkg/jsannotate.min.js pkg/jsannotate.min.css"
+  tree = `git write-tree`
+  commit = `echo 'jsannotate release #{tag}' | git commit-tree #{tree}`
+  sh "git tag #{tag} #{commit}"
+end
+
 def yui_compressor(srclist, outfile)
   open(outfile, 'w') do |f|
     srclist.each do |src|
