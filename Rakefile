@@ -9,6 +9,13 @@ SRC = ['vendor/jquery',
 
 CSS = ['annotator'].map { |x| "lib/#{x}.css" }
 
+task :default => :jspec
+
+desc "Run JSpec tests"
+task :jspec do
+  sh "jspec run"
+end
+
 desc "Build packaged annotator"
 task :package => ['pkg/jsannotate.min.js', 'pkg/jsannotate.min.css']
 
