@@ -1,8 +1,6 @@
 JSpec.describe('Annotator', function () {
 
     before(function () {
-        a = new Annotator();
-
         rangeGen = function (x) {
             return [//{{{
                 [ x[1], 13, x[1], 27, 
@@ -50,10 +48,9 @@ JSpec.describe('Annotator', function () {
     });
 
     before_each(function () {
-        a.ignoreMouseup = false;
-        a.annotations = [];
-
         fix = element(fixture('fixtures/annotator.html'));
+
+        a = new Annotator({}, fix.get(0).parentNode);
 
         testTNs = fix.textNodes().get();
         testRanges = rangeGen(testTNs);

@@ -23,16 +23,16 @@ that talks to such a backend might look like:
 
         <script>
           jQuery(document).ready(function($) {
-            window.jsannotator = new Annotator();
+            $('p').annotator();
 
             $('button#load').click(function () {
               $.getJSON('/resource/annotations', function (data) {
-                window.jsannotator.loadAnnotations(data);
+                $('p').annotator('loadAnnotations', data);
               });
             });
 
             $('button#save').click(function () {
-              $.post('/resource/annotations', window.jsannotator.dumpAnnotations());
+              $.post('/resource/annotations', $('p').data('annotator').dumpAnnotations());
             });
           });
         </script>
