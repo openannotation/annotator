@@ -48,14 +48,14 @@ JSpec.describe('Annotator', function () {
     });
 
     before_each(function () {
-        fix = element(fixture('fixtures/annotator.html'));
+        fix = $(fixture('fixtures/annotator.html')).get(0).parentNode;
 
-        a = new Annotator({}, fix.get(0).parentNode);
+        a = new Annotator({}, fix);
 
-        testTNs = fix.textNodes().get();
+        testTNs = $(fix).textNodes().get();
         testRanges = rangeGen(testTNs);
         testSelection = function (ii) {
-            return selectionGen(fix.get(0).parentNode, testRanges, ii);
+            return selectionGen(fix, testRanges, ii);
         };
     });
 
@@ -74,8 +74,8 @@ JSpec.describe('Annotator', function () {
         stub(window, 'getSelection').and_return(testSelection(0));
         a.checkForSelection();
         a.createAnnotation();
-        expect(fix).to(have_one, 'span.' + a.classPrefix + '-highlighter');
-        expect(fix.find('span.' + a.classPrefix + '-highlighter').text()).to(eql, "habitant morbi");
+        expect($(fix).children()).to(have_one, 'span.jsa-highlighter');
+        expect($(fix).find('span.jsa-highlighter').text()).to(eql, "habitant morbi");
     });
 
     it('adds a serialized description of the selection to its registry', function () {
