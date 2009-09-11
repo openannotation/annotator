@@ -45,6 +45,15 @@ JSpec.describe('Annotator', function () {
                 }
             };
         };
+
+        textInNormedRange = function (range) {
+            textNodes = $(range.commonAncestor).textNodes();
+            textNodes = textNodes.slice(textNodes.index(range.start), 
+                                        textNodes.index(range.end) + 1).get();
+            return $.inject(textNodes, "", function (acc, next) {
+                return acc += next.nodeValue;
+            });
+        };
     });
 
     before_each(function () {
@@ -63,14 +72,14 @@ JSpec.describe('Annotator', function () {
         expect(a.annotations).to(be_empty);
     });
     
-    it('checks to see if a selection has been made on mouseup', function () {
+    it('loads selections from the window object on checkForSelection', function () {
         stub(window, 'getSelection').and_return(testSelection(0));
         expect(a.selection).to(be_null);
         a.checkForSelection();
         expect(a.selection).to(eql, testSelection(0));
     });
 
-    it('surrounds the selection with a highlight element when the annotate icon is clicked on', function () {
+    it('surrounds the window\'s selections with a highlight element on createAnnotation', function () {
         stub(window, 'getSelection').and_return(testSelection(0));
         a.checkForSelection();
         a.createAnnotation();
@@ -78,17 +87,43 @@ JSpec.describe('Annotator', function () {
         expect($(fix).find('span.jsa-highlighter').text()).to(eql, "habitant morbi");
     });
 
-    it('adds a serialized description of the selection to its registry', function () {
+    it('adds a serialized description of the selection to its registry on createAnnotation', function () {
         stub(window, 'getSelection').and_return(testSelection(0));
         a.checkForSelection();
         a.createAnnotation();
         expect(a.annotations).to(have_length, 1);
         expect(a.annotations[0].ranges).to(eql, [{
-            start: "/div/p/strong",
+            start: "/p/strong",
             startOffset: 13,
-            end: "/div/p/strong",
+            end: "/p/strong",
             endOffset: 27
         }]);
+    });
+
+    it('can deserialize a serializedRange to a normedRange', function () {
+        // XPath resolution won't work unless the fixture is actually in the 
+        // document.
+        $(fix).appendTo(document.body);
+
+        deserialized = a.deserializeRange({
+            start: "/p/strong",
+            startOffset: 13,
+            end: "/p/strong",
+            endOffset: 27
+        });
+
+        // must reset fixture at this point.
+        $(fix).remove();
+        fix = $(fixture('fixtures/annotator.html')).get(0).parentNode;
+        testTNs = $(fix).textNodes().get();
+        testRanges = rangeGen(testTNs);
+        testSelection = function (ii) {
+            return selectionGen(fix, testRanges, ii);
+        };
+
+        normed = a.normRange(testSelection(0).getRangeAt(0));
+        
+        expect(textInNormedRange(deserialized)).to(eql, textInNormedRange(normed));
     });
 
     describe('#normRange', function () {
@@ -96,15 +131,8 @@ JSpec.describe('Annotator', function () {
             it('parses testRange ' + idx + ' (' + testRanges[idx][5] + ')', function () {
                 // Ooh, hackery in extremis...
                 idx = parseInt(this.currentSpec.description.split(" ")[2]);
-
                 normedRange = a.normRange(testSelection(idx).getRangeAt(0));
-                textNodes = $(normedRange.commonAncestor).textNodes();
-                textNodes = textNodes.slice(textNodes.index(normedRange.start), 
-                                            textNodes.index(normedRange.end) + 1).get();
-                rangeText = $.inject(textNodes, "", function (acc, next) {
-                    return acc += next.nodeValue;
-                });
-                expect(rangeText).to(eql, testRanges[idx][4]);
+                expect(textInNormedRange(normedRange)).to(eql, testRanges[idx][4]);
             });
         });
     });
