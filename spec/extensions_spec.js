@@ -33,10 +33,10 @@ JSpec.describe('Extensions', function () {
             expect($(fix).find('strong').xpath()).should(eql, ['/div/p[2]/strong']);
         });
 
-        it('takes an optional root-element parameter', function () {
+        it('takes an optional parameter determining the element from which XPaths should be calculated', function () {
             ol = $(fix).find('ol').get(0);
-            expect($(fix).find('li').xpath(ol)).should(eql, ['/ol/li', '/ol/li[2]', '/ol/li[3]']);
-            expect($(fix).find('span').xpath(ol)).should(eql, ['/ol/li[2]/span']);
+            expect($(fix).find('li').xpath(ol)).should(eql, ['/li', '/li[2]', '/li[3]']);
+            expect($(fix).find('span').xpath(ol)).should(eql, ['/li[2]/span']);
         });
     });
 });
