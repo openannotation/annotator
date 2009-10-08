@@ -8,17 +8,17 @@ describe('AnnotationStore', function () {
         mock_request().and_return('OK', 'text/plain');
         // with_args with 'null' conveniently skips the check for that 
         // argument. Here we don't check the event object.
-        expect(a).should(receive, 'createAnnotation', 'once').with_args(null, 'annotator', 'annotation');
+        expect(a).should(receive, 'annotationCreated', 'once').with_args(null, 'annotator', 'annotation');
         // this is the same event that Annotator triggers when an annotation 
         // is created.
         $(el).trigger('annotationCreated', ['annotator', 'annotation']);
     });
 
     it('should generate RESTful URLs by default', function () {
-      expect(a._urlFor('create')).should(eql, '/store/annotation');
-      expect(a._urlFor('read', 'foo')).should(eql, '/store/annotation/foo');
-      expect(a._urlFor('update', 'bar')).should(eql, '/store/annotation/bar');
-      expect(a._urlFor('destroy', 'baz')).should(eql, '/store/annotation/baz');
+      expect(a._urlFor('create')).should(eql, '/store/annotations');
+      expect(a._urlFor('read', 'foo')).should(eql, '/store/annotations/foo');
+      expect(a._urlFor('update', 'bar')).should(eql, '/store/annotations/bar');
+      expect(a._urlFor('destroy', 'baz')).should(eql, '/store/annotations/baz');
     });
 
     it('should generate URLs as specified by its options otherwise', function () {

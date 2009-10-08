@@ -11,6 +11,11 @@
     background: rgba(255, 255, 10, 0.3);
 }
 
+
+.jsa-highlighter .hover {
+    border: 2px solid #f00;
+}
+
 .jsa-creater {
     position: absolute;
     width: 10em;
