@@ -1,7 +1,14 @@
-JS Annotate
-===========
+Annotator
+=========
 
-A wee playground to see what can be done with a Javascript annotation system.
+A wee playground to see what can be done with a Javascript annotation system. 
+You should be able to create an Annotator on an element (or the whole page) as 
+simply as $('#content').annotator().
+
+Separately from the annotator (which will simply create annotations in the 
+page and allow you to read their contents -- COMING SOON) you can also create 
+an AnnotationStore which will listen to the Annotator and will save/restore 
+your annotations across page loads via a RESTful HTTP interface.
 
 Usage
 -----
@@ -24,30 +31,19 @@ that talks to such a backend might look like:
         <script>
           jQuery(document).ready(function($) {
             $('p').annotator();
-
-            $('button#load').click(function () {
-              $.getJSON('/resource/annotations', function (data) {
-                $('p').annotator('loadAnnotations', data);
-              });
-            });
-
-            $('button#save').click(function () {
-              $.post('/resource/annotations', $('p').data('annotator').dumpAnnotations());
-            });
+            $('p').annotationStore();
           });
         </script>
       </body>
     </html>
 
-This is obviously a very basic example, with no error checking/handling, but 
-it gets the idea across. The Annotator dumpAnnotations/loadAnnotations methods 
-return/accept native javascript objects, not JSON strings, and this is 
-reflected above.
+An example Sinatra backend (which doesn't actually save the annotations to 
+disk) can be found in examples/.
 
 Development
 -----------
 
-The specs/tests can be found in spec/, and are most easily run by opening 
+The specs can be found in spec/, and are most easily run by opening 
 spec/spec.dom.html in a browser.
 
 Annotation format
