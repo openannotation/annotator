@@ -1,37 +1,61 @@
-.jsa-adder img {
-    border: none;
+/* @override http://localhost:9393/lib/annotator.css */
+
+.annot-adder img {
+	border: none;
 }
 
-.jsa-adder {
-    position: absolute;
-    display: none;
+.annot-adder {
+	position: absolute;
+	display: none;
 }
 
-.jsa-highlighter {
-    background: rgba(255, 255, 10, 0.3);
+.annot-highlighter {
+	background: rgba(255, 255, 10, 0.3);
 }
 
-
-.jsa-highlighter .hover {
-    border: 2px solid #f00;
+.annot-highlighter .hover {
+	border: 2px solid #f00;
 }
 
-.jsa-creater {
-    position: absolute;
-    width: 10em;
-    height: 4em;
-    opacity: 0.95;
+.annot-creater {
+	position: absolute;
+	width: 10em;
+	height: 4em;
+	opacity: 0.95;
 }
 
-.jsa-creater textarea {
-    border: none;
-    background: #fdf5d8;
-    border: 1px solid #e1be94;
-    -moz-border-radius: 0.3em;
-    -webkit-border-radius: 0.3em;
-    margin: 0;
-    padding: 0.4em;
-    width: 100%;
-    height: 100%;
+.annot-creater textarea {
+	background: #fdf5d8;
+	border: 1px solid #e1be94;
+	-moz-border-radius: 0.3em;
+	-webkit-border-radius: 0.3em;
+	margin: 0;
+	padding: 0.4em;
+	width: 100%;
+	height: 100%;
 }
-    
+
+.annot-viewer {
+	position: absolute;
+	width: 15em;
+	height: auto;
+	opacity: 0.95;
+	background: #fdf5d8;
+	border: 1px solid #e1be94;
+	-moz-border-radius: 0.3em;
+	-webkit-border-radius: 0.3em;
+	margin: 0;
+	padding: 0.2em 0.4em 0.4em 0.4em;
+}
+
+.annot-viewer p {
+	color: #333333;
+	font-family: helvetica;
+	font-size: 75%;
+	margin: 0.25em 0 0;
+}
+
+.annot-viewer p + p {
+	border-top: 1px solid #E1BE94;
+	padding-top: 0.25em;
+}
