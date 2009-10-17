@@ -4,6 +4,7 @@ YCPATH = ENV['HOME'] + '/local/package/yui/yuicompressor-latest.jar'
 
 SRC = ['vendor/jquery.pluginfactory',
        'vendor/jquery.sji',
+       'vendor/jquery.json',
        'extensions',
        'annotator'].map { |x| "lib/#{x}.js" }
 
