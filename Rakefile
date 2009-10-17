@@ -36,6 +36,7 @@ task :release => :package do |t|
   tree = `git write-tree`
   commit = `echo 'jsannotate release #{tag}' | git commit-tree #{tree}`
   sh "git tag #{tag} #{commit}"
+  sh "git reset HEAD pkg/"
 end
 
 def yui_compressor(srclist, outfile)
