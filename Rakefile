@@ -18,13 +18,13 @@ task :jspec do
 end
 
 desc "Build packaged annotator"
-task :package => ['pkg/jsannotate.min.js', 'pkg/jsannotate.min.css']
+task :package => ['pkg/annotator.min.js', 'pkg/annotator.min.css']
 
-file 'pkg/jsannotate.min.js' => SRC do |t|
+file 'pkg/annotator.min.js' => SRC do |t|
   yui_compressor(t.prerequisites, t.name)
 end
 
-file 'pkg/jsannotate.min.css' => CSS do |t|
+file 'pkg/annotator.min.css' => CSS do |t|
   yui_compressor(t.prerequisites, t.name)
 end
 
@@ -32,7 +32,7 @@ desc "Make a release tag"
 task :release => :package do |t|
   abort "Specify a tag: `TAG=0.1 rake release`" unless ENV['TAG']
   tag = ENV['TAG'].strip
-  sh "git add -f pkg/jsannotate.min.js pkg/jsannotate.min.css"
+  sh "git add -f pkg/annotator.min.js pkg/annotator.min.css"
   tree = `git write-tree`
   commit = `echo 'jsannotate release #{tag}' | git commit-tree #{tree}`
   sh "git tag #{tag} #{commit}"
