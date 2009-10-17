@@ -67,10 +67,6 @@ JSpec.describe('Annotator', function () {
             return selectionGen(fix, testRanges, ii);
         };
     });
-
-    it('has no annotations when first loaded', function () {
-        expect(a.annotations).to(be_empty);
-    });
     
     it('loads selections from the window object on checkForSelection', function () {
         stub(window, 'getSelection').and_return(testSelection(0));
@@ -83,21 +79,8 @@ JSpec.describe('Annotator', function () {
         stub(window, 'getSelection').and_return(testSelection(0));
         a.checkForSelection();
         a.createAnnotation();
-        expect($(fix).children()).to(have_one, 'span.jsa-highlighter');
-        expect($(fix).find('span.jsa-highlighter').text()).to(eql, "habitant morbi");
-    });
-
-    it('adds a serialized description of the selection to its registry on createAnnotation', function () {
-        stub(window, 'getSelection').and_return(testSelection(0));
-        a.checkForSelection();
-        a.createAnnotation();
-        expect(a.annotations).to(have_length, 1);
-        expect(a.annotations[0].ranges).to(eql, [{
-            start: "/p/strong",
-            startOffset: 13,
-            end: "/p/strong",
-            endOffset: 27
-        }]);
+        expect($(fix).children()).to(have_one, 'span.annot-highlighter');
+        expect($(fix).find('span.annot-highlighter').text()).to(eql, "habitant morbi");
     });
 
     it('can deserialize a serializedRange to a normedRange', function () {
