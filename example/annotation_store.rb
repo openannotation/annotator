@@ -15,14 +15,20 @@ def jsonpify(stuff)
   end
 end
 
-get '/store/annotations/all' do
+before do
+  if params['json']
+    params['json'] = JSON.parse(params['json'])
+  end
+end
+
+get %r{/store/annotations/?} do
   jsonpify(annotations.values)
 end
 
 put '/store/annotations' do
-  if params.any?
+  if params['json']
     id = (annotations.keys.max || 0) + 1;
-    annotations[id] = params
+    annotations[id] = params['json']
     annotations[id]['id'] = id
     return 201, jsonpify(annotations[id])
   else
