@@ -6,9 +6,9 @@ You should be able to create an Annotator on an element (or the whole page) as
 simply as $('#content').annotator().
 
 Separately from the annotator (which will simply create annotations in the 
-page and allow you to read their contents -- COMING SOON) you can also create 
-an AnnotationStore which will listen to the Annotator and will save/restore 
-your annotations across page loads via a RESTful HTTP interface.
+page and allow you to read their contents) you can also create an 
+AnnotationStore which will listen to the Annotator and will save/restore your 
+annotations across page loads via a RESTful HTTP interface.
 
 Usage
 -----
@@ -54,19 +54,20 @@ The annotator stores annotations internally as objects like the following.
     { id: 1,
       text: "My annotation",
       ranges: [
-        { uri: "http://www.example.com/my/resource/identifier",
-          start: "/html/body/div/p[2]",
+        { start: "/html/body/div/p[2]",
           startOffset: 32,
           end: "/html/body/div/p[3]",
           endOffset: 47
         },
-        { uri: "http://...", ... } 
+        { start: "/html/...", ... } 
       ]
     }
 
-Note that an annotation can be associated with multiple ranges, over multiple 
-documents. You can call `#loadAnnotations(array)` on an instantiated annotator 
-and the annotations will be added to the page. Likewise, you can dump all the 
-current annotations in the page with `#dumpAnnotations()`. This will return an 
-array of annotation objects (as above) which can then be serialized to JSON.
+Note that an annotation can in theory be associated with multiple ranges, i.e. 
+one object will create multiple distinct highlighted areas. Multi-range 
+selection *is* possible in some browsers (try holding down Ctrl or Cmd), and 
+should 'just work'. If it doesn't work for you I'd be interested in hearing 
+about that.
 
+You can call `#loadAnnotations(array)` on an instantiated annotator and the 
+annotations will be added to the page. 
