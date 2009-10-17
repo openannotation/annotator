@@ -6,10 +6,6 @@
 
     <!-- jQuery must be included before jsannotate -->    
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"></script>
-    
-    <!-- NB: jquery.json.js is NOT needed for the annotator script. It just 
-    happens to be used in this demo (for the textarea below). -->
-    <script src="http://jquery-json.googlecode.com/svn/trunk/jquery.json.min.js"></script>
 
     <script src="pkg/jsannotate.min.js"></script>
     <link rel="stylesheet" type="text/css" href="pkg/jsannotate.min.css">
@@ -47,30 +43,17 @@
       }
       </code></pre>
 
-      <div id="serialize">
-        <button class="clear">Clear all</button>
-        <button class="dump">Dump annotations</button>
-        <button class="load">Load annotations</button><br />
-        <textarea cols="80" rows="15"></textarea>
-      </div>
+      <button id="clear">Clear all</button>
     </div>
 
     <script>
       jQuery(function () {
         $('#airlock').annotator();
 
-        $('#serialize button.load').live('click', function () {
-          $('#airlock').annotator('loadAnnotations', $.evalJSON($('#serialize textarea').val()));
-        });
-
-        $('#serialize button.dump').live('click', function () {
-          $('#serialize textarea').val(
-            $.toJSON($('#airlock').data('annotator').dumpAnnotations())
-          );
-        });
-
-        $('#serialize button.clear').live('click', function () {
-          $('#airlock').annotator('clearAll');  
+        $('button#clear').live('click', function () {
+            $('#airlock').find('.annot-highlighter').each(function () {
+                $(this).replaceWith($(this).text());
+            });
         });
       });
     </script> 
