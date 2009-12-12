@@ -46,6 +46,7 @@
 	-webkit-border-radius: 0.3em;
 	margin: 0;
 	padding: 0.2em 0.4em 0.4em 0.4em;
+	line-height: 16px;
 }
 
 .annot-viewer p {
@@ -58,4 +59,28 @@
 .annot-viewer p + p {
 	border-top: 1px solid #E1BE94;
 	padding-top: 0.25em;
+}
+
+.annot-controls {
+	display: none;
+	float: right;
+}
+
+p:hover .annot-controls {
+	display: block;
+}
+
+.annot-controls a {
+	width: 16px;
+	height: 16px;
+	display: inline-block;
+	text-indent: -9999em
+}
+
+.annot-controls a.edit {
+	background: transparent url(../img/edit.png) no-repeat top left;
+}
+
+.annot-controls a.del {
+	background: transparent url(../img/delete.png) no-repeat top left;
 }
