@@ -8,28 +8,28 @@ describe('AnnotationStore', function () {
         expect(a.annotations).to(be_empty);
     });
 
-    it('should save the annotation on an annotationCreated event', function () {
-        mock_request().and_return('OK', 'text/plain');
-        // with_args with 'null' conveniently skips the check for that 
-        // argument. Here we don't check the event object.
-        expect(a).should(receive, 'annotationCreated', 'once').with_args(null, 'annotator', 'annotation', ['annotationElementsList']);
-        // this is the same event that Annotator triggers when an annotation 
-        // is created.
-        $(el).trigger('annotationCreated', ['annotator', 'annotation', ['annotationElementsList']]);
+    it('should save an annotation on an annotationCreated event', function () {
+        expect(a.annotations).should(eql, []);
+        mock_request().and_return('', 'text/plain');
+        expect(a).should(receive, 'annotationCreated', 'once').with_args(null, 'annotation1');
+        // Trigger annotationCreated event for 'annotation1';
+        $(el).trigger('annotationCreated', ['annotation1']);        
+        expect(a.annotations).should(eql, ['annotation1']);
     });
-
-    // it('adds a serialized description of the selection to its registry on createAnnotation', function () {
-    //     stub(window, 'getSelection').and_return(testSelection(0));
-    //     a.checkForSelection();
-    //     a.createAnnotation();
-    //     expect(a.annotations).to(have_length, 1);
-    //     expect(a.annotations[0].ranges).to(eql, [{
-    //         start: "/p/strong",
-    //         startOffset: 13,
-    //         end: "/p/strong",
-    //         endOffset: 27
-    //     }]);
-    // });
+    
+    it('should remove an annotation on an annotationDeleted event', function () {
+        // Add one annotation
+        a.registerAnnotation('annotation1');
+        expect(a.annotations).should(eql, ['annotation1']);
+        // Respond positively to the request to delete.
+        mock_request().and_return('', 'text/plain');
+        // Check the annotationDeleted method is called.
+        expect(a).should(receive, 'annotationDeleted', 'once').with_args(null, 'annotation1');
+        // Trigger annotationDeleted event for 'annotation1'. 
+        $(el).trigger('annotationDeleted', ['annotation1']);
+        // Make sure annotation is no longer in the registry.
+        expect(a.annotations).should(eql, []);
+    });
 
     it('should generate RESTful URLs by default', function () {
       expect(a._urlFor('create')).should(eql, '/store/annotations');
