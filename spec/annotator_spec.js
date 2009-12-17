@@ -71,13 +71,13 @@ JSpec.describe('Annotator', function () {
     it('loads selections from the window object on checkForSelection', function () {
         stub(window, 'getSelection').and_return(testSelection(0));
         expect(a.selection).to(be_null);
-        a.checkForSelection();
+        a.checkForEndSelection();
         expect(a.selection).to(eql, testSelection(0));
     });
 
     it('surrounds the window\'s selections with a highlight element on createAnnotation', function () {
         stub(window, 'getSelection').and_return(testSelection(0));
-        a.checkForSelection();
+        a.checkForEndSelection();
         a.createAnnotation();
         expect($(fix).children()).to(have_one, 'span.annot-highlighter');
         expect($(fix).find('span.annot-highlighter').text()).to(eql, "habitant morbi");
