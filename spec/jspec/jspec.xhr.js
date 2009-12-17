@@ -167,7 +167,7 @@
     // --- Hooks
 
     afterSpec : function() {
-      this.utilities.unmockRequest()
+      unmockRequest()
     },
     
     // --- DSLs

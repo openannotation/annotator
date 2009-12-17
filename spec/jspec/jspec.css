@@ -2,10 +2,11 @@ body.jspec {
   margin: 45px 0;
   font: 12px "Helvetica Neue Light", "Lucida Grande", "Calibri", "Arial", sans-serif;
   background: #efefef url(images/bg.png) top left repeat-x;
+  text-align: center;
 }
 #jspec {
   margin: 0 auto;
-  padding-top: 25px;
+  padding-top: 30px;
   width: 1008px;
   background: url(images/vr.png) top left repeat-y;
   text-align: left;
@@ -30,8 +31,8 @@ body.jspec {
   background: url(images/loading.gif) 50% 50% no-repeat;
 }
 #jspec-title {
-  position: relative;
-  top: 35px;
+  position: absolute;
+  top: 15px;
   left: 20px;
   width: 160px;
   font-size: 22px;
@@ -74,7 +75,6 @@ body.jspec {
   color: #FA1616;
 }
 #jspec-report table {
-  width: 100%;
   font-size: 11px;
   border-collapse: collapse;
 }
@@ -90,15 +90,19 @@ body.jspec {
   margin: 0;
   padding: 0 0 5px 25px;
 }
-#jspec-report tr:not(.body):hover + tr.body {
+#jspec-report tr.even:hover + tr.body, 
+#jspec-report tr.odd:hover + tr.body {
   display: block;
 }
 #jspec-report tr td:first-child em {
+	display: block;
+	clear: both;
   font-style: normal;
   font-weight: normal;
   color: #7B8D9B;
 }
-#jspec-report tr:not(.description):hover {
+#jspec-report tr.even:hover, 
+#jspec-report tr.odd:hover {
   text-shadow: 1px 1px 1px #fff;
   background: #F2F5F7;
 }

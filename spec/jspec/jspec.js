@@ -5,7 +5,7 @@
 
   JSpec = {
 
-    version   : '2.11.0',
+    version   : '2.11.13',
     cache     : {},
     suites    : [],
     modules   : [],
@@ -143,7 +143,7 @@
           return JSpec.
             escape(JSpec.contentsOf(body)).
             replace(/^ */gm, function(a){ return (new Array(Math.round(a.length / 3))).join(' ') }).
-            replace("\n", '<br/>')
+            replace(/\r\n|\r|\n/gm, '<br/>')
         }
         
         report.innerHTML = '<div id="jspec-report" class="' + classes + '"><div class="heading"> \
@@ -160,7 +160,9 @@
                       (spec.passed() && !failuresOnly) ?
                         '<td class="pass">' + escape(spec.description)+ '</td><td>' + spec.assertionsGraph() + '</td>' :
                           !spec.passed() ?
-                            '<td class="fail">' + escape(spec.description) + ' <em>' + escape(spec.failure().message) + '</em>' + '</td><td>' + spec.assertionsGraph() + '</td>' :
+                            '<td class="fail">' + escape(spec.description) + 
+  													map(spec.failures(), function(a){ return '<em>' + escape(a.message) + '</em>' }).join('') +
+ 														'</td><td>' + spec.assertionsGraph() + '</td>' :
                               '') +
                   '<tr class="body"><td colspan="2"><pre>' + bodyContents(spec.body) + '</pre></td></tr>'
               }).join('') + '</tr>'
@@ -196,11 +198,13 @@
                   print(color('  ' + spec.description, 'green') + assertionsGraph)
                 else if (!spec.passed())
                   print(color('  ' + spec.description, 'red') + assertionsGraph + 
-                        "\n" + indent(spec.failure().message) + "\n")
+                        "\n" + indent(map(spec.failures(), function(a){ return a.message }).join("\n")) + "\n")
               })
               print("")
             }
          })
+         
+         quit(results.stats.failures)
        },
 
       /**
@@ -397,7 +401,7 @@
             this.message = methodString + ' to be called with ' + puts.apply(this, this.expectedArgs) +
              ' but was' + (negate ? '' : ' called with ' + puts.apply(this, this.failingArgs()))
 
-          if (negate ? !this.expectedResult && !this.expectedArgs && this.calls.length == this.times : this.calls.length != this.times)
+          if (negate ? !this.expectedResult && !this.expectedArgs && this.calls.length >= this.times : this.calls.length != this.times)
             this.message = methodString + ' to be called ' + times(this.times) + 
             ', but ' +  (this.calls.length == 0 ? ' was not called' : ' was called ' + times(this.calls.length))
                 
@@ -726,14 +730,9 @@
      */
     
     evalHook : function(module, name, args) {
-      var context = this.context || this.defaultContext
-      var contents = this.contentsOf(module[name])
-      var params = this.paramsFor(module[name])
-      module.utilities = module.utilities || {}
-      params.unshift('context'); args.unshift(context)
-      hook('evaluatingHookBody', module, name, context)
-      try { return new Function(params.join(), 'with (this.utilities) { with (context) { with (JSpec) {  ' + contents + ' }}}').apply(module, args) }
-      catch(e) { error('Error in hook ' + module.name + "." + name + ': ', e) }
+      hook('evaluatingHookBody', module, name)
+      try { return module[name].apply(module, args) }
+      catch(e) { error('Error in hook ' + module.name + '.' + name + ': ', e) }
     },
     
     /**
@@ -969,7 +968,7 @@
       if (object === false) return 'false'
       if (object.an_instance_of) return 'an instance of ' + object.an_instance_of.name
       if (object.jquery && object.selector.length > 0) return 'selector ' + puts(object.selector) + ''
-      if (object.jquery) return object.html()
+      if (object.jquery) return object.get(0).outerHTML
       if (object.nodeName) return object.outerHTML
       switch (object.constructor) {
         case String: return "'" + object + "'"
@@ -1311,18 +1310,6 @@
     contentsOf : function(body) {
       return body.toString().match(/^[^\{]*{((.*\n*)*)}/m)[1]
     },
-    
-    /**
-     * Return param names for a function body.
-     *
-     * @param  {function} body
-     * @return {array}
-     * @api public
-     */
-    
-    paramsFor : function(body) {
-      return body.toString().match(/\((.*?)\)/)[1].match(/[\w]+/g) || []
-    },
 
     /**
      * Evaluate a JSpec capture body.
@@ -1355,17 +1342,20 @@
       if (typeof input != 'string') return
       input = hookImmutable('preprocessing', input)
       return input.
+        replace(/\t/g, '  ').
+        replace(/\r\n|\n|\r/g, '\n').
+        replace(/__END__[^]*/, '').
         replace(/([\w\.]+)\.(stub|destub)\((.*?)\)$/gm, '$2($1, $3)').
         replace(/describe\s+(.*?)$/gm, 'describe($1, function(){').
         replace(/^\s+it\s+(.*?)$/gm, ' it($1, function(){').
-        replace(/^(?: *)(before_each|after_each|before|after)(?= |\n|$)/gm, 'JSpec.currentSuite.addHook("$1", function(){').
+        replace(/^ *(before_each|after_each|before|after)(?= |\n|$)/gm, 'JSpec.currentSuite.addHook("$1", function(){').
         replace(/^\s*end(?=\s|$)/gm, '});').
         replace(/-\{/g, 'function(){').
         replace(/(\d+)\.\.(\d+)/g, function(_, a, b){ return range(a, b) }).
         replace(/\.should([_\.]not)?[_\.](\w+)(?: |;|$)(.*)$/gm, '.should$1_$2($3)').
         replace(/([\/\s]*)(.+?)\.(should(?:[_\.]not)?)[_\.](\w+)\((.*)\)\s*;?$/gm, '$1 expect($2).$3($4, $5)').
-        replace(/, \)/gm, ')').
-        replace(/should\.not/gm, 'should_not')
+        replace(/, \)/g, ')').
+        replace(/should\.not/g, 'should_not')
     },
 
     /**
@@ -1548,12 +1538,33 @@
     /**
      * Instantiate an XMLHttpRequest.
      *
+     * Here we utilize IE's lame ActiveXObjects first which
+     * allow IE access serve files via the file: protocol, otherwise
+     * we then default to XMLHttpRequest.
+     *
      * @return {XMLHttpRequest, ActiveXObject}
      * @api private
      */
     
     xhr : function() {
-      return new (JSpec.request || ActiveXObject("Microsoft.XMLHTTP"))
+      return this.ieXhr() || new JSpec.request
+    },
+    
+    /**
+     * Return Microsoft piece of crap ActiveXObject.
+     *
+     * @return {ActiveXObject}
+     * @api public
+     */
+    
+    ieXhr : function() {
+      function object(str) {
+        try { return new ActiveXObject(str) } catch(e) {}
+      }
+      return object('Msxml2.XMLHTTP.6.0') ||
+        object('Msxml2.XMLHTTP.3.0') ||
+        object('Msxml2.XMLHTTP') ||
+        object('Microsoft.XMLHTTP')
     },
     
     /**
@@ -1593,14 +1604,14 @@
     load : function(file, callback) {
       if (any(hook('loading', file), haveStopped)) return
       if ('readFile' in main)
-        return callback ? readFile(file, callback) : readFile(file)
+        return readFile(file)
       else if (this.hasXhr()) {
         var request = this.xhr()
         request.open('GET', file, false)
         request.send(null)
         if (request.readyState == 4 && 
            (request.status == 0 || 
-            parseInt(request.status.toString()[0]) == 2)) 
+            request.status.toString().charAt(0) == 2)) 
           return request.responseText
       }
       else
@@ -1617,12 +1628,7 @@
 
     exec : function(file) {
       if (any(hook('executing', file), haveStopped)) return this
-      if ('node' in main)
-        this.load(file, function(contents){
-          eval('with (JSpec){ ' + JSpec.preprocess(contents) + ' }')
-        })
-      else
-        eval('with (JSpec){' + this.preprocess(this.load(file)) + '}')
+      eval('with (JSpec){' + this.preprocess(this.load(file)) + '}')
       return this
     }
   }

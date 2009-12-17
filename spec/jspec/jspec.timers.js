@@ -1,7 +1,13 @@
 
-// Mock Timers - 1.0.0 - Copyright TJ Holowaychuk <tj@vision-media.ca> (MIT Licensed)
+// Mock Timers - Copyright TJ Holowaychuk <tj@vision-media.ca> (MIT Licensed)
 
 ;(function(){
+  
+  /**
+   * Version.
+   */
+   
+  mockTimersVersion = '1.0.2'
   
   /**
    * Localized timer stack.
@@ -48,7 +54,7 @@
    * @api public
    */
 
-  clearInterval = function(id) {
+  clearInterval = clearTimeout = function(id) {
     return delete timers[--id]
   }
   
@@ -77,7 +83,7 @@
           var times = Math.floor((timers[i].current - timers[i].last) / timers[i].step)
           var remainder = (timers[i].current - timers[i].last) % timers[i].step
           timers[i].last = timers[i].current - remainder
-          while (times--) timers[i]()
+          while (times-- && timers[i]) timers[i]()
         }
   }
   
