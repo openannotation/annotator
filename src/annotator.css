@@ -1,7 +1,10 @@
 /* @override http://localhost:9393/lib/annotator.css */
 
-.annot-adder img {
-	border: none;
+.annot-adder a {
+	display: block;
+	width: 22px;
+	height: 22px;
+	background: transparent url(img/note.png) no-repeat left top;
 }
 
 .annot-adder {

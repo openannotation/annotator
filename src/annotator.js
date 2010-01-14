@@ -8,7 +8,7 @@
     
 this.Annotator = DelegatorClass.extend({
     events: {
-        '-adder img mousedown': 'showCreater',
+        '-adder mousedown': 'showCreater',
         '-highlighter mouseover': 'highlightMouseover',
         '-highlighter mouseout': 'startViewerHideTimer',
         '-viewer mouseover': 'viewerMouseover',
@@ -24,7 +24,7 @@ this.Annotator = DelegatorClass.extend({
             // Class used to identify elements owned/created by the annotator.
             classPrefix: 'annot',
 
-            adder:       "<div><a href='#'><img src='img/note.png' /></a></div>",
+            adder:       "<div><a href='#'></a></div>",
             creater:     "<div><textarea></textarea></div>",
             highlighter: "<span></span>",
             viewer:      "<div></div>"
@@ -37,7 +37,7 @@ this.Annotator = DelegatorClass.extend({
         this.addDelegatedEvent(this.element, 'mousedown', 'checkForStartSelection');
 
         // For all events beginning with '-', map them to a meaningful selector.
-        // e.g. '-adder img click' -> '.annot-adder img click'
+        // e.g. '-adder click' -> '.annot-adder click'
         $.each(this.events, function (k, v) {
             if (k.substr(0, 1) === '-') {
                 annotator.events['.' + annotator.options.classPrefix + k] = v;

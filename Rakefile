@@ -6,9 +6,9 @@ SRC = ['vendor/jquery.pluginfactory',
        'vendor/jquery.sji',
        'vendor/jquery.json',
        'extensions',
-       'annotator'].map { |x| "lib/#{x}.js" }
+       'annotator'].map { |x| "src/#{x}.js" }
 
-CSS = ['annotator'].map { |x| "lib/#{x}.css" }
+CSS = ['annotator'].map { |x| "src/#{x}.css" }
 
 task :default => :jspec
 
@@ -18,7 +18,9 @@ task :jspec do
 end
 
 desc "Build packaged annotator"
-task :package => ['pkg/annotator.min.js', 'pkg/annotator.min.css']
+task :package => ['pkg/annotator.min.js', 'pkg/annotator.min.css'] do 
+  sh "cp -Rf src/img pkg/img"
+end
 
 file 'pkg/annotator.min.js' => SRC do |t|
   yui_compressor(t.prerequisites, t.name)

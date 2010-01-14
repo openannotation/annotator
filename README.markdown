@@ -13,9 +13,13 @@ annotations across page loads via a RESTful HTTP interface.
 Usage
 -----
 
-To use the annotator, you'll probably want to set up some kind of back end 
-that can save and load your annotations to a database. An example of a page 
-that talks to such a backend might look like:
+To use the annotator, it's easiest to download a tagged release of the annotator from http://github.com/nickstenning/annotator/downloads. You need to make the contents of the pkg/ directory available from the web and include the Javascript and CSS files as below.
+
+(NB: the pkg/ directory will be empty unless you've downloaded a tagged release as suggested.)
+
+You'll probably also want to set up some kind of back end that can save and
+load your annotations to a database. An example of a page that talks to such a
+backend might look like:
 
     <html>
       <head>
@@ -25,12 +29,8 @@ that talks to such a backend might look like:
       <body>
         <p>Lorem ipsum dolor sit .....</p>
 
-        <button id="load">Load annotations</button>
-        <button id="save">Save annotations!</button>
-
         <script>
-          jQuery(document).ready(function($) {
-            $('p').annotator();
+          jQuery(function($) {
             $('p').annotationStore();
           });
         </script>
