@@ -436,6 +436,7 @@ this.AnnotationStore = DelegatorClass.extend({
                 type: 'PUT',
                 success: function (data) {
                     // Update with (e.g.) ID from server.
+                    if (!"id" in data) { console.warn("No ID returned from server for annotation ", annotation); }
                     self.updateAnnotation(annotation, data);
                 },
                 error: function () { self.handleBackendError.apply(self, arguments); }
