@@ -10,6 +10,7 @@
 .annot-adder {
 	position: absolute;
 	display: none;
+	margin: -25px 0 0 3px;
 }
 
 .annot-highlighter {
@@ -47,7 +48,7 @@
 	border: 1px solid #e1be94;
 	-moz-border-radius: 0.3em;
 	-webkit-border-radius: 0.3em;
-	margin: 0;
+	margin: 2px 0 0 2px;
 	padding: 0.2em 0.4em 0.4em 0.4em;
 	line-height: 16px;
 }
@@ -81,9 +82,9 @@ p:hover .annot-controls {
 }
 
 .annot-controls a.edit {
-	background: transparent url(../img/edit.png) no-repeat top left;
+	background: transparent url(img/edit.png) no-repeat top left;
 }
 
 .annot-controls a.del {
-	background: transparent url(../img/delete.png) no-repeat top left;
+	background: transparent url(img/delete.png) no-repeat top left;
 }

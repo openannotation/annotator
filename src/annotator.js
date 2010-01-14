@@ -23,7 +23,7 @@ this.Annotator = DelegatorClass.extend({
         this.options = $.extend({
             // Class used to identify elements owned/created by the annotator.
             classPrefix: 'annot',
-
+            
             adder:       "<div><a href='#'></a></div>",
             creater:     "<div><textarea></textarea></div>",
             highlighter: "<span></span>",
@@ -32,6 +32,15 @@ this.Annotator = DelegatorClass.extend({
         
         this.element = element;
         this.dom = {};
+        
+        // Set 'position: relative' on the parent element so we can accurately 
+        // position the UI elements relative to the top-left of this.element. 
+        // Using 'position: absolute' on UI elements without this does NOT 
+        // guarantee accuracy, as absolutely positioned elements are placed 
+        // relative to the first ancestor with a position != static, which is 
+        // NOT always the viewport (whereas event.{pageX, pageY} coordinates
+        // are always relative to the viewport).
+        $(this.element).css('position', 'relative')
         
         this.addDelegatedEvent(this.element, 'mouseup', 'checkForEndSelection');
         this.addDelegatedEvent(this.element, 'mousedown', 'checkForStartSelection');
@@ -73,10 +82,7 @@ this.Annotator = DelegatorClass.extend({
         this.getSelection();
 
         if (e && this.validSelection()) {
-            this.dom.adder.show().css({
-                top: e.pageY - 25,
-                left: e.pageX + 3
-            });
+            this.dom.adder.css(this.mousePosition(e)).show();
         } else {
             this.dom.adder.hide();
         }
@@ -295,10 +301,8 @@ this.Annotator = DelegatorClass.extend({
     showCreater: function (e) {
         var annotator = this;
 
-        this.dom.creater.css({
-            top: e.pageY,
-            left: e.pageX
-        }).show().find('textarea').focus().bind('keydown', function (e) {
+        this.dom.creater.css(this.mousePosition(e)).show()
+                        .find('textarea').focus().bind('keydown', function (e) {
             if (e.keyCode == 27) {
                 // "Escape" key: abort.
                 $(this).val('').unbind().parent().hide();
@@ -350,10 +354,7 @@ this.Annotator = DelegatorClass.extend({
                 
         });
 
-        viewerclone.css({
-            top: e.pageY + 2,
-            left: e.pageX + 2
-        }).replaceAll(this.dom.viewer).show();
+        viewerclone.css(this.mousePosition(e)).replaceAll(this.dom.viewer).show();
         
         this.dom.viewer = viewerclone;
     },
@@ -378,6 +379,13 @@ this.Annotator = DelegatorClass.extend({
         if (!this.dom.viewer.is(':parent')) {
             this.dom.viewer.hide();
         }
+    },
+    
+    mousePosition: function (e) {
+        return {
+            top:  e.pageY - $(this.element).offset().top,
+            left: e.pageX - $(this.element).offset().left
+        };
     }
 });
 
