@@ -512,11 +512,17 @@ this.AnnotationStore = DelegatorClass.extend({
     },
     
     _dataFor: function (annotation) {
-        // Remove the list of highlight elements before passing back to the server.
-        var _obj = $.evalJSON($.toJSON(annotation)); // Cheap deep clone.
-        delete _obj.highlights;
-        
-        return {json: $.toJSON(_obj)};
+        // Store a reference to the highlights array. We can't serialize
+        // a list of HTML Element objects.
+        var highlights = annotation.highlights;
+
+        delete annotation.highlights;
+        var data = {json: $.toJSON(annotation)};
+
+        // Restore the highlights array.
+        annotation.highlights = highlights;
+
+        return data;
     }
 });
 
