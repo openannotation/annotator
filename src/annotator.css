@@ -1,5 +1,9 @@
 /* @override http://localhost:9393/lib/annotator.css */
 
+.annot-wrapper {
+	position: relative;
+}
+
 .annot-adder a {
 	display: block;
 	width: 22px;

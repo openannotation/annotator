@@ -79,7 +79,6 @@ JSpec.describe('Annotator', function () {
         stub(window, 'getSelection').and_return(testSelection(0));
         a.checkForEndSelection();
         a.createAnnotation();
-        expect($(fix).children()).to(have_one, 'span.annot-highlighter');
         expect($(fix).find('span.annot-highlighter').text()).to(eql, "habitant morbi");
     });
 
