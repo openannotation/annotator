@@ -70,7 +70,7 @@
 	float: right;
 }
 
-p:hover .annot-controls {
+.annot-viewer:hover .annot-controls {
 	display: block;
 }
 
