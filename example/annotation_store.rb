@@ -47,7 +47,7 @@ end
 delete '/store/annotations/:id' do |id|
   if annotations.has_key? id.to_i
     annotations.delete(id.to_i)
-    return 204
+    return 200
   else
     return 404, 'Annotation not found'
   end
