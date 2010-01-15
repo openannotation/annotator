@@ -34,7 +34,7 @@ this.Annotator = DelegatorClass.extend({
         this.dom = {};
 
         $(this.element).wrapInner('<div class="' + this.options.classPrefix + '-wrapper" />');
-        this.wrapper = $(this.element).find('.' + this.options.classPrefix + '-wrapper').get();
+        this.wrapper = $(this.element).find('.' + this.options.classPrefix + '-wrapper').get(0);
 
         this.addDelegatedEvent(this.element, 'mouseup', 'checkForEndSelection');
         this.addDelegatedEvent(this.element, 'mousedown', 'checkForStartSelection');
