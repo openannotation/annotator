@@ -4,23 +4,23 @@
     <meta charset="utf-8">
     <title>JS annotation test</title>
 
-    <!-- jQuery must be included before jsannotate -->    
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"></script>
+    <!-- jQuery must be included before Annotator -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
 
-    <script src="pkg/jsannotate.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="pkg/jsannotate.min.css">
+    <script src="pkg/annotator.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="pkg/annotator.min.css">
   </head>
 
   <body>
     <header>
       <h1>Javascript annotation service test</h1>
     </header>
-    
+
     <div id="airlock">
       <p><strong>Pellentesque habitant morbi tristique</strong> senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. <em>Aenean ultricies mi vitae est.</em> Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, <code>commodo vitae</code>, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. <a href="#">Donec non enim</a> in turpis pulvinar facilisis. Ut felis.</p>
 
       <h2>Header Level 2</h2>
-               
+
       <ol>
          <li>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</li>
          <li>Aliquam tincidunt mauris eu risus.</li>
@@ -36,27 +36,19 @@
       </ul>
 
       <pre><code>
-      #header h1 a { 
-        display: block; 
-        width: 300px; 
-        height: 80px; 
+      #header h1 a {
+        display: block;
+        width: 300px;
+        height: 80px;
       }
       </code></pre>
-
-      <button id="clear">Clear all</button>
     </div>
 
     <script>
-      jQuery(function () {
+      jQuery(function ($) {
         $('#airlock').annotator();
-
-        $('button#clear').live('click', function () {
-            $('#airlock').find('.annot-highlighter').each(function () {
-                $(this).replaceWith($(this).text());
-            });
-        });
       });
-    </script> 
+    </script>
   </body>
 
 
