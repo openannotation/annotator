@@ -25,14 +25,14 @@
 	border: 2px solid #f00;
 }
 
-.annot-creater {
+.annot-editor {
 	position: absolute;
 	width: 10em;
 	height: 4em;
 	opacity: 0.95;
 }
 
-.annot-creater textarea {
+.annot-editor textarea {
 	background: #fdf5d8;
 	border: 1px solid #e1be94;
 	-moz-border-radius: 0.3em;

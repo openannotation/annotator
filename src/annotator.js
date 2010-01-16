@@ -8,7 +8,7 @@
 
 this.Annotator = DelegatorClass.extend({
     events: {
-        '-adder mousedown': 'showCreater',
+        '-adder mousedown': 'adderMousedown',
         '-highlighter mouseover': 'highlightMouseover',
         '-highlighter mouseout': 'startViewerHideTimer',
         '-viewer mouseover': 'viewerMouseover',
@@ -25,7 +25,7 @@ this.Annotator = DelegatorClass.extend({
             classPrefix: 'annot',
 
             adder:       "<div><a href='#'></a></div>",
-            creater:     "<div><textarea></textarea></div>",
+            editor:      "<div><textarea></textarea></div>",
             highlighter: "<span></span>",
             viewer:      "<div></div>"
         }, options);
@@ -51,7 +51,7 @@ this.Annotator = DelegatorClass.extend({
         // Bind delegated events.
         this._super();
 
-        $.each(['adder', 'creater', 'highlighter', 'viewer'], function (idx, name) {
+        $.each(['adder', 'editor', 'highlighter', 'viewer'], function (idx, name) {
             annotator.dom[name] = $(annotator.options[name]).attr({
                 'class': annotator.options.classPrefix + '-' + name
             }).appendTo(annotator.wrapper).hide();
@@ -135,6 +135,19 @@ this.Annotator = DelegatorClass.extend({
             $(this).replaceWith($(this)[0].childNodes);
         });
         $(this.element).trigger('annotationDeleted', [annotation]);
+    },
+
+    updateAnnotation: function (annotation, data) {
+        $.extend(annotation, data);
+        $(this.element).trigger('annotationUpdated', [annotation]);
+    },
+
+    loadAnnotations: function (annotations) {
+        var annotator = this, results = [];
+        $.each(annotations, function () {
+            results.push(annotator.createAnnotation(this));
+        });
+        return results;
     },
 
     // normRange: works around the fact that browsers don't generate
@@ -281,26 +294,26 @@ this.Annotator = DelegatorClass.extend({
         return elemList;
     },
 
-    loadAnnotations: function (annotations) {
-        var annotator = this, results = [];
-        $.each(annotations, function () {
-            results.push(annotator.createAnnotation(this));
-        });
-        return results;
-    },
-
-    showCreater: function (e) {
+    showEditor: function (e, annotation) {
         var annotator = this;
 
-        this.dom.creater.css(this._mousePosition(e)).show()
-                        .find('textarea').focus().bind('keydown', function (e) {
+        if (annotation) {
+            this.dom.editor.find('textarea').val(annotation.text);
+        }
+
+        this.dom.editor.css(this._mousePosition(e)).show()
+                       .find('textarea').focus().bind('keydown', function (e) {
             if (e.keyCode == 27) {
                 // "Escape" key: abort.
                 $(this).val('').unbind().parent().hide();
             } else if (e.keyCode == 13 && !e.shiftKey) {
                 // If "return" was pressed without the shift key, we're done.
                 $(this).unbind().parent().hide();
-                annotator.createAnnotation({ text: $(this).val() });
+                if (annotation) {
+                    annotator.updateAnnotation(annotation, { text: $(this).val() });
+                } else {
+                    annotator.createAnnotation({ text: $(this).val() });
+                }
                 $(this).val('');
             }
         }).bind('blur', function (e) {
@@ -308,7 +321,6 @@ this.Annotator = DelegatorClass.extend({
         });
 
         this.ignoreMouseup = true;
-        this.dom.adder.hide();
         return false;
     },
 
@@ -350,13 +362,23 @@ this.Annotator = DelegatorClass.extend({
         this.dom.viewer = viewerclone;
     },
 
+    adderMousedown: function (e) {
+        this.dom.adder.hide();
+        this.showEditor(e);
+    },
+
     viewerMouseover: function (e) {
         // Cancel any pending hiding of the viewer.
         $(this).stopTime("viewerHide");
     },
 
     controlEditClick: function (e) {
-        console.log("Annotation editing: yet to be implemented.");
+        var para = $(e.target).parents('p'),
+            pos = this._fakePositionFromElement(this.dom.viewer);
+
+        // Replace the viewer with the editor.
+        this.dom.viewer.hide();
+        this.showEditor(pos, para.data("annotation"));
     },
 
     controlDeleteClick: function (e) {
@@ -377,13 +399,21 @@ this.Annotator = DelegatorClass.extend({
             top:  e.pageY - $(this.wrapper).offset().top,
             left: e.pageX - $(this.wrapper).offset().left
         };
+    },
+
+    _fakePositionFromElement: function (elem) {
+        return {
+            pageY: $(elem).offset().top,
+            pageX: $(elem).offset().left
+        }
     }
 });
 
 this.AnnotationStore = DelegatorClass.extend({
     events: {
         'annotationCreated': 'annotationCreated',
-        'annotationDeleted': 'annotationDeleted'
+        'annotationDeleted': 'annotationDeleted',
+        'annotationUpdated': 'annotationUpdated'
     },
 
     init: function (options, element) {
@@ -447,6 +477,21 @@ this.AnnotationStore = DelegatorClass.extend({
                 url: this._urlFor('destroy', annotation.id),
                 type: 'DELETE',
                 success: function () { self.unregisterAnnotation(annotation); },
+                error: function () { self.handleBackendError.apply(self, arguments); }
+            });
+        }
+    },
+
+    annotationUpdated: function (e, annotation) {
+        var self = this;
+
+        if ($.inArray(annotation, this.annotations) !== -1) {
+            $.ajax({
+                url: this._urlFor('update', annotation.id),
+                type: 'POST',
+                data: this._dataFor(annotation),
+                dataType: 'jsonp',
+                success: function () { self.updateAnnotation(annotation); },
                 error: function () { self.handleBackendError.apply(self, arguments); }
             });
         }
