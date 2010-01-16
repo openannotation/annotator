@@ -27,8 +27,8 @@
 
 .annot-editor {
 	position: absolute;
-	width: 10em;
-	height: 4em;
+	width: 15em;
+	height: auto;
 	opacity: 0.95;
 }
 
