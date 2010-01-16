@@ -297,12 +297,11 @@ this.Annotator = DelegatorClass.extend({
     showEditor: function (e, annotation) {
         var annotator = this;
 
-        if (annotation) {
-            this.dom.editor.find('textarea').val(annotation.text);
-        }
+        if (annotation) { this.dom.editor.find('textarea').val(annotation.text); }
 
         this.dom.editor.css(this._mousePosition(e)).show()
-                       .find('textarea').focus().bind('keydown', function (e) {
+                       .find('textarea').focus()
+                       .bind('keydown', function (e) {
             if (e.keyCode == 27) {
                 // "Escape" key: abort.
                 $(this).val('').unbind().parent().hide();
@@ -321,7 +320,6 @@ this.Annotator = DelegatorClass.extend({
         });
 
         this.ignoreMouseup = true;
-        return false;
     },
 
     startViewerHideTimer: function (e) {
@@ -365,6 +363,7 @@ this.Annotator = DelegatorClass.extend({
     adderMousedown: function (e) {
         this.dom.adder.hide();
         this.showEditor(e);
+        return false;
     },
 
     viewerMouseover: function (e) {
