@@ -44,16 +44,22 @@ get '/store/annotations/:id' do |id|
   end
 end
 
-delete '/store/annotations/:id' do |id|
+post '/store/annotations/:id' do |id|
   if annotations.has_key? id.to_i
-    annotations.delete(id.to_i)
-    return 204
+    if params['json']
+      annotations[id.to_i].update(params['json'])
+    end
+    return 200, jsonpify(annotations[id.to_i])
   else
     return 404, 'Annotation not found'
   end
 end
 
-get '/testparams' do
-  require 'yaml'
-  return '<code><pre>' + params.to_yaml + '</pre></code>'
+delete '/store/annotations/:id' do |id|
+  if annotations.has_key? id.to_i
+    annotations.delete(id.to_i)
+    return 200
+  else
+    return 404, 'Annotation not found'
+  end
 end

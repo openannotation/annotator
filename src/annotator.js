@@ -5,10 +5,10 @@
 // for the moment, having no means of testing it.
 
 (function($){
-    
+
 this.Annotator = DelegatorClass.extend({
     events: {
-        '-adder mousedown': 'showCreater',
+        '-adder mousedown': 'adderMousedown',
         '-highlighter mouseover': 'highlightMouseover',
         '-highlighter mouseout': 'startViewerHideTimer',
         '-viewer mouseover': 'viewerMouseover',
@@ -19,29 +19,23 @@ this.Annotator = DelegatorClass.extend({
 
     init: function (options, element) {
         var annotator = this;
-        
+
         this.options = $.extend({
             // Class used to identify elements owned/created by the annotator.
             classPrefix: 'annot',
-            
+
             adder:       "<div><a href='#'></a></div>",
-            creater:     "<div><textarea></textarea></div>",
+            editor:      "<div><textarea></textarea></div>",
             highlighter: "<span></span>",
             viewer:      "<div></div>"
         }, options);
-        
+
         this.element = element;
         this.dom = {};
-        
-        // Set 'position: relative' on the parent element so we can accurately 
-        // position the UI elements relative to the top-left of this.element. 
-        // Using 'position: absolute' on UI elements without this does NOT 
-        // guarantee accuracy, as absolutely positioned elements are placed 
-        // relative to the first ancestor with a position != static, which is 
-        // NOT always the viewport (whereas event.{pageX, pageY} coordinates
-        // are always relative to the viewport).
-        $(this.element).css('position', 'relative')
-        
+
+        $(this.element).wrapInner('<div class="' + this.options.classPrefix + '-wrapper" />');
+        this.wrapper = $(this.element).find('.' + this.options.classPrefix + '-wrapper').get(0);
+
         this.addDelegatedEvent(this.element, 'mouseup', 'checkForEndSelection');
         this.addDelegatedEvent(this.element, 'mousedown', 'checkForStartSelection');
 
@@ -56,11 +50,11 @@ this.Annotator = DelegatorClass.extend({
 
         // Bind delegated events.
         this._super();
-        
-        $.each(['adder', 'creater', 'highlighter', 'viewer'], function (idx, name) {
-            annotator.dom[name] = $(annotator.options[name]).attr({ 
+
+        $.each(['adder', 'editor', 'highlighter', 'viewer'], function (idx, name) {
+            annotator.dom[name] = $(annotator.options[name]).attr({
                 'class': annotator.options.classPrefix + '-' + name
-            }).appendTo(annotator.element).hide();
+            }).appendTo(annotator.wrapper).hide();
         });
     },
 
@@ -77,19 +71,22 @@ this.Annotator = DelegatorClass.extend({
         if (this.ignoreMouseup) {
             this.ignoreMouseup = false;
             return;
-        } 
+        }
 
         this.getSelection();
 
-        if (e && this.validSelection()) {
-            this.dom.adder.css(this.mousePosition(e)).show();
+        if (e &&
+            this.selection &&
+            this.selection.rangeCount > 0 &&
+           !this.selection.isCollapsed) {
+            this.dom.adder.css(this._mousePosition(e)).show();
         } else {
             this.dom.adder.hide();
         }
     },
 
     getSelection: function () {
-        // TODO: fail gracefully in IE. 
+        // TODO: fail gracefully in IE.
         this.selection = window.getSelection();
         this.selectedRanges = [];
         for(var ii = 0; ii < this.selection.rangeCount; ii += 1) {
@@ -97,16 +94,10 @@ this.Annotator = DelegatorClass.extend({
         }
     },
 
-    validSelection: function () {
-        return this.selection && 
-               this.selection.rangeCount > 0 && 
-              !this.selection.isCollapsed;
-    },
-
     createAnnotation: function (annotation) {
         var annotator = this;
 
-        annotation = annotation || {};    
+        annotation = annotation || {};
         annotation.highlights = annotation.highlights || [];
 
         annotation.ranges = $.map(annotation.ranges || this.selectedRanges, function (r) {
@@ -138,7 +129,7 @@ this.Annotator = DelegatorClass.extend({
 
         return annotation;
     },
-    
+
     deleteAnnotation: function (annotation) {
         $.each(annotation.highlights, function () {
             $(this).replaceWith($(this)[0].childNodes);
@@ -146,16 +137,29 @@ this.Annotator = DelegatorClass.extend({
         $(this.element).trigger('annotationDeleted', [annotation]);
     },
 
-    // normRange: works around the fact that browsers don't generate 
-    // ranges/selections in a consistent manner. Some (Safari) will create 
-    // ranges that have (say) a textNode startContainer and elementNode 
-    // endContainer. Others (Firefox) seem to only ever generate 
-    // textNode/textNode or elementNode/elementNode pairs. 
+    updateAnnotation: function (annotation, data) {
+        $.extend(annotation, data);
+        $(this.element).trigger('annotationUpdated', [annotation]);
+    },
+
+    loadAnnotations: function (annotations) {
+        var annotator = this, results = [];
+        $.each(annotations, function () {
+            results.push(annotator.createAnnotation(this));
+        });
+        return results;
+    },
+
+    // normRange: works around the fact that browsers don't generate
+    // ranges/selections in a consistent manner. Some (Safari) will create
+    // ranges that have (say) a textNode startContainer and elementNode
+    // endContainer. Others (Firefox) seem to only ever generate
+    // textNode/textNode or elementNode/elementNode pairs.
     //
-    // This will return a (start, end, commonAncestor) triple, where start and 
+    // This will return a (start, end, commonAncestor) triple, where start and
     // end are textNodes, and commonAncestor is an elementNode.
     //
-    // NB: This method may well split textnodes (i.e. alter the DOM) to 
+    // NB: This method may well split textnodes (i.e. alter the DOM) to
     // achieve this.
     normRange: function (range) {
         var r = {}, nr = {};
@@ -166,7 +170,7 @@ this.Annotator = DelegatorClass.extend({
             if(node.nodeType === Node.ELEMENT_NODE) {
                 // Get specified node.
                 it = node.childNodes[offset];
-                // If it doesn't exist, that means we need the end of the 
+                // If it doesn't exist, that means we need the end of the
                 // previous one.
                 node = it || node.childNodes[offset - 1];
                 while(node.nodeType !== Node.TEXT_NODE) { node = node.firstChild; }
@@ -191,29 +195,29 @@ this.Annotator = DelegatorClass.extend({
 
         // Make sure the common ancestor is an element node.
         nr.commonAncestor = range.commonAncestorContainer;
-        while(nr.commonAncestor.nodeType !== Node.ELEMENT_NODE) { 
+        while(nr.commonAncestor.nodeType !== Node.ELEMENT_NODE) {
             nr.commonAncestor = nr.commonAncestor.parentNode;
         }
 
         return nr;
     },
 
-    // serializeRange: takes a normedRange and turns it into a 
-    // serializedRange, which is two pairs of (xpath, character offset), which 
-    // can be easily stored in a database and loaded through 
+    // serializeRange: takes a normedRange and turns it into a
+    // serializedRange, which is two pairs of (xpath, character offset), which
+    // can be easily stored in a database and loaded through
     // #loadAnnotations/#deserializeRange.
     serializeRange: function (normedRange) {
         var annotator = this;
-        var serialization = function (node, isEnd) { 
+        var serialization = function (node, isEnd) {
             var origParent = $(node).parents(':not(.' + annotator.options.classPrefix + '-highlighter)').eq(0),
-                xpath = origParent.xpath(annotator.element)[0],
+                xpath = origParent.xpath(annotator.wrapper)[0],
                 textNodes = origParent.textNodes(),
-                
-                // Calculate real offset as the combined length of all the 
-                // preceding textNode siblings. We include the length of the 
+
+                // Calculate real offset as the combined length of all the
+                // preceding textNode siblings. We include the length of the
                 // node if it's the end node.
-                offset = $.inject(textNodes.slice(0, textNodes.index(node)), 
-                                  0, 
+                offset = $.inject(textNodes.slice(0, textNodes.index(node)),
+                                  0,
                                   function (acc, tn) { return acc + tn.nodeValue.length; });
 
             return isEnd ? [xpath, offset + node.nodeValue.length] : [xpath, offset];
@@ -237,13 +241,13 @@ this.Annotator = DelegatorClass.extend({
             return document.evaluate( xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
         };
 
-        var parentXPath = $(this.element).xpath()[0],
+        var parentXPath = $(this.wrapper).xpath()[0],
             startAncestry = serializedRange.start.split("/"),
             endAncestry   = serializedRange.end.split("/"),
             common = [],
             range = {};
 
-        // Crudely find a near common ancestor by walking down the XPath from 
+        // Crudely find a near common ancestor by walking down the XPath from
         // the root until the segments no longer match.
         for (var ii = 0; ii < startAncestry.length; ii += 1) {
             if (startAncestry[ii] === endAncestry[ii]) {
@@ -255,9 +259,9 @@ this.Annotator = DelegatorClass.extend({
 
         range.commonAncestorContainer = nodeFromXPath(parentXPath + common.join("/"));
 
-        // Unfortunately, we *can't* guarantee only one textNode per 
-        // elementNode, so we have to walk along the element's textNodes until 
-        // the combined length of the textNodes to that point exceeds or 
+        // Unfortunately, we *can't* guarantee only one textNode per
+        // elementNode, so we have to walk along the element's textNodes until
+        // the combined length of the textNodes to that point exceeds or
         // matches the value of the offset.
         $.each(['start', 'end'], function () {
             var which = this, length = 0;
@@ -281,7 +285,7 @@ this.Annotator = DelegatorClass.extend({
         var textNodes = $(normedRange.commonAncestor).textNodes();
         var elemList = [];
 
-        textNodes.slice(textNodes.index(normedRange.start), 
+        textNodes.slice(textNodes.index(normedRange.start),
                         textNodes.index(normedRange.end) + 1).each(function () {
                       var wrapper = annotator.dom.highlighter.clone().show();
                       elemList.push($(this).wrap(wrapper).parent().get(0));
@@ -290,26 +294,26 @@ this.Annotator = DelegatorClass.extend({
         return elemList;
     },
 
-    loadAnnotations: function (annotations) {
-        var annotator = this, results = [];
-        $.each(annotations, function () {
-            results.push(annotator.createAnnotation(this));
-        });
-        return results;
-    },
-
-    showCreater: function (e) {
+    showEditor: function (e, annotation) {
         var annotator = this;
 
-        this.dom.creater.css(this.mousePosition(e)).show()
-                        .find('textarea').focus().bind('keydown', function (e) {
+        if (annotation) {
+            this.dom.editor.find('textarea').val(annotation.text);
+        }
+
+        this.dom.editor.css(this._mousePosition(e)).show()
+                       .find('textarea').focus().bind('keydown', function (e) {
             if (e.keyCode == 27) {
                 // "Escape" key: abort.
                 $(this).val('').unbind().parent().hide();
             } else if (e.keyCode == 13 && !e.shiftKey) {
                 // If "return" was pressed without the shift key, we're done.
                 $(this).unbind().parent().hide();
-                annotator.createAnnotation({ text: $(this).val() });
+                if (annotation) {
+                    annotator.updateAnnotation(annotation, { text: $(this).val() });
+                } else {
+                    annotator.createAnnotation({ text: $(this).val() });
+                }
                 $(this).val('');
             }
         }).bind('blur', function (e) {
@@ -317,82 +321,99 @@ this.Annotator = DelegatorClass.extend({
         });
 
         this.ignoreMouseup = true;
-        this.dom.adder.hide();
         return false;
     },
 
     startViewerHideTimer: function (e) {
-        // Allow 250ms for pointer to get from annotation to viewer to manipulate 
+        // Allow 250ms for pointer to get from annotation to viewer to manipulate
         // annotations.
         $(this).oneTime(250, "viewerHide", function () {
             this.dom.viewer.hide();
         });
     },
-    
+
     highlightMouseover: function (e) {
         // Cancel any pending hiding of the viewer.
         $(this).stopTime("viewerHide");
         // Don't do anything if we're making a selection.
         if (this.mouseIsDown) { return false; }
-        
+
         var items = $(e.target)
             .parents('.' + this.options.classPrefix + '-highlighter').andSelf();
 
         var controlsHTML = '<span class="' + this.options.classPrefix + '-controls">' +
-                           '<a href="#" class="edit" alt="Edit" title="Edit this annotation">Edit</a>' + 
+                           '<a href="#" class="edit" alt="Edit" title="Edit this annotation">Edit</a>' +
                            '<a href="#" class="del" alt="X" title="Delete this annotation">Delete</a></span>';
 
         var viewerclone = this.dom.viewer.clone().empty();
-        
+
         $.each(items, function (idx, annot) {
             // As well as filling the viewer element, we also copy the annotation
-            // object from the highlight element to the <p> containing the note 
+            // object from the highlight element to the <p> containing the note
             // and controls. This makes editing/deletion much easier.
             $('<p>' + $(annot).data("annotation").text + controlsHTML + '</p>')
                 .appendTo(viewerclone)
                 .data("annotation", $(annot).data("annotation"));
-                
+
         });
 
-        viewerclone.css(this.mousePosition(e)).replaceAll(this.dom.viewer).show();
-        
+        viewerclone.css(this._mousePosition(e)).replaceAll(this.dom.viewer).show();
+
         this.dom.viewer = viewerclone;
     },
-    
-    viewerMouseover: function (e) { 
+
+    adderMousedown: function (e) {
+        this.dom.adder.hide();
+        this.showEditor(e);
+    },
+
+    viewerMouseover: function (e) {
         // Cancel any pending hiding of the viewer.
         $(this).stopTime("viewerHide");
     },
-    
+
     controlEditClick: function (e) {
-        console.log("Annotation editing: yet to be implemented.");
+        var para = $(e.target).parents('p'),
+            pos = this._fakePositionFromElement(this.dom.viewer);
+
+        // Replace the viewer with the editor.
+        this.dom.viewer.hide();
+        this.showEditor(pos, para.data("annotation"));
     },
-    
+
     controlDeleteClick: function (e) {
         var para = $(e.target).parents('p');
-        
+
         // Delete highlight elements.
         this.deleteAnnotation(para.data("annotation"));
-        
+
         // Remove from viewer and hide viewer if this was the only annotation displayed.
         para.remove();
         if (!this.dom.viewer.is(':parent')) {
             this.dom.viewer.hide();
         }
     },
-    
-    mousePosition: function (e) {
+
+    _mousePosition: function (e) {
         return {
-            top:  e.pageY - $(this.element).offset().top,
-            left: e.pageX - $(this.element).offset().left
+            top:  e.pageY - $(this.wrapper).offset().top,
+            left: e.pageX - $(this.wrapper).offset().left
         };
+    },
+
+    _fakePositionFromElement: function (elem) {
+        return {
+            pageY: $(elem).offset().top,
+            pageX: $(elem).offset().left
+        }
     }
 });
 
 this.AnnotationStore = DelegatorClass.extend({
     events: {
         'annotationCreated': 'annotationCreated',
-        'annotationDeleted': 'annotationDeleted'
+        'annotationDeleted': 'annotationDeleted',
+        'annotationUpdated': 'annotationUpdated'
     },
 
     init: function (options, element) {
@@ -407,7 +428,7 @@ this.AnnotationStore = DelegatorClass.extend({
             annotator: $(element).data('annotator')
         }, options);
 
-        // If the element on which we're instantiated doesn't already have an 
+        // If the element on which we're instantiated doesn't already have an
         // annotator instance, create one.
         if (!this.options.annotator) {
             $(element).annotator();
@@ -424,10 +445,10 @@ this.AnnotationStore = DelegatorClass.extend({
 
     annotationCreated: function (e, annotation) {
         var self = this;
-        
-        // Pre-register the annotation so as to save the list of highlight 
+
+        // Pre-register the annotation so as to save the list of highlight
         // elements.
-        if ($.inArray(annotation, this.annotations) === -1) {        
+        if ($.inArray(annotation, this.annotations) === -1) {
             this.registerAnnotation(annotation);
             $.ajax({
                 url: this._urlFor('create'),
@@ -447,10 +468,10 @@ this.AnnotationStore = DelegatorClass.extend({
             self.updateAnnotation(annotation, {});
         }
     },
-    
+
     annotationDeleted: function (e, annotation) {
         var self = this;
-        
+
         if ($.inArray(annotation, this.annotations) !== -1) {
             $.ajax({
                 url: this._urlFor('destroy', annotation.id),
@@ -461,24 +482,39 @@ this.AnnotationStore = DelegatorClass.extend({
         }
     },
 
+    annotationUpdated: function (e, annotation) {
+        var self = this;
+
+        if ($.inArray(annotation, this.annotations) !== -1) {
+            $.ajax({
+                url: this._urlFor('update', annotation.id),
+                type: 'POST',
+                data: this._dataFor(annotation),
+                dataType: 'jsonp',
+                success: function () { self.updateAnnotation(annotation); },
+                error: function () { self.handleBackendError.apply(self, arguments); }
+            });
+        }
+    },
+
     // NB: registerAnnotation and unregisterAnnotation do no error-checking/
     // duplication avoidance of their own. Use with care.
     registerAnnotation: function (annotation) {
         this.annotations.push(annotation);
     },
-    
+
     unregisterAnnotation: function (annotation) {
         this.annotations.splice(this.annotations.indexOf(annotation), 1);
     },
-    
+
     updateAnnotation: function (annotation, data) {
         if ($.inArray(annotation, this.annotations) === -1) {
             console.error("Trying to update unregistered annotation!");
         } else {
             $.extend(annotation, data);
         }
-        
-        // Update the elements with our copies of the annotation objects (e.g. 
+
+        // Update the elements with our copies of the annotation objects (e.g.
         // with ids from the server).
         $(annotation.highlights).data('annotation', annotation);
     },
@@ -498,9 +534,9 @@ this.AnnotationStore = DelegatorClass.extend({
     },
 
     loadAnnotations: function () { this.loadAnnotation(null); },
-    
+
     handleBackendError: function (xhrobj, textStatus, errorThrown) {
-        alert("The annotation store backend encountered an error! " + 
+        alert("The annotation store backend encountered an error! " +
               "Your changes may not have been saved. " +
               "Refresh the page or see the console for more details.");
         console.error("AJAX error - { status: ", textStatus, ", error: ", errorThrown, " }");
@@ -511,7 +547,7 @@ this.AnnotationStore = DelegatorClass.extend({
         var url = this.options.prefix ? this.options.prefix : '/';
         return url + this.options.urls[action].replace(/:id/, id || '');
     },
-    
+
     _dataFor: function (annotation) {
         // Store a reference to the highlights array. We can't serialize
         // a list of HTML Element objects.
