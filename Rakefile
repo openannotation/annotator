@@ -34,11 +34,12 @@ desc "Make a release tag"
 task :release => :package do |t|
   abort "Specify a tag: `TAG=0.1 rake release`" unless ENV['TAG']
   tag = ENV['TAG'].strip
-  sh "git add -f pkg/annotator.min.js pkg/annotator.min.css"
+  sh "git add -f pkg/*"
   tree = `git write-tree`
-  commit = `echo 'jsannotate release #{tag}' | git commit-tree #{tree}`
+  commit = `echo 'Annotator release #{tag}' | git commit-tree #{tree}`
   sh "git tag #{tag} #{commit}"
   sh "git reset HEAD pkg/"
+  sh "rm -Rf pkg/*"
 end
 
 def yui_compressor(srclist, outfile)
