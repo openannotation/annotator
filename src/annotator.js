@@ -419,7 +419,7 @@ this.AnnotationStore = DelegatorClass.extend({
         this.options = $.extend({
             prefix: '/store/annotations',
             urls: {
-               'create': '',     // PUT/[POST]
+               'create': '',     // POST
                'read': '/:id',   // GET
                'update': '/:id', // POST/[PUT]
                'destroy': '/:id' // DELETE
@@ -453,7 +453,7 @@ this.AnnotationStore = DelegatorClass.extend({
                 url: this._urlFor('create'),
                 data: this._dataFor(annotation),
                 dataType: 'jsonp',
-                type: 'PUT',
+                type: 'POST',
                 success: function (data) {
                     // Update with (e.g.) ID from server.
                     if (!("id" in data)) { console.warn("Warning: No ID returned from server for annotation ", annotation); }

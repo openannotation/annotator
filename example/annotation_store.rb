@@ -25,12 +25,12 @@ get %r{/store/annotations/?} do
   jsonpify(annotations.values)
 end
 
-put '/store/annotations' do
+post '/store/annotations' do
   if params['json']
     id = (annotations.keys.max || 0) + 1;
     annotations[id] = params['json']
     annotations[id]['id'] = id
-    return 201, jsonpify(annotations[id])
+    return redirect "/store/annotations/#{id}"
   else
     return 400, 'No parameters given. Annotation not created'
   end
@@ -49,7 +49,7 @@ post '/store/annotations/:id' do |id|
     if params['json']
       annotations[id.to_i].update(params['json'])
     end
-    return 200, jsonpify(annotations[id.to_i])
+    return redirect "/store/annotations/#{id}"
   else
     return 404, 'Annotation not found'
   end
