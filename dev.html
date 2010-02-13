@@ -51,7 +51,12 @@
 
     <script>
       jQuery(function ($) {
-          $('#airlock').annotationStore();
+          $('#airlock').annotationStore({
+            annotationData: {
+              name: "Bongos",
+              age: 34
+            }
+          });
       });
     </script>
   </body>

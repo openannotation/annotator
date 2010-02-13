@@ -10,13 +10,14 @@ this.AnnotationStore = DelegatorClass.extend({
     init: function (options, element) {
         this.options = $.extend({
             prefix: '/store/annotations',
+            annotator: $(element).data('annotator'),
+            annotationData: {},
             urls: {
                'create': '',     // POST
                'read': '/:id',   // GET
                'update': '/:id', // POST/[PUT]
                'destroy': '/:id' // DELETE
-            },
-            annotator: $(element).data('annotator')
+            }
         }, options);
 
         // If the element on which we're instantiated doesn't already have an
@@ -145,6 +146,9 @@ this.AnnotationStore = DelegatorClass.extend({
         var highlights = annotation.highlights;
 
         delete annotation.highlights;
+
+        // Preload with extra data.
+        $.extend(annotation, this.options.annotationData)
         var data = {json: $.toJSON(annotation)};
 
         // Restore the highlights array.
