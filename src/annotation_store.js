@@ -9,14 +9,28 @@ this.AnnotationStore = DelegatorClass.extend({
 
     init: function (options, element) {
         this.options = $.extend({
-            prefix: '/store/annotations',
+            prefix: '/store',
+
             annotator: $(element).data('annotator'),
             annotationData: {},
+
+            // If loadFromSearch is set, then we load the first batch of
+            // annotations from 'prefix/search(options=loadFromSearch)'
+            // instead of the registry path 'prefix/read'.
+            //
+            //     loadFromSearch: {
+            //         'limit': 0,
+            //         'all_fields': 1
+            //         'uri': 'http://this/document/only'
+            //     }
+            loadFromSearch: false,
+
             urls: {
-               'create': '',     // POST
-               'read': '/:id',   // GET
-               'update': '/:id', // POST/[PUT]
-               'destroy': '/:id' // DELETE
+               'create': '/annotations',     // POST
+               'read': '/annotations/:id',   // GET
+               'update': '/annotations/:id', // POST/[PUT]
+               'destroy': '/annotations/:id',// DELETE
+               'search': '/search'
             }
         }, options);
 
@@ -30,7 +44,11 @@ this.AnnotationStore = DelegatorClass.extend({
         this.element = element;
         this.annotations = [];
 
-        this.loadAnnotations();
+        if (this.options.loadFromSearch) {
+            this.loadAnnotationsFromSearch(this.options.loadFromSearch);
+        } else {
+            this.loadAnnotations();
+        }
 
         this._super();
     },
@@ -111,21 +129,29 @@ this.AnnotationStore = DelegatorClass.extend({
         $(annotation.highlights).data('annotation', annotation);
     },
 
-    loadAnnotation: function (id) {
-        // NB: null id loads all annotations.
+    loadAnnotations: function () {
         var self = this;
-        $.getJSON(this._urlFor('read', id), null, function (data, textStatus) {
-            var results;
-            if (textStatus === 'success') {
-                self.annotations = id ? [data] : data;
-                results = self.options.annotator.loadAnnotations(self.annotations);
+        $.getJSON(this._urlFor('read'), null, function (data, textStatus) {
+            if (textStatus === 'success' && $.isArray(data)) {
+                self.annotations = data;
+                self.options.annotator.loadAnnotations(self.annotations);
             } else {
                 throw('Annotation could not be loaded. [XHR returned "' + textStatus + '"]');
             }
         });
     },
 
-    loadAnnotations: function () { this.loadAnnotation(null); },
+    loadAnnotationsFromSearch: function (searchOptions) {
+        var self = this;
+        $.getJSON(this._urlFor('search'), searchOptions, function (data, textStatus) {
+            if (textStatus === 'success' && 'results' in data && $.isArray(data.results)) {
+                self.annotations = data.results;
+                self.options.annotator.loadAnnotations(self.annotations);
+            } else {
+                throw('Annotation could not be loaded. [XHR returned "' + textStatus + '"]');
+            }
+        });
+    },
 
     handleBackendError: function (xhrobj, textStatus, errorThrown) {
         alert("The annotation store backend encountered an error! " +

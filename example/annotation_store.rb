@@ -63,3 +63,10 @@ delete '/store/annotations/:id' do |id|
     return 404, 'Annotation not found'
   end
 end
+
+get '/store/search' do
+  results = annotations.values.select do |ann|
+    params.all? { |key, val| ann[key].to_s == val }
+  end
+  return jsonpify({:total => results.length, :results => results})
+end
