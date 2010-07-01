@@ -1,6 +1,7 @@
 require 'open-uri'
 
-YCPATH = ENV['HOME'] + '/local/package/yui/yuicompressor-latest.jar'
+YCPATH = ENV['YCPATH'] ||
+         ENV['HOME'] + '/local/package/yui/yuicompressor-latest.jar'
 
 SRC = ['vendor/jquery.pluginfactory',
        'vendor/jquery.sji',
