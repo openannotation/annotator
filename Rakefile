@@ -7,7 +7,8 @@ SRC = ['vendor/jquery.pluginfactory',
        'vendor/jquery.json',
        'extensions',
        'annotator',
-       'annotation_store'].map { |x| "src/#{x}.js" }
+       'plugins/store',
+       'plugins/user'].map { |x| "src/#{x}.js" }
 
 CSS = ['annotator'].map { |x| "src/#{x}.css" }
 

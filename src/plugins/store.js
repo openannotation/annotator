@@ -1,6 +1,6 @@
 (function($){
 
-this.AnnotationStore = DelegatorClass.extend({
+Annotator.Plugins.Store = DelegatorClass.extend({
     events: {
         'annotationCreated': 'annotationCreated',
         'annotationDeleted': 'annotationDeleted',
@@ -183,7 +183,5 @@ this.AnnotationStore = DelegatorClass.extend({
         return data;
     }
 });
-
-$.plugin('annotationStore', AnnotationStore);
 
 })(jQuery);

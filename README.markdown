@@ -3,11 +3,11 @@ Annotator
 
 A wee playground to see what can be done with a Javascript annotation system. 
 You should be able to create an Annotator on an element (or the whole page) as 
-simply as $('#content').annotator().
+simply as $('#content').annotator(). See demo.html for an example.
 
-Separately from the annotator (which will simply create annotations in the 
-page and allow you to read their contents) you can also create an 
-AnnotationStore which will listen to the Annotator and will save/restore your 
+Separately from the annotator (which will simply create annotations in the
+page and allow you to read their contents) you can also create an annotation
+"Store" which will listen to the Annotator and will save/restore your
 annotations across page loads via a RESTful HTTP interface.
 
 Usage
@@ -31,14 +31,15 @@ backend might look like:
 
         <script>
           jQuery(function($) {
-            $('p').annotationStore();
+            $('p').annotator()
+                  .annotator('addPlugin', Annotator.Plugins.Store);
           });
         </script>
       </body>
     </html>
 
-An example Sinatra backend (which doesn't actually save the annotations to 
-disk) can be found in examples/.
+An example Sinatra [http://www.sinatrarb.com] backend (which doesn't actually
+save the annotations to disk) can be found in examples/.
 
 Development
 -----------

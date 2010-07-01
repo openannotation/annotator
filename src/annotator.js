@@ -392,6 +392,10 @@ this.Annotator = DelegatorClass.extend({
             this.dom.viewer.hide();
         }
     },
+    
+    addPlugin: function (klass, options) {
+        new klass(options, this.element);
+    },
 
     _mousePosition: function (e) {
         return {
@@ -407,6 +411,8 @@ this.Annotator = DelegatorClass.extend({
         }
     }
 });
+
+Annotator.Plugins = {};
 
 $.plugin('annotator', Annotator);
 

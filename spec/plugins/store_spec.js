@@ -1,8 +1,8 @@
-describe('AnnotationStore', function () {
+describe('Annotator.Plugins.Store', function () {
     before_each(function () {
         el = $('<div></div>')[0];
         mock_request().and_return('[]', 'text/plain');
-        a = new AnnotationStore({}, el);
+        a = new Annotator.Plugins.Store({}, el);
     });
 
     it('should save an annotation on an annotationCreated event', function () {
@@ -59,11 +59,11 @@ describe('AnnotationStore', function () {
    });
 });
 
-describe('AnnotationStore initialized with an empty backend', function () {
+describe('Annotator.Plugins.Store initialized with an empty backend', function () {
     before_each(function () {
         el = $('<div></div>')[0];
         mock_request().and_return('[]', 'text/plain');
-        a = new AnnotationStore({}, el);
+        a = new Annotator.Plugins.Store({}, el);
     });
 
     it('should have no annotations', function () {
@@ -71,11 +71,11 @@ describe('AnnotationStore initialized with an empty backend', function () {
     });
 });
 
-describe('AnnotationStore with annotations in backend store', function () {
+describe('Annotator.Plugins.Store with annotations in backend store', function () {
     before_each(function () {
         el = $('<div></div>')[0];
         mock_request().and_return('[{"ranges":[],"text":"hello","id":1}]', 'text/plain');
-        a = new AnnotationStore({}, el);
+        a = new Annotator.Plugins.Store({}, el);
     });
 
     it('should load the annotations into its registry', function () {

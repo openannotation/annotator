@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
   <head>
     <link type="text/css" rel="stylesheet" href="jspec/jspec.css" />
@@ -10,13 +11,13 @@
     <script src="../src/vendor/jquery.sji.js"></script>
     <script src="../src/extensions.js"></script>
     <script src="../src/annotator.js"></script>
-    <script src="../src/annotation_store.js"></script>
+    <script src="../src/plugins/store.js"></script>
     <script>
       jQuery(function () {
         JSpec
         .exec('extensions_spec.js')
         .exec('annotator_spec.js')
-        .exec('annotation_store_spec.js')
+        .exec('plugins/store_spec.js')
         .run()
         .report();
       });

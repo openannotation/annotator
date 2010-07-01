@@ -11,7 +11,8 @@
     <script src="src/vendor/jquery.json.js"></script>
     <script src="src/extensions.js"></script>
     <script src="src/annotator.js"></script>
-    <script src="src/annotation_store.js"></script>
+    <script src="src/plugins/store.js"></script>
+    <script src="src/plugins/user.js"></script>
 
     <link rel="stylesheet" type="text/css" href="src/annotator.css">
   </head>
@@ -51,12 +52,14 @@
 
     <script>
       jQuery(function ($) {
-          $('#airlock').annotationStore({
-            annotationData: {
-              name: "Bongos",
-              age: 34
-            }
-          });
+          $('#airlock').annotator()
+                       .annotator('addPlugin', Annotator.Plugins.User, {one: 1, two: 2})
+                       .annotator('addPlugin', Annotator.Plugins.Store, {
+                         annotationData: {
+                           name: "Bongos",
+                           age: 34
+                         }
+                       });
       });
     </script>
   </body>
