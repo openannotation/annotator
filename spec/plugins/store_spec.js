@@ -22,7 +22,7 @@ describe('Annotator.Plugins.Store', function () {
        mock_request().and_return('', 'text/plain');
 
        $(el).trigger('annotationCreated', [{three: 3}]);
-       expect(a.annotations).should(eql, [{one:1, two: 2, three: 3, highlights: null}]);
+       expect(a.annotations).should(eql, [{one:1, two: 2, three: 3, highlights: undefined}]);
    });
 
    it('should remove an annotation on an annotationDeleted event', function () {

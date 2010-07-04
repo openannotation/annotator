@@ -3,15 +3,18 @@
         events: {},
 
         init: function () {
-            var __obj = this;
+            var self = this;
             $.each(this.events, function (sel, functionName) {
                 var ary = sel.split(' ');
-                __obj.addDelegatedEvent(ary.slice(0, -1).join(' '), ary.slice(-1)[0], functionName);
+                self.addDelegatedEvent(ary.slice(0, -1).join(' '), ary.slice(-1)[0], functionName);
             });
         },
 
         addDelegatedEvent: function (selectorOrElement, event, functionName) {
-            var __obj = this;
+            var self = this,
+                closure = function (ev) {
+                    return self[functionName].apply(self, arguments);
+                }
 
             this.element = this.element || document.body;
 
@@ -20,14 +23,11 @@
                 selectorOrElement = this.element;
             }
 
-            $(this.element).bind(event, function (ev) {
-                for(var el = ev.target; el !== __obj.element.parentNode; el = el.parentNode) {
-                    if (el === selectorOrElement || $(el).is(selectorOrElement)) {
-                        return __obj[functionName].apply(__obj, arguments);
-                    }
-                }
-                return null;
-            });
+            if (typeof(selectorOrElement) === 'string') {
+                $(this.element).delegate(selectorOrElement, event, closure);
+            } else {
+                $(selectorOrElement).bind(event, closure);
+            }
         }
     });
 
