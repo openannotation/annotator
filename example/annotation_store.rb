@@ -9,6 +9,7 @@ annotations = {}
 
 def jsonpify(stuff)
   if params[:callback]
+    content_type 'text/javascript', :charset => 'utf-8'
     "#{params[:callback]}(#{stuff.to_json})"
   else
     stuff.to_json
@@ -16,6 +17,8 @@ def jsonpify(stuff)
 end
 
 before do
+  content_type 'application/json', :charset => 'utf-8'
+
   if params['json']
     params['json'] = JSON.parse(params['json'])
   end
