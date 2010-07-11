@@ -21,16 +21,17 @@ task :jspec do
 end
 
 desc "Build packaged annotator"
-task :package => ['pkg/annotator.min.js', 'pkg/annotator.min.css'] do 
-  sh "cp -Rf src/img pkg/img"
-end
+task :package => ['pkg/annotator.min.js', 'pkg/annotator.min.css']
 
 file 'pkg/annotator.min.js' => SRC do |t|
-  yui_compressor(t.prerequisites, t.name)
+  concat(t.prerequisites, t.name)
+  yui_compressor(t.name)
 end
 
 file 'pkg/annotator.min.css' => CSS do |t|
-  yui_compressor(t.prerequisites, t.name)
+  concat(t.prerequisites, t.name)
+  data_uri_ify(t.name)
+  yui_compressor(t.name)
 end
 
 desc "Make a release tag"
@@ -45,13 +46,39 @@ task :release => :package do |t|
   sh "rm -Rf pkg/*"
 end
 
-def yui_compressor(srclist, outfile)
+desc "Clobber package files"
+task :clobber do
+  rm 'pkg/annotator.min.js'
+  rm 'pkg/annotator.min.css'
+end
+
+def concat(srclist, outfile)
   open(outfile, 'w') do |f|
     srclist.each do |src|
       f.write(open(src).read)
       puts "Wrote #{src} to #{outfile}"
     end
   end
-  sh "java -jar #{YCPATH} -o #{outfile} #{outfile}"
-  puts "Compressed #{outfile}"
+end
+
+def yui_compressor(file)
+  sh "java -jar #{YCPATH} -o #{file} #{file}"
+  puts "Compressed #{file}"
+end
+
+def data_uri_ify(file)
+  lines = open(file, 'r').readlines.map do |l|
+    m = l.match(/(url\(([^)]+)\.png\))/)
+
+    if m
+      b64 = `openssl enc -a -in src/#{m[2]}.png | tr -d "\n"`
+      l.sub(m[1], "url('data:image/png;base64,#{b64}')")
+    else
+      l
+    end
+  end
+
+  open(file, 'w') do |f|
+    f.puts lines.join
+  end
 end
