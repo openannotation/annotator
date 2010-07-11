@@ -7,32 +7,34 @@ Annotator.Plugins.Store = DelegatorClass.extend({
     'annotationUpdated': 'annotationUpdated'
   },
 
+  options: {
+    prefix: '/store',
+
+    annotator: $(element).data('annotator'),
+    annotationData: {},
+
+    // If loadFromSearch is set, then we load the first batch of
+    // annotations from 'prefix/search(options=loadFromSearch)'
+    // instead of the registry path 'prefix/read'.
+    //
+    //     loadFromSearch: {
+    //       'limit': 0,
+    //       'all_fields': 1
+    //       'uri': 'http://this/document/only'
+    //     }
+    loadFromSearch: false,
+
+    urls: {
+      'create':  '/annotations',     // POST
+      'read':    '/annotations/:id', // GET
+      'update':  '/annotations/:id', // POST/[PUT]
+      'destroy': '/annotations/:id', // DELETE
+      'search':  '/search'
+    }
+  },
+
   init: function (options, element) {
-    this.options = $.extend({
-      prefix: '/store',
-
-      annotator: $(element).data('annotator'),
-      annotationData: {},
-
-      // If loadFromSearch is set, then we load the first batch of
-      // annotations from 'prefix/search(options=loadFromSearch)'
-      // instead of the registry path 'prefix/read'.
-      //
-      //     loadFromSearch: {
-      //       'limit': 0,
-      //       'all_fields': 1
-      //       'uri': 'http://this/document/only'
-      //     }
-      loadFromSearch: false,
-
-      urls: {
-        'create':  '/annotations',     // POST
-        'read':    '/annotations/:id', // GET
-        'update':  '/annotations/:id', // POST/[PUT]
-        'destroy': '/annotations/:id', // DELETE
-        'search':  '/search'
-      }
-    }, options);
+    this.options = $.extend(this.options, options);
 
     // If the element on which we're instantiated doesn't already have an
     // annotator instance, create one.
@@ -60,7 +62,7 @@ Annotator.Plugins.Store = DelegatorClass.extend({
     // elements.
     if (this.annotations.indexOf(annotation) === -1) {
       this.registerAnnotation(annotation);
-      
+
       $.ajax({
         url: this._urlFor('create'),
         data: this._dataFor(annotation),
@@ -73,7 +75,7 @@ Annotator.Plugins.Store = DelegatorClass.extend({
         },
         error: $.proxy(this, 'handleBackendError')
       });
-      
+
     } else {
       // This is called to update annotations created at load time with
       // the highlight elements created by Annotator.

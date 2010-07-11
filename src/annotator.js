@@ -17,18 +17,20 @@ this.Annotator = DelegatorClass.extend({
     '-controls .del click': 'controlDeleteClick'
   },
 
+  options: {
+    // Class used to identify elements owned/created by the annotator.
+    classPrefix: 'annot',
+
+    adder:       "<div><a href='#'></a></div>",
+    editor:      "<div><textarea></textarea></div>",
+    highlighter: "<span></span>",
+    viewer:      "<div></div>"
+  },
+
   init: function (options, element) {
     var annotator = this;
 
-    this.options = $.extend({
-      // Class used to identify elements owned/created by the annotator.
-      classPrefix: 'annot',
-
-      adder:       "<div><a href='#'></a></div>",
-      editor:      "<div><textarea></textarea></div>",
-      highlighter: "<span></span>",
-      viewer:      "<div></div>"
-    }, options);
+    this.options = $.extend(this.options, options);
 
     this.element = element;
     this.dom = {};
@@ -77,7 +79,7 @@ this.Annotator = DelegatorClass.extend({
 
     var s = this.selection,
         validSelection = s && s.rangeCount > 0 && !s.isCollapsed;
-    
+
     if (e && validSelection) {
       this.dom.adder.css(this._mousePosition(e)).show();
     } else {
@@ -210,7 +212,7 @@ this.Annotator = DelegatorClass.extend({
   // #loadAnnotations/#deserializeRange.
   serializeRange: function (normedRange) {
     var self = this;
-    
+
     var serialization = function (node, isEnd) {
       var origParent = $(node).parents(':not(.' + self.options.classPrefix + '-highlighter)').eq(0),
           xpath = origParent.xpath(self.wrapper)[0],
@@ -304,7 +306,7 @@ this.Annotator = DelegatorClass.extend({
   showEditor: function (e, annotation) {
     var self = this;
 
-    if (annotation) { 
+    if (annotation) {
       this.dom.editor.find('textarea').val(annotation.text);
     }
 
@@ -317,7 +319,7 @@ this.Annotator = DelegatorClass.extend({
         if (e.keyCode == 27) {
           // "Escape" key: abort.
           $(this).val('').unbind().parent().hide();
-        
+
         } else if (e.keyCode == 13 && !e.shiftKey) {
           // If "return" was pressed without the shift key, we're done.
           $(this).unbind().parent().hide();
@@ -335,7 +337,7 @@ this.Annotator = DelegatorClass.extend({
 
     this.ignoreMouseup = true;
   },
-  
+
   showViewer: function (e, annotations) {
     var controlsHTML = '<span class="' + this.options.classPrefix + '-controls">' +
                        '<a href="#" class="edit" alt="Edit" title="Edit this annotation">Edit</a>' +
@@ -353,7 +355,7 @@ this.Annotator = DelegatorClass.extend({
     });
 
     viewerclone.css(this._mousePosition(e)).replaceAll(this.dom.viewer).show();
-    
+
     $(this.element).trigger('annotationViewerShown', [viewerclone.get(0), annotations]);
 
     this.dom.viewer = viewerclone;
@@ -375,7 +377,7 @@ this.Annotator = DelegatorClass.extend({
     var annotations = $(e.target)
       .parents('.' + this.options.classPrefix + '-highlighter')
       .andSelf().map(function () { return $(this).data("annotation"); });
-    
+
     this.showViewer(e, annotations);
   },
 
@@ -411,7 +413,7 @@ this.Annotator = DelegatorClass.extend({
       this.dom.viewer.hide();
     }
   },
-  
+
   addPlugin: function (klass, options) {
     new klass(options, this.element);
   },

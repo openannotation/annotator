@@ -5,21 +5,21 @@ Annotator.Plugins.User = DelegatorClass.extend({
     'annotationViewerShown': 'updateViewerWithUsers'
   },
 
+  options: {
+    // Define how to display the 'user' property of the annotation. By
+    // default assumes the value is string-coerceable, so just returns the
+    // value. If the user property were an object in and of itself, this
+    // could, for example, return u.name, or u.getName(), etc.
+    //
+    // @param elem The element representing the annotation.
+    // @param user The value of the relevant annotation's "user" property.
+    display: function(elem, user) {
+      $(elem).append('<span class="user">&ndash; ' + user +'</span>');
+    }
+  },
+
   init: function(options, element) {
-    this.options = $.extend({
-      // Define how to display the 'user' property of the annotation. By 
-      // default assumes the value is string-coerceable, so just returns the 
-      // value. If the user property were an object in and of itself, this 
-      // could, for example, return u.name, or u.getName(), etc.
-      //
-      // @param elem The element representing the annotation.
-      // @param user The value of the relevant annotation's "user" property.
-      display: function(elem, user) {
-        $(this).append('<span class="user">&ndash; ' +
-                       self.options.display(user) +
-                       '</span>');
-      }
-    }, options);
+    this.options = $.extend(this.options, options);
 
     this._super();
   },
@@ -30,9 +30,7 @@ Annotator.Plugins.User = DelegatorClass.extend({
     $(viewerElement).find('p').each(function() {
       var user = $(this).data('annotation').user;
       if (user) {
-        $(this).append('<span class="user">&ndash; ' +
-                       self.options.display(user) +
-                       '</span>');
+        self.options.display(this, user);
       }
     });
   }
