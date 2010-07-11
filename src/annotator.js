@@ -322,6 +322,29 @@ this.Annotator = DelegatorClass.extend({
         this.ignoreMouseup = true;
     },
 
+    showViewer: function (e, annotations) {
+        var controlsHTML = '<span class="' + this.options.classPrefix + '-controls">' +
+                           '<a href="#" class="edit" alt="Edit" title="Edit this annotation">Edit</a>' +
+                           '<a href="#" class="del" alt="X" title="Delete this annotation">Delete</a></span>';
+
+        var viewerclone = this.dom.viewer.clone().empty();
+
+        $.each(annotations, function (idx, annot) {
+            // As well as filling the viewer element, we also copy the annotation
+            // object from the highlight element to the <p> containing the note
+            // and controls. This makes editing/deletion much easier.
+            $('<p>' + annot.text + controlsHTML + '</p>')
+                .appendTo(viewerclone)
+                .data("annotation", annot);
+        });
+
+        viewerclone.css(this._mousePosition(e)).replaceAll(this.dom.viewer).show();
+
+        $(this.element).trigger('annotationViewerShown', [viewerclone.get(0), annotations]);
+
+        this.dom.viewer = viewerclone;
+    },
+
     startViewerHideTimer: function (e) {
         // Allow 250ms for pointer to get from annotation to viewer to manipulate
         // annotations.
@@ -335,28 +358,11 @@ this.Annotator = DelegatorClass.extend({
         // Don't do anything if we're making a selection.
         if (this.mouseIsDown) { return false; }
 
-        var items = $(e.target)
-            .parents('.' + this.options.classPrefix + '-highlighter').andSelf();
+        var annotations = $(e.target)
+            .parents('.' + this.options.classPrefix + '-highlighter')
+            .andSelf().map(function () { return $(this).data("annotation"); });
 
-        var controlsHTML = '<span class="' + this.options.classPrefix + '-controls">' +
-                           '<a href="#" class="edit" alt="Edit" title="Edit this annotation">Edit</a>' +
-                           '<a href="#" class="del" alt="X" title="Delete this annotation">Delete</a></span>';
-
-        var viewerclone = this.dom.viewer.clone().empty();
-
-        $.each(items, function (idx, annot) {
-            // As well as filling the viewer element, we also copy the annotation
-            // object from the highlight element to the <p> containing the note
-            // and controls. This makes editing/deletion much easier.
-            $('<p>' + $(annot).data("annotation").text + controlsHTML + '</p>')
-                .appendTo(viewerclone)
-                .data("annotation", $(annot).data("annotation"));
-
-        });
-
-        viewerclone.css(this._mousePosition(e)).replaceAll(this.dom.viewer).show();
-
-        this.dom.viewer = viewerclone;
+        this.showViewer(e, annotations);
     },
 
     adderMousedown: function (e) {
@@ -391,7 +397,7 @@ this.Annotator = DelegatorClass.extend({
             this.dom.viewer.hide();
         }
     },
-    
+
     addPlugin: function (klass, options) {
         new klass(options, this.element);
     },

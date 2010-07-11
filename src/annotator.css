@@ -92,3 +92,9 @@
 .annot-controls a.del {
 	background: transparent url(img/delete.png) no-repeat top left;
 }
+
+.annot-viewer .user {
+  display: block;
+  font-size: 0.8em;
+  opacity: 0.6;
+}
