@@ -1,4 +1,4 @@
-(function($) {
+;(function($) {
 
 Annotator.Plugins.User = DelegatorClass.extend({
   events: {
@@ -14,26 +14,26 @@ Annotator.Plugins.User = DelegatorClass.extend({
     // @param elem The element representing the annotation.
     // @param user The value of the relevant annotation's "user" property.
     display: function(elem, user) {
-      $(elem).append('<span class="user">&ndash; ' + user +'</span>');
+      $(elem).append('<span class="user">&ndash; ' + user +'</span>')
     }
   },
 
   init: function(options, element) {
-    this.options = $.extend(this.options, options);
+    this.options = $.extend(this.options, options)
 
-    this._super();
+    this._super()
   },
 
   updateViewerWithUsers: function(e, viewerElement, annotations) {
-    var self = this;
+    var self = this
 
     $(viewerElement).find('p').each(function() {
-      var user = $(this).data('annotation').user;
+      var user = $(this).data('annotation').user
       if (user) {
-        self.options.display(this, user);
+        self.options.display(this, user)
       }
-    });
+    })
   }
-});
+})
 
-})(jQuery);
+})(jQuery)

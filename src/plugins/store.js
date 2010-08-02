@@ -3,11 +3,6 @@
 function apiRequest (opts) {
   opts = $.extend({
     dataType: 'jsonp',
-    jsonp: 'callback',
-    cache: false,
-    beforeSend: function () {
-      console.log(arguments)
-    },
     success: function () {}
   }, opts)
 
@@ -47,29 +42,29 @@ Annotator.Plugins.Store = DelegatorClass.extend({
   },
 
   init: function (options, element) {
-    this.options = $.extend(this.options, options);
+    this.options = $.extend(this.options, options)
 
     this.options.annotator = $(element).data('annotator')
 
-    this.element = element;
-    this.annotations = [];
+    this.element = element
+    this.annotations = []
 
     if (this.options.loadFromSearch) {
-      this.loadAnnotationsFromSearch(this.options.loadFromSearch);
+      this.loadAnnotationsFromSearch(this.options.loadFromSearch)
     } else {
-      this.loadAnnotations();
+      this.loadAnnotations()
     }
 
-    this._super();
+    this._super()
   },
 
   annotationCreated: function (e, annotation) {
-    var self = this;
+    var self = this
 
     // Pre-register the annotation so as to save the list of highlight
     // elements.
     if (this.annotations.indexOf(annotation) === -1) {
-      this.registerAnnotation(annotation);
+      this.registerAnnotation(annotation)
 
       apiRequest({
         url: this._urlFor('create'),
@@ -85,12 +80,12 @@ Annotator.Plugins.Store = DelegatorClass.extend({
     } else {
       // This is called to update annotations created at load time with
       // the highlight elements created by Annotator.
-      this.updateAnnotation(annotation, {});
+      this.updateAnnotation(annotation, {})
     }
   },
 
   annotationDeleted: function (e, annotation) {
-    var self = this;
+    var self = this
 
     if ($.inArray(annotation, this.annotations) !== -1) {
       apiRequest({
@@ -102,7 +97,7 @@ Annotator.Plugins.Store = DelegatorClass.extend({
   },
 
   annotationUpdated: function (e, annotation) {
-    var self = this;
+    var self = this
 
     if ($.inArray(annotation, this.annotations) !== -1) {
       apiRequest({
@@ -117,23 +112,23 @@ Annotator.Plugins.Store = DelegatorClass.extend({
   // NB: registerAnnotation and unregisterAnnotation do no error-checking/
   // duplication avoidance of their own. Use with care.
   registerAnnotation: function (annotation) {
-    this.annotations.push(annotation);
+    this.annotations.push(annotation)
   },
 
   unregisterAnnotation: function (annotation) {
-    this.annotations.splice(this.annotations.indexOf(annotation), 1);
+    this.annotations.splice(this.annotations.indexOf(annotation), 1)
   },
 
   updateAnnotation: function (annotation, data) {
     if ($.inArray(annotation, this.annotations) === -1) {
-      console.error("Trying to update unregistered annotation!");
+      console.error("Trying to update unregistered annotation!")
     } else {
-      $.extend(annotation, data);
+      $.extend(annotation, data)
     }
 
     // Update the elements with our copies of the annotation objects (e.g.
     // with ids from the server).
-    $(annotation.highlights).data('annotation', annotation);
+    $(annotation.highlights).data('annotation', annotation)
   },
 
   loadAnnotations: function () {
@@ -146,7 +141,7 @@ Annotator.Plugins.Store = DelegatorClass.extend({
         self.annotations = data
         self.options.annotator.loadAnnotations(self.annotations)
       }
-    });
+    })
   },
 
   loadAnnotationsFromSearch: function (searchOptions) {
@@ -171,19 +166,19 @@ Annotator.Plugins.Store = DelegatorClass.extend({
   _dataFor: function (annotation) {
     // Store a reference to the highlights array. We can't serialize
     // a list of HTML Element objects.
-    var highlights = annotation.highlights;
+    var highlights = annotation.highlights
 
-    delete annotation.highlights;
+    delete annotation.highlights
 
     // Preload with extra data.
     $.extend(annotation, this.options.annotationData)
-    var data = { json: $.toJSON(annotation) };
+    var data = { json: $.toJSON(annotation) }
 
     // Restore the highlights array.
-    annotation.highlights = highlights;
+    annotation.highlights = highlights
 
-    return data;
+    return data
   }
-});
+})
 
-})(jQuery);
+})(jQuery)
