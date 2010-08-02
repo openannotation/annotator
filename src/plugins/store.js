@@ -1,4 +1,18 @@
-(function($){
+;(function($){
+
+function apiRequest (opts) {
+  opts = $.extend({
+    dataType: 'jsonp',
+    jsonp: 'callback',
+    cache: false,
+    beforeSend: function () {
+      console.log(arguments)
+    },
+    success: function () {}
+  }, opts)
+
+  return $.ajax(opts)
+}
 
 Annotator.Plugins.Store = DelegatorClass.extend({
   events: {
@@ -10,7 +24,6 @@ Annotator.Plugins.Store = DelegatorClass.extend({
   options: {
     prefix: '/store',
 
-    annotator: $(element).data('annotator'),
     annotationData: {},
 
     // If loadFromSearch is set, then we load the first batch of
@@ -36,12 +49,7 @@ Annotator.Plugins.Store = DelegatorClass.extend({
   init: function (options, element) {
     this.options = $.extend(this.options, options);
 
-    // If the element on which we're instantiated doesn't already have an
-    // annotator instance, create one.
-    if (!this.options.annotator) {
-      $(element).annotator();
-      this.options.annotator = $(element).data('annotator');
-    }
+    this.options.annotator = $(element).data('annotator')
 
     this.element = element;
     this.annotations = [];
@@ -63,18 +71,16 @@ Annotator.Plugins.Store = DelegatorClass.extend({
     if (this.annotations.indexOf(annotation) === -1) {
       this.registerAnnotation(annotation);
 
-      $.ajax({
+      apiRequest({
         url: this._urlFor('create'),
         data: this._dataFor(annotation),
-        dataType: 'jsonp',
         type: 'POST',
         success: function (data) {
           // Update with (e.g.) ID from server.
-          if (!("id" in data)) { console.warn("Warning: No ID returned from server for annotation ", annotation); }
-          self.updateAnnotation(annotation, data);
-        },
-        error: $.proxy(this, 'handleBackendError')
-      });
+          if (!("id" in data)) { console.warn("Warning: No ID returned from server for annotation ", annotation) }
+          self.updateAnnotation(annotation, data)
+        }
+      })
 
     } else {
       // This is called to update annotations created at load time with
@@ -87,12 +93,11 @@ Annotator.Plugins.Store = DelegatorClass.extend({
     var self = this;
 
     if ($.inArray(annotation, this.annotations) !== -1) {
-      $.ajax({
+      apiRequest({
         url: this._urlFor('destroy', annotation.id),
         type: 'DELETE',
-        success: function () { self.unregisterAnnotation(annotation); },
-        error: $.proxy(this, 'handleBackendError')
-      });
+        success: function () { self.unregisterAnnotation(annotation) }
+      })
     }
   },
 
@@ -100,14 +105,12 @@ Annotator.Plugins.Store = DelegatorClass.extend({
     var self = this;
 
     if ($.inArray(annotation, this.annotations) !== -1) {
-      $.ajax({
+      apiRequest({
         url: this._urlFor('update', annotation.id),
         type: 'POST',
         data: this._dataFor(annotation),
-        dataType: 'jsonp',
-        success: function () { self.updateAnnotation(annotation); },
-        error: $.proxy(this, 'handleBackendError')
-      });
+        success: function () { self.updateAnnotation(annotation) }
+      })
     }
   },
 
@@ -134,40 +137,35 @@ Annotator.Plugins.Store = DelegatorClass.extend({
   },
 
   loadAnnotations: function () {
-    var self = this;
-    $.getJSON(this._urlFor('read'), null, function (data, textStatus) {
-      if (textStatus === 'success' && $.isArray(data)) {
-        self.annotations = data;
-        self.options.annotator.loadAnnotations(self.annotations);
-      } else {
-        throw('Annotation could not be loaded. [XHR returned "' + textStatus + '"]');
+    var self = this
+
+    apiRequest({
+      url: this._urlFor('read'),
+      type: 'GET',
+      success: function (data) {
+        self.annotations = data
+        self.options.annotator.loadAnnotations(self.annotations)
       }
     });
   },
 
   loadAnnotationsFromSearch: function (searchOptions) {
-    var self = this;
-    $.getJSON(this._urlFor('search'), searchOptions, function (data, textStatus) {
-      if (textStatus === 'success' && 'results' in data && $.isArray(data.results)) {
-        self.annotations = data.results;
-        self.options.annotator.loadAnnotations(self.annotations);
-      } else {
-        throw('Annotation could not be loaded. [XHR returned "' + textStatus + '"]');
+    var self = this
+    apiRequest({
+      url: this._urlFor('search'),
+      type: 'GET',
+      data: searchOptions,
+      success: function (data) {
+        self.annotations = data.results
+        self.options.annotator.loadAnnotations(self.annotations)
       }
-    });
-  },
-
-  handleBackendError: function (xhrobj, textStatus, errorThrown) {
-    alert("The annotation store backend encountered an error! " +
-          "Your changes may not have been saved. " +
-          "Refresh the page or see the console for more details.");
-    console.error("AJAX error - { status: ", textStatus, ", error: ", errorThrown, " }");
-    console.error("AJAX error - XMLHTTPRequest object: ", xhrobj);
+    })
   },
 
   _urlFor: function (action, id) {
-    var url = this.options.prefix ? this.options.prefix : '/';
-    return url + this.options.urls[action].replace(/:id/, id || '');
+    var url = this.options.prefix || '/'
+    url += this.options.urls[action].replace(/\/:id/, id ? '/' + id : '')
+    return url
   },
 
   _dataFor: function (annotation) {
