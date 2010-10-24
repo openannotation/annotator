@@ -399,6 +399,7 @@ this.Annotator = DelegatorClass.extend({
     // Replace the viewer with the editor.
     this.dom.viewer.hide()
     this.showEditor(pos, para.data("annotation"))
+    return false
   },
 
   controlDeleteClick: function (e) {
@@ -412,6 +413,7 @@ this.Annotator = DelegatorClass.extend({
     if (!this.dom.viewer.is(':parent')) {
       this.dom.viewer.hide()
     }
+    return false
   },
 
   addPlugin: function (klass, options) {
