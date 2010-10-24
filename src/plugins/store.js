@@ -35,7 +35,7 @@ Annotator.Plugins.Store = DelegatorClass.extend({
     urls: {
       'create':  '/annotations',     // POST
       'read':    '/annotations/:id', // GET
-      'update':  '/annotations/:id', // POST/[PUT]
+      'update':  '/annotations/:id', // PUT (since idempotent)
       'destroy': '/annotations/:id', // DELETE
       'search':  '/search'
     }
@@ -102,7 +102,7 @@ Annotator.Plugins.Store = DelegatorClass.extend({
     if ($.inArray(annotation, this.annotations) !== -1) {
       apiRequest({
         url: this._urlFor('update', annotation.id),
-        type: 'POST',
+        type: 'PUT',
         data: this._dataFor(annotation),
         success: function () { self.updateAnnotation(annotation) }
       })
