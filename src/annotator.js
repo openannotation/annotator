@@ -144,12 +144,29 @@ this.Annotator = DelegatorClass.extend({
     $(this.element).trigger('annotationUpdated', [annotation])
   },
 
-  loadAnnotations: function (annotations) {
-    var annotator = this, results = []
-    $.each(annotations, function () {
-      results.push(annotator.createAnnotation(this))
-    })
-    return results
+  loadAnnotations: function (annotations, callback) {
+    callback = callback || function () {}
+
+    var self = this,
+        results = []
+
+    var loader = function (annList) {
+      now = annList.splice(0, 10)
+
+      $.each(now, function () {
+        results.push(self.createAnnotation(this))
+      })
+
+      // If there are more to do, do them after a 100ms break (for browser
+      // responsiveness).
+      if (annList.length > 0) {
+        setTimeout(function () { loader(annList) }, 100)
+      } else {
+        callback(results)
+      }
+    }
+
+    loader(annotations)
   },
 
   // normRange: works around the fact that browsers don't generate

@@ -42,6 +42,8 @@ Annotator.Plugins.Store = DelegatorClass.extend({
   },
 
   init: function (options, element) {
+    var self = this
+
     this.options = $.extend(this.options, options)
 
     this.options.annotator = $(element).data('annotator')
@@ -49,13 +51,16 @@ Annotator.Plugins.Store = DelegatorClass.extend({
     this.element = element
     this.annotations = []
 
-    if (this.options.loadFromSearch) {
-      this.loadAnnotationsFromSearch(this.options.loadFromSearch)
-    } else {
-      this.loadAnnotations()
-    }
+    // We can't bind the event handlers until the initial load is done, or
+    // we'd catch the annotationCreated events for our own load.
+    var s = self._super
+    var callback = function () { s.apply(self) }
 
-    this._super()
+    if (this.options.loadFromSearch) {
+      this.loadAnnotationsFromSearch(this.options.loadFromSearch, callback)
+    } else {
+      this.loadAnnotations(callback)
+    }
   },
 
   annotationCreated: function (e, annotation) {
@@ -131,7 +136,7 @@ Annotator.Plugins.Store = DelegatorClass.extend({
     $(annotation.highlights).data('annotation', annotation)
   },
 
-  loadAnnotations: function () {
+  loadAnnotations: function (callback) {
     var self = this
 
     apiRequest({
@@ -139,12 +144,12 @@ Annotator.Plugins.Store = DelegatorClass.extend({
       type: 'GET',
       success: function (data) {
         self.annotations = data
-        self.options.annotator.loadAnnotations(self.annotations)
+        self.options.annotator.loadAnnotations(self.annotations, callback)
       }
     })
   },
 
-  loadAnnotationsFromSearch: function (searchOptions) {
+  loadAnnotationsFromSearch: function (searchOptions, callback) {
     var self = this
     apiRequest({
       url: this._urlFor('search'),
@@ -152,7 +157,7 @@ Annotator.Plugins.Store = DelegatorClass.extend({
       data: searchOptions,
       success: function (data) {
         self.annotations = data.results
-        self.options.annotator.loadAnnotations(self.annotations)
+        self.options.annotator.loadAnnotations(self.annotations, callback)
       }
     })
   },
