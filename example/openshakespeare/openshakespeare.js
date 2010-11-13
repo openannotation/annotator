@@ -12,7 +12,7 @@ OpenShakespeare.Annotator = function (element) {
     },
 
     store: {
-      // prefix: 'http://localhost:5000'
+      prefix: 'http://localhost:5000'
     }
   }
 

@@ -2,7 +2,7 @@
 
 function apiRequest (opts) {
   opts = $.extend({
-    dataType: 'jsonp',
+    dataType: 'json',
     success: function () {}
   }, opts)
 
