@@ -430,7 +430,7 @@ this.Annotator = DelegatorClass.extend({
   },
 
   addPlugin: function (klass, options) {
-    new klass(options, this.element)
+    return new klass(options, this.element)
   },
 
   getComponentClassname: function (name) {

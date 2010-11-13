@@ -157,6 +157,10 @@ Annotator.Plugins.Store = DelegatorClass.extend({
     })
   },
 
+  setAnnotationData: function (data) {
+    this.options.annotationData = data
+  },
+
   _urlFor: function (action, id) {
     var url = this.options.prefix || '/'
     url += this.options.urls[action].replace(/\/:id/, id ? '/' + id : '')
