@@ -264,7 +264,12 @@ this.Annotator = DelegatorClass.extend({
       }
     }
 
-    range.commonAncestorContainer = nodeFromXPath(parentXPath + common.join("/"))
+    var cacXPath = parentXPath + common.join("/")
+    range.commonAncestorContainer = nodeFromXPath(cacXPath)
+
+    if (!range.commonAncestorContainer) {
+      console.error("Error deserializing range: can't find XPath '" + cacXPath + "'. Is this the right document?")
+    }
 
     // Unfortunately, we *can't* guarantee only one textNode per
     // elementNode, so we have to walk along the element's textNodes until
