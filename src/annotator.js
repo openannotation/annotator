@@ -367,14 +367,22 @@ this.Annotator = DelegatorClass.extend({
   },
 
   startViewerHideTimer: function (e) {
-    // Allow 250ms for pointer to get from annotation to viewer to manipulate
-    // annotations.
-    this.viewerHideTimer = setTimeout(function (ann) { ann.dom.viewer.hide() }, 250, this)
+    // Don't do this if timer has already been set by another annotation.
+    if (!this.viewerHideTimer) {
+      // Allow 250ms for pointer to get from annotation to viewer to manipulate
+      // annotations.
+      this.viewerHideTimer = setTimeout(function (ann) { ann.dom.viewer.hide() }, 250, this)
+    }
+  },
+
+  clearViewerHideTimer: function () {
+    clearTimeout(this.viewerHideTimer)
+    this.viewerHideTimer = false
   },
 
   highlightMouseover: function (e) {
     // Cancel any pending hiding of the viewer.
-    clearTimeout(this.viewerHideTimer)
+    this.clearViewerHideTimer()
 
     // Don't do anything if we're making a selection.
     if (this.mouseIsDown) { return false }
@@ -394,7 +402,7 @@ this.Annotator = DelegatorClass.extend({
 
   viewerMouseover: function (e) {
     // Cancel any pending hiding of the viewer.
-    clearTimeout(this.viewerHideTimer)
+    this.clearViewerHideTimer()
   },
 
   controlEditClick: function (e) {
