@@ -28,15 +28,15 @@ this.Annotator = DelegatorClass.extend({
   },
 
   init: function (options, element) {
-    var annotator = this
+    var self = this
 
     this.options = $.extend(this.options, options)
 
     this.element = element
     this.dom = {}
 
-    $(this.element).wrapInner('<div class="' + this.options.classPrefix + '-wrapper" />')
-    this.wrapper = $(this.element).find('.' + this.options.classPrefix + '-wrapper').get(0)
+    $(this.element).wrapInner('<div class="' + this.getComponentClassname('wrapper') + '" />')
+    this.wrapper = $(this.element).find('.' + this.getComponentClassname('wrapper')).get(0)
 
     this.addDelegatedEvent(this.element, 'mouseup', 'checkForEndSelection')
     this.addDelegatedEvent(this.element, 'mousedown', 'checkForStartSelection')
@@ -45,8 +45,8 @@ this.Annotator = DelegatorClass.extend({
     // e.g. '-adder click' -> '.annot-adder click'
     $.each(this.events, function (k, v) {
       if (k.substr(0, 1) === '-') {
-        annotator.events['.' + annotator.options.classPrefix + k] = v
-        delete annotator.events[k]
+        self.events['.' + self.options.classPrefix + k] = v
+        delete self.events[k]
       }
     })
 
@@ -54,9 +54,9 @@ this.Annotator = DelegatorClass.extend({
     this._super()
 
     $.each(['adder', 'editor', 'highlighter', 'viewer'], function (idx, name) {
-      annotator.dom[name] = $(annotator.options[name]).attr({
-        'class': annotator.options.classPrefix + '-' + name
-      }).appendTo(annotator.wrapper).hide()
+      self.dom[name] = $(self.options[name]).attr({
+        'class': self.getComponentClassname(name)
+      }).appendTo(self.wrapper).hide()
     })
   },
 
@@ -214,7 +214,7 @@ this.Annotator = DelegatorClass.extend({
     var self = this
 
     var serialization = function (node, isEnd) {
-      var origParent = $(node).parents(':not(.' + self.options.classPrefix + '-highlighter)').eq(0),
+      var origParent = $(node).parents(':not(.' + self.getComponentClassname('highlighter') + ')').eq(0),
           xpath = origParent.xpath(self.wrapper)[0],
           textNodes = origParent.textNodes(),
 
@@ -339,7 +339,7 @@ this.Annotator = DelegatorClass.extend({
   },
 
   showViewer: function (e, annotations) {
-    var controlsHTML = '<span class="' + this.options.classPrefix + '-controls">' +
+    var controlsHTML = '<span class="' + this.getComponentClassname('controls') + '">' +
                        '<a href="#" class="edit" alt="Edit" title="Edit this annotation">Edit</a>' +
                        '<a href="#" class="del" alt="X" title="Delete this annotation">Delete</a></span>'
 
@@ -375,7 +375,7 @@ this.Annotator = DelegatorClass.extend({
     if (this.mouseIsDown) { return false }
 
     var annotations = $(e.target)
-      .parents('.' + this.options.classPrefix + '-highlighter')
+      .parents('.' + this.getComponentClassname('highlighter'))
       .andSelf().map(function () { return $(this).data("annotation") })
 
     this.showViewer(e, annotations)
@@ -418,6 +418,10 @@ this.Annotator = DelegatorClass.extend({
 
   addPlugin: function (klass, options) {
     new klass(options, this.element)
+  },
+
+  getComponentClassname: function (name) {
+    return this.options.classPrefix + '-' + name
   },
 
   _mousePosition: function (e) {
