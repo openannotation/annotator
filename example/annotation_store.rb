@@ -33,7 +33,7 @@ post '/store/annotations' do
     id = (annotations.keys.max || 0) + 1;
     annotations[id] = params['json']
     annotations[id]['id'] = id
-    return redirect "/store/annotations/#{id}"
+    return redirect "/store/annotations/#{id}", 303
   else
     return 400, 'No parameters given. Annotation not created'
   end
