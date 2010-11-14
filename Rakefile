@@ -1,4 +1,6 @@
 require 'open-uri'
+require 'jasmine'
+load 'jasmine/tasks/jasmine.rake'
 
 YCPATH = ENV['YCPATH'] ||
          ENV['HOME'] + '/local/package/yui/yuicompressor-latest.jar'
