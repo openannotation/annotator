@@ -34,12 +34,9 @@ h1 {
 	top: 2em;
 	right: 2em;
 	background: #fff;
-	border: 1px solid #ddd;
-	border-top-color: #fff;
-	border-left-color: #fff;
-	box-shadow: 5px 5px 10px rgba(0,0,0,0.5);
-	-webkit-box-shadow: 5px 5px 10px rgba(0,0,0,0.5);
-	-moz-box-shadow: 5px 5px 10px rgba(0,0,0,0.5);
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
 }
 
 #text-to-annotate {
