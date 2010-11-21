@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  	<meta charset="utf-8">
+
+  	<!-- Prevent the conditional comments from stalling page load -->
+  	<!--[if IE]><![endif]-->
+
+  	<title>Annotator: the copy-editor of the web</title>
+
+    <link href='http://fonts.googleapis.com/css?family=Arvo:regular,bold&amp;subset=latin' rel='stylesheet' type='text/css'>
+  	<link href='http://fonts.googleapis.com/css?family=Inconsolata&amp;subset=latin' rel='stylesheet' type='text/css'>
+  	<link rel="stylesheet" href="main.css">
+
+  	<!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+    <script src="main.js"></script>
+
+    <!-- Here it is: -->
+    <script src="http://github.com/nickstenning/annotator/raw/0.9/pkg/annotator.min.js"></script>
+    <link rel="stylesheet" href="http://github.com/nickstenning/annotator/raw/0.9/pkg/annotator.min.css">
+  </head>
+  <body>
+    <div id="airlock">
+    	<header>
+    		<h1>Annotator</h1>
+    	  <h2>The <span id="role">copy-editor</span> of the web</h2>
+    	</header>
+
+      <p>
+        Annotator is a Javascript shim that you can insert into any page, allowing
+        you to select and annotate text, images, or any other HTML element.
+      </p>
+
+      <p>
+        <strong>How do I use it?</strong> We think you'll get the hang of it
+        pretty quickly. It's running right now on this page &mdash; try it out
+        by selecting some text, entering a note, and pressing <tt>Enter &#x21A9;</tt>
+      </p>
+
+      <p>
+        <strong>What happens to my annotations?</strong> The ones you create on
+        this page will get lost in the ether, but Annotator comes with the ability
+        to save your annotations to a remote server. Preliminary support for
+        saving to an entirely different website is available using
+        <a href="http://www.w3.org/TR/cors/" title="Cross-Origin Resource Sharing">
+        CORS</a>. A reference backend is available at
+        <a href="https://github.com/nickstenning/annotator-store-py">nickstenning/annotator-store-py</a>.
+      </p>
+
+      <p>
+        <strong>Give me the code</strong> Go get a tagged release from
+        <a href="https://github.com/nickstenning/annotator/downloads">this page</a>,
+        load <tt>annotator.min.js</tt> and <tt>annotator.min.css</tt> into your page,
+        and adding the following Javascript<sup><a href="#jquery">1</a></sup>:
+      </p>
+
+      <blockquote><p><code>$('body').annotator()</code></p></blockquote>
+
+      <p>
+        When we get a moment we're also going to knock together a bookmarklet to
+        load Annotator into any page, saving annotations to a server of your choice.
+      </p>
+
+      <hr>
+
+    	<p class="footnote">
+    	  <a name="jquery">1:</a> I'm assuming you're already using <a href="http://jquery.com">jQuery</a>, right?
+    	  If not you'll need to load that too. Best use Google's ajax APIs, and
+    	  use a URL like <tt>http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js</tt>.
+  	  </p>
+
+      <hr>
+
+    	<footer>
+    	  The development of Annotator is supported by the <a href="http://okfn.org">
+    	  Open Knowledge Foundation</a>. Go see what other cool stuff we're doing at
+    	  the moment!
+    	</footer>
+    </div>
+  </body>
+</html>
