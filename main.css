@@ -68,7 +68,6 @@ p.footnote {
 }
 
 hr {
+	visibility: hidden;
 	margin: 1em 0;
-	color: transparent;
-  background-color: transparent;
 }
