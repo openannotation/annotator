@@ -13,5 +13,5 @@ $(function () {
   setInterval(rollRole, 5000)
 
   // What we're here for...
-  $(document.body).annotator()
+  $('#airlock').annotator()
 })
