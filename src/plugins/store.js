@@ -143,7 +143,6 @@ Annotator.Plugins.Store = DelegatorClass.extend({
       url: this._urlFor('read'),
       type: 'GET',
       success: function (data) {
-        console.log(data)
         self.annotations = data.slice() // Clone array
         self.options.annotator.loadAnnotations(data, callback)
       }
