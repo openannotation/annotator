@@ -143,8 +143,9 @@ Annotator.Plugins.Store = DelegatorClass.extend({
       url: this._urlFor('read'),
       type: 'GET',
       success: function (data) {
-        self.annotations = data
-        self.options.annotator.loadAnnotations(self.annotations, callback)
+        console.log(data)
+        self.annotations = data.slice() // Clone array
+        self.options.annotator.loadAnnotations(data, callback)
       }
     })
   },
@@ -156,8 +157,8 @@ Annotator.Plugins.Store = DelegatorClass.extend({
       type: 'GET',
       data: searchOptions,
       success: function (data) {
-        self.annotations = data.results
-        self.options.annotator.loadAnnotations(self.annotations, callback)
+        self.annotations = data.results.slice() // Clone array
+        self.options.annotator.loadAnnotations(data.results, callback)
       }
     })
   },
