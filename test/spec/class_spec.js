@@ -23,12 +23,14 @@ describe('DelegatorClass', function () {
   var $fix
 
   beforeEach(function () {
-    $fix = $(fixture('delegatorclass.html'))
-    d = new DelegatedExample($fix.get(0), [])
+    addFixture('delegatorclass')
+
+    d = new DelegatedExample(fix(), [])
+    $fix = $(fix())
   })
 
   afterEach(function () {
-    $fix.empty()
+    clearFixtures()
   })
 
   describe('addDelegatedEvent', function () {

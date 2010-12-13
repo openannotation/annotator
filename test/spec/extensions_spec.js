@@ -3,11 +3,12 @@ describe('jQuery.fn.textnodes()', function () {
   var $fix
 
   beforeEach(function () {
-    $fix = $(fixture('textnodes.html'))
+    addFixture('textNodes')
+    $fix = $(fix())
   })
 
   afterEach(function () {
-    $fix.empty()
+    clearFixtures()
   })
 
   it("returns an element's textNode descendants", function () {
@@ -20,21 +21,22 @@ describe('jQuery.fn.textnodes()', function () {
   })
 })
 
-describe('jQuery.fn.xpath', function () {
+describe('jQuery.fn.xpath()', function () {
   var $fix
 
   beforeEach(function () {
-    $fix = $(fixture('xpath.html'))
+    addFixture('xpath')
+    $fix = $(fix())
   })
 
   afterEach(function () {
-    $fix.empty()
+    clearFixtures()
   })
 
   it("generates an XPath string for an element's position in the document", function () {
     // FIXME: this is quite fragile. A change to dom.html may well break these tests and the
     //        resulting xpaths will need to be changed.
-    var pathToFixHTML = '/html/body/div/div'
+    var pathToFixHTML = '/html/body/div'
     expect($fix.find('p').xpath()).toEqual([pathToFixHTML + '/p', pathToFixHTML + '/p[2]'])
     expect($fix.find('span').xpath()).toEqual([pathToFixHTML + '/ol/li[2]/span'])
     expect($fix.find('strong').xpath()).toEqual([pathToFixHTML + '/p[2]/strong'])
