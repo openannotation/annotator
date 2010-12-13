@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Jasmine Test Runner</title>
+  <link rel="stylesheet" href="../lib/vendor/jasmine/jasmine.css">
+  <script src="../lib/vendor/jasmine/jasmine.js"></script>
+  <script src="../lib/vendor/jasmine/jasmine-html.js"></script>
+
+  <script src="../lib/vendor/jquery.js"></script>
+  <script src="../lib/vendor/jquery.json.js"></script>
+  <script src="../lib/vendor/jquery.pluginfactory.js"></script>
+  <script src="../lib/vendor/underscore.js"></script>
+
+  <script src="spec_helper.js"></script>
+
+  <!-- source files -->
+  <script src="../lib/class.js"></script>
+  <script src="../lib/extensions.js"></script>
+
+  <!-- spec files -->
+  <script src="spec/class_spec.js"></script>
+  <script src="spec/extensions_spec.js"></script>
+
+</head>
+<body>
+
+  <div id="fixture"></div>
+
+  <script>
+    jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
+    jasmine.getEnv().execute();
+  </script>
+
+</body>
+</html>
