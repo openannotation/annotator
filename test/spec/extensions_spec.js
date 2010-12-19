@@ -17,7 +17,7 @@ describe('jQuery.fn.textnodes()', function () {
       return acc + node.nodeValue
     }, "").replace(/\s+/g, ' ')
 
-    expect(allText).toEqual(' lorem ipsum dolor sit dolor sit amet. humpty dumpty. etc. ')
+    expect(allText).toEqual(' lorem ipsum dolor sit dolor sit amet. humpty dumpty. etc.')
   })
 })
 
