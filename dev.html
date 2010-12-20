@@ -15,6 +15,7 @@
     <script src="lib/annotator.js"></script>
     <script src="lib/plugins/store.js"></script>
     <script src="lib/plugins/user.js"></script>
+    <script src="lib/plugins/auth.js"></script>
 
     <link rel="stylesheet" type="text/css" href="css/annotator.css">
   </head>
@@ -55,6 +56,7 @@
     <script>
       jQuery(function ($) {
           $('#airlock').annotator()
+                       .annotator('addPlugin', Annotator.Plugins.Auth)
                        .annotator('addPlugin', Annotator.Plugins.User, {one: 1, two: 2})
                        .annotator('addPlugin', Annotator.Plugins.Store, {
                          annotationData: {
@@ -62,7 +64,7 @@
                            name: "Bongos",
                            age: 34
                          }
-                       });
+                       })
       });
     </script>
   </body>
