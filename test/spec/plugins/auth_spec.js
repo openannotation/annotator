@@ -78,11 +78,6 @@ describe('Annotator.Plugins.Auth', function () {
       expect(mock.auth.haveValidToken()).toBeFalsy()
     })
 
-    it('returns false when the current token is missing a userId', function () {
-      delete mock.auth.token.userId
-      expect(mock.auth.haveValidToken()).toBeFalsy()
-    })
-
     it('returns false when the current token expires in the past', function () {
       mock.auth.token.authTokenTTL = 0
       expect(mock.auth.haveValidToken()).toBeFalsy()
