@@ -5,9 +5,9 @@
     <title>JS annotation test</title>
 
     <script src="lib/vendor/jquery.js"></script>
-    <script src="lib/vendor/jquery.json.js"></script>
     <script src="lib/vendor/jquery.pluginfactory.js"></script>
     <script src="lib/vendor/underscore.js"></script>
+    <script src="lib/vendor/json2.js"></script>
 
     <script src="lib/console.js"></script>
     <script src="lib/class.js"></script>
@@ -55,16 +55,17 @@
 
     <script>
       jQuery(function ($) {
-          $('#airlock').annotator()
-                       .annotator('addPlugin', Annotator.Plugins.Auth)
-                       .annotator('addPlugin', Annotator.Plugins.User, {one: 1, two: 2})
-                       .annotator('addPlugin', Annotator.Plugins.Store, {
-                         annotationData: {
-                           user: "Mark",
-                           name: "Bongos",
-                           age: 34
-                         }
-                       })
+        //.annotator('addPlugin', Annotator.Plugins.Auth)
+
+        $('#airlock').annotator()
+                     .annotator('addPlugin', Annotator.Plugins.User, {one: 1, two: 2})
+                     .annotator('addPlugin', Annotator.Plugins.Store, {
+                       annotationData: {
+                         user: "Mark",
+                         name: "Bongos",
+                         age: 34
+                       }
+                     })
       });
     </script>
   </body>
