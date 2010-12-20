@@ -55,11 +55,11 @@
 
     <script>
       jQuery(function ($) {
-        //.annotator('addPlugin', Annotator.Plugins.Auth)
+        //.annotator('addPlugin', 'auth')
 
         $('#airlock').annotator()
-                     .annotator('addPlugin', Annotator.Plugins.User, {one: 1, two: 2})
-                     .annotator('addPlugin', Annotator.Plugins.Store, {
+                     .annotator('addPlugin', 'user', {one: 1, two: 2})
+                     .annotator('addPlugin', 'store', {
                        annotationData: {
                          user: "Mark",
                          name: "Bongos",

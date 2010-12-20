@@ -1,8 +1,8 @@
 Annotator
 =========
 
-A wee playground to see what can be done with a Javascript annotation system. 
-You should be able to create an Annotator on an element (or the whole page) as 
+A wee playground to see what can be done with a Javascript annotation system.
+You should be able to create an Annotator on an element (or the whole page) as
 simply as $('#content').annotator(). See demo.html for an example.
 
 Separately from the annotator (which will simply create annotations in the
@@ -32,7 +32,7 @@ backend might look like:
         <script>
           jQuery(function($) {
             $('p').annotator()
-                  .annotator('addPlugin', Annotator.Plugins.Store);
+                  .annotator('addPlugin', 'store');
           });
         </script>
       </body>
@@ -44,7 +44,7 @@ save the annotations to disk) can be found in examples/.
 Development
 -----------
 
-The specs can be found in spec/, and are most easily run by opening 
+The specs can be found in spec/, and are most easily run by opening
 spec/spec.dom.html in a browser.
 
 Annotation format
@@ -60,15 +60,15 @@ The annotator stores annotations internally as objects like the following.
           end: "/html/body/div/p[3]",
           endOffset: 47
         },
-        { start: "/html/...", ... } 
+        { start: "/html/...", ... }
       ]
     }
 
-Note that an annotation can in theory be associated with multiple ranges, i.e. 
-one object will create multiple distinct highlighted areas. Multi-range 
-selection *is* possible in some browsers (try holding down Ctrl or Cmd), and 
-should 'just work'. If it doesn't work for you I'd be interested in hearing 
+Note that an annotation can in theory be associated with multiple ranges, i.e.
+one object will create multiple distinct highlighted areas. Multi-range
+selection *is* possible in some browsers (try holding down Ctrl or Cmd), and
+should 'just work'. If it doesn't work for you I'd be interested in hearing
 about that.
 
-You can call `#loadAnnotations(array)` on an instantiated annotator and the 
-annotations will be added to the page. 
+You can call `#loadAnnotations(array)` on an instantiated annotator and the
+annotations will be added to the page.
