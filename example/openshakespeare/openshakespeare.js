@@ -12,21 +12,19 @@ OpenShakespeare.Annotator = function (element) {
     },
 
     store: {
-      prefix: 'http://localhost:5000'
+      prefix: 'http://localhost:5000/store'
     }
   }
 
   // Init
   ;(function () {
-     self.userPlugin = self.annotator.addPlugin(Annotator.Plugins.User, self.options.user)
-     self.storePlugin = self.annotator.addPlugin(Annotator.Plugins.Store, self.options.store)
+     self.userPlugin = self.annotator.addPlugin("user", self.options.user)
+     self.storePlugin = self.annotator.addPlugin("store", self.options.store)
   })()
 
   this.setCurrentUser = function (user) {
     self.currentUser = user
-    self.storePlugin.setAnnotationData({
-      user: self.currentUser
-    })
+    self.storePlugin.options.annotationData.user = self.currentUser
   }
 
   this.displayUser = function (elem, user) {
