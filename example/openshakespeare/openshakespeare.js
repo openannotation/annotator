@@ -29,7 +29,7 @@ OpenShakespeare.Annotator = function (element) {
 
   this.displayUser = function (elem, user) {
     // First, hide the controls for users other than the annotation's owner
-    var controls = $(elem).find('.' + self.annotator.getComponentClassname('controls'))
+    var controls = $(elem).find('.' + self.annotator.componentClassname('controls'))
 
     if (user === self.currentUser) {
       controls.show()
