@@ -1,6 +1,0 @@
-[submodule "vendor/blue-ridge"]
-	path = vendor/blue-ridge
-	url = git://github.com/nickstenning/blue-ridge.git
-[submodule "vendor/jsload"]
-	path = vendor/jsload
-	url = git://github.com/nickstenning/jsload.git
