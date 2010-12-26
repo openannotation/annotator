@@ -331,17 +331,18 @@ class Annotator extends Delegator
   showViewer: (e, annotations) =>
     controlsHTML = """
                    <span class="#{this.componentClassname('controls')}">
-                   <a href="#" class="edit" alt="Edit" title="Edit this annotation">Edit</a>
-                   <a href="#" class="del" alt="X" title="Delete this annotation">Delete</a></span>
+                     <a href="#" class="edit" alt="Edit" title="Edit this annotation">Edit</a>
+                     <a href="#" class="del" alt="X" title="Delete this annotation">Delete</a>
+                   </span>
                    """
 
     viewerclone = @dom.viewer.clone().empty()
 
     for annot in annotations
       # As well as filling the viewer element, we also copy the annotation
-      # object from the highlight element to the <p> containing the note
+      # object from the highlight element to the <div> containing the note
       # and controls. This makes editing/deletion much easier.
-      $("<p>#{annot.text + controlsHTML}</p>")
+      $("<div><div class='#{@options.classPrefix}-text'><p>#{annot.text}</p></div>#{controlsHTML}</div>")
         .appendTo(viewerclone)
         .data("annotation", annot)
 

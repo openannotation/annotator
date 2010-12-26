@@ -16,13 +16,13 @@ class Annotator.Plugins.User extends Delegator
       $(elem).append("<span class='user'>&ndash; #{user}</span>")
 
   constructor: (element, options) ->
-    super()
+    super
     this.addEvents()
 
   updateViewerWithUsers: (e, viewerElement, annotations) ->
-    paras = $(viewerElement).find('p')
+    annDivs = $(viewerElement).find('div')
 
-    for p in paras
-      user = $(p).data('annotation').user
+    for d in annDivs
+      user = $(d).data('annotation').user
       if (user)
-        @options.display(p, user)
+        @options.display(d, user)
