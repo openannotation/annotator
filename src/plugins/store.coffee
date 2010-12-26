@@ -125,7 +125,7 @@ class Annotator.Plugins.Store extends Delegator
       type:       this._methodFor(action),
       beforeSend: onBeforeSend,
       dataType:   "json",
-      success:    onSuccess or (() ->),
+      success:    (onSuccess or ->),
       error:      onError
     }
 

@@ -6,7 +6,7 @@ fixtureMemo = {}
 this.setFixtureElem = (elem) ->
   fixtureElem = elem
 
-this.fix = () ->
+this.fix = ->
   fixtureElem
 
 this.getFixture = (fname) ->
@@ -21,13 +21,13 @@ this.getFixture = (fname) ->
 this.addFixture = (fname) ->
   $(this.getFixture(fname)).appendTo(fixtureElem)
 
-this.clearFixtures = () ->
+this.clearFixtures = ->
   $(fixtureElem).empty()
 
 this.mockAjax = (fname) ->
   $.getScript("ajax/#{fname}.js")
 
-this.clearMockAjax = () ->
+this.clearMockAjax = ->
   $.mockjaxClear()
 
 class this.MockSelection
@@ -46,7 +46,7 @@ class this.MockSelection
     @expectation    = data[4]
     @description    = data[5]
 
-  getRangeAt: () ->
+  getRangeAt: ->
     {
       startContainer: @startContainer
       startOffset:    @startOffset

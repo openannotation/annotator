@@ -7,14 +7,14 @@ class Delegator
     @options = $.extend(@options, options)
     @element = element
 
-  addEvents: () ->
+  addEvents: ->
     for sel, functionName of @events
       [selector..., event] = sel.split ' '
       this.addEvent selector.join(' '), event, functionName
       # console.log selector.join(' '), '>', event, '>', functionName
 
   addEvent: (bindTo, event, functionName) ->
-    closure = () => this[functionName].apply(this, arguments)
+    closure = => this[functionName].apply(this, arguments)
 
     isBlankSelector = typeof bindTo is 'string' and bindTo.replace(/\s+/g, '') is ''
 
@@ -35,7 +35,7 @@ $.plugin = (name, object) ->
   $.fn[name] = (options) ->
 
     args = Array::slice.call(arguments, 1)
-    this.each () ->
+    this.each ->
 
       # check the data() cache, if it's there we'll call the method requested
       instance = $.data(this, name)

@@ -88,7 +88,7 @@ class Annotator extends Delegator
     else
       @dom.adder.hide()
 
-  getSelection: () ->
+  getSelection: ->
     # TODO: fail gracefully in IE.
     @selection = window.getSelection()
     @selectedRanges = (@selection.getRangeAt(i) for i in [0...@selection.rangeCount])
@@ -147,7 +147,7 @@ class Annotator extends Delegator
       # If there are more to do, do them after a 100ms break (for browser
       # responsiveness).
       if annList.length > 0
-        setTimeout (() -> loader(annList)), 100
+        setTimeout (-> loader(annList)), 100
       else
         callback(results) if callback
 
@@ -264,7 +264,7 @@ class Annotator extends Delegator
     # matches the value of the offset.
     for p in ['start', 'end']
       length = 0
-      $(nodeFromXPath(parentXPath + serializedRange[p])).textNodes().each () ->
+      $(nodeFromXPath(parentXPath + serializedRange[p])).textNodes().each ->
         if (length + this.nodeValue.length >= serializedRange[p + 'Offset'])
           range[p + 'Container'] = this
           range[p + 'Offset'] = serializedRange[p + 'Offset'] - length
@@ -277,11 +277,8 @@ class Annotator extends Delegator
 
   highlightRange: (normedRange) ->
     textNodes = $(normedRange.commonAncestor).textNodes()
-
-    textNodes = textNodes.slice(
-      textNodes.index(normedRange.start),
-      textNodes.index(normedRange.end) + 1
-    )
+    [start, end] = [textNodes.index(normedRange.start), textNodes.index(normedRange.end)]
+    textNodes = textNodes[start..end]
 
     elemList = for node in textNodes
       wrapper = @dom.highlighter.clone().show()
@@ -310,8 +307,7 @@ class Annotator extends Delegator
     .find('textarea')
       .focus()
       .bind 'keydown', (e) ->
-        if e.keyCode is 27
-          # "Escape" key: abort.
+        if e.keyCode is 27 # "Escape" key => abort.
           $(this).val('').unbind().parent().hide()
 
         else if e.keyCode is 13 && !e.shiftKey
@@ -342,7 +338,13 @@ class Annotator extends Delegator
       # As well as filling the viewer element, we also copy the annotation
       # object from the highlight element to the <div> containing the note
       # and controls. This makes editing/deletion much easier.
-      $("<div><div class='#{@options.classPrefix}-text'><p>#{annot.text}</p></div>#{controlsHTML}</div>")
+      $("""
+        <div>
+          <div class='#{@options.classPrefix}-text'>
+            <p>#{annot.text}</p>
+          </div>#{controlsHTML}
+        </div>
+        """)
         .appendTo(viewerclone)
         .data("annotation", annot)
 
@@ -370,12 +372,12 @@ class Annotator extends Delegator
     this.clearViewerHideTimer()
 
     # Don't do anything if we're making a selection.
-    if @mouseIsDown
-      return false
+    return false if @mouseIsDown
 
     annotations = $(e.target)
       .parents('.' + this.componentClassname('highlighter'))
-      .andSelf().map () -> $(this).data("annotation")
+      .andSelf()
+      .map -> $(this).data("annotation")
 
     this.showViewer(e, annotations)
 
@@ -397,19 +399,18 @@ class Annotator extends Delegator
 
     # Replace the viewer with the editor.
     @dom.viewer.hide()
-    this.showEditor(pos, para.data("annotation"))
+    this.showEditor pos, para.data("annotation")
     false
 
   controlDeleteClick: (e) =>
     para = $(e.target).parents('p')
 
     # Delete highlight elements.
-    this.deleteAnnotation(para.data("annotation"))
+    this.deleteAnnotation para.data("annotation")
 
     # Remove from viewer and hide viewer if this was the only annotation displayed.
     para.remove()
-    if not @dom.viewer.is(':parent')
-      @dom.viewer.hide()
+    @dom.viewer.hide() unless @dom.viewer.is(':parent')
 
     false
 

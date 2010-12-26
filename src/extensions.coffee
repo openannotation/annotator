@@ -1,16 +1,16 @@
 $ = jQuery
 
-$.fn.textNodes = () ->
+$.fn.textNodes = ->
   getTextNodes = (node) ->
     if node.nodeType isnt Node.TEXT_NODE
-      $(node).contents().map(() -> getTextNodes(this)).get()
+      $(node).contents().map(-> getTextNodes(this)).get()
     else
       node
 
-  this.map () -> _.flatten(getTextNodes(this))
+  this.map -> _.flatten(getTextNodes(this))
 
 $.fn.xpath = (relativeRoot) ->
-  jq = this.map () ->
+  jq = this.map ->
     path = ''
     elem = this
 

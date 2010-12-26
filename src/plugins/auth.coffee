@@ -47,7 +47,7 @@ class Annotator.Plugins.Auth extends Delegator
       this.requestToken()
 
   # Get a new token from consumer web service
-  requestToken: () ->
+  requestToken: ->
     @requestInProgress = true
 
     $.getJSON(@options.tokenUrl, (data, status, xhr) =>
@@ -87,7 +87,7 @@ class Annotator.Plugins.Auth extends Delegator
     allFields && this.timeToExpiry() > 0
 
   # Return time to expiry in seconds
-  timeToExpiry: () ->
+  timeToExpiry: ->
     now = new Date().getTime() / 1000
     issue = new Date().setISO8601(@token.authTokenIssueTime).getTime() / 1000
 
@@ -97,7 +97,7 @@ class Annotator.Plugins.Auth extends Delegator
     if (timeToExpiry > 0) then timeToExpiry else 0
 
   # Update headers to be sent with request
-  updateHeaders: () ->
+  updateHeaders: ->
     current = $(@element).data('annotator:headers')
     $(@element).data('annotator:headers', $.extend(current, {
       'x-annotator-auth-token':            @token.authToken,

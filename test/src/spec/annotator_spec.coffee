@@ -13,28 +13,28 @@ testData = [
   [ '/p',        0,   '/p',        8,   "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. Donec non enim in turpis pulvinar facilisis. Ut felis.", "Spanning multiple nodes, elementNode refs." ]
 ]
 
-describe 'Annotator', () ->
+describe 'Annotator', ->
   a = null
   mockSelection = null
 
-  beforeEach () ->
+  beforeEach ->
     addFixture('annotator')
 
     a = new Annotator(fix(), {})
 
     mockSelection = (ii) -> new MockSelection(a.wrapper, testData[ii])
 
-  afterEach () ->
+  afterEach ->
     delete a
     clearFixtures()
 
-  it "loads selections from the window object on checkForSelection", () ->
+  it "loads selections from the window object on checkForSelection", ->
     sel = mockSelection(0)
     spyOn(window, 'getSelection').andReturn(sel)
     a.checkForEndSelection()
     expect(window.getSelection).toHaveBeenCalled()
 
-  it "will deserialize a range composed of XPaths and offsets", () ->
+  it "will deserialize a range composed of XPaths and offsets", ->
     deserialized = a.deserializeRange({
       start: "/p/strong"
       startOffset: 13
@@ -43,7 +43,7 @@ describe 'Annotator', () ->
     })
     expect(textInNormedRange(deserialized)).toEqual("habitant morbi")
 
-  it "splits textNodes to generated a normed range", () ->
+  it "splits textNodes to generated a normed range", ->
     sel = mockSelection(0)
     normed = a.normRange(sel.getRangeAt(0))
 
@@ -51,7 +51,7 @@ describe 'Annotator', () ->
     expect(textInNormedRange(normed)).toEqual('habitant morbi')
 
   testFunction = (i) ->
-    () ->
+    ->
       sel = mockSelection(i)
       normed = a.normRange(sel.getRangeAt(0))
       expect(textInNormedRange(normed)).toEqual(sel.expectation)
