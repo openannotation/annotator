@@ -290,7 +290,7 @@ class Annotator extends Delegator
     if typeof klass is 'function'
       new klass(@element, options)
     else
-      alert "Could not load #{name} plugin. Have you included the appropriate <script> tag?"
+      console.error "Could not load #{name} plugin. Have you included the appropriate <script> tag?"
 
   componentClassname: (name) ->
     @options.classPrefix + '-' + name

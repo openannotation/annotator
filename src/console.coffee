@@ -14,9 +14,15 @@ if console?
   # Stub out any remaining functions
   for fn in functions
     if not console[fn]?
-      console[fn] = () -> console.log "Not implemented: console.#{name}"
+      console[fn] = -> console.log "Not implemented: console.#{name}"
 else
-  console = {}
+  self.console = {}
 
   for fn in functions
-    console[fn] = () ->
+    self.console[fn] = ->
+
+  self.console['error'] = (args...) ->
+    alert("ERROR: #{args.join(', ')}")
+
+  self.console['warn'] = (args...) ->
+    alert("WARNING: #{args.join(', ')}")

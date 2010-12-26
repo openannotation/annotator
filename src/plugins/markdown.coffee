@@ -10,7 +10,7 @@ class Annotator.Plugins.Markdown extends Delegator
       this.addEvents()
       @converter = new Showdown.converter()
     else
-      alert "To use the Markdown plugin, you must include Showdown into the page first."
+      console.error "To use the Markdown plugin, you must include Showdown into the page first."
 
   updateViewer: (e, viewerElement, annotations) =>
     textContainers = $(viewerElement).find('div.annot-text')
