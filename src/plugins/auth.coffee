@@ -30,6 +30,7 @@ class Annotator.Plugins.Auth extends Delegator
   options:
     token: null
     tokenUrl: '/auth/token'
+    autoFetch: true
 
   constructor: (element, options) ->
     super
@@ -62,8 +63,9 @@ class Annotator.Plugins.Auth extends Delegator
     @token = token
 
     if this.haveValidToken()
-      # Set timeout to fetch new token 2 seconds before current token expiry
-      @refreshTimeout = setTimeout (() => this.requestToken()), (this.timeToExpiry() - 2) * 1000
+      if @autofetch
+        # Set timeout to fetch new token 2 seconds before current token expiry
+        @refreshTimeout = setTimeout (() => this.requestToken()), (this.timeToExpiry() - 2) * 1000
 
       # Set headers field on this.element
       this.updateHeaders()
@@ -73,8 +75,10 @@ class Annotator.Plugins.Auth extends Delegator
         @waitingForToken.pop().apply()
 
     else
-      console.warn "Didn't get a valid token. Getting a new token in 10s."
-      setTimeout (() => this.requestToken()), 10 * 1000
+      console.warn "Didn't get a valid token."
+      if @autoFetch
+        console.warn "Getting a new token in 10s."
+        setTimeout (() => this.requestToken()), 10 * 1000
 
   haveValidToken: () =>
     allFields = @token &&
