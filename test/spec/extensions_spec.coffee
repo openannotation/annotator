@@ -29,7 +29,11 @@ describe 'jQuery.fn.xpath()', ->
   it "generates an XPath string for an element's position in the document", ->
     # FIXME: this is quite fragile. A change to dom.html may well break these tests and the
     #        resulting xpaths will need to be changed.
-    pathToFixHTML = '/html/body/div'
+    if /Node\.js/.test(navigator.userAgent)
+      pathToFixHTML = '/html/body'
+    else
+      pathToFixHTML = '/html/body/div'
+
     expect($fix.find('p').xpath()).toEqual([pathToFixHTML + '/p', pathToFixHTML + '/p[2]'])
     expect($fix.find('span').xpath()).toEqual([pathToFixHTML + '/ol/li[2]/span'])
     expect($fix.find('strong').xpath()).toEqual([pathToFixHTML + '/p[2]/strong'])

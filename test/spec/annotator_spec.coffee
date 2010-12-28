@@ -28,6 +28,7 @@ describe 'Annotator', ->
     delete a
     clearFixtures()
 
+  # FIXME: Fails under Node. Need to mock out window.getSelection() properly
   it "loads selections from the window object on checkForSelection", ->
     sel = mockSelection(0)
     spyOn(window, 'getSelection').andReturn(sel)

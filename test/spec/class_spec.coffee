@@ -14,7 +14,7 @@ class DelegatedExample extends Delegator
   pushB: -> @returns.push("B")
   pushC: -> @returns.push("C")
 
-describe 'DelegatorClass', ->
+describe 'Delegator', ->
   d = null
   $fix = null
 

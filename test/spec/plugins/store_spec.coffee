@@ -1,6 +1,6 @@
 $ = jQuery
 
-describe "Annotator.Plugins.Store", ->
+xdescribe "Annotator.Plugins.Store", ->
   a = null
   el = null
 

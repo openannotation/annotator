@@ -1,3 +1,5 @@
+Date::toISO8601String = DateToISO8601String
+
 $ = jQuery
 
 describe 'Annotator.Plugins.Auth', ->
@@ -17,12 +19,12 @@ describe 'Annotator.Plugins.Auth', ->
     validToken = {
       consumerKey: "key"
       authToken: "foobar"
-      authTokenIssueTime: new Date().toLocaleFormat("%Y-%m-%dT%H:%M:%S%z")
+      authTokenIssueTime: new Date().toISO8601String()
       authTokenTTL: 300
       userId: "testUser"
     }
 
-    mock = mockAuth({token: validToken})
+    mock = mockAuth({token: validToken, autoFetch: false})
 
   it "sets annotator:auth data on its element on init", ->
     expect($(mock.elem).data('annotator:auth')).toBe(mock.auth)
@@ -36,7 +38,6 @@ describe 'Annotator.Plugins.Auth', ->
     data = $(mock.elem).data('annotator:headers')
     expect(data).not.toBeNull()
     expect(data['x-annotator-auth-token-issue-time']).toEqual(validToken.authTokenIssueTime)
-
 
   it "should call callbacks given to #withToken immediately if it has a valid token", ->
     callback = jasmine.createSpy()

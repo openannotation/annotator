@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Jasmine Test Runner</title>
+  <link rel="stylesheet" href="../lib/vendor/jasmine/jasmine.css">
+  <script src="../lib/vendor/jasmine/jasmine.js"></script>
+  <script src="../lib/vendor/jasmine/jasmine-html.js"></script>
+
+  <script src="../lib/vendor/jquery.js"></script>
+  <script src="../lib/vendor/underscore.js"></script>
+  <script src="../lib/vendor/json2.js"></script>
+
+  <!-- source files -->
+  <script src="../lib/console.js"></script>
+  <script src="../lib/class.js"></script>
+  <script src="../lib/extensions.js"></script>
+  <script src="../lib/annotator.js"></script>
+  <script src="../lib/plugins/store.js"></script>
+  <script src="../lib/plugins/auth.js"></script>
+
+  <!-- spec helpers -->
+  <script type="text/coffeescript" src="spec_helper.coffee"></script>
+  <script type="text/coffeescript" src="ajax_fixtures.coffee"></script>
+
+  <!-- spec files -->
+  <script type="text/coffeescript" src="spec/class_spec.coffee"></script>
+  <script type="text/coffeescript" src="spec/extensions_spec.coffee"></script>
+  <script type="text/coffeescript" src="spec/annotator_spec.coffee"></script>
+  <script type="text/coffeescript" src="spec/plugins/store_spec.coffee"></script>
+  <script type="text/coffeescript" src="spec/plugins/auth_spec.coffee"></script>
+
+  <script type="text/coffeescript">
+    jasmine.getEnv().addReporter(new jasmine.TrivialReporter())
+    setTimeout((-> jasmine.getEnv().execute()), 0)
+  </script>
+
+  <script src="../lib/vendor/coffee-script.js"></script>
+</head>
+<body>
+
+  <div id="fixtures" style="display: none"></div>
+
+</body>
+</html>
