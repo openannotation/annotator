@@ -19,8 +19,10 @@ class Annotator extends Delegator
     "-adder mousedown":                  "adderMousedown"
     "-highlighter mouseover":            "highlightMouseover"
     "-highlighter mouseout":             "startViewerHideTimer"
-    "-viewer mouseover":                 "viewerMouseover"
+    "-viewer mouseover":                 "clearViewerHideTimer"
     "-viewer mouseout":                  "startViewerHideTimer"
+    "-editor textarea keydown":          "processEditorKeypress"
+    "-editor textarea blur":             "hideEditor"
     "-annotation-controls .edit click":  "controlEditClick"
     "-annotation-controls .del click":   "controlDeleteClick"
 
@@ -303,6 +305,7 @@ class Annotator extends Delegator
         @plugins[name].annotator = this
       else
         console.error "Could not load #{name} plugin. Have you included the appropriate <script> tag?"
+    this # allow chaining
 
   componentClassname: (name) ->
     @options.classPrefix + '-' + name
@@ -311,6 +314,7 @@ class Annotator extends Delegator
     self = this
 
     if annotation
+      @dom.editor.data('annotation', annotation)
       @dom.editor.find('textarea').val(annotation.text)
 
     @dom.editor
@@ -318,23 +322,34 @@ class Annotator extends Delegator
       .show()
     .find('textarea')
       .focus()
-      .bind 'keydown', (e) ->
-        if e.keyCode is 27 # "Escape" key => abort.
-          $(this).val('').unbind().parent().hide()
 
-        else if e.keyCode is 13 && !e.shiftKey
-          # If "return" was pressed without the shift key, we're done.
-          $(this).unbind().parent().hide()
-          if annotation
-            self.updateAnnotation(annotation, { text: $(this).val() })
-          else
-            self.createAnnotation({ text: $(this).val() })
-          # Clear <textarea>
-          $(this).val('')
-      .bind 'blur', (e) ->
-        $(this).val('').unbind().parent().hide()
+    $(@element).trigger('annotationEditorShown', [@dom.editor, annotation])
 
     @ignoreMouseup = true
+
+  hideEditor: ->
+    @dom.editor
+      .data('annotation', null)
+      .find('textarea').val('')
+      .hide()
+
+  processEditorKeypress: (e) =>
+    if e.keyCode is 27 # "Escape" key => abort.
+      this.hideEditor()
+
+    else if e.keyCode is 13 && !e.shiftKey
+      # If "return" was pressed without the shift key, we're done.
+      this.submitEditor()
+      this.hideEditor()
+
+  submitEditor: ->
+    textarea = @dom.editor.find('textarea')
+    annotation = @dom.editor.data('annotation')
+
+    if annotation
+      this.updateAnnotation(annotation, { text: textarea.val() })
+    else
+      this.createAnnotation({ text: textarea.val() })
 
   showViewer: (e, annotations) =>
     controlsHTML = """
@@ -398,10 +413,6 @@ class Annotator extends Delegator
     @dom.adder.hide()
     this.showEditor(e)
     false
-
-  viewerMouseover: (e) =>
-    # Cancel any pending hiding of the viewer.
-    this.clearViewerHideTimer()
 
   controlEditClick: (e) =>
     annot = $(e.target).parents('.' + this.componentClassname('annotation'))
