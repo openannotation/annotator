@@ -16,6 +16,6 @@ class Annotator.Plugins.Markdown extends Delegator
     textContainers = $(viewerElement).find('.' + @annotator.componentClassname('annotation-text'))
 
     for t in textContainers
-      ann = $(t).parents('.' + @annotator.componentClassname('annotation')).data('annotation')
+      ann = $(t).parent().data('annotation')
       markdown = @converter.makeHtml ann.text
       $(t).html markdown
