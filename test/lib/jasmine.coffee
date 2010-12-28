@@ -6,13 +6,13 @@ jasmine = {}
 jasmine.node = {}
 
 class jasmine.node.ConsoleReporter
-  constructor: () ->
+  constructor: (@callback) ->
     @log = []
     @columnCounter = 0
     @start = 0
     @elapsed = 0
     @colors = true
-    @verbose = true
+    @verbose = false
     @ansi =
       green: '\033[32m'
       red: '\033[31m'
@@ -53,8 +53,8 @@ class jasmine.node.ConsoleReporter
     msg = ''
     if result.passed()
       msg = if @colors then @ansi.green + '.' + @ansi.none else '.'
-#      else if (result.skipped) # TODO: Research why "result.skipped" returns false when "xit" is called on a spec?
-#        msg = (colors) ? (ansi.yellow + '*' + ansi.none) : '*'
+    else if result.skipped # TODO: Research why "result.skipped" returns false when "xit" is called on a spec?
+      msg = if @colors then @ansi.yellow + '*' + @ansi.none else '*'
     else
       msg = if @colors then @ansi.red + 'F' + @ansi.none else 'F'
 
@@ -79,6 +79,8 @@ class jasmine.node.ConsoleReporter
     else
       sys.puts(summary)
 
+    @callback(runner, @log) if @callback
+
   runnerResultsSummary: (runner) ->
     results = runner.results()
     suites = runner.suites()
@@ -90,28 +92,5 @@ class jasmine.node.ConsoleReporter
     msg += results.totalCount + ' assertion' + plural(results.totalCount) + ', '
     msg += results.failedCount + ' failure' + plural(results.failedCount) + '\n'
     msg
-
-jasmine.node.extend = (j) ->
-
-  j.asyncSpecWait = ->
-    now = -> new Date().getTime()
-    wait = j.asyncSpecWait
-    wait.start = now()
-    wait.done = false
-
-    innerWait = do ->
-      waits(10)
-      runs ->
-        if wait.start + wait.timeout < now()
-          expect('timeout waiting for spec').toBeNull()
-        else if wait.done
-          wait.done = false
-        else
-          innerWait()
-
-  j.asyncSpecWait.timeout = 4 * 1000
-
-  j.asyncSpecDone = ->
-    j.asyncSpecWait.done = true
 
 exports.jasmine = jasmine
