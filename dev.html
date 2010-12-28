@@ -54,17 +54,8 @@
 
     <script>
       jQuery(function ($) {
-        //.annotator('addPlugin', 'auth')
-
         $('#airlock').annotator()
-                     .annotator('addPlugin', 'user', {one: 1, two: 2})
-                     .annotator('addPlugin', 'store', {
-                       annotationData: {
-                         user: "Mark",
-                         name: "Bongos",
-                         age: 34
-                       }
-                     })
+                     .annotator('addPlugin', 'Store')
       });
     </script>
   </body>
