@@ -17,7 +17,6 @@ noisyPrint = (data) ->
 
 task 'watch', 'Run development source watcher', ->
   relay 'coffee', ['-w', '-c', '-o', 'lib/', 'src/'], noisyPrint
-  relay 'coffee', ['-w', '-c', '-o', 'test/', 'test/src/'], noisyPrint
 
 task 'test', 'Run tests', ->
   relay 'coffee', ["#{__dirname}/test/runner.coffee"]
