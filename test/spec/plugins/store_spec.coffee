@@ -1,12 +1,12 @@
 $ = jQuery
 
-xdescribe "Annotator.Plugins.Store", ->
+describe "Annotator.Plugins.Store", ->
   a = null
   el = null
 
   beforeEach ->
     el = $('<div></div>')[0]
-    a = new Annotator.Plugins.Store(el)
+    a = new Annotator.Plugins.Store(el, {autoFetch: false})
 
   xit "should save an annotation on an annotationCreated event", ->
     mockAjax('store')
