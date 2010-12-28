@@ -16,16 +16,17 @@ util =
 
 class Annotator extends Delegator
   events:
-    "-adder mousedown":       "adderMousedown"
-    "-highlighter mouseover": "highlightMouseover"
-    "-highlighter mouseout":  "startViewerHideTimer"
-    "-viewer mouseover":      "viewerMouseover"
-    "-viewer mouseout":       "startViewerHideTimer"
-    "-controls .edit click":  "controlEditClick"
-    "-controls .del click":   "controlDeleteClick"
+    "-adder mousedown":                  "adderMousedown"
+    "-highlighter mouseover":            "highlightMouseover"
+    "-highlighter mouseout":             "startViewerHideTimer"
+    "-viewer mouseover":                 "viewerMouseover"
+    "-viewer mouseout":                  "startViewerHideTimer"
+    "-annotation-controls .edit click":  "controlEditClick"
+    "-annotation-controls .del click":   "controlDeleteClick"
+
     # TODO: allow for adding these events on document.body
-    "mouseup":                "checkForEndSelection"
-    "mousedown":              "checkForStartSelection"
+    "mouseup":   "checkForEndSelection"
+    "mousedown": "checkForStartSelection"
 
   options:
     classPrefix: "annot" # Class used to identify elements owned/created by the annotator.
@@ -337,7 +338,7 @@ class Annotator extends Delegator
 
   showViewer: (e, annotations) =>
     controlsHTML = """
-                   <span class="#{this.componentClassname('controls')}">
+                   <span class="#{this.componentClassname('annotation-controls')}">
                      <a href="#" class="edit" alt="Edit" title="Edit this annotation">Edit</a>
                      <a href="#" class="del" alt="X" title="Delete this annotation">Delete</a>
                    </span>
@@ -350,10 +351,11 @@ class Annotator extends Delegator
       # object from the highlight element to the <div> containing the note
       # and controls. This makes editing/deletion much easier.
       $("""
-        <div>
-          <div class='#{@options.classPrefix}-text'>
+        <div class='#{this.componentClassname('annotation')}'>
+          #{controlsHTML}
+          <div class='#{this.componentClassname('annotation-text')}'>
             <p>#{annot.text}</p>
-          </div>#{controlsHTML}
+          </div>
         </div>
         """)
         .appendTo(viewerclone)
@@ -402,7 +404,7 @@ class Annotator extends Delegator
     this.clearViewerHideTimer()
 
   controlEditClick: (e) =>
-    para = $(e.target).parents('p')
+    annot = $(e.target).parents('.' + this.componentClassname('annotation'))
     offset = $(@dom.viewer).offset()
     pos =
       pageY: offset.top,
@@ -410,17 +412,17 @@ class Annotator extends Delegator
 
     # Replace the viewer with the editor.
     @dom.viewer.hide()
-    this.showEditor pos, para.data("annotation")
+    this.showEditor pos, annot.data("annotation")
     false
 
   controlDeleteClick: (e) =>
-    para = $(e.target).parents('p')
+    annot = $(e.target).parents('.' + this.componentClassname('annotation'))
 
     # Delete highlight elements.
-    this.deleteAnnotation para.data("annotation")
+    this.deleteAnnotation annot.data("annotation")
 
     # Remove from viewer and hide viewer if this was the only annotation displayed.
-    para.remove()
+    annot.remove()
     @dom.viewer.hide() unless @dom.viewer.is(':parent')
 
     false

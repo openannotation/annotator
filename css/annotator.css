@@ -67,27 +67,27 @@
   padding-top: 0.25em;
 }
 
-.annot-controls {
+.annot-annotation-controls {
   display: none;
   float: right;
 }
 
-.annot-viewer:hover .annot-controls {
+.annot-viewer:hover .annot-annotation-controls {
   display: block;
 }
 
-.annot-controls a {
+.annot-annotation-controls a {
   width: 16px;
   height: 16px;
   display: inline-block;
   text-indent: -9999em
 }
 
-.annot-controls a.edit {
+.annot-annotation-controls a.edit {
   background: transparent url(../img/edit.png) no-repeat top left;
 }
 
-.annot-controls a.del {
+.annot-annotation-controls a.del {
   background: transparent url(../img/delete.png) no-repeat top left;
 }
 
