@@ -16,13 +16,13 @@ if console?
     if not console[fn]?
       console[fn] = -> console.log "Not implemented: console.#{name}"
 else
-  self.console = {}
+  this.console = {}
 
   for fn in functions
-    self.console[fn] = ->
+    this.console[fn] = ->
 
-  self.console['error'] = (args...) ->
+  this.console['error'] = (args...) ->
     alert("ERROR: #{args.join(', ')}")
 
-  self.console['warn'] = (args...) ->
+  this.console['warn'] = (args...) ->
     alert("WARNING: #{args.join(', ')}")
