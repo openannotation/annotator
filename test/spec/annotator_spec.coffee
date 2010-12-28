@@ -57,5 +57,8 @@ describe 'Annotator', ->
       normed = a.normRange(sel.getRangeAt(0))
       expect(textInNormedRange(normed)).toEqual(sel.expectation)
 
+  # FIXME: testData[5] fails due to an apparent bug in jsdom. Specifically, the
+  # textNode.splitText() method dumps half the result at the end of the container
+  # element, which rather fuggers things.
   for i in [0...testData.length]
     it "normRange should parse test range #{i} (#{testData[i][5]})", testFunction(i)
