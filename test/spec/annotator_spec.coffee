@@ -35,30 +35,53 @@ describe 'Annotator', ->
     a.checkForEndSelection()
     expect(window.getSelection).toHaveBeenCalled()
 
-  it "will deserialize a range composed of XPaths and offsets", ->
-    deserialized = a.deserializeRange({
-      start: "/p/strong"
-      startOffset: 13
-      end: "/p/strong"
-      endOffset: 27
-    })
-    expect(textInNormedRange(deserialized)).toEqual("habitant morbi")
+  describe "deserializeRange", ->
+    it "will deserialize a range composed of XPaths and offsets", ->
+      deserialized = a.deserializeRange({
+        start: "/p/strong"
+        startOffset: 13
+        end: "/p/strong"
+        endOffset: 27
+      })
+      expect(textInNormedRange(deserialized)).toEqual("habitant morbi")
 
-  it "splits textNodes to generated a normed range", ->
-    sel = mockSelection(0)
-    normed = a.normRange(sel.getRangeAt(0))
-
-    expect(normed.start).toBe(normed.end)
-    expect(textInNormedRange(normed)).toEqual('habitant morbi')
-
-  testFunction = (i) ->
-    ->
-      sel = mockSelection(i)
+  describe "normRange", ->
+    it "splits textNodes to generated a normed range", ->
+      sel = mockSelection(0)
       normed = a.normRange(sel.getRangeAt(0))
-      expect(textInNormedRange(normed)).toEqual(sel.expectation)
 
-  # FIXME: testData[5] fails due to an apparent bug in jsdom. Specifically, the
-  # textNode.splitText() method dumps half the result at the end of the container
-  # element, which rather fuggers things.
-  for i in [0...testData.length]
-    it "normRange should parse test range #{i} (#{testData[i][5]})", testFunction(i)
+      expect(normed.start).toBe(normed.end)
+      expect(textInNormedRange(normed)).toEqual('habitant morbi')
+
+    testFunction = (i) ->
+      ->
+        sel = mockSelection(i)
+        normed = a.normRange(sel.getRangeAt(0))
+        expect(textInNormedRange(normed)).toEqual(sel.expectation)
+
+    # FIXME: testData[5] fails due to an apparent bug in jsdom. Specifically, the
+    # textNode.splitText() method dumps half the result at the end of the container
+    # element, which rather fuggers things.
+    for i in [0...testData.length]
+      it "should parse test range #{i} (#{testData[i][5]})", testFunction(i)
+
+  describe "addPlugin", ->
+
+    Annotator.Plugins.Foo = -> this.name = "Bar"
+
+    it "should add and instantiate a plugin of the specified name", ->
+      a.addPlugin('Foo')
+      expect(a.plugins['Foo'].name).toEqual('Bar')
+
+    it "should complain if you try and instantiate a plugin twice", ->
+      spyOn(console, 'error')
+      a.addPlugin('Foo')
+      a.addPlugin('Foo')
+      expect(a.plugins['Foo'].name).toEqual('Bar')
+      expect(console.error).toHaveBeenCalled()
+
+    it "should complain if you try and instantiate a plugin that doesn't exist", ->
+      spyOn(console, 'error')
+      a.addPlugin('Bar')
+      expect(a.plugins['Bar']?).toBeFalsy()
+      expect(console.error).toHaveBeenCalled()

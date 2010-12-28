@@ -39,6 +39,9 @@ class Annotator extends Delegator
   constructor: (element, options) ->
     super
 
+    # Plugin registry
+    @plugins = {}
+
     # Wrap element contents
     @wrapper = $("<div></div>").addClass(this.componentClassname('wrapper'))
     $(@element).wrapInner(@wrapper)
@@ -284,12 +287,15 @@ class Annotator extends Delegator
       $(node).wrap(wrapper).parent().get(0)
 
   addPlugin: (name, options) ->
-    name = name[0].toUpperCase() + name[1..]
-    klass = Annotator.Plugins[name]
-    if typeof klass is 'function'
-      new klass(@element, options)
+    if @plugins[name]
+      console.error "You cannot have more than one instance of any plugin."
     else
-      console.error "Could not load #{name} plugin. Have you included the appropriate <script> tag?"
+      klass = Annotator.Plugins[name]
+      if typeof klass is 'function'
+        @plugins[name] = new klass(@element, options)
+        @plugins[name].annotator = this
+      else
+        console.error "Could not load #{name} plugin. Have you included the appropriate <script> tag?"
 
   componentClassname: (name) ->
     @options.classPrefix + '-' + name
