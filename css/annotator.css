@@ -55,40 +55,48 @@
   line-height: 16px;
 }
 
-.annot-viewer p {
+.annot-viewer .annot-annotation {
   color: #333333;
   font-family: helvetica;
   font-size: 75%;
-  margin: 0.25em 0 0;
+  margin: 0.25em 0 0 0;
 }
 
-.annot-viewer p + p {
+.annot-viewer .annot-annotation + .annot-annotation {
   border-top: 1px solid #E1BE94;
   padding-top: 0.25em;
 }
 
-.annot-annotation-controls {
+.annot-annotation .annot-annotation-controls {
   display: none;
   float: right;
 }
 
-.annot-viewer:hover .annot-annotation-controls {
+.annot-viewer:hover .annot-annotation .annot-annotation-controls {
   display: block;
 }
 
-.annot-annotation-controls a {
+.annot-annotation .annot-annotation-controls a {
   width: 16px;
   height: 16px;
   display: inline-block;
   text-indent: -9999em
 }
 
-.annot-annotation-controls a.edit {
+.annot-annotation .annot-annotation-controls a.edit {
   background: transparent url(../img/edit.png) no-repeat top left;
 }
 
-.annot-annotation-controls a.del {
+.annot-annotation .annot-annotation-controls a.del {
   background: transparent url(../img/delete.png) no-repeat top left;
+}
+
+.annot-annotation .annot-annotation-text p {
+  margin: 0;
+}
+
+.annot-annotation .annot-annotation-text p + p {
+  margin: 0 0 0.25em 0;
 }
 
 .annot-viewer .user {
