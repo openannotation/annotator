@@ -5,7 +5,6 @@
 # for the moment, having no means of testing it.
 
 $ = jQuery
-window = this
 
 util =
   mousePosition: (e, offsetEl) ->
@@ -180,7 +179,7 @@ class Annotator extends Delegator
         node = it or node.childNodes[offset - 1]
         while node.nodeType isnt Node.TEXT_NODE
           node = node.firstChild
-        offset = it ? 0 : node.nodeValue.length
+        offset = if it then 0 else node.nodeValue.length
 
       r[p] = node
       r[p + 'Offset'] = offset
@@ -236,7 +235,7 @@ class Annotator extends Delegator
 
   deserializeRange: (serializedRange) ->
     nodeFromXPath = (xpath) ->
-      document.evaluate( xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
+      document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
 
     parentXPath   = $(@wrapper).xpath()[0]
     startAncestry = serializedRange.start.split("/")
