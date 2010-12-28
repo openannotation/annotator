@@ -10,6 +10,7 @@ describe 'Annotator.Plugins.Markdown', ->
     el = $('<div><div class="annot-text">' + input + '</div></div>')[0]
     $(el).data('annotation', {text: input})
     m = new Annotator.Plugins.Markdown(el)
+    m.annotator = { componentClassname: -> "annot-text" }
 
   it 'should process the annotation text as Markdown when an annotationViewerShown event is fired', ->
     text = $(el).find('.annot-text').html()
