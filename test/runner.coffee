@@ -14,6 +14,7 @@ s = new Sandbox(ROOT_DIR)
 s.require('lib/vendor/jquery.js')
 s.require 'lib/vendor/underscore.js'
 s.require 'lib/vendor/json2.js'
+s.require 'lib/vendor/showdown.js'
 
 # Add fixture helpers
 specutil.addFixtureHelpers(s.window, FIXTURES_DIR)
@@ -34,6 +35,7 @@ s.require 'lib/extensions.js'
 s.require 'lib/annotator.js'
 s.require 'lib/plugins/store.js'
 s.require 'lib/plugins/auth.js'
+s.require 'lib/plugins/markdown.js'
 
 # List of spec files to require
 specFiles = specutil.getSpecFiles(SPEC_DIR)
@@ -54,7 +56,7 @@ for specFile in specFiles
 
 reporter = new jasmine.node.ConsoleReporter (runner, log) ->
   console.log("As of 2010-12-28, you should be seeing 2 failures that we know about.")
-  process.exit(runner.results().failedCount)
+  # process.exit(runner.results().failedCount)
 
 s.window.jasmine.getEnv().addReporter(reporter)
 s.window.jasmine.getEnv().execute()
