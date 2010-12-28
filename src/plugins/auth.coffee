@@ -63,7 +63,7 @@ class Annotator.Plugins.Auth extends Delegator
     @token = token
 
     if this.haveValidToken()
-      if @autofetch
+      if @options.autoFetch
         # Set timeout to fetch new token 2 seconds before current token expiry
         @refreshTimeout = setTimeout (() => this.requestToken()), (this.timeToExpiry() - 2) * 1000
 
@@ -76,7 +76,7 @@ class Annotator.Plugins.Auth extends Delegator
 
     else
       console.warn "Didn't get a valid token."
-      if @autoFetch
+      if @options.autoFetch
         console.warn "Getting a new token in 10s."
         setTimeout (() => this.requestToken()), 10 * 1000
 
