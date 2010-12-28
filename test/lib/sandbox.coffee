@@ -17,7 +17,6 @@ class Sandbox
     # Set up DOM/BOM
     @document = jsdom.jsdom(@src)
     @window = @document.createWindow()
-    @window.Node or= @document.createElement('span')
 
     # Forward console.* calls to Node
     @window.console = console

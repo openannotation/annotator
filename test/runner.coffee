@@ -11,25 +11,24 @@ FIXTURES_DIR = ROOT_DIR + '/test/fixtures'
 # Create new browser/document sandbox
 s = new Sandbox(ROOT_DIR)
 
-# Add jQuery
 s.require('lib/vendor/jquery.js')
+s.require 'lib/vendor/underscore.js'
+s.require 'lib/vendor/json2.js'
 
 # Add fixture helpers
 specutil.addFixtureHelpers(s.window, FIXTURES_DIR)
 
-# Require jasmine and patch so we can talk to it from Node
+# Require jasmine
 s.require 'lib/vendor/jasmine/jasmine.js'
-jasmine.node.extend(s.window.jasmine)
 
 # Patch in a vendor XPath implementation until jsdom has one
 s.require 'lib/vendor/xpath.js'
 
+# Sneaky hack to provide Node.ELEMENT_NODE
+s.window.Node or= s.window.document.createElement('span')
+
 s.require 'test/spec_helper.coffee'
 
-s.require 'lib/vendor/underscore.js'
-s.require 'lib/vendor/json2.js'
-
-# s.require 'lib/console.js'
 s.require 'lib/class.js'
 s.require 'lib/extensions.js'
 s.require 'lib/annotator.js'
@@ -53,5 +52,10 @@ if filters.length > 0
 for specFile in specFiles
   s.require(specFile)
 
-s.window.jasmine.getEnv().addReporter(new jasmine.node.ConsoleReporter())
+reporter = new jasmine.node.ConsoleReporter (runner, log) ->
+  console.log("As of 2010-12-28, you should be seeing 2 failures that we know about.")
+  process.exit(runner.results().failedCount)
+
+s.window.jasmine.getEnv().addReporter(reporter)
 s.window.jasmine.getEnv().execute()
+
