@@ -155,6 +155,12 @@ class Annotator extends Delegator
 
     loader(annotations)
 
+  dumpAnnotations: () ->
+    if @plugins['Store']
+      @plugins['Store'].dumpAnnotations()
+    else
+      console.warn("Can't dump annotations without Store plugin.")
+
   # normRange: works around the fact that browsers don't generate
   # ranges/selections in a consistent manner. Some (Safari) will create
   # ranges that have (say) a textNode startContainer and elementNode

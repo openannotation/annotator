@@ -65,6 +65,16 @@ describe 'Annotator', ->
     for i in [0...testData.length]
       it "should parse test range #{i} (#{testData[i][5]})", testFunction(i)
 
+  describe "dumpAnnotations", ->
+    it "returns false and prints a warning if no Store plugin is active", ->
+      spyOn(console, 'warn')
+      expect(a.dumpAnnotations()).toBeFalsy()
+      expect(console.warn).toHaveBeenCalled()
+
+    it "returns the results of the Store plugins dumpAnnotations method", ->
+      a.plugins.Store = { dumpAnnotations: -> [1,2,3] }
+      expect(a.dumpAnnotations()).toEqual([1,2,3])
+
   describe "addPlugin", ->
 
     Annotator.Plugins.Foo = -> this.name = "Bar"

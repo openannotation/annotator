@@ -53,9 +53,12 @@
     </div>
 
     <script>
+      var devAnnotator
       jQuery(function ($) {
-        $('#airlock').annotator()
-                     .annotator('addPlugin', 'Store')
+        var elem = document.getElementById('airlock');
+
+        devAnnotator = new Annotator(elem);
+        devAnnotator.addPlugin('Store');
       });
     </script>
   </body>

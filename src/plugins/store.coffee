@@ -34,7 +34,6 @@ class Annotator.Plugins.Store extends Delegator
     super
     this.addEvents()
 
-    @annotator = $(@element).data('annotator')
     @annotations = []
 
     # We can't bind the event handlers until the initial load is done, or
@@ -114,6 +113,17 @@ class Annotator.Plugins.Store extends Delegator
       @annotator.loadAnnotations(data.results, callback)
     )
 
+  ##
+  # Dump an array of serialized annotations
+  dumpAnnotations: ->
+    _.map(@annotations, (ann) =>
+      JSON.parse(this._dataFor(ann))
+    )
+
+  ##
+  # Make a request to the Annotator Store API
+  #
+  # @private
   _apiRequest: (action, obj, onSuccess) ->
     # set request headers before send
     onBeforeSend = (xhr) =>

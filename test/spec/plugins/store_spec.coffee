@@ -59,6 +59,15 @@ describe "Annotator.Plugins.Store", ->
     expect(a._urlFor('update', 'bar')).toEqual('/some/prefix/bar/updateMe')
     expect(a._urlFor('destroy', 'baz')).toEqual('/some/prefix/baz/destroyMe')
 
+  describe "dumpAnnotations", ->
+    it "returns a list of its annotations", ->
+      a.annotations = [{text: "Foobar"}, {user: "Bob"}]
+      expect(a.dumpAnnotations()).toEqual([{text: "Foobar"}, {user: "Bob"}])
+
+    it "removes the highlights properties from the annotations", ->
+      a.annotations = [{highlights: "abc"}, {highlights: [1,2,3]}]
+      expect(a.dumpAnnotations()).toEqual([{}, {}])
+
 xdescribe "Annotator.Plugins.Store initialized with an empty backend", ->
   beforeEach ->
     el = $('<div></div>')[0]
