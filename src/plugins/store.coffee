@@ -9,6 +9,7 @@ class Annotator.Plugins.Store extends Delegator
   options:
     prefix: '/store'
 
+    autoFetch: true
     annotationData: {}
 
     # If loadFromSearch is set, then we load the first batch of
@@ -41,6 +42,10 @@ class Annotator.Plugins.Store extends Delegator
     s = Store.__super__.constructor
     callback = () =>
       s.apply(this)
+
+    if not @options.autoFetch
+      callback()
+      return
 
     getAnnotations = () =>
       if @options.loadFromSearch
