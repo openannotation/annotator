@@ -311,8 +311,6 @@ class Annotator extends Delegator
     @options.classPrefix + '-' + name
 
   showEditor: (e, annotation) =>
-    self = this
-
     if annotation
       @dom.editor.data('annotation', annotation)
       @dom.editor.find('textarea').val(annotation.text)
@@ -330,8 +328,9 @@ class Annotator extends Delegator
   hideEditor: ->
     @dom.editor
       .data('annotation', null)
-      .find('textarea').val('')
       .hide()
+    .find('textarea')
+      .val('')
 
   processEditorKeypress: (e) =>
     if e.keyCode is 27 # "Escape" key => abort.
