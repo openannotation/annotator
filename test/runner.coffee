@@ -28,10 +28,14 @@ s.require 'lib/vendor/xpath.js'
 # Sneaky hack to provide Node.ELEMENT_NODE
 s.window.Node or= s.window.document.createElement('span')
 
+# In a word: aaarrgrgh.
+s.window.getSelection = -> "Node selection"
+
 s.require 'test/spec_helper.coffee'
 
 s.require 'lib/class.js'
 s.require 'lib/extensions.js'
+s.require 'lib/range.js'
 s.require 'lib/annotator.js'
 s.require 'lib/plugins/store.js'
 s.require 'lib/plugins/auth.js'
