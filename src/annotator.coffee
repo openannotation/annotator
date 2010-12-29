@@ -7,6 +7,8 @@
 $ = jQuery
 
 util =
+  getGlobal: -> (-> this)()
+
   mousePosition: (e, offsetEl) ->
     offset = $(offsetEl).offset()
     {
@@ -95,7 +97,7 @@ class Annotator extends Delegator
 
   getSelection: ->
     # TODO: fail gracefully in IE.
-    @selection = window.getSelection()
+    @selection = util.getGlobal().getSelection()
     @selectedRanges = (@selection.getRangeAt(i) for i in [0...@selection.rangeCount])
 
   createAnnotation: (annotation) ->
@@ -106,20 +108,9 @@ class Annotator extends Delegator
     a.highlights or= []
 
     a.ranges = for r in a.ranges
-      if r.commonAncestorContainer?
-        # range from a browser
-        normed = this.normRange(r)
-        serialized = this.serializeRange(normed)
-      else if r.start and typeof r.start is "string"
-        # serialized range
-        normed = this.deserializeRange(r)
-        serialized = r
-      else
-        # presume normed
-        normed = r
-        serialized = this.serializeRange(normed)
-
-      serialized
+      sniffed    = Range.sniff(r)
+      normed     = sniffed.normalize(@wrapper)
+      serialized = sniffed.serialize(@wrapper, '.' + this.componentClassname('highlighter'))
 
     a.highlights = this.highlightRange(normed)
 
@@ -163,128 +154,6 @@ class Annotator extends Delegator
       @plugins['Store'].dumpAnnotations()
     else
       console.warn("Can't dump annotations without Store plugin.")
-
-  # normRange: works around the fact that browsers don't generate
-  # ranges/selections in a consistent manner. Some (Safari) will create
-  # ranges that have (say) a textNode startContainer and elementNode
-  # endContainer. Others (Firefox) seem to only ever generate
-  # textNode/textNode or elementNode/elementNode pairs.
-  #
-  # This will return a (start, end, commonAncestor) triple, where start and
-  # end are textNodes, and commonAncestor is an elementNode.
-  #
-  # NB: This method may well split textnodes (i.e. alter the DOM) to
-  # achieve this.
-  normRange: (range) ->
-    r = {}
-    nr = {}
-
-    for p in ['start', 'end']
-      node = range[p + 'Container']
-      offset = range[p + 'Offset']
-
-      if node.nodeType is Node.ELEMENT_NODE
-        # Get specified node.
-        it = node.childNodes[offset]
-        # If it doesn't exist, that means we need the end of the
-        # previous one.
-        node = it or node.childNodes[offset - 1]
-        while node.nodeType isnt Node.TEXT_NODE
-          node = node.firstChild
-        offset = if it then 0 else node.nodeValue.length
-
-      r[p] = node
-      r[p + 'Offset'] = offset
-
-    nr.start = if r.startOffset > 0 then r.start.splitText(r.startOffset) else r.start
-
-    if r.start is r.end
-      if (r.endOffset - r.startOffset) < nr.start.nodeValue.length
-        nr.start.splitText(r.endOffset - r.startOffset)
-      nr.end = nr.start
-    else
-      if r.endOffset < r.end.nodeValue.length
-        r.end.splitText(r.endOffset)
-      nr.end = r.end
-
-    # Make sure the common ancestor is an element node.
-    nr.commonAncestor = range.commonAncestorContainer
-    while nr.commonAncestor.nodeType isnt Node.ELEMENT_NODE
-      nr.commonAncestor = nr.commonAncestor.parentNode
-
-    nr
-
-  # serializeRange: takes a normedRange and turns it into a
-  # serializedRange, which is two pairs of (xpath, character offset), which
-  # can be easily stored in a database and loaded through
-  # #loadAnnotations/#deserializeRange.
-  serializeRange: (normedRange) ->
-
-    serialization = (node, isEnd) =>
-      origParent = $(node).parents(":not(.#{this.componentClassname('highlighter')})").eq(0)
-      xpath = origParent.xpath(@wrapper)[0]
-      textNodes = origParent.textNodes()
-
-      # Calculate real offset as the combined length of all the
-      # preceding textNode siblings. We include the length of the
-      # node if it's the end node.
-      nodes = textNodes.slice(0, textNodes.index(node))
-      offset = _(nodes).reduce ((acc, tn) -> acc + tn.nodeValue.length), 0
-
-      if isEnd then [xpath, offset + node.nodeValue.length] else [xpath, offset]
-
-    start = serialization(normedRange.start)
-    end   = serialization(normedRange.end, true)
-
-    {
-      # XPath strings
-      start: start[0]
-      end: end[0]
-      # Character offsets (integer)
-      startOffset: start[1]
-      endOffset: end[1]
-    }
-
-  deserializeRange: (serializedRange) ->
-    nodeFromXPath = (xpath) ->
-      document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
-
-    parentXPath   = $(@wrapper).xpath()[0]
-    startAncestry = serializedRange.start.split("/")
-    endAncestry   = serializedRange.end.split("/")
-    common = []
-    range = {}
-
-    # Crudely find a near common ancestor by walking down the XPath from
-    # the root until the segments no longer match.
-    for i in [0...startAncestry.length]
-      if startAncestry[i] is endAncestry[i]
-        common.push(startAncestry[i])
-      else
-        break
-
-    cacXPath = parentXPath + common.join("/")
-    range.commonAncestorContainer = nodeFromXPath(cacXPath)
-
-    if not range.commonAncestorContainer
-      console.error("Error deserializing range: can't find XPath '" + cacXPath + "'. Is this the right document?")
-
-    # Unfortunately, we *can't* guarantee only one textNode per
-    # elementNode, so we have to walk along the element's textNodes until
-    # the combined length of the textNodes to that point exceeds or
-    # matches the value of the offset.
-    for p in ['start', 'end']
-      length = 0
-      $(nodeFromXPath(parentXPath + serializedRange[p])).textNodes().each ->
-        if (length + this.nodeValue.length >= serializedRange[p + 'Offset'])
-          range[p + 'Container'] = this
-          range[p + 'Offset'] = serializedRange[p + 'Offset'] - length
-          false # end each loop.
-        else
-          length += this.nodeValue.length
-          true
-
-    this.normRange(range)
 
   highlightRange: (normedRange) ->
     textNodes = $(normedRange.commonAncestor).textNodes()
