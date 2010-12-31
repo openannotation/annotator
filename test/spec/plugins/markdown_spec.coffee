@@ -7,16 +7,15 @@ describe 'Annotator.Plugins.Markdown', ->
   output = '<p>Is <strong>this</strong> <a href="http://daringfireball.com">Markdown</a>?</p>'
 
   beforeEach ->
-    el = $('<div><div class="annot-text">' + input + '</div></div>')[0]
+    el = $('<div><div class="annotator-ann-text">' + input + '</div></div>')[0]
     $(el).data('annotation', {text: input})
     m = new Annotator.Plugins.Markdown(el)
-    m.annotator = { componentClassname: -> "annot-text" }
 
   it 'should process the annotation text as Markdown when an annotationViewerShown event is fired', ->
-    text = $(el).find('.annot-text').html()
+    text = $(el).find('.annotator-ann-text').html()
     expect(text).toEqual(input)
 
     $(el).trigger('annotationViewerShown', [el, []])
 
-    text = $(el).find('.annot-text').html()
+    text = $(el).find('.annotator-ann-text').html()
     expect(text).toEqual(output)

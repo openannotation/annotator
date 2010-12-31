@@ -18,28 +18,31 @@ util =
 
 class Annotator extends Delegator
   events:
-    "-adder mousedown":                  "adderMousedown"
-    "-highlighter mouseover":            "highlightMouseover"
-    "-highlighter mouseout":             "startViewerHideTimer"
-    "-viewer mouseover":                 "clearViewerHideTimer"
-    "-viewer mouseout":                  "startViewerHideTimer"
-    "-editor textarea keydown":          "processEditorKeypress"
-    "-editor textarea blur":             "hideEditor"
-    "-annotation-controls .edit click":  "controlEditClick"
-    "-annotation-controls .del click":   "controlDeleteClick"
+    ".annotator-adder mousedown":          "adderMousedown"
+    ".annotator-hl mouseover":             "highlightMouseover"
+    ".annotator-hl mouseout":              "startViewerHideTimer"
+    ".annotator-viewer mouseover":         "clearViewerHideTimer"
+    ".annotator-viewer mouseout":          "startViewerHideTimer"
+    ".annotator-editor textarea keydown":  "processEditorKeypress"
+    ".annotator-ann-controls .edit click": "controlEditClick"
+    ".annotator-ann-controls .del click":  "controlDeleteClick"
 
     # TODO: allow for adding these events on document.body
     "mouseup":   "checkForEndSelection"
     "mousedown": "checkForStartSelection"
 
-  options:
-    classPrefix: "annot" # Class used to identify elements owned/created by the annotator.
+  dom:
+    adder:       "<div><a href='#'></a></div>"
+    editor:      """
+                 <div>
+                   <textarea></textarea>
+                   <input type='submit' cl>
+                 </div>
+                 """
+    hl:     "<span></span>"
+    viewer:      "<div></div>"
 
-    dom:
-      adder:       "<div><a href='#'></a></div>"
-      editor:      "<div><textarea></textarea></div>"
-      highlighter: "<span></span>"
-      viewer:      "<div></div>"
+  options: {} # Configuration options
 
   constructor: (element, options) ->
     super
@@ -48,24 +51,16 @@ class Annotator extends Delegator
     @plugins = {}
 
     # Wrap element contents
-    @wrapper = $("<div></div>").addClass(this.componentClassname('wrapper'))
+    @wrapper = $("<div></div>").addClass('annotator-wrapper')
     $(@element).wrapInner(@wrapper)
     @wrapper = $(@element).contents().get(0)
 
-    # For all events beginning with '-', map them to a meaningful selector.
-    # e.g. '-adder click' -> '.annot-adder click'
-    for k, v of @events
-      if k[0] is '-'
-        @events['.' + @options.classPrefix + k] = v
-        delete @events[k]
-
     # Create model dom elements
-    @dom = {}
-    for name, src of @options.dom
+    for name, src of @dom
       @dom[name] = $(src)
-        .addClass(this.componentClassname(name))
-        .appendTo(@wrapper)
+        .addClass("annotator-#{name}")
         .hide()
+        .appendTo(@wrapper)
 
     # Bind delegated events.
     this.addEvents()
@@ -110,7 +105,7 @@ class Annotator extends Delegator
     a.ranges = for r in a.ranges
       sniffed    = Range.sniff(r)
       normed     = sniffed.normalize(@wrapper)
-      serialized = sniffed.serialize(@wrapper, '.' + this.componentClassname('highlighter'))
+      serialized = sniffed.serialize(@wrapper, '.annotator-hl')
 
     a.highlights = this.highlightRange(normed)
 
@@ -161,7 +156,7 @@ class Annotator extends Delegator
     textNodes = textNodes[start..end]
 
     elemList = for node in textNodes
-      wrapper = @dom.highlighter.clone().show()
+      wrapper = @dom.hl.clone().show()
       $(node).wrap(wrapper).parent().get(0)
 
   addPlugin: (name, options) ->
@@ -175,9 +170,6 @@ class Annotator extends Delegator
       else
         console.error "Could not load #{name} plugin. Have you included the appropriate <script> tag?"
     this # allow chaining
-
-  componentClassname: (name) ->
-    @options.classPrefix + '-' + name
 
   showEditor: (e, annotation) =>
     if annotation
@@ -221,7 +213,7 @@ class Annotator extends Delegator
 
   showViewer: (e, annotations) =>
     controlsHTML = """
-                   <span class="#{this.componentClassname('annotation-controls')}">
+                   <span class="annotator-ann-controls">
                      <a href="#" class="edit" alt="Edit" title="Edit this annotation">Edit</a>
                      <a href="#" class="del" alt="X" title="Delete this annotation">Delete</a>
                    </span>
@@ -234,9 +226,9 @@ class Annotator extends Delegator
       # object from the highlight element to the <div> containing the note
       # and controls. This makes editing/deletion much easier.
       $("""
-        <div class='#{this.componentClassname('annotation')}'>
+        <div class='annotator-ann'>
           #{controlsHTML}
-          <div class='#{this.componentClassname('annotation-text')}'>
+          <div class='annotator-ann-text'>
             <p>#{annot.text}</p>
           </div>
         </div>
@@ -271,7 +263,7 @@ class Annotator extends Delegator
     return false if @mouseIsDown
 
     annotations = $(e.target)
-      .parents('.' + this.componentClassname('highlighter'))
+      .parents('.annotator-hl')
       .andSelf()
       .map -> $(this).data("annotation")
 
@@ -283,7 +275,7 @@ class Annotator extends Delegator
     false
 
   controlEditClick: (e) =>
-    annot = $(e.target).parents('.' + this.componentClassname('annotation'))
+    annot = $(e.target).parents('.annotator-ann')
     offset = $(@dom.viewer).offset()
     pos =
       pageY: offset.top,
@@ -295,7 +287,7 @@ class Annotator extends Delegator
     false
 
   controlDeleteClick: (e) =>
-    annot = $(e.target).parents('.' + this.componentClassname('annotation'))
+    annot = $(e.target).parents('.annotator-ann')
 
     # Delete highlight elements.
     this.deleteAnnotation annot.data("annotation")

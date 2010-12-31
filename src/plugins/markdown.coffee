@@ -13,7 +13,7 @@ class Annotator.Plugins.Markdown extends Delegator
       console.error "To use the Markdown plugin, you must include Showdown into the page first."
 
   updateViewer: (e, viewerElement, annotations) =>
-    textContainers = $(viewerElement).find('.' + @annotator.componentClassname('annotation-text'))
+    textContainers = $(viewerElement).find('.annotator-ann-text')
 
     for t in textContainers
       ann = $(t).parent().data('annotation')

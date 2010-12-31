@@ -1,29 +1,29 @@
-.annot-wrapper {
+.annotator-wrapper {
   position: relative;
 }
 
-.annot-adder a {
+.annotator-adder a {
   display: block;
   width: 22px;
   height: 22px;
   background: transparent url(../img/note.png) no-repeat left top;
 }
 
-.annot-adder {
+.annotator-adder {
   position: absolute;
   display: none;
   margin: -25px 0 0 3px;
 }
 
-.annot-highlighter {
+.annotator-hl {
   background: rgba(255, 255, 10, 0.3);
 }
 
-.annot-highlighter .hover {
+.annotator-hl .hover {
   border: 2px solid #f00;
 }
 
-.annot-editor {
+.annotator-editor {
   position: absolute;
   width: 15em;
   height: auto;
@@ -41,7 +41,7 @@
   height: 100%;
 }
 
-.annot-viewer {
+.annotator-viewer {
   position: absolute;
   width: 15em;
   height: auto;
@@ -55,51 +55,51 @@
   line-height: 16px;
 }
 
-.annot-viewer .annot-annotation {
+.annotator-viewer .annotator-ann {
   color: #333333;
   font-family: helvetica;
   font-size: 75%;
   margin: 0.25em 0 0 0;
 }
 
-.annot-viewer .annot-annotation + .annot-annotation {
+.annotator-viewer .annotator-ann + .annotator-ann {
   border-top: 1px solid #E1BE94;
   padding-top: 0.25em;
 }
 
-.annot-annotation .annot-annotation-controls {
+.annotator-ann .annotator-ann-controls {
   display: none;
   float: right;
 }
 
-.annot-viewer:hover .annot-annotation .annot-annotation-controls {
+.annotator-viewer:hover .annotator-ann .annotator-ann-controls {
   display: block;
 }
 
-.annot-annotation .annot-annotation-controls a {
+.annotator-ann .annotator-ann-controls a {
   width: 16px;
   height: 16px;
   display: inline-block;
   text-indent: -9999em
 }
 
-.annot-annotation .annot-annotation-controls a.edit {
+.annotator-ann .annotator-ann-controls a.edit {
   background: transparent url(../img/edit.png) no-repeat top left;
 }
 
-.annot-annotation .annot-annotation-controls a.del {
+.annotator-ann .annotator-ann-controls a.del {
   background: transparent url(../img/delete.png) no-repeat top left;
 }
 
-.annot-annotation .annot-annotation-text p {
+.annotator-ann .annotator-ann-text p {
   margin: 0;
 }
 
-.annot-annotation .annot-annotation-text p + p {
+.annotator-ann .annotator-ann-text p + p {
   margin: 0 0 0.25em 0;
 }
 
-.annot-viewer .user {
+.annotator-viewer .user {
   display: block;
   font-size: 0.8em;
   opacity: 0.6;
