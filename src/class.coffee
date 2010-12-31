@@ -11,7 +11,6 @@ class Delegator
     for sel, functionName of @events
       [selector..., event] = sel.split ' '
       this.addEvent selector.join(' '), event, functionName
-      # console.log selector.join(' '), '>', event, '>', functionName
 
   addEvent: (bindTo, event, functionName) ->
     closure = => this[functionName].apply(this, arguments)
@@ -21,10 +20,8 @@ class Delegator
     bindTo = @element if isBlankSelector
 
     if typeof bindTo is 'string'
-      # console.log "binding selector #{bindTo} for event #{event}:", closure
       $(@element).delegate bindTo, event, closure
     else
-      # console.log "binding element ", bindTo, " for event #{event}:", closure
       $(bindTo).bind event, closure
 
 this.Delegator = Delegator
