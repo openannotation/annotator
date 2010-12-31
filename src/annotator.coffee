@@ -25,8 +25,8 @@ class Annotator extends Delegator
     ".annotator-viewer mouseout":          "startViewerHideTimer"
     ".annotator-editor textarea keydown":  "processEditorKeypress"
     ".annotator-editor form submit":       "submitEditor"
-    ".annotator-editor-controls button.annotator-editor-save   click": "submitEditor"
-    ".annotator-editor-controls button.annotator-editor-cancel click": "hideEditor"
+    ".annotator-editor button.annotator-editor-save click": "submitEditor"
+    ".annotator-editor button.annotator-editor-cancel click": "hideEditor"
     ".annotator-ann-controls .edit click": "controlEditClick"
     ".annotator-ann-controls .del click":  "controlDeleteClick"
 
@@ -82,7 +82,6 @@ class Annotator extends Delegator
     # This prevents the note image from jumping away on the mouseup
     # of a click on icon.
     if (@ignoreMouseup)
-      @ignoreMouseup = false
       return
 
     this.getSelection()
@@ -191,9 +190,10 @@ class Annotator extends Delegator
 
     $(@element).trigger('annotationEditorShown', [@dom.editor, annotation])
 
-    @ignoreMouseup = true
 
-  hideEditor: ->
+  hideEditor: (e) =>
+    e?.preventDefault()
+
     @dom.editor
       .data('annotation', null)
       .hide()
@@ -201,15 +201,18 @@ class Annotator extends Delegator
       .val('')
 
     $(@element).trigger('annotationEditorHidden', [@dom.editor])
+    @ignoreMouseup = false
 
   processEditorKeypress: (e) =>
     if e.keyCode is 27 # "Escape" key => abort.
-      this.hideEditor()
+      this.hideEditor(e)
     else if e.keyCode is 13 && !e.shiftKey
       # If "return" was pressed without the shift key, we're done.
-      this.submitEditor()
+      this.submitEditor(e)
 
   submitEditor: (e) =>
+    e?.preventDefault()
+
     textarea = @dom.editor.find('textarea')
     annotation = @dom.editor.data('annotation')
 
@@ -226,7 +229,6 @@ class Annotator extends Delegator
       this.updateAnnotation(annotation, { text: textarea.val() })
 
     this.hideEditor()
-    false # Don't actually submit the form.
 
   showViewer: (e, annotations) =>
     controlsHTML = """
@@ -287,9 +289,10 @@ class Annotator extends Delegator
     this.showViewer(e, annotations)
 
   adderMousedown: (e) =>
+    e?.preventDefault()
+    @ignoreMouseup = true
     @dom.adder.hide()
     this.showEditor(e)
-    false
 
   controlEditClick: (e) =>
     annot = $(e.target).parents('.annotator-ann')
