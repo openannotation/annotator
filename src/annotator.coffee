@@ -143,7 +143,7 @@ class Annotator extends Delegator
       # If there are more to do, do them after a 100ms break (for browser
       # responsiveness).
       if annList.length > 0
-        setTimeout (-> loader(annList)), 100
+        setTimeout((-> loader(annList)), 100)
       else
         callback(results) if callback
 
