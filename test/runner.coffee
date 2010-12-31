@@ -19,8 +19,10 @@ s.require 'lib/vendor/showdown.js'
 # Add fixture helpers
 specutil.addFixtureHelpers(s.window, FIXTURES_DIR)
 
-# Require jasmine
+# Require jasmine test library
 s.require 'lib/vendor/jasmine/jasmine.js'
+# Require jasmine jquery helpers
+s.require 'lib/vendor/jasmine-jquery.js'
 
 # Patch in a vendor XPath implementation until jsdom has one
 s.require 'lib/vendor/xpath.js'
@@ -40,6 +42,7 @@ s.require 'lib/annotator.js'
 s.require 'lib/plugins/store.js'
 s.require 'lib/plugins/auth.js'
 s.require 'lib/plugins/markdown.js'
+s.require 'lib/plugins/tags.js'
 
 # List of spec files to require
 specFiles = specutil.getSpecFiles(SPEC_DIR)
@@ -59,7 +62,7 @@ for specFile in specFiles
   s.require(specFile)
 
 reporter = new jasmine.node.ConsoleReporter (runner, log) ->
-  console.log("As of 2010-12-28, you should be seeing 2 failures that we know about.")
+  console.log("As of 2010-12-31, you should be seeing 1 failure that we know about.")
   # process.exit(runner.results().failedCount)
 
 s.window.jasmine.getEnv().addReporter(reporter)

@@ -24,6 +24,9 @@ class Annotator extends Delegator
     ".annotator-viewer mouseover":         "clearViewerHideTimer"
     ".annotator-viewer mouseout":          "startViewerHideTimer"
     ".annotator-editor textarea keydown":  "processEditorKeypress"
+    ".annotator-editor form submit":       "submitEditor"
+    ".annotator-editor-controls button.annotator-editor-save   click": "submitEditor"
+    ".annotator-editor-controls button.annotator-editor-cancel click": "hideEditor"
     ".annotator-ann-controls .edit click": "controlEditClick"
     ".annotator-ann-controls .del click":  "controlDeleteClick"
 
@@ -32,15 +35,20 @@ class Annotator extends Delegator
     "mousedown": "checkForStartSelection"
 
   dom:
-    adder:       "<div><a href='#'></a></div>"
-    editor:      """
-                 <div>
-                   <textarea></textarea>
-                   <input type='submit' cl>
-                 </div>
-                 """
-    hl:     "<span></span>"
-    viewer:      "<div></div>"
+    adder:  "<div class='annotator-adder'><a href='#'></a></div>"
+    editor: """
+            <div class='annotator-editor'>
+              <form>
+                <textarea></textarea>
+                <div class='annotator-editor-controls'>
+                  <button type='submit' class='annotator-editor-save'>Save</button>
+                  <button type='submit' class='annotator-editor-cancel'>Cancel</button>
+                </div>
+              <form>
+            </div>
+            """
+    hl:     "<span class='annotator-hl'></span>"
+    viewer: "<div class='annotator-viewer'></div>"
 
   options: {} # Configuration options
 
@@ -58,7 +66,6 @@ class Annotator extends Delegator
     # Create model dom elements
     for name, src of @dom
       @dom[name] = $(src)
-        .addClass("annotator-#{name}")
         .hide()
         .appendTo(@wrapper)
 
@@ -193,23 +200,33 @@ class Annotator extends Delegator
     .find('textarea')
       .val('')
 
+    $(@element).trigger('annotationEditorHidden', [@dom.editor])
+
   processEditorKeypress: (e) =>
     if e.keyCode is 27 # "Escape" key => abort.
       this.hideEditor()
-
     else if e.keyCode is 13 && !e.shiftKey
       # If "return" was pressed without the shift key, we're done.
       this.submitEditor()
-      this.hideEditor()
 
-  submitEditor: ->
+  submitEditor: (e) =>
     textarea = @dom.editor.find('textarea')
     annotation = @dom.editor.data('annotation')
 
-    if annotation
-      this.updateAnnotation(annotation, { text: textarea.val() })
+    if not annotation
+      create = true
+      annotation = {}
+
+    $(@element).trigger('annotationEditorSubmit', [@dom.editor, annotation])
+
+    if create
+      annotation.text = textarea.val()
+      this.createAnnotation(annotation)
     else
-      this.createAnnotation({ text: textarea.val() })
+      this.updateAnnotation(annotation, { text: textarea.val() })
+
+    this.hideEditor()
+    false # Don't actually submit the form.
 
   showViewer: (e, annotations) =>
     controlsHTML = """

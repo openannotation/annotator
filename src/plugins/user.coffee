@@ -24,5 +24,5 @@ class Annotator.Plugins.User extends Delegator
 
     for d in annDivs
       user = $(d).data('annotation').user
-      if (user)
+      if user
         @options.display(d, user)

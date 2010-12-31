@@ -1,3 +1,5 @@
+/* @override http://localhost:5000/static/css/annotator.css */
+
 .annotator-wrapper {
   position: relative;
 }
@@ -19,40 +21,65 @@
   background: rgba(255, 255, 10, 0.3);
 }
 
-.annotator-hl .hover {
-  border: 2px solid #f00;
-}
-
-.annotator-editor {
+.annotator-editor, .annotator-viewer {
   position: absolute;
-  width: 15em;
-  height: auto;
-  opacity: 0.95;
-}
-
-.annot-editor textarea {
-  background: #fdf5d8;
-  border: 1px solid #e1be94;
+  border-radius: 0.3em;
   -moz-border-radius: 0.3em;
   -webkit-border-radius: 0.3em;
-  margin: 0;
-  padding: 0.4em;
+  height: auto;
+  width: 15em;
+  line-height: 16px;
+  background: rgba(253, 245, 216, 0.95);
+  border: 1px solid rgb(225, 190, 148);
+  margin: 1px 0 0 0;
+  padding: 0.2em;
+}
+
+.annotator-editor textarea {
+  background: transparent;
+  margin: 1px 0 0 0;
+  padding: 0;
+  border: none;
   width: 100%;
-  height: 100%;
+}
+
+.annotator-editor .annotator-editor-controls {
+  float: right;
+}
+
+.annotator-editor .annotator-editor-controls button {
+  opacity: 0.5;
+  border: 1px solid transparent;
+  margin: 0;
+  line-height: 16px;
+  padding: 0 0 0 18px;
+  background: transparent none no-repeat top left;
+}
+
+.annotator-editor .annotator-editor-controls button:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.annotator-editor .annotator-editor-controls button.annotator-editor-save {
+  background-image: url(../img/accept.png);
+}
+
+.annotator-editor .annotator-editor-controls button.annotator-editor-cancel {
+  background-image: url(../img/cancel.png);
+}
+
+.annotator-editor input.annotator-editor-tags {
+  font-size: 0.6em;
+  width: 24.8em;
+  padding: 0;
+  margin-bottom: 0.4em;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid #ccc;
 }
 
 .annotator-viewer {
-  position: absolute;
-  width: 15em;
-  height: auto;
-  opacity: 0.95;
-  background: #fdf5d8;
-  border: 1px solid #e1be94;
-  -moz-border-radius: 0.3em;
-  -webkit-border-radius: 0.3em;
-  margin: 2px 0 0 2px;
   padding: 0.2em 0.4em 0.4em 0.4em;
-  line-height: 16px;
 }
 
 .annotator-viewer .annotator-ann {

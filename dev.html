@@ -16,6 +16,7 @@
     <script src="lib/plugins/store.js"></script>
     <script src="lib/plugins/user.js"></script>
     <script src="lib/plugins/auth.js"></script>
+    <script src="lib/plugins/tags.js"></script>
 
     <link rel="stylesheet" type="text/css" href="css/annotator.css">
   </head>
@@ -58,8 +59,8 @@
       jQuery(function ($) {
         var elem = document.getElementById('airlock');
 
-        devAnnotator = new Annotator(elem);
-        devAnnotator.addPlugin('Store');
+        devAnnotator = new Annotator(elem)
+          .addPlugin('Store');
       });
     </script>
   </body>
