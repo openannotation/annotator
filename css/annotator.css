@@ -1,133 +1,133 @@
 /* @override http://localhost:5000/static/css/annotator.css */
 
 .annotator-wrapper {
-  position: relative;
+	position: relative;
 }
 
 .annotator-adder a {
-  display: block;
-  width: 22px;
-  height: 22px;
-  background: transparent url(../img/note.png) no-repeat left top;
+	display: block;
+	width: 22px;
+	height: 22px;
+	background: transparent url(../img/note.png) no-repeat left top;
 }
 
 .annotator-adder {
-  position: absolute;
-  display: none;
-  margin: -25px 0 0 3px;
+	position: absolute;
+	display: none;
+	margin: -25px 0 0 3px;
 }
 
 .annotator-hl {
-  background: rgba(255, 255, 10, 0.3);
+	background: rgba(255, 255, 10, 0.3);
 }
 
 .annotator-editor, .annotator-viewer {
-  position: absolute;
-  border-radius: 0.3em;
-  -moz-border-radius: 0.3em;
-  -webkit-border-radius: 0.3em;
-  height: auto;
-  width: 15em;
-  line-height: 16px;
-  background: rgba(253, 245, 216, 0.95);
-  border: 1px solid rgb(225, 190, 148);
-  margin: 1px 0 0 0;
-  padding: 0.2em;
+	position: absolute;
+	border-radius: 0.3em;
+	-moz-border-radius: 0.3em;
+	-webkit-border-radius: 0.3em;
+	height: auto;
+	width: 15em;
+	line-height: 16px;
+	background: rgba(253, 245, 216, 0.95);
+	border: 1px solid rgb(225, 190, 148);
+	margin: 1px 0 0 0;
+	padding: 0.2em;
 }
 
 .annotator-editor textarea {
-  background: transparent;
-  margin: 1px 0 0 0;
-  padding: 0;
-  border: none;
-  width: 100%;
+	background: transparent;
+	margin: 1px 0 0 0;
+	padding: 0;
+	border: none;
+	width: 100%;
 }
 
 .annotator-editor .annotator-editor-controls {
-  float: right;
+	float: right;
 }
 
 .annotator-editor .annotator-editor-controls button {
-  opacity: 0.5;
-  border: 1px solid transparent;
-  margin: 0;
-  line-height: 16px;
-  padding: 0 0 0 18px;
-  background: transparent none no-repeat top left;
+	opacity: 0.5;
+	border: 1px solid transparent;
+	margin: 0;
+	line-height: 16px;
+	padding: 0 0 0 18px;
+	background: transparent none no-repeat top left;
 }
 
 .annotator-editor .annotator-editor-controls button:hover {
-  opacity: 1;
-  cursor: pointer;
+	opacity: 1;
+	cursor: pointer;
 }
 
 .annotator-editor .annotator-editor-controls button.annotator-editor-save {
-  background-image: url(../img/accept.png);
+	background-image: url(../img/accept.png);
 }
 
 .annotator-editor .annotator-editor-controls button.annotator-editor-cancel {
-  background-image: url(../img/cancel.png);
+	background-image: url(../img/cancel.png);
 }
 
 .annotator-editor input.annotator-editor-tags {
-  font-size: 0.6em;
-  width: 24.8em;
-  padding: 0;
-  margin-bottom: 0.4em;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid #ccc;
+	font-size: 0.6em;
+	width: 24.8em;
+	padding: 0;
+	margin-bottom: 0.4em;
+	background: rgba(255, 255, 255, 0.8);
+	border: 1px solid #ccc;
 }
 
 .annotator-viewer {
-  padding: 0.2em 0.4em 0.4em 0.4em;
+	padding: 0.2em 0.4em 0.4em 0.4em;
 }
 
 .annotator-viewer .annotator-ann {
-  color: #333333;
-  font-family: helvetica;
-  font-size: 75%;
-  margin: 0.25em 0 0 0;
+	color: #333333;
+	font-family: helvetica;
+	font-size: 75%;
+	margin: 0.25em 0 0 0;
 }
 
 .annotator-viewer .annotator-ann + .annotator-ann {
-  border-top: 1px solid #E1BE94;
-  padding-top: 0.25em;
+	border-top: 1px solid #E1BE94;
+	padding-top: 0.25em;
 }
 
 .annotator-ann .annotator-ann-controls {
-  display: none;
-  float: right;
+	display: none;
+	float: right;
 }
 
 .annotator-viewer:hover .annotator-ann .annotator-ann-controls {
-  display: block;
+	display: block;
 }
 
 .annotator-ann .annotator-ann-controls a {
-  width: 16px;
-  height: 16px;
-  display: inline-block;
-  text-indent: -9999em
+	width: 16px;
+	height: 16px;
+	display: inline-block;
+	text-indent: -9999em
 }
 
 .annotator-ann .annotator-ann-controls a.edit {
-  background: transparent url(../img/edit.png) no-repeat top left;
+	background: transparent url(../img/edit.png) no-repeat top left;
 }
 
 .annotator-ann .annotator-ann-controls a.del {
-  background: transparent url(../img/delete.png) no-repeat top left;
+	background: transparent url(../img/delete.png) no-repeat top left;
 }
 
 .annotator-ann .annotator-ann-text p {
-  margin: 0;
+	margin: 0;
 }
 
 .annotator-ann .annotator-ann-text p + p {
-  margin: 0 0 0.25em 0;
+	margin: 0 0 0.25em 0;
 }
 
 .annotator-viewer .user {
-  display: block;
-  font-size: 0.8em;
-  opacity: 0.6;
+	display: block;
+	font-size: 0.8em;
+	opacity: 0.6;
 }
