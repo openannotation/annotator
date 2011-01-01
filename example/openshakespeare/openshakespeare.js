@@ -7,9 +7,7 @@ OpenShakespeare.Annotator = function (element) {
   this.currentUser = null
 
   this.options = {
-    user: {
-      display: function () { self.displayUser.apply(self, arguments) }
-    },
+    user: { },
 
     store: {
       prefix: 'http://localhost:5000/store'
@@ -18,27 +16,12 @@ OpenShakespeare.Annotator = function (element) {
 
   // Init
   ;(function () {
-     self.userPlugin = self.annotator.addPlugin("user", self.options.user)
-     self.storePlugin = self.annotator.addPlugin("store", self.options.store)
+     self.annotator.addPlugin("User", self.options.user)
+     self.annotator.addPlugin("Store", self.options.store)
   })()
 
   this.setCurrentUser = function (user) {
-    self.currentUser = user
-    self.storePlugin.options.annotationData.user = self.currentUser
-  }
-
-  this.displayUser = function (elem, user) {
-    // First, hide the controls for users other than the annotation's owner
-    var controls = $(elem).find('.annotator-ann-controls')
-
-    if (user === self.currentUser) {
-      controls.show()
-    } else {
-      controls.hide()
-    }
-
-    // Now, add the username to the annotation
-    $(elem).append('<span class="os-annot-username">' + user + '</span>')
+    self.annotator.plugins["User"].setUser(user)
   }
 
   return this

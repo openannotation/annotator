@@ -2,6 +2,7 @@ $ = jQuery
 
 class Annotator.Plugins.Tags extends Delegator
   events:
+    'annotationViewerShown':  'updateViewer'
     'annotationEditorShown':  'updateEditor'
     'annotationEditorHidden': 'clearEditor'
     'annotationEditorSubmit': 'setAnnotationTags'
@@ -32,3 +33,5 @@ class Annotator.Plugins.Tags extends Delegator
 
   stringifyTags: (array) ->
     array.join(" ")
+
+  updateViewer: ->

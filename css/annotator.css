@@ -126,8 +126,12 @@
 	margin: 0 0 0.25em 0;
 }
 
-.annotator-viewer .user {
+.annotator-ann .annotator-ann-user {
+	color: #888;
+	font-size: 10px;
+	line-height: 11px;
+	margin: 3px 0 0 0;
+	padding: 1px 0 0 12px;
+	background: transparent url(../img/icon_user.gif) no-repeat 0 0;
 	display: block;
-	font-size: 0.8em;
-	opacity: 0.6;
 }

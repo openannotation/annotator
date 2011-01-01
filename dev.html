@@ -60,7 +60,11 @@
         var elem = document.getElementById('airlock');
 
         devAnnotator = new Annotator(elem)
+          .addPlugin('Tags')
+          .addPlugin('User')
           .addPlugin('Store');
+
+				devAnnotator.plugins['User'].setUser('alice');
       });
     </script>
   </body>

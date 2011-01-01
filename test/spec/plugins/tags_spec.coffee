@@ -2,7 +2,7 @@ describe 'Annotator.Plugin.Tags', ->
   t = null
 
   beforeEach ->
-    el = $("<div><div class='annotator-editor-controls'></div>")[0]
+    el = $("<div><div class='annotator-editor-controls'></div></div>")[0]
     t = new Annotator.Plugins.Tags(el)
 
   it "should parse whitespace-delimited tags into an array", ->
@@ -46,3 +46,6 @@ describe 'Annotator.Plugin.Tags', ->
     $(t.element).trigger('annotationEditorHidden', [t.element, annotation])
 
     expect(tags.val()).toEqual('')
+
+  it "should show the tags on annotationViewerShown", ->
+

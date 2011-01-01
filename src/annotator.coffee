@@ -101,7 +101,7 @@ class Annotator extends Delegator
     @selection = util.getGlobal().getSelection()
     @selectedRanges = (@selection.getRangeAt(i) for i in [0...@selection.rangeCount])
 
-  createAnnotation: (annotation) ->
+  createAnnotation: (annotation, fireEvents=true) ->
     a = annotation
 
     a or= {}
@@ -117,8 +117,11 @@ class Annotator extends Delegator
 
     # Save the annotation data on each highlighter element.
     $(a.highlights).data('annotation', a)
-    # Fire annotationCreated event so that others can react to it.
-    $(@element).trigger('annotationCreated', [a])
+
+    # Fire annotationCreated events so that plugins can react to them.
+    if fireEvents
+      $(@element).trigger('beforeAnnotationCreated', [a])
+      $(@element).trigger('annotationCreated', [a])
 
     a
 
@@ -130,23 +133,22 @@ class Annotator extends Delegator
 
   updateAnnotation: (annotation, data) ->
     $.extend(annotation, data)
+    $(@element).trigger('beforeAnnotationUpdated', [annotation])
     $(@element).trigger('annotationUpdated', [annotation])
 
-  loadAnnotations: (annotations, callback) ->
+  loadAnnotations: (annotations) ->
     results = []
 
     loader = (annList) =>
       now = annList.splice(0,10)
 
       for n in now
-        results.push(this.createAnnotation(n))
+        results.push(this.createAnnotation(n, false)) # 'false' suppresses event firing
 
       # If there are more to do, do them after a 100ms break (for browser
       # responsiveness).
       if annList.length > 0
         setTimeout((-> loader(annList)), 100)
-      else
-        callback(results) if callback
 
     loader(annotations)
 
@@ -173,6 +175,7 @@ class Annotator extends Delegator
       if typeof klass is 'function'
         @plugins[name] = new klass(@element, options)
         @plugins[name].annotator = this
+        @plugins[name].pluginInit?()
       else
         console.error "Could not load #{name} plugin. Have you included the appropriate <script> tag?"
     this # allow chaining

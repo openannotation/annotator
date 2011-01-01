@@ -33,26 +33,17 @@ class Annotator.Plugins.Store extends Delegator
   constructor: (element, options) ->
     super
     this.addEvents()
-
     @annotations = []
 
-    # We can't bind the event handlers until the initial load is done, or
-    # we'd catch the annotationCreated events for our own load.
-    s = Store.__super__.constructor
-    callback = () =>
-      s.apply(this)
-
-    if not @options.autoFetch
-      callback()
-      return
-
-    getAnnotations = () =>
+  pluginInit: ->
+    getAnnotations = =>
       if @options.loadFromSearch
-        this.loadAnnotationsFromSearch(@options.loadFromSearch, callback)
+        this.loadAnnotationsFromSearch(@options.loadFromSearch)
       else
-        this.loadAnnotations(callback)
+        this.loadAnnotations()
 
     auth = $(@element).data('annotator:auth')
+
     if auth
       auth.withToken(getAnnotations)
     else
@@ -101,16 +92,16 @@ class Annotator.Plugins.Store extends Delegator
     # with ids from the server).
     $(annotation.highlights).data('annotation', annotation)
 
-  loadAnnotations: (callback) ->
+  loadAnnotations: () ->
     this._apiRequest('read', null, (data) =>
       @annotations = data.slice() # Clone array
-      @annotator.loadAnnotations(data, callback)
+      @annotator.loadAnnotations(data)
     )
 
-  loadAnnotationsFromSearch: (searchOptions, callback) ->
+  loadAnnotationsFromSearch: (searchOptions) ->
     this._apiRequest('search', searchOptions, (data) =>
       @annotations = data.results.slice() # Clone array
-      @annotator.loadAnnotations(data.results, callback)
+      @annotator.loadAnnotations(data.results)
     )
 
   ##

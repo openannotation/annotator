@@ -2,27 +2,35 @@ $ = jQuery
 
 class Annotator.Plugins.User extends Delegator
   events:
-    'annotationViewerShown': 'updateViewerWithUsers'
-
-  options:
-    # Define how to display the 'user' property of the annotation. By
-    # default assumes the value is string-coerceable, so just returns the
-    # value. If the user property were an object in and of itself, this
-    # could, for example, return u.name, or u.getName(), etc.
-    #
-    # @param elem The element representing the annotation.
-    # @param user The value of the relevant annotation's "user" property.
-    display: (elem, user) ->
-      $(elem).append("<span class='user'>&ndash; #{user}</span>")
+    'beforeAnnotationCreated': 'addUserToAnnotation'
+    'annotationViewerShown': 'updateViewer'
 
   constructor: (element, options) ->
     super
     this.addEvents()
 
-  updateViewerWithUsers: (e, viewerElement, annotations) ->
-    annDivs = $(viewerElement).find('div')
+  setUser: (userid) ->
+    @user = userid
 
-    for d in annDivs
-      user = $(d).data('annotation').user
+  addUserToAnnotation: (e, annotation) =>
+    if @user and annotation
+      annotation.user = @user
+
+  updateViewer: (e, viewerElement, annotations) =>
+    annElements = $(viewerElement).find('.annotator-ann')
+
+    for i in [0...annElements.length]
+      user       = annotations[i].user
+      $controlEl = annElements.eq(i).find('.annotator-ann-controls')
+      $textEl    = annElements.eq(i).find('.annotator-ann-text')
+
       if user
-        @options.display(d, user)
+        $("<div class='annotator-ann-user'>#{user}</div>").insertAfter($textEl)
+
+        if @user and @user != user
+          $controlEl.hide()
+        else
+          $controlEl.show()
+
+      else
+          $controlEl.show()
