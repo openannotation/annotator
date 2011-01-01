@@ -12,7 +12,6 @@ FIXTURES_DIR = ROOT_DIR + '/test/fixtures'
 s = new Sandbox(ROOT_DIR)
 
 s.require('lib/vendor/jquery.js')
-s.require 'lib/vendor/underscore.js'
 s.require 'lib/vendor/json2.js'
 s.require 'lib/vendor/showdown.js'
 
@@ -26,9 +25,6 @@ s.require 'lib/vendor/jasmine-jquery.js'
 
 # Patch in a vendor XPath implementation until jsdom has one
 s.require 'lib/vendor/xpath.js'
-
-# Sneaky hack to provide Node.ELEMENT_NODE
-s.window.Node or= s.window.document.createElement('span')
 
 # In a word: aaarrgrgh.
 s.window.getSelection = -> "Node selection"

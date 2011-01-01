@@ -1,6 +1,6 @@
 $ = jQuery
 
-describe 'jQuery.fn.textnodes()', ->
+describe 'jQuery.fn.textNodes()', ->
   $fix = null
 
   beforeEach ->
@@ -10,12 +10,21 @@ describe 'jQuery.fn.textnodes()', ->
   afterEach -> clearFixtures()
 
   it "returns an element's textNode descendants", ->
-    textNodes = $fix.textNodes()
-    allText = _.inject(textNodes, (acc, node) ->
-      acc + node.nodeValue
-    , "").replace(/\s+/g, ' ')
+    nodes = $fix.textNodes()
+    text = (node.nodeValue for node in nodes)
 
-    expect(allText).toEqual(' lorem ipsum dolor sit dolor sit amet. humpty dumpty. etc.')
+    expectation = [ '\n  '
+                  , 'lorem ipsum'
+                  , '\n  '
+                  , 'dolor sit'
+                  , '\n'
+                  , '\n'
+                  , 'dolor sit '
+                  , 'amet'
+                  , '. humpty dumpty. etc.'
+                  ]
+
+    expect(text).toEqual(expectation)
 
 describe 'jQuery.fn.xpath()', ->
   $fix = null

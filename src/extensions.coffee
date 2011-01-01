@@ -1,20 +1,33 @@
 $ = jQuery
 
+Array::flatten = ->
+  flatten = (ary) ->
+    flat = []
+
+    for el in ary
+      flat = flat.concat(if el and $.isArray(el) then flatten(el) else el)
+
+    return flat
+
+  flatten(this)
+
 $.fn.textNodes = ->
   getTextNodes = (node) ->
-    if node.nodeType isnt Node.TEXT_NODE
-      $(node).contents().map(-> getTextNodes(this)).get()
+    # textNode nodeType == 3
+    if node and node.nodeType != 3
+      return (getTextNodes(n) for n in $(node).contents().get())
     else
-      node
+      return node
 
-  this.map -> _.flatten(getTextNodes(this))
+  this.map -> getTextNodes(this).flatten()
 
 $.fn.xpath = (relativeRoot) ->
   jq = this.map ->
     path = ''
     elem = this
 
-    while elem?.nodeType == Node.ELEMENT_NODE and elem isnt relativeRoot
+    # elementNode nodeType == 1
+    while elem and elem.nodeType == 1 and elem isnt relativeRoot
       idx = $(elem.parentNode).children(elem.tagName).index(elem) + 1
 
       idx  =  if idx > 1 then "[#{idx}]" else ""

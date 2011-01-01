@@ -44,14 +44,16 @@ class Range.BrowserRange
       node = this[p + 'Container']
       offset = this[p + 'Offset']
 
-      if node.nodeType is Node.ELEMENT_NODE
+      # elementNode nodeType == 1
+      if node.nodeType is 1
         # Get specified node.
         it = node.childNodes[offset]
         # If it doesn't exist, that means we need the end of the
         # previous one.
         node = it or node.childNodes[offset - 1]
 
-        while node.nodeType isnt Node.TEXT_NODE
+        # textNode nodeType == 3
+        while node.nodeType isnt 3
           node = node.firstChild
 
         offset = if it then 0 else node.nodeValue.length
@@ -72,7 +74,8 @@ class Range.BrowserRange
 
     # Make sure the common ancestor is an element node.
     nr.commonAncestor = @commonAncestorContainer
-    while nr.commonAncestor.nodeType isnt Node.ELEMENT_NODE
+    # elementNode nodeType == 1
+    while nr.commonAncestor.nodeType isnt 1
       nr.commonAncestor = nr.commonAncestor.parentNode
 
     new Range.NormalizedRange(nr)
@@ -111,7 +114,9 @@ class Range.NormalizedRange
       # preceding textNode siblings. We include the length of the
       # node if it's the end node.
       nodes = textNodes.slice(0, textNodes.index(node))
-      offset = _(nodes).reduce ((acc, tn) -> acc + tn.nodeValue.length), 0
+      offset = 0
+      for n in nodes
+        offset += n.nodeValue.length
 
       if isEnd then [xpath, offset + node.nodeValue.length] else [xpath, offset]
 

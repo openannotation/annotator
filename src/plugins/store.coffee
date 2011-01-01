@@ -107,9 +107,7 @@ class Annotator.Plugins.Store extends Delegator
   ##
   # Dump an array of serialized annotations
   dumpAnnotations: ->
-    _.map(@annotations, (ann) =>
-      JSON.parse(this._dataFor(ann))
-    )
+    (JSON.parse(this._dataFor(ann)) for ann in @annotations)
 
   ##
   # Make a request to the Annotator Store API
