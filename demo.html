@@ -4,11 +4,41 @@
     <meta charset="utf-8">
     <title>JS annotation test</title>
 
-    <!-- jQuery must be included before Annotator -->
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+    <!-- jQuery and Underscore must be included before Annotator -->
+    <script src="lib/vendor/jquery.js"></script>
+    <script src="lib/vendor/underscore.js"></script>
 
+    <!-- If you're sure your users will only be using browsers modern
+         enough to have their own JSON.parse and JSON.stringify
+         implementations you can skip this -->
+    <script src="lib/vendor/json2.js"></script>
+
+    <!-- The main Annotator script -->
     <script src="pkg/annotator.min.js"></script>
+
+    <!-- Annotator's styling and images -->
     <link rel="stylesheet" type="text/css" href="pkg/annotator.min.css">
+
+    <!-- The following plugins are entirely optional -->
+
+    <!-- The Store plugin. Saves annotations to a remote backend -->
+    <script src="pkg/annotator.store.min.js"></script>
+
+    <!-- The Auth plugin. Allows users of Annotator to authenticate themselves
+         to the remote backend -->
+    <script src="pkg/annotator.auth.min.js"></script>
+
+    <!-- The User plugin. See who created which annotation and create
+         annotations as a specified user -->
+    <script src="pkg/annotator.user.min.js"></script>
+
+    <!-- The Tags plugin. Edit and display tag keywords on annotations -->
+    <script src="pkg/annotator.tags.min.js"></script>
+
+    <!-- The Markdown plugin. Treat annotation text as Markdown -->
+    <script src="lib/vendor/showdown.js"></script>
+    <script src="pkg/annotator.markdown.min.js"></script>
+
   </head>
 
   <body>
@@ -51,7 +81,14 @@
                 "Either download a tagged release from GitHub, or modify the Rakefile to point " +
                 "at your copy of the YUI compressor and run `rake package`.");
         } else {
-          $('#airlock').annotator();
+          // This is the important bit: how to create the annotator and add
+          // plugins
+          $('#airlock').annotator()
+                       .annotator('addPlugin', 'User')
+                       .annotator('addPlugin', 'Markdown')
+                       .annotator('addPlugin', 'Tags');
+
+          $('#airlock').data('annotator').plugins['User'].setUser("Joe Bloggs");
         }
       });
     </script>

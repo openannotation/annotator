@@ -1,3 +1,12 @@
+unless jQuery?.fn?.jquery
+  console.error("Annotator requires jQuery: have you included lib/vendor/jquery.js?")
+
+unless _?.VERSION
+  console.error("Annotator requires Underscore.js: have you included lib/vendor/underscore.js?")
+
+unless JSON and JSON.parse and JSON.stringify
+  console.error("Annotator requires a JSON implementation: have you included lib/vendor/json2.js?")
+
 $ = jQuery
 
 class Delegator

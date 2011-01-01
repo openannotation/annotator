@@ -6,6 +6,9 @@
 
 $ = jQuery
 
+unless JSON and JSON.parse and JSON.stringify
+  console.error("Annotator requires JSON support: have you included lib/vendor/json2.js?")
+
 util =
   getGlobal: -> (-> this)()
 

@@ -1,32 +1,22 @@
-require 'open-uri'
-require 'jasmine'
-load 'jasmine/tasks/jasmine.rake'
+SRC =         ['console',
+               'class',
+               'extensions',
+               'range',
+               'annotator'].map { |x| "src/#{x}.coffee" }
 
-YCPATH = ENV['YCPATH'] ||
-         ENV['HOME'] + '/local/package/yui/yuicompressor-latest.jar'
+SRC_PLUGINS = ['auth',
+               'markdown',
+               'store',
+               'tags',
+               'user'].map { |x| "src/plugins/#{x}.coffee" }
 
-SRC = ['vendor/jquery.pluginfactory',
-       'vendor/jquery.sji',
-       'vendor/jquery.json',
-       'extensions',
-       'annotator',
-       'plugins/store',
-       'plugins/user'].map { |x| "src/#{x}.js" }
-
-CSS = ['annotator'].map { |x| "src/#{x}.css" }
-
-task :default => :jspec
-
-desc "Run JSpec tests"
-task :jspec do
-  sh "jspec run"
-end
+CSS = ['annotator'].map { |x| "css/#{x}.css" }
 
 desc "Build packaged annotator"
-task :package => ['pkg/annotator.min.js', 'pkg/annotator.min.css']
+task :package => ['pkg/annotator.min.js', 'pkg/annotator.min.css', :plugins]
 
 file 'pkg/annotator.min.js' => SRC do |t|
-  concat(t.prerequisites, t.name)
+  coffee_concat(t.prerequisites, t.name)
   yui_compressor(t.name)
 end
 
@@ -36,9 +26,19 @@ file 'pkg/annotator.min.css' => CSS do |t|
   yui_compressor(t.name)
 end
 
+task :plugins => SRC_PLUGINS do |t|
+  t.prerequisites.each do |plugin|
+    plugin_name = File.basename(plugin, ".coffee")
+    outfile = "pkg/annotator.#{plugin_name}.min.js"
+
+    coffee_concat([plugin], outfile)
+    yui_compressor(outfile)
+  end
+end
+
 desc "Make a release tag"
 task :release => :package do |t|
-  abort "Specify a tag: `TAG=0.1 rake release`" unless ENV['TAG']
+  abort "Specify a tag: `TAG=v0.0.1 rake release`" unless ENV['TAG']
   tag = ENV['TAG'].strip
 
   system "git diff-index --quiet --cached HEAD && git diff-files --quiet && git ls-files --others --exclude-standard"
@@ -60,6 +60,13 @@ desc "Clobber package files"
 task :clobber do
   rm 'pkg/annotator.min.js'
   rm 'pkg/annotator.min.css'
+  SRC_PLUGINS.each do |p|
+    rm "pkg/annotator.#{File.basename(p, ".coffee")}.min.js"
+  end
+end
+
+def coffee_concat(srclist, outfile)
+  sh "coffee -jp #{srclist.join ' '} > #{outfile}"
 end
 
 def concat(srclist, outfile)
@@ -72,7 +79,7 @@ def concat(srclist, outfile)
 end
 
 def yui_compressor(file)
-  sh "java -jar #{YCPATH} -o #{file} #{file}"
+  sh "yuicompressor -o #{file} #{file}"
   puts "Compressed #{file}"
 end
 
