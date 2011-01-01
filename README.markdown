@@ -1,74 +1,109 @@
 Annotator
 =========
 
-A wee playground to see what can be done with a Javascript annotation system.
-You should be able to create an Annotator on an element (or the whole page) as
-simply as $('#content').annotator(). See demo.html for an example.
+Annotator is a web annotation system. Loaded into a webpage, it provides the user with tools to annotate text (and other elements) in the page. For a simple demonstration, [download a tagged release of Annotator][dl] and open `demo.html`.
 
-Separately from the annotator (which will simply create annotations in the
-page and allow you to read their contents) you can also create an annotation
-"Store" which will listen to the Annotator and will save/restore your
-annotations across page loads via a RESTful HTTP interface.
+[dl]: javascript:void($('#download_button').click())
+
+The Annotator project also has a simple but powerful plugin architecture. While the core annotator code does the bare minimum, it is easily extended with plugins that perform such tasks as:
+
+- serialization: the `Store` plugin saves all your annotations to a REST API backend
+- authentication and authorization: the `Auth` and `User` plugins allow you to decouple the storage of your annotations from the website on which the annotation happens. In practice, this means that users could edit pages across the web, with all their annotations being saved to one server.
+- prettification: the `Markdown` plugin renders all annotation text as [Markdown][md]
+- tagging: the `Tags` plugin allows you to tag individual annotations
+
+[md]: http://daringfireball.net/projects/markdown/
 
 Usage
 -----
 
-To use the annotator, it's easiest to download a tagged release of the annotator from http://github.com/nickstenning/annotator/downloads. You need to make the contents of the pkg/ directory available from the web and include the Javascript and CSS files as below.
+To use Annotator, it's easiest to [download a tagged release][dl]. These can be found either by clicking on the preceding link (if you're viewing this file on Github) or by going to <https://github.com/nickstenning/annotator/downloads>.
 
-(NB: the pkg/ directory will be empty unless you've downloaded a tagged release as suggested.)
+In a tagged release, the `pkg/` directory will contain all the files you need to get going. The most important are `annotator.min.js`, which contains the core Annotator code, and `annotator.min.css`, which contains all the CSS and embedded images for the annotator.
 
-You'll probably also want to set up some kind of back end that can save and
-load your annotations to a database. An example of a page that talks to such a
-backend might look like:
+Annotator requires [jQuery][$] and [an implementation][json2] of `JSON.parse` and `JSON.stringify`. In short, the quickest way to get going with annotator is to include the following in the `<head>` of your document (paths relative to the repository root):
 
-    <html>
-      <head>
-        <link rel="stylesheet" src="jsannotator.min.css">
-        <script src="jsannotator.min.js"></script>
-      </head>
-      <body>
-        <p>Lorem ipsum dolor sit .....</p>
+    <script src='lib/vendor/jquery.js'></script>
+    <script src='lib/vendor/json2.js'></script>
 
-        <script>
-          jQuery(function($) {
-            $('p').annotator()
-                  .annotator('addPlugin', 'store');
-          });
-        </script>
-      </body>
-    </html>
+    <script src='pkg/annotator.min.js'></script>
+    <link rel='stylesheet' href='pkg/annotator.min.css'>
 
-An example Sinatra [http://www.sinatrarb.com] backend (which doesn't actually
-save the annotations to disk) can be found in examples/.
+[$]: http://jquery.com/
+[json2]: https://github.com/douglascrockford/JSON-js/blob/master/json2.js
+
+You can then initialize Annotator for the whole document by including the following at the end of the `<body>` tag:
+
+    <script>
+      $(document.body).annotator()
+    </script>
+
+See `demo.html` for an example how to load and interact with plugins.
+
+Writing Plugins
+---------------
+
+As mentioned, Annotator has a simple but powerful plugin architecture. In order to write your own plugin, you need only add your plugin to the Annotator.Plugins object, ensuring that the first argument to the constructor is a DOM Element, and the second is an "options" object. Below is a simple Hello World plugin:
+
+    Annotator.Plugins.HelloWorld = (function() {
+
+      function HelloWorld(element, options) {
+        this.element = element;
+        this.options = options;
+        console.log("Hello World!");
+      }
+
+      HelloWorld.prototype.pluginInit = function() {
+        return console.log("Initialized with annotator: ", this.annotator);
+      };
+
+      return HelloWorld;
+    })();
+
+Other than the constructor, the only "special" method is `pluginInit`, which is called after the Annotator has constructed the plugin, and set `pluginInstance.annotator` to itself. In order to load this plugin into an existing annotator, you would call `addPlugin("HelloWorld")`. For example:
+
+    $(document.body).annotator()
+                    .annotator('addPlugin', 'HelloWorld')
+
+Look at the existing plugins to get a feel for how they work. The Markdown plugin is a good place to start.
+
+Useful events are triggered on the Annotator `element` (passed to the constructor of the plugin):
+
+- `beforeAnnotationCreated(event, annotation)`: called immediately before an annotation is created. If you need to modify the annotation before it is saved to the server by the Store plugin, use this event.
+- `annotationCreated(event, annotation)`: called when the annotation is created. Used by the Store plugin to save new annotations.
+- `beforeAnnotationUpdated(event, annotation)`: as above, but just before an existing annotation is saved.
+- `annotationUpdated(event, annotation)`: as above, but for an existing annotation which has just been edited.
+- `annotationDeleted(event, annotation)`: called when the user deletes an annotation.
+- `annotationEditorShown(event, editorElement, annotation)`: called when the annotation editor is presented to the user. Allows a plugin to add extra form fields. See the Tags plugin for an example of its use.
+- `annotationEditorHidden(event, editorElement)`: called when the annotation editor is hidden, both when submitted and when editing is cancelled.
+- `annotationEditorSubmit(event, editorElement, annotation)`: called when the annotation editor is submitted.
 
 Development
 -----------
 
-The specs can be found in spec/, and are most easily run by opening
-spec/spec.dom.html in a browser.
+If you wish to develop annotator, you'll need to have a working installation of [Node.js][node]. I'd highly recommend installing both Node.js and the [Node Package Manager][npm], after which you can run the following to get up and running:
 
-Annotation format
------------------
+    npm install coffee-script@1.0.0 jsdom@0.1.21
 
-The annotator stores annotations internally as objects like the following.
+If that worked, you should be able to run the tests:
 
-    { id: 1,
-      text: "My annotation",
-      ranges: [
-        { start: "/html/body/div/p[2]",
-          startOffset: 32,
-          end: "/html/body/div/p[3]",
-          endOffset: 47
-        },
-        { start: "/html/...", ... }
-      ]
-    }
+    $ cake test
+    Started
+    .....................................................
 
-Note that an annotation can in theory be associated with multiple ranges, i.e.
-one object will create multiple distinct highlighted areas. Multi-range
-selection *is* possible in some browsers (try holding down Ctrl or Cmd), and
-should 'just work'. If it doesn't work for you I'd be interested in hearing
-about that.
+    Finished in 0.385 seconds
+    18 tests, 85 assertions, 0 failures
 
-You can call `#loadAnnotations(array)` on an instantiated annotator and the
-annotations will be added to the page.
+The `cake` command is provided by CoffeeScript. Note that *some* tests may fail, due to brokenness in jsdom. There should be a note at the end of the output for that command informing you if we're expecting any tests to fail. The reason we don't simply comment these tests out until jsdom is fixed is that the tests can also be run by opening `test/runner.html` in a browser.
+
+[node]: http://nodejs.org
+[coffee]: http://jashkenas.github.com/coffee-script/
+[npm]: http://npmjs.org
+
+The Annotator source is found in `src/`, and is written in CoffeeScript, which is a little language that compiles to Javascript. See the [CoffeeScript website][coffee] for more information. For ease of development, you can run a watcher that will notice any changes you make in `src/` and compile them into `lib/`.
+
+`dev.html` loads the raw development files from `lib/` and can be useful when developing.
+
+The tests are to be found in `test/spec/`, and use [Jasmine][jas] to support a BDD process.
+
+[jas]: http://pivotal.github.com/jasmine/
