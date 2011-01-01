@@ -111,7 +111,7 @@ class Annotator extends Delegator
     a.ranges = for r in a.ranges
       sniffed    = Range.sniff(r)
       normed     = sniffed.normalize(@wrapper)
-      serialized = sniffed.serialize(@wrapper, '.annotator-hl')
+      serialized = normed.serialize(@wrapper, '.annotator-hl')
 
     a.highlights = this.highlightRange(normed)
 

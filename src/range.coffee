@@ -31,6 +31,12 @@ class Range.BrowserRange
   #
   # This will return an instance of Range.NormalizedRange
   normalize: (root) ->
+    if @tainted
+      console.error("You may only call normalize() once on a BrowserRange!")
+      return false
+    else
+      @tainted = true
+
     r = {}
     nr = {}
 
