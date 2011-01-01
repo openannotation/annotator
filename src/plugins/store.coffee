@@ -119,8 +119,9 @@ class Annotator.Plugins.Store extends Delegator
     # set request headers before send
     onBeforeSend = (xhr) =>
       headers = $(@element).data('annotator:headers')
-      for val, key in headers?
-        xhr.setRequestHeader(key, val)
+      if headers
+        for key, val of headers
+          xhr.setRequestHeader(key, val)
 
     # error handler
     onError = (xhr, status, errThrown) ->

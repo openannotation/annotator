@@ -27,7 +27,7 @@ class Annotator.Plugins.User extends Delegator
       if user
         $("<div class='annotator-ann-user'>#{user}</div>").insertAfter($textEl)
 
-        if @user and @user != user
+        if not @user or (@user != user)
           $controlEl.hide()
         else
           $controlEl.show()
