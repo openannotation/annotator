@@ -48,4 +48,8 @@ describe 'Annotator.Plugin.Tags', ->
     expect(tags.val()).toEqual('')
 
   it "should show the tags on annotationViewerShown", ->
-
+    annotations = [{ tags: ['foo', 'bar', 'baz'] }]
+    viewerEl = $("<div><div class='annotator-ann'><div class='annotator-ann-text'></div></div></div>")[0]
+    $(t.element).trigger('annotationViewerShown', [viewerEl, annotations])
+    tags = $(viewerEl).find('.annotator-ann-tags')
+    expect(tags.text()).toEqual('foo, bar, baz')

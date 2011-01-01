@@ -126,12 +126,20 @@
 	margin: 0 0 0.25em 0;
 }
 
-.annotator-ann .annotator-ann-user {
-	color: #888;
+.annotator-ann .annotator-ann-user, .annotator-ann .annotator-ann-tags {
+	opacity: 0.8;
 	font-size: 10px;
 	line-height: 11px;
 	margin: 3px 0 0 0;
 	padding: 1px 0 0 12px;
-	background: transparent url(../img/icon_user.png) no-repeat 0 0;
+	background: transparent none no-repeat 0 0;
 	display: block;
+}
+
+.annotator-ann .annotator-ann-user {
+	background-image: url(../img/mini_person.png);
+}
+
+.annotator-ann .annotator-ann-tags {
+	background-image: url(../img/mini_tag.png);
 }

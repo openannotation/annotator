@@ -34,4 +34,13 @@ class Annotator.Plugins.Tags extends Delegator
   stringifyTags: (array) ->
     array.join(" ")
 
-  updateViewer: ->
+  updateViewer: (e, viewerElement, annotations) ->
+    annElements = $(viewerElement).find('.annotator-ann')
+
+    for i in [0...annElements.length]
+      tags    = annotations[i].tags
+      tagStr  = tags?.join(", ")
+      $textEl = annElements.eq(i).find('.annotator-ann-text')
+
+      if tagStr and tagStr != ""
+        $("<div class='annotator-ann-tags'>#{tags.join(", ")}</div>").insertAfter($textEl)
