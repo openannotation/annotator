@@ -8,7 +8,7 @@ relay = (cmd, args, stdoutPrint=print, stderrPrint=debug) ->
   handle = spawn cmd, args
 
   handle.stdout.on 'data', (data) -> stdoutPrint(data) if data
-  handle.stderr.on 'data', (data) -> stdoutPrint(data) if data
+  handle.stderr.on 'data', (data) -> stderrPrint(data) if data
 
 noisyPrint = (data) ->
   print data
