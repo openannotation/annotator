@@ -55,7 +55,7 @@ As mentioned, Annotator has a simple but powerful plugin architecture. In order 
       }
 
       HelloWorld.prototype.pluginInit = function() {
-        return console.log("Initialized with annotator: ", this.annotator);
+        console.log("Initialized with annotator: ", this.annotator);
       };
 
       return HelloWorld;
