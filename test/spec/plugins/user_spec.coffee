@@ -157,12 +157,12 @@ describe 'Annotator.Plugin.User', ->
     it "should hide controls for users other than the current user", ->
       controlEls = $(el).find('.annotator-ann-controls')
 
-      expect(controlEls.eq(0)).toBeVisible()
-      expect(controlEls.eq(1)).toBeHidden()
+      expect(controlEls.eq(0).css('display')).not.toEqual('none')
+      expect(controlEls.eq(1).css('display')).toEqual('none')
 
     it "should show controls for annotations without a user", ->
       controlEls = $(el).find('.annotator-ann-controls')
-      expect(controlEls.eq(2)).toBeVisible()
+      expect(controlEls.eq(2).css('display')).not.toEqual('none')
 
   describe 'fine-grained use (user and permissions)', ->
     annotations = null
@@ -204,11 +204,11 @@ describe 'Annotator.Plugin.User', ->
     it "it should should allow editing if @user is authorised for the 'update' action", ->
       u.setUser('bob')
       $(el).trigger('annotationViewerShown', [el, annotations])
-
       editEls = $(el).find('.annotator-ann-controls .edit')
 
-      expect(editEls.eq(0)).toBeVisible()
-      expect(editEls.eq(1)).toBeVisible()
+      expect($(el).find('.annotator-ann-controls').css('display')).not.toEqual('none')
+      expect(editEls.eq(0).css('display')).not.toEqual('none')
+      expect(editEls.eq(1).css('display')).not.toEqual('none')
 
     it "it should should allow deleting if @user is authorised for the 'delete' action", ->
       u.setUser('bob')
@@ -216,5 +216,5 @@ describe 'Annotator.Plugin.User', ->
 
       deleteEls = $(el).find('.annotator-ann-controls .delete')
 
-      expect(deleteEls.eq(0)).toBeHidden()
-      expect(deleteEls.eq(1)).toBeVisible()
+      expect(deleteEls.eq(0).css('display')).toEqual('none')
+      expect(deleteEls.eq(1).css('display')).not.toEqual('none')
