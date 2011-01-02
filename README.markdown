@@ -44,9 +44,9 @@ See `demo.html` for an example how to load and interact with plugins.
 Writing Plugins
 ---------------
 
-As mentioned, Annotator has a simple but powerful plugin architecture. In order to write your own plugin, you need only add your plugin to the Annotator.Plugins object, ensuring that the first argument to the constructor is a DOM Element, and the second is an "options" object. Below is a simple Hello World plugin:
+As mentioned, Annotator has a simple but powerful plugin architecture. In order to write your own plugin, you need only add your plugin to the Annotator.Plugin object, ensuring that the first argument to the constructor is a DOM Element, and the second is an "options" object. Below is a simple Hello World plugin:
 
-    Annotator.Plugins.HelloWorld = (function() {
+    Annotator.Plugin.HelloWorld = (function() {
 
       function HelloWorld(element, options) {
         this.element = element;

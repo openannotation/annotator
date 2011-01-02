@@ -1,6 +1,6 @@
 $ = jQuery
 
-class Annotator.Plugins.User extends Delegator
+class Annotator.Plugin.User extends Annotator.Plugin
   events:
     'beforeAnnotationCreated': 'addUserToAnnotation'
     'annotationViewerShown': 'updateViewer'

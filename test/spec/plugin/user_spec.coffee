@@ -4,7 +4,7 @@ describe 'Annotator.Plugin.User', ->
 
   beforeEach ->
     el = $("<div class='annotator-viewer'></div>")[0]
-    u = new Annotator.Plugins.User(el)
+    u = new Annotator.Plugin.User(el)
 
   it "it should add the userId of the current user to newly created annotations on beforeAnnotationCreated", ->
     ann = {}

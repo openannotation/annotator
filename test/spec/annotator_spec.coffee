@@ -34,7 +34,7 @@ describe 'Annotator', ->
 
   describe "addPlugin", ->
 
-    Annotator.Plugins.Foo = -> this.name = "Bar"
+    Annotator.Plugin.Foo = -> this.name = "Bar"
 
     it "should add and instantiate a plugin of the specified name", ->
       a.addPlugin('Foo')

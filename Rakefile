@@ -8,7 +8,7 @@ SRC_PLUGINS = ['auth',
                'markdown',
                'store',
                'tags',
-               'user'].map { |x| "src/plugins/#{x}.coffee" }
+               'user'].map { |x| "src/plugin/#{x}.coffee" }
 
 CSS = ['annotator'].map { |x| "css/#{x}.css" }
 

@@ -2,13 +2,13 @@ Date::toISO8601String = DateToISO8601String
 
 $ = jQuery
 
-describe 'Annotator.Plugins.Auth', ->
+describe 'Annotator.Plugin.Auth', ->
   mock = null
   validToken = null
 
   mockAuth = (options) ->
     el = $('<div></div>')[0]
-    a = new Annotator.Plugins.Auth(el, options)
+    a = new Annotator.Plugin.Auth(el, options)
 
     {
       elem: el,
@@ -30,7 +30,7 @@ describe 'Annotator.Plugins.Auth', ->
     expect($(mock.elem).data('annotator:auth')).toBe(mock.auth)
 
   it "uses token supplied in options by default", ->
-    expect(mock.auth.token).toBe(validToken)
+    expect(mock.auth.token).toEqual(validToken)
 
   xit "makes an ajax request to tokenUrl to retrieve token otherwise"
 

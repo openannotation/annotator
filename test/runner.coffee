@@ -35,11 +35,11 @@ s.require 'lib/class.js'
 s.require 'lib/extensions.js'
 s.require 'lib/range.js'
 s.require 'lib/annotator.js'
-s.require 'lib/plugins/user.js'
-s.require 'lib/plugins/store.js'
-s.require 'lib/plugins/auth.js'
-s.require 'lib/plugins/markdown.js'
-s.require 'lib/plugins/tags.js'
+s.require 'lib/plugin/user.js'
+s.require 'lib/plugin/store.js'
+s.require 'lib/plugin/auth.js'
+s.require 'lib/plugin/markdown.js'
+s.require 'lib/plugin/tags.js'
 
 # List of spec files to require
 specFiles = specutil.getSpecFiles(SPEC_DIR)

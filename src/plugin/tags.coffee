@@ -1,6 +1,6 @@
 $ = jQuery
 
-class Annotator.Plugins.Tags extends Delegator
+class Annotator.Plugin.Tags extends Annotator.Plugin
   events:
     'annotationViewerShown':  'updateViewer'
     'annotationEditorShown':  'updateEditor'

@@ -1,6 +1,6 @@
 $ = jQuery
 
-describe 'Annotator.Plugins.Markdown', ->
+describe 'Annotator.Plugin.Markdown', ->
   el = null
   m = null
   input = 'Is **this** [Markdown](http://daringfireball.com)?'
@@ -9,7 +9,7 @@ describe 'Annotator.Plugins.Markdown', ->
   beforeEach ->
     el = $('<div><div class="annotator-ann-text">' + input + '</div></div>')[0]
     $(el).data('annotation', {text: input})
-    m = new Annotator.Plugins.Markdown(el)
+    m = new Annotator.Plugin.Markdown(el)
 
   it 'should process the annotation text as Markdown when an annotationViewerShown event is fired', ->
     text = $(el).find('.annotator-ann-text').html()

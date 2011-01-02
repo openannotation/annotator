@@ -174,7 +174,7 @@ class Annotator extends Delegator
     if @plugins[name]
       console.error "You cannot have more than one instance of any plugin."
     else
-      klass = Annotator.Plugins[name]
+      klass = Annotator.Plugin[name]
       if typeof klass is 'function'
         @plugins[name] = new klass(@element, options)
         @plugins[name].annotator = this
@@ -325,7 +325,11 @@ class Annotator extends Delegator
     false
 
 # Create namespace for Annotator plugins
-Annotator.Plugins = {}
+class Annotator.Plugin extends Delegator
+  constructor: (element, options) ->
+    super
+
+  pluginInit: ->
 
 # Create global access for Annotator
 $.plugin('annotator', Annotator)

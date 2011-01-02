@@ -1,6 +1,6 @@
 $ = jQuery
 
-class Annotator.Plugins.Store extends Delegator
+class Annotator.Plugin.Store extends Annotator.Plugin
   events:
     'annotationCreated': 'annotationCreated'
     'annotationDeleted': 'annotationDeleted'

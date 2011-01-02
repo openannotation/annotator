@@ -1,12 +1,12 @@
 $ = jQuery
 
-describe "Annotator.Plugins.Store", ->
+describe "Annotator.Plugin.Store", ->
   a = null
   el = null
 
   beforeEach ->
     el = $('<div></div>')[0]
-    a = new Annotator.Plugins.Store(el, {autoFetch: false})
+    a = new Annotator.Plugin.Store(el, {autoFetch: false})
 
   xit "should save an annotation on an annotationCreated event", ->
     mockAjax('store')
@@ -68,20 +68,20 @@ describe "Annotator.Plugins.Store", ->
       a.annotations = [{highlights: "abc"}, {highlights: [1,2,3]}]
       expect(a.dumpAnnotations()).toEqual([{}, {}])
 
-xdescribe "Annotator.Plugins.Store initialized with an empty backend", ->
+xdescribe "Annotator.Plugin.Store initialized with an empty backend", ->
   beforeEach ->
     el = $('<div></div>')[0]
     mock_request().and_return('[]', 'text/plain')
-    a = new Annotator.Plugins.Store(el)
+    a = new Annotator.Plugin.Store(el)
 
   it "should have no annotations", ->
     expect(a.annotations.length).toEqual(0)
 
-xdescribe "Annotator.Plugins.Store with annotations in backend store", ->
+xdescribe "Annotator.Plugin.Store with annotations in backend store", ->
   beforeEach ->
     el = $('<div></div>')[0]
     mock_request().and_return('[{"ranges":[],"text":"hello","id":1}]', 'text/plain')
-    a = new Annotator.Plugins.Store(el)
+    a = new Annotator.Plugin.Store(el)
 
   it "should load the annotations into its registry", ->
     expect(a.annotations).to(have_length, 1)

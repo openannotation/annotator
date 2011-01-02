@@ -3,7 +3,7 @@ describe 'Annotator.Plugin.Tags', ->
 
   beforeEach ->
     el = $("<div><div class='annotator-editor-controls'></div></div>")[0]
-    t = new Annotator.Plugins.Tags(el)
+    t = new Annotator.Plugin.Tags(el)
 
   it "should parse whitespace-delimited tags into an array", ->
     str = 'one two  three\tfourFive'

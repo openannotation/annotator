@@ -1,6 +1,6 @@
 $ = jQuery
 
-class Annotator.Plugins.Markdown extends Delegator
+class Annotator.Plugin.Markdown extends Annotator.Plugin
   events:
     'annotationViewerShown': 'updateViewer'
 

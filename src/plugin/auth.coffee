@@ -26,7 +26,7 @@ Date.prototype.setISO8601 = (string) ->
   this.setTime(Number(time))
   this
 
-class Annotator.Plugins.Auth extends Delegator
+class Annotator.Plugin.Auth extends Annotator.Plugin
   options:
     token: null
     tokenUrl: '/auth/token'
