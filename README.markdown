@@ -82,7 +82,7 @@ Useful events are triggered on the Annotator `element` (passed to the constructo
 Development
 -----------
 
-If you wish to develop annotator, you'll need to have a working installation of [Node.js][node]. I'd highly recommend installing both Node.js and the [Node Package Manager][npm], after which you can run the following to get up and running:
+If you wish to develop annotator, you'll need to have a working installation of [Node.js][node] (v0.2.x). I'd highly recommend installing both Node.js and the [Node Package Manager][npm], after which you can run the following to get up and running:
 
     npm install coffee-script@1.0.0 jsdom@0.1.21
 
