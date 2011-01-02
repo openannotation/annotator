@@ -12,43 +12,59 @@
   <script src="../lib/vendor/jasmine/jasmine-html.js"></script>
   <script src="../lib/vendor/jasmine-jquery.js"></script>
 
-  <!-- source files -->
-  <script src="../lib/console.js"></script>
-  <script src="../lib/class.js"></script>
-  <script src="../lib/extensions.js"></script>
-  <script src="../lib/range.js"></script>
-  <script src="../lib/annotator.js"></script>
-  <script src="../lib/plugins/store.js"></script>
-  <script src="../lib/plugins/user.js"></script>
-  <script src="../lib/plugins/auth.js"></script>
-  <script src="../lib/plugins/markdown.js"></script>
-  <script src="../lib/plugins/tags.js"></script>
-
-  <!-- spec helpers -->
-  <script type="text/coffeescript" src="spec_helper.coffee"></script>
-  <script type="text/coffeescript" src="ajax_fixtures.coffee"></script>
-
-  <!-- spec files -->
-  <script type="text/coffeescript" src="spec/class_spec.coffee"></script>
-  <script type="text/coffeescript" src="spec/extensions_spec.coffee"></script>
-  <script type="text/coffeescript" src="spec/range_spec.coffee"></script>
-  <script type="text/coffeescript" src="spec/annotator_spec.coffee"></script>
-  <script type="text/coffeescript" src="spec/plugins/store_spec.coffee"></script>
-  <script type="text/coffeescript" src="spec/plugins/user_spec.coffee"></script>
-  <script type="text/coffeescript" src="spec/plugins/auth_spec.coffee"></script>
-  <script type="text/coffeescript" src="spec/plugins/markdown_spec.coffee"></script>
-  <script type="text/coffeescript" src="spec/plugins/tags_spec.coffee"></script>
-
   <script type="text/coffeescript">
-    jasmine.getEnv().addReporter(new jasmine.TrivialReporter())
-    setTimeout((-> jasmine.getEnv().execute()), 100)
-  </script>
+    # source files
+    SRC = [
+      'console'
+      'class'
+      'extensions'
+      'range'
+      'annotator'
+      'plugins/store'
+      'plugins/user'
+      'plugins/auth'
+      'plugins/markdown'
+      'plugins/tags'
+    ]
 
-  <script src="../lib/vendor/coffee-script.js"></script>
+    # spec helpers
+    OTHER = [
+      'spec_helper'
+      'ajax_fixtures'
+    ]
+
+    $(window).bind 'load', ->
+      load = (i, callback) ->
+        if i < SRC.length
+          $.getScript "../lib/#{SRC[i]}.js", (-> load(i+1, callback))
+        else
+          callback?()
+
+      load 0, ->
+        for o in OTHER
+          coffee = $.ajax(
+            async: false
+            url: "#{o}.coffee"
+          ).responseText
+
+          CoffeeScript.run(coffee)
+
+        for s in SRC
+          ajax = $.ajax(
+            global: false
+            async: false
+            url: "spec/#{s}_spec.coffee"
+          )
+
+          if ajax.statusText == "OK"
+            CoffeeScript.run(ajax.responseText)
+
+        jasmine.getEnv().addReporter(new jasmine.TrivialReporter())
+        jasmine.getEnv().execute()
+  </script>
 </head>
 <body>
-
   <div id="fixtures" style="display: none"></div>
-
+  <script src="../lib/vendor/coffee-script.js"></script>
 </body>
 </html>
