@@ -10,7 +10,7 @@ class Delegator
   events: {}
 
   constructor: (element, options) ->
-    @options = $.extend(@options, options)
+    @options = $.extend(true, {}, @options, options)
     @element = element
 
   addEvents: ->

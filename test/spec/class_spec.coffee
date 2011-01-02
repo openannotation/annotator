@@ -5,6 +5,10 @@ class DelegatedExample extends Delegator
     'div click': 'pushA'
     'baz': 'pushB'
 
+  options:
+    foo: "bar"
+    bar: (a) -> a
+
   constructor: (elem) ->
     super
     @returns = []
@@ -25,6 +29,14 @@ describe 'Delegator', ->
     $fix = $(fix())
 
   afterEach -> clearFixtures()
+
+  describe "options", ->
+    it "should provide access to an options object", ->
+      expect(d.options.foo).toEqual("bar")
+      d.options.bar = (a) -> "<#{a}>"
+
+    it "should be unique to an instance", ->
+      expect(d.options.bar("hello")).toEqual("hello")
 
   describe "addEvent", ->
     it "adds an event for a selector", ->
