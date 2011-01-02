@@ -14,12 +14,12 @@ class Annotator.Plugins.User extends Delegator
     super
     this.addEvents()
 
-  setUser: (userid) ->
-    @user = userid
+  setUser: (user) ->
+    @user = user
 
   addUserToAnnotation: (e, annotation) =>
     if @user and annotation
-      annotation.user = @user
+      annotation.user = @options.userId(@user)
 
   authorise: (action, annotation) ->
     # Fine-grained authorization

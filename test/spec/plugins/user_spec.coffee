@@ -6,12 +6,19 @@ describe 'Annotator.Plugin.User', ->
     el = $("<div class='annotator-viewer'></div>")[0]
     u = new Annotator.Plugins.User(el)
 
-  it "it should add the current user to newly created annotations on beforeAnnotationCreated", ->
+  it "it should add the userId of the current user to newly created annotations on beforeAnnotationCreated", ->
     ann = {}
     $(el).trigger('beforeAnnotationCreated', [ann])
     expect(ann).toEqual({})
 
+    ann = {}
     u.setUser('alice')
+    $(el).trigger('beforeAnnotationCreated', [ann])
+    expect(ann).toEqual({user: 'alice'})
+
+    ann = {}
+    u.setUser({id: 'alice'})
+    u.options.userId = (user) -> user.id
     $(el).trigger('beforeAnnotationCreated', [ann])
     expect(ann).toEqual({user: 'alice'})
 
@@ -128,9 +135,6 @@ describe 'Annotator.Plugin.User', ->
   describe 'viewer update', ->
     beforeEach ->
       u.setUser('alice')
-      # Why aren't these getting reset?
-      u.options.userId = (user) -> user
-      u.options.userGroups = (user) -> ['public']
 
       annotations = [{user: 'alice'}, {user: 'bob'}, {}]
 
@@ -168,10 +172,6 @@ describe 'Annotator.Plugin.User', ->
     annotations = null
 
     beforeEach ->
-      # Why aren't these getting reset?
-      u.options.userId = (user) -> user
-      u.options.userGroups = (user) -> ['public']
-
       annotations = [
         {
           user: 'alice'
