@@ -8,7 +8,6 @@ jasmine.node = {}
 class jasmine.node.ConsoleReporter
   constructor: (@callback) ->
     @log = []
-    @columnCounter = 0
     @start = 0
     @elapsed = 0
     @colors = true
@@ -59,9 +58,6 @@ class jasmine.node.ConsoleReporter
       msg = if @colors then @ansi.red + 'F' + @ansi.none else 'F'
 
     sys.print(msg)
-    return if @columnCounter++ < 50
-    @columnCounter = 0
-    sys.print('\n')
 
   reportRunnerResults: (runner) ->
     @elapsed = (Number(new Date) - @start) / 1000
