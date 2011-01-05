@@ -6,12 +6,10 @@ jasmine = {}
 jasmine.node = {}
 
 class jasmine.node.ConsoleReporter
-  constructor: (@callback) ->
+  constructor: (@callback, @colors=true, @verbose=false) ->
     @log = []
     @start = 0
     @elapsed = 0
-    @colors = true
-    @verbose = false
     @ansi =
       green: '\033[32m'
       red: '\033[31m'
