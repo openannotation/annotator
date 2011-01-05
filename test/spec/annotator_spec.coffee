@@ -2,15 +2,9 @@ $ = jQuery
 
 describe 'Annotator', ->
   a = null
-  mockSelection = null
 
   beforeEach ->
-    addFixture('annotator')
-    a = new Annotator(fix(), {})
-
-  afterEach ->
-    delete a
-    clearFixtures()
+    a = new Annotator($('<div></div>')[0], {})
 
   it "loads selections from the window object on checkForSelection", ->
     if /Node\.js/.test(navigator.userAgent)

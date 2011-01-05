@@ -14,7 +14,7 @@ describe 'Range', ->
   mockSelection = null
 
   beforeEach ->
-    addFixture('annotator')
+    addFixture('range')
     mockSelection = (ii) -> new MockSelection(fix(), testData[ii])
 
   afterEach ->
@@ -69,8 +69,5 @@ describe 'Range', ->
 
         expect(textInNormedRange(norm)).toEqual(sel.expectation)
 
-    # FIXME: testData[5] fails due to an apparent bug in jsdom. Specifically, the
-    # textNode.splitText() method dumps half the result at the end of the container
-    # element, which rather fuggers things.
     for i in [0...testData.length]
       it "should parse test range #{i} (#{testData[i][5]})", testBrowserRange(i)
