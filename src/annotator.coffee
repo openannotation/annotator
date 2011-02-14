@@ -42,7 +42,7 @@ class Annotator extends Delegator
     editor: """
             <div class='annotator-editor'>
               <form>
-                <textarea></textarea>
+                <textarea rows='6' cols='30'></textarea>
                 <div class='annotator-editor-controls'>
                   <button type='submit' class='annotator-editor-save'>Save</button>
                   <button type='submit' class='annotator-editor-cancel'>Cancel</button>
