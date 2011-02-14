@@ -35,6 +35,11 @@
 	padding: 0.2em;
 }
 
+.annotator-editor input,
+.annotator-editor textarea {
+	display: block;
+}
+
 .annotator-editor textarea {
 	background: transparent;
 	margin: 1px 0 0 0;
