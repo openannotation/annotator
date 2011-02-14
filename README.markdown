@@ -84,7 +84,7 @@ Development
 
 If you wish to develop annotator, you'll need to have a working installation of [Node.js][node] (v0.2.x). I'd highly recommend installing both Node.js and the [Node Package Manager][npm], after which you can run the following to get up and running:
 
-    npm install coffee-script@1.0.0 jsdom@0.1.21
+    npm install coffee-script@1.0.0 jsdom@0.1.21 htmlparser@1.7.3
 
 If that worked, you should be able to run the tests:
 
