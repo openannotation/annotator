@@ -1,6 +1,11 @@
 # Stub the console when not available so that everything still works.
 
-functions = ["log", "debug", "info", "warn", "exception", "assert", "dir", "dirxml", "trace", "group", "groupEnd", "groupCollapsed", "time", "timeEnd", "profile", "profileEnd", "count", "clear", "table", "error", "notifyFirebug", "firebug", "userObjects"]
+functions = [
+  "log", "debug", "info", "warn", "exception", "assert", "dir", "dirxml",
+  "trace", "group", "groupEnd", "groupCollapsed", "time", "timeEnd", "profile",
+  "profileEnd", "count", "clear", "table", "error", "notifyFirebug", "firebug",
+  "userObjects"
+]
 
 if console?
   # Opera's console doesn't have a group function as of 2010-07-01

@@ -1,6 +1,6 @@
 $ = jQuery
 
-this.Range = {}
+Range = {}
 
 Range.sniff = (r) ->
   if r.commonAncestorContainer?

@@ -30,8 +30,6 @@ class Delegator
     else
       $(bindTo).bind event, closure
 
-this.Delegator = Delegator
-
 # PluginFactory. Make a jQuery plugin out of a Class.
 $.plugin = (name, object) ->
   # create a new plugin with the given name
