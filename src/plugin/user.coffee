@@ -1,5 +1,3 @@
-$ = jQuery
-
 class Annotator.Plugin.User extends Annotator.Plugin
   events:
     'beforeAnnotationCreated': 'addUserToAnnotation'

@@ -1,5 +1,3 @@
-$ = jQuery
-
 class Annotator.Plugin.Markdown extends Annotator.Plugin
   events:
     'annotationViewerShown': 'updateViewer'

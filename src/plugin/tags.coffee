@@ -1,5 +1,3 @@
-$ = jQuery
-
 class Annotator.Plugin.Tags extends Annotator.Plugin
   events:
     'annotationViewerShown':  'updateViewer'

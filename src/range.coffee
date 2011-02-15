@@ -1,5 +1,3 @@
-$ = jQuery
-
 Range = {}
 
 Range.sniff = (r) ->

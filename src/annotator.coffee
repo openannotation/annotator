@@ -4,11 +4,6 @@
 # I've removed any support for IE TextRange (see commit d7085bf2 for code)
 # for the moment, having no means of testing it.
 
-$ = jQuery
-
-unless JSON and JSON.parse and JSON.stringify
-  console.error("Annotator requires JSON support: have you included lib/vendor/json2.js?")
-
 util =
   getGlobal: -> (-> this)()
 

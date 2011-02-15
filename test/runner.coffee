@@ -31,8 +31,8 @@ s.window.getSelection = -> "Node selection"
 
 s.require 'test/spec_helper.coffee'
 
-s.require 'lib/class.js'
 s.require 'lib/extensions.js'
+s.require 'lib/class.js'
 s.require 'lib/range.js'
 s.require 'lib/annotator.js'
 s.require 'lib/plugin/user.js'

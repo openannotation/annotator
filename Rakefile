@@ -1,6 +1,6 @@
-SRC =         ['console',
+SRC =         ['extensions',
+               'console',
                'class',
-               'extensions',
                'range',
                'annotator'].map { |x| "src/#{x}.coffee" }
 

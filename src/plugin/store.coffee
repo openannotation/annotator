@@ -1,5 +1,3 @@
-$ = jQuery
-
 class Annotator.Plugin.Store extends Annotator.Plugin
   events:
     'annotationCreated': 'annotationCreated'
