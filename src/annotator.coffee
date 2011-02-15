@@ -328,3 +328,6 @@ class Annotator.Plugin extends Delegator
 
 # Create global access for Annotator
 $.plugin('annotator', Annotator)
+
+# Export Annotator object.
+this.Annotator = Annotator;
