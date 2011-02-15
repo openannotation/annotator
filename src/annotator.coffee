@@ -64,8 +64,8 @@ class Annotator extends Delegator
     # Create model dom elements
     for name, src of @dom
       @dom[name] = $(src)
-        .hide()
         .appendTo(@wrapper)
+        .hide()
 
     # Bind delegated events.
     this.addEvents()
