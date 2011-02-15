@@ -1,4 +1,4 @@
-Date.prototype.setISO8601 = (string) ->
+createDateFromISO8601 = (string) ->
   regexp = "([0-9]{4})(-([0-9]{2})(-([0-9]{2})" +
            "(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?" +
            "(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?"
@@ -21,8 +21,9 @@ Date.prototype.setISO8601 = (string) ->
 
   offset -= date.getTimezoneOffset()
   time = (Number(date) + (offset * 60 * 1000))
-  this.setTime(Number(time))
-  this
+
+  date.setTime(Number(time))
+  date
 
 class Annotator.Plugin.Auth extends Annotator.Plugin
   options:
@@ -91,7 +92,7 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
   # Return time to expiry in seconds
   timeToExpiry: ->
     now = new Date().getTime() / 1000
-    issue = new Date().setISO8601(@token.authTokenIssueTime).getTime() / 1000
+    issue = createDateFromISO8601(@token.authTokenIssueTime).getTime() / 1000
 
     expiry = issue + @token.authTokenTTL
     timeToExpiry = expiry - now
