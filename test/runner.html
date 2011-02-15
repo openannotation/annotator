@@ -56,7 +56,7 @@
             url: "spec/#{s}_spec.coffee"
           )
 
-          if ajax.statusText == "OK"
+          if ajax.status == 200
             CoffeeScript.run(ajax.responseText)
 
         jasmine.getEnv().addReporter(new jasmine.TrivialReporter())
