@@ -11,7 +11,7 @@ FIXTURES_DIR = ROOT_DIR + '/test/fixtures'
 # Create new browser/document sandbox
 s = new Sandbox(ROOT_DIR)
 
-s.require('lib/vendor/jquery.js')
+s.require 'lib/vendor/jquery.js'
 s.require 'lib/vendor/json2.js'
 s.require 'lib/vendor/showdown.js'
 
@@ -29,8 +29,6 @@ s.require 'lib/vendor/xpath.js'
 # In a word: aaarrgrgh.
 s.window.getSelection = -> "Node selection"
 
-s.require 'test/spec_helper.coffee'
-
 s.require 'lib/extensions.js'
 s.require 'lib/class.js'
 s.require 'lib/range.js'
@@ -40,6 +38,8 @@ s.require 'lib/plugin/store.js'
 s.require 'lib/plugin/auth.js'
 s.require 'lib/plugin/markdown.js'
 s.require 'lib/plugin/tags.js'
+
+s.require 'test/spec_helper.coffee'
 
 # List of spec files to require
 specFiles = specutil.getSpecFiles(SPEC_DIR)

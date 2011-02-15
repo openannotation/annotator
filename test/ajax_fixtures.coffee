@@ -1,5 +1,3 @@
-$ = jQuery
-
 fixtureElem = document.getElementById('fixtures')
 fixtureMemo = {}
 

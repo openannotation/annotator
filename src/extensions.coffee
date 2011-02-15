@@ -4,7 +4,7 @@ unless jQuery?.fn?.jquery
 unless JSON and JSON.parse and JSON.stringify
   console.error("Annotator requires a JSON implementation: have you included lib/vendor/json2.js?")
 
-$ = jQuery;
+$ = jQuery.sub();
 
 Array::flatten = ->
   flatten = (ary) ->
