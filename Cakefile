@@ -16,7 +16,7 @@ noisyPrint = (data) ->
     exec 'afplay ~/.autotest.d/sound/sound_fx/red.mp3 2>&1 >/dev/null'
 
 task 'watch', 'Run development source watcher', ->
-  relay 'coffee', ['-w', '-c', '-o', 'lib/', 'src/'], noisyPrint
+  relay 'coffee', ['-w', '-b', '-c', '-o', 'lib/', 'src/'], noisyPrint
 
 task 'test', 'Run tests', ->
   relay 'coffee', ["#{__dirname}/test/runner.coffee"]
