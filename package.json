@@ -1,0 +1,15 @@
+{
+  "name": "annotator",
+  "version": "1.0.0beta3",
+  "description": "Inline annotation for the web. Select text, images, or (nearly) anything else, and add your notes.",
+  "repositories": [
+    {
+      "type": "git",
+      "url": "http://github.com/okfn/annotator.git"
+    }
+  ],
+  "dependencies": {
+    "coffee-script": "1.0.1",
+    "jsdom": "0.1.23"
+  }
+}
