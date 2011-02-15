@@ -1,5 +1,3 @@
-$ = jQuery
-
 describe "Annotator.Plugin.Store", ->
   a = null
   el = null

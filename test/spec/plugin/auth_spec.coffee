@@ -1,7 +1,5 @@
 Date::toISO8601String = DateToISO8601String
 
-$ = jQuery
-
 describe 'Annotator.Plugin.Auth', ->
   mock = null
   validToken = null

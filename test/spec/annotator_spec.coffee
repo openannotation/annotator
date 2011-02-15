@@ -1,5 +1,3 @@
-$ = jQuery
-
 describe 'Annotator', ->
   a = null
   mockSelection = null

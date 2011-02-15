@@ -1,5 +1,3 @@
-$ = jQuery
-
 class DelegatedExample extends Delegator
   events:
     'div click': 'pushA'

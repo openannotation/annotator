@@ -1,5 +1,3 @@
-$ = jQuery
-
 class this.MockSelection
   rangeCount: 1
   isCollapsed: false

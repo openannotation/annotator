@@ -1,5 +1,3 @@
-$ = jQuery
-
 describe 'Annotator.Plugin.Markdown', ->
   el = null
   m = null

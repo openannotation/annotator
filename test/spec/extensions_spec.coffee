@@ -1,5 +1,3 @@
-$ = jQuery
-
 describe 'jQuery.fn.textNodes()', ->
   $fix = null
 
