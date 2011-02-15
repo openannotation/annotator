@@ -1,3 +1,8 @@
+describe 'jQuery.fn.flatten()', ->
+  it "flattens the contents of an Array", ->
+    flattened = $.flatten([[1,2], 'lorem ipsum', [{}]])
+    expect(flattened).toEqual([1, 2, 'lorem ipsum', {}])
+
 describe 'jQuery.fn.textNodes()', ->
   $fix = null
 

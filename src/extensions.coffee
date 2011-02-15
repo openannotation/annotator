@@ -6,7 +6,7 @@ unless JSON and JSON.parse and JSON.stringify
 
 $ = jQuery.sub();
 
-Array::flatten = ->
+$.flatten = (array) ->
   flatten = (ary) ->
     flat = []
 
@@ -15,7 +15,7 @@ Array::flatten = ->
 
     return flat
 
-  flatten(this)
+  flatten(array)
 
 $.fn.textNodes = ->
   getTextNodes = (node) ->
