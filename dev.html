@@ -59,12 +59,14 @@
         var elem = document.getElementById('airlock');
 
         devAnnotator = new Annotator(elem)
-          .addPlugin('Auth')
+          //.addPlugin('Auth')
           .addPlugin('Tags')
           .addPlugin('User')
-          .addPlugin('Store');
+          .addPlugin('Store', {
+            prefix: 'http://localhost:5000/'
+          });
 
-				devAnnotator.plugins['User'].setUser('alice');
+        devAnnotator.plugins['User'].setUser('alice');
       });
     </script>
   </body>
