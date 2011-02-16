@@ -1,3 +1,4 @@
+fs = require 'fs'
 {print, debug} = require 'sys'
 {spawn, exec} = require 'child_process'
 
@@ -20,3 +21,30 @@ task 'watch', 'Run development source watcher', ->
 
 task 'test', 'Run tests', ->
   relay 'coffee', ["#{__dirname}/test/runner.coffee"]
+
+task 'watch-bookmarklet', 'Watch the bookmarklet source for changes', ->
+
+  root        = "contrib/bookmarklet"
+  template    = "#{root}/dev.html"
+  destination = "#{root}/demo.html"
+  javascript  = "#{root}/src/bookmarklet.js"
+
+  fs.watchFile javascript, {persistent: true, interval: 500}, (curr, prev) ->
+      return if curr.size is prev.size and curr.mtime.getTime() is prev.mtime.getTime()
+
+      exec "yuicompressor #{javascript}", (err, stdout, stderr) ->
+        if stderr
+          console.log "Unable to compress #{javascript}"
+          console.log "Output from yuicompressor: \n", stderr
+          return;
+
+        throw err if err
+
+        oneline = stdout.toString().replace(/"/g, '&quot;')
+        fs.readFile template, (err, html) ->
+          throw err if err
+          
+          html = html.toString().replace('{bookmarklet}', oneline)
+          fs.writeFile destination, html, (err) ->
+            throw err if err
+            console.log "Updated #{destination}…"
