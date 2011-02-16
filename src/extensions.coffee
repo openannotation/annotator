@@ -26,12 +26,12 @@ $.plugin = (name, object) ->
     this.each ->
 
       # check the data() cache, if it's there we'll call the method requested
-      instance = jQuery.data(this, name)
+      instance = $.data(this, name)
       if instance
         options && instance[options].apply(instance, args)
       else
         instance = new object(this, options)
-        jQuery.data(this, name, instance)
+        $.data(this, name, instance)
 
 $.fn.textNodes = ->
   getTextNodes = (node) ->
