@@ -58,9 +58,10 @@ if filters.length > 0
 for specFile in specFiles
   s.require(specFile)
 
-reporter = new jasmine.node.ConsoleReporter (runner, log) ->
-  console.log("As of 2010-12-31, you should be seeing 1 failure that we know about.")
-  # process.exit(runner.results().failedCount)
+runnerFinished = (runner, log) ->
+  console.log("As of 2011-01-05, any failures you see should *not* be occurring. Please report them at https://github.com/nickstenning/annotator/issues.")
+
+reporter = new jasmine.node.ConsoleReporter(runnerFinished, colors=true, verbose=false)
 
 s.window.jasmine.getEnv().addReporter(reporter)
 s.window.jasmine.getEnv().execute()

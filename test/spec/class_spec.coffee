@@ -21,7 +21,7 @@ describe 'Delegator', ->
   $fix = null
 
   beforeEach ->
-    addFixture('delegatorclass')
+    addFixture('delegator')
 
     d = new DelegatedExample(fix())
     $fix = $(fix())

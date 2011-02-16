@@ -101,7 +101,7 @@ The `cake` command is provided by CoffeeScript. Note that *some* tests may fail,
 [coffee]: http://jashkenas.github.com/coffee-script/
 [npm]: http://npmjs.org
 
-The Annotator source is found in `src/`, and is written in CoffeeScript, which is a little language that compiles to Javascript. See the [CoffeeScript website][coffee] for more information. For ease of development, you can run a watcher that will notice any changes you make in `src/` and compile them into `lib/`.
+The Annotator source is found in `src/`, and is written in CoffeeScript, which is a little language that compiles to Javascript. See the [CoffeeScript website][coffee] for more information. For ease of development, you can run a watcher (`cake watch`) that will notice any changes you make in `src/` and compile them into `lib/`.
 
 `dev.html` loads the raw development files from `lib/` and can be useful when developing.
 
