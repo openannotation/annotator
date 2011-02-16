@@ -26,7 +26,7 @@
     var total = scripts.length;
 
     jQuery.each(styles, function () {
-      jQuery(document.head).append($('<link />', {
+      jQuery('head').append($('<link />', {
         rel: 'stylesheet',
         href: source + this
       }));
@@ -46,6 +46,7 @@
   function setup() {
     jQuery(document.body).annotator();
   }
+
 
   if (jQuery === undefined || !jQuery.sub) {
     loadjQuery();
