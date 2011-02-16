@@ -27,6 +27,7 @@ class Annotator extends Delegator
     ".annotator-editor button.annotator-editor-cancel click": "hideEditor"
     ".annotator-ann-controls .edit click": "controlEditClick"
     ".annotator-ann-controls .del click":  "controlDeleteClick"
+    ".annotator-notice click": "hideNotification"
 
     # TODO: allow for adding these events on document.body
     "mouseup":   "checkForEndSelection"
@@ -47,6 +48,7 @@ class Annotator extends Delegator
             """
     hl:     "<span class='annotator-hl'></span>"
     viewer: "<div class='annotator-viewer'></div>"
+    notice: "<div class='annotator-notice'></div>"
 
   options: {} # Configuration options
 
@@ -64,8 +66,10 @@ class Annotator extends Delegator
     # Create model dom elements
     for name, src of @dom
       @dom[name] = $(src)
-        .appendTo(@wrapper)
-        .hide()
+      if name == 'notice'
+        @dom[name].appendTo(document.body)
+      else
+        @dom[name].appendTo(@wrapper).hide()
 
     # Bind delegated events.
     this.addEvents()
@@ -203,6 +207,17 @@ class Annotator extends Delegator
 
     $(@element).trigger('annotationEditorHidden', [@dom.editor])
     @ignoreMouseup = false
+
+  showNotification: (message) =>
+    @dom.notice.html(message).addClass('show')
+
+    # Hide the notification after a set period.
+    setTimeout(=>
+      this.hideNotification()
+    , 5000)
+
+  hideNotification: () =>
+    @dom.notice.removeClass('show');
 
   processEditorKeypress: (e) =>
     if e.keyCode is 27 # "Escape" key => abort.

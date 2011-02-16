@@ -148,3 +148,34 @@
 .annotator-ann .annotator-ann-tags {
 	background-image: url(../img/mini_tag.png);
 }
+
+.annotator-notice {
+	position: absolute;
+	position: fixed;
+	top: -40px;
+	width: 100%;
+	line-height: 40px;
+	font-size: 12px;
+}
+
+.annotator-notice {
+	font-family: helvetica, arial, sans-serif;
+	position: absolute;
+	position: fixed;
+	top: -40px;
+	left: 0;
+	width: 100%;
+	line-height: 40px;
+	font-size: 12px;
+	text-align: center;
+	background-color: #FDF5D8;
+	border-bottom: 1px solid #E1BE99;
+	-webkit-transition: top 0.4s ease-out;
+	-moz-transition: top 0.4s ease-out;
+	-o-transition: top 0.4s ease-out;
+	transition: top 0.4s ease-out;
+}
+
+.annotator-notice.show {
+	top: 0;
+}
