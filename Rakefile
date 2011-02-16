@@ -12,7 +12,7 @@ SRC_PLUGINS = ['auth',
 
 CSS = ['annotator'].map { |x| "css/#{x}.css" }
 
-desc "Build packaged annotator"
+desc "Build packaged annotator (set MINIFY=false to skip compression of files)"
 task :package => ['pkg/annotator.min.js', 'pkg/annotator.min.css', :plugins]
 
 file 'pkg/annotator.min.js' => SRC do |t|
@@ -79,8 +79,10 @@ def concat(srclist, outfile)
 end
 
 def yui_compressor(file)
-  sh "yuicompressor -o #{file} #{file}"
-  puts "Compressed #{file}"
+  unless ENV['MINIFY'] == 'false'
+    sh "yuicompressor -o #{file} #{file}"
+    puts "Compressed #{file}"
+  end
 end
 
 def data_uri_ify(file)
