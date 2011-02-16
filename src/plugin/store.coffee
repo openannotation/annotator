@@ -112,24 +112,13 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   #
   # @private
   _apiRequest: (action, obj, onSuccess) ->
-    # set request headers before send
-    onBeforeSend = (xhr) =>
-      headers = $(@element).data('annotator:headers')
-      if headers
-        for key, val of headers
-          xhr.setRequestHeader(key, val)
-
-    # error handler
-    onError = (xhr, status, errThrown) ->
-      console.error "API request failed: '#{status}'", xhr
-
     opts = {
       url:        this._urlFor(action, obj && obj.id),
       type:       this._methodFor(action),
-      beforeSend: onBeforeSend,
+      beforeSend: this._onBeforeSend,
       dataType:   "json",
       success:    (onSuccess or ->),
-      error:      onError
+      error:      this._onError
     }
 
     # Don't JSONify obj if making search request.
@@ -141,7 +130,8 @@ class Annotator.Plugin.Store extends Annotator.Plugin
         contentType: "application/json; charset=utf-8"
       })
 
-    $.ajax(opts)
+    request = $.ajax(opts)
+    request._action = action
 
   _urlFor: (action, id) ->
     replaceWith = if id? then '/' + id else ''
@@ -163,6 +153,10 @@ class Annotator.Plugin.Store extends Annotator.Plugin
 
     table[action]
 
+  _actionFor: (method) ->
+    for action, currentMethod in @_methodMap
+      return action if method == currentMethod
+
   _dataFor: (annotation) ->
     # Store a reference to the highlights array. We can't serialize
     # a list of HTMLElement objects.
@@ -178,3 +172,23 @@ class Annotator.Plugin.Store extends Annotator.Plugin
     annotation.highlights = highlights
 
     data
+
+  # Set request headers before send
+  _onBeforeSend: (xhr) =>
+    headers = $(@element).data('annotator:headers')
+    if headers
+      for key, val of headers
+        xhr.setRequestHeader(key, val)
+
+  _onError: (xhr, text, error) =>
+    action  = xhr._action
+    message = "Sorry we could not #{action} your annotations"
+
+    switch xhr.status
+      when 401 then message = "Sorry you are not allowed to #{action} this annotation"
+      when 404 then message = "Sorry we could not connect to the annotations store"
+      when 500 then message = "Sorry something went wrong with the annotation store"
+
+    this.annotator.showNotification(message)
+
+    console.error "API request failed: '#{xhr.status}'"
