@@ -112,8 +112,10 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   #
   # @private
   _apiRequest: (action, obj, onSuccess) ->
+    id = obj && obj.id
+
     opts = {
-      url:        this._urlFor(action, obj && obj.id),
+      url:        this._urlFor(action, id),
       type:       this._methodFor(action),
       beforeSend: this._onBeforeSend,
       dataType:   "json",
@@ -131,6 +133,7 @@ class Annotator.Plugin.Store extends Annotator.Plugin
       })
 
     request = $.ajax(opts)
+    request._id = id
     request._action = action
 
   _urlFor: (action, id) ->
@@ -182,7 +185,8 @@ class Annotator.Plugin.Store extends Annotator.Plugin
 
   _onError: (xhr, text, error) =>
     action  = xhr._action
-    message = "Sorry we could not #{action} your annotations"
+    message = "Sorry we could not #{action} the annotations"
+    message = "Sorry we could not #{action} this annotation" if xhr._id
 
     switch xhr.status
       when 401 then message = "Sorry you are not allowed to #{action} this annotation"
