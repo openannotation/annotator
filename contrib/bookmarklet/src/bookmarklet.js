@@ -1,0 +1,3 @@
+(function () {
+  // Bookmarklet code here.
+}());
