@@ -34,6 +34,8 @@ class Annotator.Plugin.Store extends Annotator.Plugin
     @annotations = []
 
   pluginInit: ->
+    return unless Annotator.supported()
+
     getAnnotations = =>
       if @options.loadFromSearch
         this.loadAnnotationsFromSearch(@options.loadFromSearch)

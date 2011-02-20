@@ -52,11 +52,13 @@ class Annotator extends Delegator
 
   options: {} # Configuration options
 
-  constructor: (element, options) ->
-    super
+  plugins: {}
 
-    # Plugin registry
-    @plugins = {}
+  constructor: (element, options) ->
+    # Return early if the annotator is not supported.
+    return this unless Annotator.supported()
+
+    super
 
     # Wrap element contents
     @wrapper = $("<div></div>").addClass('annotator-wrapper')
@@ -341,8 +343,8 @@ class Annotator.Plugin extends Delegator
 
   pluginInit: ->
 
-# Create global access for Annotator
-$.plugin('annotator', Annotator)
+# Returns true if the Annotator can be used in the current browser.
+Annotator.supported = -> (-> !!this.getSelection)()
 
 # Export Annotator object.
 this.Annotator = Annotator;
