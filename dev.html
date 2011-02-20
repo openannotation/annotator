@@ -55,7 +55,7 @@
 
     <script>
       var devAnnotator
-      jQuery(function ($) {
+      (function ($) {
         var elem = document.getElementById('airlock');
 
         devAnnotator = new Annotator(elem)
@@ -67,7 +67,7 @@
           });
 
         //devAnnotator.plugins['User'].setUser('alice');
-      });
+      }(jQuery));
     </script>
   </body>
 
