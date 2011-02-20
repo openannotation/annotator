@@ -333,5 +333,8 @@ class Annotator.Plugin extends Delegator
 # Returns true if the Annotator can be used in the current browser.
 Annotator.supported = -> (-> !!this.getSelection)()
 
+# Create global access for Annotator
+$.plugin 'annotator', Annotator
+
 # Export Annotator object.
 this.Annotator = Annotator;
