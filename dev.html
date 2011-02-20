@@ -17,6 +17,7 @@
     <script src="lib/plugin/user.js"></script>
     <script src="lib/plugin/auth.js"></script>
     <script src="lib/plugin/tags.js"></script>
+    <script src="lib/plugin/unsupported.js"></script>
 
     <link rel="stylesheet" type="text/css" href="css/annotator.css">
   </head>
@@ -61,6 +62,7 @@
 
         devAnnotator = new Annotator(elem)
           //.addPlugin('Auth')
+          .addPlugin('Unsupported')
           .addPlugin('Tags')
           //.addPlugin('User')
           .addPlugin('Store', {
