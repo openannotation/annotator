@@ -187,7 +187,7 @@ class Annotator.Plugin.Store extends Annotator.Plugin
 
   _onError: (xhr, text, error) =>
     action  = xhr._action
-    message = "Sorry we could not #{action} the annotations"
+    message = "Sorry we could not #{action} the annotations from the store"
     message = "Sorry we could not #{action} this annotation" if xhr._id
 
     switch xhr.status
