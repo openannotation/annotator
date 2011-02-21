@@ -10,6 +10,6 @@
   ],
   "dependencies": {
     "coffee-script": "1.0.1",
-    "jsdom": "0.1.23"
+    "jsdom": "0.2.0"
   }
 }
