@@ -1,4 +1,7 @@
-/* @override http://localhost:5000/static/css/annotator.css */
+/* @override 
+	http://localhost:5000/static/css/annotator.css
+	http://localhost:8000/css/annotator.css
+*/
 
 .annotator-wrapper {
 	position: relative;
@@ -22,6 +25,7 @@
 }
 
 .annotator-editor, .annotator-viewer {
+	font-family: helvetica;
 	position: absolute;
 	border-radius: 0.3em;
 	-moz-border-radius: 0.3em;
@@ -35,9 +39,20 @@
 	padding: 0.2em;
 }
 
+.annotator-editor label {
+	font-size: 0.6em;
+	color: #6d6a5e;
+}
+
 .annotator-editor input,
 .annotator-editor textarea {
 	display: block;
+}
+
+.annotator-editor input[type=radio],
+.annotator-editor input[type=checkbox] {
+	display: inline;
+	margin-right: 0;
 }
 
 .annotator-editor textarea {

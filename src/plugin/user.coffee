@@ -2,11 +2,17 @@ class Annotator.Plugin.User extends Annotator.Plugin
   events:
     'beforeAnnotationCreated': 'addUserToAnnotation'
     'annotationViewerShown': 'updateViewer'
+    'annotationEditorShown': 'updateEditor'
 
   options:
     userId: (user) -> user
     userString: (user) -> user
     userGroups: (user) -> ['public']
+    html:
+      publiclyEditable: """
+                        <input type='checkbox' value='1' />
+                        <label>Allow anyone to edit this annotation</label>
+                        """
 
   constructor: (element, options) ->
     super
@@ -53,6 +59,24 @@ class Annotator.Plugin.User extends Annotator.Plugin
     # No authorization info on annotation: free-for-all!
     else
       true
+
+  updateEditor: (e, editorElement, annotation) =>
+    unless @globallyEditableCheckbox
+      # Unique ID for for and id attributes of checkbox.
+      uid = +(new Date)
+
+      editorControls = editorElement.find('.annotator-editor-controls')
+      @globallyEditableCheckbox = $(@options.html.publiclyEditable)
+        .insertBefore(editorControls)
+        .filter('label')
+          .attr('for', uid).end()
+        .filter('input')
+          .attr('id', uid)
+
+    if annotation?.publiclyEditable == true
+      @globallyEditableCheckbox.attr('checked', 'checked')
+    else
+      @globallyEditableCheckbox.removeAttr('checked')
 
   updateViewer: (e, viewerElement, annotations) =>
     annElements = $(viewerElement).find('.annotator-ann')
