@@ -4,7 +4,7 @@ class Annotator.Plugin.User extends Annotator.Plugin
     'annotationViewerShown':   'updateViewer'
     'annotationEditorShown':   'updateEditor'
     'annotationEditorHidden':  'clearEditor'
-    'annotationEditorSubmit':  'setAnnotationEditableStatus'
+    'annotationEditorSubmit':  'updateAnnotationPermissions'
 
   options:
     userId: (user) -> user
@@ -12,7 +12,7 @@ class Annotator.Plugin.User extends Annotator.Plugin
     userGroups: (user) -> ['public']
     html:
       publiclyEditable: """
-                        <input type='checkbox' value='1' />
+                        <input class='annotator-editor-user' type='checkbox' value='1' />
                         <label>Allow anyone to edit this annotation</label>
                         """
 
@@ -26,7 +26,6 @@ class Annotator.Plugin.User extends Annotator.Plugin
   addUserToAnnotation: (e, annotation) =>
     if @user and annotation
       annotation.user = @options.userId(@user)
-      annotation.publiclyEditable = false
 
   authorise: (action, annotation) ->
     # Fine-grained authorization
@@ -76,19 +75,24 @@ class Annotator.Plugin.User extends Annotator.Plugin
         .filter('input')
           .attr('id', uid)
 
-    if annotation?.publiclyEditable == true
-      @globallyEditableCheckbox.attr('checked', 'checked')
-    else
+    if annotation?.permissions
       this.clearEditor(e, editorElement)
+    else
+      @globallyEditableCheckbox.attr('checked', 'checked')
 
   clearEditor: (e, editorElement) =>
     if @globallyEditableCheckbox
       @globallyEditableCheckbox.removeAttr('checked')
 
-  setAnnotationEditableStatus: (e, editorElement, annotation) =>
-    annotation.publiclyEditable = false
+  updateAnnotationPermissions: (e, editorElement, annotation) =>
     if @globallyEditableCheckbox.is(':checked')
-      annotation.publiclyEditable = true
+      # Cache the permissions in case the user unchecks global permissions later.
+      $.data(annotation, 'permissions', annotation.permissions)
+      delete annotation.permissions
+    else
+      # Retrieve and re-apply the permissions.
+      permissions = $.data(annotation, 'permissions')
+      annotation.permissions = permissions if permissions
 
   updateViewer: (e, viewerElement, annotations) =>
     annElements = $(viewerElement).find('.annotator-ann')
