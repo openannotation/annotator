@@ -129,7 +129,7 @@ class Annotator extends Delegator
 
   deleteAnnotation: (annotation) ->
     for h in annotation.highlights
-      $(h).replaceWith($(h)[0].childNodes)
+      $(h).replaceWith(h.childNodes)
 
     $(@element).trigger('annotationDeleted', [annotation])
 
