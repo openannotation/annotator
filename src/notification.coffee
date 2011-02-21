@@ -20,7 +20,6 @@ class Annotator.Notification extends Delegator
     setTimeout this.hide, 5000
 
   hide: =>
-    console.log 'cllicked'
     @element.removeClass(@options.classes.show)
 
 # Attach notification methods to the Annotation object on document ready.
