@@ -11,16 +11,16 @@ class Annotator.Notification extends Delegator
       show: "show"
 
   constructor: (options) ->
-    super $(@options.html).appendTo(document.body, options)
+    super $(@options.html).appendTo(document.body, options)[0]
     this.addEvents()
 
   show: (message) =>
-    @element.addClass(@options.classes.show).text(message || "")
+    $(@element).addClass(@options.classes.show).text(message || "")
 
     setTimeout this.hide, 5000
 
   hide: =>
-    @element.removeClass(@options.classes.show)
+    $(@element).removeClass(@options.classes.show)
 
 # Attach notification methods to the Annotation object on document ready.
 $(->
