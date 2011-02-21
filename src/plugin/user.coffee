@@ -1,8 +1,10 @@
 class Annotator.Plugin.User extends Annotator.Plugin
   events:
     'beforeAnnotationCreated': 'addUserToAnnotation'
-    'annotationViewerShown': 'updateViewer'
-    'annotationEditorShown': 'updateEditor'
+    'annotationViewerShown':   'updateViewer'
+    'annotationEditorShown':   'updateEditor'
+    'annotationEditorHidden':  'clearEditor'
+    'annotationEditorSubmit':  'setAnnotationEditableStatus'
 
   options:
     userId: (user) -> user
@@ -24,6 +26,7 @@ class Annotator.Plugin.User extends Annotator.Plugin
   addUserToAnnotation: (e, annotation) =>
     if @user and annotation
       annotation.user = @options.userId(@user)
+      annotation.publiclyEditable = false
 
   authorise: (action, annotation) ->
     # Fine-grained authorization
@@ -76,7 +79,16 @@ class Annotator.Plugin.User extends Annotator.Plugin
     if annotation?.publiclyEditable == true
       @globallyEditableCheckbox.attr('checked', 'checked')
     else
+      this.clearEditor(e, editorElement)
+
+  clearEditor: (e, editorElement) =>
+    if @globallyEditableCheckbox
       @globallyEditableCheckbox.removeAttr('checked')
+
+  setAnnotationEditableStatus: (e, editorElement, annotation) =>
+    annotation.publiclyEditable = false
+    if @globallyEditableCheckbox.is(':checked')
+      annotation.publiclyEditable = true
 
   updateViewer: (e, viewerElement, annotations) =>
     annElements = $(viewerElement).find('.annotator-ann')
