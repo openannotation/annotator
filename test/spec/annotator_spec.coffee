@@ -14,6 +14,33 @@ describe 'Annotator', ->
     a.checkForEndSelection()
     expect(a.selection).toEqual(expectation)
 
+  describe "getTextFromRange", ->
+    range = null
+    fixtures = [
+      [
+        document.createTextNode('This is the start ')
+        document.createTextNode('of a short ')
+        document.createTextNode('sentence')
+        document.createTextNode(' to test the #getTextFromRange() method')
+      ]
+    ]
+
+    beforeEach ->
+      div = document.createElement('div')
+      nodes = fixtures.shift()
+
+      for node in nodes
+        div.appendChild(node)
+        
+      range = new Range.NormalizedRange({
+        commonAncestor: div
+        start: nodes[1]
+        end: nodes[2]
+      })
+
+    it "should return a plain string containing the text within a NormedRange", ->
+      expect(a.getTextFromRange(range)).toEqual('of a short sentence')
+
   describe "dumpAnnotations", ->
     it "returns false and prints a warning if no Store plugin is active", ->
       spyOn(console, 'warn')
