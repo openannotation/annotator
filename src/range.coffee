@@ -130,6 +130,11 @@ class Range.NormalizedRange
       endOffset: end[1]
     })
 
+  text: ->
+    (for node in this.textNodes()
+      node.nodeValue
+    ).join ''
+
   textNodes: ->
     textNodes = $(this.commonAncestor).textNodes()
     [start, end] = [textNodes.index(this.start), textNodes.index(this.end)]
