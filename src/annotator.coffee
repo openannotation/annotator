@@ -102,11 +102,6 @@ class Annotator extends Delegator
     @selection = util.getGlobal().getSelection()
     @selectedRanges = (@selection.getRangeAt(i) for i in [0...@selection.rangeCount])
 
-  getTextFromRange: (normedRange) ->
-    (for node in normedRange.textNodes()
-      node.nodeValue
-    ).join ''
-
   createAnnotation: (annotation, fireEvents=true) ->
     a = annotation
 
