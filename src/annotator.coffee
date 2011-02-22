@@ -103,16 +103,9 @@ class Annotator extends Delegator
     @selectedRanges = (@selection.getRangeAt(i) for i in [0...@selection.rangeCount])
 
   getTextFromRange: (normedRange) ->
-    textNodes = $(normedRange.commonAncestor).textNodes()
-    [start, end] = [textNodes.index(normedRange.start), textNodes.index(normedRange.end)]
-    textNodes = textNodes[start..end]
-
-    
-
-    strings = for node in textNodes
+    (for node in normedRange.textNodes()
       node.nodeValue
-      
-    strings.join ''
+    ).join ''
 
   createAnnotation: (annotation, fireEvents=true) ->
     a = annotation
@@ -172,11 +165,7 @@ class Annotator extends Delegator
       console.warn("Can't dump annotations without Store plugin.")
 
   highlightRange: (normedRange) ->
-    textNodes = $(normedRange.commonAncestor).textNodes()
-    [start, end] = [textNodes.index(normedRange.start), textNodes.index(normedRange.end)]
-    textNodes = textNodes[start..end]
-
-    elemList = for node in textNodes
+    elemList = for node in normedRange.textNodes()
       wrapper = @dom.hl.clone().show()
       $(node).wrap(wrapper).parent().get(0)
 
