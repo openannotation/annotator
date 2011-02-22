@@ -14,6 +14,37 @@ describe 'Annotator', ->
     a.checkForEndSelection()
     expect(a.selection).toEqual(expectation)
 
+  describe "createAnnotation", ->
+    annotation = null
+    quote = null
+    comment = null
+
+    beforeEach ->
+      quote = 'This is some annotated text'
+      comment = 'This is a comment on an annotation'
+
+      # Create our quoted text.
+      paragraph = document.createElement('p')
+      node = document.createTextNode()
+      node.nodeValue = quote
+      paragraph.appendChild(node)
+
+      annotationObj = {
+        text: comment,
+        ranges: [new Range.NormalizedRange({
+          commonAncestor: paragraph,
+          start: node,
+          end: node
+        })]
+      }
+      annotation = a.createAnnotation(annotationObj)
+
+    it "should return the annotation object with a comment", ->
+      expect(annotation.text).toEqual(comment)
+
+    it "should return the annotation object with the quoted text", ->
+      expect(annotation.quote).toEqual(quote)
+
   describe "dumpAnnotations", ->
     it "returns false and prints a warning if no Store plugin is active", ->
       spyOn(console, 'warn')
