@@ -85,7 +85,7 @@ describe 'Range', ->
 
       expect($.type(textNodes)).toEqual('array')
       expect(textNodes.length).toEqual(sel.endOffset)
-      
+
       # Should contain the contents of the first <strong> element.
       expect(textNodes[0].nodeValue).toEqual('Pellentesque habitant morbi tristique')
 
