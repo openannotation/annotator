@@ -73,6 +73,8 @@ describe 'Range', ->
       it "should parse test range #{i} (#{testData[i][5]})", testBrowserRange(i)
 
   describe "NormalizedRange", ->
+    sel = null
+
     beforeEach ->
       sel = mockSelection(7)
       browserRange = new Range.BrowserRange(sel.getRangeAt(0))
@@ -82,8 +84,10 @@ describe 'Range', ->
       textNodes = r.textNodes()
 
       expect($.type(textNodes)).toEqual('array')
-      expect(textNodes.length).toEqual(testData[8][4])
+      expect(textNodes.length).toEqual(sel.endOffset)
       
       # Should contain the contents of the first <strong> element.
       expect(textNodes[0].nodeValue).toEqual('Pellentesque habitant morbi tristique')
 
+    it "text() returns the textual contents of the range", ->
+      expect(r.text()).toEqual(sel.expectation)
