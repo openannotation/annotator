@@ -133,17 +133,32 @@
   }
 
   function setup() {
-    jQuery(body).annotator();
+    var annotator = jQuery(body).annotator().data('annotator');
+
+    // Attach the annotator to the window object so we can prevent it
+    // being loaded twice.
+    window._annotator = {
+      jQuery: jQuery,
+      element: body,
+      instance: annotator
+    };
+
     status.message('Annotator is ready!', status.status.SUCCESS);
     setTimeout(status.hide, 3000);
   }
 
-  status.show('Loading Annotator into page');
-  if (jQuery === undefined || !jQuery.sub) {
-    loadjQuery();
+  if (window._annotator) {
+    window._annotator.instance.constructor.showNotification(
+      'Annotator is already loaded into this page'
+    );
   } else {
-    jQuery = jQuery.sub();
-    load(setup);
+    status.show('Loading Annotator into page');
+    if (jQuery === undefined || !jQuery.sub) {
+      loadjQuery();
+    } else {
+      jQuery = jQuery.sub();
+      load(setup);
+    }
   }
 
 }(this, this.document, this.jQuery));
