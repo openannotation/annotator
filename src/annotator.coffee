@@ -102,6 +102,18 @@ class Annotator extends Delegator
     @selection = util.getGlobal().getSelection()
     @selectedRanges = (@selection.getRangeAt(i) for i in [0...@selection.rangeCount])
 
+  getTextFromRange: (normedRange) ->
+    textNodes = $(normedRange.commonAncestor).textNodes()
+    [start, end] = [textNodes.index(normedRange.start), textNodes.index(normedRange.end)]
+    textNodes = textNodes[start..end]
+
+    
+
+    strings = for node in textNodes
+      node.nodeValue
+      
+    strings.join ''
+
   createAnnotation: (annotation, fireEvents=true) ->
     a = annotation
 
