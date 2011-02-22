@@ -99,7 +99,6 @@ class Annotator extends Delegator
       @dom.adder.hide()
 
   getSelection: ->
-    # TODO: fail gracefully in IE.
     @selection = util.getGlobal().getSelection()
     @selectedRanges = (@selection.getRangeAt(i) for i in [0...@selection.rangeCount])
 
