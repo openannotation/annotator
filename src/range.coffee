@@ -130,6 +130,13 @@ class Range.NormalizedRange
       endOffset: end[1]
     })
 
+  textNodes: ->
+    textNodes = $(this.commonAncestor).textNodes()
+    [start, end] = [textNodes.index(this.start), textNodes.index(this.end)]
+
+    # Return the textNodes that fall between the start and end indexes.
+    $.makeArray textNodes[start..end]
+
 class Range.SerializedRange
 
   constructor: (obj) ->
