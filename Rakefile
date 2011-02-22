@@ -2,9 +2,11 @@ SRC =         ['extensions',
                'console',
                'class',
                'range',
-               'annotator'].map { |x| "src/#{x}.coffee" }
+               'annotator',
+               'notification'].map { |x| "src/#{x}.coffee" }
 
-SRC_PLUGINS = ['auth',
+SRC_PLUGINS = ['unsupported',
+               'auth',
                'markdown',
                'store',
                'tags',
