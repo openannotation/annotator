@@ -71,16 +71,22 @@
       },
       show: function (message, status) {
         this.message(message);
+
         element.style.display = 'block';
         element.style.visibility = 'visible';
         element.style.top = '0';
+
+        return this;
       },
       hide: function () {
         element.style.top = '-40px';
+
         setTimeout(function () {
           element.style.display = 'none';
           element.style.visibility = 'hidden';
         }, 400);
+
+        return this;
       },
       message: function (message, status) {
         status = status || this.status.INFO;
@@ -88,8 +94,13 @@
         element.style.backgroundColor = rgbToHex(status);
         element.style.borderColor = rgbToHex(status, -100);
         element.style.color = rgbToHex(status, -150);
-
         element.innerHTML = message;
+
+        return this;
+      },
+      remove: function () {
+        element.parentNode.removeChild(element);
+        return this;
       }
     };
   }());
@@ -140,10 +151,11 @@
     window._annotator = {
       jQuery: jQuery,
       element: body,
-      instance: annotator
+      instance: annotator,
+      Annotator: annotator.constructor
     };
 
-    status.message('Annotator is ready!', status.status.SUCCESS);
+    status.message('Annotator is ready!', status.status.SUCCESS).remove();
     setTimeout(status.hide, 3000);
   }
 
@@ -153,6 +165,7 @@
     );
   } else {
     status.show('Loading Annotator into page');
+
     if (jQuery === undefined || !jQuery.sub) {
       loadjQuery();
     } else {
