@@ -160,8 +160,8 @@
   }
 
   if (window._annotator) {
-    window._annotator.instance.constructor.showNotification(
-      'Annotator is already loaded into this page'
+    window._annotator.Annotator.showNotification(
+      'Annotator is already loaded. Try highlighting some text to get started'
     );
   } else {
     status.show('Loading Annotator into page');
