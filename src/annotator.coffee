@@ -114,6 +114,7 @@ class Annotator extends Delegator
       normed     = sniffed.normalize(@wrapper)
       serialized = normed.serialize(@wrapper, '.annotator-hl')
 
+    a.quote = normed.text()
     a.highlights = this.highlightRange(normed)
 
     # Save the annotation data on each highlighter element.
