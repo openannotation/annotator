@@ -15,10 +15,9 @@
 class Annotator.Plugin.Permissions extends Annotator.Plugin
 
   # A Object literal consisting of event/method pairs to be bound to
-  # Permissions#element.
-  # See Delegator#addEvents() for details.
+  # @element. See Delegator#addEvents() for details.
   events:
-    'beforeAnnotationCreated': 'addUserToAnnotation'
+    'beforeAnnotationCreated': 'addFieldsToAnnotation'
     'annotationViewerShown':   'updateViewer'
     'annotationEditorShown':   'updateEditor'
     'annotationEditorHidden':  'clearEditor'
@@ -29,6 +28,13 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     userId: (user) -> user
     userString: (user) -> user
     userAuthorize: (user, token) -> user == token
+    user: null
+    permissions: {
+      read:    []
+      update:  []
+      destroy: []
+      admin:   []
+    }
     html:
       publiclyEditable: """
                         <input class='annotator-editor-user' type='checkbox' value='1' />
@@ -60,8 +66,8 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   setUser: (user) ->
     @user = user
 
-  # Event callback: Appends the Permissions#user to the annotation object.
-  # Only appends the user object if one has been set.
+  # Event callback: Appends the @user and @options.permissions objects to the
+  # provided annotation object. Only appends the user if one has been set.
   #
   # event      - An Event object.
   # annotation - An annotation object.
@@ -69,14 +75,17 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   # Examples
   #
   #   annotation = {text: 'My comment'}
-  #   permissions.addUserToAnnotation(event, annotation)
+  #   permissions.addFieldsToAnnotation(event, annotation)
   #   console.log(annotation)
-  #   # => {text: 'My comment', user: 'Alice'}
+  #   # => {text: 'My comment', user: 'Alice', permissions: {...}}
   #
   # Returns
-  addUserToAnnotation: (event, annotation) =>
-    if @user and annotation
-      annotation.user = @options.userId(@user)
+  addFieldsToAnnotation: (event, annotation) =>
+    if annotation
+      annotation.permissions = @options.permissions
+
+      if @user
+        annotation.user = @options.userId(@user)
 
   # Public: Determines whether the provided action can be performed on the
   # annotation. It does this in several stages.

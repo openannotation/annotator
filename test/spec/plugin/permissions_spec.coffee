@@ -9,7 +9,7 @@ describe 'Annotator.Plugin.Permissions', ->
   it "it should add the userId of the current user to newly created annotations on beforeAnnotationCreated", ->
     ann = {}
     $(el).trigger('beforeAnnotationCreated', [ann])
-    expect(ann).toEqual({})
+    expect(ann.user).toBeUndefined()
 
     ann = {}
     permissions.setUser('alice')
@@ -21,6 +21,16 @@ describe 'Annotator.Plugin.Permissions', ->
     permissions.options.userId = (user) -> user.id
     $(el).trigger('beforeAnnotationCreated', [ann])
     expect(ann.user).toEqual('alice')
+
+  it "it should add permissions to newly created annotations on beforeAnnotationCreated", ->
+    ann = {}
+    $(el).trigger('beforeAnnotationCreated', [ann])
+    expect(ann.permissions).toBeTruthy()
+
+    ann = {}
+    permissions.options.permissions = {}
+    $(el).trigger('beforeAnnotationCreated', [ann])
+    expect(ann.permissions).toEqual({})
 
   describe 'authorize', ->
     annotations = null
