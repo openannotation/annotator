@@ -96,7 +96,7 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
 
     # Default HTML for the plugin elements.
     html:
-      publiclyEditable: 
+      publiclyEditable: \
       """
       <input class='annotator-editor-user' type='checkbox' value='1' />
       <label>Allow anyone to edit this annotation</label>
@@ -168,6 +168,7 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   #              the following: read/update/destroy/admin. See @options.permissions
   #              for more details.
   # annotation - An Object literal annotation.
+  # user       - User Object to authorise. (default: @user)
   #
   # Examples
   #
@@ -197,7 +198,9 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   #   # => false
   #
   # Returns a Boolean, true if the action can be performed on the annotation.
-  authorize: (action, annotation) ->
+  authorize: (action, annotation, user) ->
+    user = @user if user == undefined
+
     # Fine-grained custom authorization
     if annotation.permissions
       tokens = annotation.permissions[action] || []
@@ -207,7 +210,7 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
         return true
 
       for token in tokens
-        if @options.userAuthorize.call(@options, @user, token)
+        if @options.userAuthorize.call(@options, user, token)
           return true
 
       # No tokens matched, action should not be perfomed.
@@ -216,7 +219,7 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     # Coarse-grained authorization
     else if annotation.user
       # If @user is set, and the annotation belongs to @user, allow.
-      return @user and @options.userId(@user) == annotation.user
+      return user and @options.userId(user) == annotation.user
 
     # No authorization info on annotation: free-for-all!
     true
@@ -242,10 +245,11 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
         .filter('input')
           .attr('id', uid)
 
-    if annotation?.permissions
-      this.clearEditor(e, editorElement)
-    else
+    # See if we can authorise without a user.
+    if this.authorize('update', annotation || {}, null)
       @globallyEditableCheckbox.attr('checked', 'checked')
+    else
+      this.clearEditor(e, editorElement)
 
   # Event callback: Resets the editor to a default state.
   #
@@ -267,14 +271,17 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   #
   # Returns nothing.
   updateAnnotationPermissions: (event, editorElement, annotation) =>
+    annotation.permissions = @options.permissions unless annotation.permissions
+
     if @globallyEditableCheckbox.is(':checked')
       # Cache the permissions in case the user unchecks global permissions later.
-      $.data(annotation, 'permissions', annotation.permissions)
-      delete annotation.permissions
+      $.data(annotation, 'permissions', annotation.permissions.update)
+      annotation.permissions.update = []
     else
       # Retrieve and re-apply the permissions.
       permissions = $.data(annotation, 'permissions')
-      annotation.permissions = permissions if permissions
+      annotation.permissions.update = permissions if permissions
+      annotation.permissions.update.push(@options.userId(@user))
 
   # Event callback: updates the annotation viewer to inlude the display name
   # for the user obtained through Permissions#options.userString().

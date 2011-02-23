@@ -111,7 +111,7 @@ describe 'Annotator.Plugin.Permissions', ->
         # to "public" which means anyone can edit it.
         permissions.options.userAuthorize = (user, token) ->
           userGroups = (user) -> user?.groups || ['public']
-          
+
           if /^(?:group|user):/.test(token)
             [key,values...] = token.split(':')
             value = values.join(':')
@@ -120,7 +120,7 @@ describe 'Annotator.Plugin.Permissions', ->
               groups = userGroups(user)
               return $.inArray(value, groups) != -1
 
-            else if user and key == 'user' 
+            else if user and key == 'user'
               return value == user.id
 
           false
@@ -218,24 +218,24 @@ describe 'Annotator.Plugin.Permissions', ->
       annotation = {permissions: {'update': ['user:Alice']}}
       $(el).trigger('annotationEditorShown', [editorEl, annotation])
 
-    it "should leave permissions when 'Anyone can edit' checkbox is unchecked", ->
+    it "should NOT be world editable when 'Anyone can edit' checkbox is unchecked", ->
       permissions.globallyEditableCheckbox.removeAttr('checked')
       $(el).trigger('annotationEditorSubmit', [editorEl, annotation])
-      expect(annotation.permissions).toBeTruthy()
+      expect(permissions.authorize('update', annotation, null)).toBeFalsy()
 
-    it "should remove permissions when 'Anyone can edit' checkbox is checked", ->
+    it "should be world editable when 'Anyone can edit' checkbox is checked", ->
       permissions.globallyEditableCheckbox.attr('checked', 'checked')
       $(el).trigger('annotationEditorSubmit', [editorEl, annotation])
-      expect(annotation.permissions).toBeFalsy()
+      expect(permissions.authorize('update', annotation, null)).toBeTruthy()
 
-    it "should restore permissions when 'Anyone can edit' checkbox is unchecked for a second time", ->
+    it "should NOT be world editable when 'Anyone can edit' checkbox is unchecked for a second time", ->
       permissions.globallyEditableCheckbox.attr('checked', 'checked')
       $(el).trigger('annotationEditorSubmit', [editorEl, annotation])
-      expect(annotation.permissions).toBeFalsy()
+      expect(permissions.authorize('update', annotation, null)).toBeTruthy()
 
       permissions.globallyEditableCheckbox.removeAttr('checked')
       $(el).trigger('annotationEditorSubmit', [editorEl, annotation])
-      expect(annotation.permissions).toBeTruthy()
+      expect(permissions.authorize('update', annotation, null)).toBeFalsy()
 
   describe 'viewer update', ->
     beforeEach ->
