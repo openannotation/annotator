@@ -25,21 +25,82 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
 
   # A Object literal of default options for the class.
   options:
+
+    # Public: Used by the plugin to determine a unique id for the @user property.
+    # By default this accepts and returns the user String but can be over-
+    # ridden in the @options object passed into the constructor.
+    #
+    # user - A String username.
+    #
+    # Returns the String provided as user object.
     userId: (user) -> user
+
+    # Public: Used by the plugin to determine a display name for the @user
+    # property. By default this accepts and returns the user String but can be
+    # over-ridden in the @options object passed into the constructor.
+    #
+    # user - A String username.
+    #
+    # Returns the String provided as user object
     userString: (user) -> user
+
+    # Public: Used by Permissions#authorize to determine whether a user can
+    # perform an action on an annotation. Overriding this function allows
+    # a far more complex permissions sysyem.
+    #
+    # By default this compares the passed user to the token but can be
+    # over-ridden in the @options object passed into the constructor.
+    #
+    # user  - An annotation user object, usually a String.
+    # token - A String permissions token. These are set in the @options.permissions
+    #         Object. e.g. permissions = {read: [], update: ['Alice']}. Here the
+    #         one token for the update permisson is 'Alice' and this can be
+    #         compare to the user parameter to see if they match.
+    #
+    # Examples:
+    #
+    #   # Default settings.
+    #   plugin.setUser('Alice')
+    #   annotation = {user: 'Bob', permissions: {'update': ['Alice', 'Bob']}}
+    #   plugin.authorize('update', annotation)
+    #   # => true ('Alice' is in the array of tokens for the update action)
+    #
+    #   # Contrived example of a custom JavaScript function that allows a
+    #   # "group:Admin" token as well as an id for validation.
+    #   plugin.options.userAuthorize = function (user, token) {
+    #     if (user.group === 'Admin' && token === 'group:Admin') {
+    #       return true;
+    #     }
+    #     else if (user.id === token) {
+    #       return true;
+    #     }
+    #     return false;
+    #   }
+    #   plugin.setUser({id: 'Alice', group: 'Admin'})
+    #   annotation = {user: 'Bob', permissions: {'update': ['Bob', 'group:Admin']}}
+    #   # => true (User has the "admin" value set to thier group property)
+    #
+    # Returns a Boolean, true if the user is authorised for the token provided.
     userAuthorize: (user, token) -> user == token
-    user: null
+
+    # Default user object.
+    user: ''
+
+    # Default permissions for all annotations. Anyone can perform any action.
     permissions: {
       read:    []
       update:  []
       destroy: []
       admin:   []
     }
+
+    # Default HTML for the plugin elements.
     html:
-      publiclyEditable: """
-                        <input class='annotator-editor-user' type='checkbox' value='1' />
-                        <label>Allow anyone to edit this annotation</label>
-                        """
+      publiclyEditable: 
+      """
+      <input class='annotator-editor-user' type='checkbox' value='1' />
+      <label>Allow anyone to edit this annotation</label>
+      """
 
   # The constructor called when a new instance of the Permissions
   # plugin is created. See class documentation for usage.
