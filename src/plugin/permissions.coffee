@@ -1,4 +1,22 @@
+# Public: Plugin for setting permissions on newly created annotations as well as
+# managing user permissions such as viewing/editing/deleting annotions.
+#
+# element - A DOM Element upon which events are bound. When initialised by
+#           the Annotator it is the Annotator#element.
+# options - An Object literal containing custom options.
+#
+# Examples
+#
+#   new Annotator.plugin.Permissions(annotator.element, {
+#     user: 'Alice'
+#   })
+#
+# Returns a new instance of the Permissions Object.
 class Annotator.Plugin.Permissions extends Annotator.Plugin
+
+  # A Object literal consisting of event/method pairs to be bound to
+  # Permissions#element.
+  # See Delegator#addEvents() for details.
   events:
     'beforeAnnotationCreated': 'addUserToAnnotation'
     'annotationViewerShown':   'updateViewer'
@@ -6,6 +24,7 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     'annotationEditorHidden':  'clearEditor'
     'annotationEditorSubmit':  'updateAnnotationPermissions'
 
+  # A Object literal of default options for the class.
   options:
     userId: (user) -> user
     userString: (user) -> user
@@ -16,14 +35,46 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
                         <label>Allow anyone to edit this annotation</label>
                         """
 
+  # The constructor called when a new instance of the Permissions
+  # plugin is created. See class documentation for usage.
+  #
+  # element - A DOM Element upon which events are bound..
+  # options - An Object literal containing custom options.
+  #
+  # Returns an instance of the Permissions object.
   constructor: (element, options) ->
     super
     this.addEvents()
 
+  # Public: Sets the Permissions#user property.
+  #
+  # user - A String or Object to represent the current user.
+  #
+  # Examples
+  #
+  #   permissions.setUser('Alice')
+  #
+  #   permissions.setUser({id: 35, name: 'Alice'})
+  #
+  # Returns nothing.
   setUser: (user) ->
     @user = user
 
-  addUserToAnnotation: (e, annotation) =>
+  # Event callback: Appends the Permissions#user to the annotation object.
+  # Only appends the user object if one has been set.
+  #
+  # event      - An Event object.
+  # annotation - An annotation object.
+  #
+  # Examples
+  #
+  #   annotation = {text: 'My comment'}
+  #   permissions.addUserToAnnotation(event, annotation)
+  #   console.log(annotation)
+  #   # => {text: 'My comment', user: 'Alice'}
+  #
+  # Returns
+  addUserToAnnotation: (event, annotation) =>
     if @user and annotation
       annotation.user = @options.userId(@user)
 
@@ -62,6 +113,14 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     else
       true
 
+  # Event callback: Appends a checkbox to the Annotator editor so the user can
+  # edit the annotation's permissions.
+  #
+  # event         - An Event instance.
+  # editorElement - A DOM Element representing the annotation editor.
+  # annotation    - An annotation Object.
+  #
+  # Returns nothing.
   updateEditor: (e, editorElement, annotation) =>
     unless @globallyEditableCheckbox
       # Unique ID for for and id attributes of checkbox.
@@ -80,11 +139,26 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     else
       @globallyEditableCheckbox.attr('checked', 'checked')
 
-  clearEditor: (e, editorElement) =>
+  # Event callback: Resets the editor to a default state.
+  #
+  # event         - An Event instance.
+  # editorElement - A DOM Element representing the annotation editor.
+  #
+  # Returns nothing.
+  clearEditor: (event, editorElement) =>
     if @globallyEditableCheckbox
       @globallyEditableCheckbox.removeAttr('checked')
 
-  updateAnnotationPermissions: (e, editorElement, annotation) =>
+  # Event callback: updates the annotation.permissions object based on the state
+  # of Permissions#globallyEditableCheckbox. If it is checked then permissions
+  # are set to world writable otherwise they use the original settings.
+  #
+  # event         - An Event instance.
+  # editorElement - A DOM Element representing the annotation editor.
+  # annotation    - An annotation Object.
+  #
+  # Returns nothing.
+  updateAnnotationPermissions: (event, editorElement, annotation) =>
     if @globallyEditableCheckbox.is(':checked')
       # Cache the permissions in case the user unchecks global permissions later.
       $.data(annotation, 'permissions', annotation.permissions)
@@ -94,7 +168,15 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
       permissions = $.data(annotation, 'permissions')
       annotation.permissions = permissions if permissions
 
-  updateViewer: (e, viewerElement, annotations) =>
+  # Event callback: updates the annotation viewer to inlude the display name
+  # for the user obtained through Permissions#options.userString().
+  #
+  # event         - An Event instance.
+  # viewerElement - A DOM Element representing the annotation viewer.
+  # annotations   - An Array of annotations to display.
+  #
+  # Returns nothing.
+  updateViewer: (event, viewerElement, annotations) =>
     annElements = $(viewerElement).find('.annotator-ann')
 
     for i in [0...annElements.length]
