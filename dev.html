@@ -14,7 +14,7 @@
     <script src="lib/annotator.js"></script>
     <script src="lib/notification.js"></script>
     <script src="lib/plugin/store.js"></script>
-    <script src="lib/plugin/user.js"></script>
+    <script src="lib/plugin/permissions.js"></script>
     <script src="lib/plugin/auth.js"></script>
     <script src="lib/plugin/tags.js"></script>
     <script src="lib/plugin/unsupported.js"></script>
@@ -64,12 +64,12 @@
           //.addPlugin('Auth')
           .addPlugin('Unsupported')
           .addPlugin('Tags')
-          //.addPlugin('User')
+          //.addPlugin('Permissions')
           .addPlugin('Store', {
             prefix: 'http://localhost:5000'
           });
 
-        //devAnnotator.plugins['User'].setUser('alice');
+        //devAnnotator.plugins['Permissions'].setUser('alice');
       }(jQuery));
     </script>
   </body>

@@ -1,10 +1,10 @@
-describe 'Annotator.Plugin.User', ->
+describe 'Annotator.Plugin.Permissions', ->
   el = null
-  u = null
+  permissions = null
 
   beforeEach ->
     el = $("<div class='annotator-viewer'></div>")[0]
-    u = new Annotator.Plugin.User(el)
+    permissions = new Annotator.Plugin.Permissions(el)
 
   it "it should add the userId of the current user to newly created annotations on beforeAnnotationCreated", ->
     ann = {}
@@ -12,13 +12,13 @@ describe 'Annotator.Plugin.User', ->
     expect(ann).toEqual({})
 
     ann = {}
-    u.setUser('alice')
+    permissions.setUser('alice')
     $(el).trigger('beforeAnnotationCreated', [ann])
     expect(ann.user).toEqual('alice')
 
     ann = {}
-    u.setUser({id: 'alice'})
-    u.options.userId = (user) -> user.id
+    permissions.setUser({id: 'alice'})
+    permissions.options.userId = (user) -> user.id
     $(el).trigger('beforeAnnotationCreated', [ann])
     expect(ann.user).toEqual('alice')
 
@@ -55,82 +55,82 @@ describe 'Annotator.Plugin.User', ->
 
     it 'should allow any action for an annotation with no authorisation info', ->
       a = annotations[0]
-      expect(u.authorise(null,  a)).toBeTruthy()
-      expect(u.authorise('foo', a)).toBeTruthy()
-      u.setUser('alice')
-      expect(u.authorise(null,  a)).toBeTruthy()
-      expect(u.authorise('foo', a)).toBeTruthy()
+      expect(permissions.authorise(null,  a)).toBeTruthy()
+      expect(permissions.authorise('foo', a)).toBeTruthy()
+      permissions.setUser('alice')
+      expect(permissions.authorise(null,  a)).toBeTruthy()
+      expect(permissions.authorise('foo', a)).toBeTruthy()
 
     it 'should NOT allow any action if annotation.user and no @user is set', ->
       a = annotations[1]
-      expect(u.authorise(null,  a)).toBeFalsy()
-      expect(u.authorise('foo', a)).toBeFalsy()
+      expect(permissions.authorise(null,  a)).toBeFalsy()
+      expect(permissions.authorise('foo', a)).toBeFalsy()
 
     it 'should allow any action if @options.userId(@user) == annotation.user', ->
       a = annotations[1]
-      u.setUser('alice')
-      expect(u.authorise(null,  a)).toBeTruthy()
-      expect(u.authorise('foo', a)).toBeTruthy()
+      permissions.setUser('alice')
+      expect(permissions.authorise(null,  a)).toBeTruthy()
+      expect(permissions.authorise('foo', a)).toBeTruthy()
 
     it 'should NOT allow any action if @options.userId(@user) != annotation.user', ->
       a = annotations[1]
-      u.setUser('bob')
-      expect(u.authorise(null,  a)).toBeFalsy()
-      expect(u.authorise('foo', a)).toBeFalsy()
+      permissions.setUser('bob')
+      expect(permissions.authorise(null,  a)).toBeFalsy()
+      expect(permissions.authorise('foo', a)).toBeFalsy()
 
     it 'should allow any action if annotation.permissions == {}', ->
       a = annotations[2]
-      expect(u.authorise(null,  a)).toBeTruthy()
-      expect(u.authorise('foo', a)).toBeTruthy()
-      u.setUser('alice')
-      expect(u.authorise(null,  a)).toBeTruthy()
-      expect(u.authorise('foo', a)).toBeTruthy()
+      expect(permissions.authorise(null,  a)).toBeTruthy()
+      expect(permissions.authorise('foo', a)).toBeTruthy()
+      permissions.setUser('alice')
+      expect(permissions.authorise(null,  a)).toBeTruthy()
+      expect(permissions.authorise('foo', a)).toBeTruthy()
 
     it 'should NOT allow an action if annotation.permissions[action] == []', ->
       a = annotations[3]
-      expect(u.authorise('update', a)).toBeFalsy()
-      u.setUser('bob')
-      expect(u.authorise('update', a)).toBeFalsy()
+      expect(permissions.authorise('update', a)).toBeFalsy()
+      permissions.setUser('bob')
+      expect(permissions.authorise('update', a)).toBeFalsy()
 
     it 'should (by default) allow an action if annotation.permissions[action] includes "group:public"', ->
       a = annotations[4]
-      expect(u.authorise('update', a)).toBeTruthy()
-      u.setUser('bob')
-      expect(u.authorise('update', a)).toBeTruthy()
+      expect(permissions.authorise('update', a)).toBeTruthy()
+      permissions.setUser('bob')
+      expect(permissions.authorise('update', a)).toBeTruthy()
 
     it 'should (by default) allow an action if annotation.permissions[action] includes "user:@user"', ->
       a = annotations[5]
-      expect(u.authorise('update', a)).toBeFalsy()
-      u.setUser('bob')
-      expect(u.authorise('update', a)).toBeFalsy()
-      u.setUser('alice')
-      expect(u.authorise('update', a)).toBeTruthy()
+      expect(permissions.authorise('update', a)).toBeFalsy()
+      permissions.setUser('bob')
+      expect(permissions.authorise('update', a)).toBeFalsy()
+      permissions.setUser('alice')
+      expect(permissions.authorise('update', a)).toBeTruthy()
 
       a = annotations[6]
-      u.setUser(null)
-      expect(u.authorise('update', a)).toBeFalsy()
-      u.setUser('bob')
-      expect(u.authorise('update', a)).toBeTruthy()
-      u.setUser('alice')
-      expect(u.authorise('update', a)).toBeTruthy()
+      permissions.setUser(null)
+      expect(permissions.authorise('update', a)).toBeFalsy()
+      permissions.setUser('bob')
+      expect(permissions.authorise('update', a)).toBeTruthy()
+      permissions.setUser('alice')
+      expect(permissions.authorise('update', a)).toBeTruthy()
 
     it 'should allow an action if annotation.permissions[action] includes "user:@options.userId(@user)"', ->
       a = annotations[5]
-      u.options.userId = (user) -> user?.id or null
+      permissions.options.userId = (user) -> user?.id or null
 
-      expect(u.authorise('update', a)).toBeFalsy()
-      u.setUser({id: 'alice'})
-      expect(u.authorise('update', a)).toBeTruthy()
+      expect(permissions.authorise('update', a)).toBeFalsy()
+      permissions.setUser({id: 'alice'})
+      expect(permissions.authorise('update', a)).toBeTruthy()
 
     it 'should allow an action if annotation.permissions[action] includes "user:@options.userId(@user)"', ->
       a = annotations[7]
-      u.options.userGroups = (user) -> user?.groups
+      permissions.options.userGroups = (user) -> user?.groups
 
-      expect(u.authorise('update', a)).toBeFalsy()
-      u.setUser({id: 'foo', groups: ['other']})
-      expect(u.authorise('update', a)).toBeFalsy()
-      u.setUser({id: 'charlie', groups: ['admin']})
-      expect(u.authorise('update', a)).toBeTruthy()
+      expect(permissions.authorise('update', a)).toBeFalsy()
+      permissions.setUser({id: 'foo', groups: ['other']})
+      expect(permissions.authorise('update', a)).toBeFalsy()
+      permissions.setUser({id: 'charlie', groups: ['admin']})
+      expect(permissions.authorise('update', a)).toBeTruthy()
 
   describe 'editor update', ->
     checkboxEl  = null
@@ -164,27 +164,27 @@ describe 'Annotator.Plugin.User', ->
       $(el).trigger('annotationEditorShown', [editorEl, annotation])
 
     it "should leave permissions when 'Anyone can edit' checkbox is unchecked", ->
-      u.globallyEditableCheckbox.removeAttr('checked')
+      permissions.globallyEditableCheckbox.removeAttr('checked')
       $(el).trigger('annotationEditorSubmit', [editorEl, annotation])
       expect(annotation.permissions).toBeTruthy()
 
     it "should remove permissions when 'Anyone can edit' checkbox is checked", ->
-      u.globallyEditableCheckbox.attr('checked', 'checked')
+      permissions.globallyEditableCheckbox.attr('checked', 'checked')
       $(el).trigger('annotationEditorSubmit', [editorEl, annotation])
       expect(annotation.permissions).toBeFalsy()
 
     it "should restore permissions when 'Anyone can edit' checkbox is unchecked for a second time", ->
-      u.globallyEditableCheckbox.attr('checked', 'checked')
+      permissions.globallyEditableCheckbox.attr('checked', 'checked')
       $(el).trigger('annotationEditorSubmit', [editorEl, annotation])
       expect(annotation.permissions).toBeFalsy()
 
-      u.globallyEditableCheckbox.removeAttr('checked')
+      permissions.globallyEditableCheckbox.removeAttr('checked')
       $(el).trigger('annotationEditorSubmit', [editorEl, annotation])
       expect(annotation.permissions).toBeTruthy()
 
   describe 'viewer update', ->
     beforeEach ->
-      u.setUser('alice')
+      permissions.setUser('alice')
 
       annotations = [{user: 'alice'}, {user: 'bob'}, {}]
 
@@ -252,7 +252,7 @@ describe 'Annotator.Plugin.User', ->
 
 
     it "it should should allow editing if @user is authorised for the 'update' action", ->
-      u.setUser('bob')
+      permissions.setUser('bob')
       $(el).trigger('annotationViewerShown', [el, annotations])
       editEls = $(el).find('.annotator-ann-controls .edit')
 
@@ -261,7 +261,7 @@ describe 'Annotator.Plugin.User', ->
       expect(editEls.eq(1).css('display')).not.toEqual('none')
 
     it "it should should allow deleting if @user is authorised for the 'delete' action", ->
-      u.setUser('bob')
+      permissions.setUser('bob')
       $(el).trigger('annotationViewerShown', [el, annotations])
 
       deleteEls = $(el).find('.annotator-ann-controls .delete')

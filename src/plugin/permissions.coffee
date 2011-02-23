@@ -1,4 +1,4 @@
-class Annotator.Plugin.User extends Annotator.Plugin
+class Annotator.Plugin.Permissions extends Annotator.Plugin
   events:
     'beforeAnnotationCreated': 'addUserToAnnotation'
     'annotationViewerShown':   'updateViewer'

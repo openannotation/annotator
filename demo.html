@@ -27,9 +27,9 @@
          to the remote backend -->
     <script src="pkg/annotator.auth.min.js"></script>
 
-    <!-- The User plugin. See who created which annotation and create
+    <!-- The Permissions plugin. See who created which annotation and create
          annotations as a specified user -->
-    <script src="pkg/annotator.user.min.js"></script>
+    <script src="pkg/annotator.permissions.min.js"></script>
 
     <!-- The Tags plugin. Edit and display tag keywords on annotations -->
     <script src="pkg/annotator.tags.min.js"></script>
@@ -83,11 +83,11 @@
           // This is the important bit: how to create the annotator and add
           // plugins
           $('#airlock').annotator()
-                       .annotator('addPlugin', 'User')
+                       .annotator('addPlugin', 'Permissions')
                        .annotator('addPlugin', 'Markdown')
                        .annotator('addPlugin', 'Tags');
 
-          $('#airlock').data('annotator').plugins['User'].setUser("Joe Bloggs");
+          $('#airlock').data('annotator').plugins['Permissions'].setUser("Joe Bloggs");
         }
       });
     </script>

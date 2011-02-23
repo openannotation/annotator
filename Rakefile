@@ -5,12 +5,12 @@ SRC =         ['extensions',
                'annotator',
                'notification'].map { |x| "src/#{x}.coffee" }
 
-SRC_PLUGINS = ['unsupported',
+SRC_PLUGINS = ['tags',
                'auth',
-               'markdown',
                'store',
-               'tags',
-               'user'].map { |x| "src/plugin/#{x}.coffee" }
+               'markdown',
+               'unsupported',
+               'permissions'].map { |x| "src/plugin/#{x}.coffee" }
 
 CSS = ['annotator'].map { |x| "css/#{x}.css" }
 
