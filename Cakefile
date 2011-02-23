@@ -21,7 +21,10 @@ task 'watch', 'Run development source watcher', ->
 
 option '-f', '--filter [string]', 'Filename filter to apply to `cake test`'
 task 'test', 'Run tests. Filter tests using `-f [filter]` eg. cake -f auth test', (options) ->
-  relay 'coffee', ["#{__dirname}/test/runner.coffee", options.filter || '']
+  args = ["#{__dirname}/test/runner.coffee"]
+  args.push(options.filter) if options.filter
+
+  relay 'coffee', args
 
 task 'watch-bookmarklet', 'Watch the bookmarklet source for changes', ->
 
