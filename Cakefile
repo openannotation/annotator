@@ -19,8 +19,9 @@ noisyPrint = (data) ->
 task 'watch', 'Run development source watcher', ->
   relay 'coffee', ['-w', '-b', '-c', '-o', 'lib/', 'src/'], noisyPrint
 
-task 'test', 'Run tests', ->
-  relay 'coffee', ["#{__dirname}/test/runner.coffee"]
+option '-f', '--filter [string]', 'Filename filter to apply to `cake test`'
+task 'test', 'Run tests. Filter tests using `-f [filter]` eg. cake -f auth test', (options) ->
+  relay 'coffee', ["#{__dirname}/test/runner.coffee", options.filter || '']
 
 task 'watch-bookmarklet', 'Watch the bookmarklet source for changes', ->
 
