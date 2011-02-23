@@ -29,6 +29,7 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     userId: (user) -> user
     userString: (user) -> user
     userGroups: (user) -> ['public']
+    userAuthorize: (user, token) -> user == token
     html:
       publiclyEditable: """
                         <input class='annotator-editor-user' type='checkbox' value='1' />
@@ -78,40 +79,78 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     if @user and annotation
       annotation.user = @options.userId(@user)
 
+  # Public: Determines whether the provided action can be performed on the
+  # annotation. It does this in several stages.
+  #
+  # 1. If the annotation has a permissions property with an array of tokens
+  #    for the current action. If it does not have an array for the current
+  #    action it will assume the action can ber performed.
+  #    If an array of tokens are present it will pass them through to the
+  #    @options.userAuthorize() callback and return the result.
+  #
+  # 2. If the annotation has a user property and @user is set it will pass the
+  #    annotation.user into @options.userId() and see if it matches the current
+  #    user (@user). If it does it will return true.
+  #
+  # 3. Finally if none of these criteria are met the method will assume the
+  #    annotation is editable and return true.
+  #
+  # action     - String representing the action to be performed. Must be one of
+  #              the following: read/update/destroy/admin. See @options.permissions
+  #              for more details.
+  # annotation - An Object literal annotation.
+  #
+  # Examples
+  #
+  #   permissions.setUser(null)
+  #   permissions.authorise('update', {})
+  #   # => true
+  #
+  #   permissions.setUser('alice')
+  #   permissions.authorise('update', {user: 'alice'})
+  #   # => true
+  #   permissions.authorise('update', {user: 'bob'})
+  #   # => false
+  #
+  #   permissions.setUser('alice')
+  #   permissions.authorise('update', {
+  #     user: 'bob',
+  #     permissions: ['update': ['alice', 'bob']]
+  #   })
+  #   # => true
+  #   permissions.authorise('destroy', {
+  #     user: 'bob',
+  #     permissions: [
+  #       'update': ['alice', 'bob']
+  #       'destroy': ['bob']
+  #     ]
+  #   })
+  #   # => false
+  #
+  # Returns a Boolean, true if the action can be performed on the annotation.
   authorise: (action, annotation) ->
-    # Fine-grained authorization
-    if p = annotation.permissions
+    # Fine-grained custom authorization
+    if annotation.permissions
+      tokens = annotation.permissions[action] || []
 
-      # If the requested action isn't in permissions, it's allowed by default
-      if not action or not p[action]
-        true
+      if tokens.length == 0
+        # Empty or missing tokens array so anyone can edit.
+        return true
 
-      # The requested action is in permissions.
-      else
-        # If @user is in the permissions for this action, allow.
-        if "user:#{@options.userId(@user)}" in p[action]
-          true
+      for token in tokens
+        if @options.userAuthorize.call(@options, @user, token)
+          return true
 
-        # User not allowed. Try groups:
-        else if groups = @options.userGroups(@user)
-          for g in groups
-            if "group:#{g}" in p[action]
-              return true
-
-          false
+      # No tokens matched, no-one can edit.
+      return false
 
     # Coarse-grained authorization
-    else if u = annotation.user
-
+    else if annotation.user
       # If @user is set, and the annotation belongs to @user, allow.
-      if @user and @options.userId(@user) == u
-        true
-      else
-        false
+      return @user and @options.userId(@user) == annotation.user
 
     # No authorization info on annotation: free-for-all!
-    else
-      true
+    true
 
   # Event callback: Appends a checkbox to the Annotator editor so the user can
   # edit the annotation's permissions.
