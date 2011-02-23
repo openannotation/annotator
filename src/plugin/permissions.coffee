@@ -28,7 +28,6 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   options:
     userId: (user) -> user
     userString: (user) -> user
-    userGroups: (user) -> ['public']
     userAuthorize: (user, token) -> user == token
     html:
       publiclyEditable: """
