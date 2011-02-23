@@ -79,7 +79,7 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   #   console.log(annotation)
   #   # => {text: 'My comment', user: 'Alice', permissions: {...}}
   #
-  # Returns
+  # Returns nothing.
   addFieldsToAnnotation: (event, annotation) =>
     if annotation
       annotation.permissions = @options.permissions
@@ -142,14 +142,14 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
       tokens = annotation.permissions[action] || []
 
       if tokens.length == 0
-        # Empty or missing tokens array so anyone can edit.
+        # Empty or missing tokens array so anyone can perform action.
         return true
 
       for token in tokens
         if @options.userAuthorize.call(@options, @user, token)
           return true
 
-      # No tokens matched, no-one can edit.
+      # No tokens matched, action should not be perfomed.
       return false
 
     # Coarse-grained authorization
