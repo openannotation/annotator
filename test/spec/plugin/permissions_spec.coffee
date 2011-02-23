@@ -22,7 +22,7 @@ describe 'Annotator.Plugin.Permissions', ->
     $(el).trigger('beforeAnnotationCreated', [ann])
     expect(ann.user).toEqual('alice')
 
-  describe 'authorise', ->
+  describe 'authorize', ->
     annotations = null
 
     describe 'Basic usage', ->
@@ -42,42 +42,42 @@ describe 'Annotator.Plugin.Permissions', ->
 
       it 'should allow any action for an annotation with no authorisation info', ->
         a = annotations[0]
-        expect(permissions.authorise(null,  a)).toBeTruthy()
-        expect(permissions.authorise('foo', a)).toBeTruthy()
+        expect(permissions.authorize(null,  a)).toBeTruthy()
+        expect(permissions.authorize('foo', a)).toBeTruthy()
         permissions.setUser('alice')
-        expect(permissions.authorise(null,  a)).toBeTruthy()
-        expect(permissions.authorise('foo', a)).toBeTruthy()
+        expect(permissions.authorize(null,  a)).toBeTruthy()
+        expect(permissions.authorize('foo', a)).toBeTruthy()
 
       it 'should NOT allow any action if annotation.user and no @user is set', ->
         a = annotations[1]
-        expect(permissions.authorise(null,  a)).toBeFalsy()
-        expect(permissions.authorise('foo', a)).toBeFalsy()
+        expect(permissions.authorize(null,  a)).toBeFalsy()
+        expect(permissions.authorize('foo', a)).toBeFalsy()
 
       it 'should allow any action if @options.userId(@user) == annotation.user', ->
         a = annotations[1]
         permissions.setUser('alice')
-        expect(permissions.authorise(null,  a)).toBeTruthy()
-        expect(permissions.authorise('foo', a)).toBeTruthy()
+        expect(permissions.authorize(null,  a)).toBeTruthy()
+        expect(permissions.authorize('foo', a)).toBeTruthy()
 
       it 'should NOT allow any action if @options.userId(@user) != annotation.user', ->
         a = annotations[1]
         permissions.setUser('bob')
-        expect(permissions.authorise(null,  a)).toBeFalsy()
-        expect(permissions.authorise('foo', a)).toBeFalsy()
+        expect(permissions.authorize(null,  a)).toBeFalsy()
+        expect(permissions.authorize('foo', a)).toBeFalsy()
 
       it 'should allow any action if annotation.permissions == {}', ->
         a = annotations[2]
-        expect(permissions.authorise(null,  a)).toBeTruthy()
-        expect(permissions.authorise('foo', a)).toBeTruthy()
+        expect(permissions.authorize(null,  a)).toBeTruthy()
+        expect(permissions.authorize('foo', a)).toBeTruthy()
         permissions.setUser('alice')
-        expect(permissions.authorise(null,  a)).toBeTruthy()
-        expect(permissions.authorise('foo', a)).toBeTruthy()
+        expect(permissions.authorize(null,  a)).toBeTruthy()
+        expect(permissions.authorize('foo', a)).toBeTruthy()
 
       it 'should allow an action if annotation.permissions[action] == []', ->
         a = annotations[3]
-        expect(permissions.authorise('update', a)).toBeTruthy()
+        expect(permissions.authorize('update', a)).toBeTruthy()
         permissions.setUser('bob')
-        expect(permissions.authorise('update', a)).toBeTruthy()
+        expect(permissions.authorize('update', a)).toBeTruthy()
 
     describe 'Custom options.userAuthorize() callback', ->
 
@@ -140,42 +140,42 @@ describe 'Annotator.Plugin.Permissions', ->
 
       it 'should (by default) allow an action if annotation.permissions[action] includes "group:public"', ->
         a = annotations[0]
-        expect(permissions.authorise('update', a)).toBeTruthy()
+        expect(permissions.authorize('update', a)).toBeTruthy()
         permissions.setUser({id: 'bob'})
-        expect(permissions.authorise('update', a)).toBeTruthy()
+        expect(permissions.authorize('update', a)).toBeTruthy()
 
       it 'should (by default) allow an action if annotation.permissions[action] includes "user:@user"', ->
         a = annotations[1]
-        expect(permissions.authorise('update', a)).toBeFalsy()
+        expect(permissions.authorize('update', a)).toBeFalsy()
         permissions.setUser({id: 'bob'})
-        expect(permissions.authorise('update', a)).toBeFalsy()
+        expect(permissions.authorize('update', a)).toBeFalsy()
         permissions.setUser({id: 'alice'})
-        expect(permissions.authorise('update', a)).toBeTruthy()
+        expect(permissions.authorize('update', a)).toBeTruthy()
 
         a = annotations[2]
         permissions.setUser(null)
-        expect(permissions.authorise('update', a)).toBeFalsy()
+        expect(permissions.authorize('update', a)).toBeFalsy()
         permissions.setUser({id: 'bob'})
-        expect(permissions.authorise('update', a)).toBeTruthy()
+        expect(permissions.authorize('update', a)).toBeTruthy()
         permissions.setUser({id: 'alice'})
-        expect(permissions.authorise('update', a)).toBeTruthy()
+        expect(permissions.authorize('update', a)).toBeTruthy()
 
       it 'should allow an action if annotation.permissions[action] includes "user:@options.userId(@user)"', ->
         a = annotations[1]
         permissions.options.userId = (user) -> user?.id or null
 
-        expect(permissions.authorise('update', a)).toBeFalsy()
+        expect(permissions.authorize('update', a)).toBeFalsy()
         permissions.setUser({id: 'alice'})
-        expect(permissions.authorise('update', a)).toBeTruthy()
+        expect(permissions.authorize('update', a)).toBeTruthy()
 
       it 'should allow an action if annotation.permissions[action] includes "user:@options.userId(@user)"', ->
         a = annotations[3]
 
-        expect(permissions.authorise('update', a)).toBeFalsy()
+        expect(permissions.authorize('update', a)).toBeFalsy()
         permissions.setUser({id: 'foo', groups: ['other']})
-        expect(permissions.authorise('update', a)).toBeFalsy()
+        expect(permissions.authorize('update', a)).toBeFalsy()
         permissions.setUser({id: 'charlie', groups: ['admin']})
-        expect(permissions.authorise('update', a)).toBeTruthy()
+        expect(permissions.authorize('update', a)).toBeTruthy()
 
   describe 'editor update', ->
     checkboxEl  = null
@@ -296,7 +296,7 @@ describe 'Annotator.Plugin.Permissions', ->
         viewerEls.push($(annElSrc).appendTo(el))
 
 
-    it "it should should allow editing if @user is authorised for the 'update' action", ->
+    it "it should should allow editing if @user is authorized for the 'update' action", ->
       permissions.setUser('bob')
       $(el).trigger('annotationViewerShown', [el, annotations])
       editEls = $(el).find('.annotator-ann-controls .edit')
@@ -306,7 +306,7 @@ describe 'Annotator.Plugin.Permissions', ->
       expect(editEls.eq(0).css('display')).not.toEqual('none')
       expect(editEls.eq(1).css('display')).not.toEqual('none')
 
-    it "it should should allow deleting if @user is authorised for the 'delete' action", ->
+    it "it should should allow deleting if @user is authorized for the 'delete' action", ->
       permissions.setUser('bob')
       $(el).trigger('annotationViewerShown', [el, annotations])
 

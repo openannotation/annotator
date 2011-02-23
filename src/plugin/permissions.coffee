@@ -102,22 +102,22 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   # Examples
   #
   #   permissions.setUser(null)
-  #   permissions.authorise('update', {})
+  #   permissions.authorize('update', {})
   #   # => true
   #
   #   permissions.setUser('alice')
-  #   permissions.authorise('update', {user: 'alice'})
+  #   permissions.authorize('update', {user: 'alice'})
   #   # => true
-  #   permissions.authorise('update', {user: 'bob'})
+  #   permissions.authorize('update', {user: 'bob'})
   #   # => false
   #
   #   permissions.setUser('alice')
-  #   permissions.authorise('update', {
+  #   permissions.authorize('update', {
   #     user: 'bob',
   #     permissions: ['update': ['alice', 'bob']]
   #   })
   #   # => true
-  #   permissions.authorise('destroy', {
+  #   permissions.authorize('destroy', {
   #     user: 'bob',
   #     permissions: [
   #       'update': ['alice', 'bob']
@@ -127,7 +127,7 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   #   # => false
   #
   # Returns a Boolean, true if the action can be performed on the annotation.
-  authorise: (action, annotation) ->
+  authorize: (action, annotation) ->
     # Fine-grained custom authorization
     if annotation.permissions
       tokens = annotation.permissions[action] || []
@@ -229,19 +229,19 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
         $updateEl = $controlEl.find('.edit')
         $deleteEl = $controlEl.find('.delete')
 
-        if this.authorise('update', annotations[i])
+        if this.authorize('update', annotations[i])
           $updateEl.show()
         else
           $updateEl.hide()
 
-        if this.authorise('delete', annotations[i])
+        if this.authorize('delete', annotations[i])
           $deleteEl.show()
         else
           $deleteEl.hide()
 
       else if "user" of annotations[i]
 
-        if this.authorise(null, annotations[i])
+        if this.authorize(null, annotations[i])
           $controlEl.children().andSelf().show()
         else
           $controlEl.hide()
