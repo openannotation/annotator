@@ -45,7 +45,7 @@
 }
 
 .annotator-widget {
-	width: 265px;
+	min-width: 265px;
 	background-color: rgba(251, 251, 251, 0.98);
 	border: 1px solid rgba(122, 122, 122, 0.6);
 	-webkit-border-radius: 5px;
@@ -81,7 +81,6 @@
 }
 
 .annotator-viewer li {
-	padding: 0 2px;
 	border-top: 2px solid rgba(122, 122, 122, 0.2);
 }
 
@@ -159,10 +158,6 @@
 	background-position: 0 -45px;
 }
 
-.annotator-editor ul {
-	padding: 0 2px;
-}
-
 .annotator-editor li {
 	position: relative;
 }
@@ -176,12 +171,17 @@
 .annotator-editor li input,
 .annotator-editor li textarea {
 	display: block;
-	width: 251px;
-	padding: 10px 6px 10px 8px;
+	width: 100%;
+	padding: 10px 8px;
 	border: none;
-	margin: 0 0 0 -2px;
+	margin: 0;
 	color: rgb(60, 60, 60);
 	background: none;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
+	resize: none;
 }
 
 .annotator-editor li:first-child textarea {
@@ -214,16 +214,39 @@
 	text-align: right;
 	padding: 3px;
 	border-top: 1px solid rgb(212,212,212);
-	background: rgb(212, 212, 212) -webkit-gradient(
+	background-color: rgb(212, 212, 212);
+	background-image: -webkit-gradient(
   		linear, left top, left bottom,
   		from(rgb(228, 228, 228)),
-  		color-stop(0.5, rgb(235,235,235)),
+  		color-stop(0.5, rgb(235, 235, 235)),
   		color-stop(0.65, rgb(228, 228, 228)),
   		to(rgb(210, 210, 210))
+	);
+	background-image: -moz-linear-gradient(
+	    -90deg,
+	    rgb(228, 228, 228),
+	    rgb(235, 235, 235) 50%,
+	    rgb(228, 228, 228) 60%,
+	    rgb(210, 210, 210)
+	);
+	background-image: -webkit-linear-gradient(
+	    -90deg,
+	    rgb(228, 228, 228),
+	    rgb(235, 235, 235) 50%,
+	    rgb(228, 228, 228) 60%,
+	    rgb(210, 210, 210)
+	);
+	background-image: linear-gradient(
+	    -90deg,
+	    rgb(228, 228, 228),
+	    rgb(235, 235, 235) 50%,
+	    rgb(228, 228, 228) 60%,
+	    rgb(210, 210, 210)
 	);
 }
 
 .annotator-editor a {
+	position: relative;
 	display: inline-block;
 	padding: 0 6px 0 22px;
 	color: rgb(54, 54, 54);
@@ -234,59 +257,134 @@
 	font-weight: bold;
 	border: 1px solid rgb(162, 162, 162);
 	background-color: rgb(212, 212, 212);
-	background-image: url(../img/annotator-glyph-sprite.png),
-	-webkit-gradient(
+	background-image: -webkit-gradient(
   		linear, left top, left bottom,
   		from(rgb(245, 245, 245)),
   		color-stop(0.5, rgb(210, 210, 210)),
   		color-stop(0.5, rgb(190, 190, 190)),
   		to(rgb(210, 210, 210))
 	);
-	background-repeat: no-repeat;
-	background-position: 5px -70px, 0 0;
+	background-image: -moz-linear-gradient(
+	    -90deg,
+	    rgb(245, 245, 245),
+	    rgb(210, 210, 210) 50%,
+	    rgb(190, 190, 190) 50%,
+	    rgb(210, 210, 210)
+	);
+	background-image: -webkit-linear-gradient(
+	    -90deg,
+	    rgb(245, 245, 245),
+	    rgb(210, 210, 210) 50%,
+	    rgb(190, 190, 190) 50%,
+	    rgb(210, 210, 210)
+	);
+	background-image: linear-gradient(
+	    -90deg,
+	    rgb(245, 245, 245),
+	    rgb(210, 210, 210) 50%,
+	    rgb(190, 190, 190) 50%,
+	    rgb(210, 210, 210)
+	);
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	-o-border-radius: 5px;
 	border-radius: 5px;
 }
 
+.annotator-editor a::after {
+	position: absolute;
+	top: 50%;
+	left: 5px;
+	display: block;
+	content: "";
+	width: 15px;
+	height: 15px;
+	margin-top: -7px;
+	background: url(../img/annotator-glyph-sprite.png) no-repeat 0 -75px;
+}
+
 .annotator-editor a:hover,
 .annotator-editor a.annotator-focus {
 	border-color: rgb(67, 90, 160);
 	background-color: rgb(56, 101, 249);
-	background-image: url(../img/annotator-glyph-sprite.png),
-	-webkit-gradient(
+	background-image: -webkit-gradient(
   		linear, left top, left bottom,
   		from(rgb(118, 145, 251)),
   		color-stop(0.5, rgb(80, 117, 251)),
   		color-stop(0.5, rgb(56, 101, 249)),
   		to(rgb(54, 101, 250))
 	);
-	background-position: 5px -101px, 0 0;
+	background-image: -moz-linear-gradient(
+	    -90deg,
+	    rgb(118, 145, 251),
+	    rgb(80, 117, 251) 50%,
+	    rgb(56, 101, 249) 50%,
+	    rgb(54, 101, 250)
+	);
+	background-image: -webkit-linear-gradient(
+	    -90deg,
+	    rgb(118, 145, 251),
+	    rgb(80, 117, 251) 50%,
+	    rgb(56, 101, 249) 50%,
+	    rgb(54, 101, 250)
+	);
+	background-image: linear-gradient(
+	    -90deg,
+	    rgb(118, 145, 251),
+	    rgb(80, 117, 251) 50%,
+	    rgb(56, 101, 249) 50%,
+	    rgb(54, 101, 250)
+	);
 	color: rgb(255, 255, 255);
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.42);
+}
+
+.annotator-editor a:hover::after {
+	margin-top: -8px;
+	background-position: 0 -105px;
 }
 
 .annotator-editor a:active {
 	border-color: rgb(112, 12, 73);
 	background-color: rgb(209, 46, 142);
-	background-image: url(../img/annotator-glyph-sprite.png),
-	-webkit-gradient(
+	background-image: -webkit-gradient(
   		linear, left top, left bottom,
   		from(rgb(252, 124, 202)),
   		color-stop(0.5, rgb(232, 93, 178)),
   		color-stop(0.5, rgb(209, 46, 142)),
   		to(rgb(255, 0, 156))
 	);
+	background-image: -moz-linear-gradient(
+	    -90deg,
+	    rgb(252, 124, 202),
+	    rgb(232, 93, 178) 50%,
+	    rgb(209, 46, 142) 50%,
+	    rgb(255, 0, 156)
+	);
+	background-image: -webkit-linear-gradient(
+	    -90deg,
+	    rgb(118, 145, 251),
+	    rgb(80, 117, 251) 50%,
+	    rgb(56, 101, 249) 50%,
+	    rgb(54, 101, 250)
+	);
+	background-image: linear-gradient(
+	    -90deg,
+	    rgb(118, 145, 251),
+	    rgb(80, 117, 251) 50%,
+	    rgb(56, 101, 249) 50%,
+	    rgb(54, 101, 250)
+	);
 }
 
-.annotator-editor a.annotator-save {
-	background-position: 5px -130px, 0 0;
+.annotator-editor a.annotator-save::after {
+	background-position: 5px -145px, 0 0;
 }
 
-.annotator-editor a.annotator-save:hover,
-.annotator-editor a.annotator-save.annotator-focus {
-	background-position: 5px -161px, 0 0;
+.annotator-editor a.annotator-save:hover::after,
+.annotator-editor a.annotator-save.annotator-focus::after {
+	margin-top: -8px;
+	background-position: 0 -165px;
 }
 
 .annotator-editor::after {
