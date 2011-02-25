@@ -40,7 +40,7 @@
         </code></pre>
       
         <div class="annotator-adder"><a href="#annotate" title="Annotate selection">Annotate</a></div>
-        <ul class="annotator-viewer">
+        <ul class="annotator-widget annotator-viewer">
           <li class="annotator-annotation">
             <div>
               This is a comment on this annotation text. This annotation
@@ -70,7 +70,7 @@
             </span>
           </li>
         </ul>
-        <ul class="annotator-viewer">
+        <ul class="annotator-widget annotator-viewer">
           <li class="annotator-annotation">
             <div>
               This is a comment on this annotation text. This annotation
@@ -82,6 +82,28 @@
             </span>
           </li>
         </ul>
+        <div class="annotator-widget annotator-editor">
+          <ul>
+            <li>
+              <textarea cols="20" rows="4" placeholder="Comments…"></textarea>
+            </li>
+            <li>
+              <input id="annotator-field-2" placeholder="Tags…" />
+            </li>
+            <li class="annotator-checkbox">
+              <input type="checkbox" id="annotator-field-3"></textarea>
+              <label for="annotator-field-3">Anyone can <strong>view</strong> this annotation</label>
+            </li>
+            <li class="annotator-checkbox">
+              <input type="checkbox" id="annotator-field-4"></textarea>
+              <label for="annotator-field-4">Anyone can <strong>edit</strong> this annotation</label>
+            </li>
+          </ul>
+          <div class="annotator-controls">
+            <a href="#cancel" class="annotator-cancel">Cancel</a>
+            <a href="#save" class="annotator-save annotator-active">Save</a>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -108,6 +130,15 @@
           viewer.css({
             top:  base.top - viewer.height() - 8,
             left: base.left + 50 + (270 * i)
+          });
+        });
+        
+        $('.annotator-editor').each(function (i) {
+          var viewer = $(this);
+
+          viewer.css({
+            top:  base.top + 20,
+            left: base.left
           });
         });
       }(jQuery));

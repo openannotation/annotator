@@ -8,7 +8,10 @@
 }
 
 .annotator-adder,
-.annotator-viewer {
+.annotator-widget,
+.annotator-editor input,
+.annotator-editor textarea,
+.annotator-notice {
 	position: absolute;
 	font: 10px/1 "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
@@ -41,11 +44,8 @@
 	background: rgba(255, 255, 10, 0.3);
 }
 
-.annotator-viewer {
+.annotator-widget {
 	width: 265px;
-	padding: 0;
-	margin: 0;
-	list-style: none;
 	background-color: rgba(251, 251, 251, 0.98);
 	border: 1px solid rgba(122, 122, 122, 0.6);
 	-webkit-border-radius: 5px;
@@ -54,7 +54,14 @@
 	-webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-.annotator-viewer::after {
+.annotator-viewer,
+.annotator-editor ul {
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+
+.annotator-widget::after {
 	content: "";
 	display: block;
 	width: 18px;
@@ -65,24 +72,34 @@
 	left: 8px;
 }
 
-.annotator-viewer li {
+.annotator-widget li,
+.annotator-editor li input,
+.annotator-editor li textarea {
 	position: relative;
-	font-size: 11px;
+	font-size: 12px;
 	color: rgb(144, 144, 144);
+}
+
+.annotator-viewer li {
 	padding: 0 2px;
 	border-top: 2px solid rgba(122, 122, 122, 0.2);
 }
 
-.annotator-viewer li:first-child {
+.annotator-widget li:first-child {
 	border-top: none;
+}
+
+.annotator-editor li,
+.annotator-viewer div {
+	border-top: 1px solid rgba(133, 133, 133, 0.11);
 }
 
 .annotator-viewer div {
 	padding: 6px 6px;
-	border-top: 1px solid rgba(133, 133, 133, 0.11);
 }
 
-.annotator-viewer div:first-child {
+.annotator-viewer div:first-child,
+.annotator-editor li:first-child textarea {
 	padding-top: 12px;
 	padding-bottom: 12px;
 	color: rgb(60, 60, 60);
@@ -143,77 +160,57 @@
 }
 
 .annotator-editor {
-	font-family: helvetica;
-	position: absolute;
-	border-radius: 0.3em;
-	-moz-border-radius: 0.3em;
-	-webkit-border-radius: 0.3em;
-	height: auto;
-	width: 15em;
-	line-height: 16px;
-	background: rgba(253, 245, 216, 0.95);
-	border: 1px solid rgb(225, 190, 148);
-	margin: 1px 0 0 0;
-	padding: 0.2em;
+	padding: 0 2px;
 }
 
-.annotator-editor label {
-	font-size: 0.6em;
-	color: #6d6a5e;
+.annotator-editor li {
+	position: relative;
 }
 
-.annotator-editor input,
-.annotator-editor textarea {
-	display: block;
-}
-
-.annotator-editor input[type=radio],
-.annotator-editor input[type=checkbox] {
+.annotator-editor li label {
+	top: 0;
 	display: inline;
-	margin-right: 0;
-}
-
-.annotator-editor textarea {
-	background: transparent;
-	margin: 1px 0 0 0;
-	padding: 0;
-	border: none;
-	width: 100%;
-}
-
-.annotator-editor .annotator-editor-controls {
-	float: right;
-}
-
-.annotator-editor .annotator-editor-controls button {
-	opacity: 0.5;
-	border: 1px solid transparent;
-	margin: 0;
-	line-height: 16px;
-	padding: 0 0 0 18px;
-	background: transparent none no-repeat top left;
-}
-
-.annotator-editor .annotator-editor-controls button:hover {
-	opacity: 1;
 	cursor: pointer;
 }
 
-.annotator-editor .annotator-editor-controls button.annotator-editor-save {
-	background-image: url(../img/accept.png);
+.annotator-editor li input,
+.annotator-editor li textarea {
+	display: block;
+	width: 269px;
+	padding: 10px 6px;
+	border: none;
+	margin: 0 0 0 -2px;
+	color: rgb(60, 60, 60);
+	background-color: transparent;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 }
 
-.annotator-editor .annotator-editor-controls button.annotator-editor-cancel {
-	background-image: url(../img/cancel.png);
+.annotator-editor li:first-child textarea {
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-o-border-radius: 5px;
+	border-radius: 5px;
 }
 
-.annotator-editor input.annotator-editor-tags {
-	font-size: 0.6em;
-	width: 24.8em;
+.annotator-editor li input:focus,
+.annotator-editor li textarea:focus {
+	background-color: rgb(243, 243, 243);
+	outline: none;
+}
+
+.annotator-editor li input[type=radio],
+.annotator-editor li input[type=checkbox] {
+	width: auto;
 	padding: 0;
-	margin-bottom: 0.4em;
-	background: rgba(255, 255, 255, 0.8);
-	border: 1px solid #ccc;
+	display: inline;
+	margin: 0 4px 0 0;
+	cursor: pointer;
+}
+
+.annotator-editor .annotator-checkbox {
+	padding: 8px 6px;
 }
 
 .annotator-notice {
@@ -227,7 +224,6 @@
 
 .annotator-notice {
 	color: #706446;
-	font-family: helvetica, arial, sans-serif;
 	position: absolute;
 	position: fixed;
 	top: -40px;
