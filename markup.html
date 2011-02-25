@@ -12,39 +12,95 @@
     </header>
 
     <div id="airlock">
-      <p><strong>Pellentesque habitant morbi tristique</strong> senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. <em>Aenean ultricies mi vitae est.</em> Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, <code>commodo vitae</code>, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. <a href="#">Donec non enim</a> in turpis pulvinar facilisis. Ut felis.</p>
+      <div class="annotator-wrapper">
+        <p><strong>Pellentesque habitant morbi tristique</strong> senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. <em>Aenean ultricies mi vitae est.</em> Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, <code>commodo vitae</code>, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. <a href="#">Donec non enim</a> in turpis pulvinar facilisis. Ut felis.</p>
 
-      <h2>Header Level 2</h2>
+        <h2>Header Level 2</h2>
 
-      <ol>
-         <li>Lorem <span class="annotator-hl">ipsum dolor sit amet, consectetuer adipiscing</span> elit.</li>
-         <li>Aliquam tincidunt mauris eu risus.</li>
-      </ol>
+        <ol>
+           <li>Lorem <span class="annotator-hl">ipsum dolor sit amet, consectetuer adipiscing</span> elit.</li>
+           <li>Aliquam tincidunt mauris eu risus.</li>
+        </ol>
 
-      <blockquote><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus magna. Cras in mi at felis aliquet congue. Ut a est eget ligula molestie gravida. Curabitur massa. Donec eleifend, libero at sagittis mollis, tellus est malesuada tellus, at luctus turpis elit sit amet quam. Vivamus pretium ornare est.</p></blockquote>
+        <blockquote><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus magna. Cras in mi at felis aliquet congue. Ut a est eget ligula molestie gravida. Curabitur massa. Donec eleifend, libero at sagittis mollis, tellus est malesuada tellus, at luctus turpis elit sit amet quam. Vivamus pretium ornare est.</p></blockquote>
 
-      <h3>Header Level 3</h3>
+        <h3>Header Level 3</h3>
 
-      <ul>
-         <li id="listone">Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</li>
-         <li id="listtwo">Aliquam tincidunt mauris eu risus.</li>
-      </ul>
+        <ul>
+           <li id="listone">Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</li>
+           <li id="listtwo">Aliquam tincidunt mauris eu risus.</li>
+        </ul>
 
-      <pre><code>
-      #header h1 a {
-        display: block;
-        width: 300px;
-        height: 80px;
-      }
-      </code></pre>
+        <pre><code>
+        #header h1 a {
+          display: block;
+          width: 300px;
+          height: 80px;
+        }
+        </code></pre>
+      
+        <div class="annotator-adder"><a href="#annotate" title="Annotate selection">Annotate</a></div>
+        <div class='annotator-viewer'>
+          <ul>
+            <li>
+              <div>
+                This is a comment on this annotation text. This annotation
+                has multiple comments.
+              </div>
+              <div class="section annotator-tags">
+                <span>Apple</span><span>Oranges</span><span>Pears</span>
+              </div>
+              <div class="section annotator-author">
+                By Joe Bloggs
+              </div>
+            </li>
+            <li>
+              <divc >
+                This is a comment on this annotation text. This annotation
+                has multiple comments.
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class='annotator-viewer'>
+          <ul>
+            <li>
+              <div>
+                This is a comment on this annotation text. This annotation
+                has one comment. An no plugins
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
-
-    <div class="annotator-adder"><a href="#annotate" title="Annotate selection">Annotate</a></div>
 
     <script src="lib/vendor/jquery.js"></script>
     <script>
       (function ($) {
-        $('.annotator-adder').offset($('.annotator-hl').offset());
+        var base = (function () {
+          var wrapper    = $('.annotator-wrapper').offset();
+          var annotation = $('.annotator-hl').offset();
+          return {
+            top:  annotation.top - wrapper.top,
+            left: annotation.left - wrapper.left
+          };
+        }());
+
+        $('.annotator-adder').css({
+          top:  base.top,
+          left: base.left + ($('.annotator-adder a').width() / 2)
+        });
+        
+        $('.annotator-viewer:first').css({
+          top:  base.top,
+          left: base.left + 100
+        });
+        
+        $('.annotator-viewer:last').css({
+          top:  base.top,
+          left: base.left + 300
+        });
       }(jQuery));
     </script>
   </body>
