@@ -40,38 +40,34 @@
         </code></pre>
       
         <div class="annotator-adder"><a href="#annotate" title="Annotate selection">Annotate</a></div>
-        <div class='annotator-viewer'>
-          <ul>
-            <li>
-              <div>
-                This is a comment on this annotation text. This annotation
-                has multiple comments.
-              </div>
-              <div class="section annotator-tags">
-                <span>Apple</span><span>Oranges</span><span>Pears</span>
-              </div>
-              <div class="section annotator-author">
-                By Joe Bloggs
-              </div>
-            </li>
-            <li>
-              <divc >
-                This is a comment on this annotation text. This annotation
-                has multiple comments.
-              </div>
-            </li>
-          </ul>
-        </div>
-        <div class='annotator-viewer'>
-          <ul>
-            <li>
-              <div>
-                This is a comment on this annotation text. This annotation
-                has one comment. An no plugins
-              </div>
-            </li>
-          </ul>
-        </div>
+        <ul class="annotator-viewer">
+          <li class="annotator-annotation">
+            <div>
+              This is a comment on this annotation text. This annotation
+              has multiple comments.
+            </div>
+            <div class="plugin annotator-tags">
+              <span>Apple</span><span>Oranges</span><span>Pears</span>
+            </div>
+            <div class="plugin annotator-author">
+              By Joe Bloggs
+            </div>
+          </li>
+          <li class="annotator-annotation">
+            <div>
+              This is a comment on this annotation text. This annotation
+              has multiple comments.
+            </div>
+          </li>
+        </ul>
+        <ul class="annotator-viewer">
+          <li class="annotator-annotation">
+            <div>
+              This is a comment on this annotation text. This annotation
+              has one comment. An no plugins
+            </div>
+          </li>
+        </ul>
       </div>
     </div>
 
@@ -91,15 +87,14 @@
           top:  base.top,
           left: base.left + ($('.annotator-adder a').width() / 2)
         });
-        
-        $('.annotator-viewer:first').css({
-          top:  base.top,
-          left: base.left + 100
-        });
-        
-        $('.annotator-viewer:last').css({
-          top:  base.top,
-          left: base.left + 300
+
+        $('.annotator-viewer').each(function (i) {
+          var viewer = $(this);
+
+          viewer.css({
+            top:  base.top - viewer.height() - 8,
+            left: base.left + 50 + (270 * i)
+          });
         });
       }(jQuery));
     </script>
