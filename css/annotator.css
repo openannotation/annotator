@@ -7,17 +7,29 @@
 	position: relative;
 }
 
-.annotator-adder a {
-	display: block;
-	width: 22px;
-	height: 22px;
-	background: transparent url(../img/note.png) no-repeat left top;
-}
-
 .annotator-adder {
 	position: absolute;
-	display: none;
-	margin: -25px 0 0 3px;
+	margin-top: -60px;
+	margin-left: -25px;
+	width: 50px;
+	height: 55px;
+	background: url(../img/annotator-icon-sprite.png) no-repeat left top;
+}
+
+.annotator-adder:hover {
+	background-position: center top;
+}
+
+.annotator-adder:active {
+	background-position: center right;
+}
+
+.annotator-adder a {
+	display: block;
+	width: 36px;
+	height: 41px;
+	margin: 0 auto;
+	text-indent: -999em;
 }
 
 .annotator-hl {
