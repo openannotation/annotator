@@ -68,7 +68,7 @@
 	height: 10px;
 	background: url(../img/annotator-glyph-sprite.png) no-repeat 0 0;
 	position: absolute;
-	bottom: -9px;
+	bottom: -10zpx;
 	left: 8px;
 }
 
@@ -159,7 +159,7 @@
 	background-position: 0 -45px;
 }
 
-.annotator-editor {
+.annotator-editor ul {
 	padding: 0 2px;
 }
 
@@ -176,22 +176,19 @@
 .annotator-editor li input,
 .annotator-editor li textarea {
 	display: block;
-	width: 269px;
-	padding: 10px 6px;
+	width: 251px;
+	padding: 10px 6px 10px 8px;
 	border: none;
 	margin: 0 0 0 -2px;
 	color: rgb(60, 60, 60);
-	background-color: transparent;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
+	background: none;
 }
 
 .annotator-editor li:first-child textarea {
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	-o-border-radius: 5px;
-	border-radius: 5px;
+	-webkit-border-radius: 5px 5px 0 0;
+	-moz-border-radius: 5px 5px 0 0;
+	-o-border-radius: 5px 5px 0 0;
+	border-radius: 5px 5px 0 0;
 }
 
 .annotator-editor li input:focus,
@@ -211,6 +208,89 @@
 
 .annotator-editor .annotator-checkbox {
 	padding: 8px 6px;
+}
+
+.annotator-editor .annotator-controls {
+	text-align: right;
+	padding: 3px;
+	border-top: 1px solid rgb(212,212,212);
+	background: rgb(212, 212, 212) -webkit-gradient(
+  		linear, left top, left bottom,
+  		from(rgb(228, 228, 228)),
+  		color-stop(0.5, rgb(235,235,235)),
+  		color-stop(0.65, rgb(228, 228, 228)),
+  		to(rgb(210, 210, 210))
+	);
+}
+
+.annotator-editor a {
+	display: inline-block;
+	padding: 0 6px 0 22px;
+	color: rgb(54, 54, 54);
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
+	text-decoration: none;
+	line-height: 24px;
+	font-size: 12px;
+	font-weight: bold;
+	border: 1px solid rgb(162, 162, 162);
+	background-color: rgb(212, 212, 212);
+	background-image: url(../img/annotator-glyph-sprite.png),
+	-webkit-gradient(
+  		linear, left top, left bottom,
+  		from(rgb(245, 245, 245)),
+  		color-stop(0.5, rgb(210, 210, 210)),
+  		color-stop(0.5, rgb(190, 190, 190)),
+  		to(rgb(210, 210, 210))
+	);
+	background-repeat: no-repeat;
+	background-position: 5px -70px, 0 0;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-o-border-radius: 5px;
+	border-radius: 5px;
+}
+
+.annotator-editor a:hover,
+.annotator-editor a.annotator-focus {
+	border-color: rgb(67, 90, 160);
+	background-color: rgb(56, 101, 249);
+	background-image: url(../img/annotator-glyph-sprite.png),
+	-webkit-gradient(
+  		linear, left top, left bottom,
+  		from(rgb(118, 145, 251)),
+  		color-stop(0.5, rgb(80, 117, 251)),
+  		color-stop(0.5, rgb(56, 101, 249)),
+  		to(rgb(54, 101, 250))
+	);
+	background-position: 5px -101px, 0 0;
+	color: rgb(255, 255, 255);
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.42);
+}
+
+.annotator-editor a:active {
+	border-color: rgb(112, 12, 73);
+	background-color: rgb(209, 46, 142);
+	background-image: url(../img/annotator-glyph-sprite.png),
+	-webkit-gradient(
+  		linear, left top, left bottom,
+  		from(rgb(252, 124, 202)),
+  		color-stop(0.5, rgb(232, 93, 178)),
+  		color-stop(0.5, rgb(209, 46, 142)),
+  		to(rgb(255, 0, 156))
+	);
+}
+
+.annotator-editor a.annotator-save {
+	background-position: 5px -130px, 0 0;
+}
+
+.annotator-editor a.annotator-save:hover,
+.annotator-editor a.annotator-save.annotator-focus {
+	background-position: 5px -161px, 0 0;
+}
+
+.annotator-editor::after {
+	background-position: 0 -15px;
 }
 
 .annotator-notice {
