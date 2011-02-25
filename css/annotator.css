@@ -59,13 +59,14 @@
 	display: block;
 	width: 18px;
 	height: 10px;
-	background: url(../img/callout.png) no-repeat top left;
+	background: url(../img/annotator-glyph-sprite.png) no-repeat 0 0;
 	position: absolute;
 	bottom: -9px;
 	left: 8px;
 }
 
 .annotator-viewer li {
+	position: relative;
 	font-size: 11px;
 	color: rgb(144, 144, 144);
 	padding: 0 2px;
@@ -87,8 +88,57 @@
 }
 
 .annotator-viewer li:last-child {
-
 	border-bottom: none;
+}
+
+.annotator-viewer .annotator-controls {
+	top: 5px;
+	right: 5px;
+	position: absolute;
+	background-color: rgba(255, 255, 255, 0.9);
+	padding: 0 3px 5px;
+	opacity: 0;
+	-webkit-transition: opacity 0.2s ease-in;
+	-moz-transition: opacity 0.2s ease-in;
+	-o-transition: opacity 0.2s ease-in;
+	transition: opacity 0.2s ease-in;
+}
+
+.annotator-viewer li .annotator-controls:hover,
+.annotator-viewer li .annotator-controls.visible {
+	opacity: 1;
+}
+
+.annotator-viewer .annotator-controls button {
+	cursor: pointer;
+	display: inline-block;
+	width: 13px;
+	height: 13px;
+	margin-left: 2px;
+	border: none;
+	opacity: 0.2;
+	text-indent: -900em;
+	background: transparent url(../img/annotator-glyph-sprite.png) no-repeat;
+}
+
+.annotator-viewer .annotator-controls button:hover {
+	opacity: 0.9;
+}
+
+.annotator-viewer .annotator-controls button:active {
+	opacity: 1;
+}
+
+.annotator-viewer .annotator-controls button[disabled] {
+	display: none;
+}
+
+.annotator-viewer .annotator-controls .annotator-edit {
+	background-position: 0 -30px;
+}
+
+.annotator-viewer .annotator-controls .annotator-delete {
+	background-position: 0 -45px;
 }
 
 .annotator-editor {
