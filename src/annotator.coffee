@@ -18,17 +18,16 @@ class Annotator extends Delegator
   events:
     ".annotator-adder click":     "onAdderClick"
     ".annotator-adder mousedown": "onAdderMousedown"
-    ".annotator-hl mouseover":    "highlightMouseover"
+    ".annotator-hl mouseover":    "onHighlightMouseover"
     ".annotator-hl mouseout":     "startViewerHideTimer"
 
     # TODO: allow for adding these events on document.body
     "mouseup":   "checkForEndSelection"
     "mousedown": "checkForStartSelection"
 
-  dom:
-    adder:  "<div class='annotator-adder'><a href='#'></a></div>"
+  html:
     hl:     "<span class='annotator-hl'></span>"
-    viewer: "<div class='annotator-viewer'></div>"
+    adder:  "<div class='annotator-adder'><a href='#'></a></div>"
 
   options: {} # Configuration options
 
@@ -63,36 +62,8 @@ class Annotator extends Delegator
     })
 
     # Create model dom elements
-    for name, src of @dom
-      @dom[name] = $(src)
-      if name == 'notice'
-        @dom[name].appendTo(document.body)
-      else
-        @dom[name].appendTo(@wrapper).hide()
-
-  checkForStartSelection: (e) =>
-    this.startViewerHideTimer()
-    @mouseIsDown = true
-
-  checkForEndSelection: (e) =>
-    @mouseIsDown = false
-
-    # This prevents the note image from jumping away on the mouseup
-    # of a click on icon.
-    if (@ignoreMouseup)
-      return
-
-    this.getSelection()
-
-    s = @selection
-    validSelection = s?.rangeCount > 0 and not s.isCollapsed
-
-    if e and validSelection
-      @dom.adder
-        .css(util.mousePosition(e, @wrapper))
-        .show()
-    else
-      @dom.adder.hide()
+    for name, src of @html
+      this[name] = $(src).appendTo(@wrapper).hide()
 
   getSelection: ->
     @selection = util.getGlobal().getSelection()
@@ -157,7 +128,7 @@ class Annotator extends Delegator
 
   highlightRange: (normedRange) ->
     elemList = for node in normedRange.textNodes()
-      wrapper = @dom.hl.clone().show()
+      wrapper = @hl.clone().show()
       $(node).wrap(wrapper).parent().get(0)
 
   addPlugin: (name, options) ->
@@ -206,7 +177,31 @@ class Annotator extends Delegator
     clearTimeout(@viewerHideTimer)
     @viewerHideTimer = false
 
-  highlightMouseover: (event) =>
+  checkForStartSelection: (event) =>
+    this.startViewerHideTimer()
+    @mouseIsDown = true
+
+  checkForEndSelection: (event) =>
+    @mouseIsDown = false
+
+    # This prevents the note image from jumping away on the mouseup
+    # of a click on icon.
+    if (@ignoreMouseup)
+      return
+
+    this.getSelection()
+
+    s = @selection
+    validSelection = s?.rangeCount > 0 and not s.isCollapsed
+
+    if event and validSelection
+      @adder
+        .css(util.mousePosition(event, @wrapper))
+        .show()
+    else
+      @adder.hide()
+
+  onHighlightMouseover: (event) =>
     # Cancel any pending hiding of the viewer.
     this.clearViewerHideTimer()
 
@@ -228,8 +223,8 @@ class Annotator extends Delegator
   onAdderClick: (event) =>
     e?.preventDefault()
 
-    position = @dom.adder.position()
-    @dom.adder.hide()
+    position = @adder.position()
+    @adder.hide()
 
     this.showEditor({}, position)
 
