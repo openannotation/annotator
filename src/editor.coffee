@@ -1,13 +1,15 @@
 
 class Annotator.Editor extends Delegator
   events:
-    "form submit":             "submit"
-    ".annotator-save click":   "submit"
-    ".annotator-cancel click": "hide"
-    "textarea keydown":        "processKeypress"
+    "form submit":                 "submit"
+    ".annotator-save click":       "submit"
+    ".annotator-cancel click":     "hide"
+    ".annotator-cancel mouseover": "onCancelButtonMouseover"
+    "textarea keydown":            "processKeypress"
 
   classes:
-    hide: 'annotator-hide'
+    hide:  'annotator-hide'
+    focus: 'annotator-focus'
 
   html: """
         <div class="annotator-outer annotator-editor">
@@ -45,11 +47,9 @@ class Annotator.Editor extends Delegator
   show: (event) =>
     event?.preventDefault()
 
-    $(@element)
-     .removeClass(@classes.hide)
-     .trigger('show')
-     .find(':input:first')
-       .focus()
+    element = $(@element).removeClass(@classes.hide).trigger('show')
+    element.find('.annotator-save').addClass(@classes.focus)
+    element.find(':input:first').focus()
 
   hide: (event) =>
     event?.preventDefault()
@@ -116,6 +116,9 @@ class Annotator.Editor extends Delegator
     else if event.keyCode is 13 and !event.shiftKey
       # If "return" was pressed without the shift key, we're done.
       this.submit()
+
+  onCancelButtonMouseover: =>
+    $(@element).find('.' + @classes.focus).removeClass(@classes.focus);
 
   setupDragabbles: () ->
     mousedown = null

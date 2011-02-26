@@ -158,9 +158,11 @@
 	opacity: 0.2;
 	text-indent: -900em;
 	background: transparent url(../img/annotator-glyph-sprite.png) no-repeat;
+	outline: none;
 }
 
-.annotator-viewer .annotator-controls button:hover {
+.annotator-viewer .annotator-controls button:hover,
+.annotator-viewer .annotator-controls button:focus {
 	opacity: 0.9;
 }
 
@@ -345,7 +347,9 @@
 }
 
 .annotator-editor a:hover,
+.annotator-editor a:focus,
 .annotator-editor a.annotator-focus {
+	outline: none;
 	border-color: rgb(67, 90, 160);
 	background-color: rgb(56, 101, 249);
 	background-image: -webkit-gradient(
@@ -380,7 +384,8 @@
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.42);
 }
 
-.annotator-editor a:hover::after {
+.annotator-editor a:hover::after,
+.annotator-editor a:focus::after {
 	margin-top: -8px;
 	background-position: 0 -75px;
 }
@@ -423,6 +428,7 @@
 }
 
 .annotator-editor a.annotator-save:hover::after,
+.annotator-editor a.annotator-save:focus::after,
 .annotator-editor a.annotator-save.annotator-focus::after {
 	margin-top: -8px;
 	background-position: 0 -105px;
