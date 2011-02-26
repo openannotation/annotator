@@ -11,14 +11,14 @@ class Annotator.Editor extends Delegator
 
   html: """
         <div class="annotator-outer annotator-editor">
-          <div class="annotator-widget">
+          <form class="annotator-widget">
             <ul></ul>
             <div class="annotator-controls">
               <a href="#cancel" class="annotator-cancel">Cancel</a>
               <a href="#save" class="annotator-save annotator-focus">Save</a>
             </div>
             <span class="annotator-resize"></span>
-          </div>
+          </form>
         <div>
         """
 
@@ -72,7 +72,7 @@ class Annotator.Editor extends Delegator
     for field in @fields
       field.submit(field.element, @annotation)
 
-    $(@element).trigger('submit', [@annotation])
+    $(@element).trigger('save', [@annotation])
 
     this.hide()
 

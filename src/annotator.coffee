@@ -50,7 +50,7 @@ class Annotator extends Delegator
     $(@editor.element)
       .appendTo(@wrapper)
       .bind('hide', this.onEditorHide)
-      .bind('submit', this.onEditorSubmit)
+      .bind('save', this.onEditorSubmit)
 
     @viewer = new Annotator.Viewer()
     @viewer.hide()
