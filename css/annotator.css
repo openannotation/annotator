@@ -17,6 +17,11 @@
 	font: 10px/1 "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
 
+.annotator-hide {
+	display: none;
+	visibility: hidden;
+}
+
 .annotator-adder {
 	margin-top: -41px;
 	margin-left: -40px;
