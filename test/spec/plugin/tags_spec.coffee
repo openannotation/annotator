@@ -30,6 +30,13 @@ describe 'Annotator.Plugin.Tags', ->
 
       expect(plugin.input.val()).toEqual('apples oranges pears')
 
+    it "should set the clear the value of the input if there are no tags", ->
+      annotation = {}
+      plugin.input.val('apples pears oranges')
+      plugin.updateField(plugin.field, annotation)
+
+      expect(plugin.input.val()).toEqual('')
+
   describe "setAnnotationTags", ->
     it "should set the annotation's tags", ->
       annotation = {}

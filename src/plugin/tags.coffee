@@ -12,8 +12,10 @@ class Annotator.Plugin.Tags extends Annotator.Plugin
     @input = $(@field).find(':input')
 
   updateField: (field, annotation) =>
-    if annotation.tags
-      @input.val(this.stringifyTags(annotation.tags))
+    value = ''
+    value = this.stringifyTags(annotation.tags) if annotation.tags
+
+    @input.val(value)
 
   setAnnotationTags: (field, annotation) =>
     annotation.tags = this.parseTags(@input.val())
