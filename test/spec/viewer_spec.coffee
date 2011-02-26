@@ -15,12 +15,21 @@ describe 'Annotator.Viewer', ->
   describe "show", ->
     it "should make the viewer visible", ->
       viewer.show()
-      expect($(viewer.element).hasClass('annotator-hide')).toBeFalsy()
+      expect($(viewer.element).hasClass(viewer.classes.hide)).toBeFalsy()
+
+  describe "isShown", ->
+    it "should return true if the viewer is visible", ->
+      viewer.show()
+      expect(viewer.isShown()).toBeTruthy()
+
+    it "should return false if the viewer is not visible", ->
+      viewer.hide()
+      expect(viewer.isShown()).toBeFalsy()
 
   describe "hide", ->
     it "should hide the viewer from view", ->
       viewer.hide()
-      expect($(viewer.element).hasClass('annotator-hide')).toBeTruthy()
+      expect($(viewer.element).hasClass(viewer.classes.hide)).toBeTruthy()
 
   describe "load", ->
     beforeEach ->

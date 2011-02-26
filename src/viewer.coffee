@@ -4,6 +4,9 @@ class Annotator.Viewer extends Delegator
     ".annotator-controls .annotator-edit click":   "controlEditClick"
     ".annotator-controls .annotator-delete click": "controlDeleteClick"
 
+  classes:
+    hide: 'annotator-hide'
+
   html:
     element:"""
             <div class="annotator-outer annotator-viewer">
@@ -35,11 +38,14 @@ class Annotator.Viewer extends Delegator
 
   show: (event) =>
     event?.preventDefault()
-    $(@element).removeClass('annotator-hide').trigger('show')
+    $(@element).removeClass(@classes.hide).trigger('show')
+
+  isShown: ->
+    not $(@element).hasClass(@classes.hide)
 
   hide: (event) =>
     event?.preventDefault()
-    $(@element).addClass('annotator-hide').trigger('hide')
+    $(@element).addClass(@classes.hide).trigger('hide')
 
   load: (annotations) =>
     @annotations = annotations || []
@@ -47,8 +53,14 @@ class Annotator.Viewer extends Delegator
     list = $(@element).find('ul:first').empty()
     for annotation in @annotations
       item = $(@item).clone().appendTo(list)
+      controls = item.find('.annotator-controls')
+
       for field in @fields
-        element = $(field.element).clone().appendTo(item).data('annotation', annotation)[0]
+        element = $(field.element)
+          .clone()
+          .insertBefore(controls)
+          .data('annotation', annotation)[0]
+
         field.load(element, annotation)
 
     $(@element).trigger('load', [@annotations])
@@ -61,7 +73,7 @@ class Annotator.Viewer extends Delegator
     }, options)
 
     field.element = $('<div />')[0]
-    @fields.push field.element
+    @fields.push field
     field.element
 
   onEditClick: (event) =>

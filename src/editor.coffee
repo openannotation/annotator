@@ -6,6 +6,9 @@ class Annotator.Editor extends Delegator
     ".annotator-cancel click": "hide"
     "textarea keydown":        "processKeypress"
 
+  classes:
+    hide: 'annotator-hide'
+
   html: """
         <div class="annotator-outer annotator-editor">
           <div class="annotator-widget">
@@ -30,6 +33,7 @@ class Annotator.Editor extends Delegator
     # Setup the default editor field.
     this.addField({
       type: 'textarea',
+      label: 'Comments\u2026'
       load: (field, annotation) ->
         $(field).find('textarea').val(annotation.text || '')
       submit: (field, annotation) ->
@@ -42,15 +46,15 @@ class Annotator.Editor extends Delegator
     event?.preventDefault()
 
     $(@element)
-     .removeClass('annotator-hide')
+     .removeClass(@classes.hide)
      .trigger('show')
      .find(':input:first')
-       .focus();
+       .focus()
 
   hide: (event) =>
     event?.preventDefault()
 
-    $(@element).addClass('annotator-hide').trigger('hide')
+    $(@element).addClass(@classes.hide).trigger('hide')
 
   load: (annotation) =>
     @annotation = annotation
@@ -140,7 +144,6 @@ class Annotator.Editor extends Delegator
       $(window).unbind '.annotator-editor-resize'
 
     onMousemove = (event) ->
-      console.log 'oops'
       if mousedown and throttle == false
         diff = {
           top:  event.pageY - mousedown.top
