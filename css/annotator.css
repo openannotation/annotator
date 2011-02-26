@@ -464,7 +464,7 @@
 	color: rgb(255, 255, 255);
 }
 
-.annotator-notice {
+.annotator-notice.show {
 	top: 0;
 }
 
