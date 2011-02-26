@@ -38,7 +38,7 @@
           height: 80px;
         }
         </code></pre>
-      
+
         <div class="annotator-adder"><a href="#annotate" title="Annotate selection">Annotate</a></div>
         <div class="annotator-outer annotator-viewer">
           <ul class="annotator-widget">
@@ -135,18 +135,56 @@
           var viewer = $(this);
 
           viewer.css({
-            top:  base.top - viewer.height() - 8,
+            top:  base.top,
             left: base.left + 50 + (270 * i)
           });
         });
-        
+
         $('.annotator-editor').each(function (i) {
           var viewer = $(this);
 
           viewer.css({
-            top:  base.top + 20,
+            top:  base.top + 280,
             left: base.left
           });
+        });
+
+        var mousedown = null;
+        var resize = $('.annotator-resize');
+        var textarea = resize.parent().find('textarea:first');
+        var throttle = false;
+
+        resize.bind({
+          mousedown: function (e) {
+            mousedown = {
+              top:  e.pageY,
+              left: e.pageX
+            };
+            e.preventDefault();
+          }
+        });
+
+        $(window).bind({
+          mouseup: function () {
+            mousedown = null;
+          },
+          mousemove: function (e) {
+            if (mousedown && throttle === false) {
+              var offset = textarea.offset()
+              var newOffset = {
+                top:  e.pageY - offset.top,
+                left: e.pageX - offset.left
+              };
+
+              textarea.width(newOffset.left);
+              textarea.height(textarea.outerHeight() - newOffset.top);
+              
+              throttle = true;
+              setTimeout(function () {
+                throttle = false;
+              }, 1000/60);
+            }
+          }
         });
       }(jQuery));
     </script>

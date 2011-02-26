@@ -53,7 +53,7 @@
 .annotator-widget {
 	bottom: 8px;
 	left: -18px;
-	width: 265px;
+	min-width: 265px;
 	background-color: rgba(251, 251, 251, 0.98);
 	border: 1px solid rgba(122, 122, 122, 0.6);
 	-webkit-border-radius: 5px;
@@ -180,6 +180,7 @@
 .annotator-editor li textarea {
 	display: block;
 	width: 100%;
+	min-width: 100%;
 	padding: 10px 8px;
 	border: none;
 	margin: 0;
@@ -193,6 +194,7 @@
 }
 
 .annotator-editor li:first-child textarea {
+	min-height: 5.5em;
 	-webkit-border-radius: 5px 5px 0 0;
 	-moz-border-radius: 5px 5px 0 0;
 	-o-border-radius: 5px 5px 0 0;
@@ -208,6 +210,7 @@
 .annotator-editor li input[type=radio],
 .annotator-editor li input[type=checkbox] {
 	width: auto;
+	min-width: 0;
 	padding: 0;
 	display: inline;
 	margin: 0 4px 0 0;
