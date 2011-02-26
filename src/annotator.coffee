@@ -30,17 +30,6 @@ class Annotator extends Delegator
 
   dom:
     adder:  "<div class='annotator-adder'><a href='#'></a></div>"
-    editor: """
-            <div class='annotator-editor'>
-              <form>
-                <textarea rows='6' cols='30'></textarea>
-                <div class='annotator-editor-controls'>
-                  <button type='submit' class='annotator-editor-save'>Save</button>
-                  <button type='submit' class='annotator-editor-cancel'>Cancel</button>
-                </div>
-              <form>
-            </div>
-            """
     hl:     "<span class='annotator-hl'></span>"
     viewer: "<div class='annotator-viewer'></div>"
 
