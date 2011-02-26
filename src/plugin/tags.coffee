@@ -7,7 +7,6 @@ class Annotator.Plugin.Tags extends Annotator.Plugin
 
   constructor: (element, options) ->
     super
-    this.tagSrc = "<input type='text' class='annotator-editor-tags' placeholder='tags&hellip;'>"
 
   updateEditor: (e, editorElement, annotation) =>
     if not this.tags

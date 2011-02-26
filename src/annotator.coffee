@@ -21,10 +21,6 @@ class Annotator extends Delegator
     ".annotator-hl mouseout":              "startViewerHideTimer"
     ".annotator-viewer mouseover":         "clearViewerHideTimer"
     ".annotator-viewer mouseout":          "startViewerHideTimer"
-    ".annotator-editor textarea keydown":  "processEditorKeypress"
-    ".annotator-editor form submit":       "submitEditor"
-    ".annotator-editor button.annotator-editor-save click": "submitEditor"
-    ".annotator-editor button.annotator-editor-cancel click": "hideEditor"
     ".annotator-ann-controls .edit click": "controlEditClick"
     ".annotator-ann-controls .del click":  "controlDeleteClick"
 
@@ -62,6 +58,14 @@ class Annotator extends Delegator
     @wrapper = $("<div></div>").addClass('annotator-wrapper')
     $(@element).wrapInner(@wrapper)
     @wrapper = $(@element).contents().get(0)
+
+    # Set up the annotation editor
+    @editor = new Annotator.Editor()
+    @editor.hide()
+    $(@editor.element)
+      .appendTo(@wrapper)
+      .bind('hide', this.hideEditor)
+      .bind('submit', this.submitEditor)
 
     # Create model dom elements
     for name, src of @dom
@@ -130,8 +134,7 @@ class Annotator extends Delegator
 
     $(@element).trigger('annotationDeleted', [annotation])
 
-  updateAnnotation: (annotation, data) ->
-    $.extend(annotation, data)
+  updateAnnotation: (annotation) ->
     $(@element).trigger('beforeAnnotationUpdated', [annotation])
     $(@element).trigger('annotationUpdated', [annotation])
 
@@ -175,58 +178,26 @@ class Annotator extends Delegator
         console.error "Could not load #{name} plugin. Have you included the appropriate <script> tag?"
     this # allow chaining
 
-  showEditor: (e, annotation) =>
-    if annotation
-      @dom.editor.data('annotation', annotation)
-      @dom.editor.find('textarea').val(annotation.text)
+  showEditor: (event, annotation) =>
+    $(@editor.element).css(util.mousePosition(event, @wrapper))
 
-    @dom.editor
-      .css(util.mousePosition(e, @wrapper))
-      .show()
-    .find('textarea')
-      .focus()
+    @editor.load(annotation)
 
-    $(@element).trigger('annotationEditorShown', [@dom.editor, annotation])
-
-
-  hideEditor: (e) =>
-    e?.preventDefault()
-
-    @dom.editor
-      .data('annotation', null)
-      .hide()
-    .find('textarea')
-      .val('')
+  hideEditor: (event, annotation) =>
+    event?.preventDefault()
 
     $(@element).trigger('annotationEditorHidden', [@dom.editor])
     @ignoreMouseup = false
 
-  processEditorKeypress: (e) =>
-    if e.keyCode is 27 # "Escape" key => abort.
-      this.hideEditor(e)
-    else if e.keyCode is 13 && !e.shiftKey
-      # If "return" was pressed without the shift key, we're done.
-      this.submitEditor(e)
-
-  submitEditor: (e) =>
-    e?.preventDefault()
-
-    textarea = @dom.editor.find('textarea')
-    annotation = @dom.editor.data('annotation')
-
-    if not annotation
-      create = true
-      annotation = {}
+  submitEditor: (event, annotation) =>
+    event?.preventDefault()
 
     $(@element).trigger('annotationEditorSubmit', [@dom.editor, annotation])
 
-    if create
-      annotation.text = textarea.val()
+    if annotation.ranges == undefined
       this.createAnnotation(annotation)
     else
-      this.updateAnnotation(annotation, { text: textarea.val() })
-
-    this.hideEditor()
+      this.updateAnnotation(annotation)
 
   showViewer: (e, annotations) =>
     controlsHTML = """
@@ -286,11 +257,13 @@ class Annotator extends Delegator
 
     this.showViewer(e, annotations)
 
-  adderMousedown: (e) =>
+  adderMousedown: (event) =>
     e?.preventDefault()
+
     @ignoreMouseup = true
     @dom.adder.hide()
-    this.showEditor(e)
+
+    this.showEditor(event, {})
 
   controlEditClick: (e) =>
     annot = $(e.target).parents('.annotator-ann')
