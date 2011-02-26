@@ -430,24 +430,41 @@
 }
 
 .annotator-notice {
-	color: #706446;
+	color: #fff;
 	position: absolute;
 	position: fixed;
-	top: -40px;
+	top: -54px;
 	left: 0;
 	width: 100%;
-	line-height: 40px;
 	font-size: 14px;
+	line-height: 50px;
 	text-align: center;
-	background-color: #FDF5D8;
-	border-bottom: 1px solid #E1BE99;
+	background-color: #000;
+	background-color: rgba(0, 0, 0, 0.9);
+	border-bottom: 4px solid #3665f9;
 	-webkit-transition: top 0.4s ease-out;
 	-moz-transition: top 0.4s ease-out;
 	-o-transition: top 0.4s ease-out;
 	transition: top 0.4s ease-out;
 }
 
-.annotator-notice.show {
+.annotator-notice.success {
+	border-color: #d4288e;
+}
+
+.annotator-notice.error {
+	border-color: #ea2207;
+}
+
+.annotator-notice p {
+	margin: 0;
+}
+
+.annotator-notice a {
+	color: rgb(255, 255, 255);
+}
+
+.annotator-notice {
 	top: 0;
 }
 
