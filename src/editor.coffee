@@ -100,11 +100,11 @@ class Annotator.Editor extends Delegator
 
   setupDragabbles: () ->
     mousedown = null
-    editor    = $(@element);
-    resize    = editor.find('.annotator-resize');
-    textarea  = editor.find('textarea:first');
-    controls  = editor.find('.annotator-controls');
-    throttle  = false;
+    editor    = $(@element)
+    resize    = editor.find('.annotator-resize')
+    textarea  = editor.find('textarea:first')
+    controls  = editor.find('.annotator-controls')
+    throttle  = false
 
     onMousedown = (event) ->
       if event.target == this
@@ -113,45 +113,51 @@ class Annotator.Editor extends Delegator
           top:     event.pageY
           left:    event.pageX
         }
+
+        $(window).bind({
+          'mouseup.annotator-editor-resize':   onMouseup
+          'mousemove.annotator-editor-resize': onMousemove
+        })
         event.preventDefault();
 
-    resize.bind('mousedown', onMousedown);
-    controls.bind('mousedown', onMousedown);
+    onMouseup = ->
+      mousedown = null;
+      $(window).unbind '.annotator-editor-resize'
 
-    $(window).bind({
-      mouseup: ->
-        mousedown = null;
-      mousemove: (event) ->
-        if mousedown and throttle == false
-          diff = {
-            top:  event.pageY - mousedown.top
-            left: event.pageX - mousedown.left
-          }
+    onMousemove = (event) ->
+      console.log 'oops'
+      if mousedown and throttle == false
+        diff = {
+          top:  event.pageY - mousedown.top
+          left: event.pageX - mousedown.left
+        }
 
-          if mousedown.element == resize[0]
-            height = textarea.outerHeight()
-            width  = textarea.outerWidth()
+        if mousedown.element == resize[0]
+          height = textarea.outerHeight()
+          width  = textarea.outerWidth()
 
-            textarea.height(height - diff.top)
-            textarea.width(width + diff.left)
+          textarea.height(height - diff.top)
+          textarea.width(width + diff.left)
 
-            # Only update the mousedown object if the dimensions
-            # have changed, otherwise they have reached thier minimum
-            # values.
-            mousedown.top  = event.pageY unless textarea.outerHeight() == height
-            mousedown.left = event.pageX unless textarea.outerWidth() == width
+          # Only update the mousedown object if the dimensions
+          # have changed, otherwise they have reached thier minimum
+          # values.
+          mousedown.top  = event.pageY unless textarea.outerHeight() == height
+          mousedown.left = event.pageX unless textarea.outerWidth()  == width
 
-          else if mousedown.element == controls[0]
-            editor.css({
-              top:  parseInt(editor.css('top'), 10)  + diff.top
-              left: parseInt(editor.css('left'), 10) + diff.left
-            })
+        else if mousedown.element == controls[0]
+          editor.css({
+            top:  parseInt(editor.css('top'), 10)  + diff.top
+            left: parseInt(editor.css('left'), 10) + diff.left
+          })
 
-            mousedown.top  = event.pageY
-            mousedown.left = event.pageX
+          mousedown.top  = event.pageY
+          mousedown.left = event.pageX
 
-          throttle = true;
-          setTimeout(->
-            throttle = false;
-          , 1000/60);
-    });
+        throttle = true;
+        setTimeout(->
+          throttle = false
+        , 1000/60);
+
+    resize.bind   'mousedown', onMousedown
+    controls.bind 'mousedown', onMousedown
