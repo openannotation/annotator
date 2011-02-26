@@ -12,6 +12,7 @@
     <script src="lib/class.js"></script>
     <script src="lib/range.js"></script>
     <script src="lib/annotator.js"></script>
+    <script src="lib/editor.js"></script>
     <script src="lib/notification.js"></script>
     <script src="lib/plugin/store.js"></script>
     <script src="lib/plugin/permissions.js"></script>
@@ -62,12 +63,12 @@
 
         devAnnotator = new Annotator(elem)
           //.addPlugin('Auth')
-          .addPlugin('Unsupported')
+          //.addPlugin('Unsupported')
           .addPlugin('Tags')
           //.addPlugin('Permissions')
-          .addPlugin('Store', {
-            prefix: 'http://localhost:5000'
-          });
+          // .addPlugin('Store', {
+          //             prefix: 'http://localhost:5000'
+          //           });
 
         //devAnnotator.plugins['Permissions'].setUser('alice');
       }(jQuery));

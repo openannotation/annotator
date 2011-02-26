@@ -178,21 +178,16 @@ class Annotator extends Delegator
         console.error "Could not load #{name} plugin. Have you included the appropriate <script> tag?"
     this # allow chaining
 
-  showEditor: (event, annotation) =>
-    $(@editor.element).css(util.mousePosition(event, @wrapper))
-
+  showEditor: (annotation, location) =>
+    $(@editor.element).css(location)
     @editor.load(annotation)
 
-  hideEditor: (event, annotation) =>
-    event?.preventDefault()
-
-    $(@element).trigger('annotationEditorHidden', [@dom.editor])
+  hideEditor: =>
+    $(@element).trigger('annotationEditorHidden', [@editor])
     @ignoreMouseup = false
 
-  submitEditor: (event, annotation) =>
-    event?.preventDefault()
-
-    $(@element).trigger('annotationEditorSubmit', [@dom.editor, annotation])
+  submitEditor: (annotation) =>
+    $(@element).trigger('annotationEditorSubmit', [@editor, annotation])
 
     if annotation.ranges == undefined
       this.createAnnotation(annotation)
@@ -261,9 +256,11 @@ class Annotator extends Delegator
     e?.preventDefault()
 
     @ignoreMouseup = true
+
+    position = @dom.adder.position()
     @dom.adder.hide()
 
-    this.showEditor(event, {})
+    this.showEditor({}, position)
 
   controlEditClick: (e) =>
     annot = $(e.target).parents('.annotator-ann')
