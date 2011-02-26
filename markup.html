@@ -157,12 +157,14 @@
         var throttle = false;
 
         function onMousedown(e) {
-          mousedown = {
-            element: this,
-            top: e.pageY,
-            left: e.pageX
-          };
-          e.preventDefault();
+          if (e.target === this) {
+            mousedown = {
+              element: this,
+              top: e.pageY,
+              left: e.pageX
+            };
+            e.preventDefault();
+          }
         }
 
         resize.bind('mousedown', onMousedown);
