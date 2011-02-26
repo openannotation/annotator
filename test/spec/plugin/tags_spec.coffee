@@ -56,3 +56,16 @@ describe 'Annotator.Plugin.Tags', ->
         '<span class="annotator-tag">bar</span>'
         '<span class="annotator-tag">baz</span>'
       ].join(' '))
+
+    it "should remove the field if there are no tags", ->
+      annotation = { tags: [] }
+      field = $('<div />')[0]
+
+      plugin.updateViewer(field, annotation)
+      expect($(field).parent().length).toEqual(0)
+
+      annotation = {}
+      field = $('<div />')[0]
+
+      plugin.updateViewer(field, annotation)
+      expect($(field).parent().length).toEqual(0)

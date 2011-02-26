@@ -23,20 +23,24 @@ class Annotator.Plugin.Tags extends Annotator.Plugin
     annotation.tags = this.parseTags(@input.val())
 
   parseTags: (string) ->
-    string.split(/\s+/)
+    string = $.trim(string)
+
+    tags = []
+    tags = string.split(/\s+/) if string
+    tags
 
   stringifyTags: (array) ->
     array.join(" ")
 
   updateViewer: (field, annotation) ->
-    $(field).addClass('annotator-tags').html(->
-      string = ''
+    field = $(field)
 
-      if annotation.tags and $.isArray(annotation.tags)
+    if annotation.tags and $.isArray(annotation.tags) and annotation.tags.length
+      field.addClass('annotator-tags').html(->
         string = $.map(annotation.tags,(tag) ->
-          '<span class="annotator-tag">' + Annotator.$.escape(tag) + '</span>'
+            '<span class="annotator-tag">' + Annotator.$.escape(tag) + '</span>'
         ).join(' ')
-
-      string
-    )
+      )
+    else
+      field.remove()
 
