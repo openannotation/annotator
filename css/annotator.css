@@ -144,7 +144,7 @@
 }
 
 .annotator-viewer li .annotator-controls:hover,
-.annotator-viewer li .annotator-controls.visible {
+.annotator-viewer li .annotator-controls.annotator-visible {
 	opacity: 1;
 }
 

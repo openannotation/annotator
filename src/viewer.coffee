@@ -6,6 +6,7 @@ class Annotator.Viewer extends Delegator
 
   classes:
     hide: 'annotator-hide'
+    showControls: 'annotator-visible'
 
   html:
     element:"""
@@ -38,6 +39,12 @@ class Annotator.Viewer extends Delegator
 
   show: (event) =>
     event?.preventDefault()
+
+    controls = $(@element)
+      .find('.annotator-controls')
+      .addClass(@classes.showControls)
+    setTimeout((=> controls.removeClass(@classes.showControls)), 500)
+
     $(@element).removeClass(@classes.hide).trigger('show')
 
   isShown: ->
