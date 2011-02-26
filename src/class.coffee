@@ -5,6 +5,8 @@ class Delegator
     @options = $.extend(true, {}, @options, options)
     @element = element
 
+    this.addEvents()
+
   addEvents: ->
     for sel, functionName of @events
       [selector..., event] = sel.split ' '

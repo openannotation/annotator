@@ -33,7 +33,6 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
 
   constructor: (element, options) ->
     super
-    this.addEvents()
 
     # Reference self on element so store knows to wait for auth token.
     $(@element).data('annotator:auth', this)

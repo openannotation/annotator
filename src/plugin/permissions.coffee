@@ -111,7 +111,6 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   # Returns an instance of the Permissions object.
   constructor: (element, options) ->
     super
-    this.addEvents()
 
   # Public: Sets the Permissions#user property.
   #

@@ -10,7 +10,6 @@ class DelegatedExample extends Delegator
   constructor: (elem) ->
     super
     @returns = []
-    this.addEvents()
 
   pushA: -> @returns.push("A")
   pushB: -> @returns.push("B")

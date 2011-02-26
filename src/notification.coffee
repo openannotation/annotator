@@ -11,8 +11,7 @@ class Annotator.Notification extends Delegator
       show: "show"
 
   constructor: (options) ->
-    super $(@options.html).appendTo(document.body, options)[0]
-    this.addEvents()
+    super $(@options.html).appendTo(document.body)[0], options
 
   show: (message) =>
     $(@element).addClass(@options.classes.show).text(message || "")

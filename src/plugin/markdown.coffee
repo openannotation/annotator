@@ -5,7 +5,6 @@ class Annotator.Plugin.Markdown extends Annotator.Plugin
   constructor: (element, options) ->
     if Showdown?
       super
-      this.addEvents()
       @converter = new Showdown.converter()
     else
       console.error "To use the Markdown plugin, you must include Showdown into the page first."

@@ -71,9 +71,6 @@ class Annotator extends Delegator
       else
         @dom[name].appendTo(@wrapper).hide()
 
-    # Bind delegated events.
-    this.addEvents()
-
   checkForStartSelection: (e) =>
     this.startViewerHideTimer()
     @mouseIsDown = true

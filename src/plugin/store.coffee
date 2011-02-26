@@ -30,7 +30,6 @@ class Annotator.Plugin.Store extends Annotator.Plugin
 
   constructor: (element, options) ->
     super
-    this.addEvents()
     @annotations = []
 
   pluginInit: ->
