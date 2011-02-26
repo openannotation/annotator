@@ -4,7 +4,7 @@ class Annotator.Plugin.Tags extends Annotator.Plugin
 
   pluginInit: ->
     @field = @annotator.editor.addField({
-      label:  'tags'
+      label:  'Add some tags here\u2026'
       load:   this.updateField
       submit: this.setAnnotationTags
     })

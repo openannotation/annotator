@@ -19,8 +19,6 @@ class Annotator extends Delegator
     ".annotator-adder mousedown":          "adderMousedown"
     ".annotator-hl mouseover":             "highlightMouseover"
     ".annotator-hl mouseout":              "startViewerHideTimer"
-    ".annotator-viewer mouseover":         "clearViewerHideTimer"
-    ".annotator-viewer mouseout":          "startViewerHideTimer"
     ".annotator-ann-controls .edit click": "controlEditClick"
     ".annotator-ann-controls .del click":  "controlDeleteClick"
 
@@ -53,8 +51,15 @@ class Annotator extends Delegator
     @editor.hide()
     $(@editor.element)
       .appendTo(@wrapper)
-      .bind('hide', this.hideEditor)
-      .bind('submit', this.submitEditor)
+      .bind('hide', this.onEditorHide)
+      .bind('submit', this.onEditorSubmit)
+
+    @viewer = new Annotator.Viewer()
+    @viewer.hide()
+    $(@viewer.element).appendTo(@wrapper).bind({
+      "mouseover": this.clearViewerHideTimer
+      "mouseout":  this.startViewerHideTimer
+    })
 
     # Create model dom elements
     for name, src of @dom
@@ -171,11 +176,11 @@ class Annotator extends Delegator
     $(@editor.element).css(location)
     @editor.load(annotation)
 
-  hideEditor: =>
+  onEditorHide: =>
     $(@element).trigger('annotationEditorHidden', [@editor])
     @ignoreMouseup = false
 
-  submitEditor: (annotation) =>
+  onEditorSubmit: (event, annotation) =>
     $(@element).trigger('annotationEditorSubmit', [@editor, annotation])
 
     if annotation.ranges == undefined
@@ -183,63 +188,37 @@ class Annotator extends Delegator
     else
       this.updateAnnotation(annotation)
 
-  showViewer: (e, annotations) =>
-    controlsHTML = """
-                   <span class="annotator-ann-controls">
-                     <a href="#" class="edit" alt="Edit" title="Edit this annotation">Edit</a>
-                     <a href="#" class="del" alt="X" title="Delete this annotation">Delete</a>
-                   </span>
-                   """
+  showViewer: (annotations, location) =>
+    $(@viewer.element).css(location)
+    @viewer.load(annotations)
 
-    viewerclone = @dom.viewer.clone().empty()
-
-    for annot in annotations
-      # As well as filling the viewer element, we also copy the annotation
-      # object from the highlight element to the <div> containing the note
-      # and controls. This makes editing/deletion much easier.
-      $("""
-        <div class='annotator-ann'>
-          #{controlsHTML}
-          <div class='annotator-ann-text'>
-            <p>#{annot.text}</p>
-          </div>
-        </div>
-        """)
-        .appendTo(viewerclone)
-        .data("annotation", annot)
-
-    viewerclone
-      .css(util.mousePosition(e, @wrapper))
-      .replaceAll(@dom.viewer).show()
-
-    $(@element).trigger('annotationViewerShown', [viewerclone.get(0), annotations])
-
-    @dom.viewer = viewerclone
+    $(@element).trigger('annotationViewerShown', [@viewer, annotations])
 
   startViewerHideTimer: (e) =>
     # Don't do this if timer has already been set by another annotation.
     if not @viewerHideTimer
       # Allow 250ms for pointer to get from annotation to viewer to manipulate
       # annotations.
-      @viewerHideTimer = setTimeout ((ann) -> ann.dom.viewer.hide()), 250, this
+      @viewerHideTimer = setTimeout ((ann) -> ann.viewer.hide()), 250, this
 
   clearViewerHideTimer: () =>
     clearTimeout(@viewerHideTimer)
     @viewerHideTimer = false
 
-  highlightMouseover: (e) =>
+  highlightMouseover: (event) =>
     # Cancel any pending hiding of the viewer.
     this.clearViewerHideTimer()
 
-    # Don't do anything if we're making a selection.
-    return false if @mouseIsDown
+    # Don't do anything if we're making a selection or
+    # already displaying the viewer
+    return false if @mouseIsDown or @viewer.isShown()
 
-    annotations = $(e.target)
+    annotations = $(event.target)
       .parents('.annotator-hl')
       .andSelf()
-      .map -> $(this).data("annotation")
+      .map -> return $(this).data("annotation")
 
-    this.showViewer(e, annotations)
+    this.showViewer($.makeArray(annotations), util.mousePosition(event, @wrapper))
 
   adderMousedown: (event) =>
     e?.preventDefault()

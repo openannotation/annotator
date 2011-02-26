@@ -216,7 +216,7 @@
 }
 
 .annotator-editor li input:focus,
-.annotator-editor li textarea:focus {
+.annotator-editor li textarea:focus{
 	background-color: rgb(243, 243, 243);
 	outline: none;
 }
