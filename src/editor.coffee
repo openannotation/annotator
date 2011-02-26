@@ -9,11 +9,7 @@ class Annotator.Editor extends Delegator
   html: """
         <div class="annotator-outer annotator-editor">
           <div class="annotator-widget">
-            <ul>
-              <li>
-                <textarea cols="20" rows="4" placeholder="Comments…"></textarea>
-              </li>
-            </ul>
+            <ul></ul>
             <div class="annotator-controls">
               <a href="#cancel" class="annotator-cancel">Cancel</a>
               <a href="#save" class="annotator-save annotator-focus">Save</a>
@@ -30,6 +26,15 @@ class Annotator.Editor extends Delegator
 
     @fields = []
     @annotation = {}
+
+    # Setup the default editor field.
+    this.addField({
+      type: 'textarea',
+      load: (field, annotation) ->
+        $(field).find('textarea').val(annotation.text || '')
+      submit: (field, annotation) ->
+        annotation.text = $(field).find('textarea').val()
+    })
 
     this.setupDragabbles()
 
@@ -49,6 +54,8 @@ class Annotator.Editor extends Delegator
     for field in @fields
       field.load(field.element, @annotation)
 
+    $(@element).trigger('load', [@annotation])
+
     this.show();
 
   submit: (event) =>
@@ -56,6 +63,8 @@ class Annotator.Editor extends Delegator
 
     for field in @fields
       field.submit(field.element, @annotation)
+
+    $(@element).trigger('submit', [@annotation])
 
     this.hide()
 
