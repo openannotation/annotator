@@ -1,8 +1,8 @@
 
 class Annotator.Viewer extends Delegator
   events:
-    ".annotator-controls .annotator-edit click":   "controlEditClick"
-    ".annotator-controls .annotator-delete click": "controlDeleteClick"
+    ".annotator-edit click":   "onEditClick"
+    ".annotator-delete click": "onDeleteClick"
 
   classes:
     hide: 'annotator-hide'
@@ -59,15 +59,11 @@ class Annotator.Viewer extends Delegator
 
     list = $(@element).find('ul:first').empty()
     for annotation in @annotations
-      item = $(@item).clone().appendTo(list)
+      item = $(@item).clone().appendTo(list).data('annotation', annotation)
       controls = item.find('.annotator-controls')
 
       for field in @fields
-        element = $(field.element)
-          .clone()
-          .insertBefore(controls)
-          .data('annotation', annotation)[0]
-
+        element = $(field.element).clone().insertBefore(controls)[0]
         field.load(element, annotation)
 
     $(@element).trigger('load', [@annotations])

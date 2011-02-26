@@ -19,8 +19,6 @@ class Annotator extends Delegator
     ".annotator-adder mousedown":          "adderMousedown"
     ".annotator-hl mouseover":             "highlightMouseover"
     ".annotator-hl mouseout":              "startViewerHideTimer"
-    ".annotator-ann-controls .edit click": "controlEditClick"
-    ".annotator-ann-controls .del click":  "controlDeleteClick"
 
     # TODO: allow for adding these events on document.body
     "mouseup":   "checkForEndSelection"
@@ -57,6 +55,8 @@ class Annotator extends Delegator
     @viewer = new Annotator.Viewer()
     @viewer.hide()
     $(@viewer.element).appendTo(@wrapper).bind({
+      "edit":      this.onEditAnnotation
+      "delete":    this.onDeleteAnnotation
       "mouseover": this.clearViewerHideTimer
       "mouseout":  this.startViewerHideTimer
     })
@@ -230,29 +230,16 @@ class Annotator extends Delegator
 
     this.showEditor({}, position)
 
-  controlEditClick: (e) =>
-    annot = $(e.target).parents('.annotator-ann')
-    offset = $(@dom.viewer).offset()
-    pos =
-      pageY: offset.top,
-      pageX: offset.left
+  onEditAnnotation: (event, annotation) =>
+    offset = $(@viewer.element).position()
 
     # Replace the viewer with the editor.
-    @dom.viewer.hide()
-    this.showEditor pos, annot.data("annotation")
-    false
+    @viewer.hide()
+    this.showEditor(annotation, offset)
 
-  controlDeleteClick: (e) =>
-    annot = $(e.target).parents('.annotator-ann')
-
+  onDeleteAnnotation: (event, annotation) =>
     # Delete highlight elements.
-    this.deleteAnnotation annot.data("annotation")
-
-    # Remove from viewer and hide viewer if this was the only annotation displayed.
-    annot.remove()
-    @dom.viewer.hide() unless @dom.viewer.is(':parent')
-
-    false
+    this.deleteAnnotation annotation
 
 # Create namespace for Annotator plugins
 class Annotator.Plugin extends Delegator
