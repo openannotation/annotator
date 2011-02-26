@@ -100,6 +100,8 @@ class Annotator.Editor extends Delegator
 
     @fields.push field
 
+    field.element
+
   processKeypress: (event) =>
     if event.keyCode is 27 # "Escape" key => abort.
       this.hide()

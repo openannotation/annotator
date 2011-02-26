@@ -91,18 +91,22 @@ describe 'Annotator.Editor', ->
   describe "addField", ->
 
     it "should append a new field to the @fields property", ->
-      editor.addField()
-      expect(editor.fields.length).toEqual(1)
+      length = editor.fields.length
 
       editor.addField()
-      expect(editor.fields.length).toEqual(2)
+      expect(editor.fields.length).toEqual(length + 1)
+
+      editor.addField()
+      expect(editor.fields.length).toEqual(length + 2)
 
     it "should append a new list element to the editor", ->
-      editor.addField()
-      expect($(editor.element).find('li').length).toEqual(2)
+      length = $(editor.element).find('li').length
 
       editor.addField()
-      expect($(editor.element).find('li').length).toEqual(3)
+      expect($(editor.element).find('li').length).toEqual(length + 1)
+
+      editor.addField()
+      expect($(editor.element).find('li').length).toEqual(length + 2)
 
     it "should append an input element if no type is specified", ->
       editor.addField()
@@ -127,3 +131,6 @@ describe 'Annotator.Editor', ->
     it "should set placeholder text if a label is provided", ->
       editor.addField({type: 'textarea', label: 'Tags…'})
       expect($(editor.element).find('li:last :input').attr('placeholder')).toEqual('Tags…')
+
+    it "should return the created list item", ->
+      expect(editor.addField().tagName).toEqual('LI')
