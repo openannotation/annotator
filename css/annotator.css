@@ -19,7 +19,7 @@
 
 .annotator-adder {
 	margin-top: -41px;
-	margin-left: -25px;
+	margin-left: -40px;
 	width: 50px;
 	height: 55px;
 	background: url(../img/annotator-icon-sprite.png) no-repeat left top;
@@ -62,6 +62,10 @@
 	-webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
+.annotator-right .annotator-widget {
+	left: -247px;
+}
+
 .annotator-viewer ul,
 .annotator-editor ul {
 	padding: 0;
@@ -78,6 +82,11 @@
 	position: absolute;
 	bottom: -10zpx;
 	left: 8px;
+}
+
+.annotator-right .annotator-widget::after {
+	left: auto;
+	right: 8px;
 }
 
 .annotator-widget li,
