@@ -38,14 +38,18 @@ class Annotator.Editor extends Delegator
 
     this.setupDragabbles()
 
-  show: =>
+  show: (event) =>
+    event?.preventDefault()
+
     $(@element)
      .removeClass('annotator-hide')
      .trigger('show')
      .find(':input:first')
        .focus();
 
-  hide: =>
+  hide: (event) =>
+    event?.preventDefault()
+
     $(@element).addClass('annotator-hide').trigger('hide')
 
   load: (annotation) =>
