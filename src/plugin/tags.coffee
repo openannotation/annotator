@@ -1,12 +1,14 @@
 class Annotator.Plugin.Tags extends Annotator.Plugin
-  events:
-    'annotationViewerShown':  'updateViewer'
 
   pluginInit: ->
     @field = @annotator.editor.addField({
       label:  'Add some tags here\u2026'
       load:   this.updateField
       submit: this.setAnnotationTags
+    })
+
+    @annotator.viewer.addField({
+      load: this.updateViewer
     })
 
     @input = $(@field).find(':input')
@@ -26,13 +28,15 @@ class Annotator.Plugin.Tags extends Annotator.Plugin
   stringifyTags: (array) ->
     array.join(" ")
 
-  updateViewer: (e, viewerElement, annotations) ->
-    annElements = $(viewerElement).find('.annotator-ann')
+  updateViewer: (field, annotation) ->
+    $(field).addClass('annotator-tags').html(->
+      string = ''
 
-    for i in [0...annElements.length]
-      tags    = annotations[i].tags
-      tagStr  = tags?.join(", ")
-      $textEl = annElements.eq(i).find('.annotator-ann-text')
+      if annotation.tags and $.isArray(annotation.tags)
+        string = $.map(annotation.tags,(tag) ->
+          '<span class="annotator-tag">' + Annotator.$.escape(tag) + '</span>'
+        ).join(' ')
 
-      if tagStr and tagStr != ""
-        $("<div class='annotator-ann-tags'>#{tags.join(", ")}</div>").insertAfter($textEl)
+      string
+    )
+

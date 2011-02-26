@@ -45,9 +45,14 @@ describe 'Annotator.Plugin.Tags', ->
 
       expect(annotation.tags).toEqual(['apples', 'oranges', 'pears'])
 
-  it "should show the tags on annotationViewerShown", ->
-    annotations = [{ tags: ['foo', 'bar', 'baz'] }]
-    viewerEl = $("<div><div class='annotator-ann'><div class='annotator-ann-text'></div></div></div>")[0]
-    $(plugin.element).trigger('annotationViewerShown', [viewerEl, annotations])
-    tags = $(viewerEl).find('.annotator-ann-tags')
-    expect(tags.text()).toEqual('foo, bar, baz')
+  describe "updateViewer", ->
+    it "should insert the tags into the field", ->
+      annotation = { tags: ['foo', 'bar', 'baz'] }
+      field = $('<div />')[0]
+
+      plugin.updateViewer(field, annotation)
+      expect($(field).html()).toEqual([
+        '<span class="annotator-tag">foo</span>'
+        '<span class="annotator-tag">bar</span>'
+        '<span class="annotator-tag">baz</span>'
+      ].join(' '))
