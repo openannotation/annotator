@@ -261,6 +261,9 @@ class Annotator.Plugin extends Delegator
 
   pluginInit: ->
 
+# Bind our local copy of jQuery so plugins can use the extensions.
+Annotator.$ = $
+
 # Returns true if the Annotator can be used in the current browser.
 Annotator.supported = -> (-> !!this.getSelection)()
 
