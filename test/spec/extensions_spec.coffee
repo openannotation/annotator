@@ -55,6 +55,10 @@ describe 'jQuery.fn.xpath()', ->
     expect($fix.find('li').xpath(ol)).toEqual(['/li', '/li[2]', '/li[3]'])
     expect($fix.find('span').xpath(ol)).toEqual(['/li[2]/span'])
 
+describe 'jQuery.escape()', ->
+  it "should escape any HTML special characters into entities", ->
+    expect($.escape('<>"&')).toEqual('&lt;&gt;&quot;&amp;')
+
 describe 'jQuery.fn.escape()', ->
   it "should set the innerHTML of the elements but escape any HTML into entities", ->
     div = $('<div />').escape('<>"&')
