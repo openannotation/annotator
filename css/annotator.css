@@ -8,6 +8,7 @@
 }
 
 .annotator-adder,
+.annotator-outer,
 .annotator-widget,
 .annotator-editor input,
 .annotator-editor textarea,
@@ -44,7 +45,14 @@
 	background: rgba(255, 255, 10, 0.3);
 }
 
+.annotator-outer {
+	width: 0;
+	height: 0;
+}
+
 .annotator-widget {
+	bottom: 8px;
+	left: -18px;
 	width: 265px;
 	background-color: rgba(251, 251, 251, 0.98);
 	border: 1px solid rgba(122, 122, 122, 0.6);
@@ -54,7 +62,7 @@
 	-webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-.annotator-viewer,
+.annotator-viewer ul,
 .annotator-editor ul {
 	padding: 0;
 	margin: 0;
@@ -387,7 +395,7 @@
 	background-position: 0 -105px;
 }
 
-.annotator-editor::after {
+.annotator-editor .annotator-widget::after {
 	background-position: 0 -15px;
 }
 

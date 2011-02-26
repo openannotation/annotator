@@ -40,71 +40,77 @@
         </code></pre>
       
         <div class="annotator-adder"><a href="#annotate" title="Annotate selection">Annotate</a></div>
-        <ul class="annotator-widget annotator-viewer">
-          <li class="annotator-annotation">
-            <div>
-              This is a comment on this annotation text. This annotation
-              has multiple comments.
-            </div>
-            <span class="annotator-controls">
-              <button class="annotator-edit">Edit</button>
-              <button class="annotator-delete">Delete</button>
-            </span>
-          </li>
-          <li class="annotator-annotation">
-            <div>
-              This is a comment on this annotation text. This annotation
-              has multiple comments.
-            </div>
-            <div class="plugin annotator-author">
-              By Joe Bloggs
-            </div>
-            <div class="plugin annotator-tags">
-              <span class="annotator-tag">Apple</span>
-              <span class="annotator-tag">Oranges</span>
-              <span class="annotator-tag">Pears</span>
-            </div>
-            <span class="annotator-controls">
-              <button class="annotator-edit" disabled>Edit</button>
-              <button class="annotator-delete">Delete</button>
-            </span>
-          </li>
-        </ul>
-        <ul class="annotator-widget annotator-viewer">
-          <li class="annotator-annotation">
-            <div>
-              This is a comment on this annotation text. This annotation
-              has one comment and no plugins.
-            </div>
-            <span class="annotator-controls">
-              <button class="annotator-edit">Edit</button>
-              <button class="annotator-delete" disabled>Delete</button>
-            </span>
-          </li>
-        </ul>
-        <div class="annotator-widget annotator-editor">
-          <ul>
-            <li>
-              <textarea cols="20" rows="4" placeholder="Comments…"></textarea>
+        <div class="annotator-outer annotator-viewer">
+          <ul class="annotator-widget">
+            <li class="annotator-annotation">
+              <div>
+                This is a comment on this annotation text. This annotation
+                has multiple comments.
+              </div>
+              <span class="annotator-controls">
+                <button class="annotator-edit">Edit</button>
+                <button class="annotator-delete">Delete</button>
+              </span>
             </li>
-            <li>
-              <input id="annotator-field-2" placeholder="Tags…" />
-            </li>
-            <li class="annotator-checkbox">
-              <input type="checkbox" id="annotator-field-3"></textarea>
-              <label for="annotator-field-3">Anyone can <strong>view</strong> this annotation</label>
-            </li>
-            <li class="annotator-checkbox">
-              <input type="checkbox" id="annotator-field-4"></textarea>
-              <label for="annotator-field-4">Anyone can <strong>edit</strong> this annotation</label>
+            <li class="annotator-annotation">
+              <div>
+                This is a comment on this annotation text. This annotation
+                has multiple comments.
+              </div>
+              <div class="plugin annotator-author">
+                By Joe Bloggs
+              </div>
+              <div class="plugin annotator-tags">
+                <span class="annotator-tag">Apple</span>
+                <span class="annotator-tag">Oranges</span>
+                <span class="annotator-tag">Pears</span>
+              </div>
+              <span class="annotator-controls">
+                <button class="annotator-edit" disabled>Edit</button>
+                <button class="annotator-delete">Delete</button>
+              </span>
             </li>
           </ul>
-          <div class="annotator-controls">
-            <a href="#cancel" class="annotator-cancel">Cancel</a>
-            <a href="#save" class="annotator-save annotator-focus">Save</a>
-          </div>
-          <span class="annotator-resize"></span>
         </div>
+        <div class="annotator-outer annotator-viewer">
+          <ul class="annotator-widget">
+            <li class="annotator-annotation">
+              <div>
+                This is a comment on this annotation text. This annotation
+                has one comment and no plugins.
+              </div>
+              <span class="annotator-controls">
+                <button class="annotator-edit">Edit</button>
+                <button class="annotator-delete" disabled>Delete</button>
+              </span>
+            </li>
+          </ul>
+        </div>
+        <div class="annotator-outer annotator-editor">
+          <div class="annotator-widget">
+            <ul>
+              <li>
+                <textarea cols="20" rows="4" placeholder="Comments…"></textarea>
+              </li>
+              <li>
+                <input id="annotator-field-2" placeholder="Tags…" />
+              </li>
+              <li class="annotator-checkbox">
+                <input type="checkbox" id="annotator-field-3"></textarea>
+                <label for="annotator-field-3">Anyone can <strong>view</strong> this annotation</label>
+              </li>
+              <li class="annotator-checkbox">
+                <input type="checkbox" id="annotator-field-4"></textarea>
+                <label for="annotator-field-4">Anyone can <strong>edit</strong> this annotation</label>
+              </li>
+            </ul>
+            <div class="annotator-controls">
+              <a href="#cancel" class="annotator-cancel">Cancel</a>
+              <a href="#save" class="annotator-save annotator-focus">Save</a>
+            </div>
+            <span class="annotator-resize"></span>
+          </div>
+        <div>
       </div>
     </div>
 
