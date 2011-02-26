@@ -149,20 +149,24 @@
           });
         });
 
-        var mousedown = null;
+        var mousedown = null
+        var editor = $('.annotator-editor');
         var resize = $('.annotator-resize');
         var textarea = resize.parent().find('textarea:first');
+        var controls = resize.parent().find('.annotator-controls');
         var throttle = false;
 
-        resize.bind({
-          mousedown: function (e) {
-            mousedown = {
-              top:  e.pageY,
-              left: e.pageX
-            };
-            e.preventDefault();
-          }
-        });
+        function onMousedown(e) {
+          mousedown = {
+            element: this,
+            top: e.pageY,
+            left: e.pageX
+          };
+          e.preventDefault();
+        }
+
+        resize.bind('mousedown', onMousedown);
+        controls.bind('mousedown', onMousedown);
 
         $(window).bind({
           mouseup: function () {
@@ -170,15 +174,38 @@
           },
           mousemove: function (e) {
             if (mousedown && throttle === false) {
-              var offset = textarea.offset()
-              var newOffset = {
-                top:  e.pageY - offset.top,
-                left: e.pageX - offset.left
+              var diff = {
+                top:  e.pageY - mousedown.top,
+                left: e.pageX - mousedown.left
               };
 
-              textarea.width(newOffset.left);
-              textarea.height(textarea.outerHeight() - newOffset.top);
-              
+              if (mousedown.element === resize[0]) {
+                var height = textarea.outerHeight();
+                var width  = textarea.outerWidth();
+  
+                textarea.height(height - diff.top);
+                textarea.width(width + diff.left);
+
+                // Only update the mousedown object if the dimensions
+                // have changed, otherwise they have reached thier minimum
+                // values.
+                if (textarea.outerHeight() !== height) {
+                  mousedown.top  = e.pageY;
+                }
+                if (textarea.outerWidth() !== width) {
+                  mousedown.left = e.pageX;
+                }
+              }
+              else if (mousedown.element === controls[0]) {
+                editor.css({
+                  top:  parseInt(editor.css('top'), 10)  + diff.top,
+                  left: parseInt(editor.css('left'), 10) + diff.left
+                });
+
+                mousedown.top  = e.pageY;
+                mousedown.left = e.pageX;
+              }
+
               throttle = true;
               setTimeout(function () {
                 throttle = false;
