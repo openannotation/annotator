@@ -16,9 +16,10 @@ util =
 
 class Annotator extends Delegator
   events:
-    ".annotator-adder mousedown":          "adderMousedown"
-    ".annotator-hl mouseover":             "highlightMouseover"
-    ".annotator-hl mouseout":              "startViewerHideTimer"
+    ".annotator-adder click":     "onAdderClick"
+    ".annotator-adder mousedown": "onAdderMousedown"
+    ".annotator-hl mouseover":    "highlightMouseover"
+    ".annotator-hl mouseout":     "startViewerHideTimer"
 
     # TODO: allow for adding these events on document.body
     "mouseup":   "checkForEndSelection"
@@ -220,10 +221,12 @@ class Annotator extends Delegator
 
     this.showViewer($.makeArray(annotations), util.mousePosition(event, @wrapper))
 
-  adderMousedown: (event) =>
+  onAdderMousedown: (event) =>
     e?.preventDefault()
-
     @ignoreMouseup = true
+
+  onAdderClick: (event) =>
+    e?.preventDefault()
 
     position = @dom.adder.position()
     @dom.adder.hide()
