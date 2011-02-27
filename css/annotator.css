@@ -1,7 +1,28 @@
-/* @override 
-	http://localhost:5000/static/css/annotator.css
-	http://localhost:8000/css/annotator.css
-*/
+/* Images
+-------------------------------------------------------------------- */
+
+.annotator-adder {
+	background-image: url(../img/annotator-icon-sprite.png);
+	background-repeat: no-repeat;
+}
+
+.annotator-resize,
+.annotator-widget::after,
+.annotator-editor a::after,
+.annotator-viewer .annotator-controls button {
+	background-image: url(../img/annotator-glyph-sprite.png);
+	background-repeat: no-repeat;
+}
+
+/* Annotator Highlight
+-------------------------------------------------------------------- */
+
+.annotator-hl {
+	background: rgba(255, 255, 10, 0.3);
+}
+
+/* Annotator Wrapper
+-------------------------------------------------------------------- */
 
 .annotator-wrapper {
 	position: relative;
@@ -22,12 +43,15 @@
 	visibility: hidden;
 }
 
+/* Annotator Adder
+-------------------------------------------------------------------- */
+
 .annotator-adder {
 	margin-top: -41px;
 	margin-left: -25px;
 	width: 50px;
 	height: 55px;
-	background: url(../img/annotator-icon-sprite.png) no-repeat left top;
+	background-position: left top;
 }
 
 .annotator-adder:hover {
@@ -46,9 +70,10 @@
 	text-indent: -999em;
 }
 
-.annotator-hl {
-	background: rgba(255, 255, 10, 0.3);
-}
+/* Annotator Widget
+   
+   This applies to both the Viewer and the Editor
+-------------------------------------------------------------------- */
 
 .annotator-outer {
 	width: 0;
@@ -83,7 +108,7 @@
 	display: block;
 	width: 18px;
 	height: 10px;
-	background: url(../img/annotator-glyph-sprite.png) no-repeat 0 0;
+	background-position: 0 0;
 	position: absolute;
 	bottom: -10zpx;
 	left: 8px;
@@ -114,6 +139,9 @@
 .annotator-viewer div {
 	border-top: 1px solid rgba(133, 133, 133, 0.11);
 }
+
+/* Annotator Viewer
+-------------------------------------------------------------------- */
 
 .annotator-viewer div {
 	padding: 6px 6px;
@@ -157,7 +185,7 @@
 	border: none;
 	opacity: 0.2;
 	text-indent: -900em;
-	background: transparent url(../img/annotator-glyph-sprite.png) no-repeat;
+	background-color: transparent;
 	outline: none;
 }
 
@@ -181,6 +209,9 @@
 .annotator-viewer .annotator-controls .annotator-delete {
 	background-position: 0 -45px;
 }
+
+/* Annotator Editor
+-------------------------------------------------------------------- */
 
 .annotator-editor li {
 	position: relative;
@@ -343,7 +374,7 @@
 	width: 15px;
 	height: 15px;
 	margin-top: -7px;
-	background: url(../img/annotator-glyph-sprite.png) no-repeat 0 -60px;
+	background-position: 0 -60px;
 }
 
 .annotator-editor a:hover,
@@ -444,8 +475,11 @@
 	right: 0;
 	width: 12px;
 	height: 12px;
-	background: url(../img/annotator-glyph-sprite.png) no-repeat 2px -120px;
+	background-position: 2px -120px;
 }
+
+/* Annotator Notification
+-------------------------------------------------------------------- */
 
 .annotator-notice {
 	position: absolute;
@@ -494,6 +528,9 @@
 .annotator-notice.show {
 	top: 0;
 }
+
+/* Annotator Tags Plugin
+-------------------------------------------------------------------- */
 
 .annotator-tags {
 	margin-bottom: -2px;
