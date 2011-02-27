@@ -102,7 +102,8 @@ class Annotator.Editor extends Delegator
 
     if field.type == 'checkbox'
       input[0].type = 'checkbox'
-      element.append($('<label />', {for: field.id}))
+      element.addClass('annotator-checkbox')
+      element.append($('<label />', {for: field.id, html: field.label}))
 
     $(@element).find('ul:first').append(element)
 
