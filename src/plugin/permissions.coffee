@@ -117,6 +117,8 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   #
   # Returns nothing.
   pluginInit: ->
+    return unless Annotator.supported()
+
     @annotator.editor.addField({
       type:   'checkbox'
       label:  'Allow anyone to <strong>edit</strong> this annotation'

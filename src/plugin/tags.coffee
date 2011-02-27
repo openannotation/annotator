@@ -1,6 +1,8 @@
 class Annotator.Plugin.Tags extends Annotator.Plugin
 
   pluginInit: ->
+    return unless Annotator.supported()
+
     @field = @annotator.editor.addField({
       label:  'Add some tags here\u2026'
       load:   this.updateField
