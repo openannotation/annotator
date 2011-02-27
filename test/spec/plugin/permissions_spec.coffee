@@ -187,140 +187,130 @@ describe 'Annotator.Plugin.Permissions', ->
         permissions.setUser({id: 'charlie', groups: ['admin']})
         expect(permissions.authorize('update', a)).toBeTruthy()
 
-  describe 'editor update', ->
-    checkboxEl  = null
+  describe 'updateAnnotationWithEditPermissions', ->
+    field = null
+    checkbox = null
+    annotation = null
+
+    beforeEach ->
+      checkbox = $('<input type="checkbox" />')
+      field = $('<li />').append(checkbox)
+      annotation = {permissions: {'update': ['user:Alice']}}
+
+    it "should NOT be world editable when 'Anyone can edit' checkbox is unchecked", ->
+      checkbox.removeAttr('checked')
+      permissions.updateAnnotationWithEditPermissions(field, annotation)
+      expect(permissions.authorize('update', annotation, null)).toBeFalsy()
+
+    it "should be world editable when 'Anyone can edit' checkbox is checked", ->
+      checkbox.attr('checked', 'checked')
+      permissions.updateAnnotationWithEditPermissions(field, annotation)
+      expect(permissions.authorize('update', annotation, null)).toBeTruthy()
+
+    it "should NOT be world editable when 'Anyone can edit' checkbox is unchecked for a second time", ->
+      checkbox.attr('checked', 'checked')
+      permissions.updateAnnotationWithEditPermissions(field, annotation)
+      expect(permissions.authorize('update', annotation, null)).toBeTruthy()
+
+      checkbox.removeAttr('checked')
+      permissions.updateAnnotationWithEditPermissions(field, annotation)
+      expect(permissions.authorize('update', annotation, null)).toBeFalsy()
+
+  describe 'updateEditPermissionsField', ->
+    checkbox = null
     annotations = [
-      {},
       {},
       {permissions: {'update': ['user:Alice']}}
     ]
 
     beforeEach ->
-      editorEl = $("<div><div class='annotator-editor-controls'></div></div>")
-      $(el).trigger('annotationEditorShown', [editorEl, annotations.shift()])
-      checkboxEl = editorEl.find('.annotator-editor-user')
-
-    it "should display 'Allow anyone to edit…' checkbox in the element", ->
-      expect(checkboxEl.length).toBe(1)
+      checkbox = $('<input type="checkbox" />')
+      field = $('<li />').append(checkbox)
+      permissions.updateEditPermissionsField(field, annotations.shift())
 
     it "should have a checked checkbox when there are no permissions", ->
-      expect(checkboxEl.is(':checked')).toBeTruthy()
+      expect(checkbox.is(':checked')).toBeTruthy()
 
     it "should have an unchecked checkbox when there are permissions", ->
-      expect(checkboxEl.is(':checked')).toBeFalsy()
+      expect(checkbox.is(':checked')).toBeFalsy()
 
-  describe 'editor submit', ->
-    editorEl = null
-    annotation = null
-
-    beforeEach ->
-      editorEl   = $("<div><div class='annotator-editor-controls'></div></div>")
-      annotation = {permissions: {'update': ['user:Alice']}}
-      $(el).trigger('annotationEditorShown', [editorEl, annotation])
-
-    it "should NOT be world editable when 'Anyone can edit' checkbox is unchecked", ->
-      permissions.globallyEditableCheckbox.removeAttr('checked')
-      $(el).trigger('annotationEditorSubmit', [editorEl, annotation])
-      expect(permissions.authorize('update', annotation, null)).toBeFalsy()
-
-    it "should be world editable when 'Anyone can edit' checkbox is checked", ->
-      permissions.globallyEditableCheckbox.attr('checked', 'checked')
-      $(el).trigger('annotationEditorSubmit', [editorEl, annotation])
-      expect(permissions.authorize('update', annotation, null)).toBeTruthy()
-
-    it "should NOT be world editable when 'Anyone can edit' checkbox is unchecked for a second time", ->
-      permissions.globallyEditableCheckbox.attr('checked', 'checked')
-      $(el).trigger('annotationEditorSubmit', [editorEl, annotation])
-      expect(permissions.authorize('update', annotation, null)).toBeTruthy()
-
-      permissions.globallyEditableCheckbox.removeAttr('checked')
-      $(el).trigger('annotationEditorSubmit', [editorEl, annotation])
-      expect(permissions.authorize('update', annotation, null)).toBeFalsy()
-
-  describe 'viewer update', ->
-    beforeEach ->
-      permissions.setUser('alice')
-
-      annotations = [{user: 'alice'}, {user: 'bob'}, {}]
-
-      viewerEls = []
-      annElSrc = """
-                 <div class='annotator-ann'>
-                   <div class='annotator-ann-controls'></div>
-                   <div class='annotator-ann-text'></div>
-                 </div>
-                 """
-
-      for i in [0...annotations.length]
-        viewerEls.push($(annElSrc).appendTo(el))
-
-      $(el).trigger('annotationViewerShown', [el, annotations])
-
-    it "it should display annotations' users in the viewer element", ->
-      userEls = $(el).find('.annotator-ann-user')
-
-      expect(userEls.length).toBe(2)
-      expect(userEls.eq(0).text()).toEqual('alice')
-      expect(userEls.eq(1).text()).toEqual('bob')
-
-    it "should hide controls for users other than the current user", ->
-      controlEls = $(el).find('.annotator-ann-controls')
-
-      expect(controlEls.eq(0).css('display')).not.toEqual('none')
-      expect(controlEls.eq(1).css('display')).toEqual('none')
-
-    it "should show controls for annotations without a user", ->
-      controlEls = $(el).find('.annotator-ann-controls')
-      expect(controlEls.eq(2).css('display')).not.toEqual('none')
-
-  describe 'fine-grained use (user and permissions)', ->
-    annotations = null
+  describe 'updateViewer', ->
+    controls = null
+    field = null
 
     beforeEach ->
-      annotations = [
-        {
-          user: 'alice'
-          permissions: {
-            'update': []
-            'delete': ['alice']
+      field = $('<div />')[0]
+      controls = {
+        showEdit:   jasmine.createSpy()
+        hideEdit:   jasmine.createSpy()
+        showDelete: jasmine.createSpy()
+        hideDelete: jasmine.createSpy()
+      }
+
+    describe 'coarse grained updates based on user', ->
+      annotations = null
+
+      beforeEach ->
+        permissions.setUser('alice')
+        annotations = [{user: 'alice'}, {user: 'bob'}, {}]
+
+      it "it should display annotations' users in the viewer element", ->
+        permissions.updateViewer(field, annotations[0], controls)
+        expect($(field).html()).toEqual('alice')
+
+      it "it should remove the field if annotation has no user", ->
+        permissions.updateViewer(field, {}, controls)
+        expect($(field).parent().length).toEqual(0)
+
+      it "should hide controls for users other than the current user", ->
+        permissions.updateViewer(field, annotations[0], controls)
+        expect(controls.hideEdit).not.toHaveBeenCalled()
+        expect(controls.hideDelete).not.toHaveBeenCalled()
+
+        permissions.updateViewer(field, annotations[1], controls)
+        expect(controls.hideEdit).toHaveBeenCalled()
+        expect(controls.hideDelete).toHaveBeenCalled()
+
+      it "should show controls for annotations without a user", ->
+        permissions.updateViewer(field, annotations[2], controls)
+        expect(controls.hideEdit).not.toHaveBeenCalled()
+        expect(controls.hideDelete).not.toHaveBeenCalled()
+
+    describe 'fine-grained use (user and permissions)', ->
+      annotations = null
+
+      beforeEach ->
+        annotations = [
+          {
+            user: 'alice'
+            permissions: {
+              'update': ['alice']
+              'delete': ['alice']
+            }
+          },
+          {
+            user: 'bob'
+            permissions: {
+              'update': ['bob'],
+              'delete': ['bob']
+            }
           }
-        },
-        {
-          user: 'bob'
-          permissions: {
-            'update': ['bob'],
-            'delete': ['bob']
-          }
-        }
-      ]
+        ]
 
-      viewerEls = []
-      annElSrc = """
-                 <div class='annotator-ann'>
-                   <div class='annotator-ann-controls'><span class='edit'></span><span class='delete'></span> </div>
-                   <div class='annotator-ann-text'></div>
-                 </div>
-                 """
+        permissions.setUser('bob')
 
-      for i in [0...annotations.length]
-        viewerEls.push($(annElSrc).appendTo(el))
+      it "it should should hide edit button if user cannot update", ->
+        permissions.updateViewer(field, annotations[0], controls)
+        expect(controls.hideEdit).toHaveBeenCalled()
 
+      it "it should should show edit button if user can update", ->
+        permissions.updateViewer(field, annotations[1], controls)
+        expect(controls.hideEdit).not.toHaveBeenCalled()
 
-    it "it should should allow editing if @user is authorized for the 'update' action", ->
-      permissions.setUser('bob')
-      $(el).trigger('annotationViewerShown', [el, annotations])
-      editEls = $(el).find('.annotator-ann-controls .edit')
+      it "it should should hide delete button if user cannot delete", ->
+        permissions.updateViewer(field, annotations[0], controls)
+        expect(controls.hideDelete).toHaveBeenCalled()
 
-      expect($(el).find('.annotator-ann-controls').css('display')).not.toEqual('none')
-
-      expect(editEls.eq(0).css('display')).not.toEqual('none')
-      expect(editEls.eq(1).css('display')).not.toEqual('none')
-
-    it "it should should allow deleting if @user is authorized for the 'delete' action", ->
-      permissions.setUser('bob')
-      $(el).trigger('annotationViewerShown', [el, annotations])
-
-      deleteEls = $(el).find('.annotator-ann-controls .delete')
-
-      expect(deleteEls.eq(0).css('display')).toEqual('none')
-      expect(deleteEls.eq(1).css('display')).not.toEqual('none')
+      it "it should should show delete button if user can delete", ->
+        permissions.updateViewer(field, annotations[1], controls)
+        expect(controls.hideDelete).not.toHaveBeenCalled()

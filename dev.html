@@ -66,12 +66,15 @@
           //.addPlugin('Auth')
           //.addPlugin('Unsupported')
           .addPlugin('Tags')
-          //.addPlugin('Permissions')
-          // .addPlugin('Store', {
-          //             prefix: 'http://localhost:5000'
-          //           });
-
-        //devAnnotator.plugins['Permissions'].setUser('alice');
+          .addPlugin('Permissions', {
+            user: 'alice',
+            permissions: {
+              update: ['alice']
+            }
+          })
+          .addPlugin('Store', {
+            prefix: 'http://localhost:5000'
+          });
       }(jQuery));
     </script>
   </body>

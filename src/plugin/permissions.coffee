@@ -18,10 +18,9 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   # @element. See Delegator#addEvents() for details.
   events:
     'beforeAnnotationCreated': 'addFieldsToAnnotation'
-    'annotationViewerShown':   'updateViewer'
-    'annotationEditorShown':   'updateEditor'
-    'annotationEditorHidden':  'clearEditor'
-    'annotationEditorSubmit':  'updateAnnotationPermissions'
+    #'annotationEditorShown':   'updateEditor'
+    #'annotationEditorHidden':  'clearEditor'
+    #'annotationEditorSubmit':  'updateAnnotationPermissions'
 
   # A Object literal of default options for the class.
   options:
@@ -111,6 +110,34 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   # Returns an instance of the Permissions object.
   constructor: (element, options) ->
     super
+
+    if @options.user
+      this.setUser(@options.user) 
+      delete @options.user
+
+  # Public: Initializes the plugin and registers fields with the
+  # Annotator.Editor and Annotator.Viewer.
+  #
+  # Returns nothing.
+  pluginInit: ->
+    @annotator.editor.addField({
+      type:   'checkbox'
+      label:  'Allow anyone to <strong>edit</strong> this annotation'
+      load:   this.updateEditPermissionsField
+      submit: this.updateAnnotationWithEditPermissions
+    })
+
+    # @annotator.editor.addField({
+    #   type:   'checkbox'
+    #   label:  'Allow anyone to view this annotation'
+    #   load:   this.updateField
+    #   submit: this.updateAnnotationEditPermissions
+    # })
+
+    # Setup the display of annotations in the Viewer.
+    @annotator.viewer.addField({
+      load: this.updateViewer
+    })
 
   # Public: Sets the Permissions#user property.
   #
@@ -223,104 +250,64 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     # No authorization info on annotation: free-for-all!
     true
 
-  # Event callback: Appends a checkbox to the Annotator editor so the user can
-  # edit the annotation's permissions.
+  # Field callback: Updates the state of the "anyone can edit" checkbox
   #
-  # event         - An Event instance.
-  # editorElement - A DOM Element representing the annotation editor.
-  # annotation    - An annotation Object.
+  # field      - A DOM Element containing a form input.
+  # annotation - An annotation Object.
   #
   # Returns nothing.
-  updateEditor: (e, editorElement, annotation) =>
-    unless @globallyEditableCheckbox
-      # Unique ID for for and id attributes of checkbox.
-      uid = +(new Date)
-
-      editorControls = editorElement.find('.annotator-editor-controls')
-      @globallyEditableCheckbox = $(@options.html.publiclyEditable)
-        .insertBefore(editorControls)
-        .filter('label')
-          .attr('for', uid).end()
-        .filter('input')
-          .attr('id', uid)
+  updateEditPermissionsField: (field, annotation) =>
+    input = $(field).find('input')
 
     # See if we can authorise without a user.
     if this.authorize('update', annotation || {}, null)
-      @globallyEditableCheckbox.attr('checked', 'checked')
+      input.attr('checked', 'checked')
     else
-      this.clearEditor(e, editorElement)
+      input.removeAttr('checked')
 
-  # Event callback: Resets the editor to a default state.
+
+  # Field callback: updates the annotation.permissions object based on the state
+  # of the field checkbox. If it is checked then permissions are set to world
+  # writable otherwise they use the original settings.
   #
-  # event         - An Event instance.
-  # editorElement - A DOM Element representing the annotation editor.
+  # field      - A DOM Element representing the annotation editor.
+  # annotation - An annotation Object.
   #
   # Returns nothing.
-  clearEditor: (event, editorElement) =>
-    if @globallyEditableCheckbox
-      @globallyEditableCheckbox.removeAttr('checked')
-
-  # Event callback: updates the annotation.permissions object based on the state
-  # of Permissions#globallyEditableCheckbox. If it is checked then permissions
-  # are set to world writable otherwise they use the original settings.
-  #
-  # event         - An Event instance.
-  # editorElement - A DOM Element representing the annotation editor.
-  # annotation    - An annotation Object.
-  #
-  # Returns nothing.
-  updateAnnotationPermissions: (event, editorElement, annotation) =>
+  updateAnnotationWithEditPermissions: (field, annotation) =>
     annotation.permissions = @options.permissions unless annotation.permissions
 
-    if @globallyEditableCheckbox.is(':checked')
+    if $(field).find('input').is(':checked')
       # Cache the permissions in case the user unchecks global permissions later.
-      $.data(annotation, 'permissions', annotation.permissions.update)
+      $.data(annotation, 'update-permissions', annotation.permissions.update)
       annotation.permissions.update = []
     else
       # Retrieve and re-apply the permissions.
-      permissions = $.data(annotation, 'permissions')
+      permissions = $.data(annotation, 'update-permissions')
       annotation.permissions.update = permissions if permissions
-      annotation.permissions.update.push(@options.userId(@user))
 
-  # Event callback: updates the annotation viewer to inlude the display name
+  # Field callback: updates the annotation viewer to inlude the display name
   # for the user obtained through Permissions#options.userString().
   #
-  # event         - An Event instance.
-  # viewerElement - A DOM Element representing the annotation viewer.
-  # annotations   - An Array of annotations to display.
+  # field      - A DIV Element representing the annotation field.
+  # annotation - An annotation Object to display.
+  # controls   - A control Object to toggle the display of annotation controls.
   #
   # Returns nothing.
-  updateViewer: (event, viewerElement, annotations) =>
-    annElements = $(viewerElement).find('.annotator-ann')
+  updateViewer: (field, annotation, controls) =>
+    field = $(field)
 
-    for i in [0...annElements.length]
-      $controlEl = annElements.eq(i).find('.annotator-ann-controls')
-      $textEl    = annElements.eq(i).find('.annotator-ann-text')
+    if annotation.user
+      user = Annotator.$.escape(@options.userString(annotation.user))
+      field.html(user).addClass('annotator-user')
+    else
+      field.remove()
 
-      if u = annotations[i].user
-        $("<div class='annotator-ann-user'>#{@options.userString(u)}</div>").insertAfter($textEl)
+    if annotation.permissions
+      controls.hideEdit()   unless this.authorize('update', annotation)
+      controls.hideDelete() unless this.authorize('delete', annotation)
 
-      if "permissions" of annotations[i]
-        $controlEl.show()
-        $updateEl = $controlEl.find('.edit')
-        $deleteEl = $controlEl.find('.delete')
+    else if annotation.user and not this.authorize(null, annotation)
+      controls.hideEdit()
+      controls.hideDelete()
 
-        if this.authorize('update', annotations[i])
-          $updateEl.show()
-        else
-          $updateEl.hide()
-
-        if this.authorize('delete', annotations[i])
-          $deleteEl.show()
-        else
-          $deleteEl.hide()
-
-      else if "user" of annotations[i]
-
-        if this.authorize(null, annotations[i])
-          $controlEl.children().andSelf().show()
-        else
-          $controlEl.hide()
-
-      else
-        $controlEl.children().andSelf().show()
