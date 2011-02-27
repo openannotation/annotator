@@ -18,9 +18,6 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   # @element. See Delegator#addEvents() for details.
   events:
     'beforeAnnotationCreated': 'addFieldsToAnnotation'
-    #'annotationEditorShown':   'updateEditor'
-    #'annotationEditorHidden':  'clearEditor'
-    #'annotationEditorSubmit':  'updateAnnotationPermissions'
 
   # A Object literal of default options for the class.
   options:
