@@ -38,10 +38,18 @@ class Annotator extends Delegator
     return this unless Annotator.supported()
 
     super
+    element = $(@element)
 
     # Wrap element contents
     @wrapper = $("<div></div>").addClass('annotator-wrapper')
-    $(@element).wrapInner(@wrapper)
+    
+    # We need to remove all scripts within the element before wrapping the
+    # contents within a div. Otherwise when scripts are reappended to the DOM
+    # they will re-execute. This is an issue for scripts that call
+    # document.write() - such as ads - as they will clear the page.
+    element.find('script').remove()
+
+    element.wrapInner(@wrapper)
     @wrapper = $(@element).contents().get(0)
 
     # Set up the annotation editor
