@@ -10,21 +10,21 @@
 
   status = (function () {
     var element = document.createElement('div'),
-        transition = 'top 0.4s ease-out, color 0.3s linear',
+        transition = 'top 0.4s ease-out',
         styles  = {
           display: 'block',
-          position: 'fixed',
-          fontFamily: 'Helvetica, Arial, sans-serif',
+          position: 'absolute',
+          fontFamily: '"Helvetica Neue", Arial, Helvetica, sans-serif',
           fontSize: '14px',
-          color: '#706446',
-          top: '-40px',
+          color: '#fff',
+          top: '-54px',
           left: 0,
           width: '100%',
-          lineHeight: '40px',
+          lineHeight: '50px',
           fontSize: '14px',
           textAlign: 'center',
-          backgroundColor: '#FDF5D8',
-          borderBottom: '1px solid',
+          backgroundColor: '#000',
+          borderBottom: '4px solid',
           WebkitTransition: transition,
           MozTransition: transition,
           OTransition: transition,
@@ -38,36 +38,17 @@
       }
     }
 
-    if (element.style.position !== 'fixed') {
-      element.style.position = 'absolute';
-    }
+    // Apply newer styles for modern browsers.
+    element.style.position = 'fixed';
+    element.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
 
     body.appendChild(element);
 
-    function intToHex(integer) {
-      var hex;
-      integer = (integer < 0)   ? 0   :
-                (integer > 255) ? 255 : integer;
-
-      hex = (integer).toString(16);
-      return (hex.length === 1) ? '0' + hex : hex;
-    }
-
-    function rgbToHex(rgb, offset) {
-      offset = offset || 0;
-      return [
-        '#',
-        intToHex(rgb[0] + offset),
-        intToHex(rgb[1] + offset),
-        intToHex(rgb[2] + offset)
-      ].join('');
-    }
-
     return {
       status: {
-        INFO:    [253, 245, 216],
-        SUCCESS: [217, 255, 198],
-        ERROR:   [255, 148, 148]
+        INFO:    '#3665f9',
+        SUCCESS: '#d4288e',
+        ERROR:   '#ea2207'
       },
       show: function (message, status) {
         this.message(message);
@@ -91,9 +72,7 @@
       message: function (message, status) {
         status = status || this.status.INFO;
 
-        element.style.backgroundColor = rgbToHex(status);
-        element.style.borderColor = rgbToHex(status, -100);
-        element.style.color = rgbToHex(status, -150);
+        element.style.borderColor = status;
         element.innerHTML = message;
 
         return this;
@@ -158,6 +137,7 @@
     status.message('Annotator is ready!', status.status.SUCCESS).remove();
     setTimeout(status.hide, 3000);
   }
+
 
   if (window._annotator) {
     window._annotator.Annotator.showNotification(
