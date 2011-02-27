@@ -51,7 +51,7 @@
         ERROR:   '#ea2207'
       },
       show: function (message, status) {
-        this.message(message);
+        this.message(message, status);
 
         element.style.display = 'block';
         element.style.visibility = 'visible';
@@ -60,7 +60,7 @@
         return this;
       },
       hide: function () {
-        element.style.top = '-40px';
+        element.style.top = '-54px';
 
         setTimeout(function () {
           element.style.display = 'none';
@@ -134,10 +134,12 @@
       Annotator: annotator.constructor
     };
 
-    status.message('Annotator is ready!', status.status.SUCCESS).remove();
-    setTimeout(status.hide, 3000);
+    status.message('Annotator is ready!', status.status.SUCCESS);
+    setTimeout(function () {
+      status.hide();
+      setTimeout(status.remove, 800);
+    }, 3000);
   }
-
 
   if (window._annotator) {
     window._annotator.Annotator.showNotification(
