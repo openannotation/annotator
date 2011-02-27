@@ -29,7 +29,8 @@
 }
 
 .annotator-adder,
-.annotator-outer {
+.annotator-outer,
+.annotator-notice {
 	z-index: 9999;
 }
 
