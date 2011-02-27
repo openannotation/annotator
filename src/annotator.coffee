@@ -77,6 +77,11 @@ class Annotator extends Delegator
     @selection = util.getGlobal().getSelection()
     @selectedRanges = (@selection.getRangeAt(i) for i in [0...@selection.rangeCount])
 
+  createNewAnnotation: () ->
+    annotation = {}
+    $(@element).trigger('beforeAnnotationCreated', [annotation])
+    annotation
+
   createAnnotation: (annotation, fireEvents=true) ->
     a = annotation
 
@@ -97,7 +102,6 @@ class Annotator extends Delegator
 
     # Fire annotationCreated events so that plugins can react to them.
     if fireEvents
-      $(@element).trigger('beforeAnnotationCreated', [a])
       $(@element).trigger('annotationCreated', [a])
 
     a
@@ -225,16 +229,17 @@ class Annotator extends Delegator
     this.showViewer($.makeArray(annotations), util.mousePosition(event, @wrapper))
 
   onAdderMousedown: (event) =>
-    e?.preventDefault()
+    event?.preventDefault()
     @ignoreMouseup = true
 
   onAdderClick: (event) =>
-    e?.preventDefault()
+    event?.preventDefault()
 
     position = @adder.position()
     @adder.hide()
 
-    this.showEditor({}, position)
+    # Create an annotation and display the editor.
+    this.showEditor(this.createNewAnnotation(), position)
 
   onEditAnnotation: (event, annotation) =>
     offset = $(@viewer.element).position()
