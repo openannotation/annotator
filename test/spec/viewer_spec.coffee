@@ -60,10 +60,14 @@ describe 'Annotator.Viewer', ->
 
     it "should pass the cloned field element and an annotation to the callback", ->
       # Have to find the element here as it is cloned on each iteration by the load function.
-      expect(viewer.fields[0].load).toHaveBeenCalledWith(
-        $(viewer.element).find('div:first')[0],
-        viewer.annotations[0]
-      )
+      args = viewer.fields[0].load.mostRecentCall.args
+
+      expect(args[0]).toEqual($(viewer.element).find('div:first')[0])
+      expect(args[1]).toEqual(viewer.annotations[0])
+      expect(args[2].showEdit).toBeTruthy()
+      expect(args[2].hideEdit).toBeTruthy()
+      expect(args[2].showDelete).toBeTruthy()
+      expect(args[2].hideDelete).toBeTruthy()
 
   describe "addField", ->
 

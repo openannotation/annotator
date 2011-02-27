@@ -62,9 +62,18 @@ class Annotator.Viewer extends Delegator
       item = $(@item).clone().appendTo(list).data('annotation', annotation)
       controls = item.find('.annotator-controls')
 
+      edit = controls.find('.annotator-edit')
+      del  = controls.find('.annotator-delete')
+      controller = {
+        showEdit: -> edit.removeAttr('disabled')
+        hideEdit: -> edit.attr('disabled', 'disabled')
+        showDelete: -> del.removeAttr('disabled')
+        hideDelete: -> del.attr('disabled', 'disabled')
+      }
+
       for field in @fields
         element = $(field.element).clone().insertBefore(controls)[0]
-        field.load(element, annotation)
+        field.load(element, annotation, controller)
 
     $(@element).trigger('load', [@annotations])
 
