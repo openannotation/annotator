@@ -116,7 +116,7 @@
 
   function setup() {
     var annotator = jQuery(body).annotator().data('annotator'),
-        uri = location.href.split('?').shift();
+        uri = location.href.split(/#|\?/).shift();
 
     annotator
       .addPlugin('Unsupported')
