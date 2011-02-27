@@ -29,6 +29,11 @@
 }
 
 .annotator-adder,
+.annotator-outer {
+	z-index: 9999;
+}
+
+.annotator-adder,
 .annotator-outer,
 .annotator-widget,
 .annotator-editor input,
