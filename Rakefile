@@ -3,6 +3,8 @@ SRC =         ['extensions',
                'class',
                'range',
                'annotator',
+               'editor',
+               'viewer',
                'notification'].map { |x| "src/#{x}.coffee" }
 
 SRC_PLUGINS = ['tags',
