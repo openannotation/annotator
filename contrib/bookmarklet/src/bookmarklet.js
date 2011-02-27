@@ -2,11 +2,14 @@
 
   var body = document.body,
       head = document.getElementsByTagName('head')[0],
-      jQuerySource = 'https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js',
-      source  = 'http://localhost:8000/pkg/',
-      scripts = ['annotator.min.js', 'annotator.store.min.js'],
-      styles  = ['annotator.min.css'],
-      status;
+      jQuerySource = 'https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js',
+      domain  = 'http://localhost:8000/contrib/bookmarklet/pkg/',
+      source  = 'annotator.min.js',
+      styles  = 'annotator.min.css',
+      _Annotator, status;
+
+  // Cache any existing annotator.
+  _Annotator = window.Annotator;
 
   status = (function () {
     var element = document.createElement('div'),
@@ -20,6 +23,7 @@
           top: '-54px',
           left: 0,
           width: '100%',
+          zIndex: 9999,
           lineHeight: '50px',
           fontSize: '14px',
           textAlign: 'center',
@@ -102,28 +106,39 @@
   }
 
   function load(callback) {
-    var total = scripts.length;
+    head.appendChild($('<link />', {
+      rel: 'stylesheet',
+      href: domain + styles
+    })[0]);
 
-    jQuery.each(styles, function () {
-      head.appendChild($('<link />', {
-        rel: 'stylesheet',
-        href: source + this
-      })[0]);
-    });
-
-    jQuery.each(scripts, function () {
-      jQuery.getScript(source + this, function () {
-        total -= 1;
-
-        if (total === 0) {
-          callback();
-        }
-      });
-    });
+    jQuery.getScript(domain + source, callback);
   }
 
   function setup() {
-    var annotator = jQuery(body).annotator().data('annotator');
+    var annotator = jQuery(body).annotator().data('annotator'),
+        uri = location.href.split('?').shift();
+
+    annotator
+      .addPlugin('Unsupported')
+      .addPlugin('Store', {
+        prefix: 'http://uat.annotateit.org',
+        annotationData: {
+          'uri': uri
+        },
+        loadFromSearch: {
+          'uri': uri,
+          'all_fields': 1
+        }
+      })
+      .addPlugin('Permissions', {
+        user: 'Anonymous',
+        permissions: {
+          read:    ['Anonymous'],
+          update:  ['Anonymous'],
+          destroy: ['Anonymous'],
+          admin:   ['Anonymous']
+        }
+      });
 
     // Attach the annotator to the window object so we can prevent it
     // being loaded twice.
@@ -133,6 +148,9 @@
       instance: annotator,
       Annotator: annotator.constructor
     };
+
+    // Re-assign the original Annotator back to its rightful place.
+    window.Annotator = _Annotator;
 
     status.message('Annotator is ready!', status.status.SUCCESS);
     setTimeout(function () {
