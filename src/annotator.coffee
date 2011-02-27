@@ -104,7 +104,7 @@ class Annotator extends Delegator
     $(@element).trigger('beforeAnnotationUpdated', [annotation])
     $(@element).trigger('annotationUpdated', [annotation])
 
-  loadAnnotations: (annotations) ->
+  loadAnnotations: (annotations=[]) ->
     results = []
 
     loader = (annList) =>
@@ -118,7 +118,7 @@ class Annotator extends Delegator
       if annList.length > 0
         setTimeout((-> loader(annList)), 100)
 
-    loader(annotations)
+    loader(annotations) if annotations.length
 
   dumpAnnotations: () ->
     if @plugins['Store']
