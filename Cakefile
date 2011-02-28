@@ -44,7 +44,8 @@ buildBookmarklet = ->
   ].map (file) -> "src/#{file}.coffee"
 
   # Copy CSS over to the package.
-  exec "rake package && cp pkg/annotator.min.css #{root}/pkg/"
+  exec "rake package && cp pkg/annotator.min.css #{root}/pkg/", (err, stdout, stderr) ->
+    console.log "Updated pkg/annotator.min.css" unless stderr
 
   # Compile and compress required scripts.
   exec "coffee -jp #{sources.join ' '} > #{javascript}", (err, stdout, stderr) ->
@@ -59,7 +60,7 @@ buildBookmarklet = ->
         console.log "Output from yuicompressor: \n", stderr
         return;
 
-      console.log "Updated #{javascript}" unless stderr
+      console.log "Updated #{javascript}"
 
   # Compress bookmarklet script and embed in HTML template.
   exec "yuicompressor #{bookmarklet}", (err, stdout, stderr) ->
