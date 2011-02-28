@@ -99,8 +99,8 @@ class Annotator.Plugin.Store extends Annotator.Plugin
 
   loadAnnotationsFromSearch: (searchOptions) ->
     this._apiRequest('search', searchOptions, (data) =>
-      @annotations = (data.results || []).slice() # Clone array
-      @annotator.loadAnnotations(data.results)
+      @annotations = (data.rows || []).slice() # Clone array
+      @annotator.loadAnnotations(@annotations)
     )
 
   ##
