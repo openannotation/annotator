@@ -133,10 +133,10 @@
       .addPlugin('Permissions', {
         user: 'Anonymous',
         permissions: {
-          read:    ['Anonymous'],
-          update:  ['Anonymous'],
-          destroy: ['Anonymous'],
-          admin:   ['Anonymous']
+          'read':   ['Anonymous'],
+          'update': ['Anonymous'],
+          'delete': ['Anonymous'],
+          'admin':  ['Anonymous']
         }
       });
 
