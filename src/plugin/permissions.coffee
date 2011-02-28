@@ -84,10 +84,10 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
 
     # Default permissions for all annotations. Anyone can perform any action.
     permissions: {
-      read:    []
-      update:  []
-      destroy: []
-      admin:   []
+      'read':   []
+      'update': []
+      'delete': []
+      'admin':  []
     }
 
     # Default HTML for the plugin elements.
