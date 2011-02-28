@@ -242,6 +242,8 @@ describe 'Annotator.Plugin.Permissions', ->
     annotations = [
       {},
       {permissions: {'update': ['user:Alice']}},
+      {permissions: {'update': ['user:Alice']}},
+      {permissions: {'update': []}},
       {permissions: {'update': ['Alice'], 'admin': ['Alice']}}
       {permissions: {'update': ['Alice'], 'admin': ['Bob']}}
     ]
@@ -258,6 +260,12 @@ describe 'Annotator.Plugin.Permissions', ->
 
     it "should have an unchecked checkbox when there are permissions", ->
       expect(checkbox.is(':checked')).toBeFalsy()
+
+    it "should enable the checkbox by default", ->
+      expect(checkbox[0].getAttribute('disabled')).toBeFalsy()
+
+    it "should disable the checkbox if by default anyone can update the annotation", ->
+      expect(checkbox[0].getAttribute('disabled')).toBeTruthy()
 
     it "should display the field if the current user has 'admin' permissions", ->
       expect(field.is(':visible')).toBeTruthy()

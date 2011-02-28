@@ -262,7 +262,7 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   # Returns nothing.
   updatePermissionsField: (action, field, annotation) =>
     field = $(field).show()
-    input = field.find('input')
+    input = field.find('input').removeAttr('disabled')
 
     # Do not show field if current user is not admin.
     field.hide() unless this.authorize('admin', annotation)
@@ -270,6 +270,13 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     # See if we can authorise without a user.
     if this.authorize(action, annotation || {}, null)
       input.attr('checked', 'checked')
+
+      # If the default permissions allow anyone to edit this annotation then
+      # disable the checkbox as unchecking it will do nothing.
+      dummy = {permissions: @options.permissions}
+      if this.authorize(action, dummy, null)
+        input.attr('disabled', 'disabled')
+
     else
       input.removeAttr('checked')
 
