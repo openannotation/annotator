@@ -48,7 +48,7 @@ describe 'Annotator.Plugin.Permissions', ->
       expect(permissions.annotator.viewer.addField).toHaveBeenCalled()
 
     it "should register a two fields with the Editor", ->
-      expect(permissions.annotator.editor.addField).toHaveBeenCalled()
+      expect(permissions.annotator.editor.addField.callCount).toEqual(2)
 
 
   describe 'authorize', ->

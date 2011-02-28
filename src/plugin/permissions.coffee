@@ -125,17 +125,17 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
 
     @annotator.editor.addField({
       type:   'checkbox'
-      label:  'Allow anyone to <strong>edit</strong> this annotation'
-      load:   createCallback('updateEditField', 'update')
-      submit: createCallback('updateAnnotationPermissions', 'update')
+      label:  'Allow anyone to <strong>view</strong> this annotation'
+      load:   createCallback('updatePermissionsField', 'read')
+      submit: createCallback('updateAnnotationPermissions', 'read')
     })
 
-    # @annotator.editor.addField({
-    #   type:   'checkbox'
-    #   label:  'Allow anyone to view this annotation'
-    #   load:   this.updateField
-    #   submit: this.updateAnnotationEditPermissions
-    # })
+    @annotator.editor.addField({
+      type:   'checkbox'
+      label:  'Allow anyone to <strong>edit</strong> this annotation'
+      load:   createCallback('updatePermissionsField', 'update')
+      submit: createCallback('updateAnnotationPermissions', 'update')
+    })
 
     # Setup the display of annotations in the Viewer.
     @annotator.viewer.addField({
