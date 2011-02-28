@@ -246,6 +246,30 @@
 	resize: none;
 }
 
+.annotator-editor li textarea::-webkit-scrollbar {
+	height: 8px;
+	width: 8px;
+}
+
+.annotator-editor li textarea::-webkit-scrollbar-track-piece {
+	margin: 13px 0 3px;
+	background-color: #e5e5e5;
+	-webkit-border-radius: 4px;
+}
+
+.annotator-editor li textarea::-webkit-scrollbar-thumb:vertical {
+	height: 25px;
+	background-color: #ccc;
+	-webkit-border-radius: 4px;
+	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.annotator-editor li textarea::-webkit-scrollbar-thumb:horizontal {
+	width: 25px;
+	background-color: #ccc;
+	-webkit-border-radius: 4px;
+}
+
 .annotator-editor li:first-child textarea {
 	min-height: 5.5em;
 	-webkit-border-radius: 5px 5px 0 0;
