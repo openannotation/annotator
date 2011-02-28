@@ -194,8 +194,9 @@ describe 'Annotator.Plugin.Permissions', ->
 
     beforeEach ->
       checkbox = $('<input type="checkbox" />')
-      field = $('<li />').append(checkbox)
-      annotation = {permissions: {'update': ['user:Alice']}}
+      field = $('<li />').append(checkbox)[0]
+
+      annotation = {permissions: {'update': ['Alice']}}
 
     it "should NOT be world editable when 'Anyone can edit' checkbox is unchecked", ->
       checkbox.removeAttr('checked')
@@ -217,15 +218,20 @@ describe 'Annotator.Plugin.Permissions', ->
       expect(permissions.authorize('update', annotation, null)).toBeFalsy()
 
   describe 'updateEditPermissionsField', ->
+    field = null
     checkbox = null
     annotations = [
       {},
-      {permissions: {'update': ['user:Alice']}}
+      {permissions: {'update': ['user:Alice']}},
+      {permissions: {'update': ['Alice'], 'admin': ['Alice']}}
+      {permissions: {'update': ['Alice'], 'admin': ['Bob']}}
     ]
 
     beforeEach ->
       checkbox = $('<input type="checkbox" />')
       field = $('<li />').append(checkbox)
+      
+      permissions.setUser('Alice')
       permissions.updateEditPermissionsField(field, annotations.shift())
 
     it "should have a checked checkbox when there are no permissions", ->
@@ -233,6 +239,12 @@ describe 'Annotator.Plugin.Permissions', ->
 
     it "should have an unchecked checkbox when there are permissions", ->
       expect(checkbox.is(':checked')).toBeFalsy()
+
+    it "should display the field if the current user has 'admin' permissions", ->
+      expect(field.is(':visible')).toBeTruthy()
+
+    it "should NOT display the field if the current user does not have 'admin' permissions", ->
+      expect(field.is(':visible')).toBeFalsy()
 
   describe 'updateViewer', ->
     controls = null

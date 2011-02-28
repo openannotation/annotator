@@ -109,7 +109,7 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     super
 
     if @options.user
-      this.setUser(@options.user) 
+      this.setUser(@options.user)
       delete @options.user
 
   # Public: Initializes the plugin and registers fields with the
@@ -256,7 +256,11 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   #
   # Returns nothing.
   updateEditPermissionsField: (field, annotation) =>
-    input = $(field).find('input')
+    field = $(field).show()
+    input = field.find('input')
+
+    # Do not show field if current user is not admin.
+    field.hide() unless this.authorize('admin', annotation)
 
     # See if we can authorise without a user.
     if this.authorize('update', annotation || {}, null)
