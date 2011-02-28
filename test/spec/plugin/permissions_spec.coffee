@@ -32,6 +32,25 @@ describe 'Annotator.Plugin.Permissions', ->
     $(el).trigger('beforeAnnotationCreated', [ann])
     expect(ann.permissions).toEqual({})
 
+  describe 'pluginInit', ->
+    beforeEach ->
+      permissions.annotator = {
+        viewer: {
+          addField: jasmine.createSpy('addField')
+        },
+        editor: {
+          addField: jasmine.createSpy('addField')
+        }
+      }
+      permissions.pluginInit()
+
+    it "should register a field with the Viewer", ->
+      expect(permissions.annotator.viewer.addField).toHaveBeenCalled()
+
+    it "should register a two fields with the Editor", ->
+      expect(permissions.annotator.editor.addField).toHaveBeenCalled()
+
+
   describe 'authorize', ->
     annotations = null
 
@@ -187,7 +206,7 @@ describe 'Annotator.Plugin.Permissions', ->
         permissions.setUser({id: 'charlie', groups: ['admin']})
         expect(permissions.authorize('update', a)).toBeTruthy()
 
-  describe 'updateAnnotationWithEditPermissions', ->
+  describe 'updateAnnotationPermissions', ->
     field = null
     checkbox = null
     annotation = null
@@ -200,24 +219,24 @@ describe 'Annotator.Plugin.Permissions', ->
 
     it "should NOT be world editable when 'Anyone can edit' checkbox is unchecked", ->
       checkbox.removeAttr('checked')
-      permissions.updateAnnotationWithEditPermissions(field, annotation)
+      permissions.updateAnnotationPermissions('update', field, annotation)
       expect(permissions.authorize('update', annotation, null)).toBeFalsy()
 
     it "should be world editable when 'Anyone can edit' checkbox is checked", ->
       checkbox.attr('checked', 'checked')
-      permissions.updateAnnotationWithEditPermissions(field, annotation)
+      permissions.updateAnnotationPermissions('update', field, annotation)
       expect(permissions.authorize('update', annotation, null)).toBeTruthy()
 
     it "should NOT be world editable when 'Anyone can edit' checkbox is unchecked for a second time", ->
       checkbox.attr('checked', 'checked')
-      permissions.updateAnnotationWithEditPermissions(field, annotation)
+      permissions.updateAnnotationPermissions('update', field, annotation)
       expect(permissions.authorize('update', annotation, null)).toBeTruthy()
 
       checkbox.removeAttr('checked')
-      permissions.updateAnnotationWithEditPermissions(field, annotation)
+      permissions.updateAnnotationPermissions('update', field, annotation)
       expect(permissions.authorize('update', annotation, null)).toBeFalsy()
 
-  describe 'updateEditPermissionsField', ->
+  describe 'updatePermissionsField', ->
     field = null
     checkbox = null
     annotations = [
@@ -232,7 +251,7 @@ describe 'Annotator.Plugin.Permissions', ->
       field = $('<li />').append(checkbox)
       
       permissions.setUser('Alice')
-      permissions.updateEditPermissionsField(field, annotations.shift())
+      permissions.updatePermissionsField('update', field, annotations.shift())
 
     it "should have a checked checkbox when there are no permissions", ->
       expect(checkbox.is(':checked')).toBeTruthy()

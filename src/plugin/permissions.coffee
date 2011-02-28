@@ -119,11 +119,15 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   pluginInit: ->
     return unless Annotator.supported()
 
+    self = this
+    createCallback = (method, type) ->
+      (field, annotation) -> self[method].call(self, type, field, annotation)
+
     @annotator.editor.addField({
       type:   'checkbox'
       label:  'Allow anyone to <strong>edit</strong> this annotation'
-      load:   this.updateEditPermissionsField
-      submit: this.updateAnnotationWithEditPermissions
+      load:   createCallback('updateEditField', 'update')
+      submit: createCallback('updateAnnotationPermissions', 'update')
     })
 
     # @annotator.editor.addField({
@@ -249,13 +253,14 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     # No authorization info on annotation: free-for-all!
     true
 
-  # Field callback: Updates the state of the "anyone can edit" checkbox
+  # Field callback: Updates the state of the "anyone can…" checkboxes
   #
+  # action     - The action String, either "view" or "update"
   # field      - A DOM Element containing a form input.
   # annotation - An annotation Object.
   #
   # Returns nothing.
-  updateEditPermissionsField: (field, annotation) =>
+  updatePermissionsField: (action, field, annotation) =>
     field = $(field).show()
     input = field.find('input')
 
@@ -263,7 +268,7 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     field.hide() unless this.authorize('admin', annotation)
 
     # See if we can authorise without a user.
-    if this.authorize('update', annotation || {}, null)
+    if this.authorize(action, annotation || {}, null)
       input.attr('checked', 'checked')
     else
       input.removeAttr('checked')
@@ -273,21 +278,24 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   # of the field checkbox. If it is checked then permissions are set to world
   # writable otherwise they use the original settings.
   #
+  # action     - The action String, either "view" or "update"
   # field      - A DOM Element representing the annotation editor.
   # annotation - An annotation Object.
   #
   # Returns nothing.
-  updateAnnotationWithEditPermissions: (field, annotation) =>
+  updateAnnotationPermissions: (type, field, annotation) =>
     annotation.permissions = @options.permissions unless annotation.permissions
+
+    dataKey = type + '-permissions'
 
     if $(field).find('input').is(':checked')
       # Cache the permissions in case the user unchecks global permissions later.
-      $.data(annotation, 'update-permissions', annotation.permissions.update)
-      annotation.permissions.update = []
+      $.data(annotation, dataKey, annotation.permissions[type])
+      annotation.permissions[type] = []
     else
       # Retrieve and re-apply the permissions.
-      permissions = $.data(annotation, 'update-permissions')
-      annotation.permissions.update = permissions if permissions
+      permissions = $.data(annotation, dataKey)
+      annotation.permissions[type] = permissions if permissions
 
   # Field callback: updates the annotation viewer to inlude the display name
   # for the user obtained through Permissions#options.userString().
