@@ -2,7 +2,7 @@
 # managing user permissions such as viewing/editing/deleting annotions.
 #
 # element - A DOM Element upon which events are bound. When initialised by
-#           the Annotator it is the Annotator#element.
+#           the Annotator it is the Annotator element.
 # options - An Object literal containing custom options.
 #
 # Examples
@@ -151,18 +151,17 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   # Event callback: Appends the @user and @options.permissions objects to the
   # provided annotation object. Only appends the user if one has been set.
   #
-  # event      - An Event object.
   # annotation - An annotation object.
   #
   # Examples
   #
   #   annotation = {text: 'My comment'}
-  #   permissions.addFieldsToAnnotation(event, annotation)
+  #   permissions.addFieldsToAnnotation(annotation)
   #   console.log(annotation)
   #   # => {text: 'My comment', user: 'Alice', permissions: {...}}
   #
   # Returns nothing.
-  addFieldsToAnnotation: (event, annotation) =>
+  addFieldsToAnnotation: (annotation) =>
     if annotation
       annotation.permissions = @options.permissions
 

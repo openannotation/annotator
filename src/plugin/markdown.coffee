@@ -9,7 +9,7 @@ class Annotator.Plugin.Markdown extends Annotator.Plugin
     else
       console.error "To use the Markdown plugin, you must include Showdown into the page first."
 
-  updateViewer: (e, viewerElement, annotations) =>
+  updateViewer: (viewerElement, annotations) =>
     textContainers = $(viewerElement).find('.annotator-ann-text')
 
     for t in textContainers

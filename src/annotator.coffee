@@ -54,19 +54,18 @@ class Annotator extends Delegator
     # Set up the annotation editor
     @editor = new Annotator.Editor()
     @editor.hide()
-    @editor.element
-      .appendTo(@wrapper)
-      .bind('hide', this.onEditorHide)
-      .bind('save', this.onEditorSubmit)
+      .on('hide', this.onEditorHide)
+      .on('save', this.onEditorSubmit)
+      .element.appendTo(@wrapper)
 
     @viewer = new Annotator.Viewer()
     @viewer.hide()
-    @viewer.element.appendTo(@wrapper).bind({
-      "edit":      this.onEditAnnotation
-      "delete":    this.onDeleteAnnotation
-      "mouseover": this.clearViewerHideTimer
-      "mouseout":  this.startViewerHideTimer
-    })
+      .on("edit", this.onEditAnnotation)
+      .on("delete", this.onDeleteAnnotation)
+      .element.appendTo(@wrapper).bind({
+        "mouseover": this.clearViewerHideTimer
+        "mouseout":  this.startViewerHideTimer
+      })
 
     # Create model dom elements
     for name, src of @html
@@ -78,7 +77,7 @@ class Annotator extends Delegator
 
   createNewAnnotation: () ->
     annotation = {}
-    @element.trigger('beforeAnnotationCreated', [annotation])
+    this.publish('beforeAnnotationCreated', [annotation])
     annotation
 
   createAnnotation: (annotation, fireEvents=true) ->
@@ -101,7 +100,7 @@ class Annotator extends Delegator
 
     # Fire annotationCreated events so that plugins can react to them.
     if fireEvents
-      @element.trigger('annotationCreated', [a])
+      this.publish('annotationCreated', [a])
 
     a
 
@@ -109,11 +108,11 @@ class Annotator extends Delegator
     for h in annotation.highlights
       $(h).replaceWith(h.childNodes)
 
-    @element.trigger('annotationDeleted', [annotation])
+    this.publish('annotationDeleted', [annotation])
 
   updateAnnotation: (annotation) ->
-    @element.trigger('beforeAnnotationUpdated', [annotation])
-    @element.trigger('annotationUpdated', [annotation])
+    this.publish('beforeAnnotationUpdated', [annotation])
+    this.publish('annotationUpdated', [annotation])
 
   loadAnnotations: (annotations=[]) ->
     results = []
@@ -160,11 +159,11 @@ class Annotator extends Delegator
     @editor.load(annotation)
 
   onEditorHide: =>
-    @element.trigger('annotationEditorHidden', [@editor])
+    this.publish('annotationEditorHidden', [@editor])
     @ignoreMouseup = false
 
-  onEditorSubmit: (event, annotation) =>
-    @element.trigger('annotationEditorSubmit', [@editor, annotation])
+  onEditorSubmit: (annotation) =>
+    this.publish('annotationEditorSubmit', [@editor, annotation])
 
     if annotation.ranges == undefined
       this.createAnnotation(annotation)
@@ -175,7 +174,7 @@ class Annotator extends Delegator
     @viewer.element.css(location)
     @viewer.load(annotations)
 
-    @element.trigger('annotationViewerShown', [@viewer, annotations])
+    this.publish('annotationViewerShown', [@viewer, annotations])
 
   startViewerHideTimer: (e) =>
     # Don't do this if timer has already been set by another annotation.
@@ -240,14 +239,14 @@ class Annotator extends Delegator
     # Create an annotation and display the editor.
     this.showEditor(this.createNewAnnotation(), position)
 
-  onEditAnnotation: (event, annotation) =>
+  onEditAnnotation: (annotation) =>
     offset = @viewer.element.position()
 
     # Replace the viewer with the editor.
     @viewer.hide()
     this.showEditor(annotation, offset)
 
-  onDeleteAnnotation: (event, annotation) =>
+  onDeleteAnnotation: (annotation) =>
     # Delete highlight elements.
     this.deleteAnnotation annotation
 

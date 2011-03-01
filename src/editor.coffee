@@ -50,11 +50,13 @@ class Annotator.Editor extends Delegator
     @element.removeClass(@classes.hide).trigger('show')
     @element.find('.annotator-save').addClass(@classes.focus)
     @element.find(':input:first').focus()
+    this
 
   hide: (event) =>
     event?.preventDefault()
 
     @element.addClass(@classes.hide).trigger('hide')
+    this
 
   load: (annotation) =>
     @annotation = annotation
@@ -62,7 +64,7 @@ class Annotator.Editor extends Delegator
     for field in @fields
       field.load(field.element, @annotation)
 
-    @element.trigger('load', [@annotation])
+    this.publish('load', [@annotation])
 
     this.show();
 
@@ -72,7 +74,7 @@ class Annotator.Editor extends Delegator
     for field in @fields
       field.submit(field.element, @annotation)
 
-    @element.trigger('save', [@annotation])
+    this.publish('save', [@annotation])
 
     this.hide()
 

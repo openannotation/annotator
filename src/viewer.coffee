@@ -46,6 +46,7 @@ class Annotator.Viewer extends Delegator
     setTimeout((=> controls.removeClass(@classes.showControls)), 500)
 
     @element.removeClass(@classes.hide).trigger('show')
+    this
 
   isShown: ->
     not @element.hasClass(@classes.hide)
@@ -53,6 +54,7 @@ class Annotator.Viewer extends Delegator
   hide: (event) =>
     event?.preventDefault()
     @element.addClass(@classes.hide).trigger('hide')
+    this
 
   load: (annotations) =>
     @annotations = annotations || []
@@ -75,7 +77,7 @@ class Annotator.Viewer extends Delegator
         element = $(field.element).clone().insertBefore(controls)[0]
         field.load(element, annotation, controller)
 
-    @element.trigger('load', [@annotations])
+    this.publish('load', [@annotations])
 
     this.show();
 
@@ -87,6 +89,7 @@ class Annotator.Viewer extends Delegator
     field.element = $('<div />')[0]
     @fields.push field
     field.element
+    this
 
   onEditClick: (event) =>
     this.onButtonClick(event, 'edit')
@@ -97,4 +100,4 @@ class Annotator.Viewer extends Delegator
   onButtonClick: (event, type) ->
     item = $(event.target).parents('.annotator-annotation')
 
-    @element.trigger(type, [item.data('annotation')])
+    this.publish(type, [item.data('annotation')])

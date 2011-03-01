@@ -48,7 +48,7 @@ class Annotator.Plugin.Store extends Annotator.Plugin
     else
       getAnnotations()
 
-  annotationCreated: (e, annotation) ->
+  annotationCreated: (annotation) ->
     # Pre-register the annotation so as to save the list of highlight
     # elements.
     if annotation not in @annotations
@@ -65,11 +65,11 @@ class Annotator.Plugin.Store extends Annotator.Plugin
       # the highlight elements created by Annotator.
       this.updateAnnotation annotation, {}
 
-  annotationDeleted: (e, annotation) ->
+  annotationDeleted: (annotation) ->
     if annotation in this.annotations
       this._apiRequest 'destroy', annotation, (() => this.unregisterAnnotation(annotation))
 
-  annotationUpdated: (e, annotation) ->
+  annotationUpdated: (annotation) ->
     if annotation in this.annotations
       this._apiRequest 'update', annotation, (() => this.updateAnnotation(annotation))
 
