@@ -31,25 +31,43 @@ task 'test', 'Run tests. Filter tests using `-f [filter]` eg. cake -f auth test'
 BOOKMARKLET_PATH = "contrib/bookmarklet"
 
 # Create the bookmarklet demo page.
-buildBookmarklet = ->
-  template    = "#{BOOKMARKLET_PATH}/dev.html"
-  destination = "#{BOOKMARKLET_PATH}/demo.html"
+buildBookmarklet = (callback) ->
   bookmarklet = "#{BOOKMARKLET_PATH}/src/bookmarklet.js"
+  config      = "#{BOOKMARKLET_PATH}/config.json"
+  temp        = "#{BOOKMARKLET_PATH}/temp.js"
+
+  # Replace the __config__ placeholder with the JSON data.
+  config = fs.readFileSync(config).toString()
+  source = fs.readFileSync(bookmarklet).toString()
+  source = source.toString().replace('__config__', config)
+
+  # Write back out to temp file so YUI can compress it. This needs to be updated
+  # with either a compressor than can read from stdin or a Node library.
+  fs.writeFileSync temp, source
 
   # Compress bookmarklet script and embed in HTML template.
-  exec "yuicompressor #{bookmarklet}", (err, stdout, stderr) ->
+  exec "yuicompressor #{temp}", (err, stdout, stderr) ->
+    fs.unlinkSync(temp)
+
     if stderr
       console.log "Unable to compress #{bookmarklet}"
       console.log "Output from yuicompressor: \n", stderr
       return;
     throw err if err
 
-    oneline = stdout.toString().replace(/"/g, '&quot;')
-    html = fs.readFileSync template
-    html = html.toString().replace('{bookmarklet}', oneline)
+    callback stdout.toString()
 
-    fs.writeFileSync destination, html
-    console.log "Updated #{destination}"
+
+packageBookmarkletDemo = ->
+  template    = "#{BOOKMARKLET_PATH}/dev.html"
+  destination = "#{BOOKMARKLET_PATH}/demo.html"
+  html = fs.readFileSync(template).toString()
+
+  buildBookmarklet (source) ->
+     html = html.replace '{bookmarklet}', source.replace(/"/g, '&quot;')
+     fs.writeFileSync destination, html
+     console.log "Updated #{destination}"
+
 
 # Compile & compress annotator scripts.
 packageBookmarkletJavaScript = ->
@@ -73,6 +91,7 @@ packageBookmarkletJavaScript = ->
 
       console.log "Updated #{destination}"
 
+
 # Compile CSS and add !important declarations to styles.
 packageBookmarkletCSS = ->
   source = 'pkg/annotator.min.css'
@@ -92,8 +111,11 @@ packageBookmarkletCSS = ->
     fs.writeFileSync "#{BOOKMARKLET_PATH}/#{source}", css
     console.log "Updated #{BOOKMARKLET_PATH}/#{source}"
 
-task 'bookmarklet:build', 'Watch the bookmarklet source for changes', ->
-  buildBookmarklet()
+task 'bookmarklet:build', 'Output bookmarklet source', ->
+  buildBookmarklet console.log
+
+task 'bookmarklet:package', 'Compile the bookmarklet source and dependancies', ->
+  packageBookmarkletDemo()
   packageBookmarkletJavaScript()
   packageBookmarkletCSS()
 
@@ -107,5 +129,5 @@ task 'bookmarklet:watch', 'Watch the bookmarklet source for changes', ->
   fs.watchFile file, options, (curr, prev) ->
       return if curr.size is prev.size and curr.mtime.getTime() is prev.mtime.getTime()
 
-      buildBookmarklet()
+      packageBookmarkletDemo()
 
