@@ -5,17 +5,17 @@ describe 'Annotator.Viewer', ->
     viewer = new Annotator.Viewer()
 
   afterEach ->
-    $(viewer.element).remove()
+    viewer.element.remove()
 
   it "should have an element property", ->
     expect(viewer.element).toBeTruthy()
 
-    expect($(viewer.element).hasClass('annotator-viewer')).toBeTruthy()
+    expect(viewer.element.hasClass('annotator-viewer')).toBeTruthy()
 
   describe "show", ->
     it "should make the viewer visible", ->
       viewer.show()
-      expect($(viewer.element).hasClass(viewer.classes.hide)).toBeFalsy()
+      expect(viewer.element.hasClass(viewer.classes.hide)).toBeFalsy()
 
   describe "isShown", ->
     it "should return true if the viewer is visible", ->
@@ -29,7 +29,7 @@ describe 'Annotator.Viewer', ->
   describe "hide", ->
     it "should hide the viewer from view", ->
       viewer.hide()
-      expect($(viewer.element).hasClass(viewer.classes.hide)).toBeTruthy()
+      expect(viewer.element.hasClass(viewer.classes.hide)).toBeTruthy()
 
   describe "load", ->
     beforeEach ->
@@ -62,7 +62,7 @@ describe 'Annotator.Viewer', ->
       # Have to find the element here as it is cloned on each iteration by the load function.
       args = viewer.fields[0].load.mostRecentCall.args
 
-      expect(args[0]).toEqual($(viewer.element).find('div:first')[0])
+      expect(args[0]).toEqual(viewer.element.find('div:first')[0])
       expect(args[1]).toEqual(viewer.annotations[0])
       expect(args[2].showEdit).toBeTruthy()
       expect(args[2].hideEdit).toBeTruthy()
@@ -105,7 +105,7 @@ describe 'Annotator.Viewer', ->
 
     beforeEach ->
       listener = jasmine.createSpy()
-      $(viewer.element).bind('edit', listener)
+      viewer.element.bind('edit', listener)
 
     it "should trigger an 'edit' event", ->
       viewer.onButtonClick({}, 'edit')

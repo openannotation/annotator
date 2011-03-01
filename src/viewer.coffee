@@ -40,24 +40,24 @@ class Annotator.Viewer extends Delegator
   show: (event) =>
     event?.preventDefault()
 
-    controls = $(@element)
+    controls = @element
       .find('.annotator-controls')
       .addClass(@classes.showControls)
     setTimeout((=> controls.removeClass(@classes.showControls)), 500)
 
-    $(@element).removeClass(@classes.hide).trigger('show')
+    @element.removeClass(@classes.hide).trigger('show')
 
   isShown: ->
-    not $(@element).hasClass(@classes.hide)
+    not @element.hasClass(@classes.hide)
 
   hide: (event) =>
     event?.preventDefault()
-    $(@element).addClass(@classes.hide).trigger('hide')
+    @element.addClass(@classes.hide).trigger('hide')
 
   load: (annotations) =>
     @annotations = annotations || []
 
-    list = $(@element).find('ul:first').empty()
+    list = @element.find('ul:first').empty()
     for annotation in @annotations
       item = $(@item).clone().appendTo(list).data('annotation', annotation)
       controls = item.find('.annotator-controls')
@@ -75,7 +75,7 @@ class Annotator.Viewer extends Delegator
         element = $(field.element).clone().insertBefore(controls)[0]
         field.load(element, annotation, controller)
 
-    $(@element).trigger('load', [@annotations])
+    @element.trigger('load', [@annotations])
 
     this.show();
 
@@ -97,4 +97,4 @@ class Annotator.Viewer extends Delegator
   onButtonClick: (event, type) ->
     item = $(event.target).parents('.annotator-annotation')
 
-    $(@element).trigger(type, [item.data('annotation')])
+    @element.trigger(type, [item.data('annotation')])

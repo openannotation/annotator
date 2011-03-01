@@ -47,14 +47,14 @@ class Annotator.Editor extends Delegator
   show: (event) =>
     event?.preventDefault()
 
-    element = $(@element).removeClass(@classes.hide).trigger('show')
-    element.find('.annotator-save').addClass(@classes.focus)
-    element.find(':input:first').focus()
+    @element.removeClass(@classes.hide).trigger('show')
+    @element.find('.annotator-save').addClass(@classes.focus)
+    @element.find(':input:first').focus()
 
   hide: (event) =>
     event?.preventDefault()
 
-    $(@element).addClass(@classes.hide).trigger('hide')
+    @element.addClass(@classes.hide).trigger('hide')
 
   load: (annotation) =>
     @annotation = annotation
@@ -62,7 +62,7 @@ class Annotator.Editor extends Delegator
     for field in @fields
       field.load(field.element, @annotation)
 
-    $(@element).trigger('load', [@annotation])
+    @element.trigger('load', [@annotation])
 
     this.show();
 
@@ -72,7 +72,7 @@ class Annotator.Editor extends Delegator
     for field in @fields
       field.submit(field.element, @annotation)
 
-    $(@element).trigger('save', [@annotation])
+    @element.trigger('save', [@annotation])
 
     this.hide()
 
@@ -105,7 +105,7 @@ class Annotator.Editor extends Delegator
       element.addClass('annotator-checkbox')
       element.append($('<label />', {for: field.id, html: field.label}))
 
-    $(@element).find('ul:first').append(element)
+    @element.find('ul:first').append(element)
 
     @fields.push field
 
@@ -119,11 +119,11 @@ class Annotator.Editor extends Delegator
       this.submit()
 
   onCancelButtonMouseover: =>
-    $(@element).find('.' + @classes.focus).removeClass(@classes.focus);
+    @element.find('.' + @classes.focus).removeClass(@classes.focus);
 
   setupDragabbles: () ->
     mousedown = null
-    editor    = $(@element)
+    editor    = @element
     resize    = editor.find('.annotator-resize')
     textarea  = editor.find('textarea:first')
     controls  = editor.find('.annotator-controls')

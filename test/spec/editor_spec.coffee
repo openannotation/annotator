@@ -5,22 +5,22 @@ describe 'Annotator.Editor', ->
     editor = new Annotator.Editor()
 
   afterEach ->
-    $(editor.element).remove()
+    editor.element.remove()
 
   it "should have an element property", ->
     expect(editor.element).toBeTruthy()
 
-    expect($(editor.element).hasClass('annotator-editor')).toBeTruthy()
+    expect(editor.element.hasClass('annotator-editor')).toBeTruthy()
 
   describe "show", ->
     it "should make the editor visible", ->
       editor.show()
-      expect($(editor.element).hasClass('annotator-hide')).toBeFalsy()
+      expect(editor.element.hasClass('annotator-hide')).toBeFalsy()
 
   describe "hide", ->
     it "should hide the editor from view", ->
       editor.hide()
-      expect($(editor.element).hasClass('annotator-hide')).toBeTruthy()
+      expect(editor.element.hasClass('annotator-hide')).toBeTruthy()
 
   describe "load", ->
     beforeEach ->
@@ -100,37 +100,37 @@ describe 'Annotator.Editor', ->
       expect(editor.fields.length).toEqual(length + 2)
 
     it "should append a new list element to the editor", ->
-      length = $(editor.element).find('li').length
+      length = editor.element.find('li').length
 
       editor.addField()
-      expect($(editor.element).find('li').length).toEqual(length + 1)
+      expect(editor.element.find('li').length).toEqual(length + 1)
 
       editor.addField()
-      expect($(editor.element).find('li').length).toEqual(length + 2)
+      expect(editor.element.find('li').length).toEqual(length + 2)
 
     it "should append an input element if no type is specified", ->
       editor.addField()
-      expect($(editor.element).find('li:last :input').attr('type')).toEqual('text')
+      expect(editor.element.find('li:last :input').attr('type')).toEqual('text')
 
     it "should append a textarea element if 'textarea' type is specified", ->
       editor.addField({type: 'textarea'})
-      expect($(editor.element).find('li:last :input').attr('type')).toEqual('textarea')
+      expect(editor.element.find('li:last :input').attr('type')).toEqual('textarea')
 
     it "should append a checkbox element if 'checkbox' type is specified", ->
       editor.addField({type: 'checkbox'})
-      expect($(editor.element).find('li:last :input').attr('type')).toEqual('checkbox')
+      expect(editor.element.find('li:last :input').attr('type')).toEqual('checkbox')
 
     it "should append a label element with a for attribute matching the checkbox id", ->
       editor.addField({type: 'checkbox'})
       expect(
-        $(editor.element).find('li:last :input').attr('id')
+        editor.element.find('li:last :input').attr('id')
       ).toEqual(
-        $(editor.element).find('li:last label').attr('for')
+        editor.element.find('li:last label').attr('for')
       )
 
     it "should set placeholder text if a label is provided", ->
       editor.addField({type: 'textarea', label: 'Tags…'})
-      expect($(editor.element).find('li:last :input').attr('placeholder')).toEqual('Tags…')
+      expect(editor.element.find('li:last :input').attr('placeholder')).toEqual('Tags…')
 
     it "should return the created list item", ->
       expect(editor.addField().tagName).toEqual('LI')
