@@ -26,41 +26,15 @@ task 'test', 'Run tests. Filter tests using `-f [filter]` eg. cake -f auth test'
 
   relay 'coffee', args
 
-
 # Bookmarklet Tasks
 
-outputError = () ->
+BOOKMARKLET_PATH = "contrib/bookmarklet"
 
+# Create the bookmarklet demo page.
 buildBookmarklet = ->
-  root        = "contrib/bookmarklet"
-  template    = "#{root}/dev.html"
-  destination = "#{root}/demo.html"
-  bookmarklet = "#{root}/src/bookmarklet.js"
-  javascript  = "#{root}/pkg/annotator.min.js"
-
-  sources = [
-    'extensions', 'console', 'class', 'range', 'annotator', 'editor', 'viewer',
-    'notification', 'plugin/store', 'plugin/permissions', 'plugin/unsupported'
-  ].map (file) -> "src/#{file}.coffee"
-
-  # Copy CSS over to the package.
-  exec "rake package && cp pkg/annotator.min.css #{root}/pkg/", (err, stdout, stderr) ->
-    console.log "Updated pkg/annotator.min.css" unless stderr
-
-  # Compile and compress required scripts.
-  exec "coffee -jp #{sources.join ' '} > #{javascript}", (err, stdout, stderr) ->
-    if stderr
-      console.log "Unable to compile #{javascript}"
-      console.log "Output from coffee: \n", stderr
-      return;
-
-    exec "yuicompressor -o #{javascript} #{javascript}", (err, stdout, stderr) ->
-      if stderr
-        console.log "Unable to compress #{bookmarklet}"
-        console.log "Output from yuicompressor: \n", stderr
-        return;
-
-      console.log "Updated #{javascript}"
+  template    = "#{BOOKMARKLET_PATH}/dev.html"
+  destination = "#{BOOKMARKLET_PATH}/demo.html"
+  bookmarklet = "#{BOOKMARKLET_PATH}/src/bookmarklet.js"
 
   # Compress bookmarklet script and embed in HTML template.
   exec "yuicompressor #{bookmarklet}", (err, stdout, stderr) ->
@@ -68,20 +42,60 @@ buildBookmarklet = ->
       console.log "Unable to compress #{bookmarklet}"
       console.log "Output from yuicompressor: \n", stderr
       return;
-
     throw err if err
 
     oneline = stdout.toString().replace(/"/g, '&quot;')
-    fs.readFile template, (err, html) ->
-      throw err if err
+    html = fs.readFileSync template
+    html = html.toString().replace('{bookmarklet}', oneline)
 
-      html = html.toString().replace('{bookmarklet}', oneline)
-      fs.writeFile destination, html, (err) ->
-        throw err if err
-        console.log "Updated #{destination}"
+    fs.writeFileSync destination, html
+    console.log "Updated #{destination}"
+
+# Compile & compress annotator scripts.
+packageBookmarkletJavaScript = ->
+  destination = "#{BOOKMARKLET_PATH}/pkg/annotator.min.js"
+  sources = [
+    'extensions', 'console', 'class', 'range', 'annotator', 'editor', 'viewer',
+    'notification', 'plugin/store', 'plugin/permissions', 'plugin/unsupported'
+  ].map (file) -> "src/#{file}.coffee"
+
+  exec "coffee -jp #{sources.join ' '} > #{destination}", (err, stdout, stderr) ->
+    if stderr
+      console.log "Unable to compile #{destination}"
+      console.log "Output from coffee: \n", stderr
+      return;
+
+    exec "yuicompressor -o #{destination} #{destination}", (err, stdout, stderr) ->
+      if stderr
+        console.log "Unable to compress #{destination}"
+        console.log "Output from yuicompressor: \n", stderr
+        return;
+
+      console.log "Updated #{destination}"
+
+# Compile CSS and add !important declarations to styles.
+packageBookmarkletCSS = ->
+  source = 'pkg/annotator.min.css'
+
+  exec 'rake package', (err, stdout, stderr) ->
+    return if err or stderr
+
+    css = fs.readFileSync source
+
+    # Add !important declarations to compiled CSS but avoid the data uris.
+    # I'm sure this could be done far more efficiently.
+    css = css.toString().replace(/(image\/png)?;/g, (_, m) ->
+      return _ if m == 'image/png'
+      '!important;'
+    )
+
+    fs.writeFileSync "#{BOOKMARKLET_PATH}/#{source}", css
+    console.log "Updated #{BOOKMARKLET_PATH}/#{source}"
 
 task 'bookmarklet:build', 'Watch the bookmarklet source for changes', ->
   buildBookmarklet()
+  packageBookmarkletJavaScript()
+  packageBookmarkletCSS()
 
 task 'bookmarklet:watch', 'Watch the bookmarklet source for changes', ->
   file = "contrib/bookmarklet/src/bookmarklet.js"
