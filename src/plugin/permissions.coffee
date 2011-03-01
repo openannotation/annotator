@@ -90,14 +90,6 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
       'admin':  []
     }
 
-    # Default HTML for the plugin elements.
-    html:
-      publiclyEditable: \
-      """
-      <input class='annotator-editor-user' type='checkbox' value='1' />
-      <label>Allow anyone to edit this annotation</label>
-      """
-
   # The constructor called when a new instance of the Permissions
   # plugin is created. See class documentation for usage.
   #
