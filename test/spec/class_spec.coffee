@@ -108,3 +108,21 @@ describe 'Delegator', ->
 
         delegator.publish('custom')
         expect(callback).toHaveBeenCalled()
+
+    describe "isCustomEvent", ->
+      events = [
+        ['click', false]
+        ['mouseover', false]
+        ['mousedown', false]
+        ['submit', false]
+        ['load', false]
+        ['click.namespaced', false]
+        ['save', true]
+        ['cancel', true]
+        ['update', true]
+      ]        
+
+      it "should return true if the string passed is a custom event", ->
+        while events.length
+          [event, result] = events.shift()
+          expect(delegator.isCustomEvent(event)).toEqual(result)
