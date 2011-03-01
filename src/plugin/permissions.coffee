@@ -26,7 +26,7 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     # By default this accepts and returns the user String but can be over-
     # ridden in the @options object passed into the constructor.
     #
-    # user - A String username.
+    # user - A String username or null if no user is set.
     #
     # Returns the String provided as user object.
     userId: (user) -> user
@@ -35,7 +35,7 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     # property. By default this accepts and returns the user String but can be
     # over-ridden in the @options object passed into the constructor.
     #
-    # user - A String username.
+    # user - A String username or null if no user is set.
     #
     # Returns the String provided as user object
     userString: (user) -> user
@@ -47,7 +47,7 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     # By default this compares the passed user to the token but can be
     # over-ridden in the @options object passed into the constructor.
     #
-    # user  - An annotation user object, usually a String.
+    # user  - An annotation user object. Can be null if no user is set.
     # token - A String permissions token. These are set in the @options.permissions
     #         Object. e.g. permissions = {read: [], update: ['Alice']}. Here the
     #         one token for the update permisson is 'Alice' and this can be
@@ -77,7 +77,7 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     #   # => true (User has the "admin" value set to thier group property)
     #
     # Returns a Boolean, true if the user is authorised for the token provided.
-    userAuthorize: (user, token) -> user == token
+    userAuthorize: (user, token) -> this.userId(user) == token
 
     # Default user object.
     user: ''
