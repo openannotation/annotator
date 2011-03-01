@@ -27,7 +27,7 @@ class Annotator extends Delegator
 
   html:
     hl:     "<span class='annotator-hl'></span>"
-    adder:  "<div class='annotator-adder'><a href='#'></a></div>"
+    adder:  "<div class='annotator-adder'><button>Annotate</button></div>"
 
   options: {} # Configuration options
 
