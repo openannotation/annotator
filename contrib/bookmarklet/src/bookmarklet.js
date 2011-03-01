@@ -50,9 +50,9 @@
 
     return {
       status: {
-        INFO:    '#3665f9',
-        SUCCESS: '#d4288e',
-        ERROR:   '#ea2207'
+        INFO:    '#d4d4d4',
+        SUCCESS: '#3665f9',
+        ERROR:   '#ff7e00'
       },
       show: function (message, status) {
         this.message(message, status);

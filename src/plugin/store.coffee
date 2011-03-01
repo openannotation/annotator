@@ -196,6 +196,6 @@ class Annotator.Plugin.Store extends Annotator.Plugin
       when 404 then message = "Sorry we could not connect to the annotations store"
       when 500 then message = "Sorry something went wrong with the annotation store"
 
-    Annotator.showNotification message
+    Annotator.showNotification message, Annotator.Notification.ERROR
 
     console.error "API request failed: '#{xhr.status}'"

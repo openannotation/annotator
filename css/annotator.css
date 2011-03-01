@@ -1,3 +1,5 @@
+/* @override http://localhost:8000/css/annotator.css */
+
 /* Base Reset
 -------------------------------------------------------------------- */
 
@@ -575,19 +577,19 @@
 	text-align: center;
 	background-color: #000;
 	background-color: rgba(0, 0, 0, 0.9);
-	border-bottom: 4px solid #3665f9;
+	border-bottom: 4px solid #d4d4d4;
 	-webkit-transition: top 0.4s ease-out;
 	-moz-transition: top 0.4s ease-out;
 	-o-transition: top 0.4s ease-out;
 	transition: top 0.4s ease-out;
 }
 
-.annotator-notice.success {
-	border-color: #d4288e;
+.annotator-notice-success {
+	border-color: #3665f9;
 }
 
-.annotator-notice.error {
-	border-color: #ea2207;
+.annotator-notice-error {
+	border-color: #ff7e00;
 }
 
 .annotator-notice p {
@@ -598,7 +600,7 @@
 	color: #fff;
 }
 
-.annotator-notice.show {
+.annotator-notice-show {
 	top: 0;
 }
 
