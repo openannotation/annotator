@@ -8,25 +8,28 @@
   // These HTTP headers will be submitted with each request to the store.
   "auth": {
     "headers": {
-      "X-Annotator-Account-Id": "MyAccountID",
-      "X-Annotator-User-Id":    "Anonymous",
-      "X-Annotator-Auth-Token": "X-Annotator-Auth-Token"
+      "X-Annotator-Account-Id":            "AccountID",
+      "X-Annotator-User-Id":               "MyUserName",
+      "X-Annotator-Auth-Token":            "SomeVeryLongAndUniqueString",
+      'X-Annotator-Auth-Token-Issue-Time': "1299001411432",
+      'X-Annotator-Auth-Token-TTL':        "315360000" // 10 years!
     }
   },
   // Subset of the Store plugin options.
   "store": {
     "prefix": "http://annotateit.org"
   },
+  // Subset of the Permissions plugin options.
   "permissions": {
     "user": {
       "id": "Anonymous",
       "name": "Anonymous"
     },
     "permissions": {
-      "read":   ["Anonymous"],
-      "update": ["Anonymous"],
-      "delete": ["Anonymous"],
-      "admin":  ["Anonymous"]
+      "read":   ["MyUserName"],
+      "update": ["MyUserName"],
+      "delete": ["MyUserName"],
+      "admin":  ["MyUserName"]
     }
   }
 }
