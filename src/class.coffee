@@ -46,6 +46,11 @@ class Delegator
 
   subscribe: (event, callback) ->
     closure = -> callback.apply(this, [].slice.call(arguments, 1))
+
+    # Ensure both functions have the same unique id so that jQuery will accept
+    # callback when unbinding closure.
+    closure.guid = callback.guid = ($.guid += 1)
+
     @element.bind event, closure
     this
 

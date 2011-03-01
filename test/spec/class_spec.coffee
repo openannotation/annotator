@@ -83,6 +83,16 @@ describe 'Delegator', ->
       delegator.element.trigger('custom', ['first', 'second', 'third'])
       expect(callback).toHaveBeenCalledWith('first', 'second', 'third')
 
+    it "should ensure the bound function is unbindable", ->
+      callback = jasmine.createSpy('listener')
+
+      delegator.subscribe('custom', callback)
+      delegator.unsubscribe('custom', callback)
+      delegator.publish('custom')
+
+      expect(callback).not.toHaveBeenCalled()
+
+
   describe "unsubscribe", ->
     it "should unbind an event from the Delegator#element", ->
       callback = jasmine.createSpy('listener')
