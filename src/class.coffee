@@ -5,6 +5,7 @@ class Delegator
     @options = $.extend(true, {}, @options, options)
     @element = $(element)
 
+    this.on = this.subscribe
     this.addEvents()
 
   addEvents: ->
@@ -29,7 +30,7 @@ class Delegator
 
   subscribe: (event, callback) ->
     closure = -> callback.apply(this, [].slice.call(arguments, 1))
-    @element.bind event closure
+    @element.bind event, closure
 
   unsubscribe: -> 
     @element.unbind.apply @element, arguments

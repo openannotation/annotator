@@ -16,50 +16,95 @@ class DelegatedExample extends Delegator
   pushC: -> @returns.push("C")
 
 describe 'Delegator', ->
-  d = null
+  delegator = null
   $fix = null
 
   beforeEach ->
     addFixture('delegator')
 
-    d = new DelegatedExample(fix())
+    delegator = new DelegatedExample(fix())
     $fix = $(fix())
 
   afterEach -> clearFixtures()
 
   describe "options", ->
     it "should provide access to an options object", ->
-      expect(d.options.foo).toEqual("bar")
-      d.options.bar = (a) -> "<#{a}>"
+      expect(delegator.options.foo).toEqual("bar")
+      delegator.options.bar = (a) -> "<#{a}>"
 
     it "should be unique to an instance", ->
-      expect(d.options.bar("hello")).toEqual("hello")
+      expect(delegator.options.bar("hello")).toEqual("hello")
 
   describe "addEvent", ->
     it "adds an event for a selector", ->
-      d.addEvent('p', 'foo', 'pushC')
+      delegator.addEvent('p', 'foo', 'pushC')
 
       $fix.find('p').trigger('foo')
-      expect(d.returns).toEqual(['C'])
+      expect(delegator.returns).toEqual(['C'])
 
     it "adds an event for an element", ->
-      d.addEvent($fix.find('p').get(0), 'bar', 'pushC')
+      delegator.addEvent($fix.find('p').get(0), 'bar', 'pushC')
 
       $fix.find('p').trigger('bar')
-      expect(d.returns).toEqual(['C'])
+      expect(delegator.returns).toEqual(['C'])
 
     it "uses event delegation to bind the events", ->
-      d.addEvent('li', 'click', 'pushB')
+      delegator.addEvent('li', 'click', 'pushB')
 
       $fix.find('ol').append("<li>Hi there, I'm new round here.</li>")
       $fix.find('li').click()
 
-      expect(d.returns).toEqual(['B', 'A', 'B', 'A'])
+      expect(delegator.returns).toEqual(['B', 'A', 'B', 'A'])
 
   it "automatically binds events described in its events property", ->
     $fix.find('p').click()
-    expect(d.returns).toEqual(['A'])
+    expect(delegator.returns).toEqual(['A'])
 
   it "will bind events in its events property to its root element if no selector is specified", ->
     $fix.trigger('baz')
-    expect(d.returns).toEqual(['B'])
+    expect(delegator.returns).toEqual(['B'])
+
+  describe "on", ->
+    it "should be an alias of Delegator#subscribe()", ->
+      expect(delegator.on).toEqual(delegator.subscribe)
+
+  describe "subscribe", ->
+    it "should bind an event to the Delegator#element", ->
+      callback = jasmine.createSpy('listener')
+      delegator.subscribe('custom', callback)
+      
+      delegator.element.trigger('custom')
+      expect(callback).toHaveBeenCalled()
+
+    it "should remove the event object from the parameters passed to the callback", ->
+      callback = jasmine.createSpy('listener')
+      delegator.subscribe('custom', callback)
+
+      delegator.element.trigger('custom', ['first', 'second', 'third'])
+      expect(callback).toHaveBeenCalledWith('first', 'second', 'third')
+
+  describe "unsubscribe", ->
+    it "should unbind an event from the Delegator#element", ->
+      callback = jasmine.createSpy('listener')
+
+      delegator.element.bind('custom', callback)
+      delegator.unsubscribe('custom', callback)
+      delegator.element.trigger('custom')
+
+      expect(callback).not.toHaveBeenCalled()
+      
+      callback = jasmine.createSpy('second listener')
+
+      delegator.element.bind('custom', callback)
+      delegator.unsubscribe('custom')
+      delegator.element.trigger('custom')
+
+      expect(callback).not.toHaveBeenCalled()
+
+    describe "publish", ->
+      it "should trigger an event on the Delegator#element", ->
+        callback = jasmine.createSpy('listener')
+        delegator.element.bind('custom', callback)
+
+        delegator.publish('custom')
+        expect(callback).toHaveBeenCalled()
