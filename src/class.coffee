@@ -3,7 +3,7 @@ class Delegator
 
   constructor: (element, options) ->
     @options = $.extend(true, {}, @options, options)
-    @element = element
+    @element = $(element)
 
     this.addEvents()
 
@@ -20,6 +20,6 @@ class Delegator
     bindTo = @element if isBlankSelector
 
     if typeof bindTo is 'string'
-      $(@element).delegate bindTo, event, closure
+      @element.delegate bindTo, event, closure
     else
       $(bindTo).bind event, closure
