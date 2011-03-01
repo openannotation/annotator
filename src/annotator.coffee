@@ -38,7 +38,6 @@ class Annotator extends Delegator
     return this unless Annotator.supported()
 
     super
-    element = $(@element)
 
     # Wrap element contents
     @wrapper = $("<div></div>").addClass('annotator-wrapper')
@@ -47,22 +46,22 @@ class Annotator extends Delegator
     # contents within a div. Otherwise when scripts are reappended to the DOM
     # they will re-execute. This is an issue for scripts that call
     # document.write() - such as ads - as they will clear the page.
-    element.find('script').remove()
+    @element.find('script').remove()
 
-    element.wrapInner(@wrapper)
-    @wrapper = $(@element).contents().get(0)
+    @element.wrapInner(@wrapper)
+    @wrapper = @element.contents().get(0)
 
     # Set up the annotation editor
     @editor = new Annotator.Editor()
     @editor.hide()
-    $(@editor.element)
+    @editor.element
       .appendTo(@wrapper)
       .bind('hide', this.onEditorHide)
       .bind('save', this.onEditorSubmit)
 
     @viewer = new Annotator.Viewer()
     @viewer.hide()
-    $(@viewer.element).appendTo(@wrapper).bind({
+    @viewer.element.appendTo(@wrapper).bind({
       "edit":      this.onEditAnnotation
       "delete":    this.onDeleteAnnotation
       "mouseover": this.clearViewerHideTimer
@@ -79,7 +78,7 @@ class Annotator extends Delegator
 
   createNewAnnotation: () ->
     annotation = {}
-    $(@element).trigger('beforeAnnotationCreated', [annotation])
+    @element.trigger('beforeAnnotationCreated', [annotation])
     annotation
 
   createAnnotation: (annotation, fireEvents=true) ->
@@ -102,7 +101,7 @@ class Annotator extends Delegator
 
     # Fire annotationCreated events so that plugins can react to them.
     if fireEvents
-      $(@element).trigger('annotationCreated', [a])
+      @element.trigger('annotationCreated', [a])
 
     a
 
@@ -110,11 +109,11 @@ class Annotator extends Delegator
     for h in annotation.highlights
       $(h).replaceWith(h.childNodes)
 
-    $(@element).trigger('annotationDeleted', [annotation])
+    @element.trigger('annotationDeleted', [annotation])
 
   updateAnnotation: (annotation) ->
-    $(@element).trigger('beforeAnnotationUpdated', [annotation])
-    $(@element).trigger('annotationUpdated', [annotation])
+    @element.trigger('beforeAnnotationUpdated', [annotation])
+    @element.trigger('annotationUpdated', [annotation])
 
   loadAnnotations: (annotations=[]) ->
     results = []
@@ -149,7 +148,7 @@ class Annotator extends Delegator
     else
       klass = Annotator.Plugin[name]
       if typeof klass is 'function'
-        @plugins[name] = new klass(@element, options)
+        @plugins[name] = new klass(@element[0], options)
         @plugins[name].annotator = this
         @plugins[name].pluginInit?()
       else
@@ -157,15 +156,15 @@ class Annotator extends Delegator
     this # allow chaining
 
   showEditor: (annotation, location) =>
-    $(@editor.element).css(location)
+    @editor.element.css(location)
     @editor.load(annotation)
 
   onEditorHide: =>
-    $(@element).trigger('annotationEditorHidden', [@editor])
+    @element.trigger('annotationEditorHidden', [@editor])
     @ignoreMouseup = false
 
   onEditorSubmit: (event, annotation) =>
-    $(@element).trigger('annotationEditorSubmit', [@editor, annotation])
+    @element.trigger('annotationEditorSubmit', [@editor, annotation])
 
     if annotation.ranges == undefined
       this.createAnnotation(annotation)
@@ -173,10 +172,10 @@ class Annotator extends Delegator
       this.updateAnnotation(annotation)
 
   showViewer: (annotations, location) =>
-    $(@viewer.element).css(location)
+    @viewer.element.css(location)
     @viewer.load(annotations)
 
-    $(@element).trigger('annotationViewerShown', [@viewer, annotations])
+    @element.trigger('annotationViewerShown', [@viewer, annotations])
 
   startViewerHideTimer: (e) =>
     # Don't do this if timer has already been set by another annotation.
@@ -242,7 +241,7 @@ class Annotator extends Delegator
     this.showEditor(this.createNewAnnotation(), position)
 
   onEditAnnotation: (event, annotation) =>
-    offset = $(@viewer.element).position()
+    offset = @viewer.element.position()
 
     # Replace the viewer with the editor.
     @viewer.hide()

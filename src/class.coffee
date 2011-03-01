@@ -23,3 +23,13 @@ class Delegator
       @element.delegate bindTo, event, closure
     else
       $(bindTo).bind event, closure
+
+  publish: () ->
+    @element.trigger.apply @element, arguments
+
+  subscribe: (event, callback) ->
+    closure = -> callback.apply(this, [].slice.call(arguments, 1))
+    @element.bind event closure
+
+  unsubscribe: -> 
+    @element.unbind.apply @element, arguments
