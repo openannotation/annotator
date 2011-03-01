@@ -35,7 +35,7 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
     super
 
     # Reference self on element so store knows to wait for auth token.
-    $(@element).data('annotator:auth', this)
+    @element.data('annotator:auth', this)
 
     # List of functions to be executed when we have a valid token.
     @waitingForToken = []
@@ -100,8 +100,8 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
 
   # Update headers to be sent with request
   updateHeaders: ->
-    current = $(@element).data('annotator:headers')
-    $(@element).data('annotator:headers', $.extend(current, {
+    current = @element.data('annotator:headers')
+    @element.data('annotator:headers', $.extend(current, {
       'x-annotator-auth-token':            @token.authToken,
       'x-annotator-auth-token-issue-time': @token.authTokenIssueTime,
       'x-annotator-auth-token-ttl':        @token.authTokenTTL,

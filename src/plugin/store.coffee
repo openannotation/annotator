@@ -41,7 +41,7 @@ class Annotator.Plugin.Store extends Annotator.Plugin
       else
         this.loadAnnotations()
 
-    auth = $(@element).data('annotator:auth')
+    auth = @element.data('annotator:auth')
 
     if auth
       auth.withToken(getAnnotations)
@@ -179,7 +179,7 @@ class Annotator.Plugin.Store extends Annotator.Plugin
 
   # Set request headers before send
   _onBeforeSend: (xhr) =>
-    headers = $(@element).data('annotator:headers')
+    headers = @element.data('annotator:headers')
     if headers
       for key, val of headers
         xhr.setRequestHeader(key, val)
