@@ -13,12 +13,57 @@ The bookmarklet version of the annotator has the following plugins loaded:
  - Unsupported: Displays a notification if the bookmarklet is run on an
    unsupported browser.
 
+Generation
+----------
+
+To generate the bookmarklet source code simply run:
+
+    $ cake bookmarklet:build
+
+This will output the source to the console. To save the code to a file you could
+run the following:
+
+    $ cake bookmarklet:build > bookmarklet.js
+
+Configuration
+-------------
+
+In order to configure the bookmarklet for your needs it accepts `config` hash of
+options. These are set in the _config.json_ file. There's an example in the
+repository (see _config.example.json_). The options are as follows:
+
+### externals
+
+ - `jQuery`: A URL to a hosted version of jQuery. This will default to version
+    1.5.1 hosted on Googles CDN.
+ - `source`: The generated Annotator JavaScript source code (see Development)
+ - `styles`: The generated Annotator CSS source code (see Development)
+   
+### auth
+
+Currently only supports custom headers to be provided when querying the store.
+
+ - `headers`: An object literal of custom headers.
+
+### store
+
+Settings for the [Store plugin][#wiki-store].
+
+ - `prefix`: The prefix url for the store.
+
+### permissions
+
+Settings for the [Permissions plugin][#wiki-permissions].
+
+ - `user`: The object representing the current user.
+ - `permissions`: An object literal of permissions to set on annotations.
+
 Development
 -----------
 
 To build a copy of the bookmarklet run:
 
-    $ cake bookmarklet:build
+    $ cake bookmarklet:package
 
 This will minify the source of _bookmarklet.js_ and embed it within _dev.html_
 replacing the `{bookmarklet}` token. The file will be written to _demo.html_.
@@ -33,3 +78,5 @@ run:
     $ cake bookmarklet:watch
 
 [#annotateit]: http://annotateit.org
+[#wiki-permissions]: https://github.com/okfn/annotator/wiki/Permissions-Plugin
+[#wiki-store]: https://github.com/okfn/annotator/wiki/Store-Plugin

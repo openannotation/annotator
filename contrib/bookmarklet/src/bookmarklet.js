@@ -1,17 +1,13 @@
-(function (window, document, jQuery, undefined) {
+(function (options, window, document, jQuery, undefined) {
 
   var body = document.body,
       head = document.getElementsByTagName('head')[0],
-      jQuerySource = 'https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js',
-      domain  = 'http://localhost:8000/contrib/bookmarklet/pkg/',
-      source  = 'annotator.min.js',
-      styles  = 'annotator.min.css',
-      _Annotator, status;
+      _Annotator, notification;
 
   // Cache any existing annotator.
   _Annotator = window.Annotator;
 
-  status = (function () {
+  notification = (function () {
     var element = document.createElement('div'),
         transition = 'top 0.4s ease-out',
         styles  = {
@@ -88,10 +84,45 @@
     };
   }());
 
+  function keypath(object, path, fallback) {
+    var keys = (path || '').split('.'),
+        key;
+
+    while (object && keys.length) {
+      key = keys.shift();
+
+      if (object.hasOwnProperty(key)) {
+        object = object[key];
+
+        if (keys.length === 0 && object !== undefined) {
+          return object;
+        }
+      } else {
+        break;
+      }
+    }
+
+    return (fallback == null) ? null : fallback;
+  }
+
+  function config(path, fallback) {
+    var value = keypath(options, path, fallback);
+
+    if (value === null) {
+      notification.show(
+        'Sorry there was an error reading the bookmarklet setting for key: ' + path,
+        notification.status.ERROR
+      );
+      setTimeout(notification.hide, 3000);
+    }
+
+    return value;
+  }
+
   function loadjQuery() {
     var script = document.createElement('script');
 
-    script.src = jQuerySource;
+    script.src = config('externals.jQuery', 'https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js');
     script.onload = function () {
       jQuery = window.jQuery;
 
@@ -108,10 +139,10 @@
   function load(callback) {
     head.appendChild($('<link />', {
       rel: 'stylesheet',
-      href: domain + styles
+      href: config('externals.styles')
     })[0]);
 
-    jQuery.getScript(domain + source, callback);
+    jQuery.getScript(config('externals.source'), callback);
   }
 
   function setup() {
@@ -121,7 +152,7 @@
     annotator
       .addPlugin('Unsupported')
       .addPlugin('Store', {
-        prefix: 'http://uat.annotateit.org',
+        prefix: config('store.prefix'),
         annotationData: {
           'uri': uri
         },
@@ -131,14 +162,19 @@
         }
       })
       .addPlugin('Permissions', {
-        user: 'Anonymous',
-        permissions: {
-          'read':   ['Anonymous'],
-          'update': ['Anonymous'],
-          'delete': ['Anonymous'],
-          'admin':  ['Anonymous']
+        user: config('permissions.user'),
+        permissions: config('permissions.permissions'),
+        userId: function (user) {
+          return user ? user.id : '';
+        },
+        userString: function (user) {
+          return user ? user.name : '';
         }
-      });
+      })
+      // As we're not requesting the auth tokens for the bookmarklet we
+      // don't need the Auth plugin. Instead we just need to set the required
+      // headers on each request.
+      .element.data('annotator:headers', config('auth.headers'));
 
     // Attach the annotator to the window object so we can prevent it
     // being loaded twice.
@@ -152,10 +188,10 @@
     // Re-assign the original Annotator back to its rightful place.
     window.Annotator = _Annotator;
 
-    status.message('Annotator is ready!', status.status.SUCCESS);
+    notification.message('Annotator is ready!', notification.status.SUCCESS);
     setTimeout(function () {
-      status.hide();
-      setTimeout(status.remove, 800);
+      notification.hide();
+      setTimeout(notification.remove, 800);
     }, 3000);
   }
 
@@ -164,7 +200,7 @@
       'Annotator is already loaded. Try highlighting some text to get started'
     );
   } else {
-    status.show('Loading Annotator into page');
+    notification.show('Loading Annotator into page');
 
     if (jQuery === undefined || !jQuery.sub) {
       loadjQuery();
@@ -174,4 +210,4 @@
     }
   }
 
-}(this, this.document, this.jQuery));
+}(__config__, this, this.document, this.jQuery));
