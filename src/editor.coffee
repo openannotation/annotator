@@ -1,4 +1,4 @@
-
+# Public: Creates an element for editing annotations.
 class Annotator.Editor extends Delegator
   events:
     "form submit":                 "submit"
@@ -26,6 +26,26 @@ class Annotator.Editor extends Delegator
 
   options: {} # Configuration options
 
+  # Public: Creates an instance of the annotator object. This will create the
+  # @element from the @html string and set up all events.
+  #
+  # options - An Object literal containing options. There are currently no
+  #           options implemented.
+  #
+  # Examples
+  #
+  #   # Creates a new editor, adds a custom field and
+  #   # loads an annotation for editing.
+  #   editor = new Annotator.Editor
+  #   editor.addField({
+  #     label: 'My custom input field',
+  #     type:  'textarea'
+  #     load:  someLoadCallback
+  #     save:  someSaveCallback
+  #   })
+  #   editor.load(annotation)
+  #
+  # Returns 
   constructor: (options) ->
     super $(@html)[0], options
 
@@ -44,6 +64,21 @@ class Annotator.Editor extends Delegator
 
     this.setupDragabbles()
 
+  # Public: Displays the Editor. Can be used as an event callback and will
+  # call Event#preventDefault() on the supplied event.
+  #
+  # event - Event object provided if method is called by event
+  #         listener (default:undefined)
+  #
+  # Examples
+  #
+  #   # Displays the editor.
+  #   editor.show()
+  #
+  #   # Displays the editor on click (prevents default action).
+  #   $('a.show-editor').bind('click', editor.show)
+  #
+  # Returns itself.
   show: (event) =>
     event?.preventDefault()
 
@@ -52,22 +87,78 @@ class Annotator.Editor extends Delegator
     @element.find(':input:first').focus()
     this
 
+  # Public: Hides the Editor. Can be used as an event callback and will
+  # call Event#preventDefault() on the supplied event.
+  #
+  # event - Event object provided if method is called by event
+  #         listener (default:undefined)
+  #
+  # Examples
+  #
+  #   # Hides the editor.
+  #   editor.hide()
+  #
+  #   # Hide the editor on click (prevents default action).
+  #   $('a.hide-editor').bind('click', editor.hide)
+  #
+  # Returns itself.
   hide: (event) =>
     event?.preventDefault()
 
     @element.addClass(@classes.hide).trigger('hide')
     this
 
+  # Public: Loads an annotation into the Editor and displays it setting
+  # Editor#annotation to the provided annotation. It fires the "load" event
+  # providing the current annotation subscribers can modify the annotation
+  # before it updates the editor fields.
+  #
+  # annotation - An annotation Object to display for editing.
+  #
+  # Examples
+  #
+  #   # Diplays the editor with the annotation loaded.
+  #   editor.load({text: 'My Annotation'})
+  #
+  #   editor.on('load', (annotation) ->
+  #     console.log annotation.text
+  #   ).load({text: 'My Annotation'})
+  #   # => Outputs "My Annotation"
+  #
+  # Returns itself.
   load: (annotation) =>
     @annotation = annotation
+
+    this.publish('load', [@annotation])
 
     for field in @fields
       field.load(field.element, @annotation)
 
-    this.publish('load', [@annotation])
-
     this.show();
 
+  # Public: Hides the Editor and passes the anotation to all registered fields
+  # so they can update it's state. It then fires the "save" event so that other
+  # parties can further modify the annotation.
+  # Can be used as an event callback and will call Event#preventDefault() on the
+  # supplied event.
+  #
+  # event - Event object provided if method is called by event
+  #         listener (default:undefined)
+  #
+  # Examples
+  #
+  #   # Submits the editor.
+  #   editor.submit()
+  #
+  #   # Submits the editor on click (prevents default action).
+  #   $('button.submit-editor').bind('click', editor.submit)
+  #
+  #   # Appends "Comment: " to the annotation comment text.
+  #   editor.on('save', (annotation) ->
+  #     annotation.text = "Comment: " + annotation.text
+  #   ).submit()
+  #
+  # Returns itself.
   submit: (event) =>
     event?.preventDefault()
 
@@ -78,6 +169,61 @@ class Annotator.Editor extends Delegator
 
     this.hide()
 
+  # Public: Adds an addional form field to the editor. Callbacks can be provided
+  # to update the view and anotations on load and submission.
+  #
+  # options - An options Object. Options are as follows:
+  #           id     - A unique id for the form element will also be set as the
+  #                    "for" attrubute of a label if there is one. Defaults to
+  #                    a timestamp. (default: "annotator-field-{timestamp}")
+  #           type   - Input type String. One of "input", "textarea", "checkbox"
+  #                    (default: "input")
+  #           label  - Label to display either in a label Element or as place-
+  #                    holder text depending on the type. (default: "")
+  #           load   - Callback Function called when the editor is loaded with a
+  #                    new annotation. Recieves the field <li> element and the
+  #                    annotation to be loaded.
+  #           submit - Callback Function called when the editor is submitted.
+  #                    Recieves the field <li> element and the annotation to be
+  #                    updated.
+  #            
+  # Examples
+  #
+  #   # Add a new input element.
+  #   editor.addField({
+  #     label: "Tags",
+  #
+  #     # This is called when the editor is loaded use it to update your input.
+  #     load: (field, annotation) ->
+  #       # Do something with the annotation.
+  #       value = getTagString(annotation.tags)
+  #       $(field).find('input').val(value)
+  #
+  #     # This is called when the editor is submitted use it to retrieve data
+  #     # from your input and save it to the annotation.
+  #     submit: (field, annotation) ->
+  #       value = $(field).find('input').val()
+  #       annotation.tags = getTagsFromString(value)
+  #   })
+  #
+  #   # Add a new checkbox element.
+  #   editor.addField({
+  #     type: 'checkbox',
+  #     id: 'annotator-field-my-checkbox',
+  #     label: 'Allow anyone to see this annotation',
+  #     load: (field, annotation) ->
+  #       # Check what state of input should be.
+  #       if checked
+  #         $(field).find('input').attr('checked', 'checked')
+  #       else
+  #         $(field).find('input').removeAttr('checked')
+
+  #     submit: (field, annotation) ->
+  #       checked = $(field).find('input').is(':checked')
+  #       # Do something.
+  #   })
+  #
+  # Returns the created <li> Element.
   addField: (options) ->
     field = $.extend({
       id:     'annotator-field-' + (new Date()).getTime()
@@ -113,6 +259,13 @@ class Annotator.Editor extends Delegator
 
     field.element
 
+  # Event callback. Listens for the following special keypresses.
+  # - escape: Hides the editor
+  # - enter:  Submits the editor
+  #
+  # event - A keydown Event object.
+  #
+  # Returns nothing
   processKeypress: (event) =>
     if event.keyCode is 27 # "Escape" key => abort.
       this.hide()
@@ -120,9 +273,18 @@ class Annotator.Editor extends Delegator
       # If "return" was pressed without the shift key, we're done.
       this.submit()
 
+  # Event callback. Removes the focus class from the submit button when the
+  # cancel button is hovered.
+  #
+  # Returns nothing
   onCancelButtonMouseover: =>
     @element.find('.' + @classes.focus).removeClass(@classes.focus);
 
+  # Sets up mouse events for resizing and dragging the editor window.
+  # window events are bound only when needed and throttled to only update
+  # the positions at most 60 times a second.
+  #
+  # Returns nothing.
   setupDragabbles: () ->
     mousedown = null
     editor    = @element
