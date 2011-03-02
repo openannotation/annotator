@@ -1,5 +1,7 @@
 # Public: Creates an element for editing annotations.
 class Annotator.Editor extends Delegator
+
+  # Events to be bound to @element.
   events:
     "form submit":                 "submit"
     ".annotator-save click":       "submit"
@@ -7,10 +9,12 @@ class Annotator.Editor extends Delegator
     ".annotator-cancel mouseover": "onCancelButtonMouseover"
     "textarea keydown":            "processKeypress"
 
+  # Classes to toggle state.
   classes:
     hide:  'annotator-hide'
     focus: 'annotator-focus'
 
+  # HTML template for @element.
   html: """
         <div class="annotator-outer annotator-editor">
           <form class="annotator-widget">
@@ -26,7 +30,7 @@ class Annotator.Editor extends Delegator
 
   options: {} # Configuration options
 
-  # Public: Creates an instance of the annotator object. This will create the
+  # Public: Creates an instance of the Editor object. This will create the
   # @element from the @html string and set up all events.
   #
   # options - An Object literal containing options. There are currently no
@@ -45,7 +49,7 @@ class Annotator.Editor extends Delegator
   #   })
   #   editor.load(annotation)
   #
-  # Returns 
+  # Returns a new Editor instance.
   constructor: (options) ->
     super $(@html)[0], options
 
@@ -64,8 +68,9 @@ class Annotator.Editor extends Delegator
 
     this.setupDragabbles()
 
-  # Public: Displays the Editor. Can be used as an event callback and will
-  # call Event#preventDefault() on the supplied event.
+  # Public: Displays the Editor and fires a "show" event.
+  # Can be used as an event callback and will call Event#preventDefault()
+  # on the supplied event.
   #
   # event - Event object provided if method is called by event
   #         listener (default:undefined)
@@ -87,8 +92,8 @@ class Annotator.Editor extends Delegator
     @element.find(':input:first').focus()
     this
 
-  # Public: Hides the Editor. Can be used as an event callback and will
-  # call Event#preventDefault() on the supplied event.
+  # Public: Hides the Editor and fires a "hide" event. Can be used as an event
+  # callback and will call Event#preventDefault() on the supplied event.
   #
   # event - Event object provided if method is called by event
   #         listener (default:undefined)
@@ -186,7 +191,7 @@ class Annotator.Editor extends Delegator
   #           submit - Callback Function called when the editor is submitted.
   #                    Recieves the field <li> element and the annotation to be
   #                    updated.
-  #            
+  #
   # Examples
   #
   #   # Add a new input element.
