@@ -52,7 +52,7 @@ class Annotator.Notification extends Delegator
   #   notification.show("An error has occurred", Annotator.Notification.ERROR)
   #
   # Returns itself.
-  show: ("An error has occurred", status=Annotator.Notification.INFO) =>
+  show: (message, status=Annotator.Notification.INFO) =>
     $(@element)
       .addClass(@options.classes.show)
       .addClass(@options.classes[status])
