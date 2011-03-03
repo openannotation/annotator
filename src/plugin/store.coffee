@@ -30,24 +30,25 @@ class Annotator.Plugin.Store extends Annotator.Plugin
 
   constructor: (element, options) ->
     super
-    this.addEvents()
     @annotations = []
 
   pluginInit: ->
+    return unless Annotator.supported()
+
     getAnnotations = =>
       if @options.loadFromSearch
         this.loadAnnotationsFromSearch(@options.loadFromSearch)
       else
         this.loadAnnotations()
 
-    auth = $(@element).data('annotator:auth')
+    auth = @element.data('annotator:auth')
 
     if auth
       auth.withToken(getAnnotations)
     else
       getAnnotations()
 
-  annotationCreated: (e, annotation) ->
+  annotationCreated: (annotation) ->
     # Pre-register the annotation so as to save the list of highlight
     # elements.
     if annotation not in @annotations
@@ -64,11 +65,11 @@ class Annotator.Plugin.Store extends Annotator.Plugin
       # the highlight elements created by Annotator.
       this.updateAnnotation annotation, {}
 
-  annotationDeleted: (e, annotation) ->
+  annotationDeleted: (annotation) ->
     if annotation in this.annotations
       this._apiRequest 'destroy', annotation, (() => this.unregisterAnnotation(annotation))
 
-  annotationUpdated: (e, annotation) ->
+  annotationUpdated: (annotation) ->
     if annotation in this.annotations
       this._apiRequest 'update', annotation, (() => this.updateAnnotation(annotation))
 
@@ -91,15 +92,15 @@ class Annotator.Plugin.Store extends Annotator.Plugin
     $(annotation.highlights).data('annotation', annotation)
 
   loadAnnotations: () ->
-    this._apiRequest('read', null, (data) =>
+    this._apiRequest('read', null, (data=[]) =>
       @annotations = data.slice() # Clone array
       @annotator.loadAnnotations(data)
     )
 
   loadAnnotationsFromSearch: (searchOptions) ->
     this._apiRequest('search', searchOptions, (data) =>
-      @annotations = data.results.slice() # Clone array
-      @annotator.loadAnnotations(data.results)
+      @annotations = (data.rows || []).slice() # Clone array
+      @annotator.loadAnnotations(@annotations)
     )
 
   ##
@@ -178,21 +179,23 @@ class Annotator.Plugin.Store extends Annotator.Plugin
 
   # Set request headers before send
   _onBeforeSend: (xhr) =>
-    headers = $(@element).data('annotator:headers')
+    headers = @element.data('annotator:headers')
     if headers
       for key, val of headers
         xhr.setRequestHeader(key, val)
 
   _onError: (xhr, text, error) =>
     action  = xhr._action
-    message = "Sorry we could not #{action} the annotations"
-    message = "Sorry we could not #{action} this annotation" if xhr._id
+    message = "Sorry we could not #{action} this annotation"
+
+    if xhr._action == 'store' || (xhr._action == 'read' && !xhr._id)
+      message = "Sorry we could not #{action} the annotations from the store"
 
     switch xhr.status
       when 401 then message = "Sorry you are not allowed to #{action} this annotation"
       when 404 then message = "Sorry we could not connect to the annotations store"
       when 500 then message = "Sorry something went wrong with the annotation store"
 
-    this.annotator.showNotification(message)
+    Annotator.showNotification message, Annotator.Notification.ERROR
 
     console.error "API request failed: '#{xhr.status}'"

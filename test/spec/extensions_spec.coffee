@@ -54,3 +54,23 @@ describe 'jQuery.fn.xpath()', ->
     ol = $fix.find('ol').get(0)
     expect($fix.find('li').xpath(ol)).toEqual(['/li', '/li[2]', '/li[3]'])
     expect($fix.find('span').xpath(ol)).toEqual(['/li[2]/span'])
+
+describe 'jQuery.escape()', ->
+  it "should escape any HTML special characters into entities", ->
+    expect($.escape('<>"&')).toEqual('&lt;&gt;&quot;&amp;')
+
+describe 'jQuery.fn.escape()', ->
+  it "should set the innerHTML of the elements but escape any HTML into entities", ->
+    div = $('<div />').escape('<>"&')
+    expect(div.html()).toEqual('&lt;&gt;&quot;&amp;')
+
+    div = $('<div />').escape('<script>alert("hello")</script>')
+    expect(div.html()).toEqual('&lt;script&gt;alert(&quot;hello&quot;)&lt;/script&gt;')
+
+  it "should return the original jQuery collection", ->
+    div = $('<div />').escape('<>"&')
+    expect(div).toEqual(div)
+
+  it "should return the equivalent of .html() if no arguments are passed", ->
+    div = $('<div><strong>My div</strong></div>').escape('<>"&')
+    expect(div.escape()).toEqual(div.html())

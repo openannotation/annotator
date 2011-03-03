@@ -16,92 +16,69 @@ util =
 
 class Annotator extends Delegator
   events:
-    ".annotator-adder mousedown":          "adderMousedown"
-    ".annotator-hl mouseover":             "highlightMouseover"
-    ".annotator-hl mouseout":              "startViewerHideTimer"
-    ".annotator-viewer mouseover":         "clearViewerHideTimer"
-    ".annotator-viewer mouseout":          "startViewerHideTimer"
-    ".annotator-editor textarea keydown":  "processEditorKeypress"
-    ".annotator-editor form submit":       "submitEditor"
-    ".annotator-editor button.annotator-editor-save click": "submitEditor"
-    ".annotator-editor button.annotator-editor-cancel click": "hideEditor"
-    ".annotator-ann-controls .edit click": "controlEditClick"
-    ".annotator-ann-controls .del click":  "controlDeleteClick"
-    ".annotator-notice click": "hideNotification"
+    ".annotator-adder button click":     "onAdderClick"
+    ".annotator-adder button mousedown": "onAdderMousedown"
+    ".annotator-hl mouseover":           "onHighlightMouseover"
+    ".annotator-hl mouseout":            "startViewerHideTimer"
 
     # TODO: allow for adding these events on document.body
     "mouseup":   "checkForEndSelection"
     "mousedown": "checkForStartSelection"
 
-  dom:
-    adder:  "<div class='annotator-adder'><a href='#'></a></div>"
-    editor: """
-            <div class='annotator-editor'>
-              <form>
-                <textarea rows='6' cols='30'></textarea>
-                <div class='annotator-editor-controls'>
-                  <button type='submit' class='annotator-editor-save'>Save</button>
-                  <button type='submit' class='annotator-editor-cancel'>Cancel</button>
-                </div>
-              <form>
-            </div>
-            """
+  html:
     hl:     "<span class='annotator-hl'></span>"
-    viewer: "<div class='annotator-viewer'></div>"
-    notice: "<div class='annotator-notice'></div>"
+    adder:  "<div class='annotator-adder'><button>Annotate</button></div>"
 
   options: {} # Configuration options
 
-  constructor: (element, options) ->
-    super
+  plugins: {}
 
-    # Plugin registry
-    @plugins = {}
+  constructor: (element, options) ->
+    # Return early if the annotator is not supported.
+    return this unless Annotator.supported()
+
+    super
 
     # Wrap element contents
     @wrapper = $("<div></div>").addClass('annotator-wrapper')
-    $(@element).wrapInner(@wrapper)
-    @wrapper = $(@element).contents().get(0)
+    
+    # We need to remove all scripts within the element before wrapping the
+    # contents within a div. Otherwise when scripts are reappended to the DOM
+    # they will re-execute. This is an issue for scripts that call
+    # document.write() - such as ads - as they will clear the page.
+    @element.find('script').remove()
+
+    @element.wrapInner(@wrapper)
+    @wrapper = @element.contents().get(0)
+
+    # Set up the annotation editor
+    @editor = new Annotator.Editor()
+    @editor.hide()
+      .on('hide', this.onEditorHide)
+      .on('save', this.onEditorSubmit)
+      .element.appendTo(@wrapper)
+
+    @viewer = new Annotator.Viewer()
+    @viewer.hide()
+      .on("edit", this.onEditAnnotation)
+      .on("delete", this.onDeleteAnnotation)
+      .element.appendTo(@wrapper).bind({
+        "mouseover": this.clearViewerHideTimer
+        "mouseout":  this.startViewerHideTimer
+      })
 
     # Create model dom elements
-    for name, src of @dom
-      @dom[name] = $(src)
-      if name == 'notice'
-        @dom[name].appendTo(document.body)
-      else
-        @dom[name].appendTo(@wrapper).hide()
-
-    # Bind delegated events.
-    this.addEvents()
-
-  checkForStartSelection: (e) =>
-    this.startViewerHideTimer()
-    @mouseIsDown = true
-
-  checkForEndSelection: (e) =>
-    @mouseIsDown = false
-
-    # This prevents the note image from jumping away on the mouseup
-    # of a click on icon.
-    if (@ignoreMouseup)
-      return
-
-    this.getSelection()
-
-    s = @selection
-    validSelection = s?.rangeCount > 0 and not s.isCollapsed
-
-    if e and validSelection
-      @dom.adder
-        .css(util.mousePosition(e, @wrapper))
-        .show()
-    else
-      @dom.adder.hide()
+    for name, src of @html
+      this[name] = $(src).appendTo(@wrapper).hide()
 
   getSelection: ->
-    # TODO: fail gracefully in IE.
     @selection = util.getGlobal().getSelection()
     @selectedRanges = (@selection.getRangeAt(i) for i in [0...@selection.rangeCount])
+
+  createNewAnnotation: () ->
+    annotation = {}
+    this.publish('beforeAnnotationCreated', [annotation])
+    annotation
 
   createAnnotation: (annotation, fireEvents=true) ->
     a = annotation
@@ -115,6 +92,7 @@ class Annotator extends Delegator
       normed     = sniffed.normalize(@wrapper)
       serialized = normed.serialize(@wrapper, '.annotator-hl')
 
+    a.quote = normed.text()
     a.highlights = this.highlightRange(normed)
 
     # Save the annotation data on each highlighter element.
@@ -122,23 +100,21 @@ class Annotator extends Delegator
 
     # Fire annotationCreated events so that plugins can react to them.
     if fireEvents
-      $(@element).trigger('beforeAnnotationCreated', [a])
-      $(@element).trigger('annotationCreated', [a])
+      this.publish('annotationCreated', [a])
 
     a
 
   deleteAnnotation: (annotation) ->
     for h in annotation.highlights
-      $(h).replaceWith($(h)[0].childNodes)
+      $(h).replaceWith(h.childNodes)
 
-    $(@element).trigger('annotationDeleted', [annotation])
+    this.publish('annotationDeleted', [annotation])
 
-  updateAnnotation: (annotation, data) ->
-    $.extend(annotation, data)
-    $(@element).trigger('beforeAnnotationUpdated', [annotation])
-    $(@element).trigger('annotationUpdated', [annotation])
+  updateAnnotation: (annotation) ->
+    this.publish('beforeAnnotationUpdated', [annotation])
+    this.publish('annotationUpdated', [annotation])
 
-  loadAnnotations: (annotations) ->
+  loadAnnotations: (annotations=[]) ->
     results = []
 
     loader = (annList) =>
@@ -152,7 +128,7 @@ class Annotator extends Delegator
       if annList.length > 0
         setTimeout((-> loader(annList)), 100)
 
-    loader(annotations)
+    loader(annotations) if annotations.length
 
   dumpAnnotations: () ->
     if @plugins['Store']
@@ -161,12 +137,8 @@ class Annotator extends Delegator
       console.warn("Can't dump annotations without Store plugin.")
 
   highlightRange: (normedRange) ->
-    textNodes = $(normedRange.commonAncestor).textNodes()
-    [start, end] = [textNodes.index(normedRange.start), textNodes.index(normedRange.end)]
-    textNodes = textNodes[start..end]
-
-    elemList = for node in textNodes
-      wrapper = @dom.hl.clone().show()
+    elemList = for node in normedRange.textNodes()
+      wrapper = @hl.clone().show()
       $(node).wrap(wrapper).parent().get(0)
 
   addPlugin: (name, options) ->
@@ -175,164 +147,108 @@ class Annotator extends Delegator
     else
       klass = Annotator.Plugin[name]
       if typeof klass is 'function'
-        @plugins[name] = new klass(@element, options)
+        @plugins[name] = new klass(@element[0], options)
         @plugins[name].annotator = this
         @plugins[name].pluginInit?()
       else
         console.error "Could not load #{name} plugin. Have you included the appropriate <script> tag?"
     this # allow chaining
 
-  showEditor: (e, annotation) =>
-    if annotation
-      @dom.editor.data('annotation', annotation)
-      @dom.editor.find('textarea').val(annotation.text)
+  showEditor: (annotation, location) =>
+    @editor.element.css(location)
+    @editor.load(annotation)
 
-    @dom.editor
-      .css(util.mousePosition(e, @wrapper))
-      .show()
-    .find('textarea')
-      .focus()
-
-    $(@element).trigger('annotationEditorShown', [@dom.editor, annotation])
-
-
-  hideEditor: (e) =>
-    e?.preventDefault()
-
-    @dom.editor
-      .data('annotation', null)
-      .hide()
-    .find('textarea')
-      .val('')
-
-    $(@element).trigger('annotationEditorHidden', [@dom.editor])
+  onEditorHide: =>
+    this.publish('annotationEditorHidden', [@editor])
     @ignoreMouseup = false
 
-  showNotification: (message) =>
-    @dom.notice.html(message).addClass('show')
+  onEditorSubmit: (annotation) =>
+    this.publish('annotationEditorSubmit', [@editor, annotation])
 
-    # Hide the notification after a set period.
-    setTimeout(=>
-      this.hideNotification()
-    , 5000)
-
-  hideNotification: () =>
-    @dom.notice.removeClass('show');
-
-  processEditorKeypress: (e) =>
-    if e.keyCode is 27 # "Escape" key => abort.
-      this.hideEditor(e)
-    else if e.keyCode is 13 && !e.shiftKey
-      # If "return" was pressed without the shift key, we're done.
-      this.submitEditor(e)
-
-  submitEditor: (e) =>
-    e?.preventDefault()
-
-    textarea = @dom.editor.find('textarea')
-    annotation = @dom.editor.data('annotation')
-
-    if not annotation
-      create = true
-      annotation = {}
-
-    $(@element).trigger('annotationEditorSubmit', [@dom.editor, annotation])
-
-    if create
-      annotation.text = textarea.val()
+    if annotation.ranges == undefined
       this.createAnnotation(annotation)
     else
-      this.updateAnnotation(annotation, { text: textarea.val() })
+      this.updateAnnotation(annotation)
 
-    this.hideEditor()
+  showViewer: (annotations, location) =>
+    @viewer.element.css(location)
+    @viewer.load(annotations)
 
-  showViewer: (e, annotations) =>
-    controlsHTML = """
-                   <span class="annotator-ann-controls">
-                     <a href="#" class="edit" alt="Edit" title="Edit this annotation">Edit</a>
-                     <a href="#" class="del" alt="X" title="Delete this annotation">Delete</a>
-                   </span>
-                   """
-
-    viewerclone = @dom.viewer.clone().empty()
-
-    for annot in annotations
-      # As well as filling the viewer element, we also copy the annotation
-      # object from the highlight element to the <div> containing the note
-      # and controls. This makes editing/deletion much easier.
-      $("""
-        <div class='annotator-ann'>
-          #{controlsHTML}
-          <div class='annotator-ann-text'>
-            <p>#{annot.text}</p>
-          </div>
-        </div>
-        """)
-        .appendTo(viewerclone)
-        .data("annotation", annot)
-
-    viewerclone
-      .css(util.mousePosition(e, @wrapper))
-      .replaceAll(@dom.viewer).show()
-
-    $(@element).trigger('annotationViewerShown', [viewerclone.get(0), annotations])
-
-    @dom.viewer = viewerclone
+    this.publish('annotationViewerShown', [@viewer, annotations])
 
   startViewerHideTimer: (e) =>
     # Don't do this if timer has already been set by another annotation.
     if not @viewerHideTimer
       # Allow 250ms for pointer to get from annotation to viewer to manipulate
       # annotations.
-      @viewerHideTimer = setTimeout ((ann) -> ann.dom.viewer.hide()), 250, this
+      @viewerHideTimer = setTimeout ((ann) -> ann.viewer.hide()), 250, this
 
   clearViewerHideTimer: () =>
     clearTimeout(@viewerHideTimer)
     @viewerHideTimer = false
 
-  highlightMouseover: (e) =>
+  checkForStartSelection: (event) =>
+    this.startViewerHideTimer()
+    @mouseIsDown = true
+
+  checkForEndSelection: (event) =>
+    @mouseIsDown = false
+
+    # This prevents the note image from jumping away on the mouseup
+    # of a click on icon.
+    if (@ignoreMouseup)
+      return
+
+    this.getSelection()
+
+    s = @selection
+    validSelection = s?.rangeCount > 0 and not s.isCollapsed
+
+    if event and validSelection
+      @adder
+        .css(util.mousePosition(event, @wrapper))
+        .show()
+    else
+      @adder.hide()
+
+  onHighlightMouseover: (event) =>
     # Cancel any pending hiding of the viewer.
     this.clearViewerHideTimer()
 
-    # Don't do anything if we're making a selection.
-    return false if @mouseIsDown
+    # Don't do anything if we're making a selection or
+    # already displaying the viewer
+    return false if @mouseIsDown or @viewer.isShown()
 
-    annotations = $(e.target)
+    annotations = $(event.target)
       .parents('.annotator-hl')
       .andSelf()
-      .map -> $(this).data("annotation")
+      .map -> return $(this).data("annotation")
 
-    this.showViewer(e, annotations)
+    this.showViewer($.makeArray(annotations), util.mousePosition(event, @wrapper))
 
-  adderMousedown: (e) =>
-    e?.preventDefault()
+  onAdderMousedown: (event) =>
+    event?.preventDefault()
     @ignoreMouseup = true
-    @dom.adder.hide()
-    this.showEditor(e)
 
-  controlEditClick: (e) =>
-    annot = $(e.target).parents('.annotator-ann')
-    offset = $(@dom.viewer).offset()
-    pos =
-      pageY: offset.top,
-      pageX: offset.left
+  onAdderClick: (event) =>
+    event?.preventDefault()
+
+    position = @adder.position()
+    @adder.hide()
+
+    # Create an annotation and display the editor.
+    this.showEditor(this.createNewAnnotation(), position)
+
+  onEditAnnotation: (annotation) =>
+    offset = @viewer.element.position()
 
     # Replace the viewer with the editor.
-    @dom.viewer.hide()
-    this.showEditor pos, annot.data("annotation")
-    false
+    @viewer.hide()
+    this.showEditor(annotation, offset)
 
-  controlDeleteClick: (e) =>
-    annot = $(e.target).parents('.annotator-ann')
-
+  onDeleteAnnotation: (annotation) =>
     # Delete highlight elements.
-    this.deleteAnnotation annot.data("annotation")
-
-    # Remove from viewer and hide viewer if this was the only annotation displayed.
-    annot.remove()
-    @dom.viewer.hide() unless @dom.viewer.is(':parent')
-
-    false
+    this.deleteAnnotation annotation
 
 # Create namespace for Annotator plugins
 class Annotator.Plugin extends Delegator
@@ -341,8 +257,14 @@ class Annotator.Plugin extends Delegator
 
   pluginInit: ->
 
+# Bind our local copy of jQuery so plugins can use the extensions.
+Annotator.$ = $
+
+# Returns true if the Annotator can be used in the current browser.
+Annotator.supported = -> (-> !!this.getSelection)()
+
 # Create global access for Annotator
-$.plugin('annotator', Annotator)
+$.plugin 'annotator', Annotator
 
 # Export Annotator object.
 this.Annotator = Annotator;

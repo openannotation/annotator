@@ -1,153 +1,560 @@
-/* @override http://localhost:5000/static/css/annotator.css */
+/* @override http://localhost:8000/css/annotator.css */
 
-.annotator-wrapper {
-	position: relative;
+/* Base Reset
+-------------------------------------------------------------------- */
+
+.annotator-notice,
+.annotator-widget * {
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	text-align: left;
+	margin: 0;
+	padding: 0;
+	background: none;
+	-webkit-transition: none;
+    -moz-transition: none;
+    -o-transition: none;
+    transition: none;
+	-moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    -o-box-shadow: none;
+    box-shadow: none;
+    color: rgb(144, 144, 144);
 }
 
-.annotator-adder a {
-	display: block;
-	width: 22px;
-	height: 22px;
-	background: transparent url(../img/note.png) no-repeat left top;
-}
+/* Images
+-------------------------------------------------------------------- */
 
 .annotator-adder {
-	position: absolute;
-	display: none;
-	margin: -25px 0 0 3px;
+	background-image: url(../img/annotator-icon-sprite.png);
+	background-repeat: no-repeat;
 }
+
+.annotator-resize,
+.annotator-widget::after,
+.annotator-editor a::after,
+.annotator-viewer .annotator-controls button {
+	background-image: url(../img/annotator-glyph-sprite.png);
+	background-repeat: no-repeat;
+}
+
+/* Annotator Highlight
+-------------------------------------------------------------------- */
 
 .annotator-hl {
 	background: rgba(255, 255, 10, 0.3);
 }
 
-.annotator-editor, .annotator-viewer {
+/* Annotator Wrapper
+-------------------------------------------------------------------- */
+
+.annotator-wrapper {
+	position: relative;
+}
+
+.annotator-adder,
+.annotator-outer,
+.annotator-notice {
+	z-index: 9999;
+}
+
+.annotator-adder,
+.annotator-outer,
+.annotator-widget,
+.annotator-notice {
 	position: absolute;
-	border-radius: 0.3em;
-	-moz-border-radius: 0.3em;
-	-webkit-border-radius: 0.3em;
-	height: auto;
-	width: 15em;
-	line-height: 16px;
-	background: rgba(253, 245, 216, 0.95);
-	border: 1px solid rgb(225, 190, 148);
-	margin: 1px 0 0 0;
-	padding: 0.2em;
+	font-size: 10px;
+	line-height: 1;
 }
 
-.annotator-editor input,
-.annotator-editor textarea {
+.annotator-hide {
+	display: none;
+	visibility: hidden;
+}
+
+/* Annotator Adder
+-------------------------------------------------------------------- */
+
+.annotator-adder {
+	margin-top: -41px;
+	margin-left: -25px;
+	width: 50px;
+	height: 55px;
+	background-position: left top;
+}
+
+.annotator-adder:hover {
+	background-position: center top;
+}
+
+.annotator-adder:active {
+	background-position: center right;
+}
+
+.annotator-adder button {
 	display: block;
-}
-
-.annotator-editor textarea {
-	background: transparent;
-	margin: 1px 0 0 0;
-	padding: 0;
+	width: 36px;
+	height: 41px;
+	margin: 0 auto;
 	border: none;
-	width: 100%;
-}
-
-.annotator-editor .annotator-editor-controls {
-	float: right;
-}
-
-.annotator-editor .annotator-editor-controls button {
-	opacity: 0.5;
-	border: 1px solid transparent;
-	margin: 0;
-	line-height: 16px;
-	padding: 0 0 0 18px;
-	background: transparent none no-repeat top left;
-}
-
-.annotator-editor .annotator-editor-controls button:hover {
-	opacity: 1;
+	background: none;
+	text-indent: -999em;
 	cursor: pointer;
 }
 
-.annotator-editor .annotator-editor-controls button.annotator-editor-save {
-	background-image: url(../img/accept.png);
+/* Annotator Widget
+   
+   This applies to both the Viewer and the Editor
+-------------------------------------------------------------------- */
+
+.annotator-outer {
+	width: 0;
+	height: 0;
 }
 
-.annotator-editor .annotator-editor-controls button.annotator-editor-cancel {
-	background-image: url(../img/cancel.png);
-}
-
-.annotator-editor input.annotator-editor-tags {
-	font-size: 0.6em;
-	width: 24.8em;
-	padding: 0;
-	margin-bottom: 0.4em;
-	background: rgba(255, 255, 255, 0.8);
-	border: 1px solid #ccc;
-}
-
-.annotator-viewer {
-	padding: 0.2em 0.4em 0.4em 0.4em;
-}
-
-.annotator-viewer .annotator-ann {
-	color: #333333;
-	font-family: helvetica;
-	font-size: 75%;
-	margin: 0.25em 0 0 0;
-}
-
-.annotator-viewer .annotator-ann + .annotator-ann {
-	border-top: 1px solid #E1BE94;
-	padding-top: 0.25em;
-}
-
-.annotator-ann .annotator-ann-controls {
-	display: none;
-	float: right;
-}
-
-.annotator-viewer:hover .annotator-ann .annotator-ann-controls {
-	display: block;
-}
-
-.annotator-ann .annotator-ann-controls a {
-	width: 16px;
-	height: 16px;
-	display: inline-block;
-	text-indent: -9999em
-}
-
-.annotator-ann .annotator-ann-controls a.edit {
-	background: transparent url(../img/edit.png) no-repeat top left;
-}
-
-.annotator-ann .annotator-ann-controls a.del {
-	background: transparent url(../img/delete.png) no-repeat top left;
-}
-
-.annotator-ann .annotator-ann-text p {
+.annotator-widget {
 	margin: 0;
+	padding: 0;
+	bottom: 8px;
+	left: -18px;
+	min-width: 265px;
+	background-color: rgba(251, 251, 251, 0.98);
+	border: 1px solid rgba(122, 122, 122, 0.6);
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	-webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+	-moz-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+	-o-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-.annotator-ann .annotator-ann-text p + p {
-	margin: 0 0 0.25em 0;
+.annotator-right .annotator-widget {
+	left: -247px;
 }
 
-.annotator-ann .annotator-ann-user, .annotator-ann .annotator-ann-tags {
-	opacity: 0.8;
-	font-size: 10px;
-	line-height: 11px;
-	margin: 3px 0 0 0;
-	padding: 1px 0 0 12px;
-	background: transparent none no-repeat 0 0;
+.annotator-widget strong {
+	font-weight: bold;
+}
+
+.annotator-widget ul,
+.annotator-widget li {
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+
+.annotator-widget::after {
+	content: "";
 	display: block;
+	width: 18px;
+	height: 10px;
+	background-position: 0 0;
+	position: absolute;
+	bottom: -10px;
+	left: 8px;
 }
 
-.annotator-ann .annotator-ann-user {
-	background-image: url(../img/mini_person.png);
+.annotator-right .annotator-widget::after {
+	left: auto;
+	right: 8px;
 }
 
-.annotator-ann .annotator-ann-tags {
-	background-image: url(../img/mini_tag.png);
+.annotator-widget li,
+.annotator-editor li input,
+.annotator-editor li textarea {
+	position: relative;
+	font-size: 12px;
 }
+
+.annotator-viewer li {
+	border-top: 2px solid rgba(122, 122, 122, 0.2);
+}
+
+.annotator-widget li:first-child {
+	border-top: none;
+}
+
+.annotator-editor li,
+.annotator-viewer div {
+	border-top: 1px solid rgba(133, 133, 133, 0.11);
+}
+
+/* Annotator Viewer
+-------------------------------------------------------------------- */
+
+.annotator-viewer div {
+	padding: 6px 6px;
+}
+
+.annotator-viewer div:first-child,
+.annotator-editor li:first-child textarea {
+	padding-top: 12px;
+	padding-bottom: 12px;
+	color: rgb(60, 60, 60);
+	font-size: 13px;
+	font-style: italic;
+	line-height: 1.3;
+	border-top: none;
+}
+
+.annotator-viewer .annotator-controls {
+	top: 5px;
+	right: 5px;
+	position: absolute;
+	background-color: rgba(255, 255, 255, 0.9);
+	padding: 0 3px 5px;
+	opacity: 0;
+	-webkit-transition: opacity 0.2s ease-in;
+	-moz-transition: opacity 0.2s ease-in;
+	-o-transition: opacity 0.2s ease-in;
+	transition: opacity 0.2s ease-in;
+}
+
+.annotator-viewer li .annotator-controls:hover,
+.annotator-viewer li .annotator-controls.annotator-visible {
+	opacity: 1;
+}
+
+.annotator-viewer .annotator-controls button {
+	cursor: pointer;
+	display: inline-block;
+	width: 13px;
+	height: 13px;
+	margin-left: 2px;
+	border: none;
+	opacity: 0.2;
+	text-indent: -900em;
+	background-color: transparent;
+	outline: none;
+}
+
+.annotator-viewer .annotator-controls button:hover,
+.annotator-viewer .annotator-controls button:focus {
+	opacity: 0.9;
+}
+
+.annotator-viewer .annotator-controls button:active {
+	opacity: 1;
+}
+
+.annotator-viewer .annotator-controls button[disabled] {
+	display: none;
+}
+
+.annotator-viewer .annotator-controls .annotator-edit {
+	background-position: 0 -30px;
+}
+
+.annotator-viewer .annotator-controls .annotator-delete {
+	background-position: 0 -45px;
+}
+
+/* Annotator Editor
+-------------------------------------------------------------------- */
+
+.annotator-editor li {
+	position: relative;
+}
+
+.annotator-editor li label {
+	top: 0;
+	display: inline;
+	cursor: pointer;
+}
+
+.annotator-editor li input,
+.annotator-editor li textarea {
+	display: block;
+	min-width: 100%;
+	padding: 10px 8px;
+	border: none;
+	margin: 0;
+	color: rgb(60, 60, 60);
+	background: none;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
+	resize: none;
+}
+
+.annotator-editor li textarea::-webkit-scrollbar {
+	height: 8px;
+	width: 8px;
+}
+
+.annotator-editor li textarea::-webkit-scrollbar-track-piece {
+	margin: 13px 0 3px;
+	background-color: #e5e5e5;
+	-webkit-border-radius: 4px;
+}
+
+.annotator-editor li textarea::-webkit-scrollbar-thumb:vertical {
+	height: 25px;
+	background-color: #ccc;
+	-webkit-border-radius: 4px;
+	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.annotator-editor li textarea::-webkit-scrollbar-thumb:horizontal {
+	width: 25px;
+	background-color: #ccc;
+	-webkit-border-radius: 4px;
+}
+
+.annotator-editor li:first-child textarea {
+	min-height: 5.5em;
+	-webkit-border-radius: 5px 5px 0 0;
+	-moz-border-radius: 5px 5px 0 0;
+	-o-border-radius: 5px 5px 0 0;
+	border-radius: 5px 5px 0 0;
+}
+
+.annotator-editor li input:focus,
+.annotator-editor li textarea:focus{
+	background-color: rgb(243, 243, 243);
+	outline: none;
+}
+
+.annotator-editor li input[type=radio],
+.annotator-editor li input[type=checkbox] {
+	width: auto;
+	min-width: 0;
+	padding: 0;
+	display: inline;
+	margin: 0 4px 0 0;
+	cursor: pointer;
+}
+
+.annotator-editor .annotator-checkbox {
+	padding: 8px 6px;
+}
+
+.annotator-editor .annotator-controls {
+	text-align: right;
+	padding: 3px;
+	border-top: 1px solid rgb(212,212,212);
+	background-color: rgb(212, 212, 212);
+	background-image: -webkit-gradient(
+  		linear, left top, left bottom,
+  		from(rgb(245, 245, 245)),
+  		color-stop(0.6, rgb(220, 220, 220)),
+  		to(rgb(210, 210, 210))
+	);
+	background-image: -moz-linear-gradient(
+	    -90deg,
+	    rgb(245, 245, 245),
+	    rgb(220, 220, 220) 60%,
+	    rgb(210, 210, 210)
+	);
+	background-image: -webkit-linear-gradient(
+	    -90deg,
+	    rgb(245, 245, 245),
+	    rgb(220, 220, 220) 60%,
+	    rgb(210, 210, 210)
+	);
+	background-image: linear-gradient(
+	    -90deg,
+	    rgb(245, 245, 245),
+	    rgb(220, 220, 220) 60%,
+	    rgb(210, 210, 210)
+	);
+	-webkit-box-shadow: 
+		inset 1px   0   0 rgba(255, 255, 255, 0.7),
+		inset -1px  0   0 rgba(255, 255, 255, 0.7),
+		inset 0     1px 0 rgba(255, 255, 255, 0.7);
+	-moz-box-shadow: 
+		inset 1px   0   0 rgba(255, 255, 255, 0.7),
+		inset -1px  0   0 rgba(255, 255, 255, 0.7),
+		inset 0     1px 0 rgba(255, 255, 255, 0.7);
+	-o-box-shadow: 
+		inset 1px   0   0 rgba(255, 255, 255, 0.7),
+		inset -1px  0   0 rgba(255, 255, 255, 0.7),
+		inset 0     1px 0 rgba(255, 255, 255, 0.7);
+	box-shadow: 
+		inset 1px   0   0 rgba(255, 255, 255, 0.7),
+		inset -1px  0   0 rgba(255, 255, 255, 0.7),
+		inset 0     1px 0 rgba(255, 255, 255, 0.7);
+	-webkit-border-radius: 0 0 5px 5px;
+	-moz-border-radius: 0 0 5px 5px;
+	-o-border-radius: 0 0 5px 5px;
+	border-radius: 0 0 5px 5px;
+}
+
+.annotator-editor a {
+	position: relative;
+	display: inline-block;
+	padding: 0 6px 0 22px;
+	color: rgb(54, 54, 54);
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
+	text-decoration: none;
+	line-height: 24px;
+	font-size: 12px;
+	font-weight: bold;
+	border: 1px solid rgb(162, 162, 162);
+	background-color: rgb(212, 212, 212);
+	background-image: -webkit-gradient(
+  		linear, left top, left bottom,
+  		from(rgb(245, 245, 245)),
+  		color-stop(0.5, rgb(210, 210, 210)),
+  		color-stop(0.5, rgb(190, 190, 190)),
+  		to(rgb(210, 210, 210))
+	);
+	background-image: -moz-linear-gradient(
+	    -90deg,
+	    rgb(245, 245, 245),
+	    rgb(210, 210, 210) 50%,
+	    rgb(190, 190, 190) 50%,
+	    rgb(210, 210, 210)
+	);
+	background-image: -webkit-linear-gradient(
+	    -90deg,
+	    rgb(245, 245, 245),
+	    rgb(210, 210, 210) 50%,
+	    rgb(190, 190, 190) 50%,
+	    rgb(210, 210, 210)
+	);
+	background-image: linear-gradient(
+	    -90deg,
+	    rgb(245, 245, 245),
+	    rgb(210, 210, 210) 50%,
+	    rgb(190, 190, 190) 50%,
+	    rgb(210, 210, 210)
+	);
+	-webkit-box-shadow: 
+		inset 0 0 5px rgba(255, 255, 255, 0.2),
+		inset 0 0 1px rgba(255, 255, 255, 0.8);
+	-moz-box-shadow:
+		inset 0 0 5px rgba(255, 255, 255, 0.2),
+		inset 0 0 1px rgba(255, 255, 255, 0.8);
+	-o-box-shadow:
+		inset 0 0 5px rgba(255, 255, 255, 0.2),
+		inset 0 0 1px rgba(255, 255, 255, 0.8);
+	box-shadow:
+		inset 0 0 5px rgba(255, 255, 255, 0.2),
+		inset 0 0 1px rgba(255, 255, 255, 0.8);
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-o-border-radius: 5px;
+	border-radius: 5px;
+}
+
+.annotator-editor a::after {
+	position: absolute;
+	top: 50%;
+	left: 5px;
+	display: block;
+	content: "";
+	width: 15px;
+	height: 15px;
+	margin-top: -7px;
+	background-position: 0 -60px;
+}
+
+.annotator-editor a:hover,
+.annotator-editor a:focus,
+.annotator-editor a.annotator-focus {
+	outline: none;
+	border-color: rgb(67, 90, 160);
+	background-color: rgb(56, 101, 249);
+	background-image: -webkit-gradient(
+  		linear, left top, left bottom,
+  		from(rgb(118, 145, 251)),
+  		color-stop(0.5, rgb(80, 117, 251)),
+  		color-stop(0.5, rgb(56, 101, 249)),
+  		to(rgb(54, 101, 250))
+	);
+	background-image: -moz-linear-gradient(
+	    -90deg,
+	    rgb(118, 145, 251),
+	    rgb(80, 117, 251) 50%,
+	    rgb(56, 101, 249) 50%,
+	    rgb(54, 101, 250)
+	);
+	background-image: -webkit-linear-gradient(
+	    -90deg,
+	    rgb(118, 145, 251),
+	    rgb(80, 117, 251) 50%,
+	    rgb(56, 101, 249) 50%,
+	    rgb(54, 101, 250)
+	);
+	background-image: linear-gradient(
+	    -90deg,
+	    rgb(118, 145, 251),
+	    rgb(80, 117, 251) 50%,
+	    rgb(56, 101, 249) 50%,
+	    rgb(54, 101, 250)
+	);
+	color: rgb(255, 255, 255);
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.42);
+}
+
+.annotator-editor a:hover::after,
+.annotator-editor a:focus::after {
+	margin-top: -8px;
+	background-position: 0 -75px;
+}
+
+.annotator-editor a:active {
+	border-color: rgb(112, 12, 73);
+	background-color: rgb(209, 46, 142);
+	background-image: -webkit-gradient(
+  		linear, left top, left bottom,
+  		from(rgb(252, 124, 202)),
+  		color-stop(0.5, rgb(232, 93, 178)),
+  		color-stop(0.5, rgb(209, 46, 142)),
+  		to(rgb(255, 0, 156))
+	);
+	background-image: -moz-linear-gradient(
+	    -90deg,
+	    rgb(252, 124, 202),
+	    rgb(232, 93, 178) 50%,
+	    rgb(209, 46, 142) 50%,
+	    rgb(255, 0, 156)
+	);
+	background-image: -webkit-linear-gradient(
+	    -90deg,
+	    rgb(252, 124, 202),
+	    rgb(232, 93, 178) 50%,
+	    rgb(209, 46, 142) 50%,
+	    rgb(255, 0, 156)
+	);
+	background-image: linear-gradient(
+	    -90deg,
+	    rgb(252, 124, 202),
+	    rgb(232, 93, 178) 50%,
+	    rgb(209, 46, 142) 50%,
+	    rgb(255, 0, 156)
+	);
+}
+
+.annotator-editor a.annotator-save::after {
+	background-position: 0 -90px;
+}
+
+.annotator-editor a.annotator-save:hover::after,
+.annotator-editor a.annotator-save:focus::after,
+.annotator-editor a.annotator-save.annotator-focus::after {
+	margin-top: -8px;
+	background-position: 0 -105px;
+}
+
+.annotator-editor .annotator-widget::after {
+	background-position: 0 -15px;
+}
+
+.annotator-resize {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 12px;
+	height: 12px;
+	background-position: 2px -120px;
+}
+
+/* Annotator Notification
+-------------------------------------------------------------------- */
 
 .annotator-notice {
 	position: absolute;
@@ -159,23 +566,60 @@
 }
 
 .annotator-notice {
-	font-family: helvetica, arial, sans-serif;
+	color: #fff;
 	position: absolute;
 	position: fixed;
-	top: -40px;
+	top: -54px;
 	left: 0;
 	width: 100%;
-	line-height: 40px;
 	font-size: 14px;
+	line-height: 50px;
 	text-align: center;
-	background-color: #FDF5D8;
-	border-bottom: 1px solid #E1BE99;
+	background-color: #000;
+	background-color: rgba(0, 0, 0, 0.9);
+	border-bottom: 4px solid #d4d4d4;
 	-webkit-transition: top 0.4s ease-out;
 	-moz-transition: top 0.4s ease-out;
 	-o-transition: top 0.4s ease-out;
 	transition: top 0.4s ease-out;
 }
 
-.annotator-notice.show {
+.annotator-notice-success {
+	border-color: #3665f9;
+}
+
+.annotator-notice-error {
+	border-color: #ff7e00;
+}
+
+.annotator-notice p {
+	margin: 0;
+}
+
+.annotator-notice a {
+	color: #fff;
+}
+
+.annotator-notice-show {
 	top: 0;
+}
+
+/* Annotator Tags Plugin
+-------------------------------------------------------------------- */
+
+.annotator-tags {
+	margin-bottom: -2px;
+}
+
+.annotator-tags .annotator-tag {
+	display: inline-block;
+	padding: 0 8px;
+	margin-bottom: 2px;
+	line-height: 1.6;
+	font-weight: bold;
+	background-color: rgb(230, 230, 230);
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	-o-border-radius: 8px;
+	border-radius: 8px;
 }

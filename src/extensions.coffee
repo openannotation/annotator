@@ -60,4 +60,11 @@ $.fn.xpath = (relativeRoot) ->
 
   jq.get()
 
+$.escape = (html) ->
+  html.replace(/&(?!\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 
+$.fn.escape = (html) ->
+  if arguments.length
+    return this.html($.escape(html))
+
+  this.html()

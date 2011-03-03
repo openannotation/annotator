@@ -2,13 +2,17 @@ SRC =         ['extensions',
                'console',
                'class',
                'range',
-               'annotator'].map { |x| "src/#{x}.coffee" }
+               'annotator',
+               'editor',
+               'viewer',
+               'notification'].map { |x| "src/#{x}.coffee" }
 
-SRC_PLUGINS = ['auth',
-               'markdown',
+SRC_PLUGINS = ['tags',
+               'auth',
                'store',
-               'tags',
-               'user'].map { |x| "src/plugin/#{x}.coffee" }
+               'markdown',
+               'unsupported',
+               'permissions'].map { |x| "src/plugin/#{x}.coffee" }
 
 CSS = ['annotator'].map { |x| "css/#{x}.css" }
 

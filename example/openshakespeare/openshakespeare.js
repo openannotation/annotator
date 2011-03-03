@@ -16,12 +16,12 @@ OpenShakespeare.Annotator = function (element) {
 
   // Init
   ;(function () {
-     self.annotator.addPlugin("User", self.options.user)
+     self.annotator.addPlugin("Permissions", self.options.user)
      self.annotator.addPlugin("Store", self.options.store)
   })()
 
   this.setCurrentUser = function (user) {
-    self.annotator.plugins["User"].setUser(user)
+    self.annotator.plugins["Permissions"].setUser(user)
   }
 
   return this

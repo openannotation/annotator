@@ -1,44 +1,123 @@
+# Public: Tags plugin allows users to tag thier annotations with metadata
+# stored in an Array on the annotation as tags.
 class Annotator.Plugin.Tags extends Annotator.Plugin
-  events:
-    'annotationViewerShown':  'updateViewer'
-    'annotationEditorShown':  'updateEditor'
-    'annotationEditorHidden': 'clearEditor'
-    'annotationEditorSubmit': 'setAnnotationTags'
 
-  constructor: (element, options) ->
-    super
-    this.addEvents()
-    this.tagSrc = "<input type='text' class='annotator-editor-tags' placeholder='tags&hellip;'>"
+  # The field element added to the Annotator.Editor wrapped in jQuery. Cached to
+  # save having to recreate it everytime the editor is displayed.
+  field: null
+  
+  # The input element added to the Annotator.Editor wrapped in jQuery. Cached to
+  # save having to recreate it everytime the editor is displayed.
+  input: null
 
-  updateEditor: (e, editorElement, annotation) =>
-    if not this.tags
-      controls = $(editorElement).find('.annotator-editor-controls')
-      this.tags = $(this.tagSrc).insertBefore(controls).get(0)
+  # Public: Initialises the plugin and adds custom fields to both the
+  # annotator viewer and editor. The plugin also checks if the annotator is
+  # supported by the current browser.
+  #
+  # Returns nothing.
+  pluginInit: ->
+    return unless Annotator.supported()
 
-    if annotation?.tags?
-      $(this.tags).val(this.stringifyTags(annotation.tags))
+    @field = @annotator.editor.addField({
+      label:  'Add some tags here\u2026'
+      load:   this.updateField
+      submit: this.setAnnotationTags
+    })
 
-  clearEditor: (e, editorElement) =>
-    if this.tags
-      $(this.tags).val('')
+    @annotator.viewer.addField({
+      load: this.updateViewer
+    })
 
-  setAnnotationTags: (e, editorElement, annotation) =>
-    if this.tags
-      annotation.tags = this.parseTags($(this.tags).val())
+    @input = $(@field).find(':input')
 
+  # Public: Extracts tags from the provided String.
+  #
+  # string - A String of tags seperated by spaces.
+  #
+  # Examples
+  #
+  #   plugin.parseTags('cake chocolate cabbage')
+  #   # => ['cake', 'chocolate', 'cabbage']
+  #
+  # Returns Array of parsed tags.
   parseTags: (string) ->
-    string.split(/\s+/)
+    string = $.trim(string)
 
+    tags = []
+    tags = string.split(/\s+/) if string
+    tags
+
+  # Public: Takes an array of tags and serialises them into a String.
+  #
+  # array - An Array of tags.
+  #
+  # Examples
+  #
+  #   plugin.stringifyTags(['cake', 'chocolate', 'cabbage'])
+  #   # => 'cake chocolate cabbage'
+  #
+  # Returns Array of parsed tags.
   stringifyTags: (array) ->
     array.join(" ")
 
-  updateViewer: (e, viewerElement, annotations) ->
-    annElements = $(viewerElement).find('.annotator-ann')
+  # Annotator.Editor callback function. Updates the @input field with the
+  # tags attached to the provided annotation.
+  #
+  # field      - The tags field Element containing the input Element.
+  # annotation - An annotation object to be edited.
+  #
+  # Examples
+  #
+  #   field = $('<li><input /></li>')[0]
+  #   plugin.updateField(field, {tags: ['apples', 'oranges', 'cake']})
+  #   field.value # => Returns 'apples oranges cake'
+  #
+  # Returns nothing.
+  updateField: (field, annotation) =>
+    value = ''
+    value = this.stringifyTags(annotation.tags) if annotation.tags
 
-    for i in [0...annElements.length]
-      tags    = annotations[i].tags
-      tagStr  = tags?.join(", ")
-      $textEl = annElements.eq(i).find('.annotator-ann-text')
+    @input.val(value)
 
-      if tagStr and tagStr != ""
-        $("<div class='annotator-ann-tags'>#{tags.join(", ")}</div>").insertAfter($textEl)
+  # Annotator.Editor callback function. Updates the annotation field with the
+  # data retrieved from the @input property.
+  #
+  # field      - The tags field Element containing the input Element.
+  # annotation - An annotation object to be updated.
+  #
+  # Examples
+  #
+  #   annotation = {}
+  #   field = $('<li><input value="cake chocolate cabbage" /></li>')[0]
+  #
+  #   plugin.setAnnotationTags(field, annotation)
+  #   annotation.tags # => Returns ['cake', 'chocolate', 'cabbage']
+  #
+  # Returns nothing.
+  setAnnotationTags: (field, annotation) =>
+    annotation.tags = this.parseTags(@input.val())
+
+  # Annotator.Viewer callback function. Updates the annotation display with tags
+  # removes the field from the Viewer if there are no tags to display.
+  #
+  # field      - The Element to populate with tags.
+  # annotation - An annotation object to be display.
+  #
+  # Examples
+  #
+  #   field = $('<div />')[0]
+  #   plugin.updateField(field, {tags: ['apples']})
+  #   field.innerHTML # => Returns '<span class="annotator-tag">apples</span>'
+  #
+  # Returns nothing.
+  updateViewer: (field, annotation) ->
+    field = $(field)
+
+    if annotation.tags and $.isArray(annotation.tags) and annotation.tags.length
+      field.addClass('annotator-tags').html(->
+        string = $.map(annotation.tags,(tag) ->
+            '<span class="annotator-tag">' + Annotator.$.escape(tag) + '</span>'
+        ).join(' ')
+      )
+    else
+      field.remove()
