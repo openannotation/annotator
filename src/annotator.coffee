@@ -16,10 +16,10 @@ util =
 
 class Annotator extends Delegator
   events:
-    ".annotator-adder click":     "onAdderClick"
-    ".annotator-adder mousedown": "onAdderMousedown"
-    ".annotator-hl mouseover":    "onHighlightMouseover"
-    ".annotator-hl mouseout":     "startViewerHideTimer"
+    ".annotator-adder button click":     "onAdderClick"
+    ".annotator-adder button mousedown": "onAdderMousedown"
+    ".annotator-hl mouseover":           "onHighlightMouseover"
+    ".annotator-hl mouseout":            "startViewerHideTimer"
 
     # TODO: allow for adding these events on document.body
     "mouseup":   "checkForEndSelection"
