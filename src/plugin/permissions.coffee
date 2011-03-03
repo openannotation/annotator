@@ -306,7 +306,8 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   updateViewer: (field, annotation, controls) =>
     field = $(field)
 
-    if annotation.user
+    username = @options.userString annotation.user
+    if annotation.user and typeof username == 'string'
       user = Annotator.$.escape(@options.userString(annotation.user))
       field.html(user).addClass('annotator-user')
     else

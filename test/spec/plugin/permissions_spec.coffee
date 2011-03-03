@@ -301,6 +301,12 @@ describe 'Annotator.Plugin.Permissions', ->
         permissions.updateViewer(field, {}, controls)
         expect($(field).parent().length).toEqual(0)
 
+      it "it should remove the field if annotation has no user string", ->
+        permissions.options.userString = -> null
+
+        permissions.updateViewer(field, annotations[1], controls)
+        expect($(field).parent().length).toEqual(0)
+
       it "should hide controls for users other than the current user", ->
         permissions.updateViewer(field, annotations[0], controls)
         expect(controls.hideEdit).not.toHaveBeenCalled()
