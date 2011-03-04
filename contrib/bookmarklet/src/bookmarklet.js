@@ -138,12 +138,11 @@
     },
 
     load: function (callback) {
-      head.appendChild($('<link />', {
+      head.appendChild(jQuery('<link />', {
         rel: 'stylesheet',
-        href: config('externals.styles')
+        href: this.config('externals.styles')
       })[0]);
-
-      jQuery.getScript(config('externals.source'), callback);
+      jQuery.getScript(this.config('externals.source'), callback);
     },
 
     setup: function () {
@@ -153,7 +152,7 @@
       annotator
         .addPlugin('Unsupported')
         .addPlugin('Store', {
-          prefix: config('store.prefix'),
+          prefix: this.config('store.prefix'),
           annotationData: {
             'uri': uri
           },
@@ -163,8 +162,8 @@
           }
         })
         .addPlugin('Permissions', {
-          user: config('permissions.user'),
-          permissions: config('permissions.permissions'),
+          user: this.config('permissions.user'),
+          permissions: this.config('permissions.permissions'),
           userId: function (user) {
             return user ? user.id : '';
           },
@@ -200,7 +199,7 @@
         );
       } else {
         notification.show('Loading Annotator into page');
-        console.log(window.jQuery);
+
         if (window.jQuery === undefined || !window.jQuery.sub) {
           this.loadjQuery();
         } else {
