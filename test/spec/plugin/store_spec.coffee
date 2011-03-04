@@ -50,6 +50,17 @@ describe "Annotator.Plugin.Store", ->
 
       expect(store.loadAnnotationsFromSearch).toHaveBeenCalledWith(store.options.loadFromSearch)
 
+  describe "loadAnnotations", ->
+    it "should call Store#_apiRequest()", ->
+      spyOn(store, '_apiRequest')
+      store.loadAnnotations()
+      expect(store._apiRequest).toHaveBeenCalled()
+      
+      args = store._apiRequest.mostRecentCall.args
+      expect(args[0]).toEqual('read')
+      expect(args[1]).toEqual(null)
+      expect(typeof args[2]).toEqual('function')
+
   describe "_urlFor", ->
     it "should generate RESTful URLs by default", ->
       expect(store._urlFor('create')).toEqual('/store/annotations')
