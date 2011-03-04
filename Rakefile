@@ -85,7 +85,7 @@ end
 def yui_compressor(file)
   unless ENV['MINIFY'] == 'false'
     begin
-      require 'yui/compresso'
+      require 'yui/compressor'
     rescue LoadError => e
       puts "`gem install yui-compressor` for minification (Error: #{e})"
     end

@@ -84,7 +84,11 @@ Development
 
 If you wish to develop annotator, you'll need to have a working installation of [Node.js][node] (v0.2.x). I'd highly recommend installing both Node.js and the [Node Package Manager][npm], after which you can run the following to get up and running:
 
-    npm install .
+    $ npm install .
+
+In order to run the `rake package` task with JavaScript and CSS minification you'll need the yui-compressor gem installed:
+
+    $ gem install yui-compressor
 
 If that worked, you should be able to run the tests:
 
