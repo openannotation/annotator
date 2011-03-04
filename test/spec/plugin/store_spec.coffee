@@ -28,8 +28,6 @@ describe "Annotator.Plugin.Store", ->
       expect(store._getAnnotations).toHaveBeenCalled()
 
     it "should call Auth#withToken() if Auth plugin is loaded", ->
-      spyOn(store, 'loadAnnotationsFromSearch')
-
       authMock = {
         withToken: jasmine.createSpy('withToken')
       }
@@ -37,6 +35,20 @@ describe "Annotator.Plugin.Store", ->
 
       store.pluginInit()
       expect(authMock.withToken).toHaveBeenCalledWith(store._getAnnotations)
+
+  describe "_getAnnotations", ->
+    it "should call Store#loadAnnotations() if @options.loadFromSearch is not present", ->
+      spyOn(store, 'loadAnnotations')
+      store._getAnnotations()
+      expect(store.loadAnnotations).toHaveBeenCalled()
+
+    it "should call Store#loadAnnotationsFromSearch() if @options.loadFromSearch is present", ->
+      spyOn(store, 'loadAnnotationsFromSearch')
+
+      store.options.loadFromSearch = {}
+      store._getAnnotations()
+
+      expect(store.loadAnnotationsFromSearch).toHaveBeenCalledWith(store.options.loadFromSearch)
 
   describe "_urlFor", ->
     it "should generate RESTful URLs by default", ->
