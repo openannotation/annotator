@@ -4,6 +4,9 @@ describe "Annotator.Plugin.Store", ->
   beforeEach ->
     element = $('<div></div>')[0]
     store = new Annotator.Plugin.Store(element, {autoFetch: false})
+    store.annotator = {
+      loadAnnotations: jasmine.createSpy('Annotator#loadAnnotations')
+    }
 
   describe "events", ->
     it "should call Store#annotationCreated when the annotationCreated is fired", ->
@@ -29,7 +32,7 @@ describe "Annotator.Plugin.Store", ->
 
     it "should call Auth#withToken() if Auth plugin is loaded", ->
       authMock = {
-        withToken: jasmine.createSpy('withToken')
+        withToken: jasmine.createSpy('Auth#withToken()')
       }
       store.element.data('annotator:auth', authMock);
 
@@ -64,6 +67,41 @@ describe "Annotator.Plugin.Store", ->
       store.loadAnnotationsFromSearch(options)
 
       expect(store._apiRequest).toHaveBeenCalledWith('search', options, store._onLoadAnnotationsFromSearch)
+
+  describe "_onLoadAnnotations", ->
+    it "should set the Store#annotations property with received annotations", ->
+      data = [1,2,3];
+      store._onLoadAnnotations(data)
+      expect(store.annotations).toBe(data)
+
+    it "should default to an empty array if no data is provided", ->
+      store._onLoadAnnotations()
+      expect(store.annotations).toEqual([])
+
+    it "should call Annotator#loadAnnotations()", ->
+      store._onLoadAnnotations()
+      expect(store.annotator.loadAnnotations).toHaveBeenCalled()
+
+    it "should call Annotator#loadAnnotations() with clone of provided data", ->
+      data = [];
+      store._onLoadAnnotations(data)
+      expect(store.annotator.loadAnnotations.mostRecentCall.args[0]).not.toBe(data)
+      expect(store.annotator.loadAnnotations.mostRecentCall.args[0]).toEqual(data)
+
+  describe "_onLoadAnnotationsFromSearch", ->
+    it "should call Store#_onLoadAnnotations() with data.rows", ->
+      spyOn(store, '_onLoadAnnotations')
+      
+      data = {rows: [{}, {}, {}]}
+      store._onLoadAnnotationsFromSearch(data)
+      expect(store._onLoadAnnotations.mostRecentCall.args[0]).toEqual(data.rows)
+
+    it "should default to an empty array if no data.rows are provided", ->
+      spyOn(store, '_onLoadAnnotations')
+
+      store._onLoadAnnotationsFromSearch()
+      expect(store._onLoadAnnotations.mostRecentCall.args[0]).toEqual([])
+
 
   describe "_urlFor", ->
     it "should generate RESTful URLs by default", ->
