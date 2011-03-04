@@ -76,7 +76,10 @@
         return this;
       },
       remove: function () {
-        element.parentNode.removeChild(element);
+        var parent = element.parentNode;
+        if (parent) {
+          parent.removeChild(element);
+        }
         return this;
       }
     };

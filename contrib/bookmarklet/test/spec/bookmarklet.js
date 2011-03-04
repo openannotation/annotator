@@ -106,14 +106,12 @@ describe("bookmarklet", function () {
         .removeData('annotator:headers');
     });
 
-    it("should export the local jQuery instance to window._annotator", function () {
+    it("should export useful values to window._annotator", function () {
       bookmarklet.setup();
-      expect(window._annotator.jQuery).toBeTruthy();
-    });
-
-    it("should setup an instance of the annotator and export it onto the window._annotator object", function () {
-      bookmarklet.setup();
+      expect(window._annotator.Annotator).toBeTruthy();
       expect(window._annotator.instance).toBeTruthy();
+      expect(window._annotator.jQuery).toBeTruthy();
+      expect(window._annotator.element).toBeTruthy();
     });
 
     it("should add the plugins to the annotator instance", function () {
@@ -125,6 +123,11 @@ describe("bookmarklet", function () {
       expect(plugins.Permissions).toBeTruthy();
       expect(plugins.Unsupported).toBeTruthy();
       expect(instance.element.data('annotator:headers')).toBeTruthy();
+    });
+
+    it("should display a loaded notification", function () {
+      bookmarklet.setup();
+      expect(bookmarklet.notification.message).toHaveBeenCalled();
     });
   });
 });
