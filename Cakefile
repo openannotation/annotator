@@ -106,9 +106,9 @@ packageBookmarkletCSS = ->
 
     # Add !important declarations to compiled CSS but avoid the data uris.
     # I'm sure this could be done far more efficiently.
-    css = css.toString().replace(/(image\/png)?;/g, (_, m) ->
+    css = css.toString().replace(/(image\/png)?;|\}/g, (_, m) ->
       return _ if m == 'image/png'
-      '!important;'
+      '!important' + _
     )
 
     fs.writeFileSync "#{BOOKMARKLET_PATH}/#{source}", css
