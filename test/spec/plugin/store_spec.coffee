@@ -1,87 +1,51 @@
 describe "Annotator.Plugin.Store", ->
-  a = null
-  el = null
+  store = null
 
   beforeEach ->
-    el = $('<div></div>')[0]
-    a = new Annotator.Plugin.Store(el, {autoFetch: false})
+    element = $('<div></div>')[0]
+    store = new Annotator.Plugin.Store(element, {autoFetch: false})
 
-  xit "should save an annotation on an annotationCreated event", ->
-    mockAjax('store')
-    expect(a.annotations).toEqual([])
-    mock_request().and_return('', 'text/plain')
-    expect(a).should(receive, 'annotationCreated', 'once').with_args(null, 'annotation1')
-    # Trigger annotationCreated event for 'annotation1'
-    $(el).trigger('annotationCreated', ['annotation1'])
-    expect(a.annotations).toEqual(['annotation1'])
+  describe "events", ->
+    it "should call annotationCreated when the annotationCreated is fired", ->
+      spyOn(store, 'annotationCreated')
+      store.element.trigger('annotationCreated', ['annotation1'])
+      expect(store.annotationCreated).toHaveBeenCalledWith('annotation1')
 
-  xit "should extend the annotation data it sends to the the backend \
-    with the contents of the annotationData object", ->
-    mock_request().and_return('[]', 'text/plain')
-    a.options.annotationData = { one: 1, two: 2 }
+    it "should call annotationUpdated when the annotationUpdated is fired", ->
+      spyOn(store, 'annotationUpdated')
+      store.element.trigger('annotationUpdated', ['annotation1'])
+      expect(store.annotationUpdated).toHaveBeenCalledWith('annotation1')
 
-    mock_request().and_return('', 'text/plain')
+    it "should call annotationDeleted when the annotationDeleted is fired", ->
+      spyOn(store, 'annotationDeleted')
+      store.element.trigger('annotationDeleted', ['annotation1'])
+      expect(store.annotationDeleted).toHaveBeenCalledWith('annotation1')
 
-    $(el).trigger('annotationCreated', [{three: 3}])
-    expect(a.annotations).toEqual([{one:1, two: 2, three: 3, highlights: undefined}])
+  describe "_urlFor", ->
+    it "should generate RESTful URLs by default", ->
+      expect(store._urlFor('create')).toEqual('/store/annotations')
+      expect(store._urlFor('read')).toEqual('/store/annotations')
+      expect(store._urlFor('read', 'foo')).toEqual('/store/annotations/foo')
+      expect(store._urlFor('update', 'bar')).toEqual('/store/annotations/bar')
+      expect(store._urlFor('destroy', 'baz')).toEqual('/store/annotations/baz')
 
-  xit "should remove an annotation on an annotationDeleted event", ->
-    # Add one annotation
-    a.registerAnnotation('annotation1')
-    expect(a.annotations).toEqual(['annotation1'])
-    # Respond positively to the request to delete.
-    mock_request().and_return('', 'text/plain')
-    # Check the annotationDeleted method is called.
-    expect(a).should(receive, 'annotationDeleted', 'once').with_args(null, 'annotation1')
-    # Trigger annotationDeleted event for 'annotation1'.
-    $(el).trigger('annotationDeleted', ['annotation1'])
-    # Make sure annotation is no longer in the registry.
-    expect(a.annotations).toEqual([])
-
-  it "should generate RESTful URLs by default", ->
-    expect(a._urlFor('create')).toEqual('/store/annotations')
-    expect(a._urlFor('read')).toEqual('/store/annotations')
-    expect(a._urlFor('read', 'foo')).toEqual('/store/annotations/foo')
-    expect(a._urlFor('update', 'bar')).toEqual('/store/annotations/bar')
-    expect(a._urlFor('destroy', 'baz')).toEqual('/store/annotations/baz')
-
-  it "should generate URLs as specified by its options otherwise", ->
-    a.options.prefix = '/some/prefix/'
-    a.options.urls.create = 'createMe'
-    a.options.urls.read = ':id/readMe'
-    a.options.urls.update = ':id/updateMe'
-    a.options.urls.destroy = ':id/destroyMe'
-    expect(a._urlFor('create')).toEqual('/some/prefix/createMe')
-    expect(a._urlFor('read')).toEqual('/some/prefix/readMe')
-    expect(a._urlFor('read', 'foo')).toEqual('/some/prefix/foo/readMe')
-    expect(a._urlFor('update', 'bar')).toEqual('/some/prefix/bar/updateMe')
-    expect(a._urlFor('destroy', 'baz')).toEqual('/some/prefix/baz/destroyMe')
+    it "should generate URLs as specified by its options otherwise", ->
+      store.options.prefix = '/some/prefix/'
+      store.options.urls.create = 'createMe'
+      store.options.urls.read = ':id/readMe'
+      store.options.urls.update = ':id/updateMe'
+      store.options.urls.destroy = ':id/destroyMe'
+      expect(store._urlFor('create')).toEqual('/some/prefix/createMe')
+      expect(store._urlFor('read')).toEqual('/some/prefix/readMe')
+      expect(store._urlFor('read', 'foo')).toEqual('/some/prefix/foo/readMe')
+      expect(store._urlFor('update', 'bar')).toEqual('/some/prefix/bar/updateMe')
+      expect(store._urlFor('destroy', 'baz')).toEqual('/some/prefix/baz/destroyMe')
 
   describe "dumpAnnotations", ->
     it "returns a list of its annotations", ->
-      a.annotations = [{text: "Foobar"}, {user: "Bob"}]
-      expect(a.dumpAnnotations()).toEqual([{text: "Foobar"}, {user: "Bob"}])
+      store.annotations = [{text: "Foobar"}, {user: "Bob"}]
+      expect(store.dumpAnnotations()).toEqual([{text: "Foobar"}, {user: "Bob"}])
 
     it "removes the highlights properties from the annotations", ->
-      a.annotations = [{highlights: "abc"}, {highlights: [1,2,3]}]
-      expect(a.dumpAnnotations()).toEqual([{}, {}])
-
-xdescribe "Annotator.Plugin.Store initialized with an empty backend", ->
-  beforeEach ->
-    el = $('<div></div>')[0]
-    mock_request().and_return('[]', 'text/plain')
-    a = new Annotator.Plugin.Store(el)
-
-  it "should have no annotations", ->
-    expect(a.annotations.length).toEqual(0)
-
-xdescribe "Annotator.Plugin.Store with annotations in backend store", ->
-  beforeEach ->
-    el = $('<div></div>')[0]
-    mock_request().and_return('[{"ranges":[],"text":"hello","id":1}]', 'text/plain')
-    a = new Annotator.Plugin.Store(el)
-
-  it "should load the annotations into its registry", ->
-    expect(a.annotations).to(have_length, 1)
-    expect(a.annotations[0].text).toEqual("hello")
-
+      store.annotations = [{highlights: "abc"}, {highlights: [1,2,3]}]
+      expect(store.dumpAnnotations()).toEqual([{}, {}])
