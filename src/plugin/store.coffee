@@ -92,16 +92,18 @@ class Annotator.Plugin.Store extends Annotator.Plugin
     $(annotation.highlights).data('annotation', annotation)
 
   loadAnnotations: () ->
-    this._apiRequest('read', null, (data=[]) =>
-      @annotations = data.slice() # Clone array
-      @annotator.loadAnnotations(data)
-    )
+    this._apiRequest 'read', null, this._onLoadAnnotations
+
+  _onLoadAnnotations: (data) =>
+    @annotations = (data || []).slice() # Clone array
+    @annotator.loadAnnotations(data)
 
   loadAnnotationsFromSearch: (searchOptions) ->
-    this._apiRequest('search', searchOptions, (data) =>
-      @annotations = (data.rows || []).slice() # Clone array
-      @annotator.loadAnnotations(@annotations)
-    )
+    this._apiRequest 'search', searchOptions, this._onLoadAnnotationsFromSearch
+
+  _onLoadAnnotationsFromSearch: (data) =>
+    @annotations = (data.rows || []).slice() # Clone array
+    @annotator.loadAnnotations(@annotations)
 
   ##
   # Dump an array of serialized annotations
