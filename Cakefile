@@ -97,7 +97,10 @@ packageBookmarkletCSS = ->
   source = 'pkg/annotator.min.css'
 
   exec 'rake package', (err, stdout, stderr) ->
-    return if err or stderr
+    if stderr
+      console.log stderr
+      return
+    throw err if err
 
     css = fs.readFileSync source
 
@@ -123,7 +126,7 @@ task 'bookmarklet:watch', 'Watch the bookmarklet source for changes', ->
   file = "contrib/bookmarklet/src/bookmarklet.js"
   options = {persistent: true, interval: 500}
 
-  buildBookmarklet()
+  packageBookmarkletDemo()
   console.log "Watching #{file} for changes:"
 
   fs.watchFile file, options, (curr, prev) ->
