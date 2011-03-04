@@ -1,12 +1,22 @@
 describe("bookmarklet", function () {
-  var bookmarklet = _annotator.bookmarklet;
+  var bookmarklet;
 
   beforeEach(function () {
-    window._annotator = { bookmarklet: bookmarklet };
+    runBookmarklet();
+
+    bookmarklet = window._annotator.bookmarklet;
+    
+    // Prevent Notifications from being fired.
     spyOn(bookmarklet.notification, 'show');
     spyOn(bookmarklet.notification, 'message');
     spyOn(bookmarklet.notification, 'hide');
     spyOn(bookmarklet.notification, 'remove');
+  });
+
+  afterEach(function () {
+    // Remove all traces of the bookmarklet.
+    delete window._annotator;
+    jQuery('.annotator-bm-status, .annotator-notice').remove();
   });
 
   describe("init()", function () {
@@ -181,9 +191,8 @@ describe("bookmarklet", function () {
 describe("bookmarklet.notification", function () {
   var notification;
 
-  beforeEach(function () {
-    notification = window._annotator.bookmarklet.notification;
-  });
+  runBookmarklet();
+  notification = window._annotator.bookmarklet.notification;
 
   it("should have an Element property", function () {
     expect(notification.element).toBeTruthy();

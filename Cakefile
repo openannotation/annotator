@@ -31,15 +31,17 @@ task 'test', 'Run tests. Filter tests using `-f [filter]` eg. cake -f auth test'
 BOOKMARKLET_PATH = "contrib/bookmarklet"
 
 # Create the bookmarklet demo page.
-buildBookmarklet = (callback) ->
+buildBookmarklet = (embedConfig, callback) ->
   bookmarklet = "#{BOOKMARKLET_PATH}/src/bookmarklet.js"
   config      = "#{BOOKMARKLET_PATH}/config.json"
   temp        = "#{BOOKMARKLET_PATH}/temp.js"
 
+  callback = embedConfig if arguments.length == 1
+
   # Replace the __config__ placeholder with the JSON data.
   config = fs.readFileSync(config).toString()
   source = fs.readFileSync(bookmarklet).toString()
-  source = source.toString().replace('__config__', config)
+  source = source.toString().replace('__config__', config) unless embedConfig == false
 
   # Write back out to temp file so YUI can compress it. This needs to be updated
   # with either a compressor than can read from stdin or a Node library.
@@ -59,14 +61,24 @@ buildBookmarklet = (callback) ->
 
 
 packageBookmarkletDemo = ->
-  template    = "#{BOOKMARKLET_PATH}/dev.html"
+  template    = "#{BOOKMARKLET_PATH}/template.html"
   destination = "#{BOOKMARKLET_PATH}/demo.html"
-  html = fs.readFileSync(template).toString()
 
-  buildBookmarklet (source) ->
-     html = html.replace '{bookmarklet}', source.replace(/"/g, '&quot;')
+  testTemplate    = "#{BOOKMARKLET_PATH}/test/template.html"
+  testDestination = "#{BOOKMARKLET_PATH}/test/runner.html"
+
+  html = fs.readFileSync(template).toString()
+  testHtml = fs.readFileSync(testTemplate).toString()
+
+  buildBookmarklet false, (source) ->
+     html = html.replace '__bookmarklet__', source.replace(/"/g, '&quot;')
+     testHtml = testHtml.replace '__bookmarklet__', source
+
      fs.writeFileSync destination, html
+     fs.writeFileSync testDestination, testHtml
+
      console.log "Updated #{destination}"
+     console.log "Updated #{testDestination}"
 
 
 # Compile & compress annotator scripts.
