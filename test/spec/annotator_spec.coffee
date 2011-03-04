@@ -92,3 +92,14 @@ describe "Annotator.noConflict()", ->
   it "should return the Annotator object", ->
     result = Annotator.noConflict()
     expect(result).toBe(_Annotator)
+
+describe "Annotator.supported()", ->
+  it "should return true if the browser has window.getSelection method", ->
+    window.getSelection = ->
+    expect(Annotator.supported()).toBeTruthy()
+
+  xit "should return false if the browser has no window.getSelection method", ->
+    # The method currently checks for getSelection on load and will always
+    # return that result.
+    window.getSelection = undefined
+    expect(Annotator.supported()).toBeFalsy()
