@@ -26,8 +26,8 @@ end
 
 file 'pkg/annotator.min.css' => CSS do |t|
   concat(t.prerequisites, t.name)
-  data_uri_ify(t.name)
   yui_compressor(t.name)
+  data_uri_ify(t.name)
 end
 
 task :plugins => SRC_PLUGINS do |t|
@@ -84,20 +84,33 @@ end
 
 def yui_compressor(file)
   unless ENV['MINIFY'] == 'false'
-    sh "yuicompressor -o #{file} #{file}"
+    begin
+      require 'yui/compresso'
+    rescue LoadError => e
+      puts "`gem install yui-compressor` for minification (Error: #{e})"
+    end
+
+    return unless defined? YUI
+
+    if file =~ /.js$/
+      compressor = YUI::JavaScriptCompressor.new
+    else
+      compressor = YUI::CssCompressor.new
+    end
+
+    compressed = compressor.compress(open(file).read)
+    open(file, 'w') { |f| f.write compressed }
+
     puts "Compressed #{file}"
   end
 end
 
 def data_uri_ify(file)
-  lines = open(file, 'r').readlines.map do |l|
-    m = l.match(/(url\(([^)]+)\.png\))/)
-
-    if m
-      b64 = `openssl enc -a -in src/#{m[2]}.png | tr -d "\n"`
-      l.sub(m[1], "url('data:image/png;base64,#{b64}')")
-    else
-      l
+  lines = open(file, 'r').readlines.map do |line|
+    line.gsub(/(url\(([^)]+)\.png\))/) do
+      puts $1, $2
+      b64 = `openssl enc -a -in src/#{$2}.png | tr -d "\n"`
+      "url('data:image/png;base64,#{b64}')"
     end
   end
 
