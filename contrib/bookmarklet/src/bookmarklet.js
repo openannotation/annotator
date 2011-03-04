@@ -145,32 +145,40 @@
       jQuery.getScript(this.config('externals.source'), callback);
     },
 
+    storeOptions: function () {
+      var uri = location.href.split(/#|\?/).shift();
+      return {
+        prefix: this.config('store.prefix'),
+        annotationData: {
+          'uri': uri
+        },
+        loadFromSearch: {
+          'uri': uri,
+          'all_fields': 1
+        }
+      };
+    },
+
+    permissionsOptions: function () {
+      return {
+        user: this.config('permissions.user'),
+        permissions: this.config('permissions.permissions'),
+        userId: function (user) {
+          return user && user.id ? user.id : '';
+        },
+        userString: function (user) {
+          return user && user.name ? user.name : '';
+        }
+      };
+    },
+
     setup: function () {
-      var annotator = new Annotator(options.target || body),
-          uri = location.href.split(/#|\?/).shift();
+      var annotator = new Annotator(options.target || body);
 
       annotator
         .addPlugin('Unsupported')
-        .addPlugin('Store', {
-          prefix: this.config('store.prefix'),
-          annotationData: {
-            'uri': uri
-          },
-          loadFromSearch: {
-            'uri': uri,
-            'all_fields': 1
-          }
-        })
-        .addPlugin('Permissions', {
-          user: this.config('permissions.user'),
-          permissions: this.config('permissions.permissions'),
-          userId: function (user) {
-            return user ? user.id : '';
-          },
-          userString: function (user) {
-            return user ? user.name : '';
-          }
-        })
+        .addPlugin('Store', this.storeOptions())
+        .addPlugin('Permissions', this.permissionsOptions())
         // As we're not requesting the auth tokens for the bookmarklet we
         // don't need the Auth plugin. Instead we just need to set the required
         // headers on each request.

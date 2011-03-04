@@ -99,6 +99,10 @@ describe("bookmarklet", function () {
   });
 
   describe("setup()", function () {
+    beforeEach(function () {
+      bookmarklet.setup();
+    });
+
     afterEach(function () {
       window._annotator.jQuery('#fixtures')
         .empty()
@@ -107,7 +111,6 @@ describe("bookmarklet", function () {
     });
 
     it("should export useful values to window._annotator", function () {
-      bookmarklet.setup();
       expect(window._annotator.Annotator).toBeTruthy();
       expect(window._annotator.instance).toBeTruthy();
       expect(window._annotator.jQuery).toBeTruthy();
@@ -115,7 +118,6 @@ describe("bookmarklet", function () {
     });
 
     it("should add the plugins to the annotator instance", function () {
-      bookmarklet.setup();
       var instance = window._annotator.instance,
           plugins  = instance.plugins;
 
@@ -126,8 +128,53 @@ describe("bookmarklet", function () {
     });
 
     it("should display a loaded notification", function () {
-      bookmarklet.setup();
       expect(bookmarklet.notification.message).toHaveBeenCalled();
+    });
+  });
+  
+  describe("permissionsOptions()", function () {
+    it("should return an object literal", function () {
+      expect(typeof bookmarklet.permissionsOptions()).toEqual('object');
+    });
+
+    it("should retrieve user and permissions from config", function () {
+      spyOn(bookmarklet, 'config');
+      bookmarklet.permissionsOptions();
+      expect(bookmarklet.config).toHaveBeenCalledWith('permissions.user');
+      expect(bookmarklet.config).toHaveBeenCalledWith('permissions.permissions');
+    });
+
+    it("should have a userId method that returns the user id", function () {
+      var userId = bookmarklet.permissionsOptions().userId;
+
+      expect(userId({id: 'myId'})).toEqual('myId');
+      expect(userId({})).toEqual('');
+      expect(userId(null)).toEqual('');
+    });
+
+    it("should have a userString method that returns the username", function () {
+      var userString = bookmarklet.permissionsOptions().userString;
+
+      expect(userString({name: 'bill'})).toEqual('bill');
+      expect(userString({})).toEqual('');
+      expect(userString(null)).toEqual('');
+    });
+  });
+
+  describe("storeOptions()", function () {
+    it("should return an object literal", function () {
+      expect(typeof bookmarklet.storeOptions()).toEqual('object');
+    });
+
+    it("should retrieve store prefix from config", function () {
+      spyOn(bookmarklet, 'config');
+      bookmarklet.storeOptions();
+      expect(bookmarklet.config).toHaveBeenCalledWith('store.prefix');
+    });
+
+    it("should have set a uri property", function () {
+      var uri = bookmarklet.storeOptions().annotationData.uri;
+      expect(uri).toBeTruthy();
     });
   });
 });
