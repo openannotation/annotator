@@ -4,6 +4,9 @@ describe("bookmarklet", function () {
   beforeEach(function () {
     window._annotator = { bookmarklet: bookmarklet };
     spyOn(bookmarklet.notification, 'show');
+    spyOn(bookmarklet.notification, 'message');
+    spyOn(bookmarklet.notification, 'hide');
+    spyOn(bookmarklet.notification, 'remove');
   });
 
   describe("init()", function () {
@@ -77,6 +80,51 @@ describe("bookmarklet", function () {
       runs(function () {
         expect(callback).toHaveBeenCalled();
       });
+    });
+  });
+
+  describe("loadjQuery()", function () {
+
+    it("should load jQuery into the page and call the callback", function () {
+      var callback = jasmine.createSpy('callback');
+
+      bookmarklet.loadjQuery(callback);
+      waitsFor(function () {
+        return !!callback.wasCalled;
+      });
+      runs(function () {
+        expect(callback).toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe("setup()", function () {
+    afterEach(function () {
+      window._annotator.jQuery('#fixtures')
+        .empty()
+        .removeData('annotator')
+        .removeData('annotator:headers');
+    });
+
+    it("should export the local jQuery instance to window._annotator", function () {
+      bookmarklet.setup();
+      expect(window._annotator.jQuery).toBeTruthy();
+    });
+
+    it("should setup an instance of the annotator and export it onto the window._annotator object", function () {
+      bookmarklet.setup();
+      expect(window._annotator.instance).toBeTruthy();
+    });
+
+    it("should add the plugins to the annotator instance", function () {
+      bookmarklet.setup();
+      var instance = window._annotator.instance,
+          plugins  = instance.plugins;
+
+      expect(plugins.Store).toBeTruthy();
+      expect(plugins.Permissions).toBeTruthy();
+      expect(plugins.Unsupported).toBeTruthy();
+      expect(instance.element.data('annotator:headers')).toBeTruthy();
     });
   });
 });
