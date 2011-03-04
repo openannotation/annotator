@@ -120,18 +120,15 @@
       return value;
     },
 
-    loadjQuery: function () {
-      var script = document.createElement('script');
+    loadjQuery: function (callback) {
+      var script   = document.createElement('script'),
+          fallback = 'https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js';
 
-      script.src = config('externals.jQuery', 'https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js');
+      script.src = this.config('externals.jQuery', fallback);
       script.onload = function () {
-        jQuery = window.jQuery;
-
         body.removeChild(script);
-        notification.load(function () {
-          jQuery.noConflict(true);
-          setup();
-        });
+        jQuery = jQuery.noConflict(true);
+        callback();
       };
 
       body.appendChild(script);
@@ -146,7 +143,7 @@
     },
 
     setup: function () {
-      var annotator = jQuery(options.target || body).annotator().data('annotator'),
+      var annotator = new Annotator(options.target || body),
           uri = location.href.split(/#|\?/).shift();
 
       annotator
@@ -174,7 +171,7 @@
         // As we're not requesting the auth tokens for the bookmarklet we
         // don't need the Auth plugin. Instead we just need to set the required
         // headers on each request.
-        .element.data('annotator:headers', config('auth.headers'));
+        .element.data('annotator:headers', this.config('auth.headers'));
 
       // Attach the annotator to the window object so we can prevent it
       // being loaded twice and test.
@@ -201,7 +198,7 @@
         notification.show('Loading Annotator into page');
 
         if (window.jQuery === undefined || !window.jQuery.sub) {
-          this.loadjQuery();
+          this.loadjQuery(this.setup);
         } else {
           jQuery = window.jQuery.sub();
           this.load(this.setup);
