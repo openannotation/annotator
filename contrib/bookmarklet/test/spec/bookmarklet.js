@@ -84,16 +84,15 @@ describe("bookmarklet", function () {
   });
 
   describe("loadjQuery()", function () {
+    it("should load jQuery into the page and call bookmarklet.load()", function () {
+      spyOn(bookmarklet, 'load');
 
-    it("should load jQuery into the page and call the callback", function () {
-      var callback = jasmine.createSpy('callback');
-
-      bookmarklet.loadjQuery(callback);
+      bookmarklet.loadjQuery();
       waitsFor(function () {
-        return !!callback.wasCalled;
+        return !!bookmarklet.load.wasCalled;
       });
       runs(function () {
-        expect(callback).toHaveBeenCalled();
+        expect(bookmarklet.load).toHaveBeenCalled();
       });
     });
   });

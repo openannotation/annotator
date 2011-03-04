@@ -126,15 +126,19 @@
       return value;
     },
 
-    loadjQuery: function (callback) {
+    loadjQuery: function () {
       var script   = document.createElement('script'),
           fallback = 'https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js';
 
       script.src = this.config('externals.jQuery', fallback);
       script.onload = function () {
+        jQuery = window.jQuery;
+
         body.removeChild(script);
-        jQuery = jQuery.noConflict(true);
-        callback();
+        bookmarklet.load(function () {
+          jQuery.noConflict(true);
+          bookmarklet.setup();
+        });
       };
 
       body.appendChild(script);
@@ -212,7 +216,7 @@
         notification.show('Loading Annotator into page');
 
         if (window.jQuery === undefined || !window.jQuery.sub) {
-          this.loadjQuery(this.setup);
+          this.loadjQuery();
         } else {
           jQuery = window.jQuery.sub();
           this.load(this.setup);
@@ -222,12 +226,14 @@
   };
 
   // Export the bookmarklet to the window object for testing.
-  window._annotator = {
-    bookmarklet: bookmarklet
-  };
+  if (!window._annotator) {
+    window._annotator = {
+      bookmarklet: bookmarklet
+    };
+  }
 
   // Load the bookmarklet.
   if (!options.test) {
-    init();
+    bookmarklet.init();
   }
 }(__config__, this, this.document, this.jQuery));
