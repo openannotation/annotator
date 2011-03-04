@@ -35,18 +35,18 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   pluginInit: ->
     return unless Annotator.supported()
 
-    getAnnotations = =>
-      if @options.loadFromSearch
-        this.loadAnnotationsFromSearch(@options.loadFromSearch)
-      else
-        this.loadAnnotations()
-
     auth = @element.data('annotator:auth')
 
     if auth
-      auth.withToken(getAnnotations)
+      auth.withToken(this._getAnnotations)
     else
-      getAnnotations()
+      this._getAnnotations()
+
+  _getAnnotations: =>
+    if @options.loadFromSearch
+      this.loadAnnotationsFromSearch(@options.loadFromSearch)
+    else
+      this.loadAnnotations()
 
   annotationCreated: (annotation) ->
     # Pre-register the annotation so as to save the list of highlight

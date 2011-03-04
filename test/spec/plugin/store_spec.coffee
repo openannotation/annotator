@@ -6,20 +6,37 @@ describe "Annotator.Plugin.Store", ->
     store = new Annotator.Plugin.Store(element, {autoFetch: false})
 
   describe "events", ->
-    it "should call annotationCreated when the annotationCreated is fired", ->
+    it "should call Store#annotationCreated when the annotationCreated is fired", ->
       spyOn(store, 'annotationCreated')
       store.element.trigger('annotationCreated', ['annotation1'])
       expect(store.annotationCreated).toHaveBeenCalledWith('annotation1')
 
-    it "should call annotationUpdated when the annotationUpdated is fired", ->
+    it "should call Store#annotationUpdated when the annotationUpdated is fired", ->
       spyOn(store, 'annotationUpdated')
       store.element.trigger('annotationUpdated', ['annotation1'])
       expect(store.annotationUpdated).toHaveBeenCalledWith('annotation1')
 
-    it "should call annotationDeleted when the annotationDeleted is fired", ->
+    it "should call Store#annotationDeleted when the annotationDeleted is fired", ->
       spyOn(store, 'annotationDeleted')
       store.element.trigger('annotationDeleted', ['annotation1'])
       expect(store.annotationDeleted).toHaveBeenCalledWith('annotation1')
+
+  describe "pluginInit", ->
+    it "should call Store#_getAnnotations() if no Auth plugin is loaded", ->
+      spyOn(store, '_getAnnotations')
+      store.pluginInit()
+      expect(store._getAnnotations).toHaveBeenCalled()
+
+    it "should call Auth#withToken() if Auth plugin is loaded", ->
+      spyOn(store, 'loadAnnotationsFromSearch')
+
+      authMock = {
+        withToken: jasmine.createSpy('withToken')
+      }
+      store.element.data('annotator:auth', authMock);
+
+      store.pluginInit()
+      expect(authMock.withToken).toHaveBeenCalledWith(store._getAnnotations)
 
   describe "_urlFor", ->
     it "should generate RESTful URLs by default", ->
