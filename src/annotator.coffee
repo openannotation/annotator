@@ -14,6 +14,8 @@ util =
       left: e.pageX - offset.left
     }
 
+_Annotator = this.Annotator
+
 class Annotator extends Delegator
   events:
     ".annotator-adder button click":     "onAdderClick"
@@ -262,6 +264,12 @@ Annotator.$ = $
 
 # Returns true if the Annotator can be used in the current browser.
 Annotator.supported = -> (-> !!this.getSelection)()
+
+# Restores the Annotator property on the global object to it's
+# previous value and returns the Annotator. 
+Annotator.noConflict = ->
+  util.getGlobal().Annotator = _Annotator
+  this
 
 # Create global access for Annotator
 $.plugin 'annotator', Annotator

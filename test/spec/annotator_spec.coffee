@@ -75,3 +75,20 @@ describe 'Annotator', ->
       a.addPlugin('Bar')
       expect(a.plugins['Bar']?).toBeFalsy()
       expect(console.error).toHaveBeenCalled()
+
+describe "Annotator.noConflict()", ->
+  _Annotator = null
+
+  beforeEach ->
+    _Annotator = Annotator
+
+  afterEach ->
+    window.Annotator = _Annotator
+
+  it "should restore the value previously occupied by window.Annotator", ->
+    Annotator.noConflict()
+    expect(window.Annotator).not.toBeDefined()
+  
+  it "should return the Annotator object", ->
+    result = Annotator.noConflict()
+    expect(result).toBe(_Annotator)
