@@ -131,7 +131,7 @@ describe("bookmarklet", function () {
       expect(bookmarklet.notification.message).toHaveBeenCalled();
     });
   });
-  
+
   describe("permissionsOptions()", function () {
     it("should return an object literal", function () {
       expect(typeof bookmarklet.permissionsOptions()).toEqual('object');
@@ -175,6 +175,65 @@ describe("bookmarklet", function () {
     it("should have set a uri property", function () {
       var uri = bookmarklet.storeOptions().annotationData.uri;
       expect(uri).toBeTruthy();
+    });
+  });
+});
+
+describe("bookmarklet.notification", function () {
+  var notification;
+
+  beforeEach(function () {
+    notification = window._annotator.bookmarklet.notification;
+  });
+
+  it("should have an Element property", function () {
+    expect(notification.element).toBeTruthy();
+  });
+
+  describe("show", function () {
+    it("should set the top style of the element", function () {
+      notification.show();
+      expect(notification.element.style.top).toEqual("0px");
+    });
+
+    it("should call notification.message", function () {
+      spyOn(notification, 'message');
+      notification.show('hello', 'red');
+      expect(notification.message).toHaveBeenCalledWith('hello', 'red');
+    });
+  });
+
+  describe("hide", function () {
+    it("should set the top style of the element", function () {
+      notification.hide();
+      expect(notification.element.style.top).not.toEqual("0px");
+    });
+  });
+
+  describe("message", function () {
+    it("should set the innerHTML of the element", function () {
+      notification.message('hello');
+      expect(notification.element.innerHTML).toEqual("hello");
+    });
+
+    it("should set the bottomBorderColor of the element", function () {
+      var current = notification.element.style.borderBottomColor;
+      notification.message('hello', '#fff');
+      expect(notification.element.style.borderBottomColor).not.toEqual(current);
+    });
+  });
+
+  describe("append", function () {
+    it("should append the element to the document.body", function () {
+      notification.append();
+      expect(notification.element.parentNode).toEqual(document.body);
+    });
+  });
+
+  describe("remove", function () {
+    it("should remove the element from the document.body", function () {
+      notification.remove();
+      expect(notification.element.parentNode).toBeFalsy();
     });
   });
 });

@@ -40,14 +40,13 @@
     element.style.position = 'fixed';
     element.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
 
-    body.appendChild(element);
-
     return {
       status: {
         INFO:    '#d4d4d4',
         SUCCESS: '#3665f9',
         ERROR:   '#ff7e00'
       },
+      element: element,
       show: function (message, status) {
         this.message(message, status);
 
@@ -75,6 +74,10 @@
 
         return this;
       },
+      append: function () {
+        body.appendChild(element);
+        return this;
+      },
       remove: function () {
         var parent = element.parentNode;
         if (parent) {
@@ -82,7 +85,7 @@
         }
         return this;
       }
-    };
+    }.append();
   }());
 
   bookmarklet = {
