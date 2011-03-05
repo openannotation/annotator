@@ -165,10 +165,6 @@ class Annotator.Plugin.Store extends Annotator.Plugin
 
     table[action]
 
-  _actionFor: (method) ->
-    for action, currentMethod in @_methodMap
-      return action if method == currentMethod
-
   _dataFor: (annotation) ->
     # Store a reference to the highlights array. We can't serialize
     # a list of HTMLElement objects.
