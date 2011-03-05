@@ -192,7 +192,9 @@ class Annotator.Plugin.Store extends Annotator.Plugin
     action  = xhr._action
     message = "Sorry we could not #{action} this annotation"
 
-    if xhr._action == 'store' || (xhr._action == 'read' && !xhr._id)
+    if xhr._action == 'search'
+      message = "Sorry we could not search the store for annotations"
+    else if xhr._action == 'read' && !xhr._id
       message = "Sorry we could not #{action} the annotations from the store"
 
     switch xhr.status

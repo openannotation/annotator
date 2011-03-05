@@ -251,6 +251,65 @@ describe "Annotator.Plugin.Store", ->
       annotation = {id: "cat"}
       store.options.annotationData = {custom: 'value', customArray: []}
       data = store._dataFor(annotation)
-      
+
       expect(data).toEqual('{"id":"cat","custom":"value","customArray":[]}')
       expect(annotation).toEqual({"id":"cat", "custom":"value", "customArray":[]})
+
+  describe "_onBeforeSend", ->
+    it "should call setRequestHeader() on the xhr object with the contents of @element.data('annotator:headers')", ->
+      mockXhr = {setRequestHeader: jasmine.createSpy('XMLHttpRequest#setRequestHeader()')}
+      spyOn(store.element, 'data').andReturn({
+        'x-custom-header-one':   'mycustomheader'
+        'x-custom-header-two':   'mycustomheadertwo'
+        'x-custom-header-three': 'mycustomheaderthree'
+      })
+
+      store._onBeforeSend(mockXhr)
+      expect(mockXhr.setRequestHeader).toHaveBeenCalledWith('x-custom-header-one',  'mycustomheader')
+      expect(mockXhr.setRequestHeader).toHaveBeenCalledWith('x-custom-header-two',  'mycustomheadertwo')
+      expect(mockXhr.setRequestHeader).toHaveBeenCalledWith('x-custom-header-three','mycustomheaderthree')
+
+  describe "_onError", ->
+    message = null
+    requests = [
+      {}
+      {}
+      {_action: 'read', _id: 'jim'}
+      {_action: 'search'}
+      {_action: 'read'}
+      {status: 401, _action: 'delete', '_id': 'cake'}
+      {status: 404, _action: 'delete', '_id': 'cake'}
+      {status: 500, _action: 'delete', '_id': 'cake'}
+    ]
+
+    beforeEach ->
+      spyOn(Annotator, 'showNotification')
+      spyOn(console,   'error')
+
+      store._onError requests.shift()
+      message = Annotator.showNotification.mostRecentCall.args[0]
+
+    it "should call call Annotator.showNotification() with a message and error style", ->
+      expect(Annotator.showNotification).toHaveBeenCalled()
+      expect(Annotator.showNotification.mostRecentCall.args[1]).toBe(Annotator.Notification.ERROR)
+
+    it "should call console.error with a message", ->
+      expect(console.error).toHaveBeenCalled()
+
+    it "should give a default message if xhr.status id not provided", ->
+      expect(message).toBe("Sorry we could not read this annotation")
+
+    it "should give a default specific message if xhr._action is 'search'", ->
+      expect(message).toBe("Sorry we could not search the store for annotations")
+
+    it "should give a default specific message if xhr._action is 'read' and there is no xhr._id", ->
+      expect(message).toBe("Sorry we could not read the annotations from the store")
+
+    it "should give a specific message if xhr.status == 401", ->
+      expect(message).toBe("Sorry you are not allowed to delete this annotation")
+
+    it "should give a specific message if xhr.status == 404", ->
+      expect(message).toBe("Sorry we could not connect to the annotations store")
+
+    it "should give a specific message if xhr.status == 500", ->
+      expect(message).toBe("Sorry something went wrong with the annotation store")
