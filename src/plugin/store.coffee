@@ -177,7 +177,7 @@ class Annotator.Plugin.Store extends Annotator.Plugin
     data = JSON.stringify(annotation)
 
     # Restore the highlights array.
-    annotation.highlights = highlights
+    annotation.highlights = highlights if highlights
 
     data
 

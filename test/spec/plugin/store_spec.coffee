@@ -230,3 +230,27 @@ describe "Annotator.Plugin.Store", ->
       }
       for action, method in table
         expect(store._methodFor action).toEqual(method)
+
+  describe "_dataFor", ->
+    it "should stringify the annotation into JSON", ->
+      annotation = {id: 'bill'}
+      data = store._dataFor(annotation)
+      expect(data).toBe('{"id":"bill"}')
+
+    it "should NOT stringify the highlights property", ->
+      annotation = {id: 'bill', highlights: {}}
+      data = store._dataFor(annotation)
+      expect(data).toBe('{"id":"bill"}')
+
+    it "should NOT append a highlights property if the annotation does not have one", ->
+      annotation = {id: 'bill'}
+      store._dataFor(annotation)
+      expect(annotation.hasOwnProperty('highlights')).toBeFalsy()
+
+    it "should extend the annotation with @options.annotationData", ->
+      annotation = {id: "cat"}
+      store.options.annotationData = {custom: 'value', customArray: []}
+      data = store._dataFor(annotation)
+      
+      expect(data).toEqual('{"id":"cat","custom":"value","customArray":[]}')
+      expect(annotation).toEqual({"id":"cat", "custom":"value", "customArray":[]})
