@@ -153,6 +153,52 @@ describe "Annotator.Plugin.Store", ->
       expect(request._id).toBe(data.id)
       expect(request._action).toBe(action)
 
+  describe "_apiRequestOptions", ->
+    beforeEach ->
+      spyOn(store, '_methodFor').andReturn('GET')
+      spyOn(store, '_dataFor').andReturn('{}')
+
+    it "should call Store#_methodFor() with the action", ->
+      action = 'read'
+      store._apiRequestOptions(action)
+      expect(store._methodFor).toHaveBeenCalledWith(action)
+
+    it "should return options for jQuery.ajax()", ->
+      action   = 'read'
+      data     = {}
+      callback = ->
+
+      options = store._apiRequestOptions(action, data, callback)
+      expect(options).toEqual({
+        type:        'GET'
+        beforeSend:  store._onBeforeSend
+        dataType:    "json"
+        success:     callback
+        error:       store._onError
+        data:        '{}'
+        contentType: "application/json; charset=utf-8"
+      })
+
+    it "should call Store#_dataFor() with the data if action is NOT search", ->
+      action = 'read'
+      data   = {}
+      store._apiRequestOptions(action, data)
+      expect(store._dataFor).toHaveBeenCalledWith(data)
+
+    it "should NOT call Store#_dataFor() if action is search", ->
+      action = 'search'
+      data   = {}
+      store._apiRequestOptions(action, data)
+      expect(store._dataFor).not.toHaveBeenCalled()
+
+    it "should NOT add the contentType property if the action is search", ->
+      action   = 'search'
+      data     = {}
+
+      options = store._apiRequestOptions(action, data)
+      expect(options.contentType).toBeUndefined()
+      expect(options.data).toBe(data)
+
   describe "_urlFor", ->
     it "should generate RESTful URLs by default", ->
       expect(store._urlFor('create')).toEqual('/store/annotations')
