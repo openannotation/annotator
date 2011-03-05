@@ -114,10 +114,20 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   #
   # @private
   _apiRequest: (action, obj, onSuccess) ->
-    id = obj && obj.id
+    id  = obj && obj.id
+    url = this._urlFor(action, id)
+    options = this._apiRequestOptions(action, obj, onSuccess)
 
+    request = $.ajax(url, options)
+
+    # Append the id and action to the request object
+    # for use in the error callback.
+    request._id = id
+    request._action = action
+    request
+
+  _apiRequestOptions: (action, obj, onSuccess) ->
     opts = {
-      url:        this._urlFor(action, id),
       type:       this._methodFor(action),
       beforeSend: this._onBeforeSend,
       dataType:   "json",
@@ -133,10 +143,7 @@ class Annotator.Plugin.Store extends Annotator.Plugin
         data:        obj && this._dataFor(obj)
         contentType: "application/json; charset=utf-8"
       })
-
-    request = $.ajax(opts)
-    request._id = id
-    request._action = action
+    opts
 
   _urlFor: (action, id) ->
     replaceWith = if id? then '/' + id else ''

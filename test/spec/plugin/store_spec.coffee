@@ -91,7 +91,7 @@ describe "Annotator.Plugin.Store", ->
   describe "_onLoadAnnotationsFromSearch", ->
     it "should call Store#_onLoadAnnotations() with data.rows", ->
       spyOn(store, '_onLoadAnnotations')
-      
+
       data = {rows: [{}, {}, {}]}
       store._onLoadAnnotationsFromSearch(data)
       expect(store._onLoadAnnotations.mostRecentCall.args[0]).toEqual(data.rows)
@@ -102,6 +102,56 @@ describe "Annotator.Plugin.Store", ->
       store._onLoadAnnotationsFromSearch()
       expect(store._onLoadAnnotations.mostRecentCall.args[0]).toEqual([])
 
+  describe "dumpAnnotations", ->
+    it "returns a list of its annotations", ->
+      store.annotations = [{text: "Foobar"}, {user: "Bob"}]
+      expect(store.dumpAnnotations()).toEqual([{text: "Foobar"}, {user: "Bob"}])
+
+    it "removes the highlights properties from the annotations", ->
+      store.annotations = [{highlights: "abc"}, {highlights: [1,2,3]}]
+      expect(store.dumpAnnotations()).toEqual([{}, {}])
+
+  describe "_apiRequest", ->
+    mockUri     = 'http://mock.com'
+    mockOptions = {}
+
+    beforeEach ->
+      spyOn(store, '_urlFor').andReturn(mockUri)
+      spyOn(store, '_apiRequestOptions').andReturn(mockOptions)
+      spyOn($, 'ajax').andReturn({})
+
+    it "should call Store#_urlFor() with the action", ->
+      action = 'read'
+
+      store._apiRequest(action)
+      expect(store._urlFor).toHaveBeenCalledWith(action, undefined)
+
+    it "should call Store#_urlFor() with the action and id extracted from the data", ->
+      data   = {id: 'myId'}
+      action = 'read'
+
+      store._apiRequest(action, data)
+      expect(store._urlFor).toHaveBeenCalledWith(action, data.id)
+
+    it "should call Store#_apiRequestOptions() with the action, data and callback", ->
+      data     = {id: 'myId'}
+      action   = 'read'
+      callback = ->
+
+      store._apiRequest(action, data, callback)
+      expect(store._apiRequestOptions).toHaveBeenCalledWith(action, data, callback)
+
+    it "should call jQuery#ajax()", ->
+      store._apiRequest()
+      expect($.ajax).toHaveBeenCalledWith(mockUri, mockOptions)
+
+    it "should return the jQuery XHR object with action and id appended", ->
+      data     = {id: 'myId'}
+      action   = 'read'
+
+      request = store._apiRequest(action, data)
+      expect(request._id).toBe(data.id)
+      expect(request._action).toBe(action)
 
   describe "_urlFor", ->
     it "should generate RESTful URLs by default", ->
@@ -123,11 +173,3 @@ describe "Annotator.Plugin.Store", ->
       expect(store._urlFor('update', 'bar')).toEqual('/some/prefix/bar/updateMe')
       expect(store._urlFor('destroy', 'baz')).toEqual('/some/prefix/baz/destroyMe')
 
-  describe "dumpAnnotations", ->
-    it "returns a list of its annotations", ->
-      store.annotations = [{text: "Foobar"}, {user: "Bob"}]
-      expect(store.dumpAnnotations()).toEqual([{text: "Foobar"}, {user: "Bob"}])
-
-    it "removes the highlights properties from the annotations", ->
-      store.annotations = [{highlights: "abc"}, {highlights: [1,2,3]}]
-      expect(store.dumpAnnotations()).toEqual([{}, {}])
