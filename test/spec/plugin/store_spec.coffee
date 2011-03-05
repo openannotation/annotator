@@ -219,3 +219,14 @@ describe "Annotator.Plugin.Store", ->
       expect(store._urlFor('update', 'bar')).toEqual('/some/prefix/bar/updateMe')
       expect(store._urlFor('destroy', 'baz')).toEqual('/some/prefix/baz/destroyMe')
 
+  describe "_methodFor", ->
+    it "should return the appropriate method for the action", ->
+      table = {
+        'create':  'POST'
+        'read':    'GET'
+        'update':  'PUT'
+        'destroy': 'DELETE'
+        'search':  'GET'
+      }
+      for action, method in table
+        expect(store._methodFor action).toEqual(method)
