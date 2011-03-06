@@ -30,8 +30,9 @@ class Annotator extends Delegator
     "mousedown": "checkForStartSelection"
 
   html:
-    hl:     "<span class='annotator-hl'></span>"
-    adder:  "<div class='annotator-adder'><button>Annotate</button></div>"
+    hl:      '<span class="annotator-hl"></span>'
+    adder:   '<div class="annotator-adder"><button>Annotate</button></div>'
+    wrapper: '<div class="annotator-wrapper"></div>'
 
   options: {} # Configuration options
 
@@ -70,20 +71,18 @@ class Annotator extends Delegator
 
     # Create model dom elements
     for name, src of @html
-      this[name] = $(src).appendTo(@wrapper).hide()
+      this[name] = $(src).appendTo(@wrapper).hide() unless name == 'wrapper'
 
   _setupWrapper: ->
-    # Wrap element contents
-    @wrapper = $("<div></div>").addClass('annotator-wrapper')
-    
+    @wrapper = $(@html.wrapper)
+
     # We need to remove all scripts within the element before wrapping the
     # contents within a div. Otherwise when scripts are reappended to the DOM
     # they will re-execute. This is an issue for scripts that call
     # document.write() - such as ads - as they will clear the page.
     @element.find('script').remove()
-
     @element.wrapInner(@wrapper)
-    @wrapper = @element.contents().get(0)
+
     this
 
   _setupViewer: ->
@@ -123,8 +122,8 @@ class Annotator extends Delegator
 
     a.ranges = for r in a.ranges
       sniffed    = Range.sniff(r)
-      normed     = sniffed.normalize(@wrapper)
-      serialized = normed.serialize(@wrapper, '.annotator-hl')
+      normed     = sniffed.normalize(@wrapper[0])
+      serialized = normed.serialize(@wrapper[0], '.annotator-hl')
 
     a.quote = normed.text()
     a.highlights = this.highlightRange(normed)
@@ -240,7 +239,7 @@ class Annotator extends Delegator
 
     if event and validSelection
       @adder
-        .css(util.mousePosition(event, @wrapper))
+        .css(util.mousePosition(event, @wrapper[0]))
         .show()
     else
       @adder.hide()
@@ -258,7 +257,7 @@ class Annotator extends Delegator
       .andSelf()
       .map -> return $(this).data("annotation")
 
-    this.showViewer($.makeArray(annotations), util.mousePosition(event, @wrapper))
+    this.showViewer($.makeArray(annotations), util.mousePosition(event, @wrapper[0]))
 
   onAdderMousedown: (event) =>
     event?.preventDefault()

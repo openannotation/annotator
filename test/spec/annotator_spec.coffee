@@ -67,6 +67,9 @@ describe 'Annotator', ->
     it "should call Annotator#_setupEditor()", ->
       expect(annotator._setupEditor).toHaveBeenCalled()
 
+  describe "_setupWrapper", ->
+    it "should wrap @element in a <div> wrapper", ->
+
   describe "checkForEndSelection", ->
     it "loads selections from the window object on checkForEndSelection", ->
       if /Node\.js/.test(navigator.userAgent)
