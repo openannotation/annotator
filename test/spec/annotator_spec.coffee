@@ -342,6 +342,45 @@ describe 'Annotator', ->
       expect(elements[0].firstChild).toBe(textNodes[0])
       expect(elements[1].firstChild).toBe(textNodes[1])
 
+  describe "addPlugin", ->
+    plugin = null
+
+    beforeEach ->
+      plugin = {
+        pluginInit: jasmine.createSpy('Plugin#pluginInit()')
+      }
+      Annotator.Plugin.Foo = jasmine.createSpy('Plugin#constructor()').andReturn(plugin)
+
+    it "should add and instantiate a plugin of the specified name", ->
+      annotator.addPlugin('Foo')
+      expect(Annotator.Plugin.Foo).toHaveBeenCalledWith(annotator.element[0], undefined)
+
+    it "should pass on the provided options", ->
+      options = {foo: 'bar'}
+      annotator.addPlugin('Foo', options)
+      expect(Annotator.Plugin.Foo).toHaveBeenCalledWith(annotator.element[0], options)
+
+    it "should attach the Annotator instance", ->
+      annotator.addPlugin('Foo')
+      expect(plugin.annotator).toBe(annotator)
+
+    it "should call Plugin#pluginInit()", ->
+      annotator.addPlugin('Foo')
+      expect(plugin.pluginInit).toHaveBeenCalled()
+
+    it "should complain if you try and instantiate a plugin twice", ->
+      spyOn(console, 'error')
+      annotator.addPlugin('Foo')
+      annotator.addPlugin('Foo')
+      expect(Annotator.Plugin.Foo.callCount).toBe(1)
+      expect(console.error).toHaveBeenCalled()
+
+    it "should complain if you try and instantiate a plugin that doesn't exist", ->
+      spyOn(console, 'error')
+      annotator.addPlugin('Bar')
+      expect(annotator.plugins['Bar']?).toBeFalsy()
+      expect(console.error).toHaveBeenCalled()
+
   describe "checkForEndSelection", ->
     it "loads selections from the window object on checkForEndSelection", ->
       if /Node\.js/.test(navigator.userAgent)
@@ -352,27 +391,6 @@ describe 'Annotator', ->
 
       annotator.checkForEndSelection()
       expect(annotator.selection).toEqual(expectation)
-
-  describe "addPlugin", ->
-
-    Annotator.Plugin.Foo = -> this.name = "Bar"
-
-    it "should add and instantiate a plugin of the specified name", ->
-      annotator.addPlugin('Foo')
-      expect(annotator.plugins['Foo'].name).toEqual('Bar')
-
-    it "should complain if you try and instantiate a plugin twice", ->
-      spyOn(console, 'error')
-      annotator.addPlugin('Foo')
-      annotator.addPlugin('Foo')
-      expect(annotator.plugins['Foo'].name).toEqual('Bar')
-      expect(console.error).toHaveBeenCalled()
-
-    it "should complain if you try and instantiate a plugin that doesn't exist", ->
-      spyOn(console, 'error')
-      annotator.addPlugin('Bar')
-      expect(annotator.plugins['Bar']?).toBeFalsy()
-      expect(console.error).toHaveBeenCalled()
 
 describe "Annotator.noConflict()", ->
   _Annotator = null

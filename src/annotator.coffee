@@ -272,6 +272,29 @@ class Annotator extends Delegator
       wrapper = @hl.clone().show()
       $(node).wrap(wrapper).parent().get(0)
 
+  # Public: Registers a plugin with the Annotator. A plugin can only be
+  # registered once. The plugin will be instantiated in the following order.
+  #
+  # 1. A new instance of the plugin will be created (providing the @element and
+  #    options as params) then assigned to the @plugins registry.
+  # 2. The current Annotator instance will be attached to the plugin.
+  # 3. The Plugin#pluginInit() method will be called if it exists.
+  #
+  # name    - Plugin to instantiate. Must be in the Annotator.Plugins namespace.
+  # options - Any options to be provided to the plugin constructor.
+  #
+  # Examples
+  #
+  #   annotator
+  #     .addPlugin('Tags')
+  #     .addPlugin('Store', {
+  #       prefix: '/store'
+  #     })
+  #     .addPlugin('Permissions', {
+  #       user: 'Bill'
+  #     })
+  #
+  # Returns itself to allow chaining.
   addPlugin: (name, options) ->
     if @plugins[name]
       console.error "You cannot have more than one instance of any plugin."
