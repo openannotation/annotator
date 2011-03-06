@@ -480,16 +480,60 @@ describe 'Annotator', ->
       annotator.clearViewerHideTimer()
       expect(annotator.viewerHideTimer).toBe(false)
 
-  describe "checkForEndSelection", ->
-    it "loads selections from the window object on checkForEndSelection", ->
-      if /Node\.js/.test(navigator.userAgent)
-        expectation = "Node selection"
-      else
-        expectation = "Text selection"
-        spyOn(window, 'getSelection').andReturn(expectation)
+  describe "checkForStartSelection", ->
+    beforeEach ->
+      spyOn(annotator, 'startViewerHideTimer')
+      annotator.mouseIsDown = false
+      annotator.checkForStartSelection()
 
-      annotator.checkForEndSelection()
-      expect(annotator.selection).toEqual(expectation)
+    it "should call Annotator#startViewerHideTimer()", ->
+      expect(annotator.startViewerHideTimer).toHaveBeenCalled()
+
+    it "should set @mouseIsDown to true", ->
+      expect(annotator.mouseIsDown).toBe(true)
+
+  describe "checkForEndSelection", ->
+    mockEvent = {}
+    mockOffset = null
+    mockSelection = null
+
+    beforeEach ->
+      mockOffset = {top: 0, left: 0}
+      mockSelection = {
+        rangeCount: 1,
+        isCollapsed: false
+      }
+
+      spyOn(util, 'mousePosition').andReturn(mockOffset)
+      spyOn(annotator.adder, 'show').andReturn(annotator.adder)
+      spyOn(annotator.adder, 'hide').andReturn(annotator.adder)
+      spyOn(annotator.adder, 'css').andReturn(annotator.adder)
+      spyOn(annotator, 'getSelection').andReturn(mockSelection)
+      annotator.mouseIsDown = true
+      annotator.checkForEndSelection(mockEvent)
+
+    it "should get the current selection from Annotator#getSelection()", ->
+      expect(annotator.getSelection).toHaveBeenCalled()
+
+    it "should set @mouseIsDown to false", ->
+      expect(annotator.mouseIsDown).toBe(false)
+
+    it "should display the Annotator#adder if valid selection", ->
+      expect(annotator.adder.show).toHaveBeenCalled()
+      expect(annotator.adder.css).toHaveBeenCalledWith(mockOffset)
+      expect(util.mousePosition).toHaveBeenCalledWith(mockEvent, annotator.wrapper[0])
+
+    it "should hide the Annotator#adder if NOT valid selection", ->
+      annotator.adder.hide.reset()
+      mockSelection.rangeCount = 0
+      annotator.checkForEndSelection(mockEvent)
+      expect(annotator.adder.hide).toHaveBeenCalled()
+
+    it "should return if @ignoreMouseup is true", ->
+      annotator.getSelection.reset()
+      annotator.ignoreMouseup = true
+      annotator.checkForEndSelection(mockEvent)
+      expect(annotator.getSelection).not.toHaveBeenCalled()
 
 describe "Annotator.noConflict()", ->
   _Annotator = null

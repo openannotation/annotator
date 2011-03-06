@@ -46,6 +46,8 @@ class Annotator extends Delegator
 
   selectedRanges: null
 
+  mouseIsDown: false
+
   ignoreMouseup: false
 
   viewerHideTimer: null
@@ -388,10 +390,24 @@ class Annotator extends Delegator
     clearTimeout(@viewerHideTimer)
     @viewerHideTimer = false
 
+  # Browser event callback function. Sets the @mouseIsDown property used to
+  # determine if a selection may have started to true. Also calls
+  # Annotator#startViewerHideTimer() to hide the Annotator#viewer.
+  #
+  # event - A mousedown Event object.
+  #
+  # Returns nothing.
   checkForStartSelection: (event) =>
     this.startViewerHideTimer()
     @mouseIsDown = true
 
+  # Browser event callback method. Checks to see if a selection has been made
+  # on mouseup and if so displays the Annotator#adder. If @ignoreMouseup is
+  # set will do nothing. Also resets the @mouseIsDown property.
+  #
+  # event - A mouseup Event object.
+  #
+  # Returns nothing.
   checkForEndSelection: (event) =>
     @mouseIsDown = false
 
