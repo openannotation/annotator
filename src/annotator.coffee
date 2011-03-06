@@ -46,6 +46,8 @@ class Annotator extends Delegator
 
   selectedRanges: null
 
+  ignoreMouseup: null
+
   # Public: Creates an instance of the Annotator. Requires a DOM Element in
   # which to watch for annotations as well as any options.
   #
@@ -75,6 +77,7 @@ class Annotator extends Delegator
 
     super
     @plugins = {}
+    @ignoreMouseup = false
     this._setupWrapper()._setupViewer()._setupEditor()
 
     # Create model dom elements
@@ -324,10 +327,20 @@ class Annotator extends Delegator
     @editor.load(annotation)
     this
 
+  # Callback method called when the @editor fires the "hide" event. Itself
+  # publishes the 'annotationEditorHidden' event and resets the @ignoreMouseup
+  # property to allow listening to mouse events.
+  #
+  # Returns nothing.
   onEditorHide: =>
     this.publish('annotationEditorHidden', [@editor])
     @ignoreMouseup = false
 
+  # Callback method called when the @editor fires the "save" event. Itself
+  # publishes the 'annotationEditorSubmit' event and creates/updates the
+  # edited annotation.
+  #
+  # Returns nothing.
   onEditorSubmit: (annotation) =>
     this.publish('annotationEditorSubmit', [@editor, annotation])
 

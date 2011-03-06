@@ -396,6 +396,43 @@ describe 'Annotator', ->
       annotator.showEditor({}, location)
       expect(annotator.editor.element.css).toHaveBeenCalledWith(location)
 
+  describe "onEditorHide", ->
+    it "should publish the 'annotationEditorHidden' event and provide the Editor and annotation", ->
+      spyOn(annotator, 'publish')
+      annotator.onEditorHide()
+      expect(annotator.publish).toHaveBeenCalledWith(
+        'annotationEditorHidden', [annotator.editor]
+      )
+
+    it "should set the Annotator#ignoreMouseup property to false", ->
+      annotator.ignoreMouseup = true
+      annotator.onEditorHide()
+      expect(annotator.ignoreMouseup).toBe(false)
+
+  describe "onEditorSubmit", ->
+    annotation = null
+
+    beforeEach ->
+      annotation = {"text": "bah"}
+      spyOn(annotator, 'publish')
+      spyOn(annotator, 'setupAnnotation')
+      spyOn(annotator, 'updateAnnotation')
+
+    it "should publish the 'annotationEditorSubmit' event and provide the Editor and annotation", ->
+      annotator.onEditorSubmit(annotation)
+      expect(annotator.publish).toHaveBeenCalledWith(
+        'annotationEditorSubmit', [annotator.editor, annotation]
+      )
+
+    it "should pass the annotation to Annotator#setupAnnotation() if has no ranges", ->
+      annotator.onEditorSubmit(annotation)
+      expect(annotator.setupAnnotation).toHaveBeenCalledWith(annotation)
+
+    it "should pass the annotation to Annotator#updateAnnotation() if has ranges", ->
+      annotation.ranges = []
+      annotator.onEditorSubmit(annotation)
+      expect(annotator.updateAnnotation).toHaveBeenCalledWith(annotation)
+
   describe "checkForEndSelection", ->
     it "loads selections from the window object on checkForEndSelection", ->
       if /Node\.js/.test(navigator.userAgent)
