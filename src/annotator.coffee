@@ -164,8 +164,6 @@ class Annotator extends Delegator
   # Returns the initialised annotation.
   setupAnnotation: (annotation, fireEvents=true) ->
     annotation.ranges or= @selectedRanges
-    annotation.highlights or= []
-
     annotation.ranges = for r in annotation.ranges
       sniffed    = Range.sniff(r)
       normed     = sniffed.normalize(@wrapper[0])

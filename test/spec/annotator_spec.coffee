@@ -197,6 +197,59 @@ describe 'Annotator', ->
       annotator.createAnnotation()
       expect(annotator.publish).toHaveBeenCalledWith('beforeAnnotationCreated', [{}])
 
+  describe "setupAnnotation", ->
+    annotation = null
+    quote = null
+    comment = null
+    element = null
+    annotationObj = null
+    normalizedRange = null
+    sniffedRange= null
+
+    beforeEach ->
+      quote   = 'This is some annotated text'
+      comment = 'This is a comment on an annotation'
+      element = $('<span />')
+
+      normalizedRange = {
+        text: jasmine.createSpy('normalizedRange#text()').andReturn(quote)
+        serialize: jasmine.createSpy('normalizedRange#serialize()').andReturn({})
+      }
+      sniffedRange = {
+        normalize: jasmine.createSpy('sniffedRange#normalize()').andReturn(normalizedRange)
+      }
+      spyOn(Range, 'sniff').andReturn(sniffedRange)
+      spyOn(annotator, 'highlightRange').andReturn(element)
+      spyOn(annotator, 'publish')
+
+      annotationObj = {
+        text: comment,
+        ranges: [1, 2]
+      }
+      annotation = annotator.setupAnnotation(annotationObj)
+
+    it "should return the annotation object with a comment", ->
+      expect(annotation.text).toEqual(comment)
+
+    it "should return the annotation object with the quoted text", ->
+      expect(annotation.quote).toEqual(quote)
+
+    it "should set the annotation.ranges", ->
+      expect(annotation.ranges).toEqual([{}, {}])
+
+    it "should call Annotator#highlightRange() with the normed range", ->
+      expect(annotator.highlightRange).toHaveBeenCalledWith(normalizedRange)
+
+    it "should store the annotation in the highlighted element's data store", ->
+      expect(element.data('annotation')).toBe(annotation)
+
+    it "should publish the 'annotationCreated' event", ->
+      expect(annotator.publish).toHaveBeenCalledWith('annotationCreated', [annotation])
+
+    it "should NOT publish the 'annotationCreated' event if fireEvents is false", ->
+      annotator.setupAnnotation(annotationObj, false)
+      expect(annotator.publish.callCount).toBe(1)
+
   describe "checkForEndSelection", ->
     it "loads selections from the window object on checkForEndSelection", ->
       if /Node\.js/.test(navigator.userAgent)
@@ -207,37 +260,6 @@ describe 'Annotator', ->
 
       annotator.checkForEndSelection()
       expect(annotator.selection).toEqual(expectation)
-
-  describe "setupAnnotation", ->
-    annotation = null
-    quote = null
-    comment = null
-
-    beforeEach ->
-      quote = 'This is some annotated text'
-      comment = 'This is a comment on an annotation'
-
-      # Create our quoted text.
-      paragraph = document.createElement('p')
-      node = document.createTextNode()
-      node.nodeValue = quote
-      paragraph.appendChild(node)
-
-      annotationObj = {
-        text: comment,
-        ranges: [new Range.NormalizedRange({
-          commonAncestor: paragraph,
-          start: node,
-          end: node
-        })]
-      }
-      annotation = annotator.setupAnnotation(annotationObj)
-
-    it "should return the annotation object with a comment", ->
-      expect(annotation.text).toEqual(comment)
-
-    it "should return the annotation object with the quoted text", ->
-      expect(annotation.quote).toEqual(quote)
 
   describe "dumpAnnotations", ->
     it "returns false and prints a warning if no Store plugin is active", ->
