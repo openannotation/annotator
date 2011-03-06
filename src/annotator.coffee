@@ -100,6 +100,7 @@ class Annotator extends Delegator
     # document.write() - such as ads - as they will clear the page.
     @element.find('script').remove()
     @element.wrapInner(@wrapper)
+    @wrapper = @element.find('.annotator-wrapper')
 
     this
 

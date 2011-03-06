@@ -69,9 +69,9 @@ describe 'Annotator', ->
 
   describe "_setupWrapper", ->
     it "should wrap children of @element in the @html.wrapper element", ->
-      annotator.element = $('<div />')
+      annotator.element = $('<div><span>contents</span></div>')
       annotator._setupWrapper()
-      expect(annotator.element.html()).toBe(annotator.html.wrapper)
+      expect(annotator.wrapper.html()).toBe('<span>contents</span>')
 
     it "should remove all script elements prior to wrapping", ->
       div = document.createElement('div')
