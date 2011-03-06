@@ -40,7 +40,14 @@ class Annotator extends Delegator
     return this unless Annotator.supported()
 
     super
+    @plugins = {}
+    this._setupWrapper()._setupViewer()._setupEditor()
 
+    # Create model dom elements
+    for name, src of @html
+      this[name] = $(src).appendTo(@wrapper).hide()
+
+  _setupWrapper: ->
     # Wrap element contents
     @wrapper = $("<div></div>").addClass('annotator-wrapper')
     
@@ -52,14 +59,9 @@ class Annotator extends Delegator
 
     @element.wrapInner(@wrapper)
     @wrapper = @element.contents().get(0)
+    this
 
-    # Set up the annotation editor
-    @editor = new Annotator.Editor()
-    @editor.hide()
-      .on('hide', this.onEditorHide)
-      .on('save', this.onEditorSubmit)
-      .element.appendTo(@wrapper)
-
+  _setupViewer: ->
     @viewer = new Annotator.Viewer()
     @viewer.hide()
       .on("edit", this.onEditAnnotation)
@@ -68,10 +70,15 @@ class Annotator extends Delegator
         "mouseover": this.clearViewerHideTimer
         "mouseout":  this.startViewerHideTimer
       })
+    this
 
-    # Create model dom elements
-    for name, src of @html
-      this[name] = $(src).appendTo(@wrapper).hide()
+  _setupEditor: ->
+    @editor = new Annotator.Editor()
+    @editor.hide()
+      .on('hide', this.onEditorHide)
+      .on('save', this.onEditorSubmit)
+      .element.appendTo(@wrapper)
+    this
 
   getSelection: ->
     @selection = util.getGlobal().getSelection()
