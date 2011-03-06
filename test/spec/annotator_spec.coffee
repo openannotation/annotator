@@ -208,7 +208,7 @@ describe 'Annotator', ->
       annotator.checkForEndSelection()
       expect(annotator.selection).toEqual(expectation)
 
-  describe "createAnnotation", ->
+  describe "setupAnnotation", ->
     annotation = null
     quote = null
     comment = null
@@ -231,7 +231,7 @@ describe 'Annotator', ->
           end: node
         })]
       }
-      annotation = annotator.createAnnotation(annotationObj)
+      annotation = annotator.setupAnnotation(annotationObj)
 
     it "should return the annotation object with a comment", ->
       expect(annotation.text).toEqual(comment)

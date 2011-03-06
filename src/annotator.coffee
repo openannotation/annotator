@@ -39,7 +39,7 @@ class Annotator extends Delegator
   plugins: {}
 
   editor: null
-  
+
   viewer: null
 
   selection: null
@@ -150,29 +150,38 @@ class Annotator extends Delegator
     this.publish('beforeAnnotationCreated', [annotation])
     annotation
 
-  createAnnotation: (annotation, fireEvents=true) ->
-    a = annotation
+  # Public: Initialises an annotation either from an object representation or
+  # an annotation created with Annotator#createNewAnnotation(). It finds the
+  # selected range and higlights the selection in the DOM.
+  #
+  # annotation - An annotation Object to initialise.
+  # fireEvents - Will fire the 'annotationCreated' event if true.
+  #
+  # Examples
+  #
+  #   example
+  #
+  # Returns the initialised annotation.
+  setupAnnotation: (annotation, fireEvents=true) ->
+    annotation.ranges or= @selectedRanges
+    annotation.highlights or= []
 
-    a or= {}
-    a.ranges or= @selectedRanges
-    a.highlights or= []
-
-    a.ranges = for r in a.ranges
+    annotation.ranges = for r in annotation.ranges
       sniffed    = Range.sniff(r)
       normed     = sniffed.normalize(@wrapper[0])
       serialized = normed.serialize(@wrapper[0], '.annotator-hl')
 
-    a.quote = normed.text()
-    a.highlights = this.highlightRange(normed)
+    annotation.quote = normed.text()
+    annotation.highlights = this.highlightRange(normed)
 
     # Save the annotation data on each highlighter element.
-    $(a.highlights).data('annotation', a)
+    $(annotation.highlights).data('annotation', annotation)
 
     # Fire annotationCreated events so that plugins can react to them.
     if fireEvents
-      this.publish('annotationCreated', [a])
+      this.publish('annotationCreated', [annotation])
 
-    a
+    annotation
 
   deleteAnnotation: (annotation) ->
     for h in annotation.highlights
@@ -191,7 +200,7 @@ class Annotator extends Delegator
       now = annList.splice(0,10)
 
       for n in now
-        results.push(this.createAnnotation(n, false)) # 'false' suppresses event firing
+        results.push(this.setupAnnotation(n, false)) # 'false' suppresses event firing
 
       # If there are more to do, do them after a 100ms break (for browser
       # responsiveness).
@@ -236,7 +245,7 @@ class Annotator extends Delegator
     this.publish('annotationEditorSubmit', [@editor, annotation])
 
     if annotation.ranges == undefined
-      this.createAnnotation(annotation)
+      this.setupAnnotation(annotation)
     else
       this.updateAnnotation(annotation)
 
