@@ -73,6 +73,10 @@ class Annotator extends Delegator
     for name, src of @html
       this[name] = $(src).appendTo(@wrapper).hide() unless name == 'wrapper'
 
+  # Wraps the children of @element in a @wrapper div. NOTE: This method will also
+  # remove any script elements inside @element to prevent them re-executing.
+  #
+  # Returns itself to allow chaining.
   _setupWrapper: ->
     @wrapper = $(@html.wrapper)
 

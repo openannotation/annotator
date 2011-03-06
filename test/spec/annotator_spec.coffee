@@ -68,7 +68,19 @@ describe 'Annotator', ->
       expect(annotator._setupEditor).toHaveBeenCalled()
 
   describe "_setupWrapper", ->
-    it "should wrap @element in a <div> wrapper", ->
+    it "should wrap children of @element in the @html.wrapper element", ->
+      annotator.element = $('<div />')
+      annotator._setupWrapper()
+      expect(annotator.element.html()).toBe(annotator.html.wrapper)
+
+    it "should remove all script elements prior to wrapping", ->
+      div = document.createElement('div')
+      div.appendChild(document.createElement('script'))
+
+      annotator.element = $(div)
+      annotator._setupWrapper()
+
+      expect(annotator.wrapper[0].innerHTML).toBe('')
 
   describe "checkForEndSelection", ->
     it "loads selections from the window object on checkForEndSelection", ->
