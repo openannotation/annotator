@@ -158,6 +158,36 @@ describe 'Annotator', ->
       annotator._setupEditor()
       expect(mockEditor.element.appendTo).toHaveBeenCalledWith(annotator.wrapper)
 
+  describe "getSelection", ->
+    mockGlobal = null
+    mockSelection = null
+
+    beforeEach ->
+      mockSelection = {
+        getRangeAt: jasmine.createSpy().andReturn('')
+        rangeCount: 1
+      }
+      mockGlobal = {
+        getSelection: jasmine.createSpy().andReturn(mockSelection)
+      }
+      spyOn(util, 'getGlobal').andReturn(mockGlobal)
+
+    it "should retrieve the global object and call getSelection()", ->
+      annotator.getSelection()
+      expect(mockGlobal.getSelection).toHaveBeenCalled()
+
+    it "should retrieve the global object and call getSelection()", ->
+      selection = annotator.getSelection()
+      expect(selection).toBe(mockSelection)
+
+    it "should set Annotator#selection", ->
+      annotator.getSelection()
+      expect(annotator.selection).toBe(mockSelection)
+
+    it "should iterate over selected ranges and set Annotator#selectedRanges", ->
+      annotator.getSelection()
+      expect(annotator.selectedRanges).toEqual([''])
+
   describe "checkForEndSelection", ->
     it "loads selections from the window object on checkForEndSelection", ->
       if /Node\.js/.test(navigator.userAgent)

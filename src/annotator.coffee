@@ -38,6 +38,14 @@ class Annotator extends Delegator
 
   plugins: {}
 
+  editor: null
+  
+  viewer: null
+
+  selection: null
+
+  selectedRanges: null
+
   # Public: Creates an instance of the Annotator. Requires a DOM Element in
   # which to watch for annotations as well as any options.
   #
@@ -90,7 +98,7 @@ class Annotator extends Delegator
     this
 
   # Creates an instance of Annotator.Viewer and assigns it to the @viewer
-  # property, appends it to the @wrapper and sets up event listeners. 
+  # property, appends it to the @wrapper and sets up event listeners.
   #
   # Returns itself to allow chaining.
   _setupViewer: ->
@@ -116,9 +124,14 @@ class Annotator extends Delegator
       .element.appendTo(@wrapper)
     this
 
+  # Public: Gets the currently selected range and sets the @selection and
+  # @selectedRanges properties.
+  #
+  # Returns DOMSelection.
   getSelection: ->
     @selection = util.getGlobal().getSelection()
     @selectedRanges = (@selection.getRangeAt(i) for i in [0...@selection.rangeCount])
+    @selection
 
   createNewAnnotation: () ->
     annotation = {}
@@ -244,10 +257,9 @@ class Annotator extends Delegator
     if (@ignoreMouseup)
       return
 
-    this.getSelection()
+    selection = this.getSelection()
 
-    s = @selection
-    validSelection = s?.rangeCount > 0 and not s.isCollapsed
+    validSelection = selection?.rangeCount > 0 and not selection.isCollapsed
 
     if event and validSelection
       @adder
@@ -309,7 +321,7 @@ Annotator.$ = $
 Annotator.supported = -> (-> !!this.getSelection)()
 
 # Restores the Annotator property on the global object to it's
-# previous value and returns the Annotator. 
+# previous value and returns the Annotator.
 Annotator.noConflict = ->
   util.getGlobal().Annotator = _Annotator
   this
