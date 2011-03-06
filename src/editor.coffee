@@ -87,10 +87,10 @@ class Annotator.Editor extends Delegator
   show: (event) =>
     event?.preventDefault()
 
-    @element.removeClass(@classes.hide).trigger('show')
+    @element.removeClass(@classes.hide)
     @element.find('.annotator-save').addClass(@classes.focus)
     @element.find(':input:first').focus()
-    this
+    this.publish('show')
 
   # Public: Hides the Editor and fires a "hide" event. Can be used as an event
   # callback and will call Event#preventDefault() on the supplied event.
@@ -110,8 +110,8 @@ class Annotator.Editor extends Delegator
   hide: (event) =>
     event?.preventDefault()
 
-    @element.addClass(@classes.hide).trigger('hide')
-    this
+    @element.addClass(@classes.hide)
+    this.publish('hide')
 
   # Public: Loads an annotation into the Editor and displays it setting
   # Editor#annotation to the provided annotation. It fires the "load" event
