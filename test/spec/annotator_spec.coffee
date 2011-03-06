@@ -456,6 +456,24 @@ describe 'Annotator', ->
         'annotationViewerShown', [annotator.viewer, annotations]
       )
 
+  describe "startViewerHideTimer", ->
+    beforeEach ->
+      spyOn(annotator.viewer, 'hide')
+
+    it "should call Viewer.hide() on the Annotator#viewer after 250ms", ->
+      annotator.startViewerHideTimer()
+      expect(annotator.viewerHideTimer).toBeTruthy()
+      waits 250
+      runs ->
+        expect(annotator.viewer.hide).toHaveBeenCalled()
+
+    it "should NOT call Viewer.hide() on the Annotator#viewer if @viewerHideTimer is set", ->
+      annotator.viewerHideTimer = 60
+      annotator.startViewerHideTimer()
+      waits 250
+      runs ->
+        expect(annotator.viewer.hide).not.toHaveBeenCalled()
+
   describe "checkForEndSelection", ->
     it "loads selections from the window object on checkForEndSelection", ->
       if /Node\.js/.test(navigator.userAgent)

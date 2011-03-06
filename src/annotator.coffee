@@ -46,7 +46,9 @@ class Annotator extends Delegator
 
   selectedRanges: null
 
-  ignoreMouseup: null
+  ignoreMouseup: false
+
+  viewerHideTimer: null
 
   # Public: Creates an instance of the Annotator. Requires a DOM Element in
   # which to watch for annotations as well as any options.
@@ -77,7 +79,6 @@ class Annotator extends Delegator
 
     super
     @plugins = {}
-    @ignoreMouseup = false
     this._setupWrapper()._setupViewer()._setupEditor()
 
     # Create model dom elements
@@ -369,13 +370,20 @@ class Annotator extends Delegator
 
     this.publish('annotationViewerShown', [@viewer, annotations])
 
-  startViewerHideTimer: (e) =>
+  # Annotator#element event callback. Allows 250ms for mouse pointer to get from
+  # annotation highlight to @viewer to manipulate annotations. If timer expires
+  # the @viewer is hidden.
+  #
+  # Returns nothing.
+  startViewerHideTimer: =>
     # Don't do this if timer has already been set by another annotation.
     if not @viewerHideTimer
-      # Allow 250ms for pointer to get from annotation to viewer to manipulate
-      # annotations.
       @viewerHideTimer = setTimeout ((ann) -> ann.viewer.hide()), 250, this
 
+  # Viewer#element event callback. Clears the timer set by
+  # Annotator#startViewerHideTimer() when the @viewer is moused over.
+  #
+  # Returns nothing.
   clearViewerHideTimer: () =>
     clearTimeout(@viewerHideTimer)
     @viewerHideTimer = false
