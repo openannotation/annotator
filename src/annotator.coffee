@@ -252,12 +252,21 @@ class Annotator extends Delegator
     loader(annotations) if annotations.length
     this
 
+  # Public: Calls the Store#dumpAnnotations() method.
+  #
+  # Returns dumped annotations Array or false if Store is not loaded.
   dumpAnnotations: () ->
     if @plugins['Store']
       @plugins['Store'].dumpAnnotations()
     else
       console.warn("Can't dump annotations without Store plugin.")
 
+  # Public: Wraps the DOM Nodes within the provided range in the @hl wrapper
+  # and returns the highlight Elements.
+  #
+  # normedRange - A NormalizedRange to be highlighted.
+  #
+  # Returns an array of highlight Elements.
   highlightRange: (normedRange) ->
     elemList = for node in normedRange.textNodes()
       wrapper = @hl.clone().show()

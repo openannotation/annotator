@@ -316,6 +316,32 @@ describe 'Annotator', ->
       runs ->
         expect(annotator.setupAnnotation.callCount).toBe(13)
 
+  describe "dumpAnnotations", ->
+    it "returns false and prints a warning if no Store plugin is active", ->
+      spyOn(console, 'warn')
+      expect(annotator.dumpAnnotations()).toBeFalsy()
+      expect(console.warn).toHaveBeenCalled()
+
+    it "returns the results of the Store plugins dumpAnnotations method", ->
+      annotator.plugins.Store = { dumpAnnotations: -> [1,2,3] }
+      expect(annotator.dumpAnnotations()).toEqual([1,2,3])
+
+  describe "highlightRange", ->
+    it "should return a highlight element for every textNode in the range", ->
+      textNodes = for text in ['hello', 'world']
+        node = document.createTextNode()
+        node.nodeValue = text
+        node
+      mockRange = {
+        textNodes: -> textNodes
+      }
+      elements = annotator.highlightRange(mockRange)
+
+      expect(elements.length).toBe(2)
+      expect(elements[0].className).toBe('annotator-hl')
+      expect(elements[0].firstChild).toBe(textNodes[0])
+      expect(elements[1].firstChild).toBe(textNodes[1])
+
   describe "checkForEndSelection", ->
     it "loads selections from the window object on checkForEndSelection", ->
       if /Node\.js/.test(navigator.userAgent)
@@ -326,16 +352,6 @@ describe 'Annotator', ->
 
       annotator.checkForEndSelection()
       expect(annotator.selection).toEqual(expectation)
-
-  describe "dumpAnnotations", ->
-    it "returns false and prints a warning if no Store plugin is active", ->
-      spyOn(console, 'warn')
-      expect(annotator.dumpAnnotations()).toBeFalsy()
-      expect(console.warn).toHaveBeenCalled()
-
-    it "returns the results of the Store plugins dumpAnnotations method", ->
-      annotator.plugins.Store = { dumpAnnotations: -> [1,2,3] }
-      expect(annotator.dumpAnnotations()).toEqual([1,2,3])
 
   describe "addPlugin", ->
 
