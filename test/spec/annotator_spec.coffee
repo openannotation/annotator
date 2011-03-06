@@ -259,6 +259,36 @@ describe 'Annotator', ->
       expect(annotator.publish).toHaveBeenCalledWith('beforeAnnotationUpdated', [annotation])
       expect(annotator.publish).toHaveBeenCalledWith('annotationUpdated', [annotation])
 
+  describe "deleteAnnotation", ->
+    annotation = null
+    div = null
+
+    beforeEach ->
+      annotation = {
+        text: "my annotation comment"
+        highlights: $('<span><em>Hats</em></span><span><em>Gloves</em></span>')
+      }
+      div = $('<div />').append(annotation.highlights)
+
+    it "should remove the highlights from the DOM", ->
+      spyOn(annotator, 'publish')
+      annotation.highlights.each ->
+        expect($(this).parent().length).toBe(1)
+
+      annotator.deleteAnnotation(annotation)
+      annotation.highlights.each ->
+        expect($(this).parent().length).toBe(0)
+
+    it "should leave the content of the highlights in place", ->
+      spyOn(annotator, 'publish')
+      annotator.deleteAnnotation(annotation)
+      expect(div.html()).toBe('<em>Hats</em><em>Gloves</em>')
+
+    it "should publish the 'annotationDeleted' event", ->
+      spyOn(annotator, 'publish')
+      annotator.deleteAnnotation(annotation)
+      expect(annotator.publish).toHaveBeenCalledWith('annotationDeleted', [annotation])
+
   describe "checkForEndSelection", ->
     it "loads selections from the window object on checkForEndSelection", ->
       if /Node\.js/.test(navigator.userAgent)
