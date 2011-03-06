@@ -224,14 +224,25 @@ class Annotator extends Delegator
     this.publish('annotationDeleted', [annotation])
     annotation
 
+  # Public: Loads an Array of annotations into the @element. Breaks the task
+  # into chunks of 10 annotations.
+  #
+  # annotations - An Array of annotation Objects.
+  #
+  # Examples
+  #
+  #   loadAnnotationsFromStore (annotations) ->
+  #     annotator.loadAnnotations(annotations)
+  #
+  # Returns itself for chaining.
   loadAnnotations: (annotations=[]) ->
     results = []
 
-    loader = (annList) =>
+    loader = (annList=[]) =>
       now = annList.splice(0,10)
 
       for n in now
-        results.push(this.setupAnnotation(n, false)) # 'false' suppresses event firing
+        this.setupAnnotation(n, false) # 'false' suppresses event firing
 
       # If there are more to do, do them after a 100ms break (for browser
       # responsiveness).
@@ -239,6 +250,7 @@ class Annotator extends Delegator
         setTimeout((-> loader(annList)), 100)
 
     loader(annotations) if annotations.length
+    this
 
   dumpAnnotations: () ->
     if @plugins['Store']

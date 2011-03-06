@@ -289,6 +289,33 @@ describe 'Annotator', ->
       annotator.deleteAnnotation(annotation)
       expect(annotator.publish).toHaveBeenCalledWith('annotationDeleted', [annotation])
 
+  describe "loadAnnotations", ->
+    beforeEach ->
+      spyOn(annotator, 'setupAnnotation')
+
+    it "should call Annotator#setupAnnotation for each annotation in the Array", ->
+      annotations = [{}, {}, {}, {}]
+      annotator.loadAnnotations(annotations)
+      expect(annotator.setupAnnotation.callCount).toBe(4)
+
+    it "should suppress the 'annotationCreated' event", ->
+      annotations = [{}]
+      annotator.loadAnnotations(annotations)
+      expect(annotator.setupAnnotation).toHaveBeenCalledWith({}, false)
+
+    it "should break the annotations into blocks of 10", ->
+      annotations = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
+      count = annotations.length
+
+      annotator.loadAnnotations(annotations)
+      expect(annotator.setupAnnotation.callCount).toBe(10)
+
+      waitsFor ->
+        !annotations.length
+
+      runs ->
+        expect(annotator.setupAnnotation.callCount).toBe(13)
+
   describe "checkForEndSelection", ->
     it "loads selections from the window object on checkForEndSelection", ->
       if /Node\.js/.test(navigator.userAgent)
