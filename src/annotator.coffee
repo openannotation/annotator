@@ -89,6 +89,10 @@ class Annotator extends Delegator
 
     this
 
+  # Creates an instance of Annotator.Viewer and assigns it to the @viewer
+  # property, appends it to the @wrapper and sets up event listeners. 
+  #
+  # Returns itself to allow chaining.
   _setupViewer: ->
     @viewer = new Annotator.Viewer()
     @viewer.hide()

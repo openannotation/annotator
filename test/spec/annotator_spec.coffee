@@ -82,6 +82,48 @@ describe 'Annotator', ->
 
       expect(annotator.wrapper[0].innerHTML).toBe('')
 
+  describe "_setupViewer", ->
+    mockViewer = null
+
+    beforeEach ->
+      element = $('<div />')
+
+      mockViewer = {
+        element: element
+        hide: jasmine.createSpy('Viewer#hide()')
+        on: jasmine.createSpy('Viewer#on()')
+      }
+      mockViewer.on.andReturn(mockViewer)
+      mockViewer.hide.andReturn(mockViewer)
+
+      spyOn(element, 'bind').andReturn(element)
+      spyOn(element, 'appendTo').andReturn(element)
+      spyOn(Annotator, 'Viewer').andReturn(mockViewer)
+
+    it "should create a new instance of Annotator.Viewer and set Annotator#viewer", ->
+      annotator._setupViewer()
+      expect(annotator.viewer).toBe(mockViewer)
+
+    it "should hide the annotator on creation", ->
+      annotator._setupViewer()
+      expect(mockViewer.hide).toHaveBeenCalled()
+
+    it "should subscribe to custom events", ->
+      annotator._setupViewer()
+      expect(mockViewer.on).toHaveBeenCalledWith('edit', annotator.onEditAnnotation)
+      expect(mockViewer.on).toHaveBeenCalledWith('delete', annotator.onDeleteAnnotation)
+
+    it "should bind to browser mouseover and  events", ->
+      annotator._setupViewer()
+      expect(mockViewer.element.bind).toHaveBeenCalledWith({
+        'mouseover': annotator.clearViewerHideTimer
+        'mouseout':  annotator.startViewerHideTimer
+      })
+      
+    it "should append the Viewer#element to the Annotator#wrapper", ->
+      annotator._setupViewer()
+      expect(mockViewer.element.appendTo).toHaveBeenCalledWith(annotator.wrapper)
+
   describe "checkForEndSelection", ->
     it "loads selections from the window object on checkForEndSelection", ->
       if /Node\.js/.test(navigator.userAgent)
