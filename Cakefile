@@ -70,16 +70,15 @@ packageBookmarkletDemo = ->
   html = fs.readFileSync(template).toString()
   testHtml = fs.readFileSync(testTemplate).toString()
 
-  buildBookmarklet false, (source) ->
-     html = html.replace '__bookmarklet__', source.replace(/"/g, '&quot;')
-     testHtml = testHtml.replace '__bookmarklet__', source
+  buildBookmarklet (source) ->
+    html = html.replace '__bookmarklet__', source.replace(/"/g, '&quot;')
+    fs.writeFileSync destination, html
+    console.log "Updated #{destination}"
 
-     fs.writeFileSync destination, html
-     fs.writeFileSync testDestination, testHtml
-
-     console.log "Updated #{destination}"
-     console.log "Updated #{testDestination}"
-
+    buildBookmarklet false, (source) ->
+      testHtml = testHtml.replace '__bookmarklet__', source
+      fs.writeFileSync testDestination, testHtml
+      console.log "Updated #{testDestination}"
 
 # Compile & compress annotator scripts.
 packageBookmarkletJavaScript = ->
