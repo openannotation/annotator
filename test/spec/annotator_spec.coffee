@@ -41,6 +41,32 @@ describe 'Annotator', ->
       annotator.element.mouseup()
       expect(annotator.checkForEndSelection).toHaveBeenCalled()
 
+  describe "constructor", ->
+    beforeEach ->
+      spyOn(annotator, '_setupWrapper').andReturn(annotator)
+      spyOn(annotator, '_setupViewer').andReturn(annotator)
+      spyOn(annotator, '_setupEditor').andReturn(annotator)
+      Annotator.prototype.constructor.call(annotator, annotator.element[0])
+
+    it "should have a jQuery wrapper as @element", ->
+      expect(annotator.element instanceof $).toBeTruthy()
+
+    it "should create an empty @plugin object", ->
+      expect(annotator.hasOwnProperty('plugins')).toBeTruthy()
+
+    it "should create the adder and highlight properties from the @html strings", ->
+      expect(annotator.adder instanceof $).toBeTruthy()
+      expect(annotator.hl instanceof $).toBeTruthy()
+
+    it "should call Annotator#_setupWrapper()", ->
+      expect(annotator._setupWrapper).toHaveBeenCalled()
+
+    it "should call Annotator#_setupViewer()", ->
+      expect(annotator._setupViewer).toHaveBeenCalled()
+
+    it "should call Annotator#_setupEditor()", ->
+      expect(annotator._setupEditor).toHaveBeenCalled()
+
   describe "checkForEndSelection", ->
     it "loads selections from the window object on checkForEndSelection", ->
       if /Node\.js/.test(navigator.userAgent)

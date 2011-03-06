@@ -37,6 +37,29 @@ class Annotator extends Delegator
 
   plugins: {}
 
+  # Public: Creates an instance of the Annotator. Requires a DOM Element in
+  # which to watch for annotations as well as any options.
+  #
+  # NOTE: If the Annotator is not supported by the current browser it will not
+  # perform any setup and simply return a basic object. This allows plugins
+  # to still be loaded but will not function as expected. It is reccomended
+  # to call Annotator.supported() before creating the instance or using the
+  # Unsupported plugin which will notify users that the Annotator will not work.
+  #
+  # element - A DOM Element in which to annotate.
+  # options - An options Object. NOTE: There are currently no user options.
+  #
+  # Examples
+  #
+  #   annotator = new Annotator(document.body)
+  #
+  #   # Example of checking for support.
+  #   if Annotator.supported()
+  #     annotator = new Annotator(document.body)
+  #   else
+  #     # Fallback for unsupported browsers.
+  #
+  # Returns a new instance of the Annotator.
   constructor: (element, options) ->
     # Return early if the annotator is not supported.
     return this unless Annotator.supported()
