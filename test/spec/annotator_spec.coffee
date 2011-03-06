@@ -113,16 +113,50 @@ describe 'Annotator', ->
       expect(mockViewer.on).toHaveBeenCalledWith('edit', annotator.onEditAnnotation)
       expect(mockViewer.on).toHaveBeenCalledWith('delete', annotator.onDeleteAnnotation)
 
-    it "should bind to browser mouseover and  events", ->
+    it "should bind to browser mouseover and mouseout events", ->
       annotator._setupViewer()
       expect(mockViewer.element.bind).toHaveBeenCalledWith({
         'mouseover': annotator.clearViewerHideTimer
         'mouseout':  annotator.startViewerHideTimer
       })
-      
+
     it "should append the Viewer#element to the Annotator#wrapper", ->
       annotator._setupViewer()
       expect(mockViewer.element.appendTo).toHaveBeenCalledWith(annotator.wrapper)
+
+  describe "_setupEditor", ->
+    mockEditor = null
+
+    beforeEach ->
+      element = $('<div />')
+
+      mockEditor = {
+        element: element
+        hide: jasmine.createSpy('Editor#hide()')
+        on: jasmine.createSpy('Editor#on()')
+      }
+      mockEditor.on.andReturn(mockEditor)
+      mockEditor.hide.andReturn(mockEditor)
+
+      spyOn(element, 'appendTo').andReturn(element)
+      spyOn(Annotator, 'Editor').andReturn(mockEditor)
+
+    it "should create a new instance of Annotator.Editor and set Annotator#editor", ->
+      annotator._setupEditor()
+      expect(annotator.editor).toBe(mockEditor)
+
+    it "should hide the annotator on creation", ->
+      annotator._setupEditor()
+      expect(mockEditor.hide).toHaveBeenCalled()
+
+    it "should subscribe to custom events", ->
+      annotator._setupEditor()
+      expect(mockEditor.on).toHaveBeenCalledWith('hide', annotator.onEditorHide)
+      expect(mockEditor.on).toHaveBeenCalledWith('save', annotator.onEditorSubmit)
+
+    it "should append the Editor#element to the Annotator#wrapper", ->
+      annotator._setupEditor()
+      expect(mockEditor.element.appendTo).toHaveBeenCalledWith(annotator.wrapper)
 
   describe "checkForEndSelection", ->
     it "loads selections from the window object on checkForEndSelection", ->

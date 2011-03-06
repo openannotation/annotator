@@ -104,6 +104,10 @@ class Annotator extends Delegator
       })
     this
 
+  # Creates an instance of the Annotator.Editor and assigns it to @editor.
+  # Appends this to the @wrapper and sets up event listeners.
+  #
+  # Returns itself for chaining.
   _setupEditor: ->
     @editor = new Annotator.Editor()
     @editor.hide()
