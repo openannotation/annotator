@@ -1,18 +1,56 @@
 describe 'Annotator', ->
-  a = null
+  annotator = null
 
   beforeEach ->
-    a = new Annotator($('<div></div>')[0], {})
+    annotator = new Annotator($('<div></div>')[0], {})
 
-  it "loads selections from the window object on checkForSelection", ->
-    if /Node\.js/.test(navigator.userAgent)
-      expectation = "Node selection"
-    else
-      expectation = "Text selection"
-      spyOn(window, 'getSelection').andReturn(expectation)
+  describe "events", ->
+    it "should call Annotator#onAdderClick() when adder is clicked", ->
+      spyOn(annotator, 'onAdderClick')
+      annotator.element.find('.annotator-adder button').click()
+      expect(annotator.onAdderClick).toHaveBeenCalled()
 
-    a.checkForEndSelection()
-    expect(a.selection).toEqual(expectation)
+    it "should call Annotator#onAdderMousedown() when mouse button is held down on adder", ->
+      spyOn(annotator, 'onAdderMousedown')
+      annotator.element.find('.annotator-adder button').mousedown()
+      expect(annotator.onAdderMousedown).toHaveBeenCalled()
+
+    it "should call Annotator#onHighlightMouseover() when mouse moves over a highlight", ->
+      spyOn(annotator, 'onHighlightMouseover')
+
+      highlight = $('<span class="annotator-hl" />').appendTo(annotator.element)
+      highlight.mouseover()
+
+      expect(annotator.onHighlightMouseover).toHaveBeenCalled()
+
+    it "should call Annotator#startViewerHideTimer() when mouse moves off a highlight", ->
+      spyOn(annotator, 'startViewerHideTimer')
+
+      highlight = $('<span class="annotator-hl" />').appendTo(annotator.element)
+      highlight.mouseout()
+
+      expect(annotator.startViewerHideTimer).toHaveBeenCalled()
+
+    it "should call Annotator#checkForStartSelection() when mouse button is pressed inside element", ->
+      spyOn(annotator, 'checkForStartSelection')
+      annotator.element.mousedown()
+      expect(annotator.checkForStartSelection).toHaveBeenCalled()
+
+    it "should call Annotator#checkForEndSelection() when mouse button is lifted inside element", ->
+      spyOn(annotator, 'checkForEndSelection')
+      annotator.element.mouseup()
+      expect(annotator.checkForEndSelection).toHaveBeenCalled()
+
+  describe "checkForEndSelection", ->
+    it "loads selections from the window object on checkForEndSelection", ->
+      if /Node\.js/.test(navigator.userAgent)
+        expectation = "Node selection"
+      else
+        expectation = "Text selection"
+        spyOn(window, 'getSelection').andReturn(expectation)
+
+      annotator.checkForEndSelection()
+      expect(annotator.selection).toEqual(expectation)
 
   describe "createAnnotation", ->
     annotation = null
@@ -37,7 +75,7 @@ describe 'Annotator', ->
           end: node
         })]
       }
-      annotation = a.createAnnotation(annotationObj)
+      annotation = annotator.createAnnotation(annotationObj)
 
     it "should return the annotation object with a comment", ->
       expect(annotation.text).toEqual(comment)
@@ -48,32 +86,32 @@ describe 'Annotator', ->
   describe "dumpAnnotations", ->
     it "returns false and prints a warning if no Store plugin is active", ->
       spyOn(console, 'warn')
-      expect(a.dumpAnnotations()).toBeFalsy()
+      expect(annotator.dumpAnnotations()).toBeFalsy()
       expect(console.warn).toHaveBeenCalled()
 
     it "returns the results of the Store plugins dumpAnnotations method", ->
-      a.plugins.Store = { dumpAnnotations: -> [1,2,3] }
-      expect(a.dumpAnnotations()).toEqual([1,2,3])
+      annotator.plugins.Store = { dumpAnnotations: -> [1,2,3] }
+      expect(annotator.dumpAnnotations()).toEqual([1,2,3])
 
   describe "addPlugin", ->
 
     Annotator.Plugin.Foo = -> this.name = "Bar"
 
     it "should add and instantiate a plugin of the specified name", ->
-      a.addPlugin('Foo')
-      expect(a.plugins['Foo'].name).toEqual('Bar')
+      annotator.addPlugin('Foo')
+      expect(annotator.plugins['Foo'].name).toEqual('Bar')
 
     it "should complain if you try and instantiate a plugin twice", ->
       spyOn(console, 'error')
-      a.addPlugin('Foo')
-      a.addPlugin('Foo')
-      expect(a.plugins['Foo'].name).toEqual('Bar')
+      annotator.addPlugin('Foo')
+      annotator.addPlugin('Foo')
+      expect(annotator.plugins['Foo'].name).toEqual('Bar')
       expect(console.error).toHaveBeenCalled()
 
     it "should complain if you try and instantiate a plugin that doesn't exist", ->
       spyOn(console, 'error')
-      a.addPlugin('Bar')
-      expect(a.plugins['Bar']?).toBeFalsy()
+      annotator.addPlugin('Bar')
+      expect(annotator.plugins['Bar']?).toBeFalsy()
       expect(console.error).toHaveBeenCalled()
 
 describe "Annotator.noConflict()", ->
@@ -88,7 +126,7 @@ describe "Annotator.noConflict()", ->
   it "should restore the value previously occupied by window.Annotator", ->
     Annotator.noConflict()
     expect(window.Annotator).not.toBeDefined()
-  
+
   it "should return the Annotator object", ->
     result = Annotator.noConflict()
     expect(result).toBe(_Annotator)

@@ -14,9 +14,11 @@ util =
       left: e.pageX - offset.left
     }
 
+# Store a reference to the current Annotator object.
 _Annotator = this.Annotator
 
 class Annotator extends Delegator
+  # Events to be bound on Annotator#element.
   events:
     ".annotator-adder button click":     "onAdderClick"
     ".annotator-adder button mousedown": "onAdderMousedown"
