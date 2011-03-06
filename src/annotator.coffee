@@ -311,7 +311,7 @@ class Annotator extends Delegator
         console.error "Could not load #{name} plugin. Have you included the appropriate <script> tag?"
     this # allow chaining
 
-  # Public: Loads the Editor with the provided annotation and updates its
+  # Public: Loads the @editor with the provided annotation and updates its
   # position in the window.
   #
   # annotation - An annotation to load into the editor.
@@ -349,6 +349,20 @@ class Annotator extends Delegator
     else
       this.updateAnnotation(annotation)
 
+  # Public: Loads the @viewer with an Array of annotations and positions it
+  # at the location provided. Calls the 'annotationViewerShown' event.
+  #
+  # annotation - An Array of annotations to load into the viewer.
+  # location   - Position to set the Viewer in the form {top: y, left: x}
+  #
+  # Examples
+  #
+  #   annotator.showViewer(
+  #    [{text: "my comment"}, {text: "my other comment"}],
+  #    {top: 34, left: 234})
+  #   )
+  #
+  # Returns itself to allow chaining.
   showViewer: (annotations, location) =>
     @viewer.element.css(location)
     @viewer.load(annotations)

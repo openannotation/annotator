@@ -418,7 +418,7 @@ describe 'Annotator', ->
       spyOn(annotator, 'setupAnnotation')
       spyOn(annotator, 'updateAnnotation')
 
-    it "should publish the 'annotationEditorSubmit' event and provide the Editor and annotation", ->
+    it "should publish the 'annotationEditorSubmit' event and pass the Editor and annotation", ->
       annotator.onEditorSubmit(annotation)
       expect(annotator.publish).toHaveBeenCalledWith(
         'annotationEditorSubmit', [annotator.editor, annotation]
@@ -432,6 +432,29 @@ describe 'Annotator', ->
       annotation.ranges = []
       annotator.onEditorSubmit(annotation)
       expect(annotator.updateAnnotation).toHaveBeenCalledWith(annotation)
+
+  describe "showViewer", ->
+    beforeEach ->
+      spyOn(annotator, 'publish')
+      spyOn(annotator.viewer, 'load')
+      spyOn(annotator.viewer.element, 'css')
+
+    it "should call Viewer#load() on the Annotator#viewer", ->
+      annotations = [{text: 'my annotation comment'}]
+      annotator.showViewer(annotations, {})
+      expect(annotator.viewer.load).toHaveBeenCalledWith(annotations)
+
+    it "should set the top/left properties of the Editor#element", ->
+      location = {top: 20, left: 20}
+      annotator.showViewer([], location)
+      expect(annotator.viewer.element.css).toHaveBeenCalledWith(location) 
+
+    it "should publish the 'annotationViewerShown' event passing the viewer and annotations", ->
+      annotations = [{text: 'my annotation comment'}]
+      annotator.showViewer(annotations, {})
+      expect(annotator.publish).toHaveBeenCalledWith(
+        'annotationViewerShown', [annotator.viewer, annotations]
+      )
 
   describe "checkForEndSelection", ->
     it "loads selections from the window object on checkForEndSelection", ->
