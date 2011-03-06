@@ -188,6 +188,15 @@ describe 'Annotator', ->
       annotator.getSelection()
       expect(annotator.selectedRanges).toEqual([''])
 
+  describe "createNewAnnotation", ->
+    it "should return an empty annotation", ->
+      expect(annotator.createNewAnnotation()).toEqual({})
+
+    it "should fire the 'beforeAnnotationCreated' event providing the annotation", ->
+      spyOn(annotator, 'publish')
+      annotator.createNewAnnotation()
+      expect(annotator.publish).toHaveBeenCalledWith('beforeAnnotationCreated', [{}])
+
   describe "checkForEndSelection", ->
     it "loads selections from the window object on checkForEndSelection", ->
       if /Node\.js/.test(navigator.userAgent)

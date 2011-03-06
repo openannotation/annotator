@@ -133,6 +133,18 @@ class Annotator extends Delegator
     @selectedRanges = (@selection.getRangeAt(i) for i in [0...@selection.rangeCount])
     @selection
 
+  # Public: Creates and returns a new annotation object. Publishes the
+  # 'beforeAnnotationCreated' event to allow the new annotation to be modified.
+  #
+  # Examples
+  #
+  #   annotator.createNewAnnotation() # Returns {}
+  #
+  #   annotator.on 'beforeAnnotationCreated', (annotation) ->
+  #     annotation.myProperty = 'This is a custom property'
+  #   annotator.createNewAnnotation() # Returns {myProperty: "This is a…"}
+  #
+  # Returns a newly created annotation Object.
   createNewAnnotation: () ->
     annotation = {}
     this.publish('beforeAnnotationCreated', [annotation])
