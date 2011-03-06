@@ -390,7 +390,7 @@ class Annotator extends Delegator
     clearTimeout(@viewerHideTimer)
     @viewerHideTimer = false
 
-  # Browser event callback function. Sets the @mouseIsDown property used to
+  # Annotator#element callback. Sets the @mouseIsDown property used to
   # determine if a selection may have started to true. Also calls
   # Annotator#startViewerHideTimer() to hide the Annotator#viewer.
   #
@@ -401,7 +401,7 @@ class Annotator extends Delegator
     this.startViewerHideTimer()
     @mouseIsDown = true
 
-  # Browser event callback method. Checks to see if a selection has been made
+  # Annotator#element callback. Checks to see if a selection has been made
   # on mouseup and if so displays the Annotator#adder. If @ignoreMouseup is
   # set will do nothing. Also resets the @mouseIsDown property.
   #
@@ -427,6 +427,12 @@ class Annotator extends Delegator
     else
       @adder.hide()
 
+  # Annotator#element callback. Displays viewer with all annotations
+  # associated with highlight Elements under the cursor.
+  #
+  # event - A mouseover Event object.
+  #
+  # Returns nothing.
   onHighlightMouseover: (event) =>
     # Cancel any pending hiding of the viewer.
     this.clearViewerHideTimer()
@@ -442,10 +448,23 @@ class Annotator extends Delegator
 
     this.showViewer($.makeArray(annotations), util.mousePosition(event, @wrapper[0]))
 
+  # Annotator#element callback. Sets @ignoreMouseup to true to prevent
+  # the annotation selection events firing when the adder is clicked.
+  #
+  # event - A mousedown Event object
+  #
+  # Returns nothing.
   onAdderMousedown: (event) =>
     event?.preventDefault()
     @ignoreMouseup = true
 
+  # Annotator#element callback. Displays the @editor in place of the @adder and
+  # loads in a newly created annotation Object. The click event is used as well
+  # as the mousedown so that we get the :active state on the @adder when clicked 
+  #
+  # event - A mousedown Event object
+  #
+  # Returns nothing.
   onAdderClick: (event) =>
     event?.preventDefault()
 

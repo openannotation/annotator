@@ -447,7 +447,7 @@ describe 'Annotator', ->
     it "should set the top/left properties of the Editor#element", ->
       location = {top: 20, left: 20}
       annotator.showViewer([], location)
-      expect(annotator.viewer.element.css).toHaveBeenCalledWith(location) 
+      expect(annotator.viewer.element.css).toHaveBeenCalledWith(location)
 
     it "should publish the 'annotationViewerShown' event passing the viewer and annotations", ->
       annotations = [{text: 'my annotation comment'}]
@@ -534,6 +534,65 @@ describe 'Annotator', ->
       annotator.ignoreMouseup = true
       annotator.checkForEndSelection(mockEvent)
       expect(annotator.getSelection).not.toHaveBeenCalled()
+
+  describe "onHighlightMouseover", ->
+    element = null
+    mockEvent = null
+    mockOffset = null
+    annotation = null
+
+    beforeEach ->
+      annotation = {text: "my comment"}
+      element = $('<span />').data('annotation', annotation)
+      mockEvent = {
+        target: element[0]
+      }
+      mockOffset = {top: 0, left: 0}
+
+      spyOn(util, 'mousePosition').andReturn(mockOffset)
+      spyOn(annotator, 'showViewer')
+
+      annotator.viewerHideTimer = 60
+      annotator.onHighlightMouseover(mockEvent)
+
+    it "should clear the current @viewerHideTimer", ->
+      expect(annotator.viewerHideTimer).toBe(false)
+
+    it "should fetch the current mouse position", ->
+      expect(util.mousePosition).toHaveBeenCalledWith(mockEvent, annotator.wrapper[0])
+
+    it "should display the Annotation#viewer with annotations", ->
+      expect(annotator.showViewer).toHaveBeenCalledWith([annotation], mockOffset)
+
+  describe "onAdderMousedown", ->
+    it "should set the @ignoreMouseup property to true", ->
+      annotator.ignoreMouseup = false
+      annotator.onAdderMousedown()
+      expect(annotator.ignoreMouseup).toBe(true)
+
+  describe "onAdderClick", ->
+    annotation = null
+    mockOffset = null
+
+    beforeEach ->
+      annotation = {text: "test"}
+      mockOffset = {top: 0, left:0}
+      spyOn(annotator.adder, 'hide')
+      spyOn(annotator.adder, 'position').andReturn(mockOffset)
+      spyOn(annotator, 'createAnnotation').andReturn(annotation)
+      spyOn(annotator, 'showEditor')
+
+      annotator.onAdderClick()
+
+    it "should hide the Annotation#adder", ->
+      expect(annotator.adder.hide).toHaveBeenCalled()
+
+    it "should create a new annotation", ->
+      expect(annotator.createAnnotation).toHaveBeenCalled()
+
+    it "should display the Annotation#editor in the same place as the Annotation#adder", ->
+      expect(annotator.adder.position).toHaveBeenCalled()
+      expect(annotator.showEditor).toHaveBeenCalledWith(annotation, mockOffset)
 
 describe "Annotator.noConflict()", ->
   _Annotator = null
