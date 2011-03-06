@@ -53,6 +53,129 @@ describe "Annotator.Plugin.Store", ->
 
       expect(store.loadAnnotationsFromSearch).toHaveBeenCalledWith(store.options.loadFromSearch)
 
+  describe "annotationCreated", ->
+    annotation = null
+
+    beforeEach ->
+      annotation = {}
+      spyOn(store, 'registerAnnotation')
+      spyOn(store, 'updateAnnotation')
+      spyOn(store, '_apiRequest')
+
+    it "should call Store#registerAnnotation() with the new annotation", ->
+      store.annotationCreated(annotation)
+      expect(store.registerAnnotation).toHaveBeenCalledWith(annotation)
+
+    it "should call Store#_apiRequest('create') with the new annotation", ->
+      store.annotationCreated(annotation)
+      args = store._apiRequest.mostRecentCall.args
+
+      expect(store._apiRequest).toHaveBeenCalled()
+      expect(args[0]).toBe('create')
+      expect(args[1]).toBe(annotation)
+
+    it "should call Store#updateAnnotation() if the annotation already exists in @annotations", ->
+      store.annotations = [annotation]
+      store.annotationCreated(annotation)
+      expect(store.updateAnnotation).toHaveBeenCalled()
+      expect(store.updateAnnotation.mostRecentCall.args[0]).toBe(annotation)
+
+  describe "annotationUpdated", ->
+    annotation = null
+
+    beforeEach ->
+      annotation = {}
+      spyOn(store, '_apiRequest')
+
+    it "should call Store#_apiRequest('update') with the annotation and data", ->
+      store.annotations = [annotation]
+      store.annotationUpdated(annotation)
+      args = store._apiRequest.mostRecentCall.args
+
+      expect(store._apiRequest).toHaveBeenCalled()
+      expect(args[0]).toBe('update')
+      expect(args[1]).toBe(annotation)
+
+    it "should NOT call Store#_apiRequest() if the annotation is unregistered", ->
+      store.annotations = []
+      store.annotationUpdated(annotation)
+      args = store._apiRequest.mostRecentCall.args
+
+      expect(store._apiRequest).not.toHaveBeenCalled()
+
+  describe "annotationDeleted", ->
+    annotation = null
+
+    beforeEach ->
+      annotation = {}
+      spyOn(store, '_apiRequest')
+
+    it "should call Store#_apiRequest('destroy') with the annotation and data", ->
+      store.annotations = [annotation]
+      store.annotationDeleted(annotation)
+      args = store._apiRequest.mostRecentCall.args
+
+      expect(store._apiRequest).toHaveBeenCalled()
+      expect(args[0]).toBe('destroy')
+      expect(args[1]).toBe(annotation)
+
+    it "should NOT call Store#_apiRequest() if the annotation is unregistered", ->
+      store.annotations = []
+      store.annotationDeleted(annotation)
+      args = store._apiRequest.mostRecentCall.args
+
+      expect(store._apiRequest).not.toHaveBeenCalled()
+
+  describe "registerAnnotation", ->
+    it "should add the annotation to the @annotations array", ->
+      annotation = {}
+      store.annotations = []
+      store.registerAnnotation(annotation)
+      expect($.inArray(annotation, store.annotations)).toBe(0)
+
+  describe "unregisterAnnotation", ->
+    it "should remove the annotation from the @annotations array", ->
+      annotation = {}
+      store.annotations = [annotation]
+      store.unregisterAnnotation(annotation)
+      expect($.inArray(annotation, store.annotations)).toBe(-1)
+
+  describe "updateAnnotation", ->
+    annotation = {}
+
+    beforeEach ->
+      spyOn(console, 'error')
+      annotation = {
+        text: "my annotation text"
+        range: []
+      }
+      store.annotations = [annotation]
+
+    it "should extend the annotation with the data provided", ->
+      store.updateAnnotation(annotation, {
+        id: "myid"
+        text: "new text"
+      })
+      expect(annotation).toEqual({
+        id: "myid"
+        text: "new text"
+        range: []
+      })
+
+    it "should NOT extend the annotation if it is not registered with the Store", ->
+      store.annotations = []
+      store.updateAnnotation(annotation, {
+        id: "myid"
+        text: "new text"
+      })
+      expect(annotation).toEqual(annotation)
+
+    it "should update the data stored on the annotation highlight", ->
+      data = {}
+      annotation.highlight = $('<span />').data('annotation', annotation)
+      store.updateAnnotation(annotation, data)
+      expect(annotation.highlight.data('annotation')).toBe(annotation)
+
   describe "loadAnnotations", ->
     it "should call Store#_apiRequest()", ->
       spyOn(store, '_apiRequest')
