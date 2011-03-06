@@ -594,6 +594,27 @@ describe 'Annotator', ->
       expect(annotator.adder.position).toHaveBeenCalled()
       expect(annotator.showEditor).toHaveBeenCalledWith(annotation, mockOffset)
 
+  describe "onEditAnnotation", ->
+    it "should display the Annotator#editor in the same positions as Annotatorviewer", ->
+      annotation = {text: "my mock annotation"}
+      mockOffset = {top: 0, left: 0}
+
+      spyOn(annotator, "showEditor")
+      spyOn(annotator.viewer, "hide")
+      spyOn(annotator.viewer.element, "position").andReturn(mockOffset)
+
+      annotator.onEditAnnotation(annotation)
+
+      expect(annotator.viewer.hide).toHaveBeenCalled()
+      expect(annotator.showEditor).toHaveBeenCalledWith(annotation, mockOffset)
+
+  describe "onDeleteAnnotation", ->
+    it "should pass the annotation on to Annotator#deleteAnnotation()", ->
+      annotation = {text: "my mock annotation"}
+      spyOn(annotator, "deleteAnnotation")
+      annotator.onDeleteAnnotation(annotation)
+      expect(annotator.deleteAnnotation).toHaveBeenCalledWith(annotation)
+
 describe "Annotator.noConflict()", ->
   _Annotator = null
 

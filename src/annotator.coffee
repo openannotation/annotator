@@ -460,7 +460,7 @@ class Annotator extends Delegator
 
   # Annotator#element callback. Displays the @editor in place of the @adder and
   # loads in a newly created annotation Object. The click event is used as well
-  # as the mousedown so that we get the :active state on the @adder when clicked 
+  # as the mousedown so that we get the :active state on the @adder when clicked
   #
   # event - A mousedown Event object
   #
@@ -474,6 +474,13 @@ class Annotator extends Delegator
     # Create an annotation and display the editor.
     this.showEditor(this.createAnnotation(), position)
 
+  # Annotator#viewer callback function. Displays the Annotator#editor in the
+  # positions of the Annotator#viewer and loads the passed annotation for
+  # editing.
+  #
+  # annotation - An annotation Object for editing.
+  #
+  # Returns nothing.
   onEditAnnotation: (annotation) =>
     offset = @viewer.element.position()
 
@@ -481,6 +488,12 @@ class Annotator extends Delegator
     @viewer.hide()
     this.showEditor(annotation, offset)
 
+  # Annotator#viewer callback function. Deletes the annotation provided to the
+  # callback.
+  #
+  # annotation - An annotation Object for deletion.
+  #
+  # Returns nothing.
   onDeleteAnnotation: (annotation) =>
     # Delete highlight elements.
     this.deleteAnnotation annotation
