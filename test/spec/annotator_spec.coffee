@@ -250,6 +250,15 @@ describe 'Annotator', ->
       annotator.setupAnnotation(annotationObj, false)
       expect(annotator.publish.callCount).toBe(1)
 
+  describe "updateAnnotation", ->
+    it "should publish the 'beforeAnnotationUpdated' and 'annotationUpdated' events", ->
+      annotation = {text: "my annotation comment"}
+      spyOn(annotator, 'publish')
+      annotator.updateAnnotation(annotation)
+
+      expect(annotator.publish).toHaveBeenCalledWith('beforeAnnotationUpdated', [annotation])
+      expect(annotator.publish).toHaveBeenCalledWith('annotationUpdated', [annotation])
+
   describe "checkForEndSelection", ->
     it "loads selections from the window object on checkForEndSelection", ->
       if /Node\.js/.test(navigator.userAgent)

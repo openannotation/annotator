@@ -159,7 +159,15 @@ class Annotator extends Delegator
   #
   # Examples
   #
-  #   example
+  #   # Create a brand new annotation from the currently selected text.
+  #   annotation = annotator.createAnnotation()
+  #   annotation = annotator.setupAnnotation(annotation)
+  #   # annotation has now been assigned the currently selected range
+  #   # and a highlight appended to the DOM.
+  #
+  #   # Add an existing annotation that has been stored elsewere to the DOM.
+  #   annotation = getStoredAnnotationWithSerializedRanges()
+  #   annotation = annotator.setupAnnotation(annotation)
   #
   # Returns the initialised annotation.
   setupAnnotation: (annotation, fireEvents=true) ->
@@ -181,15 +189,40 @@ class Annotator extends Delegator
 
     annotation
 
+  # Public: Publishes the 'beforeAnnotationUpdated' and 'annotationUpdated'
+  # events. Listeners wishing to modify an updated annotation should subscribe
+  # to 'beforeAnnotationUpdated' while listeners storing annotations should
+  # subscribe to 'annotationUpdated'.
+  #
+  # annotation - An annotation Object to update.
+  #
+  # Examples
+  #
+  #   annotation = {tags: 'apples oranges pears'}
+  #   annotator.on 'beforeAnnotationUpdated', (annotation) ->
+  #     # validate or modify a property.
+  #     annotation.tags = annotation.tags.split(' ')
+  #   annotator.updateAnnotation(annotation)
+  #   # => Returns ["apples", "oranges", "pears"]
+  #
+  # Returns annotation Object.
+  updateAnnotation: (annotation) ->
+    this.publish('beforeAnnotationUpdated', [annotation])
+    this.publish('annotationUpdated', [annotation])
+    annotation
+
+  # Public: Deletes the annotation by removing the highlight from the DOM.
+  # Publishes the 'annotationDeleted' event on completion.
+  #
+  # annotation - An annotation Object to delete.
+  #
+  # Returns deleted annotation.
   deleteAnnotation: (annotation) ->
     for h in annotation.highlights
       $(h).replaceWith(h.childNodes)
 
     this.publish('annotationDeleted', [annotation])
-
-  updateAnnotation: (annotation) ->
-    this.publish('beforeAnnotationUpdated', [annotation])
-    this.publish('annotationUpdated', [annotation])
+    annotation
 
   loadAnnotations: (annotations=[]) ->
     results = []
