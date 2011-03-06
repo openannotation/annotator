@@ -474,6 +474,12 @@ describe 'Annotator', ->
       runs ->
         expect(annotator.viewer.hide).not.toHaveBeenCalled()
 
+  describe "clearViewerHideTimer", ->
+    it "should clear the @viewerHideTimer property", ->
+      annotator.viewerHideTimer = 456
+      annotator.clearViewerHideTimer()
+      expect(annotator.viewerHideTimer).toBe(false)
+
   describe "checkForEndSelection", ->
     it "loads selections from the window object on checkForEndSelection", ->
       if /Node\.js/.test(navigator.userAgent)
