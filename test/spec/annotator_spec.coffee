@@ -381,6 +381,21 @@ describe 'Annotator', ->
       expect(annotator.plugins['Bar']?).toBeFalsy()
       expect(console.error).toHaveBeenCalled()
 
+  describe "showEditor", ->
+    beforeEach ->
+      spyOn(annotator.editor, 'load')
+      spyOn(annotator.editor.element, 'css')
+
+    it "should call Editor#load() on the Annotator#editor", ->
+      annotation = {text: 'my annotation comment'}
+      annotator.showEditor(annotation, {})
+      expect(annotator.editor.load).toHaveBeenCalledWith(annotation)
+
+    it "should set the top/left properties of the Editor#element", ->
+      location = {top: 20, left: 20}
+      annotator.showEditor({}, location)
+      expect(annotator.editor.element.css).toHaveBeenCalledWith(location)
+
   describe "checkForEndSelection", ->
     it "loads selections from the window object on checkForEndSelection", ->
       if /Node\.js/.test(navigator.userAgent)

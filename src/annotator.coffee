@@ -308,9 +308,21 @@ class Annotator extends Delegator
         console.error "Could not load #{name} plugin. Have you included the appropriate <script> tag?"
     this # allow chaining
 
+  # Public: Loads the Editor with the provided annotation and updates its
+  # position in the window.
+  #
+  # annotation - An annotation to load into the editor.
+  # location   - Position to set the Editor in the form {top: y, left: x}
+  #
+  # Examples
+  #
+  #   annotator.showEditor({text: "my comment"}, {top: 34, left: 234})
+  #
+  # Returns itself to allow chaining.
   showEditor: (annotation, location) =>
     @editor.element.css(location)
     @editor.load(annotation)
+    this
 
   onEditorHide: =>
     this.publish('annotationEditorHidden', [@editor])
