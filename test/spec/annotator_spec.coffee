@@ -188,13 +188,13 @@ describe 'Annotator', ->
       annotator.getSelection()
       expect(annotator.selectedRanges).toEqual([''])
 
-  describe "createNewAnnotation", ->
+  describe "createAnnotation", ->
     it "should return an empty annotation", ->
-      expect(annotator.createNewAnnotation()).toEqual({})
+      expect(annotator.createAnnotation()).toEqual({})
 
     it "should fire the 'beforeAnnotationCreated' event providing the annotation", ->
       spyOn(annotator, 'publish')
-      annotator.createNewAnnotation()
+      annotator.createAnnotation()
       expect(annotator.publish).toHaveBeenCalledWith('beforeAnnotationCreated', [{}])
 
   describe "checkForEndSelection", ->

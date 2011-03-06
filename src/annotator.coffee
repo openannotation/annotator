@@ -138,20 +138,20 @@ class Annotator extends Delegator
   #
   # Examples
   #
-  #   annotator.createNewAnnotation() # Returns {}
+  #   annotator.createAnnotation() # Returns {}
   #
   #   annotator.on 'beforeAnnotationCreated', (annotation) ->
   #     annotation.myProperty = 'This is a custom property'
-  #   annotator.createNewAnnotation() # Returns {myProperty: "This is a…"}
+  #   annotator.createAnnotation() # Returns {myProperty: "This is a…"}
   #
   # Returns a newly created annotation Object.
-  createNewAnnotation: () ->
+  createAnnotation: () ->
     annotation = {}
     this.publish('beforeAnnotationCreated', [annotation])
     annotation
 
   # Public: Initialises an annotation either from an object representation or
-  # an annotation created with Annotator#createNewAnnotation(). It finds the
+  # an annotation created with Annotator#createAnnotation(). It finds the
   # selected range and higlights the selection in the DOM.
   #
   # annotation - An annotation Object to initialise.
@@ -315,7 +315,7 @@ class Annotator extends Delegator
     @adder.hide()
 
     # Create an annotation and display the editor.
-    this.showEditor(this.createNewAnnotation(), position)
+    this.showEditor(this.createAnnotation(), position)
 
   onEditAnnotation: (annotation) =>
     offset = @viewer.element.position()
