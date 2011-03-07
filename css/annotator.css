@@ -199,7 +199,7 @@
 	padding: 6px 6px;
 }
 
-.annotator-viewer div:first-child,
+.annotator-viewer div:first-of-type,
 .annotator-editor li:first-child textarea {
 	padding-top: 12px;
 	padding-bottom: 12px;
@@ -211,19 +211,19 @@
 }
 
 .annotator-viewer .annotator-controls {
+	position: relative;
 	top: 5px;
 	right: 5px;
-	position: absolute;
-	background-color: rgba(255, 255, 255, 0.9);
-	padding: 0 3px 5px;
+	padding-left: 5px;
 	opacity: 0;
 	-webkit-transition: opacity 0.2s ease-in;
 	-moz-transition: opacity 0.2s ease-in;
 	-o-transition: opacity 0.2s ease-in;
 	transition: opacity 0.2s ease-in;
+	float: right;
 }
 
-.annotator-viewer li .annotator-controls:hover,
+.annotator-viewer li:hover .annotator-controls,
 .annotator-viewer li .annotator-controls.annotator-visible {
 	opacity: 1;
 }
