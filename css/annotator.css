@@ -129,8 +129,14 @@
 	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-.annotator-right .annotator-widget {
-	left: -247px;
+.annotator-invert-x .annotator-widget {
+	left: auto;
+	right: -18px;
+}
+
+.annotator-invert-y .annotator-widget {
+	bottom: auto;
+	top: 8px;
 }
 
 .annotator-widget strong {
@@ -155,9 +161,15 @@
 	left: 8px;
 }
 
-.annotator-right .annotator-widget::after {
+.annotator-invert-x .annotator-widget::after {
 	left: auto;
 	right: 8px;
+}
+
+.annotator-invert-y .annotator-widget::after {
+	background-position: 0 -15px;
+	bottom: auto;
+	top: -9px;
 }
 
 .annotator-widget li,
@@ -243,11 +255,11 @@
 }
 
 .annotator-viewer .annotator-controls .annotator-edit {
-	background-position: 0 -30px;
+	background-position: 0 -60px;
 }
 
 .annotator-viewer .annotator-controls .annotator-delete {
-	background-position: 0 -45px;
+	background-position: 0 -75px;
 }
 
 /* Annotator Editor
@@ -493,7 +505,7 @@
 .annotator-editor a:hover::after,
 .annotator-editor a:focus::after {
 	margin-top: -8px;
-	background-position: 0 -75px;
+	background-position: 0 -105px;
 }
 
 .annotator-editor a:active {
@@ -530,18 +542,23 @@
 }
 
 .annotator-editor a.annotator-save::after {
-	background-position: 0 -90px;
+	background-position: 0 -120px;
 }
 
 .annotator-editor a.annotator-save:hover::after,
 .annotator-editor a.annotator-save:focus::after,
 .annotator-editor a.annotator-save.annotator-focus::after {
 	margin-top: -8px;
-	background-position: 0 -105px;
+	background-position: 0 -135px;
 }
 
 .annotator-editor .annotator-widget::after {
-	background-position: 0 -15px;
+	background-position: 0 -30px;
+}
+
+.annotator-editor.annotator-invert-y .annotator-widget::after {
+	background-position: 0 -45px;
+	height: 11px;
 }
 
 .annotator-resize {
@@ -550,7 +567,7 @@
 	right: 0;
 	width: 12px;
 	height: 12px;
-	background-position: 2px -120px;
+	background-position: 2px -150px;
 }
 
 /* Annotator Notification
