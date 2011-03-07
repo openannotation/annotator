@@ -37,8 +37,10 @@ describe 'Range', ->
         expect(textInNormedRange(norm)).toEqual("habitant morbi")
 
       it "should return null if it cannot normalize the range", ->
+        spyOn(console, 'error')
         normedRange = r.normalize($('<div/>')[0])
         expect(normedRange).toBe(null)
+        expect(console.error).toHaveBeenCalled()
 
     it "serialize() returns a serialized range", ->
       seri = r.serialize(fix())

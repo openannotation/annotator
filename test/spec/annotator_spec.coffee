@@ -237,6 +237,14 @@ describe 'Annotator', ->
     it "should set the annotation.ranges", ->
       expect(annotation.ranges).toEqual([{}, {}])
 
+    it "should exclude any ranges that could not be normalised", ->
+      normalizedRange.serialize = jasmine.createSpy('normalizedRange#serialize()').andReturn(null)
+      annotation = annotator.setupAnnotation({
+        text: comment,
+        ranges: [1, 2]
+      })
+      expect(annotation.ranges).toEqual([])
+
     it "should call Annotator#highlightRange() with the normed range", ->
       expect(annotator.highlightRange).toHaveBeenCalledWith(normalizedRange)
 

@@ -182,7 +182,10 @@ class Annotator extends Delegator
     annotation.ranges = for r in annotation.ranges
       sniffed    = Range.sniff(r)
       normed     = sniffed.normalize(@wrapper[0])
-      serialized = normed.serialize(@wrapper[0], '.annotator-hl')
+      serialized = normed.serialize(@wrapper[0], '.annotator-hl') if normed
+
+    # Filter out any ranges that failed to normalize. 
+    annotation.ranges = $.grep annotation.ranges, (range) -> range != null
 
     annotation.quote = normed.text()
     annotation.highlights = this.highlightRange(normed)
