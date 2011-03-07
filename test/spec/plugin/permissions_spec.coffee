@@ -6,7 +6,7 @@ describe 'Annotator.Plugin.Permissions', ->
     el = $("<div class='annotator-viewer'></div>")[0]
     permissions = new Annotator.Plugin.Permissions(el)
 
-  it "it should add the userId of the current user to newly created annotations on beforeAnnotationCreated", ->
+  it "it should add the current user object to newly created annotations on beforeAnnotationCreated", ->
     ann = {}
     $(el).trigger('beforeAnnotationCreated', [ann])
     expect(ann.user).toBeUndefined()
@@ -20,7 +20,7 @@ describe 'Annotator.Plugin.Permissions', ->
     permissions.setUser({id: 'alice'})
     permissions.options.userId = (user) -> user.id
     $(el).trigger('beforeAnnotationCreated', [ann])
-    expect(ann.user).toEqual('alice')
+    expect(ann.user).toEqual({id: 'alice'})
 
   it "it should add permissions to newly created annotations on beforeAnnotationCreated", ->
     ann = {}

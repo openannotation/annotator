@@ -164,9 +164,7 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   addFieldsToAnnotation: (annotation) =>
     if annotation
       annotation.permissions = @options.permissions
-
-      if @user
-        annotation.user = @options.userId(@user)
+      annotation.user = @user if @user
 
   # Public: Determines whether the provided action can be performed on the
   # annotation. It does this in several stages.
