@@ -278,7 +278,7 @@ describe 'Annotator.Plugin.Permissions', ->
     field = null
 
     beforeEach ->
-      field = $('<div />')[0]
+      field = $('<div />').appendTo('<div />')[0]
       controls = {
         showEdit:   jasmine.createSpy()
         hideEdit:   jasmine.createSpy()
@@ -296,6 +296,7 @@ describe 'Annotator.Plugin.Permissions', ->
       it "it should display annotations' users in the viewer element", ->
         permissions.updateViewer(field, annotations[0], controls)
         expect($(field).html()).toEqual('alice')
+        expect($(field).parent().length).toEqual(1)
 
       it "it should remove the field if annotation has no user", ->
         permissions.updateViewer(field, {}, controls)
@@ -304,6 +305,11 @@ describe 'Annotator.Plugin.Permissions', ->
       it "it should remove the field if annotation has no user string", ->
         permissions.options.userString = -> null
 
+        permissions.updateViewer(field, annotations[1], controls)
+        expect($(field).parent().length).toEqual(0)
+
+      it "it should remove the field if annotation has empty user string", ->
+        permissions.options.userString = -> ''
         permissions.updateViewer(field, annotations[1], controls)
         expect($(field).parent().length).toEqual(0)
 
