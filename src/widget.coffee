@@ -78,25 +78,3 @@ class Annotator.Widget extends Delegator
   invertY: ->
     @element.addClass @classes.invert.y
     this
-
-  # Public: Resets orientation of widget on the X axis.
-  #
-  # Examples
-  #
-  #   widget.resetX() # Widget is now left aligned.
-  #
-  # Returns itself for chaining.
-  resetX: ->
-    @element.removeClass(@classes.invert.x)
-    this
-
-  # Public: Resets orientation of widget on the Y axis.
-  #
-  # Examples
-  #
-  #   widget.resetX() # Widget is original way up.
-  #
-  # Returns itself for chaining.
-  resetY: ->
-    @element.removeClass(@classes.invert.y)
-    this

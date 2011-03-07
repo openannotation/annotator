@@ -24,26 +24,24 @@ describe "Annotator.Widget", ->
 
   describe "invertX", ->
     it "should add the Widget#classes.invert.x class to the Widget#element", ->
-      widget.element.removeClass(widget.classes.invert.x);
+      widget.element.removeClass(widget.classes.invert.x)
       widget.invertX()
       expect(widget.element.hasClass(widget.classes.invert.x)).toBe(true)
 
   describe "invertX", ->
     it "should add the Widget#classes.invert.y class to the Widget#element", ->
-      widget.element.removeClass(widget.classes.invert.y);
+      widget.element.removeClass(widget.classes.invert.y)
       widget.invertY()
       expect(widget.element.hasClass(widget.classes.invert.y)).toBe(true)
 
-  describe "resetX", ->
-    it "should remove the Widget#classes.invert.x class from the Widget#element", ->
-      widget.element.addClass(widget.classes.invert.x);
-      widget.resetX()
-      expect(widget.element.hasClass(widget.classes.invert.x)).toBe(false)
+  describe "resetOrientation", ->
+    it "should remove the Widget#classes.invert classes from the Widget#element", ->
+      widget.element
+            .addClass(widget.classes.invert.x)
+            .addClass(widget.classes.invert.y)
 
-  describe "resetY", ->
-    it "should remove the Widget#classes.invert.y class from the Widget#element", ->
-      widget.element.addClass(widget.classes.invert.y);
-      widget.resetY()
+      widget.resetOrientation()
+      expect(widget.element.hasClass(widget.classes.invert.x)).toBe(false)
       expect(widget.element.hasClass(widget.classes.invert.y)).toBe(false)
 
   describe "checkOrientation", ->
