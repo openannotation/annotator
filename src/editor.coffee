@@ -1,5 +1,5 @@
 # Public: Creates an element for editing annotations.
-class Annotator.Editor extends Delegator
+class Annotator.Editor extends Annotator.Widget
 
   # Events to be bound to @element.
   events:
