@@ -501,11 +501,12 @@ describe 'Annotator', ->
       expect(annotator.mouseIsDown).toBe(true)
 
   describe "checkForEndSelection", ->
-    mockEvent = {}
+    mockEvent = null
     mockOffset = null
     mockSelection = null
 
     beforeEach ->
+      mockEvent = { target: document.createElement('span') }
       mockOffset = {top: 0, left: 0}
       mockSelection = {
         rangeCount: 1,
@@ -517,7 +518,9 @@ describe 'Annotator', ->
       spyOn(annotator.adder, 'hide').andReturn(annotator.adder)
       spyOn(annotator.adder, 'css').andReturn(annotator.adder)
       spyOn(annotator, 'getSelection').andReturn(mockSelection)
-      annotator.mouseIsDown = true
+
+      annotator.mouseIsDown    = true
+      annotator.selectedRanges = []
       annotator.checkForEndSelection(mockEvent)
 
     it "should get the current selection from Annotator#getSelection()", ->
@@ -533,15 +536,61 @@ describe 'Annotator', ->
 
     it "should hide the Annotator#adder if NOT valid selection", ->
       annotator.adder.hide.reset()
+      annotator.adder.show.reset()
       mockSelection.rangeCount = 0
+
+      annotator.selectedRanges = []
+
       annotator.checkForEndSelection(mockEvent)
       expect(annotator.adder.hide).toHaveBeenCalled()
+      expect(annotator.adder.show).not.toHaveBeenCalled()
+
+    it "should hide the Annotator#adder if target is part of the annotator", ->
+      annotator.adder.hide.reset()
+      annotator.adder.show.reset()
+
+      mockNode = document.createTextNode()
+      mockEvent.target = annotator.viewer.element[0]
+
+      annotator.selectedRanges = ['']
+      spyOn(annotator, 'isAnnotator').andReturn(true)
+      spyOn(Range, 'BrowserRange').andReturn({
+        commonAncestorContainer: mockNode
+      })
+
+      annotator.checkForEndSelection(mockEvent)
+      expect(Range.BrowserRange).toHaveBeenCalledWith('')
+      expect(annotator.isAnnotator).toHaveBeenCalledWith(mockNode)
+
+      expect(annotator.adder.hide).not.toHaveBeenCalled()
+      expect(annotator.adder.show).not.toHaveBeenCalled()
 
     it "should return if @ignoreMouseup is true", ->
       annotator.getSelection.reset()
       annotator.ignoreMouseup = true
       annotator.checkForEndSelection(mockEvent)
       expect(annotator.getSelection).not.toHaveBeenCalled()
+
+  describe "isAnnotator", ->
+    it "should return true if the element is part of the annotator", ->
+      elements = [
+        annotator.viewer.element
+        annotator.adder
+        annotator.editor.element.find('ul')
+      ]
+
+      for element in elements
+        expect(annotator.isAnnotator(element)).toBe(true)
+
+    it "should return false if the element is NOT part of the annotator", ->
+      elements = [
+        null
+        annotator.element.parent()
+        document.createElement('span')
+        annotator.wrapper
+      ]
+      for element in elements
+        expect(annotator.isAnnotator(element)).toBe(false)
 
   describe "onHighlightMouseover", ->
     element = null

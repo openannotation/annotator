@@ -411,8 +411,9 @@ class Annotator extends Delegator
   #
   # Returns nothing.
   checkForStartSelection: (event) =>
-    this.startViewerHideTimer()
-    @mouseIsDown = true
+    unless event and this.isAnnotator(event.target)
+      this.startViewerHideTimer()
+      @mouseIsDown = true
 
   # Annotator#element callback. Checks to see if a selection has been made
   # on mouseup and if so displays the Annotator#adder. If @ignoreMouseup is
@@ -426,12 +427,16 @@ class Annotator extends Delegator
 
     # This prevents the note image from jumping away on the mouseup
     # of a click on icon.
-    if (@ignoreMouseup)
+    if @ignoreMouseup
       return
 
     selection = this.getSelection()
-
     validSelection = selection?.rangeCount > 0 and not selection.isCollapsed
+
+    for range in (@selectedRanges || [])
+      browserRange = new Range.BrowserRange(range)
+      container = browserRange.commonAncestorContainer
+      return if this.isAnnotator(container)
 
     if event and validSelection
       @adder
@@ -439,6 +444,23 @@ class Annotator extends Delegator
         .show()
     else
       @adder.hide()
+
+  # Public: Determines if the provided element is part of the annotator plugin.
+  # Useful for ignoring mouse actions on the annotator elements.
+  # NOTE: The @wrapper is not included in this check.
+  #
+  # element - An Element or TextNode to check.
+  #
+  # Examples
+  #
+  #   span = document.createElement('span')
+  #   annotator.isAnnotator(span) # => Returns false
+  #
+  #   annotator.isAnnotator(annotator.viewer.element) # => Returns true
+  #
+  # Returns true if the element is a child of an annotator element.
+  isAnnotator: (element) ->
+    !!$(element).parents().andSelf().filter('[class^=annotator-]').not(@wrapper).length
 
   # Annotator#element callback. Displays viewer with all annotations
   # associated with highlight Elements under the cursor.
