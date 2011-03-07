@@ -7,7 +7,7 @@ class Annotator.Widget extends Delegator
     invert:
       x: 'annotator-invert-x'
       y: 'annotator-invert-y'
-  
+
   # Public: Creates a new Widget instance.
   #
   # element - The Element that represents the widget in the DOM.
@@ -21,7 +21,41 @@ class Annotator.Widget extends Delegator
   # Returns a new Widget instance.
   constructor: (element, options) ->
     super
-    @classes = $.extend Annotator.Widget.prototype.classes, @classes
+    @classes = $.extend {}, Annotator.Widget.prototype.classes, @classes
+
+  checkOrientation: ->
+    this.resetOrientation()
+
+    window   = $(util.getGlobal())
+    widget   = @element.children(":first")
+    offset   = widget.offset()
+    viewport = {
+      top:   window.scrollTop(),
+      right: window.width() + window.scrollLeft()
+    }
+    current = {
+      top:   offset.top
+      right: offset.left + widget.width()
+    }
+
+    if (current.top - viewport.top) < 0
+      this.invertY()
+
+    if (current.right - viewport.right) > 0
+      this.invertX()
+
+    this
+
+  # Public: Resets orientation of widget on the X & Y axis.
+  #
+  # Examples
+  #
+  #   widget.resetOrientation() # Widget is original way up.
+  #
+  # Returns itself for chaining.
+  resetOrientation: ->
+    @element.removeClass(@classes.invert.x).removeClass(@classes.invert.y)
+    this
 
   # Public: Inverts the widget on the X axis.
   #

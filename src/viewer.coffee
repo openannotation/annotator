@@ -80,8 +80,8 @@ class Annotator.Viewer extends Annotator.Widget
       .addClass(@classes.showControls)
     setTimeout((=> controls.removeClass(@classes.showControls)), 500)
 
-    @element.removeClass(@classes.hide).trigger('show')
-    this
+    @element.removeClass(@classes.hide)
+    this.checkOrientation().publish('show')
 
   # Public: Checks to see if the Viewer is currently displayed.
   #
@@ -114,8 +114,8 @@ class Annotator.Viewer extends Annotator.Widget
   # Returns itself.
   hide: (event) =>
     event?.preventDefault()
-    @element.addClass(@classes.hide).trigger('hide')
-    this
+    @element.addClass(@classes.hide)
+    this.publish('hide')
 
   # Public: Loads annotations into the viewer and shows it. Fires the "load"
   # event once the viewer is loaded passing the annotations into the callback.

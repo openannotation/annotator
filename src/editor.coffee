@@ -90,7 +90,7 @@ class Annotator.Editor extends Annotator.Widget
     @element.removeClass(@classes.hide)
     @element.find('.annotator-save').addClass(@classes.focus)
     @element.find(':input:first').focus()
-    this.publish('show')
+    this.checkOrientation().publish('show')
 
   # Public: Hides the Editor and fires a "hide" event. Can be used as an event
   # callback and will call Event#preventDefault() on the supplied event.
@@ -264,6 +264,24 @@ class Annotator.Editor extends Annotator.Widget
 
     field.element
 
+  checkOrientation: ->
+    super
+
+    list = @element.find('ul')
+    controls = @element.find('.annotator-controls')
+
+    flipFields = ->
+      list.children().each -> $(this).parent().prepend(this)
+
+    if @element.hasClass(@classes.invert.y) and list.is(':first-child')
+      controls.insertBefore(list)
+      flipFields()
+    else if controls.is(':first-child')
+      controls.insertAfter(list)
+      flipFields()
+
+    this
+
   # Event callback. Listens for the following special keypresses.
   # - escape: Hides the editor
   # - enter:  Submits the editor
@@ -292,6 +310,7 @@ class Annotator.Editor extends Annotator.Widget
   # Returns nothing.
   setupDragabbles: () ->
     mousedown = null
+    classes   = @classes
     editor    = @element
     resize    = editor.find('.annotator-resize')
     textarea  = editor.find('textarea:first')
@@ -316,7 +335,7 @@ class Annotator.Editor extends Annotator.Widget
       mousedown = null;
       $(window).unbind '.annotator-editor-resize'
 
-    onMousemove = (event) ->
+    onMousemove = (event) =>
       if mousedown and throttle == false
         diff = {
           top:  event.pageY - mousedown.top
@@ -327,8 +346,13 @@ class Annotator.Editor extends Annotator.Widget
           height = textarea.outerHeight()
           width  = textarea.outerWidth()
 
-          textarea.height(height - diff.top)
-          textarea.width(width + diff.left)
+          directionX = if editor.hasClass(classes.invert.x) then -1 else  1
+          directionY = if editor.hasClass(classes.invert.y) then  1 else -1
+          
+          console.log directionY, directionX
+          
+          textarea.height height + (diff.top  * directionY)
+          textarea.width  width  + (diff.left * directionX)
 
           # Only update the mousedown object if the dimensions
           # have changed, otherwise they have reached thier minimum
