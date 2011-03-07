@@ -224,7 +224,7 @@ describe 'Annotator', ->
 
       annotationObj = {
         text: comment,
-        ranges: [1, 2]
+        ranges: [1]
       }
       annotation = annotator.setupAnnotation(annotationObj)
 
@@ -235,10 +235,10 @@ describe 'Annotator', ->
       expect(annotation.quote).toEqual(quote)
 
     it "should set the annotation.ranges", ->
-      expect(annotation.ranges).toEqual([{}, {}])
+      expect(annotation.ranges).toEqual([{}])
 
     it "should exclude any ranges that could not be normalised", ->
-      normalizedRange.serialize = jasmine.createSpy('normalizedRange#serialize()').andReturn(null)
+      sniffedRange.normalize = jasmine.createSpy('sniffedRange#normalize()').andReturn(null)
       annotation = annotator.setupAnnotation({
         text: comment,
         ranges: [1, 2]

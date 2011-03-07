@@ -179,16 +179,25 @@ class Annotator extends Delegator
   # Returns the initialised annotation.
   setupAnnotation: (annotation, fireEvents=true) ->
     annotation.ranges or= @selectedRanges
-    annotation.ranges = for r in annotation.ranges
+
+    normedRanges = for r in annotation.ranges
       sniffed    = Range.sniff(r)
-      normed     = sniffed.normalize(@wrapper[0])
-      serialized = normed.serialize(@wrapper[0], '.annotator-hl') if normed
+      sniffed.normalize(@wrapper[0])
 
-    # Filter out any ranges that failed to normalize. 
-    annotation.ranges = $.grep annotation.ranges, (range) -> range != null
+    # Filter out any ranges that failed to normalize.
+    normedRanges = $.grep normedRanges, (range) -> range != null
 
-    annotation.quote = normed.text()
-    annotation.highlights = this.highlightRange(normed)
+    annotation.quote      = []
+    annotation.ranges     = []
+    annotation.highlights = []
+
+    for normed in normedRanges
+      annotation.quote.push      normed.text()
+      annotation.ranges.push     normed.serialize(@wrapper[0], '.annotator-hl')
+      $.merge annotation.highlights, this.highlightRange(normed)
+
+    # Join all the quotes into one string.
+    annotation.quote = annotation.quote.join(' / ')
 
     # Save the annotation data on each highlighter element.
     $(annotation.highlights).data('annotation', annotation)
