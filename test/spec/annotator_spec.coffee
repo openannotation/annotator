@@ -497,6 +497,11 @@ describe 'Annotator', ->
     it "should call Annotator#startViewerHideTimer()", ->
       expect(annotator.startViewerHideTimer).toHaveBeenCalled()
 
+    it "should NOT call #startViewerHideTimer() if mouse is over the annotator", ->
+      annotator.startViewerHideTimer.reset()
+      annotator.checkForStartSelection({target: annotator.viewer.element})
+      expect(annotator.startViewerHideTimer).not.toHaveBeenCalled()
+
     it "should set @mouseIsDown to true", ->
       expect(annotator.mouseIsDown).toBe(true)
 
