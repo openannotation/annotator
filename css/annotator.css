@@ -394,6 +394,15 @@
 	border-radius: 0 0 5px 5px;
 }
 
+.annotator-invert-y .annotator-controls {
+	border-top: none;
+	border-bottom: 1px solid rgb(180, 180, 180);
+	-webkit-border-radius: 5px 5px 0 0;
+	-moz-border-radius: 5px 5px 0 0;
+	-o-border-radius: 5px 5px 0 0;
+	border-radius: 5px 5px 0 0;
+}
+
 .annotator-editor a {
 	position: relative;
 	display: inline-block;
@@ -568,6 +577,22 @@
 	width: 12px;
 	height: 12px;
 	background-position: 2px -150px;
+}
+
+.annotator-invert-x .annotator-resize {
+	right: auto;
+	left: 0;
+	background-position: 0 -195px;
+}
+
+.annotator-invert-y .annotator-resize {
+	top: auto;
+	bottom: 0;
+	background-position: 2px -165px;
+}
+
+.annotator-invert-y.annotator-invert-x .annotator-resize {
+	background-position: 0 -180px;
 }
 
 /* Annotator Notification
