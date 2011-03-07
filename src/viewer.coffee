@@ -145,7 +145,7 @@ class Annotator.Viewer extends Annotator.Widget
       }
 
       for field in @fields
-        element = $(field.element).clone().appendTo(list)[0]
+        element = $(field.element).clone().appendTo(item)[0]
         field.load(element, annotation, controller)
 
     this.publish('load', [@annotations])

@@ -84,7 +84,7 @@ packageBookmarkletDemo = ->
 packageBookmarkletJavaScript = ->
   destination = "#{BOOKMARKLET_PATH}/pkg/annotator.min.js"
   sources = [
-    'extensions', 'console', 'class', 'range', 'annotator', 'editor', 'viewer',
+    'extensions', 'console', 'class', 'range', 'annotator', 'widget', 'editor', 'viewer',
     'notification', 'plugin/store', 'plugin/permissions', 'plugin/unsupported'
   ].map (file) -> "src/#{file}.coffee"
 
