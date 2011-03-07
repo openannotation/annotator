@@ -173,6 +173,7 @@ class Range.SerializedRange
 
     if not range.commonAncestorContainer
       console.error("Error deserializing range: can't find XPath '" + cacXPath + "'. Is this the right document?")
+      return null
 
     # Unfortunately, we *can't* guarantee only one textNode per
     # elementNode, so we have to walk along the element's textNodes until

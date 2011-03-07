@@ -30,10 +30,15 @@ describe 'Range', ->
         endOffset: 27
       })
 
-    it "normalize() returns a normalized range", ->
-      norm = r.normalize(fix())
-      expect(norm instanceof Range.NormalizedRange).toBeTruthy()
-      expect(textInNormedRange(norm)).toEqual("habitant morbi")
+    describe "normalize", ->
+      it "should return a normalized range", ->
+        norm = r.normalize(fix())
+        expect(norm instanceof Range.NormalizedRange).toBeTruthy()
+        expect(textInNormedRange(norm)).toEqual("habitant morbi")
+
+      it "should return null if it cannot normalize the range", ->
+        normedRange = r.normalize($('<div/>')[0])
+        expect(normedRange).toBe(null)
 
     it "serialize() returns a serialized range", ->
       seri = r.serialize(fix())
