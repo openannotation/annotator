@@ -90,38 +90,43 @@ describe 'Annotator', ->
 
       mockViewer = {
         element: element
+        addField: jasmine.createSpy('Viewer#addField()')
         hide: jasmine.createSpy('Viewer#hide()')
         on: jasmine.createSpy('Viewer#on()')
       }
       mockViewer.on.andReturn(mockViewer)
       mockViewer.hide.andReturn(mockViewer)
+      mockViewer.addField.andReturn(mockViewer)
 
       spyOn(element, 'bind').andReturn(element)
       spyOn(element, 'appendTo').andReturn(element)
       spyOn(Annotator, 'Viewer').andReturn(mockViewer)
 
-    it "should create a new instance of Annotator.Viewer and set Annotator#viewer", ->
       annotator._setupViewer()
+
+    it "should create a new instance of Annotator.Viewer and set Annotator#viewer", ->
       expect(annotator.viewer).toBe(mockViewer)
 
     it "should hide the annotator on creation", ->
-      annotator._setupViewer()
       expect(mockViewer.hide).toHaveBeenCalled()
 
+    it "should setup the default text field", ->
+      args = mockViewer.addField.mostRecentCall.args[0]
+
+      expect(mockViewer.addField).toHaveBeenCalled()
+      expect(typeof args.load).toBe("function")
+
     it "should subscribe to custom events", ->
-      annotator._setupViewer()
       expect(mockViewer.on).toHaveBeenCalledWith('edit', annotator.onEditAnnotation)
       expect(mockViewer.on).toHaveBeenCalledWith('delete', annotator.onDeleteAnnotation)
 
     it "should bind to browser mouseover and mouseout events", ->
-      annotator._setupViewer()
       expect(mockViewer.element.bind).toHaveBeenCalledWith({
         'mouseover': annotator.clearViewerHideTimer
         'mouseout':  annotator.startViewerHideTimer
       })
 
     it "should append the Viewer#element to the Annotator#wrapper", ->
-      annotator._setupViewer()
       expect(mockViewer.element.appendTo).toHaveBeenCalledWith(annotator.wrapper)
 
   describe "_setupEditor", ->

@@ -50,13 +50,6 @@ class Annotator.Viewer extends Annotator.Widget
     @fields = []
     @annotations = []
 
-    # Setup the default view field.
-    this.addField({
-      type: 'textarea',
-      load: (field, annotation) ->
-        $(field).escape(annotation.text || '')
-    })
-
   # Public: Displays the Viewer and first the "show" event. Can be used as an
   # event callback and will call Event#preventDefault() on the supplied event.
   #
