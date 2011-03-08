@@ -219,7 +219,7 @@
           this.loadjQuery();
         } else {
           jQuery = window.jQuery.sub();
-          this.load(this.setup);
+          this.load(jQuery.proxy(this.setup, this));
         }
       }
     }
