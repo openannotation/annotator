@@ -3,6 +3,7 @@ SRC =         ['extensions',
                'class',
                'range',
                'annotator',
+               'widget',
                'editor',
                'viewer',
                'notification'].map { |x| "src/#{x}.coffee" }
