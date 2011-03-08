@@ -89,6 +89,7 @@ describe 'Annotator', ->
       element = $('<div />')
 
       mockViewer = {
+        fields: []
         element: element
         addField: jasmine.createSpy('Viewer#addField()')
         hide: jasmine.createSpy('Viewer#hide()')
@@ -96,7 +97,9 @@ describe 'Annotator', ->
       }
       mockViewer.on.andReturn(mockViewer)
       mockViewer.hide.andReturn(mockViewer)
-      mockViewer.addField.andReturn(mockViewer)
+      mockViewer.addField.andCallFake (options) ->
+        mockViewer.fields.push options
+        mockViewer
 
       spyOn(element, 'bind').andReturn(element)
       spyOn(element, 'appendTo').andReturn(element)
@@ -115,6 +118,15 @@ describe 'Annotator', ->
 
       expect(mockViewer.addField).toHaveBeenCalled()
       expect(typeof args.load).toBe("function")
+
+    it "should setup the default text field to publish an event on load", ->
+      field = document.createElement('div')
+      annotation = {text: "test"}
+      callback = jasmine.createSpy('callback')
+
+      annotator.on('annotationViewerTextField', callback)
+      annotator.viewer.fields[0].load(field, annotation)
+      expect(callback).toHaveBeenCalledWith(field, annotation)
 
     it "should subscribe to custom events", ->
       expect(mockViewer.on).toHaveBeenCalledWith('edit', annotator.onEditAnnotation)

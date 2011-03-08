@@ -114,8 +114,9 @@ class Annotator extends Delegator
       .on("edit", this.onEditAnnotation)
       .on("delete", this.onDeleteAnnotation)
       .addField({
-        load: (field, annotation) ->
+        load: (field, annotation) =>
           $(field).escape(annotation.text || '')
+          this.publish('annotationViewerTextField', [field, annotation])
       })
       .element.appendTo(@wrapper).bind({
         "mouseover": this.clearViewerHideTimer
