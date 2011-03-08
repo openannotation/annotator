@@ -700,7 +700,11 @@ describe 'Annotator', ->
     it "should pass the annotation on to Annotator#deleteAnnotation()", ->
       annotation = {text: "my mock annotation"}
       spyOn(annotator, "deleteAnnotation")
+      spyOn(annotator.viewer, "hide")
+
       annotator.onDeleteAnnotation(annotation)
+
+      expect(annotator.viewer.hide).toHaveBeenCalled()
       expect(annotator.deleteAnnotation).toHaveBeenCalledWith(annotation)
 
 describe "Annotator.noConflict()", ->

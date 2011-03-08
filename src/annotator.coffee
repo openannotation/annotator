@@ -545,6 +545,8 @@ class Annotator extends Delegator
   #
   # Returns nothing.
   onDeleteAnnotation: (annotation) =>
+    @viewer.hide()
+
     # Delete highlight elements.
     this.deleteAnnotation annotation
 
