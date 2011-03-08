@@ -91,6 +91,30 @@ class Range.NormalizedRange
   normalize: (root) ->
     this
 
+  # Public: Limits the nodes within the NormalizedRange to those contained
+  # withing the bounds parameter. It returns an updated range with all
+  # properties updated. NOTE: Method returns null if all nodes fall outside
+  # of the bounds.
+  #
+  # bounds - An Element to limit the range to.
+  #
+  # Returns updated self or null.
+  limit: (bounds) ->
+    nodes = $.grep this.textNodes(), (node) ->
+      node.parentNode == bounds or $.contains(bounds, node.parentNode)
+
+    return null unless nodes.length
+
+    @start = nodes[0]
+    @end   = nodes[nodes.length - 1]
+
+    startParents = $(@start).parents()
+    for parent in $(@end).parents()
+      if startParents.index(parent) != -1
+        @commonAncestor = parent
+        break
+    this
+
   ##
   # Convert this range into an object consisting of
   # two pairs of (xpath, character offset), which
@@ -138,7 +162,6 @@ class Range.NormalizedRange
   textNodes: ->
     textNodes = $(this.commonAncestor).textNodes()
     [start, end] = [textNodes.index(this.start), textNodes.index(this.end)]
-
     # Return the textNodes that fall between the start and end indexes.
     $.makeArray textNodes[start..end]
 
