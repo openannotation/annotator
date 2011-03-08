@@ -31,16 +31,6 @@ describe 'Annotator', ->
 
       expect(annotator.startViewerHideTimer).toHaveBeenCalled()
 
-    it "should call Annotator#checkForStartSelection() when mouse button is pressed inside element", ->
-      spyOn(annotator, 'checkForStartSelection')
-      annotator.element.mousedown()
-      expect(annotator.checkForStartSelection).toHaveBeenCalled()
-
-    it "should call Annotator#checkForEndSelection() when mouse button is lifted inside element", ->
-      spyOn(annotator, 'checkForEndSelection')
-      annotator.element.mouseup()
-      expect(annotator.checkForEndSelection).toHaveBeenCalled()
-
   describe "constructor", ->
     beforeEach ->
       spyOn(annotator, '_setupWrapper').andReturn(annotator)
@@ -66,6 +56,22 @@ describe 'Annotator', ->
 
     it "should call Annotator#_setupEditor()", ->
       expect(annotator._setupEditor).toHaveBeenCalled()
+
+  describe "_setupDocumentEvents", ->
+    beforeEach: ->
+      $(document).unbind('mouseup').unbind('mousedown')
+
+    it "should call Annotator#checkForStartSelection() when mouse button is pressed", ->
+      spyOn(annotator, 'checkForStartSelection')
+      annotator._setupDocumentEvents()
+      $(document).mousedown()
+      expect(annotator.checkForStartSelection).toHaveBeenCalled()
+
+    it "should call Annotator#checkForEndSelection() when mouse button is lifted", ->
+      spyOn(annotator, 'checkForEndSelection')
+      annotator._setupDocumentEvents()
+      $(document).mouseup()
+      expect(annotator.checkForEndSelection).toHaveBeenCalled()
 
   describe "_setupWrapper", ->
     it "should wrap children of @element in the @html.wrapper element", ->

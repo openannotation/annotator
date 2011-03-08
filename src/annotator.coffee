@@ -25,10 +25,6 @@ class Annotator extends Delegator
     ".annotator-hl mouseover":           "onHighlightMouseover"
     ".annotator-hl mouseout":            "startViewerHideTimer"
 
-    # TODO: allow for adding these events on document.body
-    "mouseup":   "checkForEndSelection"
-    "mousedown": "checkForStartSelection"
-
   html:
     hl:      '<span class="annotator-hl"></span>'
     adder:   '<div class="annotator-adder"><button>Annotate</button></div>'
@@ -81,7 +77,7 @@ class Annotator extends Delegator
 
     super
     @plugins = {}
-    this._setupWrapper()._setupViewer()._setupEditor()
+    this._setupDocumentEvents()._setupWrapper()._setupViewer()._setupEditor()
 
     # Create model dom elements
     for name, src of @html
@@ -144,6 +140,13 @@ class Annotator extends Delegator
       })
 
     @editor.element.appendTo(@wrapper)
+    this
+
+  _setupDocumentEvents: ->
+    $(document).bind({
+      "mouseup":   this.checkForEndSelection
+      "mousedown": this.checkForStartSelection
+    })
     this
 
   # Public: Gets the currently selected range and sets the @selection and
