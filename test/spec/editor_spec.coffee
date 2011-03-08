@@ -34,6 +34,9 @@ describe 'Annotator.Editor', ->
       expect(editor.onCancelButtonMouseover).toHaveBeenCalled()
 
     it "should call Editor#processKeypress() when a key is pressed in a textarea", ->
+      # Editor needs a text area field.
+      editor.element.find('ul').append('<li><textarea></textarea></li>')
+
       spyOn(editor, 'processKeypress')
       editor.element.find('textarea').keydown()
       expect(editor.processKeypress).toHaveBeenCalled()

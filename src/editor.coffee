@@ -56,16 +56,6 @@ class Annotator.Editor extends Annotator.Widget
     @fields = []
     @annotation = {}
 
-    # Setup the default editor field.
-    this.addField({
-      type: 'textarea',
-      label: 'Comments\u2026'
-      load: (field, annotation) ->
-        $(field).find('textarea').val(annotation.text || '')
-      submit: (field, annotation) ->
-        annotation.text = $(field).find('textarea').val()
-    })
-
     this.setupDragabbles()
 
   # Public: Displays the Editor and fires a "show" event.

@@ -137,30 +137,39 @@ describe 'Annotator', ->
 
       mockEditor = {
         element: element
+        addField: jasmine.createSpy('Editor#addField()')
         hide: jasmine.createSpy('Editor#hide()')
         on: jasmine.createSpy('Editor#on()')
       }
       mockEditor.on.andReturn(mockEditor)
       mockEditor.hide.andReturn(mockEditor)
+      mockEditor.addField.andReturn(document.createElement('li'))
 
       spyOn(element, 'appendTo').andReturn(element)
       spyOn(Annotator, 'Editor').andReturn(mockEditor)
 
-    it "should create a new instance of Annotator.Editor and set Annotator#editor", ->
       annotator._setupEditor()
+
+    it "should create a new instance of Annotator.Editor and set Annotator#editor", ->
       expect(annotator.editor).toBe(mockEditor)
 
     it "should hide the annotator on creation", ->
-      annotator._setupEditor()
       expect(mockEditor.hide).toHaveBeenCalled()
 
+    it "should add the default textarea field", ->
+      options = mockEditor.addField.mostRecentCall.args[0]
+
+      expect(mockEditor.addField).toHaveBeenCalled()
+      expect(options.type).toBe('textarea')
+      expect(options.label).toBe('Comments\u2026')
+      expect(typeof options.load).toBe('function')
+      expect(typeof options.submit).toBe('function')
+
     it "should subscribe to custom events", ->
-      annotator._setupEditor()
       expect(mockEditor.on).toHaveBeenCalledWith('hide', annotator.onEditorHide)
       expect(mockEditor.on).toHaveBeenCalledWith('save', annotator.onEditorSubmit)
 
     it "should append the Editor#element to the Annotator#wrapper", ->
-      annotator._setupEditor()
       expect(mockEditor.element.appendTo).toHaveBeenCalledWith(annotator.wrapper)
 
   describe "getSelection", ->

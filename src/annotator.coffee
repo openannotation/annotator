@@ -133,7 +133,16 @@ class Annotator extends Delegator
     @editor.hide()
       .on('hide', this.onEditorHide)
       .on('save', this.onEditorSubmit)
-      .element.appendTo(@wrapper)
+      .addField({
+        type: 'textarea',
+        label: 'Comments\u2026'
+        load: (field, annotation) ->
+          $(field).find('textarea').val(annotation.text || '')
+        submit: (field, annotation) ->
+          annotation.text = $(field).find('textarea').val()
+      })
+
+    @editor.element.appendTo(@wrapper)
     this
 
   # Public: Gets the currently selected range and sets the @selection and
