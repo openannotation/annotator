@@ -38,8 +38,6 @@ class Annotator extends Delegator
 
   viewer: null
 
-  selection: null
-
   selectedRanges: null
 
   mouseIsDown: false
@@ -118,7 +116,7 @@ class Annotator extends Delegator
         "mouseover": this.clearViewerHideTimer
         "mouseout":  this.startViewerHideTimer
       })
-      
+
     this
 
   # Creates an instance of the Annotator.Editor and assigns it to @editor.
@@ -142,6 +140,9 @@ class Annotator extends Delegator
     @editor.element.appendTo(@wrapper)
     this
 
+  # Sets up the selection event listeners to watch mouse actions on the document.
+  #
+  # Returns itself for chaining.
   _setupDocumentEvents: ->
     $(document).bind({
       "mouseup":   this.checkForEndSelection
@@ -149,14 +150,31 @@ class Annotator extends Delegator
     })
     this
 
-  # Public: Gets the currently selected range and sets the @selection and
-  # @selectedRanges properties.
+  # Public: Gets the current selection excluding any nodes that fall outside of
+  # the @wrapper. Then returns and Array of NormalizedRange instances.
   #
-  # Returns DOMSelection.
-  getSelection: ->
-    @selection = util.getGlobal().getSelection()
-    @selectedRanges = (@selection.getRangeAt(i) for i in [0...@selection.rangeCount])
-    @selection
+  # Examples
+  #
+  #   # A selection inside @wrapper
+  #   annotation.getSelectedRanges()
+  #   # => Returns [NormalizedRange]
+  #
+  #   # A selection outside of @wrapper
+  #   annotation.getSelectedRanges()
+  #   # => Returns []
+  #
+  # Returns Array of NormalizedRange instances.
+  getSelectedRanges: ->
+    selection = util.getGlobal().getSelection()
+    
+    ranges = []
+    unless selection.isCollapsed
+      ranges = for i in [0...selection.rangeCount]
+        browserRange = new Range.BrowserRange(selection.getRangeAt(i))
+        browserRange.normalize().limit(@wrapper[0])
+
+    # Remove any ranges that fell outside of @wrapper.
+    $.grep ranges, (range) -> range
 
   # Public: Creates and returns a new annotation object. Publishes the
   # 'beforeAnnotationCreated' event to allow the new annotation to be modified.
@@ -448,15 +466,14 @@ class Annotator extends Delegator
     if @ignoreMouseup
       return
 
-    selection = this.getSelection()
-    validSelection = selection?.rangeCount > 0 and not selection.isCollapsed
+    # Get the currently selected ranges.
+    @selectedRanges = this.getSelectedRanges()
 
-    for range in (@selectedRanges || [])
-      browserRange = new Range.BrowserRange(range)
-      container = browserRange.commonAncestorContainer
+    for range in @selectedRanges
+      container = range.commonAncestor
       return if this.isAnnotator(container)
 
-    if event and validSelection
+    if event and @selectedRanges.length
       @adder
         .css(util.mousePosition(event, @wrapper[0]))
         .show()

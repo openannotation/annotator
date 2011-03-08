@@ -190,11 +190,19 @@ describe 'Annotator', ->
     it "should append the Editor#element to the Annotator#wrapper", ->
       expect(mockEditor.element.appendTo).toHaveBeenCalledWith(annotator.wrapper)
 
-  describe "getSelection", ->
+  describe "getSelectedRanges", ->
     mockGlobal = null
     mockSelection = null
+    mockRange = null
 
     beforeEach ->
+      # This mock pretends to be both NomalizedRange and BrowserRange.
+      mockRange = {
+        limit: jasmine.createSpy('NormalizedRange#limit()')
+        normalize: jasmine.createSpy('BrowserRange#normalize()')
+      }
+      mockRange.limit.andReturn(mockRange)
+      mockRange.normalize.andReturn(mockRange)
       mockSelection = {
         getRangeAt: jasmine.createSpy().andReturn('')
         rangeCount: 1
@@ -203,22 +211,25 @@ describe 'Annotator', ->
         getSelection: jasmine.createSpy().andReturn(mockSelection)
       }
       spyOn(util, 'getGlobal').andReturn(mockGlobal)
+      spyOn(Range, 'BrowserRange').andReturn(mockRange)
 
     it "should retrieve the global object and call getSelection()", ->
-      annotator.getSelection()
+      annotator.getSelectedRanges()
       expect(mockGlobal.getSelection).toHaveBeenCalled()
 
     it "should retrieve the global object and call getSelection()", ->
-      selection = annotator.getSelection()
-      expect(selection).toBe(mockSelection)
+      ranges = annotator.getSelectedRanges()
+      expect(ranges).toEqual([mockRange])
 
-    it "should set Annotator#selection", ->
-      annotator.getSelection()
-      expect(annotator.selection).toBe(mockSelection)
+    it "should remove any failed calls to NormalizedRange#limit()", ->
+      mockRange.limit.andReturn(null)
+      ranges = annotator.getSelectedRanges()
+      expect(ranges).toEqual([])
 
-    it "should iterate over selected ranges and set Annotator#selectedRanges", ->
-      annotator.getSelection()
-      expect(annotator.selectedRanges).toEqual([''])
+    it "should return an empty array if selection.isCollapsed is true", ->
+      mockSelection.isCollapsed = true
+      ranges = annotator.getSelectedRanges()
+      expect(ranges).toEqual([])
 
   describe "createAnnotation", ->
     it "should return an empty annotation", ->
@@ -540,31 +551,31 @@ describe 'Annotator', ->
   describe "checkForEndSelection", ->
     mockEvent = null
     mockOffset = null
-    mockSelection = null
+    mockRanges = null
 
     beforeEach ->
       mockEvent = { target: document.createElement('span') }
       mockOffset = {top: 0, left: 0}
-      mockSelection = {
-        rangeCount: 1,
-        isCollapsed: false
-      }
+      mockRanges = [{}]
 
       spyOn(util, 'mousePosition').andReturn(mockOffset)
       spyOn(annotator.adder, 'show').andReturn(annotator.adder)
       spyOn(annotator.adder, 'hide').andReturn(annotator.adder)
       spyOn(annotator.adder, 'css').andReturn(annotator.adder)
-      spyOn(annotator, 'getSelection').andReturn(mockSelection)
+      spyOn(annotator, 'getSelectedRanges').andReturn(mockRanges)
 
       annotator.mouseIsDown    = true
       annotator.selectedRanges = []
       annotator.checkForEndSelection(mockEvent)
 
-    it "should get the current selection from Annotator#getSelection()", ->
-      expect(annotator.getSelection).toHaveBeenCalled()
+    it "should get the current selection from Annotator#getSelectedRanges()", ->
+      expect(annotator.getSelectedRanges).toHaveBeenCalled()
 
     it "should set @mouseIsDown to false", ->
       expect(annotator.mouseIsDown).toBe(false)
+
+    it "should set the Annotator#selectedRanges property", ->
+      expect(annotator.selectedRanges).toBe(mockRanges)
 
     it "should display the Annotator#adder if valid selection", ->
       expect(annotator.adder.show).toHaveBeenCalled()
@@ -574,9 +585,7 @@ describe 'Annotator', ->
     it "should hide the Annotator#adder if NOT valid selection", ->
       annotator.adder.hide.reset()
       annotator.adder.show.reset()
-      mockSelection.rangeCount = 0
-
-      annotator.selectedRanges = []
+      annotator.getSelectedRanges.andReturn([])
 
       annotator.checkForEndSelection(mockEvent)
       expect(annotator.adder.hide).toHaveBeenCalled()
@@ -586,27 +595,23 @@ describe 'Annotator', ->
       annotator.adder.hide.reset()
       annotator.adder.show.reset()
 
-      mockNode = document.createTextNode()
+      mockNode = document.createElement('span')
       mockEvent.target = annotator.viewer.element[0]
 
-      annotator.selectedRanges = ['']
       spyOn(annotator, 'isAnnotator').andReturn(true)
-      spyOn(Range, 'BrowserRange').andReturn({
-        commonAncestorContainer: mockNode
-      })
+      annotator.getSelectedRanges.andReturn([{commonAncestor: mockNode}])
 
       annotator.checkForEndSelection(mockEvent)
-      expect(Range.BrowserRange).toHaveBeenCalledWith('')
       expect(annotator.isAnnotator).toHaveBeenCalledWith(mockNode)
 
       expect(annotator.adder.hide).not.toHaveBeenCalled()
       expect(annotator.adder.show).not.toHaveBeenCalled()
 
     it "should return if @ignoreMouseup is true", ->
-      annotator.getSelection.reset()
+      annotator.getSelectedRanges.reset()
       annotator.ignoreMouseup = true
       annotator.checkForEndSelection(mockEvent)
-      expect(annotator.getSelection).not.toHaveBeenCalled()
+      expect(annotator.getSelectedRanges).not.toHaveBeenCalled()
 
   describe "isAnnotator", ->
     it "should return true if the element is part of the annotator", ->
