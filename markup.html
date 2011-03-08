@@ -41,8 +41,8 @@
 
         <div class="annotator-adder"><button>Annotate</button></div>
         <div class="annotator-outer annotator-viewer">
-          <ul class="annotator-widget">
-            <li class="annotator-annotation">
+          <ul class="annotator-widget annotator-listing">
+            <li class="annotator-annotation annotator-item">
               <span class="annotator-controls">
                 <button class="annotator-edit">Edit</button>
                 <button class="annotator-delete">Delete</button>
@@ -52,14 +52,18 @@
                 has multiple comments.
               </div>
             </li>
-            <li class="annotator-annotation">
+            <li class="annotator-annotation annotator-item">
               <span class="annotator-controls">
                 <button class="annotator-edit" disabled>Edit</button>
                 <button class="annotator-delete">Delete</button>
               </span>
               <div>
-                This is a comment on this annotation text. This annotation
+                This is a <a href="comment">Comment</a> on this annotation text. This annotation
                 has multiple comments.
+                <ul>
+                  <li>A simple list item.</li>
+                  <li>A simple list item.</li>
+                </ul>
               </div>
               <div class="plugin annotator-author">
                 By Joe Bloggs
@@ -73,8 +77,8 @@
           </ul>
         </div>
         <div class="annotator-outer annotator-viewer annotator-right">
-          <ul class="annotator-widget">
-            <li class="annotator-annotation">
+          <ul class="annotator-widget annotator-listing">
+            <li class="annotator-annotation annotator-item">
               <span class="annotator-controls">
                  <button class="annotator-edit">Edit</button>
                  <button class="annotator-delete">Delete</button>
@@ -88,18 +92,18 @@
         </div>
         <div class="annotator-outer annotator-editor">
           <form class="annotator-widget">
-            <ul>
-              <li>
+            <ul class="annotator-listing">
+              <li class="annotator-item">
                 <textarea cols="20" rows="4" placeholder="Comments…"></textarea>
               </li>
-              <li>
+              <li class="annotator-item">
                 <input id="annotator-field-2" placeholder="Tags…" />
               </li>
-              <li class="annotator-checkbox">
+              <li class="annotator-item annotator-checkbox">
                 <input type="checkbox" id="annotator-field-3"></textarea>
                 <label for="annotator-field-3">Anyone can <strong>view</strong> this annotation</label>
               </li>
-              <li class="annotator-checkbox">
+              <li class="annotator-item annotator-checkbox">
                 <input type="checkbox" id="annotator-field-4"></textarea>
                 <label for="annotator-field-4">Anyone can <strong>edit</strong> this annotation</label>
               </li>

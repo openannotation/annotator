@@ -1,5 +1,3 @@
-/* @override http://localhost:8000/css/annotator.css */
-
 /* Base Reset
 -------------------------------------------------------------------- */
 
@@ -143,8 +141,8 @@
 	font-weight: bold;
 }
 
-.annotator-widget ul,
-.annotator-widget li {
+.annotator-widget .annotator-listing,
+.annotator-widget .annotator-item {
 	padding: 0;
 	margin: 0;
 	list-style: none;
@@ -172,22 +170,22 @@
 	top: -9px;
 }
 
-.annotator-widget li,
-.annotator-editor li input,
-.annotator-editor li textarea {
+.annotator-widget .annotator-item,
+.annotator-editor .annotator-item input,
+.annotator-editor .annotator-item textarea {
 	position: relative;
 	font-size: 12px;
 }
 
-.annotator-viewer li {
+.annotator-viewer .annotator-item {
 	border-top: 2px solid rgba(122, 122, 122, 0.2);
 }
 
-.annotator-widget li:first-child {
+.annotator-widget .annotator-item:first-child {
 	border-top: none;
 }
 
-.annotator-editor li,
+.annotator-editor .annotator-item,
 .annotator-viewer div {
 	border-top: 1px solid rgba(133, 133, 133, 0.11);
 }
@@ -199,8 +197,16 @@
 	padding: 6px 6px;
 }
 
+.annotator-viewer .annotator-item ol,
+.annotator-viewer .annotator-item ul {
+	padding: 4px 16px;
+}
+
+.annotator-viewer .annotator-item li {
+}
+
 .annotator-viewer div:first-of-type,
-.annotator-editor li:first-child textarea {
+.annotator-editor .annotator-item:first-child textarea {
 	padding-top: 12px;
 	padding-bottom: 12px;
 	color: rgb(60, 60, 60);
@@ -265,18 +271,18 @@
 /* Annotator Editor
 -------------------------------------------------------------------- */
 
-.annotator-editor li {
+.annotator-editor .annotator-item {
 	position: relative;
 }
 
-.annotator-editor li label {
+.annotator-editor .annotator-item label {
 	top: 0;
 	display: inline;
 	cursor: pointer;
 }
 
-.annotator-editor li input,
-.annotator-editor li textarea {
+.annotator-editor .annotator-item input,
+.annotator-editor .annotator-item textarea {
 	display: block;
 	min-width: 100%;
 	padding: 10px 8px;
@@ -291,31 +297,31 @@
 	resize: none;
 }
 
-.annotator-editor li textarea::-webkit-scrollbar {
+.annotator-editor .annotator-item textarea::-webkit-scrollbar {
 	height: 8px;
 	width: 8px;
 }
 
-.annotator-editor li textarea::-webkit-scrollbar-track-piece {
+.annotator-editor .annotator-item textarea::-webkit-scrollbar-track-piece {
 	margin: 13px 0 3px;
 	background-color: #e5e5e5;
 	-webkit-border-radius: 4px;
 }
 
-.annotator-editor li textarea::-webkit-scrollbar-thumb:vertical {
+.annotator-editor .annotator-item textarea::-webkit-scrollbar-thumb:vertical {
 	height: 25px;
 	background-color: #ccc;
 	-webkit-border-radius: 4px;
 	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
-.annotator-editor li textarea::-webkit-scrollbar-thumb:horizontal {
+.annotator-editor .annotator-item textarea::-webkit-scrollbar-thumb:horizontal {
 	width: 25px;
 	background-color: #ccc;
 	-webkit-border-radius: 4px;
 }
 
-.annotator-editor li:first-child textarea {
+.annotator-editor .annotator-item:first-child textarea {
 	min-height: 5.5em;
 	-webkit-border-radius: 5px 5px 0 0;
 	-moz-border-radius: 5px 5px 0 0;
@@ -323,14 +329,14 @@
 	border-radius: 5px 5px 0 0;
 }
 
-.annotator-editor li input:focus,
-.annotator-editor li textarea:focus{
+.annotator-editor .annotator-item input:focus,
+.annotator-editor .annotator-item textarea:focus{
 	background-color: rgb(243, 243, 243);
 	outline: none;
 }
 
-.annotator-editor li input[type=radio],
-.annotator-editor li input[type=checkbox] {
+.annotator-editor .annotator-item input[type=radio],
+.annotator-editor .annotator-item input[type=checkbox] {
 	width: auto;
 	min-width: 0;
 	padding: 0;

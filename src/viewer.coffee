@@ -15,11 +15,11 @@ class Annotator.Viewer extends Annotator.Widget
   html:
     element:"""
             <div class="annotator-outer annotator-viewer">
-              <ul class="annotator-widget"></ul>
+              <ul class="annotator-widget annotator-listing"></ul>
             </div>
             """
     item:   """
-            <li class="annotator-annotation">
+            <li class="annotator-annotation annotator-item">
               <span class="annotator-controls">
                 <button class="annotator-edit">Edit</button>
                 <button class="annotator-delete">Delete</button>

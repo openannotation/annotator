@@ -18,7 +18,7 @@ class Annotator.Editor extends Annotator.Widget
   html: """
         <div class="annotator-outer annotator-editor">
           <form class="annotator-widget">
-            <ul></ul>
+            <ul class="annotator-listing"></ul>
             <div class="annotator-controls">
               <a href="#cancel" class="annotator-cancel">Cancel</a>
               <a href="#save" class="annotator-save annotator-focus">Save</a>
@@ -229,7 +229,7 @@ class Annotator.Editor extends Annotator.Widget
     }, options)
 
     input = null
-    element = $('<li />')
+    element = $('<li class="annotator-item" />')
     field.element = element[0]
 
     switch (field.type)
