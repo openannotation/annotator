@@ -70,14 +70,16 @@ Look at the existing plugins to get a feel for how they work. The Markdown plugi
 
 Useful events are triggered on the Annotator `element` (passed to the constructor of the plugin):
 
-- `beforeAnnotationCreated(event, annotation)`: called immediately before an annotation is created. If you need to modify the annotation before it is saved to the server by the Store plugin, use this event.
-- `annotationCreated(event, annotation)`: called when the annotation is created. Used by the Store plugin to save new annotations.
-- `beforeAnnotationUpdated(event, annotation)`: as above, but just before an existing annotation is saved.
-- `annotationUpdated(event, annotation)`: as above, but for an existing annotation which has just been edited.
-- `annotationDeleted(event, annotation)`: called when the user deletes an annotation.
-- `annotationEditorShown(event, editorElement, annotation)`: called when the annotation editor is presented to the user. Allows a plugin to add extra form fields. See the Tags plugin for an example of its use.
-- `annotationEditorHidden(event, editorElement)`: called when the annotation editor is hidden, both when submitted and when editing is cancelled.
-- `annotationEditorSubmit(event, editorElement, annotation)`: called when the annotation editor is submitted.
+- `beforeAnnotationCreated(annotation)`: called immediately before an annotation is created. If you need to modify the annotation before it is saved to the server by the Store plugin, use this event.
+- `annotationCreated(annotation)`: called when the annotation is created. Used by the Store plugin to save new annotations.
+- `beforeAnnotationUpdated(annotation)`: as above, but just before an existing annotation is saved.
+- `annotationUpdated(annotation)`: as above, but for an existing annotation which has just been edited.
+- `annotationDeleted(annotation)`: called when the user deletes an annotation.
+- `annotationEditorShown(editor, annotation)`: called when the annotation editor is presented to the user. Allows a plugin to add extra form fields. See the Tags plugin for an example of its use.
+- `annotationEditorHidden(editor)`: called when the annotation editor is hidden, both when submitted and when editing is cancelled.
+- `annotationEditorSubmit(editor, annotation)`: called when the annotation editor is submitted.
+- `annotationViewerShown(viewer, annotations)`: called when the annotation viewer is displayed provides the annotations being displayed
+- `annotationViewerTextField(field, annotation)`: called when the text field displaying the annotation in the viewer is created
 
 Development
 -----------
@@ -112,3 +114,8 @@ The Annotator source is found in `src/`, and is written in CoffeeScript, which i
 The tests are to be found in `test/spec/`, and use [Jasmine][jas] to support a BDD process.
 
 [jas]: http://pivotal.github.com/jasmine/
+
+For inline documentation we use [TomDoc][tom]. It's a Ruby specification but it
+also works nicely with CoffeeScript.
+
+[tom]: http://tomdoc.org/

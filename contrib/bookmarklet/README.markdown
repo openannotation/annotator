@@ -25,6 +25,14 @@ run the following:
 
     $ cake bookmarklet:build > bookmarklet.js
 
+NOTE: Building the bookmarklet currently requires a `yuicompressor` executable.
+If you're running a Mac with [Homebrew][#homebrew] installed you can simply run.
+Or create a [similar executable yourself][#yui-source].
+
+    $ brew install yuicompressor
+
+TODO: The Cakefile needs to be updated to remove this requirement.
+
 Configuration
 -------------
 
@@ -80,3 +88,5 @@ run:
 [#annotateit]: http://annotateit.org
 [#wiki-permissions]: https://github.com/okfn/annotator/wiki/Permissions-Plugin
 [#wiki-store]: https://github.com/okfn/annotator/wiki/Store-Plugin
+[#homebrew]: http://mxcl.github.com/homebrew/
+[#yui-source]: https://github.com/mxcl/homebrew/blob/master/Library/Formula/yuicompressor.rb
