@@ -65,6 +65,10 @@ Settings for the [Permissions plugin][#wiki-permissions].
 
  - `user`: The object representing the current user.
  - `permissions`: An object literal of permissions to set on annotations.
+ - `showViewPermissionsCheckbox`: If `true` will display the "anyone can view"
+   checkbox.
+ - `showEditPermissionsCheckbox`: If `true` will display the "anyone can edit"
+   checkbox.
 
 #### tags
 

@@ -167,16 +167,14 @@
     },
 
     permissionsOptions: function () {
-      return {
-        user: this.config('permissions.user'),
-        permissions: this.config('permissions.permissions'),
+      return jQuery.extend({}, {
         userId: function (user) {
           return user && user.id ? user.id : '';
         },
         userString: function (user) {
           return user && user.name ? user.name : '';
         }
-      };
+      }, this.config('permissions'));
     },
 
     setup: function () {

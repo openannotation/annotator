@@ -159,9 +159,10 @@ describe("bookmarklet", function () {
 
     it("should retrieve user and permissions from config", function () {
       spyOn(bookmarklet, 'config');
+      spyOn(jQuery, 'extend');
       bookmarklet.permissionsOptions();
-      expect(bookmarklet.config).toHaveBeenCalledWith('permissions.user');
-      expect(bookmarklet.config).toHaveBeenCalledWith('permissions.permissions');
+      expect(jQuery.extend).toHaveBeenCalled();
+      expect(bookmarklet.config).toHaveBeenCalledWith('permissions');
     });
 
     it("should have a userId method that returns the user id", function () {

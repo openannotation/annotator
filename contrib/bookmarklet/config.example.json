@@ -23,6 +23,8 @@
   },
   // Subset of the Permissions plugin options.
   "permissions": {
+    "showViewPermissionsCheckbox": true,
+    "showEditPermissionsCheckbox": true,
     "user": {
       "id": "Anonymous",
       "name": "Anonymous"
