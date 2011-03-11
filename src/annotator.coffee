@@ -228,7 +228,7 @@ class Annotator extends Delegator
     annotation.highlights = []
 
     for normed in normedRanges
-      annotation.quote.push      normed.text()
+      annotation.quote.push      $.trim(normed.text())
       annotation.ranges.push     normed.serialize(@wrapper[0], '.annotator-hl')
       $.merge annotation.highlights, this.highlightRange(normed)
 

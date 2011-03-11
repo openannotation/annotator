@@ -277,6 +277,11 @@ describe 'Annotator', ->
     it "should return the annotation object with the quoted text", ->
       expect(annotation.quote).toEqual(quote)
 
+    it "should trim whitespace from start and end of quote", ->
+      normalizedRange.text.andReturn('\n\t   ' + quote + '   \n')
+      annotation = annotator.setupAnnotation(annotationObj)
+      expect(annotation.quote).toEqual(quote)
+
     it "should set the annotation.ranges", ->
       expect(annotation.ranges).toEqual([{}])
 
