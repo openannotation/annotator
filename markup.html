@@ -122,6 +122,28 @@
       <p>This is an exciting message with a <a href="#link">Link</a>.</p>
     </div>
 
+    <div class="annotator-filter">
+      <strong>Filter by:</strong>
+      <label for="annotator-filter-tag" class="annotator-filter-property">
+        <input type="checkbox" id="annotator-filter-tag" name="tag" value="1" />
+        User
+      </label>
+      <label for="annotator-filter-user" class="annotator-filter-property">
+        <input type="checkbox" id="annotator-filter-user" name="user" value="1" />
+        Tag
+      </label>
+      <label for="annotator-filter-annotation" class="annotator-filter-property">
+        <input type="checkbox" id="annotator-filter-annotation" name="annotation" value="1" />
+        Annotation
+      </label>
+      <input type="search" placeholder="Filter&hellip;" value="" />
+      <span class="annotator-filter-navigation">
+        <button class="annotator-filter-previous">Previous</button>
+        <button class="annotator-filter-next">Next</button>
+      </span>
+      <button class="annotator-filter-close">Close</button>
+    </div>
+
     <script src="lib/vendor/jquery.js"></script>
     <script>
       (function ($) {
