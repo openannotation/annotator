@@ -42,14 +42,26 @@ describe 'Annotator.Plugin.Permissions', ->
           addField: jasmine.createSpy('addField')
         }
       }
-      permissions.pluginInit()
 
     it "should register a field with the Viewer", ->
+      permissions.pluginInit()
       expect(permissions.annotator.viewer.addField).toHaveBeenCalled()
 
-    it "should register a two fields with the Editor", ->
+    it "should register an two checkbox fields with the Editor", ->
+      permissions.pluginInit()
       expect(permissions.annotator.editor.addField.callCount).toEqual(2)
 
+    it "should register an 'anyone can view' field with the Editor if showEditPermissionsCheckbox is true", ->
+      permissions.options.showViewPermissionsCheckbox = true
+      permissions.options.showEditPermissionsCheckbox = false
+      permissions.pluginInit()
+      expect(permissions.annotator.editor.addField.callCount).toEqual(1)
+
+    it "should register an 'anyone can edit' field with the Editor if showViewPermissionsCheckbox is true", ->
+      permissions.options.showViewPermissionsCheckbox = false
+      permissions.options.showEditPermissionsCheckbox = true
+      permissions.pluginInit()
+      expect(permissions.annotator.editor.addField.callCount).toEqual(1)
 
   describe 'authorize', ->
     annotations = null

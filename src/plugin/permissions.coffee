@@ -22,6 +22,12 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   # A Object literal of default options for the class.
   options:
 
+    # Displays an "Anyone can view this annotation" checkbox in the Editor.
+    showViewPermissionsCheckbox: true
+
+    # Displays an "Anyone can edit this annotation" checkbox in the Editor.
+    showEditPermissionsCheckbox: true
+
     # Public: Used by the plugin to determine a unique id for the @user property.
     # By default this accepts and returns the user String but can be over-
     # ridden in the @options object passed into the constructor.
@@ -115,19 +121,21 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     createCallback = (method, type) ->
       (field, annotation) -> self[method].call(self, type, field, annotation)
 
-    @annotator.editor.addField({
-      type:   'checkbox'
-      label:  'Allow anyone to <strong>view</strong> this annotation'
-      load:   createCallback('updatePermissionsField', 'read')
-      submit: createCallback('updateAnnotationPermissions', 'read')
-    })
+    if @options.showViewPermissionsCheckbox == true
+      @annotator.editor.addField({
+        type:   'checkbox'
+        label:  'Allow anyone to <strong>view</strong> this annotation'
+        load:   createCallback('updatePermissionsField', 'read')
+        submit: createCallback('updateAnnotationPermissions', 'read')
+      })
 
-    @annotator.editor.addField({
-      type:   'checkbox'
-      label:  'Allow anyone to <strong>edit</strong> this annotation'
-      load:   createCallback('updatePermissionsField', 'update')
-      submit: createCallback('updateAnnotationPermissions', 'update')
-    })
+    if @options.showEditPermissionsCheckbox == true
+      @annotator.editor.addField({
+        type:   'checkbox'
+        label:  'Allow anyone to <strong>edit</strong> this annotation'
+        load:   createCallback('updatePermissionsField', 'update')
+        submit: createCallback('updateAnnotationPermissions', 'update')
+      })
 
     # Setup the display of annotations in the Viewer.
     @annotator.viewer.addField({
