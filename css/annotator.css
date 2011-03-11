@@ -605,15 +605,6 @@
 -------------------------------------------------------------------- */
 
 .annotator-notice {
-	position: absolute;
-	position: fixed;
-	top: -40px;
-	width: 100%;
-	line-height: 40px;
-	font-size: 12px;
-}
-
-.annotator-notice {
 	color: #fff;
 	position: absolute;
 	position: fixed;
@@ -623,13 +614,17 @@
 	font-size: 14px;
 	line-height: 50px;
 	text-align: center;
-	background-color: #000;
-	background-color: rgba(0, 0, 0, 0.9);
+	background: black;
+	background: rgba(0, 0, 0, 0.9);
 	border-bottom: 4px solid #d4d4d4;
 	-webkit-transition: top 0.4s ease-out;
 	-moz-transition: top 0.4s ease-out;
 	-o-transition: top 0.4s ease-out;
 	transition: top 0.4s ease-out;
+}
+
+.ie6 .annotator-notice {
+	position: absolute;
 }
 
 .annotator-notice-success {

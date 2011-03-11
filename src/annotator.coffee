@@ -70,11 +70,11 @@ class Annotator extends Delegator
   #
   # Returns a new instance of the Annotator.
   constructor: (element, options) ->
-    # Return early if the annotator is not supported.
-    return this unless Annotator.supported()
-
     super
     @plugins = {}
+
+    # Return early if the annotator is not supported.
+    return this unless Annotator.supported()
     this._setupDocumentEvents()._setupWrapper()._setupViewer()._setupEditor()
 
     # Create model dom elements

@@ -14,4 +14,9 @@ class Annotator.Plugin.Unsupported extends Annotator.Plugin
       $(=>
         # On document load display notification.
         Annotator.showNotification(@options.message)
+
+        # Add a class if we're in IE6. A bit of a hack but we need to be able
+        # to set the notification position in the CSS.
+        if (window.XMLHttpRequest == undefined) and (ActiveXObject != undefined)
+          $('html').addClass('ie6')
       )
