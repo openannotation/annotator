@@ -191,6 +191,10 @@
         // headers on each request.
         .element.data('annotator:headers', this.config('auth.headers'));
 
+      if (this.config('tags') === true) {
+          annotator.addPlugin('Tags');
+      }
+
       // Attach the annotator to the window object so we can prevent it
       // being loaded twice and test.
       jQuery.extend(window._annotator, {

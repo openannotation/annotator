@@ -66,6 +66,10 @@ Settings for the [Permissions plugin][#wiki-permissions].
  - `user`: The object representing the current user.
  - `permissions`: An object literal of permissions to set on annotations.
 
+#### tags
+
+If this is set to `true` the tags plugin will be added to the Annotator.
+
 Development
 -----------
 

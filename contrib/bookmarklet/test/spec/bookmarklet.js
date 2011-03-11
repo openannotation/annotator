@@ -32,7 +32,11 @@ describe("bookmarklet", function () {
 
     it("should call load() if jQuery is on the page", function () {
       var jQuery = window.jQuery;
-      window.jQuery = {sub: jasmine.createSpy('jQuery.sub()')};
+      window.jQuery = {
+        sub: jasmine.createSpy('jQuery.sub()'),
+        proxy: jasmine.createSpy('jQuery.proxy()')
+      };
+      window.jQuery.sub.andReturn(window.jQuery);
 
       bookmarklet.init();
       expect(bookmarklet.load).toHaveBeenCalled();
@@ -134,6 +138,13 @@ describe("bookmarklet", function () {
       expect(plugins.Permissions).toBeTruthy();
       expect(plugins.Unsupported).toBeTruthy();
       expect(instance.element.data('annotator:headers')).toBeTruthy();
+    });
+
+    it ("should add the tags plugin if options.tags is true", function () {
+      var instance = window._annotator.instance,
+          plugins  = instance.plugins;
+
+      expect(plugins.Tags).toBeTruthy();
     });
 
     it("should display a loaded notification", function () {
