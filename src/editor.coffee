@@ -302,8 +302,8 @@ class Annotator.Editor extends Annotator.Widget
     mousedown = null
     classes   = @classes
     editor    = @element
+    textarea  = null
     resize    = editor.find('.annotator-resize')
-    textarea  = editor.find('textarea:first')
     controls  = editor.find('.annotator-controls')
     throttle  = false
 
@@ -314,6 +314,9 @@ class Annotator.Editor extends Annotator.Widget
           top:     event.pageY
           left:    event.pageX
         }
+
+        # Find the first text area if there is one.
+        textarea = editor.find('textarea:first')
 
         $(window).bind({
           'mouseup.annotator-editor-resize':   onMouseup
@@ -338,9 +341,7 @@ class Annotator.Editor extends Annotator.Widget
 
           directionX = if editor.hasClass(classes.invert.x) then -1 else  1
           directionY = if editor.hasClass(classes.invert.y) then  1 else -1
-          
-          console.log directionY, directionX
-          
+
           textarea.height height + (diff.top  * directionY)
           textarea.width  width  + (diff.left * directionX)
 
