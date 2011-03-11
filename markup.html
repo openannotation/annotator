@@ -123,25 +123,24 @@
     </div>
 
     <div class="annotator-filter">
-      <strong>Filter by:</strong>
-      <label for="annotator-filter-tag" class="annotator-filter-property">
-        <input type="checkbox" id="annotator-filter-tag" name="tag" value="1" />
-        User
-      </label>
-      <label for="annotator-filter-user" class="annotator-filter-property">
-        <input type="checkbox" id="annotator-filter-user" name="user" value="1" />
-        Tag
-      </label>
-      <label for="annotator-filter-annotation" class="annotator-filter-property">
-        <input type="checkbox" id="annotator-filter-annotation" name="annotation" value="1" />
-        Annotation
-      </label>
-      <input type="search" placeholder="Filter&hellip;" value="" />
+      <strong>Navigate:</strong>
       <span class="annotator-filter-navigation">
         <button class="annotator-filter-previous">Previous</button>
         <button class="annotator-filter-next">Next</button>
       </span>
-      <button class="annotator-filter-close">Close</button>
+      <strong>Filter by:</strong>
+      <span class="annotator-filter-property annotator-filter-active">
+        <label for="annotator-filter-user">User</label>
+        <input type="text" id="annotator-filter-user" placeholder="Filter&hellip;" value="alice" />
+      </span>
+      <span class="annotator-filter-property">
+        <label for="annotator-filter-tag">Tag</label>
+        <input type="text" id="annotator-filter-tag" placeholder="Filter by tag&hellip;" value="" />
+      </span>
+      <span class="annotator-filter-property">
+        <label for="annotator-filter-annotation">Annotation</label>
+        <input type="text" id="annotator-filter-annotation" placeholder="Filter by annotation&hellip;" value="" />
+      </span>
     </div>
 
     <script src="lib/vendor/jquery.js"></script>
