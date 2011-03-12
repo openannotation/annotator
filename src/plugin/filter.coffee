@@ -1,8 +1,9 @@
 class Annotator.Plugin.Filter extends Annotator.Plugin
+  # Events and callbacks to bind to the Filter#element.
   events:
-    ".annotator-filter-property input focus":    "_onFilterFocus"
-    ".annotator-filter-property input blur":     "_onFilterBlur"
-    ".annotator-filter-property input keypress": "_onFilterKeypress"
+    ".annotator-filter-property input focus": "_onFilterFocus"
+    ".annotator-filter-property input blur":  "_onFilterBlur"
+    ".annotator-filter-property input keyup": "_onFilterKeyup"
 
   # Common classes used to change plugin state.
   classes:
@@ -35,6 +36,31 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
     # A CSS selector or Element to append the plugin toolbar to.
     appendTo: 'body'
 
+    # Public: Determines if the property is contained within the provided
+    # annotation property. Default is to split the string on spaces and only
+    # return true if all keywords are contained in the string. This method
+    # can be overridden by the user when initialising the plugin.
+    #
+    # string   - An input String from the fitler.
+    # property - The annotation propery to query.
+    #
+    # Examples
+    #
+    #   plugin.option.getKeywords('hello', 'hello world how are you?')
+    #   # => Returns true
+    #
+    #   plugin.option.getKeywords('hello bill', 'hello world how are you?')
+    #   # => Returns false
+    #
+    # Returns an Array of keyword Strings.
+    isFiltered: (input, property) ->
+      return false unless input and property
+
+      for keyword in (input.split /\s*/)
+        return false if property.indexOf(keyword) == -1
+
+      return true
+
   # Public: Creates a new instance of the Filter plugin.
   #
   # element - The Annotator element (this is ignored by the plugin).
@@ -53,14 +79,18 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
 
     super element, options
     @filter  = $(@html.filter)
-    @filters = []
+    @filters = {}
+    this.updateHighlights()
 
   # Public: Adds a filter to the toolbar. The filter must have both a label
   # and a property of an annotation object to filter on.
   #
   # options - An Object literal containing the filters options.
-  #           label    - A public facing String to represent the filter.
-  #           property - An annotation property String to filter on.
+  #           label      - A public facing String to represent the filter.
+  #           property   - An annotation property String to filter on.
+  #           isFiltered - A callback Function that recieves the field input
+  #                        value and the annotation property value. See
+  #                        @options.isFiltered() for details.
   #
   # Examples
   #
@@ -75,9 +105,11 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
     filter = $.extend({
       label: ''
       property: ''
+      isFiltered: @options.isFiltered
     }, options)
 
     filter.id = 'annotator-filter-' + filter.property
+    filter.annotations = []
     filter.element = @filter.clone().appendTo(@element)
     filter.element.find('label')
       .html(filter.label)
@@ -89,6 +121,65 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
       })
 
     @filters[filter.id] = filter
+    this
+
+  # Public: Updates the filter.annotations property. Then updates the state
+  # of the elements in the DOM. Calls the filter.isFiltered() method to
+  # determine if the annotation should remain.
+  #
+  # filter - A filter Object from @filters
+  #
+  # Examples
+  #
+  #   filter.updateFilter(myFilter)
+  #
+  # Returns itself for chaining
+  updateFilter: (filter) ->
+    filter.annotations = []
+
+    this.updateHighlights()
+    this.resetHighlights()
+    input = $.trim filter.element.find('input').val()
+
+    if input
+      annotations = @highlights.map -> $(this).data('annotation')
+
+      for annotation in $.makeArray(annotations)
+        property = annotation[filter.property]
+        if filter.isFiltered input, property
+          filter.annotations.push annotation
+
+      this.filterHighlights()
+
+  # Public: Updates the @highlights property with the latest highlight
+  # elements in the DOM.
+  #
+  # Returns a jQuery collection of the highlight elements.
+  updateHighlights: ->
+    @highlights = $('.annotator-hl')
+
+  # Public: Runs through each of the filters and removes all highlights not
+  # currently in scope.
+  #
+  # Returns itself for chaining.
+  filterHighlights: ->
+    filtered = []
+
+    $.each @filters, ->
+      $.merge(filtered, this.annotations)
+
+    highlights = @highlights
+    for annotation, index in filtered
+      highlights = highlights.not(annotation.highlights)
+
+    highlights.addClass(@classes.hl.hide)
+    this
+
+  # Public: Removes hidden class from all annotations.
+  #
+  # Returns itself for chaining.
+  resetHighlights: ->
+    @highlights.removeClass(@classes.hl.hide)
     this
 
   # Updates the filter field on focus.
@@ -108,10 +199,11 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
     unless event.target.value
       $(event.target).parent().removeClass(@classes.active)
 
-  # Updates the filters.
+  # Updates the filter based on the id of the filter element.
   #
-  # event - A keypress Event
+  # event - A keyup Event
   #
   # Returns nothing.
-  _onFilterKeypress: (event) =>
-    # Perform the filter.
+  _onFilterKeyup: (event) =>
+    filter = @filters[event.target.id]
+    this.updateFilter filter if filter
