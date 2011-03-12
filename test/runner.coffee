@@ -42,6 +42,7 @@ s.require 'lib/plugin/store.js'
 s.require 'lib/plugin/auth.js'
 s.require 'lib/plugin/markdown.js'
 s.require 'lib/plugin/tags.js'
+s.require 'lib/plugin/filter.js'
 
 s.require 'test/spec_helper.coffee'
 

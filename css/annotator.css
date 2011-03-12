@@ -830,6 +830,6 @@
 	background-color: transparent;
 }
 
-.annotator-hl-focus {
+.annotator-hl-active {
 	background: rgba(255, 255, 10, 0.8);
 }

@@ -11,6 +11,7 @@ SRC =         ['extensions',
 SRC_PLUGINS = ['tags',
                'auth',
                'store',
+               'filter',
                'markdown',
                'unsupported',
                'permissions'].map { |x| "src/plugin/#{x}.coffee" }

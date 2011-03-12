@@ -21,6 +21,7 @@
     <script src="lib/plugin/auth.js"></script>
     <script src="lib/plugin/tags.js"></script>
     <script src="lib/plugin/unsupported.js"></script>
+    <script src="lib/plugin/filter.js"></script>
 
     <link rel="stylesheet" type="text/css" href="css/annotator.css">
   </head>
@@ -66,16 +67,17 @@
         devAnnotator = new Annotator(elem)
           //.addPlugin('Auth')
           .addPlugin('Unsupported')
+          .addPlugin('Filter')
           .addPlugin('Tags')
-          .addPlugin('Permissions', {
-            user: 'alice',
-            permissions: {
-              update: ['alice']
-            }
-          })
-          .addPlugin('Store', {
-            prefix: 'http://localhost:5000'
-          });
+          //           .addPlugin('Permissions', {
+          //             user: 'alice',
+          //             permissions: {
+          //               update: ['alice']
+          //             }
+          //           })
+          //           .addPlugin('Store', {
+          //             prefix: 'http://localhost:5000'
+          //           });
       }(jQuery));
     </script>
   </body>
