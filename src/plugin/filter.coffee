@@ -1,14 +1,19 @@
 class Annotator.Plugin.Filter extends Annotator.Plugin
+  events:
+    ".annotator-filter-property input focus":    "_onFilterFocus"
+    ".annotator-filter-property input blur":     "_onFilterBlur"
+    ".annotator-filter-property input keypress": "_onFilterKeypress"
+
   # Common classes used to change plugin state.
-  classes: 
+  classes:
     active:   'annotator-filter-active'
     hl:
       hide:   'annotator-hl-filtered'
       active: 'annotator-hl-active'
 
   # HTML templates for the plugin UI.
-  html: 
-    toolbar: """
+  html:
+    element: """
              <div class="annotator-filter">
                <strong>Navigate:</strong>
                <span class="annotator-filter-navigation">
@@ -32,7 +37,7 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
 
   # Public: Creates a new instance of the Filter plugin.
   #
-  # element - The Annotator element.
+  # element - The Annotator element (this is ignored by the plugin).
   # options - An Object literal of options.
   #
   # Examples
@@ -41,8 +46,12 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
   #
   # Returns a new instance of the Filter plugin.
   constructor: (element, options) ->
-    super
-    @toolbar = $(@html.toolbar).appendTo(@options.appendTo)
+    # As most events for this plugin are relative to the toolbar which is
+    # not inside the Annotator#Element we override the element property.
+    # Annotator#Element can still be accessed via @annotator.element.
+    element = $(@html.element).appendTo(@options.appendTo)
+
+    super element, options
     @filter  = $(@html.filter)
     @filters = []
 
@@ -69,7 +78,7 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
     }, options)
 
     filter.id = 'annotator-filter-' + filter.property
-    filter.element = @filter.clone().appendTo(@toolbar)
+    filter.element = @filter.clone().appendTo(@element)
     filter.element.find('label')
       .html(filter.label)
       .attr('for', filter.id)
@@ -81,3 +90,28 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
 
     @filters[filter.id] = filter
     this
+
+  # Updates the filter field on focus.
+  #
+  # event - A focus Event object.
+  #
+  # Returns nothing
+  _onFilterFocus: (event) =>
+    $(event.target).parent().addClass(@classes.active)
+
+  # Updates the filter field on blur.
+  #
+  # event - A blur Event object.
+  #
+  # Returns nothing.
+  _onFilterBlur: (event) =>
+    unless event.target.value
+      $(event.target).parent().removeClass(@classes.active)
+
+  # Updates the filters.
+  #
+  # event - A keypress Event
+  #
+  # Returns nothing.
+  _onFilterKeypress: (event) =>
+    # Perform the filter.
