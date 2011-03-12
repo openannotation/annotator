@@ -23,3 +23,20 @@ describe "Filter", ->
 
       parent = $(plugin.options.appendTo)
       expect(plugin.toolbar.parent()[0]).toBe(parent[0])
+
+  describe "addFilter", ->
+    filter = null
+
+    beforeEach ->
+      filter = {
+        label: 'Tag',
+        property: 'tags'
+      }
+      plugin.addFilter(filter)
+
+    it "should add a filter object to Filter#plugins", ->
+      expect(plugin.filters['annotator-filter-tags']).toBeTruthy()
+
+    it "should append the html to Filter#toolbar", ->
+      filter = plugin.filters['annotator-filter-tags']
+      expect(filter.element[0]).toBe(plugin.toolbar.find('#annotator-filter-tags').parent()[0])
