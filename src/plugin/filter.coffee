@@ -36,6 +36,9 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
     # A CSS selector or Element to append the plugin toolbar to.
     appendTo: 'body'
 
+    # An array of filters can be provided on initialisation.
+    filters: []
+
     # Public: Determines if the property is contained within the provided
     # annotation property. Default is to split the string on spaces and only
     # return true if all keywords are contained in the string. This method
@@ -80,12 +83,16 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
     super element, options
     @filter  = $(@html.filter)
     @filters = {}
-    this.updateHighlights()
 
-  # Public: Created event listeners on the annotator object.
+  # Public: Adds new filters. Updates the @highlights cache and creates event 
+  # listeners on the annotator object.
   #
   # Returns nothing.
   pluginInit: ->
+    for filter in @options.filters
+      this.addFilter(filter)
+
+    this.updateHighlights()
     this._setupListeners()
 
   # Listens to annotation change events on the Annotator in order to refresh

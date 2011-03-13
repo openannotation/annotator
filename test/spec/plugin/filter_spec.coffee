@@ -48,10 +48,29 @@ describe "Filter", ->
       expect(plugin.element.parent()[0]).toBe(parent[0])
 
   describe "pluginInit", ->
+    it "should call Filter#updateHighlights()", ->
+      spyOn(plugin, 'updateHighlights')
+      plugin.pluginInit()
+      expect(plugin.updateHighlights).toHaveBeenCalled()
+
     it "should call Filter#_setupListeners()", ->
       spyOn(plugin, '_setupListeners')
       plugin.pluginInit()
       expect(plugin._setupListeners).toHaveBeenCalled()
+
+    it "should load any filters in the Filter#options.filters array", ->
+      filters = [
+        {label: 'filter1'}
+        {label: 'filter2'}
+        {label: 'filter3'}
+      ]
+      spyOn(plugin, 'addFilter')
+
+      plugin.options.filters = filters
+      plugin.pluginInit()
+      
+      for filter in filters
+        expect(plugin.addFilter).toHaveBeenCalledWith(filter)
 
   describe "_setupListeners", ->
     it "should subscribe to all relevant events on the annotator", ->

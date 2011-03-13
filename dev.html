@@ -67,8 +67,26 @@
         devAnnotator = new Annotator(elem)
           //.addPlugin('Auth')
           .addPlugin('Unsupported')
-          .addPlugin('Filter')
-          .addPlugin('Tags')
+          .addPlugin('Filter', {
+            filters: [
+              {label: 'Annotation', property: 'text'},
+              {label: 'Tag', property: 'tags', isFiltered: function (input, tags) {
+                var keywords;
+                if (input && tags && tags.length) {
+                  keywords = input.split(/\s+/g);
+                  for (var i = 0; i < keywords.length; i += 1) {
+                    for (var j = 0; j < tags.length; j += 1) {
+                      if (tags[j].indexOf(keywords[i]) !== -1) {
+                        return true;
+                      }
+                    }
+                  }
+                }
+                return false;
+              }}
+            ]
+          })
+          .addPlugin('Tags');
           //           .addPlugin('Permissions', {
           //             user: 'alice',
           //             permissions: {
@@ -79,7 +97,6 @@
           //             prefix: 'http://localhost:5000'
           //           });
           
-        devAnnotator.plugins.Filter.addFilter({label: 'Annotation', property: 'text'})
       }(jQuery));
     </script>
   </body>
