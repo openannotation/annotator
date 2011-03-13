@@ -82,6 +82,28 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
     @filters = {}
     this.updateHighlights()
 
+  # Public: Created event listeners on the annotator object.
+  #
+  # Returns nothing.
+  pluginInit: ->
+    this._setupListeners()
+
+  # Listens to annotation change events on the Annotator in order to refresh
+  # the @annotations collection.
+  # TODO: Make this more granular so the entire collection isn't reloaded for
+  # every single change.
+  #
+  # Returns itself.
+  _setupListeners: ->
+    events = [
+      'annotationsLoaded', 'annotationCreated',
+      'annotationUpdated', 'annotationDeleted'
+    ]
+
+    for event in events
+      @annotator.subscribe event, this.updateHighlights
+    this
+
   # Public: Adds a filter to the toolbar. The filter must have both a label
   # and a property of an annotation object to filter on.
   #
@@ -155,7 +177,7 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
   # elements in the DOM.
   #
   # Returns a jQuery collection of the highlight elements.
-  updateHighlights: ->
+  updateHighlights: =>
     @highlights = $('.annotator-hl')
 
   # Public: Runs through each of the filters and removes all highlights not

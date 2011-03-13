@@ -4,7 +4,11 @@ describe "Filter", ->
 
   beforeEach ->
     element = $('<div />')
+    annotator = {
+      subscribe: jasmine.createSpy('Annotator#subscribe()')
+    }
     plugin  = new Annotator.Plugin.Filter(element[0])
+    plugin.annotator = annotator
 
   describe "events", ->
     filterElement = null
@@ -42,6 +46,22 @@ describe "Filter", ->
 
       parent = $(plugin.options.appendTo)
       expect(plugin.element.parent()[0]).toBe(parent[0])
+
+  describe "pluginInit", ->
+    it "should call Filter#_setupListeners()", ->
+      spyOn(plugin, '_setupListeners')
+      plugin.pluginInit()
+      expect(plugin._setupListeners).toHaveBeenCalled()
+
+  describe "_setupListeners", ->
+    it "should subscribe to all relevant events on the annotator", ->
+      plugin._setupListeners()
+      events = [
+        'annotationsLoaded', 'annotationCreated',
+        'annotationUpdated', 'annotationDeleted'
+      ]
+      for event in events
+        expect(plugin.annotator.subscribe).toHaveBeenCalledWith(event, plugin.updateHighlights)
 
   describe "addFilter", ->
     filter = null
