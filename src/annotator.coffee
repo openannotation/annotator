@@ -291,8 +291,6 @@ class Annotator extends Delegator
   #
   # Returns itself for chaining.
   loadAnnotations: (annotations=[]) ->
-    results = []
-
     loader = (annList=[]) =>
       now = annList.splice(0,10)
 
@@ -303,7 +301,10 @@ class Annotator extends Delegator
       # responsiveness).
       if annList.length > 0
         setTimeout((-> loader(annList)), 100)
+      else
+        this.publish 'annotationsLoaded', [clone]
 
+    clone = annotations.slice()
     loader(annotations) if annotations.length
     this
 

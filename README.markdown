@@ -70,6 +70,7 @@ Look at the existing plugins to get a feel for how they work. The Markdown plugi
 
 Useful events are triggered on the Annotator `element` (passed to the constructor of the plugin):
 
+- `annotationsLoaded(annotations)`: called when annotations are loaded into the DOM. Provides an array of all annotations.
 - `beforeAnnotationCreated(annotation)`: called immediately before an annotation is created. If you need to modify the annotation before it is saved to the server by the Store plugin, use this event.
 - `annotationCreated(annotation)`: called when the annotation is created. Used by the Store plugin to save new annotations.
 - `beforeAnnotationUpdated(annotation)`: as above, but just before an existing annotation is saved.

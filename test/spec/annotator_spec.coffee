@@ -348,11 +348,17 @@ describe 'Annotator', ->
   describe "loadAnnotations", ->
     beforeEach ->
       spyOn(annotator, 'setupAnnotation')
+      spyOn(annotator, 'publish')
 
     it "should call Annotator#setupAnnotation for each annotation in the Array", ->
       annotations = [{}, {}, {}, {}]
       annotator.loadAnnotations(annotations)
       expect(annotator.setupAnnotation.callCount).toBe(4)
+
+    it "should publish the annotationsLoaded event with all loaded annotations", ->
+      annotations = [{}, {}, {}, {}]
+      annotator.loadAnnotations(annotations.slice())
+      expect(annotator.publish).toHaveBeenCalledWith('annotationsLoaded', [annotations])
 
     it "should suppress the 'annotationCreated' event", ->
       annotations = [{}]
