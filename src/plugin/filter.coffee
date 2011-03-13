@@ -4,6 +4,8 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
     ".annotator-filter-property input focus": "_onFilterFocus"
     ".annotator-filter-property input blur":  "_onFilterBlur"
     ".annotator-filter-property input keyup": "_onFilterKeyup"
+    ".annotator-filter-previous click":       "_onPreviousClick"
+    ".annotator-filter-next click":           "_onNextClick"
 
   # Common classes used to change plugin state.
   classes:
@@ -83,6 +85,7 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
     super element, options
     @filter  = $(@html.filter)
     @filters = []
+    @current  = 0
 
   # Public: Adds new filters. Updates the @highlights cache and creates event
   # listeners on the annotator object.
@@ -188,7 +191,9 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
   #
   # Returns a jQuery collection of the highlight elements.
   updateHighlights: =>
-    @highlights = $('.annotator-hl')
+    # Ignore any hidden highlights.
+    @highlights = @annotator.element.find('.annotator-hl:visible')
+    @filtered   = @highlights.not(@classes.hl.hide)
 
   # Public: Runs through each of the filters and removes all highlights not
   # currently in scope.
@@ -218,6 +223,8 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
       highlights = highlights.not(annotation.highlights)
 
     highlights.addClass(@classes.hl.hide)
+
+    @filtered = @highlights.not(@classes.hl.hide)
     this
 
   # Public: Removes hidden class from all annotations.
@@ -225,6 +232,7 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
   # Returns itself for chaining.
   resetHighlights: ->
     @highlights.removeClass(@classes.hl.hide)
+    @filtered = @highlights
     this
 
   # Updates the filter field on focus.
@@ -252,3 +260,58 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
   _onFilterKeyup: (event) =>
     filter = $(event.target).parent().data('filter')
     this.updateFilter filter if filter
+
+  # Locates the next highlighted element in @highlights from the current one
+  # or goes to the very first element.
+  #
+  # event - A click Event.
+  #
+  # Returns nothing
+  _onNextClick: (event) =>
+    current = @highlights.filter('.' + @classes.hl.active)
+    unless current.length
+      current = @highlights.eq(-1)
+
+    annotation = current.data('annotation')
+
+    index = @highlights.index(current[0])
+    next  = @highlights.filter(':gt(' + index + ')').not(annotation.highlights).eq(0)
+    unless next.length
+      next = @highlights.eq(0)
+
+    this._scrollToHighlight(next.data('annotation').highlights)
+
+  # Locates the previous highlighted element in @highlights from the current one
+  # or goes to the very last element.
+  #
+  # event - A click Event.
+  #
+  # Returns nothing
+  _onPreviousClick: (event) =>
+    current = @highlights.filter('.' + @classes.hl.active)
+    unless current.length
+      current = @highlights.eq(0)
+    annotation = current.data('annotation')
+
+    index = @highlights.index(current[0])
+    prev  = @highlights.filter(':lt(' + index + ')').not(annotation.highlights).eq(-1)
+    unless prev.length
+      prev = @highlights.eq(-1)
+
+    this._scrollToHighlight(prev.data('annotation').highlights)
+
+  # Scrolls to the highlight provided. An adds an active class to it.
+  #
+  # highlight - Either highlight Element or an Array of elements. This value
+  #             is usually retrieved from annotation.highlights.
+  #
+  # Returns nothing.
+  _scrollToHighlight: (highlight) ->
+    highlight = $(highlight)
+
+    @highlights.removeClass(@classes.hl.active)
+    highlight.addClass(@classes.hl.active)
+
+    $('html, body').animate({
+      scrollTop: highlight.offset().top - (@element.height() + 20)
+    }, 150);

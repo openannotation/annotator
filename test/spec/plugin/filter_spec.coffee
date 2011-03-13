@@ -6,8 +6,11 @@ describe "Filter", ->
     element = $('<div />')
     annotator = {
       subscribe: jasmine.createSpy('Annotator#subscribe()')
+      element: {
+        find: jasmine.createSpy('element#find()').andReturn($())
+      }
     }
-    plugin  = new Annotator.Plugin.Filter(element[0])
+    plugin = new Annotator.Plugin.Filter(element[0])
     plugin.annotator = annotator
 
   describe "events", ->
@@ -48,13 +51,16 @@ describe "Filter", ->
       expect(plugin.element.parent()[0]).toBe(parent[0])
 
   describe "pluginInit", ->
-    it "should call Filter#updateHighlights()", ->
+    beforeEach ->
       spyOn(plugin, 'updateHighlights')
+      spyOn(plugin, '_setupListeners')
+      spyOn(plugin, 'addFilter')
+
+    it "should call Filter#updateHighlights()", ->
       plugin.pluginInit()
       expect(plugin.updateHighlights).toHaveBeenCalled()
 
     it "should call Filter#_setupListeners()", ->
-      spyOn(plugin, '_setupListeners')
       plugin.pluginInit()
       expect(plugin._setupListeners).toHaveBeenCalled()
 
@@ -64,7 +70,6 @@ describe "Filter", ->
         {label: 'filter2'}
         {label: 'filter3'}
       ]
-      spyOn(plugin, 'addFilter')
 
       plugin.options.filters = filters
       plugin.pluginInit()
@@ -158,11 +163,10 @@ describe "Filter", ->
   describe "updateHighlights", ->
     beforeEach ->
       plugin.highlights = null
-      spyOn(jQuery.prototype, 'init')
       plugin.updateHighlights()
 
-    it "should fetch the highlights from the DOM", ->
-      expect(jQuery.prototype.init.mostRecentCall.args[0]).toBe('.annotator-hl')
+    it "should fetch the visible highlights from the Annotator#element", ->
+      expect(plugin.annotator.element.find).toHaveBeenCalledWith('.annotator-hl:visible')
 
     it "should set the Filter#highlights property", ->
       expect(plugin.highlights).toBeTruthy()
@@ -262,3 +266,83 @@ describe "Filter", ->
           target: filterElement.find('input')[0]
         })
         expect(plugin.updateFilter).not.toHaveBeenCalled()
+
+    describe "navigation", ->
+      element1    = null
+      element2    = null
+      element3    = null
+      annotation1 = null
+      annotation2 = null
+      annotation3 = null
+
+      beforeEach ->
+        element1    = $('<span />')
+        annotation1 = {text: 'annotation1', highlights: [element1[0]]}
+        element1.data('annotation', annotation1)
+        
+        element2    = $('<span />')
+        annotation2 = {text: 'annotation2', highlights: [element2[0]]}
+        element2.data('annotation', annotation2)
+        
+        element3    = $('<span />')
+        annotation3 = {text: 'annotation3', highlights: [element3[0]]}
+        element3.data('annotation', annotation3)
+
+        plugin.highlights = $([element1[0],element2[0],element3[0]])
+        spyOn(plugin, '_scrollToHighlight')
+
+      describe "_onNextClick", ->
+        it "should advance to the next element", ->
+          element2.addClass(plugin.classes.hl.active)
+          plugin._onNextClick()
+          expect(plugin._scrollToHighlight).toHaveBeenCalledWith([element3[0]])
+
+        it "should loop back to the start once it gets to the end", ->
+          element3.addClass(plugin.classes.hl.active)
+          plugin._onNextClick()
+          expect(plugin._scrollToHighlight).toHaveBeenCalledWith([element1[0]])
+        
+        it "should use the first element if there is no current element", ->
+          plugin._onNextClick()
+          expect(plugin._scrollToHighlight).toHaveBeenCalledWith([element1[0]])
+
+      describe "_onPreviousClick", ->
+        it "should advance to the previous element", ->
+          element2.addClass(plugin.classes.hl.active)
+          plugin._onPreviousClick()
+          expect(plugin._scrollToHighlight).toHaveBeenCalledWith([element1[0]])
+
+        it "should loop to the end once it gets to the beginning", ->
+          element1.addClass(plugin.classes.hl.active)
+          plugin._onPreviousClick()
+          expect(plugin._scrollToHighlight).toHaveBeenCalledWith([element3[0]])
+
+        it "should use the last element if there is no current element", ->
+          plugin._onPreviousClick()
+          expect(plugin._scrollToHighlight).toHaveBeenCalledWith([element3[0]])
+
+    describe "_scrollToHighlight", ->
+      mockjQuery = null
+
+      beforeEach ->
+        plugin.highlights = $()
+        mockjQuery = {
+          addClass: jasmine.createSpy('jQuery#addClass()')
+          animate: jasmine.createSpy('jQuery#animate()')
+          offset: jasmine.createSpy('jQuery#offset()').andReturn({top: 0})
+        }
+        spyOn(plugin.highlights, 'removeClass')
+        spyOn(jQuery.prototype, 'init').andReturn(mockjQuery)
+
+      it "should remove active class from currently active element", ->
+        plugin._scrollToHighlight({})
+        expect(plugin.highlights.removeClass).toHaveBeenCalledWith(plugin.classes.hl.active)
+
+      it "should add active class to provided elements", ->  
+        plugin._scrollToHighlight({})
+        expect(mockjQuery.addClass).toHaveBeenCalledWith(plugin.classes.hl.active)
+
+      it "should animate the scrollbar to the highlight offset", ->
+        plugin._scrollToHighlight({})
+        expect(mockjQuery.offset).toHaveBeenCalled()
+        expect(mockjQuery.animate).toHaveBeenCalled()
