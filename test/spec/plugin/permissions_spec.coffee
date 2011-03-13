@@ -40,7 +40,8 @@ describe 'Annotator.Plugin.Permissions', ->
         },
         editor: {
           addField: jasmine.createSpy('addField')
-        }
+        },
+        plugins: {}
       }
 
     it "should register a field with the Viewer", ->
@@ -62,6 +63,11 @@ describe 'Annotator.Plugin.Permissions', ->
       permissions.options.showEditPermissionsCheckbox = true
       permissions.pluginInit()
       expect(permissions.annotator.editor.addField.callCount).toEqual(1)
+
+    it "should register a filter if the Filter plugin is loaded", ->
+      permissions.annotator.plugins.Filter = {addFilter: jasmine.createSpy()}
+      permissions.pluginInit()
+      expect(permissions.annotator.plugins.Filter.addFilter).toHaveBeenCalled()
 
   describe 'authorize', ->
     annotations = null
