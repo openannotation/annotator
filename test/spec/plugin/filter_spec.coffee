@@ -68,7 +68,7 @@ describe "Filter", ->
 
       plugin.options.filters = filters
       plugin.pluginInit()
-      
+
       for filter in filters
         expect(plugin.addFilter).toHaveBeenCalledWith(filter)
 
@@ -93,11 +93,15 @@ describe "Filter", ->
       plugin.addFilter(filter)
 
     it "should add a filter object to Filter#plugins", ->
-      expect(plugin.filters['annotator-filter-tags']).toBeTruthy()
+      expect(plugin.filters[0]).toBeTruthy()
 
     it "should append the html to Filter#toolbar", ->
-      filter = plugin.filters['annotator-filter-tags']
+      filter = plugin.filters[0]
       expect(filter.element[0]).toBe(plugin.element.find('#annotator-filter-tags').parent()[0])
+
+    it "should store the filter in the elements data store under 'filter'", ->
+      filter = plugin.filters[0]
+      expect(filter.element.data('filter')).toBe(filter)
 
   describe "updateFilter", ->
     filter = null
@@ -164,27 +168,47 @@ describe "Filter", ->
       expect(plugin.highlights).toBeTruthy()
 
   describe "filterHighlights", ->
-    it "should hide all highlights not whitelisted by the filters", ->
+    div = null
+
+    beforeEach ->
       plugin.highlights = $('<span /><span /><span /><span /><span />')
-      plugin.filters = {
-        'one': {
+
+      # This annotation appears in both filters.
+      match = {highlights: [plugin.highlights[1]]}
+      plugin.filters = [
+        {
           annotations: [
             {highlights: [plugin.highlights[0]]}
-            {highlights: [plugin.highlights[1]]}
+            match
           ]
         }
-        'two': {
+        {
           annotations: [
             {highlights: [plugin.highlights[4]]}
-            {highlights: [plugin.highlights[1]]}
+            match
             {highlights: [plugin.highlights[2]]}
           ]
         }
-      }
+      ]
       div = $('<div>').append(plugin.highlights)
+
+    it "should hide all highlights not whitelisted by _every_ filter", ->
       plugin.filterHighlights()
 
-      expect(div.find('.' + plugin.classes.hl.hide).length).toBe(1)
+      #Only index 1 should remain.
+      expect(div.find('.' + plugin.classes.hl.hide).length).toBe(4)
+
+    it "should hide all highlights not whitelisted by _every_ filter if every filter is active", ->
+      plugin.filters[1].annotations = []
+      plugin.filterHighlights()
+
+      expect(div.find('.' + plugin.classes.hl.hide).length).toBe(3)
+
+    it "should hide all highlights not whitelisted if only one filter", ->
+      plugin.filters = plugin.filters.slice(0, 1)
+      plugin.filterHighlights()
+
+      expect(div.find('.' + plugin.classes.hl.hide).length).toBe(3)
 
   describe "resetHighlights", ->
     it "should remove the filter-hide class from all highlights", ->
@@ -223,18 +247,18 @@ describe "Filter", ->
 
     describe "_onFilterKeyup", ->
       beforeEach ->
-        plugin.filters = {'my-filter': {label: 'My Filter'}}
+        plugin.filters = [{label: 'My Filter'}]
         spyOn(plugin, 'updateFilter')
 
       it "should call Filter#updateFilter() with the relevant filter", ->
-        filterElement.attr('id', 'my-filter')
+        filterElement.data('filter', plugin.filters[0])
         plugin._onFilterKeyup({
-          target: filterElement[0]
+          target: filterElement.find('input')[0]
         })
-        expect(plugin.updateFilter).toHaveBeenCalledWith(plugin.filters['my-filter'])
+        expect(plugin.updateFilter).toHaveBeenCalledWith(plugin.filters[0])
 
       it "should NOT call Filter#updateFilter() if no filter is found", ->
         plugin._onFilterKeyup({
-          target: filterElement[0]
+          target: filterElement.find('input')[0]
         })
         expect(plugin.updateFilter).not.toHaveBeenCalled()

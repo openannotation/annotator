@@ -82,9 +82,9 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
 
     super element, options
     @filter  = $(@html.filter)
-    @filters = {}
+    @filters = []
 
-  # Public: Adds new filters. Updates the @highlights cache and creates event 
+  # Public: Adds new filters. Updates the @highlights cache and creates event
   # listeners on the annotator object.
   #
   # Returns nothing.
@@ -149,7 +149,10 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
         placeholder: 'Filter by ' + filter.label + '\u2026'
       })
 
-    @filters[filter.id] = filter
+    # Add the filter to the elements data store.
+    filter.element.data 'filter', filter
+
+    @filters.push(filter)
     this
 
   # Public: Updates the filter.annotations property. Then updates the state
@@ -192,10 +195,23 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
   #
   # Returns itself for chaining.
   filterHighlights: ->
-    filtered = []
+    activeFilters = $.grep @filters, (filter) -> !!filter.annotations.length
 
-    $.each @filters, ->
-      $.merge(filtered, this.annotations)
+    filtered = activeFilters[0]?.annotations || []
+    if activeFilters.length > 1
+      # If there are more than one filter then only annotations matched in every
+      # filter should remain.
+      annotations = []
+      $.each activeFilters, ->
+        $.merge(annotations, this.annotations)
+
+      uniques  = []
+      filtered = []
+      $.each annotations, ->
+        if $.inArray(this, uniques) == -1
+          uniques.push this
+        else
+          filtered.push this
 
     highlights = @highlights
     for annotation, index in filtered
@@ -234,5 +250,5 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
   #
   # Returns nothing.
   _onFilterKeyup: (event) =>
-    filter = @filters[event.target.id]
+    filter = $(event.target).parent().data('filter')
     this.updateFilter filter if filter
