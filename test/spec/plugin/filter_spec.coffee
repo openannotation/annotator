@@ -53,7 +53,8 @@ describe "Filter", ->
   describe "pluginInit", ->
     beforeEach ->
       spyOn(plugin, 'updateHighlights')
-      spyOn(plugin, '_setupListeners')
+      spyOn(plugin, '_setupListeners').andReturn(plugin)
+      spyOn(plugin, '_insertSpacer').andReturn(plugin)
       spyOn(plugin, 'addFilter')
 
     it "should call Filter#updateHighlights()", ->
@@ -63,6 +64,10 @@ describe "Filter", ->
     it "should call Filter#_setupListeners()", ->
       plugin.pluginInit()
       expect(plugin._setupListeners).toHaveBeenCalled()
+      
+    it "should call Filter#_insertSpacer()", ->
+      plugin.pluginInit()
+      expect(plugin._insertSpacer).toHaveBeenCalled()
 
     it "should load any filters in the Filter#options.filters array", ->
       filters = [

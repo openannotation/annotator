@@ -101,10 +101,20 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
       this.addFilter(filter)
 
     this.updateHighlights()
-    this._setupListeners()
+    this._setupListeners()._insertSpacer()
 
     if @options.addAnnotationFilter == true
       this.addFilter {label: 'Annotation', property: 'text'}
+
+  # Adds margin to the current document to ensure that the annotation toolbar
+  # doesn't cover the page when not scrolled.
+  #
+  # Returns itself
+  _insertSpacer: ->
+    body = $('body')
+    currentMargin = parseInt(body.css('margin-top'), 10) || 0
+    body.css('margin-top', currentMargin + @element.outerHeight())
+    this
 
   # Listens to annotation change events on the Annotator in order to refresh
   # the @annotations collection.
