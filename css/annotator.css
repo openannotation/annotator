@@ -685,8 +685,7 @@
 	right: 0;
 	left: 0;
 	text-align: left;
-	height: 25px;
-	line-height: 25px;
+	line-height: 0;
 	border: none;
 	border-bottom: 1px solid #878787;
 	padding-left: 10px;
