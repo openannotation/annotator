@@ -19,7 +19,12 @@ SRC_PLUGINS = ['tags',
 CSS = ['annotator'].map { |x| "css/#{x}.css" }
 
 desc "Build packaged annotator (set MINIFY=false to skip compression of files)"
-task :package => ['pkg/annotator.min.js', 'pkg/annotator.min.css', :plugins]
+task :package => ['pkg/annotator.min.js', 'pkg/annotator.min.css', 'pkg/annotator-full.min.js', :plugins]
+
+file 'pkg/annotator-full.min.js' => (SRC|SRC_PLUGINS) do |t|
+  coffee_concat(t.prerequisites, t.name)
+  yui_compressor(t.name)
+end
 
 file 'pkg/annotator.min.js' => SRC do |t|
   coffee_concat(t.prerequisites, t.name)
@@ -64,8 +69,9 @@ end
 
 desc "Clobber package files"
 task :clobber do
-  rm 'pkg/annotator.min.js'
   rm 'pkg/annotator.min.css'
+  rm 'pkg/annotator.min.js'
+  rm 'pkg/annotator-full.min.js'
   SRC_PLUGINS.each do |p|
     rm "pkg/annotator.#{File.basename(p, ".coffee")}.min.js"
   end
