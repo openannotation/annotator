@@ -141,6 +141,21 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     @annotator.viewer.addField({
       load: this.updateViewer
     })
+    
+    # Add a filter to the Filter plugin if loaded.
+    if @annotator.plugins.Filter
+      @annotator.plugins.Filter.addFilter({
+        label: 'User'
+        property: 'user'
+        isFiltered: (input, user) =>
+          user = @options.userString(user)
+
+          return false unless input and user
+          for keyword in (input.split /\s*/)
+            return false if user.indexOf(keyword) == -1
+
+          return true
+      })
 
   # Public: Sets the Permissions#user property.
   #

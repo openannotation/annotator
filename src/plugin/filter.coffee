@@ -43,6 +43,9 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
     # An array of filters can be provided on initialisation.
     filters: []
 
+    # Adds a default filter on annotations.
+    addAnnotationFilter: true
+
     # Public: Determines if the property is contained within the provided
     # annotation property. Default is to split the string on spaces and only
     # return true if all keywords are contained in the string. This method
@@ -99,6 +102,9 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
 
     this.updateHighlights()
     this._setupListeners()
+
+    if @options.addAnnotationFilter == true
+      this.addFilter {label: 'Annotation', property: 'text'}
 
   # Listens to annotation change events on the Annotator in order to refresh
   # the @annotations collection.

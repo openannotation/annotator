@@ -68,34 +68,18 @@
           //.addPlugin('Auth')
           .addPlugin('Unsupported')
           .addPlugin('Filter', {
-            filters: [
-              {label: 'Annotation', property: 'text'},
-              {label: 'Tag', property: 'tags', isFiltered: function (input, tags) {
-                var keywords;
-                if (input && tags && tags.length) {
-                  keywords = input.split(/\s+/g);
-                  for (var i = 0; i < keywords.length; i += 1) {
-                    for (var j = 0; j < tags.length; j += 1) {
-                      if (tags[j].indexOf(keywords[i]) !== -1) {
-                        return true;
-                      }
-                    }
-                  }
-                }
-                return false;
-              }}
-            ]
+            addAnnotationFilter: false
           })
-          .addPlugin('Tags');
-          //           .addPlugin('Permissions', {
-          //             user: 'alice',
-          //             permissions: {
-          //               update: ['alice']
-          //             }
-          //           })
-          //           .addPlugin('Store', {
-          //             prefix: 'http://localhost:5000'
-          //           });
+          .addPlugin('Tags')
+          .addPlugin('Permissions', {
+            user: 'alice',
+            permissions: {
+              update: ['alice']
+            }
+          });
+          // .addPlugin('Store', {
+          //   prefix: 'http://localhost:5000'
+          // });
           
       }(jQuery));
     </script>

@@ -28,6 +28,23 @@ class Annotator.Plugin.Tags extends Annotator.Plugin
       load: this.updateViewer
     })
 
+    # Add a filter to the Filter plugin if loaded.
+    if @annotator.plugins.Filter
+      @annotator.plugins.Filter.addFilter({
+        label: 'Tag'
+        property: 'tags'
+        isFiltered: (input, tags) ->
+          if input and tags?.length
+            matched  = 0
+            keywords = input.split(/\s+/g)
+            for keyword in keywords
+              for tag in tags
+                if tag.indexOf(keyword) != -1
+                  matched += 1
+
+          matched == keywords.length
+      })
+
     @input = $(@field).find(':input')
 
   # Public: Extracts tags from the provided String.
