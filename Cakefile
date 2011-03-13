@@ -126,8 +126,10 @@ packageBookmarkletCSS = ->
     fs.writeFileSync "#{BOOKMARKLET_PATH}/#{source}", css
     console.log "Updated #{BOOKMARKLET_PATH}/#{source}"
 
-task 'bookmarklet:build', 'Output bookmarklet source', ->
-  buildBookmarklet console.log
+option '-c', '--no-config', 'Do not embed config file'
+task 'bookmarklet:build', 'Output bookmarklet source', (options) ->
+  config = if options['no-config'] then false else true
+  buildBookmarklet config, console.log
 
 task 'bookmarklet:package', 'Compile the bookmarklet source and dependancies', ->
   packageBookmarkletDemo()
