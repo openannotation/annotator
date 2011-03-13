@@ -1,3 +1,5 @@
+/* @override http://localhost:8000/css/annotator.css */
+
 /* Base Reset
 -------------------------------------------------------------------- */
 
@@ -33,7 +35,8 @@
 .annotator-widget::after,
 .annotator-editor a::after,
 .annotator-viewer .annotator-controls button,
-.annotator-filter .annotator-filter-navigation button::after {
+.annotator-filter .annotator-filter-navigation button::after,
+.annotator-filter .annotator-filter-property .annotator-filter-clear {
 	background-image: url(../img/annotator-glyph-sprite.png);
 	background-repeat: no-repeat;
 }
@@ -770,6 +773,27 @@
 .annotator-filter .annotator-filter-property input:focus {
 	outline: none;
 	background-color: #fff;
+}
+
+.annotator-filter .annotator-filter-clear {
+	position: absolute;
+	right: 3px;
+	top: 6px;
+	border: none;
+	text-indent: -900em;
+	width: 15px;
+	height: 15px;
+	background-position: 0 -90px;
+	opacity: 0.4;
+}
+
+.annotator-filter .annotator-filter-clear:hover,
+.annotator-filter .annotator-filter-clear:focus {
+	opacity: 0.8;
+}
+
+.annotator-filter .annotator-filter-clear:active {
+	opacity: 1;
 }
 
 .annotator-filter .annotator-filter-navigation button {

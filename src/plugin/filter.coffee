@@ -6,6 +6,7 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
     ".annotator-filter-property input keyup": "_onFilterKeyup"
     ".annotator-filter-previous click":       "_onPreviousClick"
     ".annotator-filter-next click":           "_onNextClick"
+    ".annotator-filter-clear click":          "_onClearClick"
 
   # Common classes used to change plugin state.
   classes:
@@ -30,6 +31,7 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
              <span class="annotator-filter-property">
                <label></label>
                <input/>
+               <button class="annotator-filter-clear">Clear</button>
              </span>
              """
 
@@ -151,6 +153,7 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
         id: filter.id
         placeholder: 'Filter by ' + filter.label + '\u2026'
       })
+    filter.element.find('button').hide()
 
     # Add the filter to the elements data store.
     filter.element.data 'filter', filter
@@ -241,7 +244,9 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
   #
   # Returns nothing
   _onFilterFocus: (event) =>
-    $(event.target).parent().addClass(@classes.active)
+    input = $(event.target)
+    input.parent().addClass(@classes.active)
+    input.next('button').show()
 
   # Updates the filter field on blur.
   #
@@ -250,7 +255,9 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
   # Returns nothing.
   _onFilterBlur: (event) =>
     unless event.target.value
-      $(event.target).parent().removeClass(@classes.active)
+      input = $(event.target)
+      input.parent().removeClass(@classes.active)
+      input.next('button').hide()
 
   # Updates the filter based on the id of the filter element.
   #
@@ -317,3 +324,11 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
     $('html, body').animate({
       scrollTop: highlight.offset().top - (@element.height() + 20)
     }, 150);
+
+  # Clears the relevant input when the clear button is clicked.
+  #
+  # event - A click Event object.
+  #
+  # Returns nothing.
+  _onClearClick: (event) ->
+    $(event.target).prev('input').val('').keyup().blur()

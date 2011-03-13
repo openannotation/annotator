@@ -279,11 +279,11 @@ describe "Filter", ->
         element1    = $('<span />')
         annotation1 = {text: 'annotation1', highlights: [element1[0]]}
         element1.data('annotation', annotation1)
-        
+
         element2    = $('<span />')
         annotation2 = {text: 'annotation2', highlights: [element2[0]]}
         element2.data('annotation', annotation2)
-        
+
         element3    = $('<span />')
         annotation3 = {text: 'annotation3', highlights: [element3[0]]}
         element3.data('annotation', annotation3)
@@ -301,7 +301,7 @@ describe "Filter", ->
           element3.addClass(plugin.classes.hl.active)
           plugin._onNextClick()
           expect(plugin._scrollToHighlight).toHaveBeenCalledWith([element1[0]])
-        
+
         it "should use the first element if there is no current element", ->
           plugin._onNextClick()
           expect(plugin._scrollToHighlight).toHaveBeenCalledWith([element1[0]])
@@ -350,7 +350,7 @@ describe "Filter", ->
         plugin._scrollToHighlight({})
         expect(plugin.highlights.removeClass).toHaveBeenCalledWith(plugin.classes.hl.active)
 
-      it "should add active class to provided elements", ->  
+      it "should add active class to provided elements", ->
         plugin._scrollToHighlight({})
         expect(mockjQuery.addClass).toHaveBeenCalledWith(plugin.classes.hl.active)
 
@@ -358,3 +358,25 @@ describe "Filter", ->
         plugin._scrollToHighlight({})
         expect(mockjQuery.offset).toHaveBeenCalled()
         expect(mockjQuery.animate).toHaveBeenCalled()
+
+    describe "_onClearClick", ->
+      mockjQuery = null
+
+      beforeEach ->
+        mockjQuery = {}
+        mockjQuery.val = jasmine.createSpy().andReturn(mockjQuery)
+        mockjQuery.prev = jasmine.createSpy().andReturn(mockjQuery)
+        mockjQuery.keyup = jasmine.createSpy().andReturn(mockjQuery)
+        mockjQuery.blur = jasmine.createSpy().andReturn(mockjQuery)
+
+        spyOn($.prototype, 'init').andReturn(mockjQuery)
+        plugin._onClearClick({target: {}})
+
+      it "should clear the input", ->
+        expect(mockjQuery.val).toHaveBeenCalledWith('')
+
+      it "should trigger the blur event", ->
+        expect(mockjQuery.blur).toHaveBeenCalled()
+
+      it "should trigger the keyup event", ->
+        expect(mockjQuery.keyup).toHaveBeenCalled()
