@@ -826,10 +826,10 @@
 	background-position: 0 -256px;
 }
 
-.annotator-hl-filtered {
-	background-color: transparent;
-}
-
 .annotator-hl-active {
 	background: rgba(255, 255, 10, 0.8);
+}
+
+.annotator-hl-filtered {
+	background-color: transparent;
 }

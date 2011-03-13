@@ -268,16 +268,17 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
   #
   # Returns nothing
   _onNextClick: (event) =>
-    current = @highlights.filter('.' + @classes.hl.active)
+    active  = @highlights.not('.' + @classes.hl.hide)
+    current = active.filter('.' + @classes.hl.active)
     unless current.length
-      current = @highlights.eq(-1)
+      current = active.eq(-1)
 
     annotation = current.data('annotation')
 
-    index = @highlights.index(current[0])
-    next  = @highlights.filter(':gt(' + index + ')').not(annotation.highlights).eq(0)
+    index = active.index(current[0])
+    next  = active.filter(':gt(' + index + ')').not(annotation.highlights).eq(0)
     unless next.length
-      next = @highlights.eq(0)
+      next = active.eq(0)
 
     this._scrollToHighlight(next.data('annotation').highlights)
 
@@ -288,15 +289,16 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
   #
   # Returns nothing
   _onPreviousClick: (event) =>
-    current = @highlights.filter('.' + @classes.hl.active)
+    active  = @highlights.not('.' + @classes.hl.hide)
+    current = active.filter('.' + @classes.hl.active)
     unless current.length
-      current = @highlights.eq(0)
+      current = active.eq(0)
     annotation = current.data('annotation')
 
-    index = @highlights.index(current[0])
-    prev  = @highlights.filter(':lt(' + index + ')').not(annotation.highlights).eq(-1)
+    index = active.index(current[0])
+    prev  = active.filter(':lt(' + index + ')').not(annotation.highlights).eq(-1)
     unless prev.length
-      prev = @highlights.eq(-1)
+      prev = active.eq(-1)
 
     this._scrollToHighlight(prev.data('annotation').highlights)
 

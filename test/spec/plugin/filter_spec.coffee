@@ -306,11 +306,17 @@ describe "Filter", ->
           plugin._onNextClick()
           expect(plugin._scrollToHighlight).toHaveBeenCalledWith([element1[0]])
 
+        it "should only navigate through non hidden elements", ->
+          element1.addClass(plugin.classes.hl.active)
+          element2.addClass(plugin.classes.hl.hide)
+          plugin._onNextClick()
+          expect(plugin._scrollToHighlight).toHaveBeenCalledWith([element3[0]])
+
       describe "_onPreviousClick", ->
         it "should advance to the previous element", ->
-          element2.addClass(plugin.classes.hl.active)
+          element3.addClass(plugin.classes.hl.active)
           plugin._onPreviousClick()
-          expect(plugin._scrollToHighlight).toHaveBeenCalledWith([element1[0]])
+          expect(plugin._scrollToHighlight).toHaveBeenCalledWith([element2[0]])
 
         it "should loop to the end once it gets to the beginning", ->
           element1.addClass(plugin.classes.hl.active)
@@ -320,6 +326,12 @@ describe "Filter", ->
         it "should use the last element if there is no current element", ->
           plugin._onPreviousClick()
           expect(plugin._scrollToHighlight).toHaveBeenCalledWith([element3[0]])
+
+        it "should only navigate through non hidden elements", ->
+          element3.addClass(plugin.classes.hl.active)
+          element2.addClass(plugin.classes.hl.hide)
+          plugin._onNextClick()
+          expect(plugin._scrollToHighlight).toHaveBeenCalledWith([element1[0]])
 
     describe "_scrollToHighlight", ->
       mockjQuery = null
