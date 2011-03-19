@@ -15,7 +15,7 @@ describe 'Annotator.Plugin.Auth', ->
 
   beforeEach ->
     validToken = {
-      consumerKey: "key"
+      accountId: "key"
       authToken: "foobar"
       authTokenIssueTime: new Date().toISO8601String()
       authTokenTTL: 300
@@ -48,8 +48,8 @@ describe 'Annotator.Plugin.Auth', ->
     it "returns true when the current token is valid", ->
       expect(mock.auth.haveValidToken()).toBeTruthy()
 
-    it "returns false when the current token is missing a consumerKey", ->
-      delete mock.auth.token.consumerKey
+    it "returns false when the current token is missing a accountId", ->
+      delete mock.auth.token.accountId
       expect(mock.auth.haveValidToken()).toBeFalsy()
 
     it "returns false when the current token is missing an authToken", ->

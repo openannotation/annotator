@@ -15,12 +15,16 @@
       'X-Annotator-Auth-Token-TTL':        "315360000" // 10 years!
     }
   },
+  // Include the tags plugin?
+  "tags": true,
   // Subset of the Store plugin options.
   "store": {
     "prefix": "http://annotateit.org"
   },
   // Subset of the Permissions plugin options.
   "permissions": {
+    "showViewPermissionsCheckbox": true,
+    "showEditPermissionsCheckbox": true,
     "user": {
       "id": "Anonymous",
       "name": "Anonymous"

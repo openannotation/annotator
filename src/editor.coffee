@@ -1,5 +1,5 @@
 # Public: Creates an element for editing annotations.
-class Annotator.Editor extends Delegator
+class Annotator.Editor extends Annotator.Widget
 
   # Events to be bound to @element.
   events:
@@ -18,7 +18,7 @@ class Annotator.Editor extends Delegator
   html: """
         <div class="annotator-outer annotator-editor">
           <form class="annotator-widget">
-            <ul></ul>
+            <ul class="annotator-listing"></ul>
             <div class="annotator-controls">
               <a href="#cancel" class="annotator-cancel">Cancel</a>
               <a href="#save" class="annotator-save annotator-focus">Save</a>
@@ -56,16 +56,6 @@ class Annotator.Editor extends Delegator
     @fields = []
     @annotation = {}
 
-    # Setup the default editor field.
-    this.addField({
-      type: 'textarea',
-      label: 'Comments\u2026'
-      load: (field, annotation) ->
-        $(field).find('textarea').val(annotation.text || '')
-      submit: (field, annotation) ->
-        annotation.text = $(field).find('textarea').val()
-    })
-
     this.setupDragabbles()
 
   # Public: Displays the Editor and fires a "show" event.
@@ -87,10 +77,10 @@ class Annotator.Editor extends Delegator
   show: (event) =>
     event?.preventDefault()
 
-    @element.removeClass(@classes.hide).trigger('show')
+    @element.removeClass(@classes.hide)
     @element.find('.annotator-save').addClass(@classes.focus)
     @element.find(':input:first').focus()
-    this
+    this.checkOrientation().publish('show')
 
   # Public: Hides the Editor and fires a "hide" event. Can be used as an event
   # callback and will call Event#preventDefault() on the supplied event.
@@ -110,8 +100,8 @@ class Annotator.Editor extends Delegator
   hide: (event) =>
     event?.preventDefault()
 
-    @element.addClass(@classes.hide).trigger('hide')
-    this
+    @element.addClass(@classes.hide)
+    this.publish('hide')
 
   # Public: Loads an annotation into the Editor and displays it setting
   # Editor#annotation to the provided annotation. It fires the "load" event
@@ -239,7 +229,7 @@ class Annotator.Editor extends Delegator
     }, options)
 
     input = null
-    element = $('<li />')
+    element = $('<li class="annotator-item" />')
     field.element = element[0]
 
     switch (field.type)
@@ -263,6 +253,24 @@ class Annotator.Editor extends Delegator
     @fields.push field
 
     field.element
+
+  checkOrientation: ->
+    super
+
+    list = @element.find('ul')
+    controls = @element.find('.annotator-controls')
+
+    flipFields = ->
+      list.children().each -> $(this).parent().prepend(this)
+
+    if @element.hasClass(@classes.invert.y) and list.is(':first-child')
+      controls.insertBefore(list)
+      flipFields()
+    else if controls.is(':first-child')
+      controls.insertAfter(list)
+      flipFields()
+
+    this
 
   # Event callback. Listens for the following special keypresses.
   # - escape: Hides the editor
@@ -292,9 +300,10 @@ class Annotator.Editor extends Delegator
   # Returns nothing.
   setupDragabbles: () ->
     mousedown = null
+    classes   = @classes
     editor    = @element
+    textarea  = null
     resize    = editor.find('.annotator-resize')
-    textarea  = editor.find('textarea:first')
     controls  = editor.find('.annotator-controls')
     throttle  = false
 
@@ -306,6 +315,9 @@ class Annotator.Editor extends Delegator
           left:    event.pageX
         }
 
+        # Find the first text area if there is one.
+        textarea = editor.find('textarea:first')
+
         $(window).bind({
           'mouseup.annotator-editor-resize':   onMouseup
           'mousemove.annotator-editor-resize': onMousemove
@@ -316,7 +328,7 @@ class Annotator.Editor extends Delegator
       mousedown = null;
       $(window).unbind '.annotator-editor-resize'
 
-    onMousemove = (event) ->
+    onMousemove = (event) =>
       if mousedown and throttle == false
         diff = {
           top:  event.pageY - mousedown.top
@@ -327,8 +339,11 @@ class Annotator.Editor extends Delegator
           height = textarea.outerHeight()
           width  = textarea.outerWidth()
 
-          textarea.height(height - diff.top)
-          textarea.width(width + diff.left)
+          directionX = if editor.hasClass(classes.invert.x) then -1 else  1
+          directionY = if editor.hasClass(classes.invert.y) then  1 else -1
+
+          textarea.height height + (diff.top  * directionY)
+          textarea.width  width  + (diff.left * directionX)
 
           # Only update the mousedown object if the dimensions
           # have changed, otherwise they have reached thier minimum

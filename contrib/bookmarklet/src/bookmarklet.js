@@ -2,10 +2,8 @@
 
   var body = document.body,
       head = document.getElementsByTagName('head')[0],
-      _Annotator, notification;
-
-  // Cache any existing annotator.
-  _Annotator = window.Annotator;
+      bookmarklet = {},
+      notification;
 
   notification = (function () {
     var element = document.createElement('div'),
@@ -42,14 +40,13 @@
     element.style.position = 'fixed';
     element.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
 
-    body.appendChild(element);
-
     return {
       status: {
         INFO:    '#d4d4d4',
         SUCCESS: '#3665f9',
         ERROR:   '#ff7e00'
       },
+      element: element,
       show: function (message, status) {
         this.message(message, status);
 
@@ -77,82 +74,88 @@
 
         return this;
       },
+      append: function () {
+        body.appendChild(element);
+        return this;
+      },
       remove: function () {
-        element.parentNode.removeChild(element);
+        var parent = element.parentNode;
+        if (parent) {
+          parent.removeChild(element);
+        }
         return this;
       }
-    };
+    }.append();
   }());
 
-  function keypath(object, path, fallback) {
-    var keys = (path || '').split('.'),
-        key;
+  bookmarklet = {
+    notification: notification,
 
-    while (object && keys.length) {
-      key = keys.shift();
+    keypath: function (object, path, fallback) {
+      var keys = (path || '').split('.'),
+          key;
 
-      if (object.hasOwnProperty(key)) {
-        object = object[key];
+      while (object && keys.length) {
+        key = keys.shift();
 
-        if (keys.length === 0 && object !== undefined) {
-          return object;
+        if (object.hasOwnProperty(key)) {
+          object = object[key];
+
+          if (keys.length === 0 && object !== undefined) {
+            return object;
+          }
+        } else {
+          break;
         }
-      } else {
-        break;
       }
-    }
 
-    return (fallback == null) ? null : fallback;
-  }
+      return (fallback == null) ? null : fallback;
+    },
 
-  function config(path, fallback) {
-    var value = keypath(options, path, fallback);
+    config: function (path, fallback) {
+      var value = this.keypath(options, path, fallback);
 
-    if (value === null) {
-      notification.show(
-        'Sorry there was an error reading the bookmarklet setting for key: ' + path,
-        notification.status.ERROR
-      );
-      setTimeout(notification.hide, 3000);
-    }
+      if (value === null) {
+        notification.show(
+          'Sorry there was an error reading the bookmarklet setting for key: ' + path,
+          notification.status.ERROR
+        );
+        setTimeout(notification.hide, 3000);
+      }
 
-    return value;
-  }
+      return value;
+    },
 
-  function loadjQuery() {
-    var script = document.createElement('script');
+    loadjQuery: function () {
+      var script   = document.createElement('script'),
+          fallback = 'https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js';
 
-    script.src = config('externals.jQuery', 'https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js');
-    script.onload = function () {
-      jQuery = window.jQuery;
+      script.src = this.config('externals.jQuery', fallback);
+      script.onload = function () {
+        jQuery = window.jQuery;
 
-      body.removeChild(script);
-      load(function () {
-        jQuery.noConflict(true);
-        setup();
-      });
-    };
+        body.removeChild(script);
+        bookmarklet.load(function () {
+          jQuery.noConflict(true);
+          bookmarklet.setup();
+        });
+      };
 
-    body.appendChild(script);
-  }
+      body.appendChild(script);
+    },
 
-  function load(callback) {
-    head.appendChild($('<link />', {
-      rel: 'stylesheet',
-      href: config('externals.styles')
-    })[0]);
+    load: function (callback) {
+      head.appendChild(jQuery('<link />', {
+        rel: 'stylesheet',
+        href: this.config('externals.styles')
+      })[0]);
+      jQuery.getScript(this.config('externals.source'), callback);
+    },
 
-    jQuery.getScript(config('externals.source'), callback);
-  }
-
-  function setup() {
-    var annotator = jQuery(body).annotator().data('annotator'),
-        uri = location.href.split(/#|\?/).shift();
-
-    annotator
-      .addPlugin('Unsupported')
-      .addPlugin('Store', {
-        prefix: config('store.prefix'),
+    storeOptions: function () {
+      var uri = location.href.split(/#|\?/).shift();
+      return {
+        prefix: this.config('store.prefix'),
         annotationData: {
           'uri': uri
         },
@@ -160,54 +163,79 @@
           'uri': uri,
           'all_fields': 1
         }
-      })
-      .addPlugin('Permissions', {
-        user: config('permissions.user'),
-        permissions: config('permissions.permissions'),
+      };
+    },
+
+    permissionsOptions: function () {
+      return jQuery.extend({}, {
         userId: function (user) {
-          return user ? user.id : '';
+          return user && user.id ? user.id : '';
         },
         userString: function (user) {
-          return user ? user.name : '';
+          return user && user.name ? user.name : '';
         }
-      })
-      // As we're not requesting the auth tokens for the bookmarklet we
-      // don't need the Auth plugin. Instead we just need to set the required
-      // headers on each request.
-      .element.data('annotator:headers', config('auth.headers'));
+      }, this.config('permissions'));
+    },
 
-    // Attach the annotator to the window object so we can prevent it
-    // being loaded twice.
-    window._annotator = {
-      jQuery: jQuery,
-      element: body,
-      instance: annotator,
-      Annotator: annotator.constructor
-    };
+    setup: function () {
+      var annotator = new Annotator(options.target || body);
 
-    // Re-assign the original Annotator back to its rightful place.
-    window.Annotator = _Annotator;
+      annotator
+        .addPlugin('Unsupported')
+        .addPlugin('Store', this.storeOptions())
+        .addPlugin('Permissions', this.permissionsOptions())
+        // As we're not requesting the auth tokens for the bookmarklet we
+        // don't need the Auth plugin. Instead we just need to set the required
+        // headers on each request.
+        .element.data('annotator:headers', this.config('auth.headers'));
 
-    notification.message('Annotator is ready!', notification.status.SUCCESS);
-    setTimeout(function () {
-      notification.hide();
-      setTimeout(notification.remove, 800);
-    }, 3000);
-  }
+      if (this.config('tags') === true) {
+          annotator.addPlugin('Tags');
+      }
 
-  if (window._annotator) {
-    window._annotator.Annotator.showNotification(
-      'Annotator is already loaded. Try highlighting some text to get started'
-    );
-  } else {
-    notification.show('Loading Annotator into page');
+      // Attach the annotator to the window object so we can prevent it
+      // being loaded twice and test.
+      jQuery.extend(window._annotator, {
+        jQuery: jQuery,
+        element: body,
+        instance: annotator,
+        Annotator: Annotator.noConflict()
+      });
 
-    if (jQuery === undefined || !jQuery.sub) {
-      loadjQuery();
-    } else {
-      jQuery = jQuery.sub();
-      load(setup);
+      notification.message('Annotator is ready!', notification.status.SUCCESS);
+      setTimeout(function () {
+        notification.hide();
+        setTimeout(notification.remove, 800);
+      }, 3000);
+    },
+
+    init: function () {
+      if (window._annotator.instance) {
+        window._annotator.Annotator.showNotification(
+          'Annotator is already loaded. Try highlighting some text to get started'
+        );
+      } else {
+        notification.show('Loading Annotator into page');
+
+        if (window.jQuery === undefined || !window.jQuery.sub) {
+          this.loadjQuery();
+        } else {
+          jQuery = window.jQuery.sub();
+          this.load(jQuery.proxy(this.setup, this));
+        }
+      }
     }
+  };
+
+  // Export the bookmarklet to the window object for testing.
+  if (!window._annotator) {
+    window._annotator = {
+      bookmarklet: bookmarklet
+    };
   }
 
+  // Load the bookmarklet.
+  if (!options.test) {
+    bookmarklet.init();
+  }
 }(__config__, this, this.document, this.jQuery));

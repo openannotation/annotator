@@ -1,5 +1,5 @@
 # Public: Creates an element for viewing annotations.
-class Annotator.Viewer extends Delegator
+class Annotator.Viewer extends Annotator.Widget
 
   # Events to be bound to the @element.
   events:
@@ -15,11 +15,11 @@ class Annotator.Viewer extends Delegator
   html:
     element:"""
             <div class="annotator-outer annotator-viewer">
-              <ul class="annotator-widget"></ul>
+              <ul class="annotator-widget annotator-listing"></ul>
             </div>
             """
     item:   """
-            <li class="annotator-annotation">
+            <li class="annotator-annotation annotator-item">
               <span class="annotator-controls">
                 <button class="annotator-edit">Edit</button>
                 <button class="annotator-delete">Delete</button>
@@ -50,13 +50,6 @@ class Annotator.Viewer extends Delegator
     @fields = []
     @annotations = []
 
-    # Setup the default view field.
-    this.addField({
-      type: 'textarea',
-      load: (field, annotation) ->
-        $(field).escape(annotation.text || '')
-    })
-
   # Public: Displays the Viewer and first the "show" event. Can be used as an
   # event callback and will call Event#preventDefault() on the supplied event.
   #
@@ -80,8 +73,8 @@ class Annotator.Viewer extends Delegator
       .addClass(@classes.showControls)
     setTimeout((=> controls.removeClass(@classes.showControls)), 500)
 
-    @element.removeClass(@classes.hide).trigger('show')
-    this
+    @element.removeClass(@classes.hide)
+    this.checkOrientation().publish('show')
 
   # Public: Checks to see if the Viewer is currently displayed.
   #
@@ -114,8 +107,8 @@ class Annotator.Viewer extends Delegator
   # Returns itself.
   hide: (event) =>
     event?.preventDefault()
-    @element.addClass(@classes.hide).trigger('hide')
-    this
+    @element.addClass(@classes.hide)
+    this.publish('hide')
 
   # Public: Loads annotations into the viewer and shows it. Fires the "load"
   # event once the viewer is loaded passing the annotations into the callback.
@@ -145,7 +138,7 @@ class Annotator.Viewer extends Delegator
       }
 
       for field in @fields
-        element = $(field.element).clone().insertBefore(controls)[0]
+        element = $(field.element).clone().appendTo(item)[0]
         field.load(element, annotation, controller)
 
     this.publish('load', [@annotations])

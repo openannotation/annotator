@@ -1,3 +1,8 @@
+# Public: Creates a Date object from an ISO8601 formatted date String.
+#
+# string - ISO8601 formatted date String.
+#
+# Returns Date instance.
 createDateFromISO8601 = (string) ->
   regexp = "([0-9]{4})(-([0-9]{2})(-([0-9]{2})" +
            "(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?" +
@@ -25,12 +30,33 @@ createDateFromISO8601 = (string) ->
   date.setTime(Number(time))
   date
 
+# Public: Supports the Store plugin by providing Authentication headers.
 class Annotator.Plugin.Auth extends Annotator.Plugin
+  # User options that can be provided.
   options:
+
+    # An authentication token. Used to skip the request to the server for a
+    # a token.
     token: null
+
+    # The URL on the local server to request an authentication token.
     tokenUrl: '/auth/token'
+
+    # If true will try and fetch a token when the plugin is initialised.
     autoFetch: true
 
+  # Public: Create a new instance of the Auth plugin.
+  #
+  # element - The element to bind all events to. Usually the Annotator#element.
+  # options - An Object literal containing user options.
+  #
+  # Examples
+  #
+  #   plugin = new Annotator.Plugin.Auth(annotator.element, {
+  #     tokenUrl: '/my/custom/path'
+  #   })
+  #
+  # Returns instance of Auth.
   constructor: (element, options) ->
     super
 
@@ -45,7 +71,13 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
     else
       this.requestToken()
 
-  # Get a new token from consumer web service
+  # Public: Makes a request to the local server for an authentication token.
+  #
+  # Examples
+  #
+  #   auth.requestToken()
+  #
+  # Returns jqXHR object.
   requestToken: ->
     @requestInProgress = true
 
@@ -57,6 +89,22 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
         @requestInProgress = false
     )
 
+  # Public: Sets the @token and checks it's validity. If the token is invalid
+  # requests a new one from the server.
+  #
+  # token - A token Object.
+  #
+  # Examples
+  #
+  #   auth.setToken({
+  #     authToken: 'hashed-string'
+  #     authTokenIssueTime: 1299668564194
+  #     authTokenTTL: 86400
+  #     accountId: 'unique-string'
+  #     userId: 'alice'
+  #   })
+  #
+  # Returns nothing.
   setToken: (token) ->
     @token = token
 
@@ -78,17 +126,26 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
         console.warn "Getting a new token in 10s."
         setTimeout (() => this.requestToken()), 10 * 1000
 
+  # Public: Checks the validity of the current @token.
+  #
+  # Examples
+  #
+  #   auth.haveValidToken() # => Returns true if valid.
+  #
+  # Returns true if the token is valid.
   haveValidToken: () =>
     allFields = @token &&
                 @token.authToken &&
                 @token.authTokenIssueTime &&
                 @token.authTokenTTL &&
-                @token.consumerKey &&
+                @token.accountId &&
                 @token.userId
 
     allFields && this.timeToExpiry() > 0
 
-  # Return time to expiry in seconds
+  # Public: Calculates the time in seconds until the current token expires.
+  #
+  # Returns Number of seconds until token expires.
   timeToExpiry: ->
     now = new Date().getTime() / 1000
     issue = createDateFromISO8601(@token.authTokenIssueTime).getTime() / 1000
@@ -98,18 +155,32 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
 
     if (timeToExpiry > 0) then timeToExpiry else 0
 
-  # Update headers to be sent with request
+  # Public: Updates the headers to be sent with the Store requests. This is
+  # achieved by updating the 'annotator:headers' key in the @element.data()
+  # store.
+  #
+  # Returns nothing.
   updateHeaders: ->
     current = @element.data('annotator:headers')
     @element.data('annotator:headers', $.extend(current, {
       'x-annotator-auth-token':            @token.authToken,
       'x-annotator-auth-token-issue-time': @token.authTokenIssueTime,
       'x-annotator-auth-token-ttl':        @token.authTokenTTL,
-      'x-annotator-consumer-key':          @token.consumerKey,
+      'x-annotator-account-id':            @token.accountId,
       'x-annotator-user-id':               @token.userId
     }))
 
-  # Run callback, but only when we have a valid token.
+  # Runs the provided callback if a valid token is available. Otherwise requests
+  # a token until it recieves a valid one.
+  #
+  # callback - A callback function to call once a valid token is obtained.
+  #
+  # Examples
+  #
+  #   auth.withToken ->
+  #     store.loadAnnotations()
+  #
+  # Returns nothing.
   withToken: (callback) ->
     if not callback?
       return

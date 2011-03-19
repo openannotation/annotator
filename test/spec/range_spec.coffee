@@ -30,10 +30,17 @@ describe 'Range', ->
         endOffset: 27
       })
 
-    it "normalize() returns a normalized range", ->
-      norm = r.normalize(fix())
-      expect(norm instanceof Range.NormalizedRange).toBeTruthy()
-      expect(textInNormedRange(norm)).toEqual("habitant morbi")
+    describe "normalize", ->
+      it "should return a normalized range", ->
+        norm = r.normalize(fix())
+        expect(norm instanceof Range.NormalizedRange).toBeTruthy()
+        expect(textInNormedRange(norm)).toEqual("habitant morbi")
+
+      it "should return null if it cannot normalize the range", ->
+        spyOn(console, 'error')
+        normedRange = r.normalize($('<div/>')[0])
+        expect(normedRange).toBe(null)
+        expect(console.error).toHaveBeenCalled()
 
     it "serialize() returns a serialized range", ->
       seri = r.serialize(fix())
@@ -91,3 +98,50 @@ describe 'Range', ->
 
     it "text() returns the textual contents of the range", ->
       expect(r.text()).toEqual(sel.expectation)
+
+    describe "limit", ->
+      headText = null
+      paraText = null
+      paraText2 = null
+      para = null
+      root = null
+
+      beforeEach ->
+        headText = document.createTextNode()
+        headText.nodeValue = "My Heading"
+        
+        paraText = document.createTextNode()
+        paraText.nodeValue = "My paragraph"
+        paraText2 = document.createTextNode()
+        paraText2.nodeValue = " continues"
+        
+        head = document.createElement('h1')
+        head.appendChild(headText)
+        para = document.createElement('p')
+        para.appendChild(paraText)
+        para.appendChild(paraText2)
+
+        root = document.createElement('div')
+        root.appendChild(head)
+        root.appendChild(para)
+
+      it "should exclude any nodes not within the bounding element.", ->
+        range = new Range.NormalizedRange({
+          commonAncestor: root
+          start: headText
+          end: paraText2
+        })
+        
+        range = range.limit(para)
+        expect(range.commonAncestor).toBe(para)
+        expect(range.start).toBe(paraText)
+        expect(range.end).toBe(paraText2)
+      
+      it "should return null if no nodes fall within the bounds", ->
+        otherDiv = document.createElement('div')
+        range = new Range.NormalizedRange({
+          commonAncestor: root
+          start: headText
+          end: paraText2
+        })
+        expect(range.limit(otherDiv)).toBe(null)

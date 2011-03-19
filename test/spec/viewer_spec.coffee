@@ -12,6 +12,20 @@ describe 'Annotator.Viewer', ->
 
     expect(viewer.element.hasClass('annotator-viewer')).toBeTruthy()
 
+  describe "events", ->
+    beforeEach ->
+      viewer.element.find('ul').append(viewer.html.item)
+
+    it "should call Viewer#onEditClick() when the edit button is clicked", ->
+      spyOn(viewer, 'onEditClick')
+      viewer.element.find('.annotator-edit').click()
+      expect(viewer.onEditClick).toHaveBeenCalled()
+
+    it "should call Viewer#onDeleteClick() when the delete button is clicked", ->
+      spyOn(viewer, 'onDeleteClick')
+      viewer.element.find('.annotator-delete').click()
+      expect(viewer.onDeleteClick).toHaveBeenCalled()     
+
   describe "show", ->
     it "should make the viewer visible", ->
       viewer.show()

@@ -25,6 +25,14 @@ run the following:
 
     $ cake bookmarklet:build > bookmarklet.js
 
+NOTE: Building the bookmarklet currently requires a `yuicompressor` executable.
+If you're running a Mac with [Homebrew][#homebrew] installed you can simply run.
+Or create a [similar executable yourself][#yui-source].
+
+    $ brew install yuicompressor
+
+TODO: The Cakefile needs to be updated to remove this requirement.
+
 Configuration
 -------------
 
@@ -57,6 +65,14 @@ Settings for the [Permissions plugin][#wiki-permissions].
 
  - `user`: The object representing the current user.
  - `permissions`: An object literal of permissions to set on annotations.
+ - `showViewPermissionsCheckbox`: If `true` will display the "anyone can view"
+   checkbox.
+ - `showEditPermissionsCheckbox`: If `true` will display the "anyone can edit"
+   checkbox.
+
+#### tags
+
+If this is set to `true` the tags plugin will be added to the Annotator.
 
 Development
 -----------
@@ -80,3 +96,5 @@ run:
 [#annotateit]: http://annotateit.org
 [#wiki-permissions]: https://github.com/okfn/annotator/wiki/Permissions-Plugin
 [#wiki-store]: https://github.com/okfn/annotator/wiki/Store-Plugin
+[#homebrew]: http://mxcl.github.com/homebrew/
+[#yui-source]: https://github.com/mxcl/homebrew/blob/master/Library/Formula/yuicompressor.rb

@@ -3,7 +3,7 @@
 class Annotator.Plugin.Markdown extends Annotator.Plugin
   # Events to be bound to the @element.
   events:
-    'annotationViewerShown': 'updateViewer'
+    'annotationViewerTextField': 'updateTextField'
 
   # Public: Initailises an instance of the Markdown plugin.
   #
@@ -16,20 +16,39 @@ class Annotator.Plugin.Markdown extends Annotator.Plugin
   #
   # Returns a new instance of Annotator.Plugin.Markdown.
   constructor: (element, options) ->
-    if Showdown?
+    if Showdown?.converter?
       super
       @converter = new Showdown.converter()
     else
       console.error "To use the Markdown plugin, you must include Showdown into the page first."
 
-  # Annotator event callback. Updates the displayed comments with a Markdown
+  # Annotator event callback. Displays the annotation.text as a Markdown
   # rendered version.
   #
+  # field      - The viewer field Element.
+  # annotation - The annotation Object being displayed.
+  #
+  # Examples
+  #
+  #   # Normally called by Annotator#viewer()
+  #   plugin.updateTextField(field, {text: 'My _markdown_ comment'})
+  #   $(field).html() # => Returns "My <em>markdown</em> comment"
+  #
   # Returns nothing
-  updateViewer: (viewerElement, annotations) =>
-    textContainers = $(viewerElement).find('.annotator-ann-text')
+  updateTextField: (field, annotation) =>
+    # Escape any HTML in the text to prevent XSS.
+    text = Annotator.$.escape(annotation.text || '')
+    $(field).html(this.convert(text))
 
-    for t in textContainers
-      ann = $(t).parent().data('annotation')
-      markdown = @converter.makeHtml ann.text
-      $(t).html markdown
+  # Converts provided text into markdown.
+  #
+  # text - A String of Markdown to render as HTML.
+  #
+  # Examples
+  #
+  # plugin.convert('This is _very_ basic [Markdown](http://daringfireball.com)')
+  # # => Returns "This is <em>very<em> basic <a href="http://...">Markdown</a>"
+  #
+  # Returns HTML string.
+  convert: (text) ->
+    @converter.makeHtml text

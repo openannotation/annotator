@@ -7,7 +7,7 @@ jasmine.node = {}
 
 class jasmine.node.ConsoleReporter
   constructor: (@callback, @colors=true, @verbose=false) ->
-    @log = []
+    @logger = []
     @start = 0
     @elapsed = 0
     @ansi =
@@ -35,15 +35,15 @@ class jasmine.node.ConsoleReporter
     description = path.join(' ')
 
     if (@verbose)
-      @log.push('Spec ' + description)
+      @logger.push('Spec ' + description)
 
     for spec in specResults.items_
       if (spec.failedCount > 0 && spec.description)
         if (!@verbose)
-          @log.push(description)
-        @log.push('  it ' + spec.description)
+          @logger.push(description)
+        @logger.push('  it ' + spec.description)
         for result in spec.items_
-          @log.push('  ' + result.trace.stack + '\n')
+          @logger.push('  ' + result.trace.stack + '\n')
 
   reportSpecResults: (spec) ->
     result = spec.results()
@@ -60,7 +60,7 @@ class jasmine.node.ConsoleReporter
   reportRunnerResults: (runner) ->
     @elapsed = (Number(new Date) - @start) / 1000
     sys.puts('\n')
-    for l in @log
+    for l in @logger
       sys.puts(l)
     sys.puts('Finished in ' + @elapsed + ' seconds')
 
@@ -73,7 +73,7 @@ class jasmine.node.ConsoleReporter
     else
       sys.puts(summary)
 
-    @callback(runner, @log) if @callback
+    @callback(runner, @logger) if @callback
 
   runnerResultsSummary: (runner) ->
     results = runner.results()

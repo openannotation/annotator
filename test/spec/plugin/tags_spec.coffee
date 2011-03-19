@@ -23,6 +23,11 @@ describe 'Annotator.Plugin.Tags', ->
       plugin.pluginInit()
       expect(annotator.editor.addField).toHaveBeenCalled()
 
+    it "should register a filter if the Filter plugin is loaded", ->
+      plugin.annotator.plugins.Filter = {addFilter: jasmine.createSpy()}
+      plugin.pluginInit()
+      expect(plugin.annotator.plugins.Filter.addFilter).toHaveBeenCalled()
+
   describe "updateField", ->
     it "should set the value of the input", ->
       annotation = {tags: ['apples', 'oranges', 'pears']}

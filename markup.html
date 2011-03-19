@@ -39,23 +39,31 @@
         }
         </code></pre>
 
-        <div class="annotator-adder"><a href="#annotate" title="Annotate selection">Annotate</a></div>
+        <div class="annotator-adder"><button>Annotate</button></div>
         <div class="annotator-outer annotator-viewer">
-          <ul class="annotator-widget">
-            <li class="annotator-annotation">
-              <div>
-                This is a comment on this annotation text. This annotation
-                has multiple comments.
-              </div>
+          <ul class="annotator-widget annotator-listing">
+            <li class="annotator-annotation annotator-item">
               <span class="annotator-controls">
                 <button class="annotator-edit">Edit</button>
                 <button class="annotator-delete">Delete</button>
               </span>
-            </li>
-            <li class="annotator-annotation">
               <div>
                 This is a comment on this annotation text. This annotation
                 has multiple comments.
+              </div>
+            </li>
+            <li class="annotator-annotation annotator-item">
+              <span class="annotator-controls">
+                <button class="annotator-edit" disabled>Edit</button>
+                <button class="annotator-delete">Delete</button>
+              </span>
+              <div>
+                This is a <a href="comment">Comment</a> on this annotation text. This annotation
+                has multiple comments.
+                <ul>
+                  <li>A simple list item.</li>
+                  <li>A simple list item.</li>
+                </ul>
               </div>
               <div class="plugin annotator-author">
                 By Joe Bloggs
@@ -65,41 +73,37 @@
                 <span class="annotator-tag">Oranges</span>
                 <span class="annotator-tag">Pears</span>
               </div>
-              <span class="annotator-controls">
-                <button class="annotator-edit" disabled>Edit</button>
-                <button class="annotator-delete">Delete</button>
-              </span>
             </li>
           </ul>
         </div>
         <div class="annotator-outer annotator-viewer annotator-right">
-          <ul class="annotator-widget">
-            <li class="annotator-annotation">
+          <ul class="annotator-widget annotator-listing">
+            <li class="annotator-annotation annotator-item">
+              <span class="annotator-controls">
+                 <button class="annotator-edit">Edit</button>
+                 <button class="annotator-delete">Delete</button>
+               </span>
               <div>
-                This is a comment on this annotation text. This annotation
+                This is a a a a a a a a a a a a a a a a a a a a a a a a a a comment on this annotation text. This annotation
                 has one comment and no plugins.
               </div>
-              <span class="annotator-controls">
-                <button class="annotator-edit">Edit</button>
-                <button class="annotator-delete" disabled>Delete</button>
-              </span>
             </li>
           </ul>
         </div>
         <div class="annotator-outer annotator-editor">
           <form class="annotator-widget">
-            <ul>
-              <li>
+            <ul class="annotator-listing">
+              <li class="annotator-item">
                 <textarea cols="20" rows="4" placeholder="Comments…"></textarea>
               </li>
-              <li>
+              <li class="annotator-item">
                 <input id="annotator-field-2" placeholder="Tags…" />
               </li>
-              <li class="annotator-checkbox">
+              <li class="annotator-item annotator-checkbox">
                 <input type="checkbox" id="annotator-field-3"></textarea>
                 <label for="annotator-field-3">Anyone can <strong>view</strong> this annotation</label>
               </li>
-              <li class="annotator-checkbox">
+              <li class="annotator-item annotator-checkbox">
                 <input type="checkbox" id="annotator-field-4"></textarea>
                 <label for="annotator-field-4">Anyone can <strong>edit</strong> this annotation</label>
               </li>
@@ -116,6 +120,30 @@
 
     <div class='annotator-notice'>  
       <p>This is an exciting message with a <a href="#link">Link</a>.</p>
+    </div>
+
+    <div class="annotator-filter">
+      <strong>Navigate:</strong>
+      <span class="annotator-filter-navigation">
+        <button class="annotator-filter-previous">Previous</button>
+        <button class="annotator-filter-next">Next</button>
+      </span>
+      <strong>Filter by:</strong>
+      <span class="annotator-filter-property annotator-filter-active">
+        <label for="annotator-filter-user">User</label>
+        <input type="text" id="annotator-filter-user" placeholder="Filter&hellip;" value="alice" />
+        <button class="annotator-filter-clear">Clear</button>
+      </span>
+      <span class="annotator-filter-property">
+        <label for="annotator-filter-tag">Tag</label>
+        <input type="text" id="annotator-filter-tag" placeholder="Filter by tag&hellip;" value="" />
+        <button class="annotator-filter-clear">Clear</button>
+      </span>
+      <span class="annotator-filter-property">
+        <label for="annotator-filter-annotation">Annotation</label>
+        <input type="text" id="annotator-filter-annotation" placeholder="Filter by annotation&hellip;" value="" />
+        <button class="annotator-filter-clear">Clear</button>
+      </span>
     </div>
 
     <script src="lib/vendor/jquery.js"></script>

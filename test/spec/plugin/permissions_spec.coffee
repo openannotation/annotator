@@ -6,7 +6,7 @@ describe 'Annotator.Plugin.Permissions', ->
     el = $("<div class='annotator-viewer'></div>")[0]
     permissions = new Annotator.Plugin.Permissions(el)
 
-  it "it should add the userId of the current user to newly created annotations on beforeAnnotationCreated", ->
+  it "it should add the current user object to newly created annotations on beforeAnnotationCreated", ->
     ann = {}
     $(el).trigger('beforeAnnotationCreated', [ann])
     expect(ann.user).toBeUndefined()
@@ -20,7 +20,7 @@ describe 'Annotator.Plugin.Permissions', ->
     permissions.setUser({id: 'alice'})
     permissions.options.userId = (user) -> user.id
     $(el).trigger('beforeAnnotationCreated', [ann])
-    expect(ann.user).toEqual('alice')
+    expect(ann.user).toEqual({id: 'alice'})
 
   it "it should add permissions to newly created annotations on beforeAnnotationCreated", ->
     ann = {}
@@ -40,16 +40,34 @@ describe 'Annotator.Plugin.Permissions', ->
         },
         editor: {
           addField: jasmine.createSpy('addField')
-        }
+        },
+        plugins: {}
       }
-      permissions.pluginInit()
 
     it "should register a field with the Viewer", ->
+      permissions.pluginInit()
       expect(permissions.annotator.viewer.addField).toHaveBeenCalled()
 
-    it "should register a two fields with the Editor", ->
+    it "should register an two checkbox fields with the Editor", ->
+      permissions.pluginInit()
       expect(permissions.annotator.editor.addField.callCount).toEqual(2)
 
+    it "should register an 'anyone can view' field with the Editor if showEditPermissionsCheckbox is true", ->
+      permissions.options.showViewPermissionsCheckbox = true
+      permissions.options.showEditPermissionsCheckbox = false
+      permissions.pluginInit()
+      expect(permissions.annotator.editor.addField.callCount).toEqual(1)
+
+    it "should register an 'anyone can edit' field with the Editor if showViewPermissionsCheckbox is true", ->
+      permissions.options.showViewPermissionsCheckbox = false
+      permissions.options.showEditPermissionsCheckbox = true
+      permissions.pluginInit()
+      expect(permissions.annotator.editor.addField.callCount).toEqual(1)
+
+    it "should register a filter if the Filter plugin is loaded", ->
+      permissions.annotator.plugins.Filter = {addFilter: jasmine.createSpy()}
+      permissions.pluginInit()
+      expect(permissions.annotator.plugins.Filter.addFilter).toHaveBeenCalled()
 
   describe 'authorize', ->
     annotations = null
@@ -278,7 +296,7 @@ describe 'Annotator.Plugin.Permissions', ->
     field = null
 
     beforeEach ->
-      field = $('<div />')[0]
+      field = $('<div />').appendTo('<div />')[0]
       controls = {
         showEdit:   jasmine.createSpy()
         hideEdit:   jasmine.createSpy()
@@ -296,6 +314,7 @@ describe 'Annotator.Plugin.Permissions', ->
       it "it should display annotations' users in the viewer element", ->
         permissions.updateViewer(field, annotations[0], controls)
         expect($(field).html()).toEqual('alice')
+        expect($(field).parent().length).toEqual(1)
 
       it "it should remove the field if annotation has no user", ->
         permissions.updateViewer(field, {}, controls)
@@ -304,6 +323,11 @@ describe 'Annotator.Plugin.Permissions', ->
       it "it should remove the field if annotation has no user string", ->
         permissions.options.userString = -> null
 
+        permissions.updateViewer(field, annotations[1], controls)
+        expect($(field).parent().length).toEqual(0)
+
+      it "it should remove the field if annotation has empty user string", ->
+        permissions.options.userString = -> ''
         permissions.updateViewer(field, annotations[1], controls)
         expect($(field).parent().length).toEqual(0)
 

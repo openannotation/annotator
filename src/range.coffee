@@ -1,9 +1,21 @@
 Range = {}
 
+# Public: Determines the type of Range of the provided object and returns
+# a suitable Range instance.
+#
+# r - A range Object.
+#
+# Examples
+#
+#   selection = window.getSelection()
+#   Range.sniff(selection.getRangeAt(0))
+#   # => Returns a BrowserRange instance.
+#
+# Returns 
 Range.sniff = (r) ->
   if r.commonAncestorContainer?
     new Range.BrowserRange(r)
-  else if r.start and typeof r.start is "string"
+  else if typeof r.start is "string"
     new Range.SerializedRange(r)
   else if r.start and typeof r.start is "object"
     new Range.NormalizedRange(r)
@@ -11,8 +23,19 @@ Range.sniff = (r) ->
     console.error("Couldn't not sniff range type")
     false
 
+# Public: Creates a wrapper around a range object obtained from a DOMSelection.
 class Range.BrowserRange
 
+  # Public: Creates an instance of BrowserRange.
+  #
+  # object - A range object obtained via DOMSelection#getRangeAt().
+  #
+  # Examples
+  #
+  #   selection = window.getSelection()
+  #   range = new Range.BrowserRange(selection.getRangeAt(0))
+  #
+  # Returns an instance of BrowserRange.
   constructor: (obj) ->
     @commonAncestorContainer = obj.commonAncestorContainer
     @startContainer          = obj.startContainer
@@ -20,14 +43,13 @@ class Range.BrowserRange
     @endContainer            = obj.endContainer
     @endOffset               = obj.endOffset
 
-  ##
-  # normalize works around the fact that browsers don't generate
+  # Public: normalize works around the fact that browsers don't generate
   # ranges/selections in a consistent manner. Some (Safari) will create
   # ranges that have (say) a textNode startContainer and elementNode
   # endContainer. Others (Firefox) seem to only ever generate
   # textNode/textNode or elementNode/elementNode pairs.
   #
-  # This will return an instance of Range.NormalizedRange
+  # Returns an instance of Range.NormalizedRange
   normalize: (root) ->
     if @tainted
       console.error("You may only call normalize() once on a BrowserRange!")
@@ -78,25 +100,75 @@ class Range.BrowserRange
 
     new Range.NormalizedRange(nr)
 
+  # Public: Creates a range suitable for storage.
+  #
+  # root           - A root Element from which to anchor the serialisation.
+  # ignoreSelector - A selector String of elements to ignore. For example
+  #                  elements injected by the annotator.
+  #
+  # Returns an instance of SerializedRange.
   serialize: (root, ignoreSelector) ->
     this.normalize(root).serialize(root, ignoreSelector)
 
+# Public: A normalised range is most commonly used throughout the annotator.
+# its the result of a deserialised SerializedRange or a BrowserRange with
+# out browser inconsistencies.
 class Range.NormalizedRange
 
+  # Public: Creates an instance of a NormalizedRange.
+  #
+  # This is usually created by calling the .normalize() method on one of the
+  # other Range classes rather than manually.
+  #
+  # obj - An Object literal. Should have the following properties.
+  #       commonAncestor: A Element that encompasses both the start and end nodes
+  #       start:          The first TextNode in the range.
+  #       end             The last TextNode in the range.
+  #
+  # Returns an instance of NormalizedRange.
   constructor: (obj) ->
     @commonAncestor = obj.commonAncestor
     @start          = obj.start
     @end            = obj.end
 
+  # Public: For API consistency.
+  #
+  # Returns itself.
   normalize: (root) ->
     this
 
-  ##
-  # Convert this range into an object consisting of
-  # two pairs of (xpath, character offset), which
-  # can be easily stored in a database.
+  # Public: Limits the nodes within the NormalizedRange to those contained
+  # withing the bounds parameter. It returns an updated range with all
+  # properties updated. NOTE: Method returns null if all nodes fall outside
+  # of the bounds.
   #
-  # @param {Element} root The root element relative to which XPaths should be calculated
+  # bounds - An Element to limit the range to.
+  #
+  # Returns updated self or null.
+  limit: (bounds) ->
+    nodes = $.grep this.textNodes(), (node) ->
+      node.parentNode == bounds or $.contains(bounds, node.parentNode)
+
+    return null unless nodes.length
+
+    @start = nodes[0]
+    @end   = nodes[nodes.length - 1]
+
+    startParents = $(@start).parents()
+    for parent in $(@end).parents()
+      if startParents.index(parent) != -1
+        @commonAncestor = parent
+        break
+    this
+
+  # Convert this range into an object consisting of two pairs of (xpath,
+  # character offset), which can be easily stored in a database.
+  #
+  # root -           The root Element relative to which XPaths should be calculated
+  # ignoreSelector - A selector String of elements to ignore. For example
+  #                  elements injected by the annotator.
+  #
+  # Returns an instance of SerializedRange.
   serialize: (root, ignoreSelector) ->
 
     serialization = (node, isEnd) ->
@@ -130,26 +202,49 @@ class Range.NormalizedRange
       endOffset: end[1]
     })
 
+  # Public: Creates a concatenated String of the contents of all the text nodes
+  # within the range.
+  #
+  # Returns a String.
   text: ->
     (for node in this.textNodes()
       node.nodeValue
     ).join ''
 
+  # Public: Fetches only the text nodes within th range.
+  #
+  # Returns an Array of TextNode instances.
   textNodes: ->
     textNodes = $(this.commonAncestor).textNodes()
     [start, end] = [textNodes.index(this.start), textNodes.index(this.end)]
-
     # Return the textNodes that fall between the start and end indexes.
     $.makeArray textNodes[start..end]
 
+# Public: A range suitable for storing in local storage or serializing to JSON.
 class Range.SerializedRange
 
+  # Public: Creates a SerializedRange
+  #
+  # obj - The stored object. It should have the following properties.
+  #       start:       An xpath to the Element containing the first TextNode
+  #                    relative to the root Element.
+  #       startOffset: The offset to the start of the selection from obj.start.
+  #       end:         An xpath to the Element containing the last TextNode
+  #                    relative to the root Element.
+  #       startOffset: The offset to the end of the selection from obj.end. 
+  #
+  # Returns an instance of SerializedRange
   constructor: (obj) ->
     @start       = obj.start
     @startOffset = obj.startOffset
     @end         = obj.end
     @endOffset   = obj.endOffset
 
+  # Public: Creates a NormalizedRange.
+  #
+  # root - The root Element from which the XPaths were generated.
+  #
+  # Returns a NormalizedRange instance.
   normalize: (root) ->
     nodeFromXPath = (xpath) ->
       document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
@@ -173,6 +268,7 @@ class Range.SerializedRange
 
     if not range.commonAncestorContainer
       console.error("Error deserializing range: can't find XPath '" + cacXPath + "'. Is this the right document?")
+      return null
 
     # Unfortunately, we *can't* guarantee only one textNode per
     # elementNode, so we have to walk along the element's textNodes until
@@ -190,9 +286,17 @@ class Range.SerializedRange
 
     new Range.BrowserRange(range).normalize(root)
 
+  # Public: Creates a range suitable for storage.
+  #
+  # root           - A root Element from which to anchor the serialisation.
+  # ignoreSelector - A selector String of elements to ignore. For example
+  #                  elements injected by the annotator.
+  #
+  # Returns an instance of SerializedRange.
   serialize: (root, ignoreSelector) ->
     this.normalize(root).serialize(root, ignoreSelector)
 
+  # Public: Returns the range as an Object literal.
   toObject: ->
     {
       start: @start
