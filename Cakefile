@@ -1,34 +1,129 @@
 fs = require 'fs'
+path = require 'path'
 {print, debug} = require 'sys'
 {spawn, exec} = require 'child_process'
 
-# Utility functions
+SRC =         ['extensions',
+               'console',
+               'class',
+               'range',
+               'annotator',
+               'widget',
+               'editor',
+               'viewer',
+               'notification'].map (x) -> "src/#{x}.coffee"
 
-# relay: run child process relaying std{out,err} to this process
-relay = (cmd, args, stdoutPrint=print, stderrPrint=debug) ->
-  handle = spawn cmd, args
+SRC_PLUGINS = ['tags',
+               'auth',
+               'store',
+               'filter',
+               'markdown',
+               'unsupported',
+               'permissions'].map (x) -> "src/plugin/#{x}.coffee"
 
-  handle.stdout.on 'data', (data) -> stdoutPrint(data) if data
-  handle.stderr.on 'data', (data) -> stderrPrint(data) if data
+CSS         = ['annotator'].map (x) -> "css/#{x}.css"
 
-noisyPrint = (data) ->
-  print data
-  if data.toString('utf8').indexOf('In') is 0
-    exec 'afplay ~/.autotest.d/sound/sound_fx/red.mp3 2>&1 >/dev/null'
+BOOKMARKLET_PATH = 'contrib/bookmarklet'
 
 task 'watch', 'Run development source watcher', ->
   relay 'coffee', ['-w', '-b', '-c', '-o', 'lib/', 'src/'], noisyPrint
 
 option '-f', '--filter [string]', 'Filename filter to apply to `cake test`'
+
 task 'test', 'Run tests. Filter tests using `-f [filter]` eg. cake -f auth test', (options) ->
   args = ["#{__dirname}/test/runner.coffee"]
   args.push(options.filter) if options.filter
 
   relay 'coffee', args
 
-# Bookmarklet Tasks
+task 'package', 'Build the packaged annotator', ->
+  invoke 'package:annotator'
+  invoke 'package:plugins'
 
-BOOKMARKLET_PATH = "contrib/bookmarklet"
+task 'package:annotator', 'Build pkg/annotator.min.js', ->
+  packager.build_coffee SRC, 'pkg/annotator.min.js' 
+  packager.build_css CSS, 'pkg/annotator.min.css' 
+
+task 'package:plugins', 'Build pkg/annotator.<plugin_name>.min.js for all plugins', ->
+  for p in SRC_PLUGINS
+    packager.build_coffee [p], "pkg/annotator.#{path.basename(p, '.coffee')}.min.js"
+
+task 'package:kitchensink', 'Build pkg/annotator-full.min.js with Annotator and all plugins', ->
+  packager.build_coffee SRC.concat(SRC_PLUGINS), 'pkg/annotator-full.min.js'
+  packager.build_css CSS, 'pkg/annotator.min.css' 
+
+task 'package:clean', 'Clean package files', ->
+  fs.unlink "pkg/annotator.min.css"
+  fs.unlink "pkg/annotator.min.js"
+  fs.unlink "pkg/annotator-full.min.js"
+  for p in SRC_PLUGINS
+    fs.unlink "pkg/annotator.#{path.basename(p, '.coffee')}.min.js"
+
+option '-c', '--no-config', 'Do not embed config file'
+task 'bookmarklet:build', 'Output bookmarklet source', (options) ->
+  config = if options['no-config'] then false else true
+  buildBookmarklet config, console.log
+
+task 'bookmarklet:package', 'Compile the bookmarklet source and dependancies', ->
+  packageBookmarkletDemo()
+  packageBookmarkletJavaScript()
+  packageBookmarkletCSS()
+
+task 'bookmarklet:watch', 'Watch the bookmarklet source for changes', ->
+  file = "contrib/bookmarklet/src/bookmarklet.js"
+  options = {persistent: true, interval: 500}
+
+  packageBookmarkletDemo()
+  console.log "Watching #{file} for changes:"
+
+  fs.watchFile file, options, (curr, prev) ->
+      return if curr.size is prev.size and curr.mtime.getTime() is prev.mtime.getTime()
+
+      packageBookmarkletDemo()
+
+#----------------------------------------------------------------------------
+
+#
+# Packager
+#
+
+packager =
+  concat: (src, dest, callback) ->
+    exec "cat #{src.join ' '} > #{dest}", callback
+
+  concat_coffee: (src, dest, callback) ->
+    exec "coffee -jp #{src.join ' '} > #{dest}", callback
+
+  compress: (file, options={ type: 'js' }, callback) ->
+    yc = require 'yui-compressor'
+    
+    yc.compile(fs.readFileSync(file), options, (result) -> 
+      fs.writeFile(file, result, callback)  
+    )
+
+  build_coffee: (src, dest, callback) ->
+    packager.concat_coffee(src, dest, -> 
+      packager.compress(dest, callback)
+    )
+
+  build_css: (src, dest, callback) ->
+    packager.concat(src, dest, -> 
+      packager.compress(dest, { type: 'css' }, ->
+        packager.data_uri_ify(dest, callback)
+      )
+    )
+
+  data_uri_ify: (file, callback) ->
+    # NB: path to image is "src/..." because the CSS urls start with "../img"
+    b64_str = (name) -> fs.readFileSync("src/#{name}.png").toString('base64')
+    b64_url = (m...) -> "url('data:image/png;base64,#{b64_str(m[2])}')"
+
+    new_css = fs.readFileSync(file, 'utf8').replace(/(url\(([^)]+)\.png\))/g, b64_url)   
+    fs.writeFile(file, new_css, callback)
+
+#
+# Bookmarklet Tasks
+#
 
 # Create the bookmarklet demo page.
 buildBookmarklet = (embedConfig, callback) ->
@@ -93,13 +188,13 @@ packageBookmarkletJavaScript = ->
     if stderr
       console.log "Unable to compile #{destination}"
       console.log "Output from coffee: \n", stderr
-      return;
+      return
 
     exec "yuicompressor -o #{destination} #{destination}", (err, stdout, stderr) ->
       if stderr
         console.log "Unable to compress #{destination}"
         console.log "Output from yuicompressor: \n", stderr
-        return;
+        return
 
       console.log "Updated #{destination}"
 
@@ -126,25 +221,19 @@ packageBookmarkletCSS = ->
     fs.writeFileSync "#{BOOKMARKLET_PATH}/#{source}", css
     console.log "Updated #{BOOKMARKLET_PATH}/#{source}"
 
-option '-c', '--no-config', 'Do not embed config file'
-task 'bookmarklet:build', 'Output bookmarklet source', (options) ->
-  config = if options['no-config'] then false else true
-  buildBookmarklet config, console.log
+#
+# Utility functions
+#
 
-task 'bookmarklet:package', 'Compile the bookmarklet source and dependancies', ->
-  packageBookmarkletDemo()
-  packageBookmarkletJavaScript()
-  packageBookmarkletCSS()
+# relay: run child process relaying std{out,err} to this process
+relay = (cmd, args, stdoutPrint=print, stderrPrint=debug) ->
+  handle = spawn cmd, args
 
-task 'bookmarklet:watch', 'Watch the bookmarklet source for changes', ->
-  file = "contrib/bookmarklet/src/bookmarklet.js"
-  options = {persistent: true, interval: 500}
+  handle.stdout.on 'data', (data) -> stdoutPrint(data) if data
+  handle.stderr.on 'data', (data) -> stderrPrint(data) if data
 
-  packageBookmarkletDemo()
-  console.log "Watching #{file} for changes:"
-
-  fs.watchFile file, options, (curr, prev) ->
-      return if curr.size is prev.size and curr.mtime.getTime() is prev.mtime.getTime()
-
-      packageBookmarkletDemo()
+noisyPrint = (data) ->
+  print data
+  if data.toString('utf8').indexOf('In') is 0
+    exec 'afplay ~/.autotest.d/sound/sound_fx/red.mp3 2>&1 >/dev/null'
 
