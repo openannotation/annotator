@@ -95,6 +95,14 @@ describe "Annotator.Plugin.Store", ->
       expect(store._apiRequest).toHaveBeenCalled()
       expect(args[0]).toBe('update')
       expect(args[1]).toBe(annotation)
+      expect(typeof args[2]).toBe('function')
+
+      # Ensure the request callback works as expected.
+      spyOn(store, 'updateAnnotation');
+
+      data = {text: "Dummy response data"}
+      args[2](data)
+      expect(store.updateAnnotation).toHaveBeenCalledWith(annotation, data)
 
     it "should NOT call Store#_apiRequest() if the annotation is unregistered", ->
       store.annotations = []
