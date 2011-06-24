@@ -121,7 +121,8 @@ packager =
     exec "cat #{src.join ' '} > #{dest}", callback
 
   concat_coffee: (src, dest, callback) ->
-    exec "coffee -jp #{src.join ' '} > #{dest}", callback
+    # Have to specify a dummy destination for the --join flag.
+    exec "coffee -p -j dummy.js -c #{src.join ' '} > #{dest}", callback
 
   compress: (src, type, callback) ->
     yc = require 'yui-compressor'
