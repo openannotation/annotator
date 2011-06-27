@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <!-- Prevent the conditional comments from stalling page load -->
+  <!--[if IE]><![endif]-->
+
+  <title>Bookmarklet - Annotator - Annotating the Web</title>
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href='http://fonts.googleapis.com/css?family=Arvo:regular,bold&amp;subset=latin' rel='stylesheet' />
+  <link href='http://fonts.googleapis.com/css?family=Inconsolata&amp;subset=latin' rel='stylesheet' />
+  <link rel="stylesheet" href="../main.css">
+</head>
+<body>
+  <div id="airlock">
+    <header>
+      <h1>
+        <a href="../" title="The Annotator Homepage">Annotator</a>
+      </h1>
+      <nav>
+        <ul>
+          <li><a href="http://github.com/okfn/annotator/" title="Check out the repository">Code</a></li>
+          <li><a href="http://github.com/okfn/annotator/downloads/" title="Download a packaged bundle">Download</a></li>
+          <li><a href="http://github.com/okfn/annotator/wiki/" title="Read the wiki">Wiki</a></li>
+          <li><a href="http://github.com/okfn/annotator/issues/" title="Report an issue">Issues</a></li>
+        </ul>
+      </nav>
+    </header>
+    <article>
+      <section>
+        <h2>The Bookmarklet</h2>
+        <div class="primary">
+          <p>The bookmarklet will inject the Annotator into a webpage and send your
+             annotations to <a href="http://annotateit.org/">annotateit.org</a> for
+             safe keeping. To get started simply click the link below to load the
+             bookmarklet and try it out. Refresh the page and load the bookmarklet
+             again to retrieve your annotations from the server.</p>
+        </div>
+        <div class="secondary">
+          <p><a href="javascript:(function(i,e,f,h,c){var d=f.body,g=f.getElementsByTagName(&quot;head&quot;)[0],a={},b;b=(function(){var j=f.createElement(&quot;div&quot;),m=&quot;top 0.4s ease-out&quot;,k={display:&quot;block&quot;,position:&quot;absolute&quot;,fontFamily:'&quot;Helvetica Neue&quot;, Arial, Helvetica, sans-serif',fontSize:&quot;14px&quot;,color:&quot;#fff&quot;,top:&quot;-54px&quot;,left:0,width:&quot;100%&quot;,zIndex:9999,lineHeight:&quot;50px&quot;,fontSize:&quot;14px&quot;,textAlign:&quot;center&quot;,backgroundColor:&quot;#000&quot;,borderBottom:&quot;4px solid&quot;,WebkitTransition:m,MozTransition:m,OTransition:m,transition:m},l;j.className=&quot;annotator-bm-status&quot;;for(l in k){if(k.hasOwnProperty(l)){j.style[l]=k[l]}}j.style.position=&quot;fixed&quot;;j.style.backgroundColor=&quot;rgba(0, 0, 0, 0.9)&quot;;return{status:{INFO:&quot;#d4d4d4&quot;,SUCCESS:&quot;#3665f9&quot;,ERROR:&quot;#ff7e00&quot;},element:j,show:function(o,n){this.message(o,n);j.style.display=&quot;block&quot;;j.style.visibility=&quot;visible&quot;;j.style.top=&quot;0&quot;;return this},hide:function(){j.style.top=&quot;-54px&quot;;setTimeout(function(){j.style.display=&quot;none&quot;;j.style.visibility=&quot;hidden&quot;},400);return this},message:function(o,n){n=n||this.status.INFO;j.style.borderColor=n;j.innerHTML=o;return this},append:function(){d.appendChild(j);return this},remove:function(){var n=j.parentNode;if(n){n.removeChild(j)}return this}}.append()}());a={notification:b,keypath:function(j,m,n){var l=(m||&quot;&quot;).split(&quot;.&quot;),k;while(j&&l.length){k=l.shift();if(j.hasOwnProperty(k)){j=j[k];if(l.length===0&&j!==c){return j}}else{break}}return(n==null)?null:n},config:function(k,l){var j=this.keypath(i,k,l);if(j===null){b.show(&quot;Sorry there was an error reading the bookmarklet setting for key: &quot;+k,b.status.ERROR);setTimeout(b.hide,3000)}return j},loadjQuery:function(){var j=f.createElement(&quot;script&quot;),k=&quot;https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js&quot;;j.src=this.config(&quot;externals.jQuery&quot;,k);j.onload=function(){h=e.jQuery;d.removeChild(j);a.load(function(){h.noConflict(true);a.setup()})};d.appendChild(j)},load:function(j){g.appendChild(h(&quot;<link />&quot;,{rel:&quot;stylesheet&quot;,href:this.config(&quot;externals.styles&quot;)})[0]);h.getScript(this.config(&quot;externals.source&quot;),j)},storeOptions:function(){var j=location.href.split(/#|\?/).shift();return{prefix:this.config(&quot;store.prefix&quot;),annotationData:{uri:j},loadFromSearch:{uri:j,all_fields:1}}},permissionsOptions:function(){return h.extend({},{userId:function(j){return j&&j.id?j.id:&quot;&quot;},userString:function(j){return j&&j.name?j.name:&quot;&quot;}},this.config(&quot;permissions&quot;))},setup:function(){var j=new Annotator(i.target||d);j.addPlugin(&quot;Unsupported&quot;).addPlugin(&quot;Store&quot;,this.storeOptions()).addPlugin(&quot;Permissions&quot;,this.permissionsOptions()).element.data(&quot;annotator:headers&quot;,this.config(&quot;auth.headers&quot;));if(this.config(&quot;tags&quot;)===true){j.addPlugin(&quot;Tags&quot;)}h.extend(e._annotator,{jQuery:h,element:d,instance:j,Annotator:Annotator.noConflict()});b.message(&quot;Annotator is ready!&quot;,b.status.SUCCESS);setTimeout(function(){b.hide();setTimeout(b.remove,800)},3000)},init:function(){if(e._annotator.instance){e._annotator.Annotator.showNotification(&quot;Annotator is already loaded. Try highlighting some text to get started&quot;)}else{b.show(&quot;Loading Annotator into page&quot;);if(e.jQuery===c||!e.jQuery.sub){this.loadjQuery()}else{h=e.jQuery.sub();this.load(h.proxy(this.setup,this))}}}};if(!e._annotator){e._annotator={bookmarklet:a}}if(!i.test){a.init()}}({externals:{source:&quot;http://okfn.github.com/annotator/bookmarklet/annotator.min.js&quot;,styles:&quot;http://okfn.github.com/annotator/bookmarklet/annotator.min.css&quot;},auth:{headers:{&quot;X-Annotator-Account-Id&quot;:&quot;39fc339cf058bd22176771b3e3029975&quot;,&quot;X-Annotator-User-Id&quot;:&quot;annotator-demo&quot;,&quot;X-Annotator-Auth-Token&quot;:&quot;14afb08d0d3189efb5243896f3712efe58bacf312c5a2250149d3c8d3034cd06&quot;}},tags:true,store:{prefix:&quot;http://uat.annotateit.org/api&quot;},permissions:{showViewPermissionsCheckbox:true,showEditPermissionsCheckbox:true,user:{id:&quot;annotator-demo&quot;,name:&quot;Annotator Demo&quot;},permissions:{read:[&quot;annotator-demo&quot;],update:[&quot;annotator-demo&quot;],&quot;delete&quot;:[&quot;annotator-demo&quot;],admin:[&quot;annotator-demo&quot;]}}},this,this.document,this.jQuery));">Click to run the bookmarklet!</a></p>
+        </div>
+      </section>
+      <section>
+        <p><strong>How do I use it?</strong> We think you'll get the hang of it
+           pretty quickly. Once it's loaded try it out
+           by selecting some text and clicking on the note icon. Enter a note and
+           press <tt>&ldquo;Enter &#x21A9;&rdquo;</tt>: you should see your annotation
+           as a highlighted piece of text. Hover over the highlight with your mouse
+           to view, edit and delete the annotation.</p>
+      </section>
+      <section>
+        <div class="primary">
+          <p><strong>What happens to my annotations?</strong> The ones you create on
+             this page will be stored on annotateit under a demo account. Soon
+             you'll be able to create your own account and generate your very own
+             bookmarklet.</p>
+        </div>
+        <div class="secondary">
+          <p><strong>Where can I find out more?</strong> Head over to
+             <a href="http://annotateit.org/">annotateit.org</a> to find out more
+             about the bookmarklet. If you're interested in how it works or want to
+             give us some feedback you can do so on by visiting the 
+             <a href="http://github.com/okfn/annotator/">Annotator project on GitHub</a></p>
+        </div>
+      </section>
+    </article>
+    <footer>
+      <p>Annotator was developed by the
+        <img src="http://assets.okfn.org/images/logo/okf_logo_white_and_green_tiny.png" id="footer-okf-logo" />
+        <a href="http://okfn.org">Open
+        Knowledge Foundation</a> with support from the <a
+        href="http://www.shuttleworthfoundation.org/">Shuttleworth
+        Foundation</a>. Go see what other cool stuff we're doing at the
+      moment!</p>
+      <div class="widget-area">
+        <ul class="xoxo">
+          <li class="widget-container widget_text">
+          <h3 class="widget-title"></h3>
+          <div class="text-widget">
+            <ul>
+              <li>
+                &copy; <a href="http://www.okfn.org/">Open Knowledge Foundation</a>
+              </li>
+              <li>
+                <a href="http://opendefinition.org/okd/" class="img">
+                <img alt="This Content and Data is Open" src="http://assets.okfn.org/images/ok_buttons/oc_80x15_blue.png" class="button" />
+                </a>
+              </li>
+              <li>
+                <a href="http://opendefinition.org/ossd/" class="img">
+                <img alt="This Content and Data is Open"
+                  src="http://assets.okfn.org/images/ok_buttons/os_80x15_orange_grey.png" class="button" />
+                </a>
+              </li>
+            </ul>
+          </div>
+          </li>
+        </ul>
+        <ul class="xoxo">
+          <li class="widget-container widget_text">
+            <h3 class="widget-title"></h3>
+            <div class="textwidget">
+              <ul>
+                <li>
+                  <a href="http://okfn.org/projects/annotator/">Project Home Page</a>
+                </li>
+                <li>
+                <a href="/api/">API</a>
+                </li>
+                <li>
+                  <a href="http://github.com/okfn/annotator-store/">API Docs</a>
+                </li>
+                <li>
+                  <a href="http://lists.okfn.org/mailman/listinfo/annotator-dev">Mailing List</a>
+                </li>
+                <li>
+                  <a href="http://okfn.org/privacy-policy/">Privacy Policy</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </footer>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+  <script src="../main.js"></script>
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-8271754-20']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+  <script src="http://assets.okfn.org/banner/banner.js"></script>
+</body>
+</html>

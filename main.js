@@ -1,4 +1,4 @@
-(function () {
+(function ($, undefined) {
   var roleList = ["copy-editor", "English professor", "critical edition", "[citation needed]"]
 
   function rollRole() {
@@ -27,7 +27,7 @@
       event.preventDefault();
     }
   });
-}());
+})(jQuery);
 
 (function (hijs) {
 //
