@@ -77,7 +77,7 @@ for (var i = 0, children; i < nodes.length; i++) {
 
         if (code.length >= 0) { // It's a text node
             // Don't highlight command-line snippets
-            if (! /^\$/.test(code.nodeValue.trim())) {
+            if (! /^\$\s/.test(code.nodeValue.trim())) {
                 syntax.forEach(function (s) {
                     var k = s[0], v = s[1];
                     code.nodeValue = code.nodeValue.replace(v, function (_, m) {
