@@ -25,7 +25,7 @@ class Annotator.Editor extends Annotator.Widget
             </div>
             <span class="annotator-resize"></span>
           </form>
-        <div>
+        </div>
         """
 
   options: {} # Configuration options
