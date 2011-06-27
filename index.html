@@ -1,9 +1,181 @@
-<!doctype html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="refresh" content="0;url=http://annotateit.org/">
-  <title>Redirecting you to http://annotateit.org</title>
+  <meta charset="utf-8" />
+  <!-- Prevent the conditional comments from stalling page load -->
+  <!--[if IE]><![endif]-->
+
+  <title>Home - AnnotateIt - Annotating the Web</title>
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href='http://fonts.googleapis.com/css?family=Arvo:regular,bold&amp;subset=latin' rel='stylesheet' />
+  <link href='http://fonts.googleapis.com/css?family=Inconsolata&amp;subset=latin' rel='stylesheet' />
+  <link rel="stylesheet" href="./main.css">
 </head>
 <body>
+  <div id="airlock">
+    <header>
+      <h1>
+        <a href="/" title="The AnnotateIt Homepage">AnnotateIt</a>
+      </h1>
+      <!--
+      <h2>The <span id="role">copy-editor</span> of the web</h2>
+      -->
+      <nav>
+        <ul>
+          <li><a href="/#annotator">Annotator</a></li>
+          <li><a href="/#about">About</a></li>
+        </ul>
+      </nav>
+    </header>
+    <article>
+      <section>
+        <div class="primary">
+          <h2>Annotate Anything</h2>
+          <p>Now you can Annotate any web page simply by incorporating two lines
+          of javascript into your site or running our bookmarklet.</p>
+          <ul>
+            <li>Annotate any webpage with the bookmarklet</li>
+            <li>Add the Annotator to your own site in just two lines of code</li>
+          </ul>
+          <p><a href="/account/signup">Sign Up Now &raquo;</a></p>
+        </div>
+        <div class="secondary">
+          <img class="screenshot" src="./images/annotator.png" alt="The annotator" height="223" width="370" />
+        </div>
+      </section>
+      <section>
+        <div id="about">
+        <div id="annotator" class="primary">
+          <h2>The Annotator</h2>
+          <div class="thumbnails">
+            <img src="./images/thumb-add.png" alt="Highlight text to annotate" height="128" width="175" />
+            <img src="./images/thumb-viewer.png" alt="View annotations by moving your mouse over highlights" height="128" width="175" />
+          </div>
+          <p>The Annotator is a JavaScript tool that can be added to any webpage
+          to allow annotation. Annotations can have comments, tags, users and
+          more. See a <a href="http://okfn.github.com/annotator/">live
+            demonstration</a> or more in the <a href="#develop">developers
+            section</a> below.</p>
+        </div>
+        <div class="secondary">
+          <h2>The Bookmarklet</h2>
+          <div class="thumbnails">
+            <img src="./images/thumb-bookmarklet.png" alt="Add the annotator to any page with the bookmarklet" height="128" width="175" />
+            <img src="./images/thumb-editor.png" alt="Save annotations to AnnotateIt" height="128" width="175" />
+          </div>
+          <p>The Bookmarklet is a simple tool that allows you to add the
+          annotator to any webpage and save your annotations to AnnotateIt.
+          Check out the <a
+            href="http://okfn.github.com/annotator/bookmarklet">Bookmarklet
+            demo</a> or get your very own bookmarklet right now by <a
+            href="/account/signup">signing up</a> for an
+          account.</p>
+        </div>
+        </div>
+      </section>
+      <section>
+          <h2 id="develop">Developers</h2>
+          <div class="primary">
+            <p>Adding the Annotator to a webpage is easy. First you'll need to
+               <a href="http://github.com/okfn/annotator/">download the source code</a> and include it on your
+               page along with jQuery. Then simply add the following line to load
+               the annotator.</p>
+            <pre><code>jQuery('#content').annotator();</code></pre>
+            <p>To save the Annotations to the Store you'll need to <a href="#">sign
+               up</a> for an AnnotateIt account to get an Account Key and User
+               Account. Then include the <a href="#">Store</a> and
+              <a href="#">Auth</a> plugins.</p>
+          </div>
+          <div class="secondary">
+            <p>Then sign in to AnnotateIt with the following code</p>
+            <pre><code>jQuery('#content').annotator()
+      .annotator('addPlugin', 'Store', {
+        prefix: 'http://annotateit.org/api'
+      })
+      .annotator('addPlugin', 'Auth', {
+          userId:      'myusername',        // Your AnnotateIt username
+          consumerKey: 'some-big-string',   // Your Account Key
+          authToken:   'some-bigger-string' // Your Auth Token
+      });</code></pre>
+        </div>
+      </section>
+    </article>
+    <footer>
+      <p>Annotator was developed by the
+        <img src="http://assets.okfn.org/images/logo/okf_logo_white_and_green_tiny.png" id="footer-okf-logo" />
+        <a href="http://okfn.org">Open
+        Knowledge Foundation</a> with support from the <a
+        href="http://www.shuttleworthfoundation.org/">Shuttleworth
+        Foundation</a>. Go see what other cool stuff we're doing at the
+      moment!</p>
+      <div class="widget-area">
+        <ul class="xoxo">
+          <li class="widget-container widget_text">
+          <h3 class="widget-title"></h3>
+          <div class="text-widget">
+            <ul>
+              <li>
+                &copy; <a href="http://www.okfn.org/">Open Knowledge Foundation</a>
+              </li>
+              <li>
+                <a href="http://opendefinition.org/okd/" class="img">
+                <img alt="This Content and Data is Open" src="http://assets.okfn.org/images/ok_buttons/oc_80x15_blue.png" class="button" />
+                </a>
+              </li>
+              <li>
+                <a href="http://opendefinition.org/ossd/" class="img">
+                <img alt="This Content and Data is Open"
+                  src="http://assets.okfn.org/images/ok_buttons/os_80x15_orange_grey.png" class="button" />
+                </a>
+              </li>
+            </ul>
+          </div>
+          </li>
+        </ul>
+        <ul class="xoxo">
+          <li class="widget-container widget_text">
+            <h3 class="widget-title"></h3>
+            <div class="textwidget">
+              <ul>
+                <li>
+                  <a href="http://okfn.org/projects/annotator/">Project Home Page</a>
+                </li>
+                <li>
+                <a href="/api/">API</a>
+                </li>
+                <li>
+                  <a href="http://github.com/okfn/annotator-store/">API Docs</a>
+                </li>
+                <li>
+                  <a href="http://lists.okfn.org/mailman/listinfo/annotator-dev">Mailing List</a>
+                </li>
+                <li>
+                  <a href="http://okfn.org/privacy-policy/">Privacy Policy</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </footer>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+  <script src="./main.js"></script>
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-8271754-20']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+  <script src="http://assets.okfn.org/banner/banner.js"></script>
 </body>
 </html>
