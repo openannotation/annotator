@@ -1,43 +1,32 @@
 (function () {
-	var formMap = {
-		'#login':  $('#sign-up'),
-		'#sign-up': $('#login').hide()
-	};
+  var roleList = ["copy-editor", "English professor", "critical edition", "[citation needed]"]
 
-	function toggleForms(selector, callback) {
-		formMap[selector].fadeOut(100, function () {
-			$(selector).fadeIn();
-			callback && callback();
-		});
-	}
+  function rollRole() {
+    roleList.push(roleList.shift())
 
-	function scrollTo(offset) {
-		if (offset.top) {
-			$('body').animate({
-				scrollTop: offset.top - 10
-			}, 300);
-		}
-	}
+    $('h2 span#role').fadeOut(function () {
+      $(this).text(roleList[0]).fadeIn()
+    })
+  }
 
-	$('a[href^=#login], a[href^=#sign-up]').click(function (event) {
-		toggleForms(this.hash);
-		event.preventDefault();
-	});
+  // Rotate title, etc.
+  setInterval(rollRole, 5000)
 
-	$('nav').delegate('a', 'click', function (event) {
-		var section = $(this.hash),
-			offset;
+  function scrollTo(offset) {
+    if (offset.top) {
+      $('body').animate({
+        scrollTop: offset.top - 10
+      }, 300);
+    }
+  }
 
-		if (this.hash === '#login' || this.hash === '#sign-up') {
-			toggleForms(this.hash, function () {
-				scrollTo(section.offset());
-			});
-		} else {
-			scrollTo(section.offset());
-		}
-		
-		event.preventDefault();
-	});
+  $('a[href^="#"]').live('click', function (event) {
+    var section = $(this.hash);
+    if (section.length) {
+      scrollTo(section.offset());
+      event.preventDefault();
+    }
+  });
 }());
 
 (function (hijs) {

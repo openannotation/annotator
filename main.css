@@ -19,6 +19,10 @@ img {
 	border: 5px solid #333;
 }
 
+header, section, article, footer {
+	display: block;
+}
+
 h1, h2, h3, h4, h5, h6, p, ul, ol {
 	font-size: 1em /* 10px */;
 	margin: 0;
@@ -286,7 +290,7 @@ article ol,
 article pre,
 article dl {
 	font-size: 1.6em /* 16px */;
-	line-height: 1.25em /* 20px */;
+	line-height: 1.375em /* 22px */;
 	margin-bottom: 1em;
 }
 
