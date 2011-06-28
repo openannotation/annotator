@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>JS annotation test</title>
+
+    <script src="lib/vendor/jquery.js"></script>
+    <script src="lib/vendor/json2.js"></script>
+
+    <script src="lib/extensions.js"></script>
+    <script src="lib/console.js"></script>
+    <script src="lib/class.js"></script>
+    <script src="lib/range.js"></script>
+    <script src="lib/annotator.js"></script>
+    <script src="lib/widget.js"></script>
+    <script src="lib/editor.js"></script>
+    <script src="lib/viewer.js"></script>
+    <script src="lib/notification.js"></script>
+    <script src="lib/plugin/store.js"></script>
+    <script src="lib/plugin/permissions.js"></script>
+    <script src="lib/plugin/auth.js"></script>
+    <script src="lib/plugin/tags.js"></script>
+    <script src="lib/plugin/unsupported.js"></script>
+    <script src="lib/plugin/filter.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="css/annotator.css" />
+  </head>
+
+  <body>
+    <header>
+      <h1>Javascript annotation service test</h1>
+    </header>
+
+    <div id="airlock">
+      <p><strong>Pellentesque habitant morbi tristique</strong> senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. <em>Aenean ultricies mi vitae est.</em> Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, <code>commodo vitae</code>, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. <a href="#">Donec non enim</a> in turpis pulvinar facilisis. Ut felis.</p>
+
+      <h2>Header Level 2</h2>
+
+      <ol>
+         <li>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</li>
+         <li>Aliquam tincidunt mauris eu risus.</li>
+      </ol>
+
+      <blockquote><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus magna. Cras in mi at felis aliquet congue. Ut a est eget ligula molestie gravida. Curabitur massa. Donec eleifend, libero at sagittis mollis, tellus est malesuada tellus, at luctus turpis elit sit amet quam. Vivamus pretium ornare est.</p></blockquote>
+
+      <h3>Header Level 3</h3>
+
+      <ul>
+         <li id="listone">Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</li>
+         <li id="listtwo">Aliquam tincidunt mauris eu risus.</li>
+      </ul>
+
+      <pre><code>
+      #header h1 a {
+        display: block;
+        width: 300px;
+        height: 80px;
+      }
+      </code></pre>
+    </div>
+
+    <script>
+      var devAnnotator
+      (function ($) {
+        var elem = document.getElementById('airlock');
+        devAnnotator = new Annotator(elem);
+        devAnnotator.setupAnnotation({
+          "ranges":[{
+            "start":"/blockquote/p",
+            "startOffset":28,
+            "end":"/blockquote/p",
+            "endOffset":55
+          }],
+          "text": "My Quote",
+          "quote":"consectetur adipiscing elit"
+        });
+      }(jQuery));
+    </script>
+  </body>
+</html>

@@ -11,7 +11,7 @@ Range = {}
 #   Range.sniff(selection.getRangeAt(0))
 #   # => Returns a BrowserRange instance.
 #
-# Returns 
+# Returns a Range object or false.
 Range.sniff = (r) ->
   if r.commonAncestorContainer?
     new Range.BrowserRange(r)
@@ -231,7 +231,7 @@ class Range.SerializedRange
   #       startOffset: The offset to the start of the selection from obj.start.
   #       end:         An xpath to the Element containing the last TextNode
   #                    relative to the root Element.
-  #       startOffset: The offset to the end of the selection from obj.end. 
+  #       startOffset: The offset to the end of the selection from obj.end.
   #
   # Returns an instance of SerializedRange
   constructor: (obj) ->
@@ -240,15 +240,67 @@ class Range.SerializedRange
     @end         = obj.end
     @endOffset   = obj.endOffset
 
+  # Finds an Element Node using an XPath relative to the document root.
+  #
+  # If the document is served as application/xhtml+xml it will try and resolve
+  # any namespaces within the XPath.
+  #
+  # xpath - An XPath String to query.
+  #
+  # Examples
+  #
+  #   node = this._nodeFromXPath('/html/body/div/p[2]')
+  #   if node
+  #     # Do something with the node.
+  #
+  # Returns the Node if found otherwise null.
+  _nodeFromXPath: (xpath) ->
+    evaluateXPath = (xp, nsResolver=null) ->
+      document.evaluate(xp, document, nsResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
+
+    if not $.isXMLDoc document.documentElement
+      evaluateXPath xpath
+    else
+      # We're in an XML document, create a namespace resolver function to try
+      # and resolve any namespaces in the current document.
+      # https://developer.mozilla.org/en/DOM/document.createNSResolver
+      customResolver = document.createNSResolver(
+        if document.ownerDocument == null
+          document.documentElement
+        else
+          document.ownerDocument.documentElement
+      )
+      node = evaluateXPath xpath, customResolver
+
+      unless node
+        # If the previous search failed to find a node then we must try to
+        # provide a custom namespace resolver to take into account the default
+        # namespace. We also prefix all node names with a custom xhtml namespace
+        # eg. 'div' => 'xhtml:div'.
+        xpath = (for segment in xpath.split '/'
+          if segment and segment.indexOf(':') == -1
+            segment.replace(/^([a-z]+)/, 'xhtml:$1')
+          else segment
+        ).join('/')
+
+        # Find the default document namespace.
+        namespace = document.lookupNamespaceURI null 
+
+        # Try and resolve the namespace, first seeing if it is an xhtml node
+        # otherwise check the head attributes.
+        customResolver  = (ns) ->
+          if ns == 'xhtml' then namespace
+          else document.documentElement.getAttribute('xmlns:' + ns)
+
+        node = evaluateXPath xpath, customResolver 
+      node
+
   # Public: Creates a NormalizedRange.
   #
   # root - The root Element from which the XPaths were generated.
   #
   # Returns a NormalizedRange instance.
   normalize: (root) ->
-    nodeFromXPath = (xpath) ->
-      document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
-
     parentXPath   = $(root).xpath()[0]
     startAncestry = @start.split("/")
     endAncestry   = @end.split("/")
@@ -264,7 +316,7 @@ class Range.SerializedRange
         break
 
     cacXPath = parentXPath + common.join("/")
-    range.commonAncestorContainer = nodeFromXPath(cacXPath)
+    range.commonAncestorContainer = this._nodeFromXPath(cacXPath)
 
     if not range.commonAncestorContainer
       console.error("Error deserializing range: can't find XPath '" + cacXPath + "'. Is this the right document?")
@@ -276,7 +328,7 @@ class Range.SerializedRange
     # matches the value of the offset.
     for p in ['start', 'end']
       length = 0
-      for tn in $(nodeFromXPath(parentXPath + this[p])).textNodes()
+      for tn in $(this._nodeFromXPath(parentXPath + this[p])).textNodes()
         if (length + tn.nodeValue.length >= this[p + 'Offset'])
           range[p + 'Container'] = tn
           range[p + 'Offset'] = this[p + 'Offset'] - length

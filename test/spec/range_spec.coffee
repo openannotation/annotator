@@ -58,6 +58,16 @@ describe 'Range', ->
       expect(obj.endOffset).toEqual(27)
       expect(JSON.stringify(obj)).toEqual('{"start":"/p/strong","startOffset":13,"end":"/p/strong","endOffset":27}')
 
+    describe "_nodeFromXPath", ->
+      it "should parse a standard xpath string", ->
+        node = r._nodeFromXPath "/html/body/p/strong"
+        expect(node).toBe($('strong')[0])
+
+      it "should parse an standard xpath string for an xml document", ->
+        Annotator.$.isXMLDoc = -> true
+        node = r._nodeFromXPath "/html/body/p/strong"
+        expect(node).toBe($('strong')[0])
+
   describe "BrowserRange", ->
     beforeEach ->
       sel = mockSelection(0)
