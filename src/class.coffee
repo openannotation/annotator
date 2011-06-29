@@ -122,8 +122,10 @@ class Delegator
     return $.inArray(event, natives) == -1
 
   # Public: Fires an event and calls all subscribed callbacks with any parameters
-  # provided. This is essentially an alias of @element.trigger() but should be
-  # used to fire custom events.
+  # provided. This is essentially an alias of @element.triggerHandler() but
+  # should be used to fire custom events.
+  #
+  # NOTE: Events fired using .publish() will not bubble up the DOM.
   #
   # event  - A String event name.
   # params - An Array of parameters to provide to callbacks.
@@ -136,7 +138,7 @@ class Delegator
   #
   # Returns itself.
   publish: () ->
-    @element.trigger.apply @element, arguments
+    @element.triggerHandler.apply @element, arguments
     this
 
   # Public: Listens for custom event which when published will call the provided

@@ -92,6 +92,14 @@ describe 'Delegator', ->
 
       expect(callback).not.toHaveBeenCalled()
 
+    it "should not bubble custom events", ->
+      callback = jasmine.createSpy('listener')
+      $('body').bind('custom', callback)
+
+      delegator.element = $('<div />').appendTo('body')
+      delegator.publish('custom')
+
+      expect(callback).not.toHaveBeenCalled()
 
   describe "unsubscribe", ->
     it "should unbind an event from the Delegator#element", ->

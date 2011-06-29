@@ -96,7 +96,7 @@ describe 'Annotator.Editor', ->
         editor.annotation
       )
 
-    it "should publish the 'show' event", ->
+    it "should publish the 'load' event", ->
       spyOn(editor, 'publish')
       editor.load()
       expect(editor.publish).toHaveBeenCalledWith('load', [editor.annotation])
