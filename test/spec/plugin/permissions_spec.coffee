@@ -3,8 +3,10 @@ describe 'Annotator.Plugin.Permissions', ->
   permissions = null
 
   beforeEach ->
-    el = $("<div class='annotator-viewer'></div>")[0]
+    el = $("<div class='annotator-viewer'></div>").appendTo('body')[0]
     permissions = new Annotator.Plugin.Permissions(el)
+
+  afterEach -> $(el).remove()
 
   it "it should add the current user object to newly created annotations on beforeAnnotationCreated", ->
     ann = {}
@@ -268,10 +270,12 @@ describe 'Annotator.Plugin.Permissions', ->
 
     beforeEach ->
       checkbox = $('<input type="checkbox" />')
-      field = $('<li />').append(checkbox)
+      field = $('<li />').append(checkbox).appendTo(permissions.element)
       
       permissions.setUser('Alice')
       permissions.updatePermissionsField('update', field, annotations.shift())
+
+    afterEach -> field.remove()
 
     it "should have a checked checkbox when there are no permissions", ->
       expect(checkbox.is(':checked')).toBeTruthy()
@@ -283,7 +287,7 @@ describe 'Annotator.Plugin.Permissions', ->
       expect(checkbox[0].getAttribute('disabled')).toBeFalsy()
 
     it "should disable the checkbox if by default anyone can update the annotation", ->
-      expect(checkbox[0].getAttribute('disabled')).toBeTruthy()
+      expect(checkbox[0].disabled).toBeTruthy()
 
     it "should display the field if the current user has 'admin' permissions", ->
       expect(field.is(':visible')).toBeTruthy()
