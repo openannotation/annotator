@@ -15,7 +15,8 @@ describe 'Annotator.Editor', ->
   describe "events", ->
     it "should call Editor#submit() when the form is submitted", ->
       spyOn(editor, 'submit')
-      editor.element.find('form').submit()
+      # Prevent the default form submission in the browser.
+      editor.element.find('form').submit((e) -> e.preventDefault()).submit()
       expect(editor.submit).toHaveBeenCalled()
 
     it "should call Editor#submit() when the save button is clicked", ->
