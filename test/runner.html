@@ -21,15 +21,15 @@
       'range'
       'annotator'
       'widget'
-      'editor'
+      #'editor'
       'viewer'
       'notification'
-      'plugin/store'
-      'plugin/permissions'
-      'plugin/auth'
-      'plugin/markdown'
-      'plugin/tags'
-      'plugin/filter'
+      #'plugin/store'
+      #'plugin/permissions'
+      #'plugin/auth'
+      #'plugin/markdown'
+      #'plugin/tags'
+      #'plugin/filter'
     ]
 
     # spec helpers
@@ -38,32 +38,31 @@
       'ajax_fixtures'
     ]
 
+    loadScript = (file, callback) ->
+      script = document.createElement('script')
+      script.src = "../lib/#{file}.js"
+      script.onload = callback
+      document.body.appendChild(script)
+
+    loadTests = (callback) ->
+      promises = []
+      for o in OTHER then promises.push $.get("#{o}.coffee")
+      for s in SRC then promises.push $.get("spec/#{s}_spec.coffee")
+
+      $.when.apply($, promises).then ->
+        for result in promises
+          CoffeeScript.run(result.responseText) if result.status == 200
+        callback()
+
+    loadAnnotator = (callback) ->
+      files = SRC.slice()
+      (loadNext = ->
+        if files.length then loadScript(files.shift(), loadNext)
+        else callback()
+      )()
+
     $(window).bind 'load', ->
-      load = (i, callback) ->
-        if i < SRC.length
-          $.getScript "../lib/#{SRC[i]}.js", (-> load(i+1, callback))
-        else
-          callback?()
-
-      load 0, ->
-        for o in OTHER
-          coffee = $.ajax(
-            async: false
-            url: "#{o}.coffee"
-          ).responseText
-
-          CoffeeScript.run(coffee)
-
-        for s in SRC
-          ajax = $.ajax(
-            global: false
-            async: false
-            url: "spec/#{s}_spec.coffee"
-          )
-
-          if ajax.status == 200
-            CoffeeScript.run(ajax.responseText)
-
+      loadAnnotator loadTests ->
         jasmine.getEnv().addReporter(new jasmine.TrivialReporter())
         jasmine.getEnv().execute()
   </script>
