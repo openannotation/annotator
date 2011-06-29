@@ -13,12 +13,18 @@ describe "Filter", ->
     plugin = new Annotator.Plugin.Filter(element[0])
     plugin.annotator = annotator
 
+  afterEach ->
+    plugin.element.remove()
+
   describe "events", ->
     filterElement = null
 
     beforeEach ->
       filterElement = $(plugin.html.filter)
       plugin.element.append(filterElement)
+
+    afterEach ->
+      filterElement.remove()
 
     it "should call Filter#_onFilterFocus when a filter input is focussed", ->
       spyOn(plugin, '_onFilterFocus')
