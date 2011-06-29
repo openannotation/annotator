@@ -138,10 +138,13 @@
 
       script.src = this.config('externals.jQuery', fallback);
       script.onload = function () {
-        jQuery = window.jQuery.noConflict(true);
+        // Reassign our local copy of jQuery.
+        jQuery = window.jQuery;
 
         body.removeChild(script);
         bookmarklet.load(function () {
+          // Once the Annotator has been loaded we can finally remove jQuery.
+          window.jQuery.noConflict(true);
           bookmarklet.setup();
         });
       };
@@ -230,7 +233,7 @@
       } else {
         notification.show('Loading Annotator into page');
 
-        if (window.jQuery === undefined || !window.jQuery.sub) {
+        if (!window.jQuery || !window.jQuery.sub) {
           this.loadjQuery();
         } else {
           jQuery = window.jQuery.sub();
