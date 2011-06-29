@@ -62,10 +62,11 @@ describe 'jQuery.escape()', ->
 describe 'jQuery.fn.escape()', ->
   it "should set the innerHTML of the elements but escape any HTML into entities", ->
     div = $('<div />').escape('<>"&')
-    expect(div.html()).toEqual('&lt;&gt;&quot;&amp;')
+    # Match either &quot; or " as  JSDOM keeps quotes escaped but the browser does not. 
+    expect(div.html()).toMatch(/&lt;&gt;(&quot;|")&amp;/)
 
     div = $('<div />').escape('<script>alert("hello")</script>')
-    expect(div.html()).toEqual('&lt;script&gt;alert(&quot;hello&quot;)&lt;/script&gt;')
+    expect(div.html()).toMatch(/&lt;script&gt;alert\((&quot;|")hello(&quot;|")\)&lt;\/script&gt;/)
 
   it "should return the original jQuery collection", ->
     div = $('<div />').escape('<>"&')
