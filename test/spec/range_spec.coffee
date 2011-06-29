@@ -59,13 +59,14 @@ describe 'Range', ->
       expect(JSON.stringify(obj)).toEqual('{"start":"/p/strong","startOffset":13,"end":"/p/strong","endOffset":27}')
 
     describe "_nodeFromXPath", ->
+      xpath = if window.require then "/html/body/p/strong" else "/html/body/div/p/strong"
       it "should parse a standard xpath string", ->
-        node = r._nodeFromXPath "/html/body/p/strong"
+        node = r._nodeFromXPath xpath
         expect(node).toBe($('strong')[0])
 
       it "should parse an standard xpath string for an xml document", ->
         Annotator.$.isXMLDoc = -> true
-        node = r._nodeFromXPath "/html/body/p/strong"
+        node = r._nodeFromXPath xpath
         expect(node).toBe($('strong')[0])
 
   describe "BrowserRange", ->
