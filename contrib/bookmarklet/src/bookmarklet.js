@@ -1,9 +1,16 @@
-(function (options, window, document, jQuery, undefined) {
+(function (options, window, document, undefined) {
 
   var body = document.body,
       head = document.getElementsByTagName('head')[0],
+      globals = ['Annotator', '$', 'jQuery'],
+      isLoaded = {},
       bookmarklet = {},
-      notification;
+      notification, namespace, jQuery;
+
+  while (globals.length) {
+    namespace = globals.shift();
+    isLoaded[namespace] = namespace in window;
+  }
 
   notification = (function () {
     var element = document.createElement('div'),
@@ -19,7 +26,6 @@
           width: '100%',
           zIndex: 9999,
           lineHeight: '50px',
-          fontSize: '14px',
           textAlign: 'center',
           backgroundColor: '#000',
           borderBottom: '4px solid',
@@ -109,7 +115,7 @@
         }
       }
 
-      return (fallback == null) ? null : fallback;
+      return (fallback === null) ? null : fallback;
     },
 
     config: function (path, fallback) {
@@ -132,11 +138,10 @@
 
       script.src = this.config('externals.jQuery', fallback);
       script.onload = function () {
-        jQuery = window.jQuery;
+        jQuery = window.jQuery.noConflict(true);
 
         body.removeChild(script);
         bookmarklet.load(function () {
-          jQuery.noConflict(true);
           bookmarklet.setup();
         });
       };
@@ -178,7 +183,7 @@
     },
 
     setup: function () {
-      var annotator = new Annotator(options.target || body);
+      var annotator = new window.Annotator(options.target || body), namespace;
 
       annotator
         .addPlugin('Unsupported')
@@ -199,8 +204,16 @@
         jQuery: jQuery,
         element: body,
         instance: annotator,
-        Annotator: Annotator.noConflict()
+        Annotator: window.Annotator.noConflict()
       });
+
+      // Clean up after ourselves by removing any properties on window that
+      // were not there before.
+      for (namespace in isLoaded) {
+        if (isLoaded.hasOwnProperty(namespace) && !isLoaded[namespace]) {
+          delete window[namespace];
+        }
+      }
 
       notification.message('Annotator is ready!', notification.status.SUCCESS);
       setTimeout(function () {
@@ -237,5 +250,10 @@
   // Load the bookmarklet.
   if (!options.test) {
     bookmarklet.init();
+  } else {
+    // jQuery is included here for testing individual methods. It is overridden
+    // with a local copy later in the script. When checking for an external copy
+    // always check window.jQuery.
+    jQuery = window.jQuery;
   }
-}(__config__, this, this.document, this.jQuery));
+}(__config__, this, this.document));
