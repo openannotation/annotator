@@ -86,7 +86,7 @@ task 'bookmarklet:build_demo', 'Create the bookmarklet demo files', ->
   html = fs.readFileSync(bookmarklet.tpl, 'utf8')
 
   bookmarklet.build true, (source) ->
-    html = html.replace '__bookmarklet__', source.replace(/"/g, '&quot;')
+    html = html.replace '__bookmarklet__', source.replace(/\$/g, '$$$$').replace(/"/g, '&quot;')
     fs.writeFile bookmarklet.demo, html
     console.log "Updated #{bookmarklet.demo}"
 
