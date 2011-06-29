@@ -21,15 +21,15 @@
       'range'
       'annotator'
       'widget'
-      #'editor'
+      'editor'
       'viewer'
       'notification'
-      #'plugin/store'
-      #'plugin/permissions'
-      #'plugin/auth'
-      #'plugin/markdown'
-      #'plugin/tags'
-      #'plugin/filter'
+      'plugin/store'
+      'plugin/permissions'
+      'plugin/auth'
+      'plugin/markdown'
+      'plugin/tags'
+      'plugin/filter'
     ]
 
     # spec helpers
@@ -38,9 +38,11 @@
       'ajax_fixtures'
     ]
 
+    $.ajaxSetup {cache: false}
+
     loadScript = (file, callback) ->
       script = document.createElement('script')
-      script.src = "../lib/#{file}.js"
+      script.src = "../lib/#{file}.js?" + (new Date).getTime()
       script.onload = callback
       document.body.appendChild(script)
 
@@ -62,7 +64,7 @@
       )()
 
     $(window).bind 'load', ->
-      loadAnnotator loadTests ->
+      loadAnnotator -> loadTests ->
         jasmine.getEnv().addReporter(new jasmine.TrivialReporter())
         jasmine.getEnv().execute()
   </script>
