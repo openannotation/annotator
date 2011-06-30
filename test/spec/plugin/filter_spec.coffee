@@ -102,10 +102,7 @@ describe "Filter", ->
     filter = null
 
     beforeEach ->
-      filter = {
-        label: 'Tag',
-        property: 'tags'
-      }
+      filter = { label: 'Tag', property: 'tags' }
       plugin.addFilter(filter)
 
     it "should add a filter object to Filter#plugins", ->
@@ -118,6 +115,10 @@ describe "Filter", ->
     it "should store the filter in the elements data store under 'filter'", ->
       filter = plugin.filters[0]
       expect(filter.element.data('filter')).toBe(filter)
+
+    it "should not add a filter for a property that has already been loaded", ->
+      plugin.addFilter { label: 'Tag', property: 'tags' }
+      expect(plugin.filters.length).toBe(1)
 
   describe "updateFilter", ->
     filter = null

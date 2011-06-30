@@ -158,23 +158,26 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
       isFiltered: @options.isFiltered
     }, options)
 
-    filter.id = 'annotator-filter-' + filter.property
-    filter.annotations = []
-    filter.element = @filter.clone().appendTo(@element)
-    filter.element.find('label')
-      .html(filter.label)
-      .attr('for', filter.id)
-    filter.element.find('input')
-      .attr({
-        id: filter.id
-        placeholder: 'Filter by ' + filter.label + '\u2026'
-      })
-    filter.element.find('button').hide()
+    # Skip if a filter for this property has been loaded.
+    unless (f for f in @filters when f.property == filter.property).length
+      filter.id = 'annotator-filter-' + filter.property
+      filter.annotations = []
+      filter.element = @filter.clone().appendTo(@element)
+      filter.element.find('label')
+        .html(filter.label)
+        .attr('for', filter.id)
+      filter.element.find('input')
+        .attr({
+          id: filter.id
+          placeholder: 'Filter by ' + filter.label + '\u2026'
+        })
+      filter.element.find('button').hide()
+      
+      # Add the filter to the elements data store.
+      filter.element.data 'filter', filter
+      
+      @filters.push filter
 
-    # Add the filter to the elements data store.
-    filter.element.data 'filter', filter
-
-    @filters.push(filter)
     this
 
   # Public: Updates the filter.annotations property. Then updates the state
