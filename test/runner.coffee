@@ -43,6 +43,8 @@ s.require 'lib/plugin/auth.js'
 s.require 'lib/plugin/markdown.js'
 s.require 'lib/plugin/tags.js'
 s.require 'lib/plugin/filter.js'
+s.require 'lib/plugin/unsupported.js'
+s.require 'lib/plugin/kitchensink.js'
 
 s.require 'test/spec_helper.coffee'
 

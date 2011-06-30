@@ -22,19 +22,25 @@
 #
 # Returns iteself for chaining.
 Annotator::setupPlugins = (config={}) ->
+  win = util.getGlobal()
+
   # Set up the default plugins.
   plugins =
     Tags: {}
-    Filter: {}
+    Filter: 
+      filters: [
+        {label: 'User', property: 'user'}
+        {label: 'Tags', property: 'tags'}
+      ]
     Unsupported: {}
 
   # If Showdown is included add the Markdown plugin.
-  plugins.Markdown = {} if window.Showdown
+  plugins.Markdown = {} if win.Showdown
 
-  # Check the options for store credientials and add relevant plugins.
+  # Check the config for store credientials and add relevant plugins.
   {userId, userName, accountId, authToken} = config
   if userId and userName and accountId and authToken
-    uri = window.location.href.split(/#|\?/).shift()
+    uri = win.location.href.split(/#|\?/).shift() || ''
     $.extend plugins,
       Store:
         prefix: config.storeUri || 'http://annotateit.org/api'
@@ -45,13 +51,13 @@ Annotator::setupPlugins = (config={}) ->
           all_fields: 1
       Permissions:
         user:
-          id:   options.userId,
-          name: options.userName
+          id:   config.userId,
+          name: config.userName
         permissions:
-          read:   [options.userId]
-          update: [options.userId]
-          delete: [options.userId]
-          admin:  [options.userId]
+          read:   [config.userId]
+          update: [config.userId]
+          delete: [config.userId]
+          admin:  [config.userId]
         userId: (user) ->
           if user?.id then user.id else ''
         userString: (user) ->
@@ -59,8 +65,8 @@ Annotator::setupPlugins = (config={}) ->
 
     @element.data
       'annotator:headers':
-        'X-Annotator-User-Id':    options.userId
-        'X-Annotator-Account-Id': options.accountId
-        'X-Annotator-Auth-Token': options.authToken
+        'X-Annotator-User-Id':    config.userId
+        'X-Annotator-Account-Id': config.accountId
+        'X-Annotator-Auth-Token': config.authToken
 
   this.addPlugin(name, options) for own name, options of plugins
