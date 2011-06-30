@@ -45,6 +45,9 @@
     // Apply newer styles for modern browsers.
     element.style.position = 'fixed';
     element.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
+    element.onclick = function () {
+      this.parentNode.removeChild(this);
+    };
 
     return {
       status: {
@@ -79,6 +82,11 @@
         element.innerHTML = message;
 
         return this;
+      },
+      error: function (message) {
+        this.message(message, this.status.ERROR);
+        setTimeout(this.hide, 5000);
+        setTimeout(this.remove, 5500);
       },
       append: function () {
         body.appendChild(element);
@@ -122,11 +130,7 @@
       var value = this.keypath(options, path, fallback);
 
       if (value === null) {
-        notification.show(
-          'Sorry there was an error reading the bookmarklet setting for key: ' + path,
-          notification.status.ERROR
-        );
-        setTimeout(notification.hide, 3000);
+        notification.error('Sorry there was an error reading the bookmarklet setting for key: ' + path);
       }
 
       return value;
@@ -134,13 +138,19 @@
 
     loadjQuery: function () {
       var script   = document.createElement('script'),
-          fallback = 'https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js';
+          fallback = 'https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js',
+          timer;
+
+      timer = setTimeout(function () {
+        notification.error('Sorry, we were unable to load jQuery which is required by the annotator');
+      }, this.config('timeout', 3000));
 
       script.src = this.config('externals.jQuery', fallback);
       script.onload = function () {
         // Reassign our local copy of jQuery.
         jQuery = window.jQuery;
-
+        
+        clearTimeout(timer);
         body.removeChild(script);
         bookmarklet.load(function () {
           // Once the Annotator has been loaded we can finally remove jQuery.
@@ -157,7 +167,12 @@
         rel: 'stylesheet',
         href: this.config('externals.styles')
       })[0]);
-      jQuery.getScript(this.config('externals.source'), callback);
+
+      jQuery.ajaxSetup({timeout: this.config('timeout', 3000)});
+      jQuery.getScript(this.config('externals.source'), callback)
+            .error(function () {
+              notification.error('Sorry, we\'re unable to load the annotator at this time');
+            });
     },
 
     storeOptions: function () {
