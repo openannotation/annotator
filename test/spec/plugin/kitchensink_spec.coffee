@@ -4,7 +4,7 @@ describe 'Annotator::setupPlugins', ->
   beforeEach ->
     window.location = {href: 'http://www.example.com'}
     this.addMatchers
-      toHaveFilter: (prop) -> prop in (f.property for f in this.actual.filters)
+      toContainFilter: (prop) -> prop in (f.property for f in this.actual.filters)
 
   it 'should added to the Annotator prototype', ->
     expect(typeof Annotator::setupPlugins).toBe('function')
@@ -43,7 +43,7 @@ describe 'Annotator::setupPlugins', ->
 
       it 'should have a filters for annotations, tags and users', ->
         expectedFilters = ['text', 'user', 'tags']
-        expect(filterPlugin).toHaveFilter(filter) for filter in expectedFilters
+        expect(filterPlugin).toContainFilter(filter) for filter in expectedFilters
 
     describe 'and with Showdown loaded in the page', ->
       it 'should add the Markdown plugin', ->
@@ -75,3 +75,19 @@ describe 'Annotator::setupPlugins', ->
           'X-Annotator-User-Id':    'bill'
           'X-Annotator-Account-Id': 'some-fake-id'
           'X-Annotator-Auth-Token': 'another-fake-token'
+
+  describe 'called with plugin options', ->
+    beforeEach -> annotator = new Annotator $('<div />')[0]
+
+    it 'should override default plugin options', ->
+      annotator.setupPlugins null,
+        Filter:
+          filters: []
+          addAnnotationFilter: false
+
+      expect(annotator.plugins.Filter.filters.length).toBe(0)
+
+    it 'should NOT load a plugin if it\'s key is set to null OR false', ->
+      annotator.setupPlugins null, {Filter: false, Tags: null}
+      expect(annotator.plugins.Tags).not.toBeDefined()
+      expect(annotator.plugins.Filter).not.toBeDefined()

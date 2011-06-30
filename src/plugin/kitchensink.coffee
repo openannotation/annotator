@@ -4,12 +4,14 @@
 # NOTE: This method is intened to be called via the jQuery .annotator() method
 # although it is available directly on the Annotator instance.
 #
-# config - An Object containing config options for the AnnotateIt store.
-#          userId:    AnnotateIt User ID.
-#          userName:  Display name string for the annotations.
-#          accountId: AnnotateIt Account ID.
-#          authToken: AnnotateIt Auth Token.
-#          storeUri:  API endpoint for the store (default: "http://annotateit.org/api")
+# config  - An Object containing config options for the AnnotateIt store.
+#           userId:    AnnotateIt User ID.
+#           userName:  Display name string for the annotations.
+#           accountId: AnnotateIt Account ID.
+#           authToken: AnnotateIt Auth Token.
+#           storeUri:  API endpoint for the store (default: "http://annotateit.org/api")
+# options - An Object containing plugin settings to override the defaults.
+#           Setting a filter to null or false will not load the filter.
 #
 # Examples
 #
@@ -20,8 +22,17 @@
 #     authToken: 'an-even-longer-auth-token'
 #   });
 #
+#   // Only display a filter for the user field and disable tags.
+#   $('#content').annotator().annotator('setupPlugins', null, {
+#     Tags: false,
+#     Filter: {
+#       filters: [{label: 'User', property: 'user'}],
+#       addAnnotationFilter: false
+#     }
+#   });
+#
 # Returns iteself for chaining.
-Annotator::setupPlugins = (config={}) ->
+Annotator::setupPlugins = (config={}, options={}) ->
   win = util.getGlobal()
 
   # Set up the default plugins.
@@ -40,10 +51,10 @@ Annotator::setupPlugins = (config={}) ->
   # Check the config for store credientials and add relevant plugins.
   {userId, userName, accountId, authToken} = config
   if userId and userName and accountId and authToken
-    uri = win.location.href.split(/#|\?/).shift() || ''
+    uri = win.location.href.split(/#|\?/).shift() or ''
     $.extend plugins,
       Store:
-        prefix: config.storeUri || 'http://annotateit.org/api'
+        prefix: config.storeUri or 'http://annotateit.org/api'
         annotationData:
           'uri': uri
         loadFromSearch:
@@ -69,4 +80,6 @@ Annotator::setupPlugins = (config={}) ->
         'X-Annotator-Account-Id': config.accountId
         'X-Annotator-Auth-Token': config.authToken
 
-  this.addPlugin(name, options) for own name, options of plugins
+  $.extend plugins, options
+  for own name, opts of plugins when opts != null and opts != false
+    this.addPlugin(name, opts) 
