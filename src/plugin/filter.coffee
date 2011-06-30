@@ -111,9 +111,9 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
   #
   # Returns itself
   _insertSpacer: ->
-    body = $('body')
-    currentMargin = parseInt(body.css('margin-top'), 10) || 0
-    body.css('margin-top', currentMargin + @element.outerHeight())
+    html = $('html')
+    currentMargin = parseInt(html.css('margin-top'), 10) || 0
+    html.css('margin-top', currentMargin + @element.outerHeight())
     this
 
   # Listens to annotation change events on the Annotator in order to refresh
