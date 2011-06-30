@@ -11,14 +11,14 @@
 	padding: 0;
 	background: none;
 	-webkit-transition: none;
-    -moz-transition: none;
-    -o-transition: none;
-    transition: none;
+	-moz-transition: none;
+	-o-transition: none;
+	transition: none;
 	-moz-box-shadow: none;
-    -webkit-box-shadow: none;
-    -o-box-shadow: none;
-    box-shadow: none;
-    color: rgb(144, 144, 144);
+	-webkit-box-shadow: none;
+	-o-box-shadow: none;
+	box-shadow: none;
+	color: rgb(144, 144, 144);
 }
 
 /* Images
@@ -360,10 +360,10 @@
 	border-top: 1px solid rgb(212,212,212);
 	background-color: rgb(212, 212, 212);
 	background-image: -webkit-gradient(
-  		linear, left top, left bottom,
-  		from(rgb(245, 245, 245)),
-  		color-stop(0.6, rgb(220, 220, 220)),
-  		to(rgb(210, 210, 210))
+		linear, left top, left bottom,
+		from(rgb(245, 245, 245)),
+		color-stop(0.6, rgb(220, 220, 220)),
+		to(rgb(210, 210, 210))
 	);
 	background-image: -moz-linear-gradient(
 	    -90deg,
@@ -428,11 +428,11 @@
 	border: 1px solid rgb(162, 162, 162);
 	background-color: rgb(212, 212, 212);
 	background-image: -webkit-gradient(
-  		linear, left top, left bottom,
-  		from(rgb(245, 245, 245)),
-  		color-stop(0.5, rgb(210, 210, 210)),
-  		color-stop(0.5, rgb(190, 190, 190)),
-  		to(rgb(210, 210, 210))
+		linear, left top, left bottom,
+		from(rgb(245, 245, 245)),
+		color-stop(0.5, rgb(210, 210, 210)),
+		color-stop(0.5, rgb(190, 190, 190)),
+		to(rgb(210, 210, 210))
 	);
 	background-image: -moz-linear-gradient(
 	    -90deg,
@@ -494,11 +494,11 @@
 	border-color: rgb(67, 90, 160);
 	background-color: rgb(56, 101, 249);
 	background-image: -webkit-gradient(
-  		linear, left top, left bottom,
-  		from(rgb(118, 145, 251)),
-  		color-stop(0.5, rgb(80, 117, 251)),
-  		color-stop(0.5, rgb(56, 101, 249)),
-  		to(rgb(54, 101, 250))
+		linear, left top, left bottom,
+		from(rgb(118, 145, 251)),
+		color-stop(0.5, rgb(80, 117, 251)),
+		color-stop(0.5, rgb(56, 101, 249)),
+		to(rgb(54, 101, 250))
 	);
 	background-image: -moz-linear-gradient(
 	    -90deg,
@@ -536,11 +536,11 @@
 	border-color: rgb(112, 12, 73);
 	background-color: rgb(209, 46, 142);
 	background-image: -webkit-gradient(
-  		linear, left top, left bottom,
-  		from(rgb(252, 124, 202)),
-  		color-stop(0.5, rgb(232, 93, 178)),
-  		color-stop(0.5, rgb(209, 46, 142)),
-  		to(rgb(255, 0, 156))
+		linear, left top, left bottom,
+		from(rgb(252, 124, 202)),
+		color-stop(0.5, rgb(232, 93, 178)),
+		color-stop(0.5, rgb(209, 46, 142)),
+		to(rgb(255, 0, 156))
 	);
 	background-image: -moz-linear-gradient(
 	    -90deg,
