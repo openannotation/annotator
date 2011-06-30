@@ -53,7 +53,8 @@ task 'package:plugins', 'Build pkg/annotator.<plugin_name>.min.js for all plugin
     packager.build_coffee util.src_files([p], 'plugin/'), "pkg/annotator.#{p}.min.js"
 
 task 'package:kitchensink', 'Build pkg/annotator-full.min.js with Annotator and all plugins', ->
-  files = util.src_files(CORE).concat(util.src_files(PLUGINS, 'plugin/'))
+  plugins = PLUGINS.concat ['kitchensink']
+  files = util.src_files(CORE).concat(util.src_files(plugins, 'plugin/'))
   packager.build_coffee files, 'pkg/annotator-full.min.js'
 
 task 'package:clean', 'Clean package files', ->
