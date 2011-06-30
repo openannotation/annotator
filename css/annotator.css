@@ -727,6 +727,7 @@
 
 .annotator-filter .annotator-filter-property label,
 .annotator-filter .annotator-filter-navigation button {
+	text-align: left;
 	display: block;
 	float: left;
 	line-height: 20px;
