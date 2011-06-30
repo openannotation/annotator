@@ -287,6 +287,31 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
     filter = $(event.target).parent().data('filter')
     this.updateFilter filter if filter
 
+  # Locates the next/previous highlighted element in @highlights from the
+  # current one or goes to the very first/last element respectively.
+  #
+  # previous - If true finds the previously highlighted element.
+  #
+  # Returns itself.
+  _findNextHighlight: (previous) ->
+    return this unless @highlights.length
+
+    offset      = if previous then 0    else -1
+    resetOffset = if previous then -1   else 0
+    operator    = if previous then 'lt' else 'gt'
+
+    active  = @highlights.not('.' + @classes.hl.hide)
+    current = active.filter('.' + @classes.hl.active)
+    current = active.eq(offset) unless current.length
+
+    annotation = current.data 'annotation'
+
+    index = active.index current[0]
+    next  = active.filter(":#{operator}(#{index})").not(annotation.highlights).eq(resetOffset)
+    next  = active.eq(resetOffset) unless next.length
+
+    this._scrollToHighlight next.data('annotation').highlights
+
   # Locates the next highlighted element in @highlights from the current one
   # or goes to the very first element.
   #
@@ -294,19 +319,7 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
   #
   # Returns nothing
   _onNextClick: (event) =>
-    active  = @highlights.not('.' + @classes.hl.hide)
-    current = active.filter('.' + @classes.hl.active)
-    unless current.length
-      current = active.eq(-1)
-
-    annotation = current.data('annotation')
-
-    index = active.index(current[0])
-    next  = active.filter(':gt(' + index + ')').not(annotation.highlights).eq(0)
-    unless next.length
-      next = active.eq(0)
-
-    this._scrollToHighlight(next.data('annotation').highlights)
+    this._findNextHighlight()
 
   # Locates the previous highlighted element in @highlights from the current one
   # or goes to the very last element.
@@ -315,18 +328,7 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
   #
   # Returns nothing
   _onPreviousClick: (event) =>
-    active  = @highlights.not('.' + @classes.hl.hide)
-    current = active.filter('.' + @classes.hl.active)
-    unless current.length
-      current = active.eq(0)
-    annotation = current.data('annotation')
-
-    index = active.index(current[0])
-    prev  = active.filter(':lt(' + index + ')').not(annotation.highlights).eq(-1)
-    unless prev.length
-      prev = active.eq(-1)
-
-    this._scrollToHighlight(prev.data('annotation').highlights)
+    this._findNextHighlight true
 
   # Scrolls to the highlight provided. An adds an active class to it.
   #

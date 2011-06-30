@@ -324,6 +324,11 @@ describe "Filter", ->
           plugin._onNextClick()
           expect(plugin._scrollToHighlight).toHaveBeenCalledWith([element3[0]])
 
+        it "should do nothing if there are no annotations", ->
+          plugin.highlights = $()
+          plugin._onNextClick()
+          expect(plugin._scrollToHighlight).not.toHaveBeenCalled()
+
       describe "_onPreviousClick", ->
         it "should advance to the previous element", ->
           element3.addClass(plugin.classes.hl.active)
@@ -342,8 +347,13 @@ describe "Filter", ->
         it "should only navigate through non hidden elements", ->
           element3.addClass(plugin.classes.hl.active)
           element2.addClass(plugin.classes.hl.hide)
-          plugin._onNextClick()
+          plugin._onPreviousClick()
           expect(plugin._scrollToHighlight).toHaveBeenCalledWith([element1[0]])
+
+        it "should do nothing if there are no annotations", ->
+          plugin.highlights = $()
+          plugin._onPreviousClick()
+          expect(plugin._scrollToHighlight).not.toHaveBeenCalled()
 
     describe "_scrollToHighlight", ->
       mockjQuery = null
