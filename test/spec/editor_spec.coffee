@@ -160,15 +160,15 @@ describe 'Annotator.Editor', ->
 
     it "should append an input element if no type is specified", ->
       editor.addField()
-      expect(editor.element.find('li:last :input').attr('type')).toEqual('text')
+      expect(editor.element.find('li:last :input').prop('type')).toEqual('text')
 
     it "should append a textarea element if 'textarea' type is specified", ->
       editor.addField({type: 'textarea'})
-      expect(editor.element.find('li:last :input').attr('type')).toEqual('textarea')
+      expect(editor.element.find('li:last :input').prop('type')).toEqual('textarea')
 
     it "should append a checkbox element if 'checkbox' type is specified", ->
       editor.addField({type: 'checkbox'})
-      expect(editor.element.find('li:last :input').attr('type')).toEqual('checkbox')
+      expect(editor.element.find('li:last :input').prop('type')).toEqual('checkbox')
 
     it "should append a label element with a for attribute matching the checkbox id", ->
       editor.addField({type: 'checkbox'})
