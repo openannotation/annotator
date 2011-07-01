@@ -67,6 +67,7 @@
       loadAnnotator -> loadTests ->
         jasmine.getEnv().addReporter(new jasmine.TrivialReporter())
         jasmine.getEnv().execute()
+        jasmine.getEnv().afterEach -> $(document).unbind?()
   </script>
 </head>
 <body>

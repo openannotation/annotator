@@ -1,8 +1,8 @@
 describe 'Annotator', ->
   annotator = null
 
-  beforeEach ->
-    annotator = new Annotator($('<div></div>')[0], {})
+  beforeEach -> annotator = new Annotator($('<div></div>')[0], {})
+  afterEach  -> $(document).unbind()
 
   describe "events", ->
     it "should call Annotator#onAdderClick() when adder is clicked", ->
