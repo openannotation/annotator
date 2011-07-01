@@ -390,13 +390,10 @@ describe 'Annotator', ->
 
   describe "highlightRange", ->
     it "should return a highlight element for every textNode in the range", ->
-      textNodes = for text in ['hello', 'world']
-        node = document.createTextNode()
-        node.nodeValue = text
-        node
-      mockRange = {
+      textNodes = (document.createTextNode text for text in ['hello', 'world'])
+      mockRange =
         textNodes: -> textNodes
-      }
+
       elements = annotator.highlightRange(mockRange)
 
       expect(elements.length).toBe(2)

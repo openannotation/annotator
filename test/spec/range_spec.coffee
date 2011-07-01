@@ -118,13 +118,9 @@ describe 'Range', ->
       root = null
 
       beforeEach ->
-        headText = document.createTextNode()
-        headText.nodeValue = "My Heading"
-        
-        paraText = document.createTextNode()
-        paraText.nodeValue = "My paragraph"
-        paraText2 = document.createTextNode()
-        paraText2.nodeValue = " continues"
+        headText  = document.createTextNode("My Heading")
+        paraText  = document.createTextNode("My paragraph")
+        paraText2 = document.createTextNode(" continues")
         
         head = document.createElement('h1')
         head.appendChild(headText)
