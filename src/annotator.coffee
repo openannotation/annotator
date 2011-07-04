@@ -5,6 +5,8 @@
 # for the moment, having no means of testing it.
 
 util =
+  uuid: (-> counter = 0; -> counter++)()
+
   getGlobal: -> (-> this)()
 
   mousePosition: (e, offsetEl) ->
@@ -166,7 +168,7 @@ class Annotator extends Delegator
   # Returns Array of NormalizedRange instances.
   getSelectedRanges: ->
     selection = util.getGlobal().getSelection()
-    
+
     ranges = []
     unless selection.isCollapsed
       ranges = for i in [0...selection.rangeCount]

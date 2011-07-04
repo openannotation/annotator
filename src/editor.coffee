@@ -221,7 +221,7 @@ class Annotator.Editor extends Annotator.Widget
   # Returns the created <li> Element.
   addField: (options) ->
     field = $.extend({
-      id:     'annotator-field-' + (new Date()).getTime()
+      id:     'annotator-field-' + util.uuid()
       type:   'input'
       label:  ''
       load:   ->

@@ -753,3 +753,13 @@ describe "Annotator.supported()", ->
     # return that result.
     window.getSelection = undefined
     expect(Annotator.supported()).toBeFalsy()
+
+describe "util.uuid()", ->
+  it "should return a unique id on each call", ->
+    counter = 100
+    results = []
+
+    while counter--
+      current = util.uuid()
+      expect(results.indexOf(current)).toBe(-1)
+      results.push current

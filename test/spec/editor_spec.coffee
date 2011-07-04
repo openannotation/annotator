@@ -139,6 +139,13 @@ describe 'Annotator.Editor', ->
       expect(editor.publish).toHaveBeenCalledWith('save', [editor.annotation])
 
   describe "addField", ->
+    content = null
+
+    beforeEach -> content = editor.element.children()
+
+    afterEach ->
+      editor.element.empty().append(content)
+      editor.fields = []
 
     it "should append a new field to the @fields property", ->
       length = editor.fields.length
@@ -161,6 +168,14 @@ describe 'Annotator.Editor', ->
     it "should append an input element if no type is specified", ->
       editor.addField()
       expect(editor.element.find('li:last :input').prop('type')).toEqual('text')
+
+    it "should give each element a new id", ->
+      editor.addField()
+      firstID = editor.element.find('li:last :input').attr('id')
+
+      editor.addField()
+      secondID = editor.element.find('li:last :input').attr('id')
+      expect(firstID).not.toEqual(secondID)
 
     it "should append a textarea element if 'textarea' type is specified", ->
       editor.addField({type: 'textarea'})
