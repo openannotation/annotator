@@ -282,6 +282,7 @@
 	top: 0;
 	display: inline;
 	cursor: pointer;
+	font-size: 12px;
 }
 
 .annotator-editor .annotator-item input,
