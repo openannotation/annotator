@@ -5,7 +5,7 @@ class Annotator.Plugin.Tags extends Annotator.Plugin
   # The field element added to the Annotator.Editor wrapped in jQuery. Cached to
   # save having to recreate it everytime the editor is displayed.
   field: null
-  
+
   # The input element added to the Annotator.Editor wrapped in jQuery. Cached to
   # save having to recreate it everytime the editor is displayed.
   input: null
@@ -30,20 +30,10 @@ class Annotator.Plugin.Tags extends Annotator.Plugin
 
     # Add a filter to the Filter plugin if loaded.
     if @annotator.plugins.Filter
-      @annotator.plugins.Filter.addFilter({
+      @annotator.plugins.Filter.addFilter
         label: 'Tag'
         property: 'tags'
-        isFiltered: (input, tags) ->
-          if input and tags?.length
-            matched  = 0
-            keywords = input.split(/\s+/g)
-            for keyword in keywords
-              for tag in tags
-                if tag.indexOf(keyword) != -1
-                  matched += 1
-
-          matched == keywords.length
-      })
+        isFiltered: Annotator.Plugin.Tags.filterCallback
 
     @input = $(@field).find(':input')
 
@@ -138,3 +128,26 @@ class Annotator.Plugin.Tags extends Annotator.Plugin
       )
     else
       field.remove()
+
+# Checks an input string of keywords against an array of tags. If the keywords
+# match _all_ tags the function returns true. This should be used as a callback
+# in the Filter plugin.
+#
+# input - A String of keywords from a input field.
+#
+# Examples
+#
+#   Tags.filterCallback('cat dog mouse', ['cat', 'dog', 'mouse']) //=> true
+#   Tags.filterCallback('cat dog', ['cat', 'dog', 'mouse']) //=> true
+#   Tags.filterCallback('cat dog', ['cat']) //=> false
+#
+# Returns true if the input keywords match all tags.
+Annotator.Plugin.Tags.filterCallback = (input, tags = []) ->
+  matches  = 0
+  keywords = []
+  if input
+    keywords = input.split(/\s+/g)
+    for keyword in keywords when tags.length
+      matches += 1 for tag in tags when tag.indexOf(keyword) != -1
+
+  matches == keywords.length

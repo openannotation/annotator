@@ -74,3 +74,16 @@ describe 'Annotator.Plugin.Tags', ->
 
       plugin.updateViewer(field, annotation)
       expect($(field).parent().length).toEqual(0)
+
+
+describe 'Annotator.Plugin.Tags.filterCallback', ->
+  filter = null
+  beforeEach -> filter = Annotator.Plugin.Tags.filterCallback
+
+  it 'should return true if all tags are matched by keywords', ->
+    expect(filter('cat dog mouse', ['cat', 'dog', 'mouse'])).toBe(true)
+    expect(filter('cat dog', ['cat', 'dog', 'mouse'])).toBe(true)
+
+  it 'should NOT return true if all tags are NOT matched by keywords', ->
+    expect(filter('cat dog', ['cat'])).toBe(false)
+    expect(filter('cat dog', [])).toBe(false)
