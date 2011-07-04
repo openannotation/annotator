@@ -34,7 +34,7 @@ describe 'Range', ->
       it "should return a normalized range", ->
         norm = r.normalize(fix())
         expect(norm instanceof Range.NormalizedRange).toBeTruthy()
-        expect(textInNormedRange(norm)).toEqual("habitant morbi")
+        expect(norm.text()).toEqual("habitant morbi")
 
       it "should return null if it cannot normalize the range", ->
         spyOn(console, 'error')
