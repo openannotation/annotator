@@ -580,6 +580,10 @@
 	background-position: 0 -30px;
 }
 
+.annotator-editor.annotator-invert-y .annotator-widget .annotator-controls {
+	background-color: #f2f2f2;
+}
+
 .annotator-editor.annotator-invert-y .annotator-widget::after {
 	background-position: 0 -45px;
 	height: 11px;
