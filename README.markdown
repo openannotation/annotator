@@ -3,7 +3,7 @@ Annotator
 
 Annotator is a web annotation system. Loaded into a webpage, it provides the user with tools to annotate text (and other elements) in the page. For a simple demonstration, [download a tagged release of Annotator][dl] and open `demo.html`.
 
-[dl]: https://github.com/nickstenning/annotator/downloads
+[dl]: https://github.com/okfn/annotator/downloads
 
 The Annotator project also has a simple but powerful plugin architecture. While the core annotator code does the bare minimum, it is easily extended with plugins that perform such tasks as:
 
@@ -18,7 +18,7 @@ The Annotator project also has a simple but powerful plugin architecture. While 
 Usage
 -----
 
-To use Annotator, it's easiest to [download a tagged release][dl].
+To use Annotator, it's easiest to [download a packaged release][dl].
 
 In a tagged release, the `pkg/` directory will contain all the files you need to get going. The most important are `annotator.min.js`, which contains the core Annotator code, and `annotator.min.css`, which contains all the CSS and embedded images for the annotator.
 
