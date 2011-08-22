@@ -78,16 +78,17 @@
              <a href="http://github.com/okfn/annotator/wiki/Markdown-Plugin">formatting</a>.</p>
         </div>
         <div class="secondary">
-          <p>Plug-ins can be included by calling the <code>.annotator()</code>
-             method again. For example:</p>
-          <pre><code>var annotator = jQuery('#main').annotator()
-  .annotator('addPlugin', 'Store', {
-    prefix: 'http://annotateit.org/api'
-  })
-  .annotator('addPlugin', 'Auth', {
-    userId:      'myusername',        // Your AnnotateIt username
-    consumerKey: 'some-big-string',   // Your Account Key
-    authToken:   'some-bigger-string' // Your Auth Token
+          <p>To setup the default suite of plugins include 
+             <a href="http://assets.annotateit.org/annotator/v1.0.0rc4/annotator-full.min.js">annotator-full.js</a>
+             and call the <code>"setupPlugins"</code> method via
+             <code>.annotator()</code>.</p>
+          <p>For example:</p>
+          <pre><code>jQuery('#main').annotator()
+  .annotator('setupPlugins', {
+    userId:    'bill',
+    userName:  'Bill',
+    accountId: 'some-long-acccount-id',
+    authToken: 'an-even-longer-auth-token'
   });</code></pre>
         </div>
       </section>
