@@ -66,7 +66,7 @@ class Annotator.Viewer extends Annotator.Widget
   #
   # Returns itself.
   show: (event) =>
-    event?.preventDefault()
+    util.preventEventDefault event
 
     controls = @element
       .find('.annotator-controls')
@@ -106,7 +106,8 @@ class Annotator.Viewer extends Annotator.Widget
   #
   # Returns itself.
   hide: (event) =>
-    event?.preventDefault()
+    util.preventEventDefault event
+
     @element.addClass(@classes.hide)
     this.publish('hide')
 

@@ -763,3 +763,13 @@ describe "util.uuid()", ->
       current = util.uuid()
       expect(results.indexOf(current)).toBe(-1)
       results.push current
+
+describe "util.preventEventDefault()", ->
+  it "should call prevent default if the method exists", ->
+    event = {preventDefault: jasmine.createSpy('preventDefault')}
+    util.preventEventDefault(event)
+    expect(event.preventDefault).toHaveBeenCalled()
+
+    expect(-> util.preventEventDefault(1)).not.toThrow(Error)
+    expect(-> util.preventEventDefault(null)).not.toThrow(Error)
+    expect(-> util.preventEventDefault(undefined)).not.toThrow(Error)
