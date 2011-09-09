@@ -309,9 +309,10 @@ class Annotator extends Delegator
 
       for n in now
         this.setupAnnotation(n, false) # 'false' suppresses event firing
-        # if the categories plugin is loaded, let it have them first.
+        
+        # if the categories plugin is loaded, let it add the highlight classes for the categories
         if categories
-          @plugins['Categories'].modifyAnnotation(n)
+          @plugins['Categories'].setHighlights(n)
 
       # If there are more to do, do them after a 100ms break (for browser
       # responsiveness).

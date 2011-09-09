@@ -1,7 +1,7 @@
 class Annotator.Plugin.Categories extends Annotator.Plugin
   
   events:
-    'annotationCreated': 'annotationCreated'
+    'annotationCreated': 'setHighlights'
 #     'annotationLoaded': 'annotationLoaded'
     
     
@@ -60,20 +60,7 @@ class Annotator.Plugin.Categories extends Annotator.Plugin
   
   
   # must set the highlights of the annotation here.
-  annotationCreated: (annotation) =>
-    cat = annotation.category
-    highlights = annotation.highlights
-    
-    for h in highlights
-      switch (cat)
-        when 'errata'   then h.className = h.className + ' annotator-hl-errata'
-        when 'comment'   then h.className = h.className + ' annotator-hl-comment'
-        when 'suggestion'   then h.className = h.className + ' annotator-hl-suggestion'
-      
-      
-
-
-  modifyAnnotation: (annotation) =>
+   setHighlights: (annotation) =>
     cat = annotation.category
     highlights = annotation.highlights
     
