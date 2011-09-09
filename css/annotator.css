@@ -42,6 +42,20 @@
 /* Annotator Highlight
 -------------------------------------------------------------------- */
 
+
+.annotator-hl.annotator-hl-errata {
+    background: rgba(160, 4, 0, 0.3);
+}
+
+.annotator-hl.annotator-hl-comment {
+    background: rgba(27, 119, 22, 0.3);
+}
+
+.annotator-hl.annotator-hl-suggestion {
+    background: rgba(21, 72, 199, 0.3);
+}
+
+
 .annotator-hl {
 	background: rgba(255, 255, 10, 0.3);
 }

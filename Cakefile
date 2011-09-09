@@ -21,6 +21,7 @@ PLUGINS = [ 'tags'
           , 'markdown'
           , 'unsupported'
           , 'permissions'
+          , 'categories'
           ]
 
 BOOKMARKLET_PATH = 'contrib/bookmarklet'

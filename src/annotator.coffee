@@ -304,8 +304,14 @@ class Annotator extends Delegator
     loader = (annList=[]) =>
       now = annList.splice(0,10)
 
+
+      categories = @plugins['Categories']
+
       for n in now
         this.setupAnnotation(n, false) # 'false' suppresses event firing
+        # if the categories plugin is loaded, let it have them first.
+        if categories
+          @plugins['Categories'].modifyAnnotation(n)
 
       # If there are more to do, do them after a 100ms break (for browser
       # responsiveness).

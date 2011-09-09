@@ -75,7 +75,7 @@ class Annotator.Editor extends Annotator.Widget
   #
   # Returns itself.
   show: (event) =>
-    util.preventEventDefault event
+    event?.preventDefault()
 
     @element.removeClass(@classes.hide)
     @element.find('.annotator-save').addClass(@classes.focus)
@@ -98,7 +98,7 @@ class Annotator.Editor extends Annotator.Widget
   #
   # Returns itself.
   hide: (event) =>
-    util.preventEventDefault event
+    event?.preventDefault()
 
     @element.addClass(@classes.hide)
     this.publish('hide')
@@ -155,7 +155,7 @@ class Annotator.Editor extends Annotator.Widget
   #
   # Returns itself.
   submit: (event) =>
-    util.preventEventDefault event
+    event?.preventDefault()
 
     for field in @fields
       field.submit(field.element, @annotation)
@@ -235,7 +235,7 @@ class Annotator.Editor extends Annotator.Widget
     switch (field.type)
       when 'textarea'          then input = $('<textarea />')
       when 'input', 'checkbox' then input = $('<input />')
-
+      when 'radio'             then input = $('<input type="radio"/>')
     element.append(input);
 
     input.attr({
@@ -246,6 +246,13 @@ class Annotator.Editor extends Annotator.Widget
     if field.type == 'checkbox'
       input[0].type = 'checkbox'
       element.addClass('annotator-checkbox')
+      element.append($('<label />', {for: field.id, html: field.label}))
+
+    if field.type == 'radio'
+      input[0].type = 'radio'
+      input[0].name = 'radioset'
+      input[0].id = field.value
+      element.addClass('annotator-radio')
       element.append($('<label />', {for: field.id, html: field.label}))
 
     @element.find('ul:first').append(element)
