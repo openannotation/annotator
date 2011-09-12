@@ -247,6 +247,11 @@ class Annotator extends Delegator
 
     # Save the annotation data on each highlighter element.
     $(annotation.highlights).data('annotation', annotation)
+    
+    
+    # let the categories plugin set the highlights if it is present
+    if @plugins['Categories']
+      @plugins['Categories'].setHighlights(annotation)
 
     # Fire annotationCreated events so that plugins can react to them.
     if fireEvents
@@ -305,15 +310,9 @@ class Annotator extends Delegator
       now = annList.splice(0,10)
 
 
-      categories = @plugins['Categories']
-
       for n in now
         this.setupAnnotation(n, false) # 'false' suppresses event firing
         
-        # if the categories plugin is loaded, let it add the highlight classes for the categories
-        if categories
-          @plugins['Categories'].setHighlights(n)
-
       # If there are more to do, do them after a 100ms break (for browser
       # responsiveness).
       if annList.length > 0

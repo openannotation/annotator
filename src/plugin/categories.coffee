@@ -12,6 +12,16 @@ class Annotator.Plugin.Categories extends Annotator.Plugin
   # The input element added to the Annotator.Editor wrapped in jQuery. Cached to
   # save having to recreate it everytime the editor is displayed.
   input: null
+  
+  
+  options:
+    categories: {}
+  
+
+
+  constructor: (element, categories) -> 
+    @options.categories = categories
+
 
   # Public: Initialises the plugin and adds custom fields to both the
   # annotator viewer and editor. The plugin also checks if the annotator is
@@ -21,30 +31,18 @@ class Annotator.Plugin.Categories extends Annotator.Plugin
   pluginInit: ->
     return unless Annotator.supported()
 
-    @field = @annotator.editor.addField({
-      type: 'radio'
-      label:  'Errata'
-      value: 'errata'
-      load:   this.updateField
-      submit: this.setAnnotationCat
-    })
+    for cat,color of @options.categories
+      console.log(cat, color)
+        
+      @field = @annotator.editor.addField({
+        type: 'radio'
+        label:  cat
+        value: cat
+        hl: color
+        load:   this.updateField
+        submit: this.setAnnotationCat
+      })
 
-    @field = @annotator.editor.addField({
-      type: 'radio'
-      label:  'Suggestion'
-      value: 'suggestion'
-      load:   this.updateField
-      submit: this.setAnnotationCat
-    })
- 
-    @field = @annotator.editor.addField({
-      type: 'radio'
-      label:  'Comment'
-      value: 'comment'
-      load:   this.updateField
-      submit: this.setAnnotationCat
-    })
- 
     @annotator.viewer.addField({
       load: this.updateViewer
     })
@@ -60,16 +58,13 @@ class Annotator.Plugin.Categories extends Annotator.Plugin
   
   
   # must set the highlights of the annotation here.
-   setHighlights: (annotation) =>
+   setHighlights: (annotation) ->
     cat = annotation.category
     highlights = annotation.highlights
-    
-    for h in highlights
-      switch (cat)
-        when 'errata'   then h.className = h.className + ' annotator-hl-errata'
-        when 'comment'   then h.className = h.className + ' annotator-hl-comment'
-        when 'suggestion'   then h.className = h.className + ' annotator-hl-suggestion'
-      console.log(h.className)
+
+    if cat    
+      for h in highlights
+        h.className = h.className + ' ' + this.options.categories[cat]
 
 
 
