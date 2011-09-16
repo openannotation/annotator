@@ -214,6 +214,12 @@
 	padding: 6px 6px;
 }
 
+.annotator-viewer .annotator-hl-errata div {
+    padding: 6px 6px;
+    
+    
+}
+
 .annotator-viewer .annotator-item ol,
 .annotator-viewer .annotator-item ul {
 	padding: 4px 16px;

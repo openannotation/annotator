@@ -1,7 +1,8 @@
 class Annotator.Plugin.Categories extends Annotator.Plugin
   
   events:
-    'annotationCreated': 'setHighlights'
+    'annotationCreated'     : 'setHighlights'
+    'annotationViewerShown' : 'setViewer'
 #     'annotationLoaded': 'annotationLoaded'
     
     
@@ -43,7 +44,7 @@ class Annotator.Plugin.Categories extends Annotator.Plugin
         submit: this.setAnnotationCat
       })
 
-    @annotator.viewer.addField({
+    @viewer = @annotator.viewer.addField({
       load: this.updateViewer
     })
 
@@ -56,8 +57,13 @@ class Annotator.Plugin.Categories extends Annotator.Plugin
 
     @input = $(@field).find(':input')
   
+   setViewer: (viewer, annotations) ->
+     v = viewer
+     console.log(v)
+     for a in annotations
+        console.log(a)
   
-  # must set the highlights of the annotation here.
+  # set the highlights of the annotation here.
    setHighlights: (annotation) ->
     cat = annotation.category
     highlights = annotation.highlights
@@ -123,30 +129,3 @@ class Annotator.Plugin.Categories extends Annotator.Plugin
   #   field.innerHTML # => Returns '<span class="annotator-tag">apples</span>'
   #
   # Returns nothing.
-#   updateViewer: (field, annotation) ->
-    
-          
-        
-
-# Checks an input string of keywords against an array of tags. If the keywords
-# match _all_ tags the function returns true. This should be used as a callback
-# in the Filter plugin.
-#
-# input - A String of keywords from a input field.
-#
-# Examples
-#
-#   Tags.filterCallback('cat dog mouse', ['cat', 'dog', 'mouse']) //=> true
-#   Tags.filterCallback('cat dog', ['cat', 'dog', 'mouse']) //=> true
-#   Tags.filterCallback('cat dog', ['cat']) //=> false
-#
-# Returns true if the input keywords match all tags.
-Annotator.Plugin.Tags.filterCallback = (input, tags = []) ->
-  matches  = 0
-  keywords = []
-  if input
-    keywords = input.split(/\s+/g)
-    for keyword in keywords when tags.length
-      matches += 1 for tag in tags when tag.indexOf(keyword) != -1
-
-  matches == keywords.length

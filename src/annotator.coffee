@@ -109,7 +109,7 @@ class Annotator extends Delegator
     this
 
   # Creates an instance of Annotator.Viewer and assigns it to the @viewer
-  # property, appends it to the @wrapper and sets up event listeners.
+  # property, appends it to the @wrapper and sets up event listeneviewerrs.
   #
   # Returns itself to allow chaining.
   _setupViewer: ->
@@ -435,6 +435,7 @@ class Annotator extends Delegator
   showViewer: (annotations, location) =>
     @viewer.element.css(location)
     @viewer.load(annotations)
+#     console.log(@viewer)
 
     this.publish('annotationViewerShown', [@viewer, annotations])
 
@@ -446,7 +447,7 @@ class Annotator extends Delegator
   startViewerHideTimer: =>
     # Don't do this if timer has already been set by another annotation.
     if not @viewerHideTimer
-      @viewerHideTimer = setTimeout @viewer.hide, 250
+      @viewerHideTimer = setTimeout @viewer.hide, 10
 
   # Viewer#element event callback. Clears the timer set by
   # Annotator#startViewerHideTimer() when the @viewer is moused over.
@@ -527,7 +528,7 @@ class Annotator extends Delegator
     # Don't do anything if we're making a selection or
     # already displaying the viewer
     return false if @mouseIsDown or @viewer.isShown()
-
+    
     annotations = $(event.target)
       .parents('.annotator-hl')
       .andSelf()
