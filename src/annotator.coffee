@@ -433,8 +433,15 @@ class Annotator extends Delegator
   #
   # Returns itself to allow chaining.
   showViewer: (annotations, location) =>
+  
+    
+    # send the viewer to categories
+#     if @plugins['Categories']
+#       @plugins['Categories'].setViewer(@viewer, annotations)
+  
     @viewer.element.css(location)
     @viewer.load(annotations)
+    
 #     console.log(@viewer)
 
     this.publish('annotationViewerShown', [@viewer, annotations])

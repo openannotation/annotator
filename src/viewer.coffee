@@ -137,15 +137,28 @@ class Annotator.Viewer extends Annotator.Widget
         showDelete: -> del.removeAttr('disabled')
         hideDelete: -> del.attr('disabled', 'disabled')
       }
-      # add the category label if it has one
-#       if annotation.category?
-#         @fields.
 
       for field in @fields
         element = $(field.element).clone().appendTo(item)[0]
         field.load(element, annotation, controller)
 
+
+    
+
+
     this.publish('load', [@annotations])
+
+#     # add the category label if it has one
+#     if annotation.category?
+#       this.addField({
+#     # This is called when the viewer is loaded.
+#         
+#         load: (field, annotation) ->
+#           field = $(field)
+#           field.text(annotation.category) # Display the category
+#       })
+
+
 
     this.show();
 
