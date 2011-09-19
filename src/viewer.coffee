@@ -138,8 +138,8 @@ class Annotator.Viewer extends Annotator.Widget
         hideDelete: -> del.attr('disabled', 'disabled')
       }
       # add the category label if it has one
-      if annotation.category?
-        @fields.
+#       if annotation.category?
+#         @fields.
 
       for field in @fields
         element = $(field.element).clone().appendTo(item)[0]
