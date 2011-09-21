@@ -2,8 +2,8 @@ class Annotator.Plugin.Categories extends Annotator.Plugin
   
   events:
     'annotationCreated'     : 'setHighlights'
-    'annotationViewerShown' : 'setViewer'
-#     'annotationLoaded': 'annotationLoaded'
+#     'annotationViewerShown' : 'setViewer'
+   
     
     
   # The field element added to the Annotator.Editor wrapped in jQuery. Cached to
@@ -32,14 +32,20 @@ class Annotator.Plugin.Categories extends Annotator.Plugin
   pluginInit: ->
     return unless Annotator.supported()
 
+    i = 0
+    
     for cat,color of @options.categories
-      console.log(cat, color)
-        
+      if i == 0
+        isChecked = true
+      else
+        isChecked = false
+      i = i + 1
       @field = @annotator.editor.addField({
         type: 'radio'
         label:  cat
         value: cat
         hl: color
+        checked: isChecked
         load:   this.updateField
         submit: this.setAnnotationCat
       })
@@ -59,9 +65,6 @@ class Annotator.Plugin.Categories extends Annotator.Plugin
   
    setViewer: (viewer, annotations) ->
      v = viewer
-     console.log(v)
-     for a in annotations
-        console.log(a)
   
   # set the highlights of the annotation here.
    setHighlights: (annotation) ->
@@ -71,6 +74,9 @@ class Annotator.Plugin.Categories extends Annotator.Plugin
     if cat    
       for h in highlights
         h.className = h.className + ' ' + this.options.categories[cat]
+        
+        
+      
 
 
 
@@ -115,17 +121,17 @@ class Annotator.Plugin.Categories extends Annotator.Plugin
 
 
 
+ #
+ # Displays the category of the annotation when on the viewer
+ #
+  updateViewer: (field, annotation) ->
+    field = $(field)
 
-  # Annotator.Viewer callback function. Updates the annotation display with tags
-  # removes the field from the Viewer if there are no tags to display.
-  #
-  # field      - The Element to populate with tags.
-  # annotation - An annotation object to be display.
-  #
-  # Examples
-  #
-  #   field = $('<div />')[0]
-  #   plugin.updateField(field, {tags: ['apples']})
-  #   field.innerHTML # => Returns '<span class="annotator-tag">apples</span>'
-  #
-  # Returns nothing.
+    if annotation.category?
+      field.addClass('annotator-category').html(->
+        string = $.map(annotation.category,(cat) ->
+            '<span class="annotator-cat">' + Annotator.$.escape(cat) + '</span>'
+        ).join('').toUpperCase()
+      )
+    else
+      field.remove()

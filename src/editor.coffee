@@ -127,11 +127,12 @@ class Annotator.Editor extends Annotator.Widget
     this.publish('load', [@annotation])
 
     for field in @fields
-      if annotation.category?
-        if field.type == 'radio'
-          console.log(field.input)
-          
-      field.load(field.element, @annotation) 
+      field.load(field.element, @annotation)
+      
+      # make the correct radio button checked
+      if annotation.category? and field.type=='radio'
+        if field.value == @annotation.category
+          field.element.childNodes[0].checked = true
 
     this.show();
 
@@ -257,7 +258,6 @@ class Annotator.Editor extends Annotator.Widget
       input[0].name = 'radioset'
       input[0].id = field.value
       
-      console.log(field.checked)
       
       if field.checked
         input[0].checked = true

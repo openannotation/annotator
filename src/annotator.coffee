@@ -433,17 +433,9 @@ class Annotator extends Delegator
   #
   # Returns itself to allow chaining.
   showViewer: (annotations, location) =>
-  
-    
-    # send the viewer to categories
-#     if @plugins['Categories']
-#       @plugins['Categories'].setViewer(@viewer, annotations)
-  
     @viewer.element.css(location)
     @viewer.load(annotations)
     
-#     console.log(@viewer)
-
     this.publish('annotationViewerShown', [@viewer, annotations])
 
   # Annotator#element event callback. Allows 250ms for mouse pointer to get from
@@ -472,9 +464,13 @@ class Annotator extends Delegator
   #
   # Returns nothing.
   checkForStartSelection: (event) =>
-    unless event and this.isAnnotator(event.target)
+    unless event #and this.isAnnotator(event.target)
       this.startViewerHideTimer()
       @mouseIsDown = true
+#       console.log('mouse down!')
+      
+    
+    
 
   # Annotator#element callback. Checks to see if a selection has been made
   # on mouseup and if so displays the Annotator#adder. If @ignoreMouseup is
@@ -496,7 +492,8 @@ class Annotator extends Delegator
 
     for range in @selectedRanges
       container = range.commonAncestor
-      return if this.isAnnotator(container)
+      return if this.isAnnotatorViewer(container)
+      return if this.isAnnotatorEditor(container)
 
     if event and @selectedRanges.length
       @adder
@@ -521,6 +518,15 @@ class Annotator extends Delegator
   # Returns true if the element is a child of an annotator element.
   isAnnotator: (element) ->
     !!$(element).parents().andSelf().filter('[class^=annotator-]').not(@wrapper).length
+
+
+  # check if the element is the viewer
+  isAnnotatorViewer: (element) ->
+    !!$(element).parents().andSelf().filter('[class^=annotator-viewer]').not(@wrapper).length
+    
+    # check if the element is the editor
+  isAnnotatorEditor: (element) ->
+    !!$(element).parents().andSelf().filter('[class^=annotator-editor]').not(@wrapper).length
 
   # Annotator#element callback. Displays viewer with all annotations
   # associated with highlight Elements under the cursor.
