@@ -44,15 +44,18 @@
 
 
 .annotator-hl.annotator-hl-errata {
-    background: rgba(160, 4, 0, 0.3);
+    background: rgba(169, 37, 0, 0.5);
+    color: black;
 }
 
 .annotator-hl.annotator-hl-comment {
-    background: rgba(27, 119, 22, 0.3);
+   color: black;
+   background: rgba(46, 169, 0, 0.5);
 }
 
 .annotator-hl.annotator-hl-suggestion {
-    background: rgba(21, 72, 199, 0.3);
+    color: black;
+    background: rgba(0, 131, 169, 0.5);
 }
 
 

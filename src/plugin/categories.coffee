@@ -130,8 +130,8 @@ class Annotator.Plugin.Categories extends Annotator.Plugin
     if annotation.category?
       field.addClass('annotator-category').html(->
         string = $.map(annotation.category,(cat) ->
-            '<span class="annotator-cat">' + Annotator.$.escape(cat) + '</span>'
-        ).join('').toUpperCase()
+            '<span class="annotator-hl annotator-hl-' + annotation.category + '">' + Annotator.$.escape(cat).toUpperCase() + '</span>'
+        ).join('')
       )
     else
       field.remove()

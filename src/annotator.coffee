@@ -252,6 +252,11 @@ class Annotator extends Delegator
     # let the categories plugin set the highlights if it is present
     if @plugins['Categories']
       @plugins['Categories'].setHighlights(annotation)
+      
+    if @plugins['RoundupStatus']
+      if not annotation.status?
+        annotation.status='new'
+    
 
     # Fire annotationCreated events so that plugins can react to them.
     if fireEvents
@@ -458,7 +463,7 @@ class Annotator extends Delegator
 
   # Annotator#element callback. Sets the @mouseIsDown property used to
   # determine if a selection may have started to true. Also calls
-  # Annotator#startViewerHideTimer() to hide the Annotator#viewer.
+  # Annotator#startViewerHideTimer() to hide the Annotator#viewer
   #
   # event - A mousedown Event object.
   #

@@ -241,12 +241,17 @@ class Annotator.Editor extends Annotator.Widget
       when 'textarea'          then input = $('<textarea />')
       when 'input', 'checkbox' then input = $('<input />')
       when 'radio'             then input = $('<input type="radio"/>')
+      when 'span'              then input = $('<span/>')
     element.append(input);
 
     input.attr({
       id: field.id
       placeholder: field.label
     })
+
+    if field.type == 'span'
+      element.addClass('annotator-status')
+      element.append($('<label />', {for: field.id, html: field.label}))
 
     if field.type == 'checkbox'
       input[0].type = 'checkbox'
