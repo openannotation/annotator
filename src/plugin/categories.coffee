@@ -2,8 +2,25 @@ class Annotator.Plugin.Categories extends Annotator.Plugin
   
   events:
     'annotationCreated'     : 'setHighlights'
-#     'annotationViewerShown' : 'setViewer'
-   
+
+#
+#  Usage in the HTML file:
+#          options.categories = {
+#                    'errata':'annotator-hl-errata', 
+#                    'comment':'annotator-hl-comment', 
+#                    'suggestion':'annotator-hl-suggestion' };
+#
+#  annotator.addPlugin('Categories', options.categories);
+#  
+#  In .css add entries like these for each category
+#
+# .annotator-hl.annotator-hl-errata {
+#    background: rgba(169, 37, 0, 0.5);
+#    color: black;
+#}
+#
+
+
     
     
   # The field element added to the Annotator.Editor wrapped in jQuery. Cached to
