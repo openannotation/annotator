@@ -7,7 +7,7 @@ describe 'jQuery.fn.textNodes()', ->
   $fix = null
 
   beforeEach ->
-    addFixture 'textNodes'
+    addFixture 'textnodes'
     $fix = $(fix())
 
   afterEach -> clearFixtures()
