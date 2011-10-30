@@ -7,13 +7,13 @@ Annotator is a web annotation system. Loaded into a webpage, it provides the use
 
 The Annotator project also has a simple but powerful plugin architecture. While the core annotator code does the bare minimum, it is easily extended with plugins that perform such tasks as:
 
-- serialization: the `Store` plugin saves all your annotations to a REST API backend (see [the Flask store][flask] for an example)
+- serialization: the `Store` plugin saves all your annotations to a REST API backend (see [Storage wiki page][storage] for more and a link to a reference implementation)
 - authentication and authorization: the `Auth` and `Permissions` plugins allow you to decouple the storage of your annotations from the website on which the annotation happens. In practice, this means that users could edit pages across the web, with all their annotations being saved to one server.
 - prettification: the `Markdown` plugin renders all annotation text as [Markdown][md]
 - tagging: the `Tags` plugin allows you to tag individual annotations
 
 [md]: http://daringfireball.net/projects/markdown/
-[flask]: https://github.com/nickstenning/annotator-store-flask
+[storage]: https://github.com/okfn/annotator/wiki/Storage
 
 Usage
 -----
