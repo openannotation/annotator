@@ -124,7 +124,7 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     if @options.showViewPermissionsCheckbox == true
       @annotator.editor.addField({
         type:   'checkbox'
-        label:  'Allow anyone to <strong>view</strong> this annotation'
+        label:  Annotator._t('Allow anyone to <strong>view</strong> this annotation')
         load:   createCallback('updatePermissionsField', 'read')
         submit: createCallback('updateAnnotationPermissions', 'read')
       })
@@ -132,7 +132,7 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     if @options.showEditPermissionsCheckbox == true
       @annotator.editor.addField({
         type:   'checkbox'
-        label:  'Allow anyone to <strong>edit</strong> this annotation'
+        label:  Annotator._t('Allow anyone to <strong>edit</strong> this annotation')
         load:   createCallback('updatePermissionsField', 'update')
         submit: createCallback('updateAnnotationPermissions', 'update')
       })
@@ -141,11 +141,11 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     @annotator.viewer.addField({
       load: this.updateViewer
     })
-    
+
     # Add a filter to the Filter plugin if loaded.
     if @annotator.plugins.Filter
       @annotator.plugins.Filter.addFilter({
-        label: 'User'
+        label: Annotator._t('User')
         property: 'user'
         isFiltered: (input, user) =>
           user = @options.userString(user)

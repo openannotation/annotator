@@ -19,7 +19,7 @@ if console?
   # Stub out any remaining functions
   for fn in functions
     if not console[fn]?
-      console[fn] = -> console.log "Not implemented: console.#{name}"
+      console[fn] = -> console.log _t("Not implemented:") + " console.#{name}"
 else
   this.console = {}
 

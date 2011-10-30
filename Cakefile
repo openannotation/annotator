@@ -43,10 +43,10 @@ task 'package', 'Build the packaged annotator', ->
   invoke 'package:css'
 
 task 'package:core', 'Build pkg/annotator.min.js', ->
-  packager.build_coffee util.src_files(CORE), 'pkg/annotator.min.js' 
+  packager.build_coffee util.src_files(CORE), 'pkg/annotator.min.js'
 
 task 'package:css', 'Build pkg/annotator.min.css', ->
-  packager.build_css ['css/annotator.css'], 'pkg/annotator.min.css' 
+  packager.build_css ['css/annotator.css'], 'pkg/annotator.min.css'
 
 task 'package:plugins', 'Build pkg/annotator.<plugin_name>.min.js for all plugins', ->
   for p in PLUGINS
@@ -111,6 +111,15 @@ task 'bookmarklet:watch', 'Watch the bookmarklet source for changes', ->
     return if curr.size is prev.size and curr.mtime.getTime() is prev.mtime.getTime()
     invoke 'bookmarklet:build_demo'
 
+task 'i18n:update', 'Update the annotator.pot template', ->
+  util.relay 'xgettext', ['-Lpython',
+                          '-olocale/annotator.pot',
+                          '-k_t', '-kgettext'].concat(
+                            util.lib_files(CORE)
+                          ).concat(
+                            util.lib_files(PLUGINS, 'plugin/')
+                          ), util.noisyPrint
+
 #----------------------------------------------------------------------------
 
 #
@@ -130,7 +139,7 @@ packager =
     yc.compile(src, { type: type }, callback)
 
   build_coffee: (src, dest, callback) ->
-    packager.concat_coffee(src, dest, -> 
+    packager.concat_coffee(src, dest, ->
       code = fs.readFileSync(dest, 'utf8')
 
       packager.compress(code, 'js', (result) ->
@@ -140,10 +149,10 @@ packager =
     )
 
   build_css: (src, dest, callback) ->
-    packager.concat(src, dest, -> 
+    packager.concat(src, dest, ->
       code = fs.readFileSync(dest, 'utf8')
 
-      packager.compress(code, 'css', (result) -> 
+      packager.compress(code, 'css', (result) ->
         result = packager.data_uri_ify(result)
         fs.writeFileSync(dest, result)
         (callback or ->)(result)
@@ -161,7 +170,7 @@ packager =
 # Bookmarklet Tasks
 #
 
-bookmarklet = 
+bookmarklet =
   annotator_js:  "#{BOOKMARKLET_PATH}/pkg/annotator.min.js"
   annotator_css: "#{BOOKMARKLET_PATH}/pkg/annotator.min.css"
   source:        "#{BOOKMARKLET_PATH}/src/bookmarklet.js"
@@ -176,7 +185,7 @@ bookmarklet =
     source = fs.readFileSync(bookmarklet.source, 'utf8')
 
     if arguments.length == 1
-      callback = embedConfig 
+      callback = embedConfig
     else if embedConfig
       # Replace the __config__ placeholder with the JSON data.
       config = fs.readFileSync(bookmarklet.config, 'utf8')
@@ -188,8 +197,9 @@ bookmarklet =
 # Utility functions
 #
 
-util = 
+util =
   src_files: (names, prefix='') -> names.map (x) -> "src/#{prefix}#{x}.coffee"
+  lib_files: (names, prefix='') -> names.map (x) -> "lib/#{prefix}#{x}.js"
 
   # relay: run child process relaying std{out,err} to this process
   relay: (cmd, args, stdoutPrint=print, stderrPrint=debug) ->

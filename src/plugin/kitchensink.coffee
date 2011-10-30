@@ -38,10 +38,10 @@ Annotator::setupPlugins = (config={}, options={}) ->
   # Set up the default plugins.
   plugins =
     Tags: {}
-    Filter: 
+    Filter:
       filters: [
-        {label: 'User', property: 'user'}
-        {label: 'Tags', property: 'tags'}
+        {label: Annotator._t('User'), property: 'user'}
+        {label: Annotator._t('Tags'), property: 'tags'}
       ]
     Unsupported: {}
 
@@ -82,4 +82,4 @@ Annotator::setupPlugins = (config={}, options={}) ->
 
   $.extend plugins, options
   for own name, opts of plugins when opts != null and opts != false
-    this.addPlugin(name, opts) 
+    this.addPlugin(name, opts)
