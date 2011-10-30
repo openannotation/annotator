@@ -83,7 +83,7 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
 
     $.getJSON(@options.tokenUrl, (data, status, xhr) =>
       if status isnt 'success'
-        console.error "Couldn't get auth token: #{status}", xhr
+        console.error _t("Couldn't get auth token:") + " #{status}", xhr
       else
         @setToken(data)
         @requestInProgress = false
@@ -121,9 +121,9 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
         @waitingForToken.pop().apply()
 
     else
-      console.warn "Didn't get a valid token."
+      console.warn _t("Didn't get a valid token.")
       if @options.autoFetch
-        console.warn "Getting a new token in 10s."
+        console.warn _t("Getting a new token in 10s.")
         setTimeout (() => this.requestToken()), 10 * 1000
 
   # Public: Checks the validity of the current @token.

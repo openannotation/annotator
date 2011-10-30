@@ -37,7 +37,7 @@ class Annotator extends Delegator
 
   html:
     hl:      '<span class="annotator-hl"></span>'
-    adder:   '<div class="annotator-adder"><button>Annotate</button></div>'
+    adder:   '<div class="annotator-adder"><button>' + _t('Annotate') + '</button></div>'
     wrapper: '<div class="annotator-wrapper"></div>'
 
   options: {} # Configuration options
@@ -140,7 +140,7 @@ class Annotator extends Delegator
       .on('save', this.onEditorSubmit)
       .addField({
         type: 'textarea',
-        label: 'Comments\u2026'
+        label: _t('Comments') + '\u2026'
         load: (field, annotation) ->
           $(field).find('textarea').val(annotation.text || '')
         submit: (field, annotation) ->
@@ -325,7 +325,7 @@ class Annotator extends Delegator
     if @plugins['Store']
       @plugins['Store'].dumpAnnotations()
     else
-      console.warn("Can't dump annotations without Store plugin.")
+      console.warn(_t("Can't dump annotations without Store plugin."))
 
   # Public: Wraps the DOM Nodes within the provided range in the @hl wrapper
   # and returns the highlight Elements.
@@ -363,7 +363,7 @@ class Annotator extends Delegator
   # Returns itself to allow chaining.
   addPlugin: (name, options) ->
     if @plugins[name]
-      console.error "You cannot have more than one instance of any plugin."
+      console.error _t("You cannot have more than one instance of any plugin.")
     else
       klass = Annotator.Plugin[name]
       if typeof klass is 'function'
@@ -371,7 +371,7 @@ class Annotator extends Delegator
         @plugins[name].annotator = this
         @plugins[name].pluginInit?()
       else
-        console.error "Could not load #{name} plugin. Have you included the appropriate <script> tag?"
+        console.error _t("Could not load #{name} plugin. Have you included the appropriate <script> tag?")
     this # allow chaining
 
   # Public: Loads the @editor with the provided annotation and updates its

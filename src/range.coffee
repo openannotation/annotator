@@ -20,7 +20,7 @@ Range.sniff = (r) ->
   else if r.start and typeof r.start is "object"
     new Range.NormalizedRange(r)
   else
-    console.error("Couldn't not sniff range type")
+    console.error(_t("Couldn't not sniff range type"))
     false
 
 # Public: Creates a wrapper around a range object obtained from a DOMSelection.
@@ -52,7 +52,7 @@ class Range.BrowserRange
   # Returns an instance of Range.NormalizedRange
   normalize: (root) ->
     if @tainted
-      console.error("You may only call normalize() once on a BrowserRange!")
+      console.error(_t("You may only call normalize() once on a BrowserRange!"))
       return false
     else
       @tainted = true
@@ -284,7 +284,7 @@ class Range.SerializedRange
         ).join('/')
 
         # Find the default document namespace.
-        namespace = document.lookupNamespaceURI null 
+        namespace = document.lookupNamespaceURI null
 
         # Try and resolve the namespace, first seeing if it is an xhtml node
         # otherwise check the head attributes.
@@ -292,7 +292,7 @@ class Range.SerializedRange
           if ns == 'xhtml' then namespace
           else document.documentElement.getAttribute('xmlns:' + ns)
 
-        node = evaluateXPath xpath, customResolver 
+        node = evaluateXPath xpath, customResolver
       node
 
   # Public: Creates a NormalizedRange.
@@ -319,7 +319,7 @@ class Range.SerializedRange
     range.commonAncestorContainer = this._nodeFromXPath(cacXPath)
 
     if not range.commonAncestorContainer
-      console.error("Error deserializing range: can't find XPath '" + cacXPath + "'. Is this the right document?")
+      console.error(_t("Error deserializing range: can't find XPath '") + cacXPath + _t("'. Is this the right document?"))
       return null
 
     # Unfortunately, we *can't* guarantee only one textNode per

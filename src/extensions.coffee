@@ -1,8 +1,8 @@
 unless jQuery?.fn?.jquery
-  console.error("Annotator requires jQuery: have you included lib/vendor/jquery.js?")
+  console.error(_t("Annotator requires jQuery: have you included lib/vendor/jquery.js?"))
 
 unless JSON and JSON.parse and JSON.stringify
-  console.error("Annotator requires a JSON implementation: have you included lib/vendor/json2.js?")
+  console.error(_t("Annotator requires a JSON implementation: have you included lib/vendor/json2.js?"))
 
 $ = jQuery.sub();
 
@@ -85,3 +85,6 @@ $.fn.escape = (html) ->
     return this.html($.escape(html))
 
   this.html()
+
+# I18N support in progress
+this._t = (s) -> s

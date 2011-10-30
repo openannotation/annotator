@@ -19,19 +19,19 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
   html:
     element: """
              <div class="annotator-filter">
-               <strong>Navigate:</strong>
+               <strong>""" + _t('Navigate:') + """</strong>
                <span class="annotator-filter-navigation">
-                 <button class="annotator-filter-previous">Previous</button>
-                 <button class="annotator-filter-next">Next</button>
+                 <button class="annotator-filter-previous">""" + _t('Previous') + """</button>
+                 <button class="annotator-filter-next">""" + _t('Next') + """</button>
                </span>
-               <strong>Filter by:</strong>
+               <strong>""" + _t('Filter by:') + """</strong>
              </div>
              """
     filter:  """
              <span class="annotator-filter-property">
                <label></label>
                <input/>
-               <button class="annotator-filter-clear">Clear</button>
+               <button class="annotator-filter-clear">""" + _t('Clear') + """</button>
              </span>
              """
 
@@ -104,7 +104,7 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
     this._setupListeners()._insertSpacer()
 
     if @options.addAnnotationFilter == true
-      this.addFilter {label: 'Annotation', property: 'text'}
+      this.addFilter {label: _t('Annotation'), property: 'text'}
 
   # Adds margin to the current document to ensure that the annotation toolbar
   # doesn't cover the page when not scrolled.
@@ -169,13 +169,13 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
       filter.element.find('input')
         .attr({
           id: filter.id
-          placeholder: 'Filter by ' + filter.label + '\u2026'
+          placeholder: _t('Filter by ') + filter.label + '\u2026'
         })
       filter.element.find('button').hide()
-      
+
       # Add the filter to the elements data store.
       filter.element.data 'filter', filter
-      
+
       @filters.push filter
 
     this
