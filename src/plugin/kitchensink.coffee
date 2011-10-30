@@ -40,8 +40,8 @@ Annotator::setupPlugins = (config={}, options={}) ->
     Tags: {}
     Filter:
       filters: [
-        {label: _t('User'), property: 'user'}
-        {label: _t('Tags'), property: 'tags'}
+        {label: Annotator._t('User'), property: 'user'}
+        {label: Annotator._t('Tags'), property: 'tags'}
       ]
     Unsupported: {}
 

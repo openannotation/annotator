@@ -1,3 +1,14 @@
+# I18N
+gettext = null
+
+if Gettext?
+  _gettext = new Gettext(domain: "annotator")
+  gettext = (msgid) -> _gettext.gettext(msgid)
+else
+  gettext = (msgid) -> msgid
+
+_t = (msgid) -> gettext(msgid)
+
 unless jQuery?.fn?.jquery
   console.error(_t("Annotator requires jQuery: have you included lib/vendor/jquery.js?"))
 
@@ -85,6 +96,3 @@ $.fn.escape = (html) ->
     return this.html($.escape(html))
 
   this.html()
-
-# I18N support in progress
-this._t = (s) -> s

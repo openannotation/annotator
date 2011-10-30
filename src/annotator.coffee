@@ -371,7 +371,7 @@ class Annotator extends Delegator
         @plugins[name].annotator = this
         @plugins[name].pluginInit?()
       else
-        console.error _t("Could not load #{name} plugin. Have you included the appropriate <script> tag?")
+        console.error _t("Could not load ") + name + _t(" plugin. Have you included the appropriate <script> tag?")
     this # allow chaining
 
   # Public: Loads the @editor with the provided annotation and updates its
@@ -590,6 +590,9 @@ class Annotator.Plugin extends Delegator
 
 # Bind our local copy of jQuery so plugins can use the extensions.
 Annotator.$ = $
+
+# Bind gettext helper so plugins can use localisation.
+Annotator._t = _t
 
 # Returns true if the Annotator can be used in the current browser.
 Annotator.supported = -> (-> !!this.getSelection)()

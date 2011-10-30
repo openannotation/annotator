@@ -19,7 +19,7 @@ class Annotator.Plugin.Tags extends Annotator.Plugin
     return unless Annotator.supported()
 
     @field = @annotator.editor.addField({
-      label:  _t('Add some tags here') + '\u2026'
+      label:  Annotator._t('Add some tags here') + '\u2026'
       load:   this.updateField
       submit: this.setAnnotationTags
     })
@@ -31,7 +31,7 @@ class Annotator.Plugin.Tags extends Annotator.Plugin
     # Add a filter to the Filter plugin if loaded.
     if @annotator.plugins.Filter
       @annotator.plugins.Filter.addFilter
-        label: _t('Tag')
+        label: Annotator._t('Tag')
         property: 'tags'
         isFiltered: Annotator.Plugin.Tags.filterCallback
 

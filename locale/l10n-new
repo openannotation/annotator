@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if [ -z "${1}" ]; then
+  echo "Usage: l10n-new <localename>"
+  exit 1
+fi
+
+mkdir "${1}"
+msginit -i- -o- -l "${1}" < annotator.pot > "${1}"/annotator.po

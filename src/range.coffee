@@ -20,7 +20,7 @@ Range.sniff = (r) ->
   else if r.start and typeof r.start is "object"
     new Range.NormalizedRange(r)
   else
-    console.error(_t("Couldn't not sniff range type"))
+    console.error(_t("Could not sniff range type"))
     false
 
 # Public: Creates a wrapper around a range object obtained from a DOMSelection.

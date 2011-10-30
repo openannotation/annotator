@@ -19,19 +19,19 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
   html:
     element: """
              <div class="annotator-filter">
-               <strong>""" + _t('Navigate:') + """</strong>
+               <strong>""" + Annotator._t('Navigate:') + """</strong>
                <span class="annotator-filter-navigation">
-                 <button class="annotator-filter-previous">""" + _t('Previous') + """</button>
-                 <button class="annotator-filter-next">""" + _t('Next') + """</button>
+                 <button class="annotator-filter-previous">""" + Annotator._t('Previous') + """</button>
+                 <button class="annotator-filter-next">""" + Annotator._t('Next') + """</button>
                </span>
-               <strong>""" + _t('Filter by:') + """</strong>
+               <strong>""" + Annotator._t('Filter by:') + """</strong>
              </div>
              """
     filter:  """
              <span class="annotator-filter-property">
                <label></label>
                <input/>
-               <button class="annotator-filter-clear">""" + _t('Clear') + """</button>
+               <button class="annotator-filter-clear">""" + Annotator._t('Clear') + """</button>
              </span>
              """
 
@@ -104,7 +104,7 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
     this._setupListeners()._insertSpacer()
 
     if @options.addAnnotationFilter == true
-      this.addFilter {label: _t('Annotation'), property: 'text'}
+      this.addFilter {label: Annotator._t('Annotation'), property: 'text'}
 
   # Adds margin to the current document to ensure that the annotation toolbar
   # doesn't cover the page when not scrolled.
@@ -169,7 +169,7 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
       filter.element.find('input')
         .attr({
           id: filter.id
-          placeholder: _t('Filter by ') + filter.label + '\u2026'
+          placeholder: Annotator._t('Filter by ') + filter.label + '\u2026'
         })
       filter.element.find('button').hide()
 
