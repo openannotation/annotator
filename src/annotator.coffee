@@ -499,6 +499,7 @@ class Annotator extends Delegator
       container = range.commonAncestor
       return if this.isAnnotatorViewer(container)
       return if this.isAnnotatorEditor(container)
+      return if this.isAnnotatorWidget(container)
 
     if event and @selectedRanges.length
       @adder
@@ -532,6 +533,10 @@ class Annotator extends Delegator
     # check if the element is the editor
   isAnnotatorEditor: (element) ->
     !!$(element).parents().andSelf().filter('[class^=annotator-editor]').not(@wrapper).length
+
+  isAnnotatorWidget: (element) ->
+    !!$(element).parents().andSelf().filter('[class^=annotator-widget]').not(@wrapper).length
+
 
   # Annotator#element callback. Displays viewer with all annotations
   # associated with highlight Elements under the cursor.
