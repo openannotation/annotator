@@ -24,8 +24,8 @@
       <nav>
         <ul>
           <li><a href="http://github.com/okfn/annotator/" title="Check out the repository">Code</a></li>
-          <li><a href="http://github.com/okfn/annotator/downloads/" title="Download a packaged bundle">Download</a></li>
-          <li><a href="http://github.com/okfn/annotator/wiki/" title="Read the wiki">Wiki</a></li>
+          <li><a href="./demo/" title="Live demo">Demo</a></li>
+          <li><a href="http://github.com/okfn/annotator/wiki/" title="Read the docs">Docs</a></li>
           <li><a href="http://github.com/okfn/annotator/issues/" title="Report an issue">Issues</a></li>
         </ul>
       </nav>
@@ -34,12 +34,14 @@
       <section>
         <h2>The <span id="role">copy-editor</span> of the web</h2>
         <div class="primary">
-          <p>The Annotator is a JavaScript tool that can be added to any webpage
-          to allow annotation. Annotations can have comments, tags, users and
-          more.</p>
-          <p>See a <a href="./demo/">live
-          demonstration</a> or read more in the <a href="#develop">developers
-          section</a> below.</p>
+          <p>The Annotator is an open-source JavaScript library and tool that can be added to any webpage
+          to make it annotatable.</p>
+          <p>Annotations can have comments, tags, users and
+	  more. Morever, the Annotator is designed for 
+          <a href="http://github.com/okfn/annotator/wiki/Plugin-Development">easy
+          extensibility</a> so its a cinch to add a new feature or behaviour.</p>
+          <p>Check out the <a href="./demo/">live
+          demonstration</a> or <a href="#develop">install it now</a>.</p>
         </div>
         <div class="secondary">
           <img class="screenshot" src="./images/annotator.png" alt="The annotator" height="223" width="370" />
@@ -60,17 +62,17 @@
         </div>
       </section>
       <section>
-        <h2 id="develop">Developers</h2>
+        <h2 id="develop">Using Annotator</h2>
         <div class="primary">
-          <p>Adding the Annotator to a webpage is easy. First you'll need to
-             <a href="http://github.com/okfn/annotator/downloads/">download the
-             source code</a> and include it on your page along with
-             <a href="http://jquery.com/">jQuery</a>. Then
-             simply add the following line to load the annotator.</p>
-          <pre><code>var annotator = jQuery('#main').annotator();</code></pre>
-          <p>For more detailed instructions see the
-             <a href="http://github.com/okfn/annotator/wiki/Getting-Started">Getting Started</a>
-             page on the Annotator wiki.</p>
+          <p>Adding annotation to your webpage using the Annotator is easy.
+            Full instructions are in the <a
+            href="http://github.com/okfn/annotator/wiki/Getting-Started">Getting
+            Started</a> section of the docs, but it is just two short steps. First, you
+            need to <a href="http://github.com/okfn/annotator/downloads/">download the
+            Annotator library</a> (or link to the hosted version), include it on your page
+            along with <a href="http://jquery.com/">jQuery</a>. Then add the
+            following line to initialize the annotator.</p>
+          <pre><code>var annotator = jQuery('.css-selector-to-block-you-want-to-annotate').annotator();</code></pre>
           <p>Plug-ins can be included for adding functionality such as user
              <a href="http://github.com/okfn/annotator/wiki/User-Plugin">accounts</a>,
              <a href="http://github.com/okfn/annotator/wiki/Tags-Plugin">tags</a>,
@@ -102,7 +104,7 @@
                web service for storing annotations.</p>
             <p>Alternatively if you'd like to integrate the annotator with your
                own storage system check out the
-               <a href="http://github.com/okfn/annotator/wiki/">wiki</a> for more
+               <a href="http://github.com/okfn/annotator/wiki/">Docs</a> for more
                information on the annotation format and store plugin.</p>
           </div>
           <div class="secondary">
@@ -140,12 +142,6 @@
                 <img alt="This Content and Data is Open" src="http://assets.okfn.org/images/ok_buttons/oc_80x15_blue.png" class="button" />
                 </a>
               </li>
-              <li>
-                <a href="http://opendefinition.org/ossd/" class="img">
-                <img alt="This Content and Data is Open"
-                  src="http://assets.okfn.org/images/ok_buttons/os_80x15_orange_grey.png" class="button" />
-                </a>
-              </li>
             </ul>
           </div>
           </li>
@@ -159,16 +155,7 @@
                   <a href="http://okfn.org/projects/annotator/">Project Home Page</a>
                 </li>
                 <li>
-                <a href="/api/">API</a>
-                </li>
-                <li>
-                  <a href="http://github.com/okfn/annotator-store/">API Docs</a>
-                </li>
-                <li>
                   <a href="http://lists.okfn.org/mailman/listinfo/annotator-dev">Mailing List</a>
-                </li>
-                <li>
-                  <a href="http://okfn.org/privacy-policy/">Privacy Policy</a>
                 </li>
               </ul>
             </div>
@@ -181,7 +168,7 @@
   <script src="./main.js"></script>
   <script type="text/javascript">
     var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-8271754-20']);
+    _gaq.push(['_setAccount', 'UA-8271754-31']);
     _gaq.push(['_trackPageview']);
 
     (function() {
