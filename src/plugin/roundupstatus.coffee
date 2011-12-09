@@ -29,11 +29,10 @@ class Annotator.Plugin.RoundupStatus extends Annotator.Plugin
   updateViewer: (field, annotation) ->
     field = $(field)
 
-    if annotation.status?
+    if annotation.issue_id?
+      console.log(annotation.issue_id)
       field.addClass('annotator-status').html(->
-        string = $.map(annotation.status,(status) ->
-            '<span class="annotator-status">'+Annotator.$.escape(status) + '</span>'
-        ).join('').toUpperCase()
+        string = '<a href="http://0.0.0.0:8080/siyavulatracker/issue' + annotation.issue_id + '" target="_blank">See comments on Roundup!</a>'
       )
     else
       field.remove()
