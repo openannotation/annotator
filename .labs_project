@@ -1,0 +1,10 @@
+labs_project({
+     "name": "AnnotateIt",
+     "status" : "Active",
+     "category" : "Tools and Infrastructure",
+     "strapline" : "Annotate any web page simply by incorporating two lines of javascript into your site or running our bookmarklet.",
+     "description" : "",
+     "image" : "http://farm7.static.flickr.com/6116/6323055286_fc6189ebc7_t.jpg",
+     "homepage" : "http://annotateit.org/"
+ });
+
