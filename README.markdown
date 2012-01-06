@@ -3,7 +3,7 @@ Annotator
 
 Annotator is a web annotation system. Loaded into a webpage, it provides the user with tools to annotate text (and other elements) in the page. For a simple demonstration, visit the [demo page][dp] or [download a tagged release of Annotator][dl] and open `demo.html`.
 
-[dp]: http://okfn.github.com/annotator/demo/tags
+[dp]: http://okfn.github.com/annotator/demo/
 [dl]: https://github.com/okfn/annotator/downloads
 
 The Annotator project also has a simple but powerful plugin architecture. While the core annotator code does the bare minimum, it is easily extended with plugins that perform such tasks as:
