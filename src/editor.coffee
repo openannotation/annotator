@@ -20,8 +20,8 @@ class Annotator.Editor extends Annotator.Widget
           <form class="annotator-widget">
             <ul class="annotator-listing"></ul>
             <div class="annotator-controls">
-              <a href="#cancel" class="annotator-cancel">Cancel</a>
-              <a href="#save" class="annotator-save annotator-focus">Save</a>
+              <a href="#cancel" class="annotator-cancel">""" + _t('Cancel') + """</a>
+              <a href="#save" class="annotator-save annotator-focus">""" + _t('Save') + """</a>
             </div>
             <span class="annotator-resize"></span>
           </form>

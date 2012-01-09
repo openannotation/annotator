@@ -1,0 +1,194 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Annotator\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-10-30 16:18+0000\n"
+"PO-Revision-Date: 2011-10-30 16:24+0100\n"
+"Last-Translator: Lucy Chambers <lucy.chambers@okfn.org>\n"
+"Language-Team: Russian\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _t;gettext\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: lib/extensions.js:19
+msgid "Annotator requires jQuery: have you included lib/vendor/jquery.js?"
+msgstr "Annotator требует jQuery: Пожалуйста, добавьте lib/vendor/jquery.js?"
+
+#: lib/extensions.js:22
+msgid ""
+"Annotator requires a JSON implementation: have you included lib/vendor/json2."
+"js?"
+msgstr "Annotator требует JSON: Пожалуйста, добавьте lib/vendor/json2.js?"
+
+#: lib/console.js:17
+msgid "Not implemented:"
+msgstr "Процесс не завершен:"
+
+#: lib/range.js:11
+msgid "Could not sniff range type"
+msgstr "Не удалось обнаружить тип диапазона"
+
+#: lib/range.js:26
+msgid "You may only call normalize() once on a BrowserRange!"
+msgstr "Только один вызов normalize() разрешается на каждый BrowserRange"
+
+#: lib/range.js:216
+msgid "Error deserializing range: can't find XPath '"
+msgstr "Ошибка десериализации диапазон: XPath не найден '"
+
+#: lib/range.js:216
+msgid "'. Is this the right document?"
+msgstr "'. Правильный ли документ?"
+
+#: lib/annotator.js:46
+msgid "Annotate"
+msgstr "Создать аннотацию"
+
+#: lib/annotator.js:110
+msgid "Comments"
+msgstr "Примечания"
+
+#: lib/annotator.js:237
+msgid "Can't dump annotations without Store plugin."
+msgstr "Невозможно сохранить аннотации без плагина Store."
+
+#: lib/annotator.js:257
+msgid "You cannot have more than one instance of any plugin."
+msgstr "Иметь более одного экземпляра любого плагина не допускается."
+
+#: lib/annotator.js:267
+msgid "Could not load "
+msgstr ""
+
+#: lib/annotator.js:267
+msgid " plugin. Have you included the appropriate <script> tag?"
+msgstr ""
+
+#: lib/editor.js:22
+msgid "Cancel"
+msgstr "Аннулировать"
+
+#: lib/editor.js:22
+msgid "Save"
+msgstr "Сохранить"
+
+#: lib/plugin/tags.js:23
+msgid "Add some tags here"
+msgstr "Добавьте теги здесь"
+
+#: lib/plugin/tags.js:32
+msgid "Tag"
+msgstr "Тег"
+
+#: lib/plugin/auth.js:66
+msgid "Couldn't get auth token:"
+msgstr "Невозможно получить жетон аутентификации:"
+
+#: lib/plugin/auth.js:89
+msgid "Didn't get a valid token."
+msgstr "Система не получила действующего жетона."
+
+#: lib/plugin/auth.js:91
+msgid "Getting a new token in 10s."
+msgstr "Система получит новый жетон через 10 секунд."
+
+#: lib/plugin/store.js:66
+msgid "Warning: No ID returned from server for annotation "
+msgstr ""
+"Предупреждение: Никакой идентификатор для этой аннотации не вернулся из "
+"сервера "
+
+#: lib/plugin/store.js:96
+msgid "Trying to update unregistered annotation!"
+msgstr "Пытаемся обновить незарегистрированные аннотации!"
+
+#: lib/plugin/store.js:207 lib/plugin/store.js:211
+msgid "Sorry we could not "
+msgstr "К сожалению, мы не могли "
+
+#: lib/plugin/store.js:207 lib/plugin/store.js:215
+msgid " this annotation"
+msgstr " эту аннотацию"
+
+#: lib/plugin/store.js:209
+msgid "Sorry we could not search the store for annotations"
+msgstr "К сожалению, пойск в хранилище-аннотаций не возможен"
+
+#: lib/plugin/store.js:211
+msgid " the annotations from the store"
+msgstr " аннотации из хранилища"
+
+#: lib/plugin/store.js:215
+msgid "Sorry you are not allowed to "
+msgstr "Извините, не разрешается "
+
+#: lib/plugin/store.js:218
+msgid "Sorry we could not connect to the annotations store"
+msgstr "К сожалению, мы не могли подключиться к хранилищу аннотаций"
+
+#: lib/plugin/store.js:221
+msgid "Sorry something went wrong with the annotation store"
+msgstr "Извините, что-то пошло не так с хранилищем аннотаций"
+
+#: lib/plugin/store.js:224
+msgid "API request failed:"
+msgstr "API-вызов не успешен"
+
+#: lib/plugin/filter.js:27
+msgid "Navigate:"
+msgstr "Навигация:"
+
+#: lib/plugin/filter.js:27
+msgid "Previous"
+msgstr "Предыдущий"
+
+#: lib/plugin/filter.js:27
+msgid "Next"
+msgstr "Следующий"
+
+#: lib/plugin/filter.js:27
+msgid "Filter by:"
+msgstr "Использовать фильтр:"
+
+#: lib/plugin/filter.js:28
+msgid "Clear"
+msgstr "Удалить"
+
+#: lib/plugin/filter.js:72
+msgid "Annotation"
+msgstr "Аннотация"
+
+#: lib/plugin/filter.js:118
+msgid "Filter by "
+msgstr "Использовать фильтр "
+
+#: lib/plugin/markdown.js:19
+msgid ""
+"To use the Markdown plugin, you must include Showdown into the page first."
+msgstr ""
+"Чтобы использовать плагин Markdown, вы должны в первую очередь включить "
+"Showdown в страницу."
+
+#: lib/plugin/unsupported.js:15
+msgid "Sorry your current browser does not support the Annotator"
+msgstr "Извините, ваш браузер не поддерживает Annotator"
+
+#: lib/plugin/permissions.js:58
+msgid "Allow anyone to <strong>view</strong> this annotation"
+msgstr ""
+"Любой пользователь может <strong>видеть</strong> эту аннотацию"
+
+#: lib/plugin/permissions.js:66
+msgid "Allow anyone to <strong>edit</strong> this annotation"
+msgstr ""
+"Любой пользователь может <strong>редактировать</strong> эту аннотацию"
+
+#: lib/plugin/permissions.js:76
+msgid "User"
+msgstr "Пользователь"

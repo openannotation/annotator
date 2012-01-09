@@ -137,7 +137,7 @@ class Annotator.Plugin.Store extends Annotator.Plugin
       this._apiRequest('create', annotation, (data) =>
         # Update with (e.g.) ID from server.
         if not data.id?
-          console.warn "Warning: No ID returned from server for annotation ", annotation
+          console.warn Annotator._t("Warning: No ID returned from server for annotation "), annotation
         this.updateAnnotation annotation, data
       )
     else
@@ -226,7 +226,7 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   # Returns nothing.
   updateAnnotation: (annotation, data) ->
     if annotation not in this.annotations
-      console.error "Trying to update unregistered annotation!"
+      console.error Annotator._t("Trying to update unregistered annotation!")
     else
       $.extend(annotation, data)
 
@@ -295,7 +295,7 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   #
   #   example
   #
-  # Returns 
+  # Returns
   dumpAnnotations: ->
     (JSON.parse(this._dataFor(ann)) for ann in @annotations)
 
@@ -401,7 +401,7 @@ class Annotator.Plugin.Store extends Annotator.Plugin
 
     table[action]
 
-  # Creates a JSON serialisation of an annotation. 
+  # Creates a JSON serialisation of an annotation.
   #
   # annotation - An annotation Object to serialise.
   #
@@ -410,7 +410,7 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   #   store._dataFor({id: 32, text: 'my annotation comment'})
   #   # => Returns '{"id": 32, "text":"my annotation comment"}'
   #
-  # Returns 
+  # Returns
   _dataFor: (annotation) ->
     # Store a reference to the highlights array. We can't serialize
     # a list of HTMLElement objects.
@@ -441,7 +441,7 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   #   })
   #   # This will be called by jQuery.
   #   store._onBeforeSend(xhr)
-  #   # => Request will be sent with the above headers. 
+  #   # => Request will be sent with the above headers.
   #
   # Returns nothing.
   _onBeforeSend: (xhr) =>
@@ -458,18 +458,18 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   # Returns nothing.
   _onError: (xhr) =>
     action  = xhr._action
-    message = "Sorry we could not #{action} this annotation"
+    message = Annotator._t("Sorry we could not ") + action + Annotator._t(" this annotation")
 
     if xhr._action == 'search'
-      message = "Sorry we could not search the store for annotations"
+      message = Annotator._t("Sorry we could not search the store for annotations")
     else if xhr._action == 'read' && !xhr._id
-      message = "Sorry we could not #{action} the annotations from the store"
+      message = Annotator._t("Sorry we could not ") + action + Annotator._t(" the annotations from the store")
 
     switch xhr.status
-      when 401 then message = "Sorry you are not allowed to #{action} this annotation"
-      when 404 then message = "Sorry we could not connect to the annotations store"
-      when 500 then message = "Sorry something went wrong with the annotation store"
+      when 401 then message = Annotator._t("Sorry you are not allowed to ") + action + Annotator._t(" this annotation")
+      when 404 then message = Annotator._t("Sorry we could not connect to the annotations store")
+      when 500 then message = Annotator._t("Sorry something went wrong with the annotation store")
 
     Annotator.showNotification message, Annotator.Notification.ERROR
 
-    console.error "API request failed: '#{xhr.status}'"
+    console.error Annotator._t("API request failed:") + " '#{xhr.status}'"
