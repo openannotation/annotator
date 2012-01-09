@@ -38,6 +38,9 @@
     <script src="lib/vendor/showdown.js"></script>
     <script src="pkg/annotator.markdown.min.js"></script>
 
+
+     <script src="pkg/annotator.categories.min.js"></script> 
+
   </head>
 
   <body>
@@ -79,13 +82,23 @@
           alert("Ooops! it looks like you haven't built the Annotator concatenation file. " +
                 "Either download a tagged release from GitHub, or modify the Cakefile to point " +
                 "at your copy of the YUI compressor and run `cake package`.");
-        } else {
+                } else {
+
+
+                var options = {};
+                options.categories = {
+                    'errata':'annotator-hl-errata', 
+                    'comment':'annotator-hl-comment', 
+                    'suggestion':'annotator-hl-suggestion' };
+
           // This is the important bit: how to create the annotator and add
           // plugins
           $('#airlock').annotator()
+                       .annotator('addPlugin', 'Categories', options.categories)
                        .annotator('addPlugin', 'Permissions')
                        .annotator('addPlugin', 'Markdown')
                        .annotator('addPlugin', 'Tags');
+
 
           $('#airlock').data('annotator').plugins['Permissions'].setUser("Joe Bloggs");
         }
