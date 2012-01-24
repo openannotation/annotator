@@ -599,6 +599,10 @@ class Annotator.Plugin extends Delegator
 # Bind our local copy of jQuery so plugins can use the extensions.
 Annotator.$ = $
 
+# Export other modules for use in plugins.
+Annotator.Delegator = Delegator
+Annotator.Range = Range
+
 # Bind gettext helper so plugins can use localisation.
 Annotator._t = _t
 
