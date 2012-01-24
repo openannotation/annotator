@@ -121,7 +121,7 @@ describe 'Range', ->
         headText  = document.createTextNode("My Heading")
         paraText  = document.createTextNode("My paragraph")
         paraText2 = document.createTextNode(" continues")
-        
+
         head = document.createElement('h1')
         head.appendChild(headText)
         para = document.createElement('p')
@@ -138,12 +138,12 @@ describe 'Range', ->
           start: headText
           end: paraText2
         })
-        
+
         range = range.limit(para)
         expect(range.commonAncestor).toBe(para)
         expect(range.start).toBe(paraText)
         expect(range.end).toBe(paraText2)
-      
+
       it "should return null if no nodes fall within the bounds", ->
         otherDiv = document.createElement('div')
         range = new Range.NormalizedRange({
@@ -152,3 +152,19 @@ describe 'Range', ->
           end: paraText2
         })
         expect(range.limit(otherDiv)).toBe(null)
+
+    describe "toRange", ->
+      it "should return a new Range object", ->
+        mockRange =
+          setStartBefore: jasmine.createSpy('Range#setStartBefore()')
+          setEndAfter: jasmine.createSpy('Range#setEndAfter()')
+
+        document.createRange = jasmine.createSpy('document.createRange()')
+        document.createRange.andReturn(mockRange)
+        r.toRange()
+
+        expect(document.createRange).toHaveBeenCalled()
+        expect(mockRange.setStartBefore).toHaveBeenCalled()
+        expect(mockRange.setStartBefore).toHaveBeenCalledWith(r.start)
+        expect(mockRange.setEndAfter).toHaveBeenCalled()
+        expect(mockRange.setEndAfter).toHaveBeenCalledWith(r.end)

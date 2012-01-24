@@ -200,15 +200,20 @@ describe 'Annotator', ->
       mockRange = {
         limit: jasmine.createSpy('NormalizedRange#limit()')
         normalize: jasmine.createSpy('BrowserRange#normalize()')
+        toRange: jasmine.createSpy('NormalizedRange#toRange()').andReturn('range')
       }
       mockRange.limit.andReturn(mockRange)
       mockRange.normalize.andReturn(mockRange)
+
+      # https://developer.mozilla.org/en/nsISelection
       mockSelection = {
-        getRangeAt: jasmine.createSpy().andReturn('')
+        getRangeAt: jasmine.createSpy('Selection#getRangeAt()').andReturn('')
+        removeAllRanges: jasmine.createSpy('Selection#removeAllRanges()')
+        addRange: jasmine.createSpy('Selection#addRange()')
         rangeCount: 1
       }
       mockGlobal = {
-        getSelection: jasmine.createSpy().andReturn(mockSelection)
+        getSelection: jasmine.createSpy('window.getSelection()').andReturn(mockSelection)
       }
       spyOn(util, 'getGlobal').andReturn(mockGlobal)
       spyOn(Range, 'BrowserRange').andReturn(mockRange)
@@ -230,6 +235,15 @@ describe 'Annotator', ->
       mockSelection.isCollapsed = true
       ranges = annotator.getSelectedRanges()
       expect(ranges).toEqual([])
+
+    it "should deselect all current ranges", ->
+      ranges = annotator.getSelectedRanges()
+      expect(mockSelection.removeAllRanges).toHaveBeenCalled()
+
+    it "should reassign the newly normalized ranges", ->
+      ranges = annotator.getSelectedRanges()
+      expect(mockSelection.addRange).toHaveBeenCalled()
+      expect(mockSelection.addRange).toHaveBeenCalledWith('range')
 
   describe "createAnnotation", ->
     it "should return an empty annotation", ->

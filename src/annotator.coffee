@@ -183,8 +183,16 @@ class Annotator extends Delegator
         browserRange = new Range.BrowserRange(selection.getRangeAt(i))
         browserRange.normalize().limit(@wrapper[0])
 
+    # BrowserRange#normalize() modifies the DOM structure and deselects the
+    # underlying text as a result. So here we remove the selected ranges and
+    # reapply the new ones.
+    selection.removeAllRanges()
+
     # Remove any ranges that fell outside of @wrapper.
-    $.grep ranges, (range) -> range
+    $.grep ranges, (range) ->
+      # Add the normed range back to the selection if it exists.
+      selection.addRange(range.toRange()) if range
+      range
 
   # Public: Creates and returns a new annotation object. Publishes the
   # 'beforeAnnotationCreated' event to allow the new annotation to be modified.
