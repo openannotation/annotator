@@ -1,6 +1,6 @@
 fs = require 'fs'
 path = require 'path'
-{print, debug} = require 'sys'
+{print, debug} = require 'util'
 {spawn, exec} = require 'child_process'
 
 CORE = [ 'extensions'
@@ -134,6 +134,7 @@ packager =
     exec "cat #{src.join ' '} | coffee -sp > #{dest}", callback
 
   compress: (src, type, callback) ->
+    return src
     yc = require 'yui-compressor'
 
     yc.compile(src, { type: type }, callback)
