@@ -82,6 +82,7 @@ class Annotator.Editor extends Annotator.Widget
     @element.find(':input:first').focus()
     this.checkOrientation().publish('show')
 
+
   # Public: Hides the Editor and fires a "hide" event. Can be used as an event
   # callback and will call Event#preventDefault() on the supplied event.
   #
@@ -129,10 +130,10 @@ class Annotator.Editor extends Annotator.Widget
     for field in @fields
       field.load(field.element, @annotation)
 
-    this.show();
+    this.show()
 
-  # Public: Hides the Editor and passes the anotation to all registered fields
-  # so they can update it's state. It then fires the "save" event so that other
+  # Public: Hides the Editor and passes the annotation to all registered fields
+  # so they can update its state. It then fires the "save" event so that other
   # parties can further modify the annotation.
   # Can be used as an event callback and will call Event#preventDefault() on the
   # supplied event.
