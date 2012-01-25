@@ -1,6 +1,5 @@
-fs       = require 'fs'
-path     = require 'path'
-{Script} = process.binding('evals')
+fs   = require 'fs'
+path = require 'path'
 
 coffeescript = require 'coffee-script'
 jsdom        = require 'jsdom'
@@ -36,6 +35,6 @@ class Sandbox
     if path.extname(filename) is '.coffee'
       src = coffeescript.compile(src)
 
-    Script.runInNewContext(src, @window, filename)
+    @window.run(src, filename)
 
 exports.Sandbox = Sandbox

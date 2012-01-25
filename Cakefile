@@ -1,6 +1,6 @@
 fs = require 'fs'
 path = require 'path'
-{print, debug} = require 'sys'
+{print, debug} = require 'util'
 {spawn, exec} = require 'child_process'
 
 CORE = [ 'extensions'
