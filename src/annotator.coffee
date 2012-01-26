@@ -334,9 +334,8 @@ class Annotator extends Delegator
   #
   # Returns an array of highlight Elements.
   highlightRange: (normedRange) ->
-    elemList = for node in normedRange.textNodes()
-      wrapper = @hl.clone().show()
-      $(node).wrap(wrapper).parent().get(0)
+    for node in normedRange.textNodes()
+      $(node).wrapAll(@hl).parent().show()[0]
 
   # Public: Registers a plugin with the Annotator. A plugin can only be
   # registered once. The plugin will be instantiated in the following order.
