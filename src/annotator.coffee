@@ -334,7 +334,14 @@ class Annotator extends Delegator
   #
   # Returns an array of highlight Elements.
   highlightRange: (normedRange) ->
-    for node in normedRange.textNodes()
+    white = /^\s*$/
+
+    # Ignore text nodes that contain only whitespace characters. This prevents
+    # spans being injected between elements that can only contain a restricted
+    # subset of nodes such as table rows and lists. This does mean that there
+    # may be the odd abandoned whitespace node in a paragraph that is skipped
+    # but better than breaking table layouts.
+    for node in normedRange.textNodes() when not white.test(node.nodeValue)
       $(node).wrapAll(@hl).parent().show()[0]
 
   # Public: Registers a plugin with the Annotator. A plugin can only be
