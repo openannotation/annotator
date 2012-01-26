@@ -404,16 +404,25 @@ describe 'Annotator', ->
 
   describe "highlightRange", ->
     it "should return a highlight element for every textNode in the range", ->
-      textNodes = (document.createTextNode text for text in ['hello', 'world'])
+      textNodes = (document.createTextNode(text) for text in ['hello', 'world'])
       mockRange =
         textNodes: -> textNodes
 
       elements = annotator.highlightRange(mockRange)
-
       expect(elements.length).toBe(2)
       expect(elements[0].className).toBe('annotator-hl')
       expect(elements[0].firstChild).toBe(textNodes[0])
       expect(elements[1].firstChild).toBe(textNodes[1])
+
+    it "should ignore textNodes that contain only whitespace", ->
+      textNodes = (document.createTextNode(text) for text in ['hello', '\n ', '      '])
+      mockRange =
+        textNodes: -> textNodes
+
+      elements = annotator.highlightRange(mockRange)
+      expect(elements.length).toBe(1)
+      expect(elements[0].className).toBe('annotator-hl')
+      expect(elements[0].firstChild).toBe(textNodes[0])
 
   describe "addPlugin", ->
     plugin = null
