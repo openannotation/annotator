@@ -112,14 +112,8 @@ class Delegator
   #
   # Returns true if event is a custom user event.
   isCustomEvent: (event) ->
-    natives = """
-              blur focus focusin focusout load resize scroll unload click dblclick
-              mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave
-              change select submit keydown keypress keyup error
-              """.split(/[^a-z]+/)
     [event] = event.split('.')
-
-    return $.inArray(event, natives) == -1
+    $.inArray(event, Delegator.natives) == -1
 
   # Public: Fires an event and calls all subscribed callbacks with any parameters
   # provided. This is essentially an alias of @element.triggerHandler() but
@@ -187,3 +181,13 @@ class Delegator
   unsubscribe: ->
     @element.unbind.apply @element, arguments
     this
+
+# Native jQuery events that should recieve an event object. Plugins can
+# add thier own methods to this if required.
+Delegator.natives = do ->
+  specials = (key for own key, val of jQuery.event.special)
+  """
+  blur focus focusin focusout load resize scroll unload click dblclick
+  mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave
+  change select submit keydown keypress keyup error
+  """.split(/[^a-z]+/).concat(specials)
