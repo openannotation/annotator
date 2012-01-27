@@ -100,7 +100,7 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
   #     authToken: 'hashed-string'
   #     authTokenIssueTime: 1299668564194
   #     authTokenTTL: 86400
-  #     accountId: 'unique-string'
+  #     consumerKey: 'unique-string'
   #     userId: 'alice'
   #   })
   #
@@ -138,7 +138,7 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
                 @token.authToken &&
                 @token.authTokenIssueTime &&
                 @token.authTokenTTL &&
-                @token.accountId &&
+                @token.consumerKey &&
                 @token.userId
 
     allFields && this.timeToExpiry() > 0
@@ -166,7 +166,7 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
       'x-annotator-auth-token':            @token.authToken,
       'x-annotator-auth-token-issue-time': @token.authTokenIssueTime,
       'x-annotator-auth-token-ttl':        @token.authTokenTTL,
-      'x-annotator-account-id':            @token.accountId,
+      'x-annotator-consumer-key':          @token.consumerKey,
       'x-annotator-user-id':               @token.userId
     }))
 
