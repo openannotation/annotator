@@ -119,7 +119,10 @@ class Annotator extends Delegator
       .on("delete", this.onDeleteAnnotation)
       .addField({
         load: (field, annotation) =>
-          $(field).escape(annotation.text || '')
+          if annotation.text
+            $(field).escape(annotation.text)
+          else
+            $(field).html("<i>#{_t 'No Comment'}</i>")
           this.publish('annotationViewerTextField', [field, annotation])
       })
       .element.appendTo(@wrapper).bind({

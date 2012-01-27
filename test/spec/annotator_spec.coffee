@@ -125,6 +125,22 @@ describe 'Annotator', ->
       expect(mockViewer.addField).toHaveBeenCalled()
       expect(typeof args.load).toBe("function")
 
+    it "should set the contents of the field on load", ->
+      field = document.createElement('div')
+      annotation = {text: "test"}
+      callback = jasmine.createSpy('callback')
+
+      annotator.viewer.fields[0].load(field, annotation)
+      expect(jQuery(field).html()).toBe("test")
+
+    it "should set the contents of the field to placeholder text when empty", ->
+      field = document.createElement('div')
+      annotation = {text: ""}
+      callback = jasmine.createSpy('callback')
+
+      annotator.viewer.fields[0].load(field, annotation)
+      expect(jQuery(field).html()).toBe("<i>No Comment</i>")
+
     it "should setup the default text field to publish an event on load", ->
       field = document.createElement('div')
       annotation = {text: "test"}
