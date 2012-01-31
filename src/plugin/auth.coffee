@@ -81,13 +81,25 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
   requestToken: ->
     @requestInProgress = true
 
-    $.getJSON(@options.tokenUrl, (data, status, xhr) =>
-      if status isnt 'success'
-        console.error Annotator._t("Couldn't get auth token:") + " #{status}", xhr
-      else
-        @setToken(data)
-        @requestInProgress = false
-    )
+    $.ajax
+      url: @options.tokenUrl
+      dataType: 'json'
+      xhrFields:
+        withCredentials: true # Send any auth cookies to the backend
+
+    # on success, set the auth token
+    .done (data, status, xhr) =>
+      this.setToken(data)
+
+    # on failure, relay any message given by the server to the user with a notification
+    .fail (xhr, status, err) =>
+      msg = Annotator._t("Couldn't get auth token:")
+      console.error "#{msg} #{err}", xhr
+      Annotator.showNotification("#{msg} #{xhr.responseText}", Annotator.Notification.ERROR)
+
+    # always reset the requestInProgress indicator
+    .always =>
+      @requestInProgress = false
 
   # Public: Sets the @token and checks it's validity. If the token is invalid
   # requests a new one from the server.
@@ -133,7 +145,7 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
   #   auth.haveValidToken() # => Returns true if valid.
   #
   # Returns true if the token is valid.
-  haveValidToken: () =>
+  haveValidToken: () ->
     allFields = @token &&
                 @token.authToken &&
                 @token.authTokenIssueTime &&
