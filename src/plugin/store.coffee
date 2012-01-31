@@ -336,11 +336,22 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   # obj       - The data to be sent, either annotation object or query string.
   # onSuccess - A callback Function to call on successful request.
   #
+  # Also extracts any custom headers from data stored on the Annotator#element
+  # under the 'annotator:headers' key. These headers should be stored as key/
+  # value pairs and will be sent with every request.
+  #
+  # Examples
+  #
+  #   annotator.element.data('annotator:headers', {
+  #     'X-My-Custom-Header': 'CustomValue',
+  #     'X-Auth-User-Id': 'bill'
+  #   })
+  #
   # Returns Object literal of $.ajax() options.
   _apiRequestOptions: (action, obj, onSuccess) ->
     opts = {
       type:       this._methodFor(action),
-      beforeSend: this._onBeforeSend,
+      headers:    @element.data('annotator:headers'),
       dataType:   "json",
       success:    (onSuccess or ->),
       error:      this._onError
@@ -426,29 +437,6 @@ class Annotator.Plugin.Store extends Annotator.Plugin
     annotation.highlights = highlights if highlights
 
     data
-
-  # Extracts any custom headers from data stored on the Annotator#element
-  # under the 'annotator:headers' key. These headers should be stored as key/
-  # value pairs and will be sent with every request.
-  #
-  # xhr - The jXMLHttpRequest object.
-  #
-  # Examples
-  #
-  #   annotator.element.data('annotator:headers', {
-  #     'X-My-Custom-Header': 'CustomValue',
-  #     'X-Auth-User-Id': 'bill'
-  #   })
-  #   # This will be called by jQuery.
-  #   store._onBeforeSend(xhr)
-  #   # => Request will be sent with the above headers.
-  #
-  # Returns nothing.
-  _onBeforeSend: (xhr) =>
-    headers = @element.data('annotator:headers')
-    if headers
-      for key, val of headers
-        xhr.setRequestHeader(key, val)
 
   # jQuery.ajax() callback. Displays an error notification to the user if
   # the request failed.

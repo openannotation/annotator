@@ -302,12 +302,30 @@ describe "Annotator.Plugin.Store", ->
       options = store._apiRequestOptions(action, data, callback)
       expect(options).toEqual({
         type:        'GET'
-        beforeSend:  store._onBeforeSend
+        headers:     undefined
         dataType:    "json"
         success:     callback
         error:       store._onError
         data:        '{}'
         contentType: "application/json; charset=utf-8"
+      })
+
+    it "should set custom headers from the data property 'annotator:headers'", ->
+      spyOn(store.element, 'data').andReturn({
+        'x-custom-header-one':   'mycustomheader'
+        'x-custom-header-two':   'mycustomheadertwo'
+        'x-custom-header-three': 'mycustomheaderthree'
+      })
+
+      action   = 'read'
+      data     = {}
+
+      options = store._apiRequestOptions(action, data)
+
+      expect(options.headers).toEqual({
+        'x-custom-header-one':   'mycustomheader'
+        'x-custom-header-two':   'mycustomheadertwo'
+        'x-custom-header-three': 'mycustomheaderthree'
       })
 
     it "should call Store#_dataFor() with the data if action is NOT search", ->
@@ -385,20 +403,6 @@ describe "Annotator.Plugin.Store", ->
 
       expect(data).toEqual('{"id":"cat","custom":"value","customArray":[]}')
       expect(annotation).toEqual({"id":"cat", "custom":"value", "customArray":[]})
-
-  describe "_onBeforeSend", ->
-    it "should call setRequestHeader() on the xhr object with the contents of @element.data('annotator:headers')", ->
-      mockXhr = {setRequestHeader: jasmine.createSpy('XMLHttpRequest#setRequestHeader()')}
-      spyOn(store.element, 'data').andReturn({
-        'x-custom-header-one':   'mycustomheader'
-        'x-custom-header-two':   'mycustomheadertwo'
-        'x-custom-header-three': 'mycustomheaderthree'
-      })
-
-      store._onBeforeSend(mockXhr)
-      expect(mockXhr.setRequestHeader).toHaveBeenCalledWith('x-custom-header-one',  'mycustomheader')
-      expect(mockXhr.setRequestHeader).toHaveBeenCalledWith('x-custom-header-two',  'mycustomheadertwo')
-      expect(mockXhr.setRequestHeader).toHaveBeenCalledWith('x-custom-header-three','mycustomheaderthree')
 
   describe "_onError", ->
     message = null
