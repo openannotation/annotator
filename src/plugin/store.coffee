@@ -99,10 +99,8 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   pluginInit: ->
     return unless Annotator.supported()
 
-    auth = @element.data('annotator:auth')
-
-    if auth
-      auth.withToken(this._getAnnotations)
+    if @annotator.plugins.Auth
+      @annotator.plugins.Auth.withToken(this._getAnnotations)
     else
       this._getAnnotations()
 

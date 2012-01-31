@@ -60,9 +60,6 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
   constructor: (element, options) ->
     super
 
-    # Reference self on element so store knows to wait for auth token.
-    @element.data('annotator:auth', this)
-
     # List of functions to be executed when we have a valid token.
     @waitingForToken = []
 
@@ -130,7 +127,7 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
 
       # Run callbacks waiting for token
       while @waitingForToken.length > 0
-        @waitingForToken.pop().apply()
+        @waitingForToken.pop()(@token)
 
     else
       console.warn Annotator._t("Didn't get a valid token.")
@@ -198,7 +195,7 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
       return
 
     if this.haveValidToken()
-      callback()
+      callback(@token)
     else
       this.waitingForToken.push(callback)
       if not @requestInProgress

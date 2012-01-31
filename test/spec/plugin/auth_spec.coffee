@@ -24,9 +24,6 @@ describe 'Annotator.Plugin.Auth', ->
 
     mock = mockAuth({token: validToken, autoFetch: false})
 
-  it "sets annotator:auth data on its element on init", ->
-    expect($(mock.elem).data('annotator:auth')).toBe(mock.auth)
-
   it "uses token supplied in options by default", ->
     expect(mock.auth.token).toEqual(validToken)
 

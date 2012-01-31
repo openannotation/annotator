@@ -5,6 +5,7 @@ describe "Annotator.Plugin.Store", ->
     element = $('<div></div>')[0]
     store = new Annotator.Plugin.Store(element, {autoFetch: false})
     store.annotator = {
+      plugins: {}
       loadAnnotations: jasmine.createSpy('Annotator#loadAnnotations')
     }
 
@@ -34,7 +35,7 @@ describe "Annotator.Plugin.Store", ->
       authMock = {
         withToken: jasmine.createSpy('Auth#withToken()')
       }
-      store.element.data('annotator:auth', authMock);
+      store.annotator.plugins.Auth = authMock
 
       store.pluginInit()
       expect(authMock.withToken).toHaveBeenCalledWith(store._getAnnotations)
