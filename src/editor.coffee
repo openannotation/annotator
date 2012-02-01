@@ -56,7 +56,7 @@ class Annotator.Editor extends Annotator.Widget
     @fields = []
     @annotation = {}
 
-    this.setupDragabbles()
+    this.setupDraggables()
 
   # Public: Displays the Editor and fires a "show" event.
   # Can be used as an event callback and will call Event#preventDefault()
@@ -299,7 +299,7 @@ class Annotator.Editor extends Annotator.Widget
   # the positions at most 60 times a second.
   #
   # Returns nothing.
-  setupDragabbles: () ->
+  setupDraggables: () ->
     mousedown = null
     classes   = @classes
     editor    = @element
