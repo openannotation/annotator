@@ -129,7 +129,6 @@ class Annotator extends Delegator
         "mouseover": this.clearViewerHideTimer
         "mouseout":  this.startViewerHideTimer
       })
-
     this
 
   # Creates an instance of the Annotator.Editor and assigns it to @editor.
@@ -186,10 +185,10 @@ class Annotator extends Delegator
         browserRange = new Range.BrowserRange(selection.getRangeAt(i))
         browserRange.normalize().limit(@wrapper[0])
 
-    # BrowserRange#normalize() modifies the DOM structure and deselects the
-    # underlying text as a result. So here we remove the selected ranges and
-    # reapply the new ones.
-    selection.removeAllRanges()
+      # BrowserRange#normalize() modifies the DOM structure and deselects the
+      # underlying text as a result. So here we remove the selected ranges and
+      # reapply the new ones.
+      selection.removeAllRanges()
 
     # Remove any ranges that fell outside of @wrapper.
     $.grep ranges, (range) ->
