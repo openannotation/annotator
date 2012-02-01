@@ -1,6 +1,6 @@
 fs     = require 'fs'
-sys    = require 'sys'
 path   = require 'path'
+util   = require 'util'
 
 jasmine = {}
 jasmine.node = {}
@@ -21,7 +21,7 @@ class jasmine.node.ConsoleReporter
   reportSpecStarting: (runner) ->
 
   reportRunnerStarting: (runner) ->
-    sys.puts('Started')
+    util.puts('Started')
     @start = Number(new Date)
 
   reportSuiteResults: (suite) ->
@@ -55,23 +55,23 @@ class jasmine.node.ConsoleReporter
     else
       msg = if @colors then @ansi.red + 'F' + @ansi.none else 'F'
 
-    sys.print(msg)
+    util.print(msg)
 
   reportRunnerResults: (runner) ->
     @elapsed = (Number(new Date) - @start) / 1000
-    sys.puts('\n')
+    util.puts('\n')
     for l in @logger
-      sys.puts(l)
-    sys.puts('Finished in ' + @elapsed + ' seconds')
+      util.puts(l)
+    util.puts('Finished in ' + @elapsed + ' seconds')
 
     summary = this.runnerResultsSummary(runner)
     if @colors
       if runner.results().failedCount is 0
-        sys.puts(@ansi.green + summary + @ansi.none)
+        util.puts(@ansi.green + summary + @ansi.none)
       else
-        sys.puts(@ansi.red + summary + @ansi.none)
+        util.puts(@ansi.red + summary + @ansi.none)
     else
-      sys.puts(summary)
+      util.puts(summary)
 
     @callback(runner, @logger) if @callback
 

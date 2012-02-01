@@ -1,5 +1,5 @@
 describe 'Annotator.Editor', ->
-  editor = null;
+  editor = null
 
   beforeEach ->
     editor = new Annotator.Editor()
@@ -9,7 +9,6 @@ describe 'Annotator.Editor', ->
 
   it "should have an element property", ->
     expect(editor.element).toBeTruthy()
-
     expect(editor.element.hasClass('annotator-editor')).toBeTruthy()
 
   describe "events", ->
@@ -76,8 +75,12 @@ describe 'Annotator.Editor', ->
         }
       ]
 
+      # TODO: investigate why the following tests fail (editor.load blocks)
+      #       unless the following has been called.
+      # spyOn(editor, 'show')
+
     it "should call #show()", ->
-      spyOn(editor, 'show');
+      spyOn(editor, 'show')
       editor.load()
       expect(editor.show).toHaveBeenCalled()
 

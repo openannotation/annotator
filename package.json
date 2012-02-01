@@ -9,8 +9,8 @@
     }
   ],
   "dependencies": {
-    "coffee-script": "1.1.1",
-    "yui-compressor": "0.1.2",
-    "jsdom": "0.2.0"
+    "coffee-script": "1.2.0",
+    "yui-compressor": "0.1.3",
+    "jsdom": "0.2.10"
   }
 }
