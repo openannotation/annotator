@@ -1,8 +1,6 @@
-require.paths.unshift __dirname + "/lib"
-
-specutil  = require 'specutil'
-{Sandbox} = require 'sandbox'
-{jasmine} = require 'jasmine'
+specutil  = require './lib/specutil'
+{Sandbox} = require './lib/sandbox'
+{jasmine} = require './lib/jasmine'
 
 ROOT_DIR     = __dirname + '/..'
 SPEC_DIR     = ROOT_DIR + '/test/spec'
