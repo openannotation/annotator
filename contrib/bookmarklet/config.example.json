@@ -11,6 +11,5 @@
   "store": {
     "prefix": "http://annotateit.org/api"
   },
-  "permissions": true,
   "tags": true
 }
