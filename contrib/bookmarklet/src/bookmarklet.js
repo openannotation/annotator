@@ -138,7 +138,7 @@
 
     loadjQuery: function () {
       var script   = document.createElement('script'),
-          fallback = 'https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js',
+          fallback = 'https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js',
           timer;
 
       timer = setTimeout(function () {
@@ -171,33 +171,27 @@
       jQuery.ajaxSetup({timeout: this.config('timeout', 3000)});
       jQuery.getScript(this.config('externals.source'), callback)
             .error(function () {
-              notification.error('Sorry, we\'re unable to load the annotator at this time');
+              notification.error('Sorry, we\'re unable to load Annotator at this time');
             });
+    },
+
+    authOptions: function () {
+      return {
+        tokenUrl: this.config('auth.tokenUrl', 'http://annotateit.org/api/token')
+      }
     },
 
     storeOptions: function () {
       var uri = location.href.split(/#|\?/).shift();
       return {
-        prefix: this.config('store.prefix'),
-        annotationData: {
-          'uri': uri
-        },
-        loadFromSearch: {
-          'uri': uri,
-          'all_fields': 1
-        }
+        prefix: this.config('store.prefix', 'http://annotateit.org/api'),
+        annotationData: { 'uri': uri },
+        loadFromSearch: { 'uri': uri }
       };
     },
 
     permissionsOptions: function () {
-      return jQuery.extend({}, {
-        userId: function (user) {
-          return user && user.id ? user.id : '';
-        },
-        userString: function (user) {
-          return user && user.name ? user.name : '';
-        }
-      }, this.config('permissions'));
+      return this.config('permissions', {});
     },
 
     setup: function () {
@@ -205,12 +199,9 @@
 
       annotator
         .addPlugin('Unsupported')
+        .addPlugin('Auth', this.authOptions())
         .addPlugin('Store', this.storeOptions())
         .addPlugin('Permissions', this.permissionsOptions())
-        // As we're not requesting the auth tokens for the bookmarklet we
-        // don't need the Auth plugin. Instead we just need to set the required
-        // headers on each request.
-        .element.data('annotator:headers', this.config('auth.headers'));
 
       if (this.config('tags') === true) {
           annotator.addPlugin('Tags');

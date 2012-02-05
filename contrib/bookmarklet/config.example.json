@@ -1,39 +1,16 @@
 {
   // External scripts required for the bookmarklet to run. jQuery is optional.
   "externals": {
-    "jQuery":  "https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js",
-    "source":  "http://localhost:8000/contrib/bookmarklet/pkg/annotator.min.js",
-    "styles":  "http://localhost:8000/contrib/bookmarklet/pkg/annotator.min.css"
+    "jQuery":  "https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js",
+    "source":  "http://assets.annotateit.org/annotator/v1.1.0/annotator-full.min.js",
+    "styles":  "http://assets.annotateit.org/annotator/v1.1.0/annotator.min.css"
   },
-  // These HTTP headers will be submitted with each request to the store.
   "auth": {
-    "headers": {
-      "X-Annotator-Account-Id":            "AccountID",
-      "X-Annotator-User-Id":               "MyUserName",
-      "X-Annotator-Auth-Token":            "SomeVeryLongAndUniqueString",
-      'X-Annotator-Auth-Token-Issue-Time': "1299001411432",
-      'X-Annotator-Auth-Token-TTL':        "315360000" // 10 years!
-    }
+    "tokenUrl": "http://annotateit.org/api/token"
   },
-  // Include the tags plugin?
-  "tags": true,
-  // Subset of the Store plugin options.
   "store": {
-    "prefix": "http://annotateit.org"
+    "prefix": "http://annotateit.org/api"
   },
-  // Subset of the Permissions plugin options.
-  "permissions": {
-    "showViewPermissionsCheckbox": true,
-    "showEditPermissionsCheckbox": true,
-    "user": {
-      "id": "Anonymous",
-      "name": "Anonymous"
-    },
-    "permissions": {
-      "read":   ["MyUserName"],
-      "update": ["MyUserName"],
-      "delete": ["MyUserName"],
-      "admin":  ["MyUserName"]
-    }
-  }
+  "permissions": true,
+  "tags": true
 }
