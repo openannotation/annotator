@@ -142,7 +142,8 @@ packager =
     packager.concat_coffee(src, dest, ->
       code = fs.readFileSync(dest, 'utf8')
 
-      packager.compress(code, 'js', (result) ->
+      packager.compress(code, 'js', (err, result) ->
+        throw err if err
         fs.writeFileSync(dest, result)
         (callback or ->)(result)
       )
@@ -152,7 +153,8 @@ packager =
     packager.concat(src, dest, ->
       code = fs.readFileSync(dest, 'utf8')
 
-      packager.compress(code, 'css', (result) ->
+      packager.compress(code, 'css', (err, result) ->
+        throw err if err
         result = packager.data_uri_ify(result)
         fs.writeFileSync(dest, result)
         (callback or ->)(result)
