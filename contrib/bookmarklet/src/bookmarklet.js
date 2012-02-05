@@ -130,7 +130,7 @@
       var value = this.keypath(options, path, fallback);
 
       if (value === null) {
-        notification.error('Sorry there was an error reading the bookmarklet setting for key: ' + path);
+        notification.error('Sorry, there was an error reading the bookmarklet setting for key: ' + path);
       }
 
       return value;
