@@ -79,7 +79,7 @@ task 'bookmarklet:prereqs', 'Compile the annotator for the bookmarklet', ->
     fs.writeFile(bookmarklet.annotator_css, css)
 
 task 'bookmarklet:build', 'Output bookmarklet source', (options) ->
-  bookmarklet.build !options['no-config'], console.log
+  bookmarklet.build !options['no-config'], (err, src) -> print(src)
 
 task 'bookmarklet:build_demo', 'Create the bookmarklet demo files', ->
   invoke 'bookmarklet:prereqs'
