@@ -119,14 +119,16 @@ class Annotator extends Delegator
       .on("delete", this.onDeleteAnnotation)
       .addField({
         load: (field, annotation) =>
-          $(field).escape(annotation.text || '')
+          if annotation.text
+            $(field).escape(annotation.text)
+          else
+            $(field).html("<i>#{_t 'No Comment'}</i>")
           this.publish('annotationViewerTextField', [field, annotation])
       })
       .element.appendTo(@wrapper).bind({
         "mouseover": this.clearViewerHideTimer
         "mouseout":  this.startViewerHideTimer
       })
-
     this
 
   # Creates an instance of the Annotator.Editor and assigns it to @editor.
@@ -183,8 +185,16 @@ class Annotator extends Delegator
         browserRange = new Range.BrowserRange(selection.getRangeAt(i))
         browserRange.normalize().limit(@wrapper[0])
 
+      # BrowserRange#normalize() modifies the DOM structure and deselects the
+      # underlying text as a result. So here we remove the selected ranges and
+      # reapply the new ones.
+      selection.removeAllRanges()
+
     # Remove any ranges that fell outside of @wrapper.
-    $.grep ranges, (range) -> range
+    $.grep ranges, (range) ->
+      # Add the normed range back to the selection if it exists.
+      selection.addRange(range.toRange()) if range
+      range
 
   # Public: Creates and returns a new annotation object. Publishes the
   # 'beforeAnnotationCreated' event to allow the new annotation to be modified.
@@ -334,9 +344,15 @@ class Annotator extends Delegator
   #
   # Returns an array of highlight Elements.
   highlightRange: (normedRange) ->
-    elemList = for node in normedRange.textNodes()
-      wrapper = @hl.clone().show()
-      $(node).wrap(wrapper).parent().get(0)
+    white = /^\s*$/
+
+    # Ignore text nodes that contain only whitespace characters. This prevents
+    # spans being injected between elements that can only contain a restricted
+    # subset of nodes such as table rows and lists. This does mean that there
+    # may be the odd abandoned whitespace node in a paragraph that is skipped
+    # but better than breaking table layouts.
+    for node in normedRange.textNodes() when not white.test(node.nodeValue)
+      $(node).wrapAll(@hl).parent().show()[0]
 
   # Public: Registers a plugin with the Annotator. A plugin can only be
   # registered once. The plugin will be instantiated in the following order.
@@ -590,6 +606,10 @@ class Annotator.Plugin extends Delegator
 
 # Bind our local copy of jQuery so plugins can use the extensions.
 Annotator.$ = $
+
+# Export other modules for use in plugins.
+Annotator.Delegator = Delegator
+Annotator.Range = Range
 
 # Bind gettext helper so plugins can use localisation.
 Annotator._t = _t
