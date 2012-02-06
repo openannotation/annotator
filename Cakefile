@@ -137,7 +137,6 @@ packager =
     exec "cat #{src.join ' '} | coffee -sp > #{dest}", callback
 
   compress: (src, type, callback) ->
-    return src
     yc = require 'yui-compressor'
 
     yc.compile(src, { type: type }, callback)
