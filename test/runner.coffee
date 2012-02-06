@@ -64,7 +64,8 @@ for specFile in specFiles
   s.require(specFile)
 
 runnerFinished = (runner, log) ->
-  console.log("As of 2011-06-29, any failures you see should *not* be occurring. Please report them at http://github.com/okfn/annotator/issues.")
+  # console.log("As of 2011-06-29, any failures you see should *not* be occurring. Please report them at http://github.com/okfn/annotator/issues.")
+  console.log("As of 2012-02-06, you could well be seeing up to 35 failures, due to what looks like a bug in jsdom. Sorry about that.")
 
 reporter = new jasmine.node.ConsoleReporter(runnerFinished, colors=true, verbose=false)
 

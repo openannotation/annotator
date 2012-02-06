@@ -32,6 +32,9 @@ task 'watch', 'Run development source watcher', ->
 option '-f', '--filter [string]', 'Filename filter to apply to `cake test`'
 
 task 'test', 'Run tests. Filter tests using `-f [filter]` eg. cake -f auth test', (options) ->
+  console.log "WARNING: A number of tests are currently broken, pending resolution of jsdom",
+              "issue 394. See:\n  https://github.com/tmpvar/jsdom/issues/394"
+
   args = ["#{__dirname}/test/runner.coffee"]
   args.push(options.filter) if options.filter
 
