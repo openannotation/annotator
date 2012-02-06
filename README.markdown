@@ -92,7 +92,7 @@ If you wish to develop Annotator, you'll need to have a working installation of 
 
 If that worked, you should be able to run the tests:
 
-    $ ./node_modules/coffee-script/bin/cake test
+    $ `npm bin`/cake test
     Started
     .....................................................
 
