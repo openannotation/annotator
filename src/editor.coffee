@@ -56,7 +56,7 @@ class Annotator.Editor extends Annotator.Widget
     @fields = []
     @annotation = {}
 
-    this.setupDragabbles()
+    this.setupDraggables()
 
   # Public: Displays the Editor and fires a "show" event.
   # Can be used as an event callback and will call Event#preventDefault()
@@ -81,6 +81,7 @@ class Annotator.Editor extends Annotator.Widget
     @element.find('.annotator-save').addClass(@classes.focus)
     @element.find(':input:first').focus()
     this.checkOrientation().publish('show')
+
 
   # Public: Hides the Editor and fires a "hide" event. Can be used as an event
   # callback and will call Event#preventDefault() on the supplied event.
@@ -129,10 +130,10 @@ class Annotator.Editor extends Annotator.Widget
     for field in @fields
       field.load(field.element, @annotation)
 
-    this.show();
+    this.show()
 
-  # Public: Hides the Editor and passes the anotation to all registered fields
-  # so they can update it's state. It then fires the "save" event so that other
+  # Public: Hides the Editor and passes the annotation to all registered fields
+  # so they can update its state. It then fires the "save" event so that other
   # parties can further modify the annotation.
   # Can be used as an event callback and will call Event#preventDefault() on the
   # supplied event.
@@ -298,7 +299,7 @@ class Annotator.Editor extends Annotator.Widget
   # the positions at most 60 times a second.
   #
   # Returns nothing.
-  setupDragabbles: () ->
+  setupDraggables: () ->
     mousedown = null
     classes   = @classes
     editor    = @element

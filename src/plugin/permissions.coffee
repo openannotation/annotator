@@ -121,6 +121,10 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     createCallback = (method, type) ->
       (field, annotation) -> self[method].call(self, type, field, annotation)
 
+    # Set up user and default permissions from auth token if none currently given
+    if !@user and @annotator.plugins.Auth
+      @annotator.plugins.Auth.withToken(this._setUserFromToken)
+
     if @options.showViewPermissionsCheckbox == true
       @annotator.editor.addField({
         type:   'checkbox'
@@ -341,4 +345,18 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     else if annotation.user and not this.authorize(null, annotation)
       controls.hideEdit()
       controls.hideDelete()
+
+  # Sets the Permissions#user property on the basis of a received authToken.
+  #
+  # token - the authToken received by the Auth plugin
+  #
+  # Returns nothing.
+  _setUserFromToken: (token) =>
+    this.setUser(token.userId)
+    @options.permissions = {
+      'read':   [] # anyone
+      'update': [@user]
+      'delete': [@user]
+      'admin':  [@user]
+    }
 

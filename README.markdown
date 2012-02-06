@@ -86,24 +86,20 @@ Useful events are triggered on the Annotator `element` (passed to the constructo
 Development
 -----------
 
-If you wish to develop annotator, you'll need to have a working installation of [Node.js][node] (v0.2.x). I'd highly recommend installing both Node.js and the [Node Package Manager][npm], after which you can run the following to get up and running:
+If you wish to develop Annotator, you'll need to have a working installation of [Node.js][node] (v0.6.x). I'd highly recommend installing both Node.js and the [Node Package Manager][npm], after which you can run the following to get up and running:
 
     $ npm install .
 
-In order to run the `rake package` task with JavaScript and CSS minification you'll need the yui-compressor gem installed:
-
-    $ gem install yui-compressor
-
 If that worked, you should be able to run the tests:
 
-    $ cake test
+    $ ./node_modules/coffee-script/bin/cake test
     Started
     .....................................................
 
     Finished in 0.385 seconds
     18 tests, 85 assertions, 0 failures
 
-The `cake` command is provided by CoffeeScript. Note that *some* tests may fail, due to brokenness in jsdom. There should be a note at the end of the output for that command informing you if we're expecting any tests to fail. The reason we don't simply comment these tests out until jsdom is fixed is that the tests can also be run by opening `test/runner.html` in a browser.
+Note that *some* tests may fail, due to brokenness in jsdom. There should be a note at the end of the output for that command informing you if we're expecting any tests to fail. The reason we don't simply comment these tests out until jsdom is fixed is that the tests can also be run by opening `test/runner.html` in a browser.
 
 [node]: http://nodejs.org
 [coffee]: http://jashkenas.github.com/coffee-script/

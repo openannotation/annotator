@@ -55,26 +55,18 @@ describe 'Annotator::setupPlugins', ->
       spyOn Annotator.Plugin.Store.prototype, 'pluginInit'
 
       annotator = new Annotator $('<div />')[0]
-      annotator.setupPlugins
-        userId:    'bill'
-        userName:  'Bill'
-        accountId: 'some-fake-id'
-        authToken: 'another-fake-token'
+      annotator.setupPlugins()
 
-    describe 'it includes the Store plugin', ->
-      it 'should add the Store plugin', ->
-        expect(annotator.plugins.Store).toBeDefined()
 
-    describe 'it includes the Permissions plugin', ->
-      it 'should add the Permissions plugin', ->
-        expect(annotator.plugins.Permissions).toBeDefined()
+  it 'should add the Store plugin', ->
+    expect(annotator.plugins.Store).toBeDefined()
 
-    describe 'it includes the Auth headers', ->
-      it 'should add custom headers to the Annotator @element', ->
-        expect(annotator.element.data('annotator:headers')).toEqual
-          'X-Annotator-User-Id':    'bill'
-          'X-Annotator-Account-Id': 'some-fake-id'
-          'X-Annotator-Auth-Token': 'another-fake-token'
+  it 'should add the Permissions plugin', ->
+    expect(annotator.plugins.Permissions).toBeDefined()
+
+  it 'should add the Auth plugin', ->
+    expect(annotator.plugins.Auth).toBeDefined()
+
 
   describe 'called with plugin options', ->
     beforeEach -> annotator = new Annotator $('<div />')[0]

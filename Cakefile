@@ -32,6 +32,9 @@ task 'watch', 'Run development source watcher', ->
 option '-f', '--filter [string]', 'Filename filter to apply to `cake test`'
 
 task 'test', 'Run tests. Filter tests using `-f [filter]` eg. cake -f auth test', (options) ->
+  console.log "WARNING: A number of tests are currently broken, pending resolution of jsdom",
+              "issue 394. See:\n  https://github.com/tmpvar/jsdom/issues/394"
+
   args = ["#{__dirname}/test/runner.coffee"]
   args.push(options.filter) if options.filter
 
@@ -79,7 +82,7 @@ task 'bookmarklet:prereqs', 'Compile the annotator for the bookmarklet', ->
     fs.writeFile(bookmarklet.annotator_css, css)
 
 task 'bookmarklet:build', 'Output bookmarklet source', (options) ->
-  bookmarklet.build !options['no-config'], console.log
+  bookmarklet.build !options['no-config'], (err, src) -> print(src)
 
 task 'bookmarklet:build_demo', 'Create the bookmarklet demo files', ->
   invoke 'bookmarklet:prereqs'
@@ -143,7 +146,8 @@ packager =
     packager.concat_coffee(src, dest, ->
       code = fs.readFileSync(dest, 'utf8')
 
-      packager.compress(code, 'js', (result) ->
+      packager.compress(code, 'js', (err, result) ->
+        throw err if err
         fs.writeFileSync(dest, result)
         (callback or ->)(result)
       )
@@ -153,7 +157,8 @@ packager =
     packager.concat(src, dest, ->
       code = fs.readFileSync(dest, 'utf8')
 
-      packager.compress(code, 'css', (result) ->
+      packager.compress(code, 'css', (err, result) ->
+        throw err if err
         result = packager.data_uri_ify(result)
         fs.writeFileSync(dest, result)
         (callback or ->)(result)

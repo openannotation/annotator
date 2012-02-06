@@ -1,0 +1,7 @@
+{
+  "externals": {
+    "source":  "http://assets.annotateit.org/annotator/v1.1.0/annotator-full.min.js",
+    "styles":  "http://assets.annotateit.org/annotator/v1.1.0/annotator.min.css"
+  },
+  "tags": true
+}
