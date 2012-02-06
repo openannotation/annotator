@@ -92,14 +92,14 @@ If you wish to develop Annotator, you'll need to have a working installation of 
 
 If that worked, you should be able to run the tests:
 
-    $ cake test
+    $ ./node_modules/coffee-script/bin/cake test
     Started
     .....................................................
 
     Finished in 0.385 seconds
     18 tests, 85 assertions, 0 failures
 
-The `cake` command is provided by [CoffeeScript][coffee]. Note that *some* tests may fail, due to brokenness in jsdom. There should be a note at the end of the output for that command informing you if we're expecting any tests to fail. The reason we don't simply comment these tests out until jsdom is fixed is that the tests can also be run by opening `test/runner.html` in a browser.
+Note that *some* tests may fail, due to brokenness in jsdom. There should be a note at the end of the output for that command informing you if we're expecting any tests to fail. The reason we don't simply comment these tests out until jsdom is fixed is that the tests can also be run by opening `test/runner.html` in a browser.
 
 [node]: http://nodejs.org
 [coffee]: http://jashkenas.github.com/coffee-script/
