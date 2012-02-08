@@ -79,8 +79,15 @@ class Annotator.Editor extends Annotator.Widget
 
     @element.removeClass(@classes.hide)
     @element.find('.annotator-save').addClass(@classes.focus)
-    @element.find(':input:first').focus()
-    this.checkOrientation().publish('show')
+
+    # invert if necessary
+    this.checkOrientation()
+
+    # give main textarea focus
+    focusPos = if this.isInvertedY() then ':last' else ':first'
+    @element.find(":input#{focusPos}").focus()
+
+    this.publish('show')
 
 
   # Public: Hides the Editor and fires a "hide" event. Can be used as an event

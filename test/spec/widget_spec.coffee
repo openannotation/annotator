@@ -28,11 +28,23 @@ describe "Annotator.Widget", ->
       widget.invertX()
       expect(widget.element.hasClass(widget.classes.invert.x)).toBe(true)
 
-  describe "invertX", ->
+  describe "invertY", ->
     it "should add the Widget#classes.invert.y class to the Widget#element", ->
       widget.element.removeClass(widget.classes.invert.y)
       widget.invertY()
       expect(widget.element.hasClass(widget.classes.invert.y)).toBe(true)
+
+  describe "isInvertedY", ->
+    it "should return the vertical inverted status of the Widget", ->
+      expect(widget.isInvertedY()).toBe(false)
+      widget.invertY()
+      expect(widget.isInvertedY()).toBe(true)
+
+  describe "isInvertedX", ->
+    it "should return the horizontal inverted status of the Widget", ->
+      expect(widget.isInvertedX()).toBe(false)
+      widget.invertX()
+      expect(widget.isInvertedX()).toBe(true)
 
   describe "resetOrientation", ->
     it "should remove the Widget#classes.invert classes from the Widget#element", ->
