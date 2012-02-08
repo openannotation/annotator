@@ -286,13 +286,6 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     # See if we can authorise without a user.
     if this.authorize(action, annotation || {}, null)
       input.attr('checked', 'checked')
-
-      # If the default permissions allow anyone to edit this annotation then
-      # disable the checkbox as unchecking it will do nothing.
-      dummy = {permissions: @options.permissions}
-      if this.authorize(action, dummy, null)
-        input.attr('disabled', 'disabled')
-
     else
       input.removeAttr('checked')
 
@@ -312,13 +305,13 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     dataKey = type + '-permissions'
 
     if $(field).find('input').is(':checked')
-      # Cache the permissions in case the user unchecks global permissions later.
-      $.data(annotation, dataKey, annotation.permissions[type])
       annotation.permissions[type] = []
     else
-      # Retrieve and re-apply the permissions.
-      permissions = $.data(annotation, dataKey)
-      annotation.permissions[type] = permissions if permissions
+      # Clearly, the permissions model allows for more complex entries than this,
+      # but our UI presents a checkbox, so we can only interpret "prevent others
+      # from viewing" as meaning "allow only me to view". This may want changing
+      # in the future.
+      annotation.permissions[type] = [@user]
 
   # Field callback: updates the annotation viewer to inlude the display name
   # for the user obtained through Permissions#options.userString().

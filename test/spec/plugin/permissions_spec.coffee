@@ -263,7 +263,6 @@ describe 'Annotator.Plugin.Permissions', ->
       {},
       {permissions: {'update': ['user:Alice']}},
       {permissions: {'update': ['user:Alice']}},
-      {permissions: {'update': []}},
       {permissions: {'update': ['Alice'], 'admin': ['Alice']}}
       {permissions: {'update': ['Alice'], 'admin': ['Bob']}}
     ]
@@ -271,7 +270,7 @@ describe 'Annotator.Plugin.Permissions', ->
     beforeEach ->
       checkbox = $('<input type="checkbox" />')
       field = $('<li />').append(checkbox).appendTo(permissions.element)
-      
+
       permissions.setUser('Alice')
       permissions.updatePermissionsField('update', field, annotations.shift())
 
@@ -285,9 +284,6 @@ describe 'Annotator.Plugin.Permissions', ->
 
     it "should enable the checkbox by default", ->
       expect(checkbox[0].getAttribute('disabled')).toBeFalsy()
-
-    it "should disable the checkbox if by default anyone can update the annotation", ->
-      expect(checkbox[0].disabled).toBeTruthy()
 
     it "should display the field if the current user has 'admin' permissions", ->
       expect(field.is(':visible')).toBeTruthy()
