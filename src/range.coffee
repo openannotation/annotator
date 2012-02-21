@@ -72,6 +72,13 @@ class Range.BrowserRange
         # previous one.
         node = it or node.childNodes[offset - 1]
 
+        # if node doesn't have any children, it's a <br> or <hr> or
+        # other self-closing tag, and we actually want the textNode
+        # that ends just before it
+        if node.nodeType is 1 and not node.firstChild
+          it = null # null out ref to node so offset is correctly calculated below.
+          node = node.previousSibling
+
         # textNode nodeType == 3
         while node.nodeType isnt 3
           node = node.firstChild
