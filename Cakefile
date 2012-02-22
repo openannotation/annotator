@@ -29,10 +29,11 @@ PLUGINS = [ 'tags'
           , 'markdown'
           , 'unsupported'
           , 'permissions'
+          , 'annotateitpermissions'
           ]
 
 BOOKMARKLET_PATH = 'contrib/bookmarklet'
-BOOKMARKLET_PLUGINS = ['store', 'permissions', 'unsupported', 'tags']
+BOOKMARKLET_PLUGINS = ['auth', 'store', 'permissions', 'annotateitpermissions', 'unsupported', 'tags']
 
 task 'watch', 'Run development source watcher', ->
   run "#{COFFEE} --watch --bare --compile --output #{__dirname}/lib #{__dirname}/src"
@@ -81,13 +82,13 @@ task 'package:clean', 'Clean package files', ->
 
 option '-c', '--no-config', 'Do not embed config file'
 
-task 'bookmarklet:prereqs', 'Compile the annotator for the bookmarklet', ->
+task 'bookmarklet:prereqs', 'Compile the annotator for the bookmarklet', (options) ->
   files = util.src_files(CORE).concat(util.src_files(BOOKMARKLET_PLUGINS, 'plugin/'))
 
-  packager.build_coffee files, (output) ->
+  packager.build_coffee files, !options['no-minify'], (output) ->
     fs.writeFile bookmarklet.annotator_js, output
 
-  packager.build_css ['css/annotator.css'], (css) ->
+  packager.build_css ['css/annotator.css'], !options['no-minify'], (css) ->
     css = css.replace(/(image\/png)?;|\}/g, (_, m) ->
       return _ if m == 'image/png'
       '!important' + _
