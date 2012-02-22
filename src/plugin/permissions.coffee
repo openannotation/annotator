@@ -63,14 +63,33 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     #
     # annotation - The annotation on which the action is being requested.
     # action - The action being requested: e.g. 'update', 'delete'.
+    # user - The user object (or string) requesting the action. This is usually
+    #        automatically passed by Permissions#authorize as the current user (@user)
     #
-    # Examples:
+    #   permissions.setUser(null)
+    #   permissions.authorize('update', {})
+    #   # => true
     #
-    #   # Default settings.
-    #   plugin.setUser('Alice')
-    #   annotation = {user: 'Bob', permissions: {'update': ['Alice', 'Bob']}}
-    #   plugin.authorize('update', annotation)
-    #   # => true ('Alice' is in the array of tokens for the update action)
+    #   permissions.setUser('alice')
+    #   permissions.authorize('update', {user: 'alice'})
+    #   # => true
+    #   permissions.authorize('update', {user: 'bob'})
+    #   # => false
+    #
+    #   permissions.setUser('alice')
+    #   permissions.authorize('update', {
+    #     user: 'bob',
+    #     permissions: ['update': ['alice', 'bob']]
+    #   })
+    #   # => true
+    #   permissions.authorize('destroy', {
+    #     user: 'bob',
+    #     permissions: [
+    #       'update': ['alice', 'bob']
+    #       'destroy': ['bob']
+    #     ]
+    #   })
+    #   # => false
     #
     # Returns a Boolean, true if the user is authorised for the token provided.
     userAuthorize: (action, annotation, user) ->
