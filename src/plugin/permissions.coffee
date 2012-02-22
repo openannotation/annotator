@@ -91,7 +91,7 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
 
       # Coarse-grained authorization
       else if annotation.user
-        return user and this.userId(user) == annotation.user
+        return user and this.userId(user) == this.userId(annotation.user)
 
       # No authorization info on annotation: free-for-all!
       true
