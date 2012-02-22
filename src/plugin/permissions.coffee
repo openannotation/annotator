@@ -187,8 +187,8 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   setUser: (user) ->
     @user = user
 
-  # Event callback: Appends the @options.permissions objects to the
-  # provided annotation object.
+  # Event callback: Appends the @user and @options.permissions objects to the
+  # provided annotation object. Only appends the user if one has been set.
   #
   # annotation - An annotation object.
   #
