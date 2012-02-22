@@ -148,21 +148,29 @@ describe 'Annotator.Plugin.Permissions', ->
         # In this example it is assumed that all users (if present) are objects
         # with an "id" and optional "groups" property. The group will default
         # to "public" which means anyone can edit it.
-        permissions.options.userAuthorize = (user, token) ->
+        permissions.options.userAuthorize = (action, annotation, user) ->
           userGroups = (user) -> user?.groups || ['public']
 
-          if /^(?:group|user):/.test(token)
-            [key,values...] = token.split(':')
-            value = values.join(':')
+          tokenTest = (token, user) ->
+            if /^(?:group|user):/.test(token)
+              [key, values...] = token.split(':')
+              value = values.join(':')
 
-            if key == 'group'
-              groups = userGroups(user)
-              return $.inArray(value, groups) != -1
+              if key == 'group'
+                groups = userGroups(user)
+                return value in groups
 
-            else if user and key == 'user'
-              return value == user.id
+              else if user and key == 'user'
+                return value == user.id
 
-          false
+          if annotation.permissions
+            tokens = annotation.permissions[action] || []
+
+            for token in tokens
+              if tokenTest(token, user)
+                return true
+
+          return false
 
         annotations = [
           { permissions: {    # Anyone can update, assuming default @options.userGroups.

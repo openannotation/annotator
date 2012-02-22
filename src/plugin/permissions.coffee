@@ -50,14 +50,19 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     # perform an action on an annotation. Overriding this function allows
     # a far more complex permissions sysyem.
     #
-    # By default this compares the passed user to the token but can be
-    # over-ridden in the @options object passed into the constructor.
+    # By default this authorizes the action if any of three scenarios are true:
     #
-    # user  - An annotation user object. Can be null if no user is set.
-    # token - A String permissions token. These are set in the @options.permissions
-    #         Object. e.g. permissions = {read: [], update: ['Alice']}. Here the
-    #         one token for the update permisson is 'Alice' and this can be
-    #         compare to the user parameter to see if they match.
+    #     1) the annotation has a 'permissions' object, and either the field for
+    #        the specified action is missing, empty, or contains the userId of the
+    #        current user, i.e. @options.userId(@user)
+    #
+    #     2) the annotation has a 'user' property, and @options.userId(@user) matches
+    #        'annotation.user'
+    #
+    #     3) the annotation has no 'permissions' or 'user' properties
+    #
+    # annotation - The annotation on which the action is being requested.
+    # action - The action being requested: e.g. 'update', 'delete'.
     #
     # Examples:
     #
@@ -67,28 +72,35 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     #   plugin.authorize('update', annotation)
     #   # => true ('Alice' is in the array of tokens for the update action)
     #
-    #   # Contrived example of a custom JavaScript function that allows a
-    #   # "group:Admin" token as well as an id for validation.
-    #   plugin.options.userAuthorize = function (user, token) {
-    #     if (user.group === 'Admin' && token === 'group:Admin') {
-    #       return true;
-    #     }
-    #     else if (user.id === token) {
-    #       return true;
-    #     }
-    #     return false;
-    #   }
-    #   plugin.setUser({id: 'Alice', group: 'Admin'})
-    #   annotation = {user: 'Bob', permissions: {'update': ['Bob', 'group:Admin']}}
-    #   # => true (User has the "admin" value set to thier group property)
-    #
     # Returns a Boolean, true if the user is authorised for the token provided.
-    userAuthorize: (user, token) -> this.userId(user) == token
+    userAuthorize: (action, annotation, user) ->
+      # Fine-grained custom authorization
+      if annotation.permissions
+        tokens = annotation.permissions[action] || []
+
+        if tokens.length == 0
+          # Empty or missing tokens array: anyone can perform action.
+          return true
+
+        for token in tokens
+          if this.userId(user) == token
+            return true
+
+        # No tokens matched: action should not be performed.
+        return false
+
+      # Coarse-grained authorization
+      else if annotation.user
+        return user and this.userId(user) == annotation.user
+
+      # No authorization info on annotation: free-for-all!
+      true
 
     # Default user object.
     user: ''
 
-    # Default permissions for all annotations. Anyone can perform any action.
+    # Default permissions for all annotations. Anyone can do anything
+    # (assuming default userAuthorize function).
     permissions: {
       'read':   []
       'update': []
@@ -123,7 +135,7 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
 
     # Set up user and default permissions from auth token if none currently given
     if !@user and @annotator.plugins.Auth
-      @annotator.plugins.Auth.withToken(this._setUserFromToken)
+      @annotator.plugins.Auth.withToken(this._setAuthFromToken)
 
     if @options.showViewPermissionsCheckbox == true
       @annotator.editor.addField({
@@ -175,8 +187,8 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   setUser: (user) ->
     @user = user
 
-  # Event callback: Appends the @user and @options.permissions objects to the
-  # provided annotation object. Only appends the user if one has been set.
+  # Event callback: Appends the @options.permissions objects to the
+  # provided annotation object.
   #
   # annotation - An annotation object.
   #
@@ -185,89 +197,29 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   #   annotation = {text: 'My comment'}
   #   permissions.addFieldsToAnnotation(annotation)
   #   console.log(annotation)
-  #   # => {text: 'My comment', user: 'Alice', permissions: {...}}
+  #   # => {text: 'My comment', permissions: {...}}
   #
   # Returns nothing.
   addFieldsToAnnotation: (annotation) =>
     if annotation
       annotation.permissions = @options.permissions
-      annotation.user = @user if @user
+      if @user
+        annotation.user = @user
 
   # Public: Determines whether the provided action can be performed on the
-  # annotation. It does this in several stages.
-  #
-  # 1. If the annotation has a permissions property with an array of tokens
-  #    for the current action. If it does not have an array for the current
-  #    action it will assume the action can ber performed.
-  #    If an array of tokens are present it will pass them through to the
-  #    @options.userAuthorize() callback and return the result.
-  #
-  # 2. If the annotation has a user property and @user is set it will pass the
-  #    annotation.user into @options.userId() and see if it matches the current
-  #    user (@user). If it does it will return true.
-  #
-  # 3. Finally if none of these criteria are met the method will assume the
-  #    annotation is editable and return true.
-  #
-  # action     - String representing the action to be performed. Must be one of
-  #              the following: read/update/destroy/admin. See @options.permissions
-  #              for more details.
-  # annotation - An Object literal annotation.
-  # user       - User Object to authorise. (default: @user)
-  #
-  # Examples
-  #
-  #   permissions.setUser(null)
-  #   permissions.authorize('update', {})
-  #   # => true
-  #
-  #   permissions.setUser('alice')
-  #   permissions.authorize('update', {user: 'alice'})
-  #   # => true
-  #   permissions.authorize('update', {user: 'bob'})
-  #   # => false
-  #
-  #   permissions.setUser('alice')
-  #   permissions.authorize('update', {
-  #     user: 'bob',
-  #     permissions: ['update': ['alice', 'bob']]
-  #   })
-  #   # => true
-  #   permissions.authorize('destroy', {
-  #     user: 'bob',
-  #     permissions: [
-  #       'update': ['alice', 'bob']
-  #       'destroy': ['bob']
-  #     ]
-  #   })
-  #   # => false
+  # annotation. This uses the user-configurable 'userAuthorize' method to
+  # determine if an annotation is annotatable. See the default method for
+  # documentation on its behaviour.
   #
   # Returns a Boolean, true if the action can be performed on the annotation.
   authorize: (action, annotation, user) ->
     user = @user if user == undefined
 
-    # Fine-grained custom authorization
-    if annotation.permissions
-      tokens = annotation.permissions[action] || []
+    if @options.userAuthorize
+      return @options.userAuthorize.call(@options, action, annotation, user)
 
-      if tokens.length == 0
-        # Empty or missing tokens array so anyone can perform action.
-        return true
-
-      for token in tokens
-        if @options.userAuthorize.call(@options, user, token)
-          return true
-
-      # No tokens matched, action should not be perfomed.
-      return false
-
-    # Coarse-grained authorization
-    else if annotation.user
-      # If @user is set, and the annotation belongs to @user, allow.
-      return user and @options.userId(user) == annotation.user
-
-    # No authorization info on annotation: free-for-all!
-    true
+    else # userAuthorize nulled out: free-for-all!
+      return true
 
   # Field callback: Updates the state of the "anyone can…" checkboxes
   #
@@ -331,25 +283,14 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     else
       field.remove()
 
-    if annotation.permissions
-      controls.hideEdit()   unless this.authorize('update', annotation)
-      controls.hideDelete() unless this.authorize('delete', annotation)
-
-    else if annotation.user and not this.authorize(null, annotation)
-      controls.hideEdit()
-      controls.hideDelete()
+    controls.hideEdit()   unless this.authorize('update', annotation)
+    controls.hideDelete() unless this.authorize('delete', annotation)
 
   # Sets the Permissions#user property on the basis of a received authToken.
   #
   # token - the authToken received by the Auth plugin
   #
   # Returns nothing.
-  _setUserFromToken: (token) =>
+  _setAuthFromToken: (token) =>
     this.setUser(token.userId)
-    @options.permissions = {
-      'read':   [] # anyone
-      'update': [@user]
-      'delete': [@user]
-      'admin':  [@user]
-    }
 
