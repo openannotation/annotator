@@ -1,4 +1,5 @@
-(function (options, window, document, undefined) {
+(function (options, window, document) {
+  "use strict";
 
   var body = document.body,
       head = document.getElementsByTagName('head')[0],
@@ -9,7 +10,7 @@
 
   while (globals.length) {
     namespace = globals.shift();
-    isLoaded[namespace] = namespace in window;
+    isLoaded[namespace] = window.hasOwnProperty(namespace);
   }
 
   notification = (function () {
@@ -149,7 +150,7 @@
       script.onload = function () {
         // Reassign our local copy of jQuery.
         jQuery = window.jQuery;
-        
+
         clearTimeout(timer);
         body.removeChild(script);
         bookmarklet.load(function () {
@@ -163,22 +164,25 @@
     },
 
     load: function (callback) {
+      var annotatorSource = this.config('externals.source', 'http://assets.annotateit.org/bookmarklet/annotator.min.js'),
+          annotatorStyles = this.config('externals.styles', 'http://assets.annotateit.org/bookmarklet/annotator.min.css');
+
       head.appendChild(jQuery('<link />', {
         rel: 'stylesheet',
-        href: this.config('externals.styles')
+        href: annotatorStyles
       })[0]);
 
       jQuery.ajaxSetup({timeout: this.config('timeout', 3000)});
-      jQuery.getScript(this.config('externals.source'), callback)
+      jQuery.getScript(annotatorSource, callback)
             .error(function () {
-              notification.error('Sorry, we\'re unable to load Annotator at this time');
+              notification.error('Sorry, we\'re unable to load Annotator at the moment...');
             });
     },
 
     authOptions: function () {
       return {
         tokenUrl: this.config('auth.tokenUrl', 'http://annotateit.org/api/token')
-      }
+      };
     },
 
     storeOptions: function () {
@@ -190,8 +194,8 @@
       };
     },
 
-    permissionsOptions: function () {
-      return this.config('permissions', {});
+    annotateItPermissionsOptions: function () {
+      return this.config('annotateItPermissions', {});
     },
 
     setup: function () {
@@ -201,7 +205,7 @@
         .addPlugin('Unsupported')
         .addPlugin('Auth', this.authOptions())
         .addPlugin('Store', this.storeOptions())
-        .addPlugin('Permissions', this.permissionsOptions())
+        .addPlugin('AnnotateItPermissions', this.annotateItPermissionsOptions());
 
       if (this.config('tags') === true) {
           annotator.addPlugin('Tags');
@@ -234,7 +238,7 @@
     init: function () {
       if (window._annotator.instance) {
         window._annotator.Annotator.showNotification(
-          'Annotator is already loaded. Try highlighting some text to get started'
+          'Annotator is already loaded. Try highlighting some text to get started.'
         );
       } else {
         notification.show('Loading Annotator into page');
