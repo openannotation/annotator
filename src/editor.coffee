@@ -23,7 +23,6 @@ class Annotator.Editor extends Annotator.Widget
               <a href="#cancel" class="annotator-cancel">""" + _t('Cancel') + """</a>
               <a href="#save" class="annotator-save annotator-focus">""" + _t('Save') + """</a>
             </div>
-            <span class="annotator-resize"></span>
           </form>
         </div>
         """
@@ -55,8 +54,6 @@ class Annotator.Editor extends Annotator.Widget
 
     @fields = []
     @annotation = {}
-
-    this.setupDraggables()
 
   # Public: Displays the Editor and fires a "show" event.
   # Can be used as an event callback and will call Event#preventDefault()
@@ -260,25 +257,11 @@ class Annotator.Editor extends Annotator.Widget
 
     @fields.push field
 
+    # When main textarea is added, add resize handle
+    if @fields.length is 1 and field.type is 'textarea'
+      this.setupDraggables()
+
     field.element
-
-  checkOrientation: ->
-    super
-
-    list = @element.find('ul')
-    controls = @element.find('.annotator-controls')
-
-    flipFields = ->
-      list.children().each -> $(this).parent().prepend(this)
-
-    if @element.hasClass(@classes.invert.y) and list.is(':first-child')
-      controls.insertBefore(list)
-      flipFields()
-    else if controls.is(':first-child')
-      controls.insertAfter(list)
-      flipFields()
-
-    this
 
   # Event callback. Listens for the following special keypresses.
   # - escape: Hides the editor
@@ -307,6 +290,11 @@ class Annotator.Editor extends Annotator.Widget
   #
   # Returns nothing.
   setupDraggables: () ->
+    # Find the first text area if there is one.
+    textarea = @element.find('textarea:first')
+    if textarea
+      $('<span class="annotator-resize"></span>').insertAfter(textarea)
+
     mousedown = null
     classes   = @classes
     editor    = @element
