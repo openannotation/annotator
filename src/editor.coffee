@@ -81,8 +81,7 @@ class Annotator.Editor extends Annotator.Widget
     this.checkOrientation()
 
     # give main textarea focus
-    focusPos = if this.isInvertedY() then ':last' else ':first'
-    @element.find(":input#{focusPos}").focus()
+    @element.find(":input:first").focus()
 
     this.publish('show')
 
