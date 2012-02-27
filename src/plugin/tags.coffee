@@ -2,6 +2,22 @@
 # stored in an Array on the annotation as tags.
 class Annotator.Plugin.Tags extends Annotator.Plugin
 
+  options:
+    # Configurable function which accepts a string (the contents)
+    # of the tags input as an argument, and returns an array of
+    # tags.
+    parseTags: (string) ->
+      string = $.trim(string)
+
+      tags = []
+      tags = string.split(/\s+/) if string
+      tags
+
+    # Configurable function which accepts an array of tags and
+    # returns a string which will be used to fill the tags input.
+    stringifyTags: (array) ->
+      array.join(" ")
+
   # The field element added to the Annotator.Editor wrapped in jQuery. Cached to
   # save having to recreate it everytime the editor is displayed.
   field: null
@@ -48,11 +64,7 @@ class Annotator.Plugin.Tags extends Annotator.Plugin
   #
   # Returns Array of parsed tags.
   parseTags: (string) ->
-    string = $.trim(string)
-
-    tags = []
-    tags = string.split(/\s+/) if string
-    tags
+    @options.parseTags(string)
 
   # Public: Takes an array of tags and serialises them into a String.
   #
@@ -65,7 +77,7 @@ class Annotator.Plugin.Tags extends Annotator.Plugin
   #
   # Returns Array of parsed tags.
   stringifyTags: (array) ->
-    array.join(" ")
+    @options.stringifyTags(array)
 
   # Annotator.Editor callback function. Updates the @input field with the
   # tags attached to the provided annotation.
