@@ -262,6 +262,19 @@ class Annotator.Editor extends Annotator.Widget
 
     field.element
 
+  checkOrientation: ->
+    super
+
+    list = @element.find('ul')
+    controls = @element.find('.annotator-controls')
+
+    if @element.hasClass(@classes.invert.y) and list.is(':first-child')
+      controls.insertBefore(list)
+    else if controls.is(':first-child')
+      controls.insertAfter(list)
+
+    this
+
   # Event callback. Listens for the following special keypresses.
   # - escape: Hides the editor
   # - enter:  Submits the editor
