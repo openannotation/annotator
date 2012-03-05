@@ -3,7 +3,7 @@
 TAG="${1}"
 
 if [[ -z "${TAG}" ]]; then
-  echo "Usage: $(basename "${0}") X.Y.Z"
+  echo "Usage: $(basename "${0}") vX.Y.Z"
   exit 1
 fi
 

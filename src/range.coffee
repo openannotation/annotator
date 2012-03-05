@@ -72,6 +72,13 @@ class Range.BrowserRange
         # previous one.
         node = it or node.childNodes[offset - 1]
 
+        # if node doesn't have any children, it's a <br> or <hr> or
+        # other self-closing tag, and we actually want the textNode
+        # that ends just before it
+        if node.nodeType is 1 and not node.firstChild
+          it = null # null out ref to node so offset is correctly calculated below.
+          node = node.previousSibling
+
         # textNode nodeType == 3
         while node.nodeType isnt 3
           node = node.firstChild
@@ -219,6 +226,23 @@ class Range.NormalizedRange
     [start, end] = [textNodes.index(this.start), textNodes.index(this.end)]
     # Return the textNodes that fall between the start and end indexes.
     $.makeArray textNodes[start..end]
+
+  # Public: Converts the Normalized range to a native browser range.
+  #
+  # See: https://developer.mozilla.org/en/DOM/range
+  #
+  # Examples
+  #
+  #   selection = window.getSelection()
+  #   selection.removeAllRanges()
+  #   selection.addRange(normedRange.toRange())
+  #
+  # Returns a Range object.
+  toRange: ->
+    range = document.createRange()
+    range.setStartBefore(@start)
+    range.setEndAfter(@end)
+    range
 
 # Public: A range suitable for storing in local storage or serializing to JSON.
 class Range.SerializedRange

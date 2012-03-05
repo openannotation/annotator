@@ -78,3 +78,16 @@ class Annotator.Widget extends Delegator
   invertY: ->
     @element.addClass @classes.invert.y
     this
+
+  # Public: Find out whether or not the widget is currently upside down
+  #
+  # Returns a boolean: true if the widget is upside down
+  isInvertedY: ->
+    @element.hasClass @classes.invert.y
+
+  # Public: Find out whether or not the widget is currently right aligned
+  #
+  # Returns a boolean: true if the widget is right aligned
+  isInvertedX: ->
+    @element.hasClass @classes.invert.x
+

@@ -60,9 +60,6 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
   constructor: (element, options) ->
     super
 
-    # Reference self on element so store knows to wait for auth token.
-    @element.data('annotator:auth', this)
-
     # List of functions to be executed when we have a valid token.
     @waitingForToken = []
 
@@ -81,13 +78,25 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
   requestToken: ->
     @requestInProgress = true
 
-    $.getJSON(@options.tokenUrl, (data, status, xhr) =>
-      if status isnt 'success'
-        console.error Annotator._t("Couldn't get auth token:") + " #{status}", xhr
-      else
-        @setToken(data)
-        @requestInProgress = false
-    )
+    $.ajax
+      url: @options.tokenUrl
+      dataType: 'json'
+      xhrFields:
+        withCredentials: true # Send any auth cookies to the backend
+
+    # on success, set the auth token
+    .done (data, status, xhr) =>
+      this.setToken(data)
+
+    # on failure, relay any message given by the server to the user with a notification
+    .fail (xhr, status, err) =>
+      msg = Annotator._t("Couldn't get auth token:")
+      console.error "#{msg} #{err}", xhr
+      Annotator.showNotification("#{msg} #{xhr.responseText}", Annotator.Notification.ERROR)
+
+    # always reset the requestInProgress indicator
+    .always =>
+      @requestInProgress = false
 
   # Public: Sets the @token and checks it's validity. If the token is invalid
   # requests a new one from the server.
@@ -100,7 +109,7 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
   #     authToken: 'hashed-string'
   #     authTokenIssueTime: 1299668564194
   #     authTokenTTL: 86400
-  #     accountId: 'unique-string'
+  #     consumerKey: 'unique-string'
   #     userId: 'alice'
   #   })
   #
@@ -118,7 +127,7 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
 
       # Run callbacks waiting for token
       while @waitingForToken.length > 0
-        @waitingForToken.pop().apply()
+        @waitingForToken.pop()(@token)
 
     else
       console.warn Annotator._t("Didn't get a valid token.")
@@ -133,12 +142,12 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
   #   auth.haveValidToken() # => Returns true if valid.
   #
   # Returns true if the token is valid.
-  haveValidToken: () =>
+  haveValidToken: () ->
     allFields = @token &&
                 @token.authToken &&
                 @token.authTokenIssueTime &&
                 @token.authTokenTTL &&
-                @token.accountId &&
+                @token.consumerKey &&
                 @token.userId
 
     allFields && this.timeToExpiry() > 0
@@ -166,7 +175,7 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
       'x-annotator-auth-token':            @token.authToken,
       'x-annotator-auth-token-issue-time': @token.authTokenIssueTime,
       'x-annotator-auth-token-ttl':        @token.authTokenTTL,
-      'x-annotator-account-id':            @token.accountId,
+      'x-annotator-consumer-key':          @token.consumerKey,
       'x-annotator-user-id':               @token.userId
     }))
 
@@ -186,7 +195,7 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
       return
 
     if this.haveValidToken()
-      callback()
+      callback(@token)
     else
       this.waitingForToken.push(callback)
       if not @requestInProgress
