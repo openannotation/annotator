@@ -685,7 +685,7 @@
 -------------------------------------------------------------------- */
 
 .annotator-filter {
-	z-index: 10000;
+	z-index: 9998; /* notifications/popups at 9999; filter bar should be lower */
 	position: fixed;
 	top: 0;
 	right: 0;
