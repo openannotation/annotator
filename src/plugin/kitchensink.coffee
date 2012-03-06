@@ -58,7 +58,8 @@ Annotator::setupPlugins = (config={}, options={}) ->
     if name not in plugins
       plugins.push(name)
 
-  $.extend pluginConfig, options
+  $.extend true, pluginConfig, options
+
   for name in plugins
     if name not of pluginConfig or pluginConfig[name]
       this.addPlugin(name, pluginConfig[name])
