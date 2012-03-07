@@ -210,8 +210,14 @@ describe 'Annotator', ->
     mockGlobal = null
     mockSelection = null
     mockRange = null
+    mockBrowserRange = null
 
     beforeEach ->
+      mockBrowserRange = {
+        cloneRange: jasmine.createSpy('Range#cloneRange()')
+      }
+      mockBrowserRange.cloneRange.andReturn(mockBrowserRange)
+
       # This mock pretends to be both NomalizedRange and BrowserRange.
       mockRange = {
         limit: jasmine.createSpy('NormalizedRange#limit()')
@@ -223,7 +229,7 @@ describe 'Annotator', ->
 
       # https://developer.mozilla.org/en/nsISelection
       mockSelection = {
-        getRangeAt: jasmine.createSpy('Selection#getRangeAt()').andReturn('')
+        getRangeAt: jasmine.createSpy('Selection#getRangeAt()').andReturn(mockBrowserRange)
         removeAllRanges: jasmine.createSpy('Selection#removeAllRanges()')
         addRange: jasmine.createSpy('Selection#addRange()')
         rangeCount: 1
@@ -242,10 +248,11 @@ describe 'Annotator', ->
       ranges = annotator.getSelectedRanges()
       expect(ranges).toEqual([mockRange])
 
-    it "should remove any failed calls to NormalizedRange#limit()", ->
+    it "should remove any failed calls to NormalizedRange#limit(), but re-add them to the global selection", ->
       mockRange.limit.andReturn(null)
       ranges = annotator.getSelectedRanges()
       expect(ranges).toEqual([])
+      expect(mockSelection.addRange).toHaveBeenCalledWith(mockBrowserRange)
 
     it "should return an empty array if selection.isCollapsed is true", ->
       mockSelection.isCollapsed = true
