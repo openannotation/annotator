@@ -83,6 +83,8 @@ class Annotator.Editor extends Annotator.Widget
     # give main textarea focus
     @element.find(":input:first").focus()
 
+    this.setupDraggables()
+
     this.publish('show')
 
 
@@ -256,10 +258,6 @@ class Annotator.Editor extends Annotator.Widget
 
     @fields.push field
 
-    # When main textarea is added, add resize handle
-    if @fields.length is 1 and field.type is 'textarea'
-      this.setupDraggables()
-
     field.element
 
   checkOrientation: ->
@@ -302,10 +300,16 @@ class Annotator.Editor extends Annotator.Widget
   #
   # Returns nothing.
   setupDraggables: () ->
-    # Find the first text area if there is one.
-    textarea = @element.find('textarea:first')
-    if textarea
-      $('<span class="annotator-resize"></span>').insertAfter(textarea)
+    @element.find('.annotator-resize').remove()
+
+    # Find the first/last item element depending on orientation
+    if @element.hasClass(@classes.invert.y)
+      cornerItem = @element.find('.annotator-item:last')
+    else
+      cornerItem = @element.find('.annotator-item:first')
+
+    if cornerItem
+      $('<span class="annotator-resize"></span>').appendTo(cornerItem)
 
     mousedown = null
     classes   = @classes
@@ -354,7 +358,7 @@ class Annotator.Editor extends Annotator.Widget
           textarea.width  width  + (diff.left * directionX)
 
           # Only update the mousedown object if the dimensions
-          # have changed, otherwise they have reached thier minimum
+          # have changed, otherwise they have reached their minimum
           # values.
           mousedown.top  = event.pageY unless textarea.outerHeight() == height
           mousedown.left = event.pageX unless textarea.outerWidth()  == width
