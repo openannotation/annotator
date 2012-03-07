@@ -72,7 +72,7 @@
             Annotator library</a> (or link to the hosted version), include it on your page
             along with <a href="http://jquery.com/">jQuery</a>. Then add the
             following line to initialize the annotator.</p>
-          <pre><code>var annotator = jQuery('.css-selector-to-block-you-want-to-annotate').annotator();</code></pre>
+          <pre><code>$('#content').annotator();</code></pre>
           <p>Plug-ins can be included for adding functionality such as user
              <a href="http://github.com/okfn/annotator/wiki/User-Plugin">accounts</a>,
              <a href="http://github.com/okfn/annotator/wiki/Tags-Plugin">tags</a>,
@@ -81,17 +81,12 @@
         </div>
         <div class="secondary">
           <p>To setup the default suite of plugins include 
-             <a href="http://assets.annotateit.org/annotator/v1.0.0rc4/annotator-full.min.js">annotator-full.js</a>
+             <a href="http://assets.annotateit.org/annotator/v1.1.0/annotator-full.min.js">annotator-full.js</a>
              and call the <code>"setupPlugins"</code> method via
              <code>.annotator()</code>.</p>
           <p>For example:</p>
-          <pre><code>jQuery('#main').annotator()
-  .annotator('setupPlugins', {
-    userId:    'bill',
-    userName:  'Bill',
-    accountId: 'some-long-acccount-id',
-    authToken: 'an-even-longer-auth-token'
-  });</code></pre>
+          <pre><code>$('#content').annotator()
+             .annotator('setupPlugins');</code></pre>
         </div>
       </section>
       <section>
@@ -164,7 +159,7 @@
       </div>
     </footer>
   </div>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
   <script src="./main.js"></script>
   <script type="text/javascript">
     var _gaq = _gaq || [];

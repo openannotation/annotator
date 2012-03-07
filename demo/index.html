@@ -15,7 +15,7 @@
   <link href='http://fonts.googleapis.com/css?family=Inconsolata&amp;subset=latin' rel='stylesheet' />
   
   <!-- Local copy of Annotator CSS because we cannot link to it on GitHub as it is served as text/plain -->
-  <link href="../pkg/annotator.min.css" rel="stylesheet" />
+  <link href="http://assets.annotateit.org/annotator/v1.1.0/annotator.min.css" rel="stylesheet" />
   <link href="../main.css" rel="stylesheet" />
 </head>
 <body>
@@ -69,7 +69,7 @@
         <p class="footnote">
           <a name="jquery">1:</a> I'm assuming you're already using <a href="http://jquery.com">jQuery</a>, right?
           If not you'll need to load that too. Best use Google's CDN with a URL like
-          <code>http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js</code>.
+          <code>http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js</code>.
         </p>
       </section>
     </article>
@@ -132,21 +132,50 @@
       </div>
     </footer>
   </div>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
-  <script src="../pkg/annotator-full.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+  <script src="sha256.js"></script>
+  <script src="http://assets.annotateit.org/annotator/v1.1.0/annotator-full.min.js"></script>
   <script src="../main.js"></script>
   <script>
-    jQuery(function ($) {
-      var uri = location.href.split(/#|\?/).shift();
-      $('article').annotator().annotator('setupPlugins', {
-        userId: 'annotator-demo',
-        userName: 'Annotator Demo',
-        accountId: '39fc339cf058bd22176771b3e3029975',
-        authToken: '14afb08d0d3189efb5243896f3712efe58bacf312c5a2250149d3c8d3034cd06',
-        storeUri: 'http://uat.annotateit.org/api'
+    if (!Date.prototype.toISOString) {
+      Date.prototype.toISOString = function() {
+        function pad(n) { return n < 10 ? '0' + n : n }
+        return this.getUTCFullYear() + '-'
+            + pad(this.getUTCMonth() + 1) + '-'
+                + pad(this.getUTCDate()) + 'T'
+                    + pad(this.getUTCHours()) + ':'
+                        + pad(this.getUTCMinutes()) + ':'
+                            + pad(this.getUTCSeconds()) + 'Z';
+      };
+    }
+
+    // Please note that you would *never* expose the consumer secret in this way
+    // for an ordinary application. For the purposes of convenience for this demo, we do.
+    var demoConsumerKey = 'd4c108122b51434aab1d27ad4ebd2b02';
+    var demoConsumerSecret = '36977e7b-be7f-4b57-a9eb-9617e4740b6a';
+
+    function getAuthToken(consumerKey, consumerSecret, userId) {
+      var date = new Date(),
+          token = Sha256.hash(consumerSecret + userId + date.toISOString());
+
+      return {
+        consumerKey: consumerKey,
+        userId: userId,
+        authTokenIssueTime: date.toISOString(),
+        authTokenTTL: 86400,
+        authToken: token
+      }
+    }
+
+    function initAnnotator(json) {
+      $('article').annotator().annotator('setupPlugins', null, {
+        Auth: {
+          token: getAuthToken(demoConsumerKey, demoConsumerSecret, json.ip)
+        }
       });
-    });
+    }
   </script>
+  <script type="application/javascript" src="http://jsonip.appspot.com/?callback=initAnnotator"></script>
   <script>
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-8271754-20']);
