@@ -468,6 +468,11 @@ ul.annotations .annotation {
 	font-size: 85%;
 }
 
+.footnote {
+	font-size: 130%;
+	opacity: 0.9;
+}
+
 /**************************************
   * Code Highlighting
   *************************************/
