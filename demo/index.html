@@ -137,7 +137,7 @@
   <script>
     if (!Date.prototype.toISOString) {
       Date.prototype.toISOString = function() {
-        function pad(n) { return n < 10 ? '0' + n : n }
+        function pad(n) { return n < 10 ? '0' + n : n; }
         return this.getUTCFullYear() + '-'
             + pad(this.getUTCMonth() + 1) + '-'
                 + pad(this.getUTCDate()) + 'T'
@@ -162,7 +162,7 @@
         authTokenIssueTime: date.toISOString(),
         authTokenTTL: 86400,
         authToken: token
-      }
+      };
     }
 
     function initAnnotator(json) {
