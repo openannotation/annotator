@@ -268,7 +268,7 @@ class Annotator.Editor extends Annotator.Widget
     list = @element.find('ul')
     controls = @element.find('.annotator-controls')
 
-    if @element.hasClass(@classes.invert.y) and list.is(':first-child')
+    if @element.hasClass(@classes.invert.y)
       controls.insertBefore(list)
     else if controls.is(':first-child')
       controls.insertAfter(list)
