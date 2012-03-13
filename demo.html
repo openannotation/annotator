@@ -40,7 +40,7 @@
 
 
      <script src="pkg/annotator.categories.min.js"></script> 
-
+     <script src="pkg/annotator.comment.min.js"></script> 
   </head>
 
   <body>
@@ -97,7 +97,8 @@
                        .annotator('addPlugin', 'Categories', options.categories)
                        .annotator('addPlugin', 'Permissions')
                        .annotator('addPlugin', 'Markdown')
-                       .annotator('addPlugin', 'Tags');
+                       .annotator('addPlugin', 'Tags')
+                       .annotator('addPlugin', 'Comment');
 
 
           $('#airlock').data('annotator').plugins['Permissions'].setUser("Joe Bloggs");
