@@ -182,7 +182,7 @@ class Annotator.Plugin.AnnotateItPermissions extends Annotator.Plugin.Permission
     dataKey = type + '-permissions'
 
     if $(field).find('input').is(':checked')
-      annotation.permissions[type] = [@options.groups.consumer]
+      annotation.permissions[type] = [@options.groups.world]
     else
       annotation.permissions[type] = []
 
