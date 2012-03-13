@@ -78,10 +78,10 @@ class Annotator.Plugin.AnnotateItPermissions extends Annotator.Plugin.Permission
     # Default consumer
     consumer: 'annotateit'
 
-    # Default permissions for all annotations. Any annotateit user can
+    # Default permissions for all annotations. Anyone can
     # read, but only annotation owners can update/delete/admin.
     permissions: {
-      'read':   ['group:__consumer__']
+      'read':   ['group:__world__']
       'update': []
       'delete': []
       'admin':  []
