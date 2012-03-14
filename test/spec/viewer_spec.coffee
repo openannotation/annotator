@@ -1,5 +1,5 @@
 describe 'Annotator.Viewer', ->
-  viewer = null;
+  viewer = null
 
   beforeEach ->
     viewer = new Annotator.Viewer()
@@ -11,6 +11,16 @@ describe 'Annotator.Viewer', ->
     expect(viewer.element).toBeTruthy()
 
     expect(viewer.element.hasClass('annotator-viewer')).toBeTruthy()
+
+  describe "an annotation element", ->
+    it "should contain some controls", ->
+      viewer.load([{text: "Hello there"}])
+      expect(viewer.element.find('.annotator-controls:first button').length).toBeGreaterThan(0)
+
+    it "should NOT contain any controls if options.readOnly is true", ->
+      viewer = new Annotator.Viewer(readOnly: true)
+      viewer.load([{text: "Hello there"}])
+      expect(viewer.element.find('.annotator-controls:first button').length).toBe(0)
 
   describe "events", ->
     beforeEach ->
@@ -24,7 +34,7 @@ describe 'Annotator.Viewer', ->
     it "should call Viewer#onDeleteClick() when the delete button is clicked", ->
       spyOn(viewer, 'onDeleteClick')
       viewer.element.find('.annotator-delete').click()
-      expect(viewer.onDeleteClick).toHaveBeenCalled()     
+      expect(viewer.onDeleteClick).toHaveBeenCalled()
 
   describe "show", ->
     it "should make the viewer visible", ->

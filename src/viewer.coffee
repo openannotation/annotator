@@ -27,18 +27,21 @@ class Annotator.Viewer extends Annotator.Widget
             </li>
             """
 
+  # Configuration options
+  options:
+    readOnly: false # Start the viewer in read-only mode. No controls will be shown.
+
   # Public: Creates an instance of the Viewer object. This will create the
   # @element from the @html.element string and set up all events.
   #
-  # options - An Object literal containing options. There are currently no
-  #           options implemented.
+  # options - An Object literal containing options.
   #
   # Examples
   #
   #   # Creates a new viewer, adds a custom field and displays an annotation.
-  #   viewer = new Annotator.Viewer
+  #   viewer = new Annotator.Viewer()
   #   viewer.addField({
-  #     load:  someLoadCallback
+  #     load: someLoadCallback
   #   })
   #   viewer.load(annotation)
   #
@@ -129,14 +132,17 @@ class Annotator.Viewer extends Annotator.Widget
       item = $(@item).clone().appendTo(list).data('annotation', annotation)
       controls = item.find('.annotator-controls')
 
-      edit = controls.find('.annotator-edit')
-      del  = controls.find('.annotator-delete')
-      controller = {
-        showEdit: -> edit.removeAttr('disabled')
-        hideEdit: -> edit.attr('disabled', 'disabled')
-        showDelete: -> del.removeAttr('disabled')
-        hideDelete: -> del.attr('disabled', 'disabled')
-      }
+      if @options.readOnly
+        controls.empty()
+      else
+        edit = controls.find('.annotator-edit')
+        del  = controls.find('.annotator-delete')
+        controller = {
+          showEdit: -> edit.removeAttr('disabled')
+          hideEdit: -> edit.attr('disabled', 'disabled')
+          showDelete: -> del.removeAttr('disabled')
+          hideDelete: -> del.attr('disabled', 'disabled')
+        }
 
       for field in @fields
         element = $(field.element).clone().appendTo(item)[0]
@@ -144,7 +150,7 @@ class Annotator.Viewer extends Annotator.Widget
 
     this.publish('load', [@annotations])
 
-    this.show();
+    this.show()
 
   # Public: Adds an addional field to an annotation view. A callback can be
   # provided to update the view on load.
