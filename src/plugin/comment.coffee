@@ -3,6 +3,7 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
     'annotationViewerShown' : 'addReplyButton'
     '.annotator-reply click': 'onReplyClick'
     '.annotator-reply-entry click': 'onReplyEntryClick'
+    '.numberOfReplies click'    :   'showReplies'
     
 
   constructor: (element) ->
@@ -27,6 +28,16 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
     element = @annotator.element.find('.annotator-annotation.annotator-item').find('.annotator-controls')
     reply_button = $('<button class="annotator-reply">Reply</button><div id="dialog">')
     element.append(reply_button)
+    
+    # Add a label that shows the number of replies
+    console.log(viewer.annotations[0].replies?)
+    if viewer.annotations[0].replies?
+      numreplies = viewer.annotations[0].replies.length
+      console.log('Number of replies, ', numreplies)
+      viewer.element.find('.annotator-annotation.annotator-item').append('''<br/><label class="numberOfReplies">'''+ numreplies + ''' Replies</label><br/>''')
+      numrepliesdiv = viewer.element.find('.numberOfReplies')
+      numrepliesdiv.innerHTML(numreplies + "Replies")
+      
     
   #
   # Add a textarea to the viewer widget if the reply button is clicked
@@ -70,17 +81,17 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
     item = $(event.target).parents('.annotator-annotation')
     
     #TODO DEBUG
-    console.log('item-data', item.data('annotation'))
+    #console.log('item-data', item.data('annotation'))
     annotation = item.data('annotation')  
     if not annotation.replies?
       annotation.replies = []
 
     #TODO DEBUG
-#    if @annotator.plugins.Permissions?
-#      console.log('New reply by: ', @annotator.plugins.Permissions.user)
-#      annotation.replies.push replyObject
-#    else
-#      console.log('New reply by: Anonymous')
+    if @annotator.plugins.Permissions?
+      console.log('New reply by: ', @annotator.plugins.Permissions.user)
+      annotation.replies.push replyObject
+    else
+      console.log('New reply by: Anonymous')
 
     # publish annotationUpdated event so that the store can save the changes
     this.publish('annotationUpdated', [annotation])
@@ -88,6 +99,12 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
     # hide the viewer
     @annotator.viewer.hide()
     
+  showReplies: (event) ->
+    # here we show the replies attached to the annotation
+    annotation = $(event.target).parents('.annotator-annotation').data('annotation')
+    console.log(annotation)
+
+
 
 
 
