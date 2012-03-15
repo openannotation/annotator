@@ -56,10 +56,6 @@ describe 'Annotator.Plugin.Auth', ->
       delete mock.auth._unsafeToken.authTokenTTL
       expect(mock.auth.haveValidToken()).toBeFalsy()
 
-    it "returns false when the current token is missing a userId", ->
-      delete mock.auth._unsafeToken.userId
-      expect(mock.auth.haveValidToken()).toBeFalsy()
-
     it "returns false when the current token expires in the past", ->
       mock.auth._unsafeToken.authTokenTTL = 0
       expect(mock.auth.haveValidToken()).toBeFalsy()

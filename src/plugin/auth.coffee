@@ -108,8 +108,7 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
   #   auth.setToken('{
   #     authTokenIssueTime: "2002-03-15T15:02:02Z",
   #     authTokenTTL: 86400,
-  #     consumerKey: "unique-string",
-  #     userId: "alice",
+  #     consumerKey: "unique-string"
   #   }.AkOV6g.SKQMC7ybClqdLR2Wjl-JhUFzasM')
   #
   # Returns nothing.
@@ -128,7 +127,7 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
 
       # Run callbacks waiting for token
       while @waitingForToken.length > 0
-        @waitingForToken.pop()(@token)
+        @waitingForToken.pop()(@_unsafeToken)
 
     else
       console.warn Annotator._t("Didn't get a valid token.")
@@ -148,8 +147,7 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
     allFields = @_unsafeToken &&
                 @_unsafeToken.authTokenIssueTime &&
                 @_unsafeToken.authTokenTTL &&
-                @_unsafeToken.consumerKey &&
-                @_unsafeToken.userId
+                @_unsafeToken.consumerKey
 
     allFields && this.timeToExpiry() > 0
 
