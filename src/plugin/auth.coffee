@@ -80,7 +80,7 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
 
     $.ajax
       url: @options.tokenUrl
-      dataType: 'json'
+      dataType: 'text'
       xhrFields:
         withCredentials: true # Send any auth cookies to the backend
 
@@ -101,21 +101,22 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
   # Public: Sets the @token and checks it's validity. If the token is invalid
   # requests a new one from the server.
   #
-  # token - A token Object.
+  # token - A token string.
   #
   # Examples
   #
-  #   auth.setToken({
-  #     authToken: 'hashed-string'
-  #     authTokenIssueTime: 1299668564194
-  #     authTokenTTL: 86400
-  #     consumerKey: 'unique-string'
-  #     userId: 'alice'
-  #   })
+  #   auth.setToken('{
+  #     authTokenIssueTime: "2002-03-15T15:02:02Z",
+  #     authTokenTTL: 86400,
+  #     consumerKey: "unique-string",
+  #     userId: "alice",
+  #   }.AkOV6g.SKQMC7ybClqdLR2Wjl-JhUFzasM')
   #
   # Returns nothing.
   setToken: (token) ->
     @token = token
+    # Parse the token without verifying its authenticity:
+    @_unsafeToken = JSON.parse(token.split('.')[0...-2].join())
 
     if this.haveValidToken()
       if @options.autoFetch
@@ -135,7 +136,8 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
         console.warn Annotator._t("Getting a new token in 10s.")
         setTimeout (() => this.requestToken()), 10 * 1000
 
-  # Public: Checks the validity of the current @token.
+  # Public: Checks the validity of the current token. Note that this *does
+  # not* check the authenticity of the token.
   #
   # Examples
   #
@@ -143,12 +145,11 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
   #
   # Returns true if the token is valid.
   haveValidToken: () ->
-    allFields = @token &&
-                @token.authToken &&
-                @token.authTokenIssueTime &&
-                @token.authTokenTTL &&
-                @token.consumerKey &&
-                @token.userId
+    allFields = @_unsafeToken &&
+                @_unsafeToken.authTokenIssueTime &&
+                @_unsafeToken.authTokenTTL &&
+                @_unsafeToken.consumerKey &&
+                @_unsafeToken.userId
 
     allFields && this.timeToExpiry() > 0
 
@@ -157,9 +158,9 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
   # Returns Number of seconds until token expires.
   timeToExpiry: ->
     now = new Date().getTime() / 1000
-    issue = createDateFromISO8601(@token.authTokenIssueTime).getTime() / 1000
+    issue = createDateFromISO8601(@_unsafeToken.authTokenIssueTime).getTime() / 1000
 
-    expiry = issue + @token.authTokenTTL
+    expiry = issue + @_unsafeToken.authTokenTTL
     timeToExpiry = expiry - now
 
     if (timeToExpiry > 0) then timeToExpiry else 0
@@ -172,11 +173,7 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
   updateHeaders: ->
     current = @element.data('annotator:headers')
     @element.data('annotator:headers', $.extend(current, {
-      'x-annotator-auth-token':            @token.authToken,
-      'x-annotator-auth-token-issue-time': @token.authTokenIssueTime,
-      'x-annotator-auth-token-ttl':        @token.authTokenTTL,
-      'x-annotator-consumer-key':          @token.consumerKey,
-      'x-annotator-user-id':               @token.userId
+      'x-annotator-auth-token': @token,
     }))
 
   # Runs the provided callback if a valid token is available. Otherwise requests
