@@ -130,6 +130,8 @@
 	height: 0;
 }
 
+
+
 .annotator-widget {
 	margin: 0;
 	padding: 0;
@@ -289,6 +291,50 @@
 	background-position: 0 -75px;
 }
 
+
+
+
+
+
+.replybox {
+        position: fixed;
+        float:bottom;
+        background: white;
+        border: solid;
+        border-width: 1px;
+        border-radius:5px;
+}
+
+
+#Replies {
+        position: fixed;
+        float:bottom;
+        overflow:auto;
+        height:200px;
+        width:250px;
+        background: white;
+        border: solid;
+        border-width: 1px;
+        border-radius:5px;
+}
+
+
+
+.annotator-reply {
+        cursor:pointer;
+	display: inline-block;
+	padding: 0 8px;
+	margin-bottom: 2px;
+	line-height: 1.6;
+	font-weight: bold;
+	background-color: rgb(230, 230, 230);
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	-o-border-radius: 8px;
+	border-radius: 8px;
+
+}
+
 /* Annotator Editor
 -------------------------------------------------------------------- */
 
@@ -303,6 +349,7 @@
 	font-size: 12px;
 }
 
+.replybox .replyentry,
 .annotator-editor .annotator-item input,
 .annotator-editor .annotator-item textarea {
 	display: block;
@@ -371,7 +418,10 @@
 	padding: 8px 6px;
 }
 
-.annotator-filter,
+
+
+
+.annotator-filter, .numberOfReplies,
 .annotator-filter .annotator-filter-navigation button,
 .annotator-editor .annotator-controls {
 	text-align: right;
@@ -433,7 +483,7 @@
 	border-radius: 5px 5px 0 0;
 }
 
-.annotator-editor a,
+.annotator-editor a, .repliesView,
 .annotator-filter .annotator-filter-property label {
 	position: relative;
 	display: inline-block;
@@ -504,6 +554,9 @@
 	background-position: 0 -90px;
 }
 
+.annotator-reply span:hover,
+.numberOfReplies a:hover,
+.numberOfReplies a:focus,
 .annotator-editor a:hover,
 .annotator-editor a:focus,
 .annotator-editor a.annotator-focus,
@@ -550,6 +603,7 @@
 	background-position: 0 -105px;
 }
 
+.numberOfReplies a:active,
 .annotator-editor a:active,
 .annotator-filter .annotator-filter-navigation button:active {
 	border-color: rgb(112, 12, 73);

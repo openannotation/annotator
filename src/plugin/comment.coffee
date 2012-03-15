@@ -4,7 +4,7 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
     '.annotator-reply click': 'onReplyClick'
     '.annotator-reply-entry click': 'onReplyEntryClick'
     '.numberOfReplies click'    :   'showReplies'
-    
+    '.replyentry keydown' : 'processKeypress'
 
   constructor: (element) ->
       super
@@ -26,7 +26,7 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
     
     # add the reply button to the viewer element's controls element 
     element = @annotator.element.find('.annotator-annotation.annotator-item').find('.annotator-controls')
-    reply_button = $('<button class="annotator-reply">Reply</button><div id="dialog">')
+    reply_button = $('<span class="annotator-reply">Reply</span>')
     element.append(reply_button)
     
     # Add a label that shows the number of replies
@@ -34,9 +34,10 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
     if viewer.annotations[0].replies?
       numreplies = viewer.annotations[0].replies.length
       console.log('Number of replies, ', numreplies)
-      viewer.element.find('.annotator-annotation.annotator-item').append('''<br/><label class="numberOfReplies">'''+ numreplies + ''' Replies</label><br/>''')
-      numrepliesdiv = viewer.element.find('.numberOfReplies')
-      numrepliesdiv.innerHTML(numreplies + "Replies")
+      viewer.element.find('.annotator-annotation.annotator-item').append('''
+      <div class="numberOfReplies">
+          <a class="repliesView">View '''+ numreplies + ''' replies</a>
+      </div>''')
       
     
   #
@@ -54,12 +55,13 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
     # item contains only the elements of that part of the viewer, instead of all current visible viewers
     # like when annotations overlap.
     if textarea.length == 0
-      item.append('''<label> Reply to this annotation </label> 
+      item.append('''<div class='replybox'><label> Reply to this annotation </label> 
           <br/> 
-          <textarea class="replyentry annotator-editor" rows="6" cols="40"> </textarea>
+          <textarea class="replyentry" rows="6" cols="40"> </textarea>
           <br/>
           <div class="annotator-controls">
           <a href="#save" class="annotator-reply-entry">Reply</a>
+          </div>
           </div>
           ''')
 
@@ -73,7 +75,11 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
     
     replyObject = @getReplyObject()
     
-    replyObject.user ?= @annotator.plugins.Permissions.user 
+    if @annotator.plugins.Permissions.user 
+      replyObject.user = @annotator.plugins.Permissions.user
+    else
+      replyObject.user = "Anonymous"
+
     replyObject.reply = reply
 
     #TODO DEBUG info
@@ -87,11 +93,11 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
       annotation.replies = []
 
     #TODO DEBUG
-    if @annotator.plugins.Permissions?
-      console.log('New reply by: ', @annotator.plugins.Permissions.user)
-      annotation.replies.push replyObject
-    else
-      console.log('New reply by: Anonymous')
+#    if @annotator.plugins.Permissions?
+        #console.log('New reply by: ', @annotator.plugins.Permissions.user)
+    annotation.replies.push replyObject
+ #   else
+        #console.log('New reply by: Anonymous')
 
     # publish annotationUpdated event so that the store can save the changes
     this.publish('annotationUpdated', [annotation])
@@ -101,10 +107,28 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
     
   showReplies: (event) ->
     # here we show the replies attached to the annotation
-    annotation = $(event.target).parents('.annotator-annotation').data('annotation')
-    console.log(annotation)
+    viewer = @annotator.element.find('.annotator-annotation.annotator-item')
+    replylist = viewer.find('.Replies')
+    # get the annotation
+    item = $(event.target).parents('.annotator-annotation')
+    annotation = item.data('annotation')
 
 
+    if replylist.length == 0
+      viewer.append('''<div id="Replies">
+        <li class="Replies">
+        </li></div>''')
+    replylist = viewer.find('.Replies')
+    console.log(replylist.children())
+
+    if replylist.children().length == 0
+      # add all the replies into the div
+      for reply in annotation.replies
+        replylist.append('''<div class='reply'>
+            <span class='replyuser'>''' + reply.user + '''</span>
+            <div class='replytext'>''' + reply.reply + '''</div></div>''')
+
+    console.log(replylist)
 
 
 
@@ -117,4 +141,10 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
     replyObject
     
     
-     
+  processKeypress: (event) =>
+    if event.keyCode is 27 # "Escape" key => abort.
+      @annotator.viewer.hide()
+    else if event.keyCode is 13 and !event.shiftKey
+      # If "return" was pressed without the shift key, we're done.
+      @onReplyEntryClick(event)
+  

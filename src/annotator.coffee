@@ -479,7 +479,7 @@ class Annotator extends Delegator
   startViewerHideTimer: =>
     # Don't do this if timer has already been set by another annotation.
     if not @viewerHideTimer
-      @viewerHideTimer = setTimeout @viewer.hide, 10
+      @viewerHideTimer = setTimeout @viewer.hide, 250
 
   # Viewer#element event callback. Clears the timer set by
   # Annotator#startViewerHideTimer() when the @viewer is moused over.
