@@ -16,8 +16,8 @@ describe 'Annotator.Plugin.Auth', ->
   beforeEach ->
     validToken = JSON.stringify({
       consumerKey: "key"
-      authTokenIssueTime: new Date().toISO8601String()
-      authTokenTTL: 300
+      issuedAt: new Date().toISO8601String()
+      ttl: 300
       userId: "testUser"
     }) + ".timestamp.signature"
 
@@ -48,17 +48,17 @@ describe 'Annotator.Plugin.Auth', ->
       delete mock.auth._unsafeToken.consumerKey
       expect(mock.auth.haveValidToken()).toBeFalsy()
 
-    it "returns false when the current token is missing an authTokenIssueTime", ->
-      delete mock.auth._unsafeToken.authTokenIssueTime
+    it "returns false when the current token is missing an issuedAt", ->
+      delete mock.auth._unsafeToken.issuedAt
       expect(mock.auth.haveValidToken()).toBeFalsy()
 
-    it "returns false when the current token is missing an authTokenTTL", ->
-      delete mock.auth._unsafeToken.authTokenTTL
+    it "returns false when the current token is missing a ttl", ->
+      delete mock.auth._unsafeToken.ttl
       expect(mock.auth.haveValidToken()).toBeFalsy()
 
     it "returns false when the current token expires in the past", ->
-      mock.auth._unsafeToken.authTokenTTL = 0
+      mock.auth._unsafeToken.ttl = 0
       expect(mock.auth.haveValidToken()).toBeFalsy()
-      mock.auth._unsafeToken.authTokenTTL = 86400
-      mock.auth._unsafeToken.authTokenIssueTime = "1970-01-01T00:00"
+      mock.auth._unsafeToken.ttl = 86400
+      mock.auth._unsafeToken.issuedAt = "1970-01-01T00:00"
       expect(mock.auth.haveValidToken()).toBeFalsy()
