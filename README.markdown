@@ -102,7 +102,7 @@ For inline documentation we use [TomDoc][tom]. It's a Ruby specification but it
 also works nicely with CoffeeScript.
 
 
-The `Cakefile` provides a number of useful tasks. (**NB**: If `cake` doesn't work for you, try ```npm bin`/cake`` instead.)
+The `Cakefile` provides a number of useful tasks. (**NB**: If `cake` doesn't work for you, try `` `npm bin`/cake`` instead.)
 
     $ cake serve        # serves the directory at http://localhost:8000 (requires python)
     $ cake test         # opens the test suite in your browser
@@ -110,7 +110,7 @@ The `Cakefile` provides a number of useful tasks. (**NB**: If `cake` doesn't wor
     $ cake watch        # compiles src/*.coffee files into lib/*.js when they change
     $ cake package[:*]  # builds the production version of Annotator in pkg/
 
-Run `cake` (or ```npm bin`/cake``) to see the list of all available tasks.
+Run `cake` (or `` `npm bin`/cake``) to see the list of all available tasks.
 
 [node]: http://nodejs.org/
 [npm]: http://npmjs.org/
