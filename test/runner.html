@@ -36,8 +36,8 @@
 
     # spec helpers
     OTHER = [
-      'spec_helper'
-      'ajax_fixtures'
+      'helpers/spec_helper'
+      'helpers/phantomjs_helper'
     ]
 
     $.ajaxSetup {cache: false}
@@ -66,10 +66,16 @@
       )()
 
     $(window).bind 'load', ->
-      loadAnnotator -> loadTests ->
-        jasmine.getEnv().addReporter(new jasmine.TrivialReporter())
-        jasmine.getEnv().execute()
-        jasmine.getEnv().afterEach -> $(document).unbind?()
+      loadAnnotator -> loadTests -> 
+        e = jasmine.getEnv()
+
+        if navigator.userAgent.indexOf("PhantomJS") isnt -1
+          e.addReporter(new jasmine.PhantomJSReporter())
+        else
+          e.addReporter(new jasmine.TrivialReporter())
+
+        e.afterEach -> $(document).unbind?()
+        e.execute()
   </script>
 </head>
 <body>

@@ -38,13 +38,14 @@ BOOKMARKLET_PLUGINS = ['auth', 'store', 'permissions', 'annotateitpermissions', 
 task 'watch', 'Run development source watcher', ->
   run "#{COFFEE} --watch --bare --compile --output #{__dirname}/lib #{__dirname}/src"
 
-option '-f', '--filter [string]', 'Filename filter to apply to `cake test`'
+task "serve", "Serve the current directory", ->
+  run "python -m SimpleHTTPServer 8000"
 
-task 'test', 'Run tests. Filter tests using `-f [filter]` eg. cake -f auth test', (options) ->
-  console.log "WARNING: A number of tests are currently broken, pending resolution of jsdom",
-              "issue 394. See:\n  https://github.com/tmpvar/jsdom/issues/394"
+task "test", "Open the test suite in the browser", ->
+  run "open http://localhost:8000/test/runner.html"
 
-  run "#{COFFEE} #{__dirname}/test/runner.coffee #{options.filter}"
+task "test:phantom", "Open the test suite in the browser", ->
+  run "phantomjs test/runner.coffee http://localhost:8000/test/runner.html"
 
 option "", "--no-minify", "Do not minify built scripts with `cake package`"
 task 'package', 'Build the packaged annotator', ->
