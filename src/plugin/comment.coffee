@@ -1,5 +1,7 @@
 class Annotator.Plugin.Comment extends Annotator.Plugin
   events:
+#   'annotationViewerTextField' : 'test'
+  
     'annotationViewerShown' : 'addReplyButton'
     '.annotator-reply click': 'onReplyClick'
     '.annotator-reply-entry click': 'onReplyEntryClick'
@@ -18,26 +20,47 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
   pluginInit: ->
     return unless Annotator.supported()
     console.log('loaded Comment plugin')
+  
+  test: (field, annotation) ->
+    console.log('field', field)
+    console.log('annotation', annotation)
+
 
   # Add a reply button to the viewer widget's controls span
   addReplyButton: (viewer, annotations) ->
-    console.log('addReplyButton called')
-    console.log(@annotator)
-    
-    # add the reply button to the viewer element's controls element 
-    element = @annotator.element.find('.annotator-annotation.annotator-item').find('.annotator-controls')
-    reply_button = $('<span class="annotator-reply">Reply</span>')
-    element.append(reply_button)
-    
-    # Add a label that shows the number of replies
-    console.log(viewer.annotations[0].replies?)
-    if viewer.annotations[0].replies?
-      numreplies = viewer.annotations[0].replies.length
-      console.log('Number of replies, ', numreplies)
-      viewer.element.find('.annotator-annotation.annotator-item').append('''
-      <div class="numberOfReplies">
-          <a class="repliesView">View '''+ numreplies + ''' replies</a>
-      </div>''')
+    # Annotations are displayed in the order they they were entered into the viewer
+    #
+    annotations = viewer.annotations
+    annotator_listing = @annotator.element.find('.annotator-annotation.annotator-item')
+    console.log('listing: ', annotator_listing)
+    for l, i in annotator_listing
+     replies = annotations[i].replies
+     $(l).append('''<div id="Replies">
+        <li class="Replies">
+        </li></div>''')
+     console.log('l', l) 
+     if replies.length > 0
+       replylist = @annotator.element.find('.Replies')
+       for reply in replies
+         replylist.append('''<div class='reply'>
+            <span class='replyuser'>''' + reply.user + '''</span>
+            <div class='replytext'>''' + reply.reply + '''</div></div>''')
+
+
+#   # add the reply button to the viewer element's controls element 
+#   element = @annotator.element.find('.annotator-annotation.annotator-item').find('.annotator-controls')
+#   reply_button = $('<span class="annotator-reply">Reply</span>')
+#   element.append(reply_button)
+#   
+#   # Add a label that shows the number of replies
+#   console.log(viewer.annotations[0].replies?)
+#   if viewer.annotations[0].replies?
+#     numreplies = viewer.annotations[0].replies.length
+#     console.log('Number of replies, ', numreplies)
+#     viewer.element.find('.annotator-annotation.annotator-item').append('''
+#     <div class="numberOfReplies">
+#         <a class="repliesView">View '''+ numreplies + ''' replies</a>
+#     </div>''')
       
     
   #
