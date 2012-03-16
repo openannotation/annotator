@@ -10,7 +10,6 @@
   ],
   "dependencies": {
     "coffee-script": "1.2.0",
-    "jsdom": "0.2.10",
     "node-ffi": "0.5.0",
     "uglify-js": "1.2.5",
     "uglifycss": "0.0.5"
