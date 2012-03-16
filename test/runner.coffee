@@ -27,7 +27,7 @@ page.onConsoleMessage = (msg) ->
 
 page.open phantom.args[0], (status) ->
   if status isnt 'success'
-    console.log "Unable to access #{phantom.args[0]}, run `cake serve` first.\nQuitting."
+    console.log "Unable to access #{phantom.args[0]}, perhaps run `cake serve` first?\nQuitting."
     phantom.exit()
 
   # Otherwise, implicitly enter async event loop...
