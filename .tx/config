@@ -1,0 +1,8 @@
+[main]
+host = https://www.transifex.net
+
+[annotator.all-strings]
+file_filter = locale/<lang>/annotator.po
+source_file = locale/annotator.pot
+source_lang = en
+
