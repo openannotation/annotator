@@ -14,13 +14,12 @@ describe 'Annotator.Plugin.Auth', ->
     }
 
   beforeEach ->
-    validToken = {
+    validToken = JSON.stringify({
       consumerKey: "key"
-      authToken: "foobar"
-      authTokenIssueTime: new Date().toISO8601String()
-      authTokenTTL: 300
+      issuedAt: new Date().toISO8601String()
+      ttl: 300
       userId: "testUser"
-    }
+    }) + ".timestamp.signature"
 
     mock = mockAuth({token: validToken, autoFetch: false})
 
@@ -32,7 +31,7 @@ describe 'Annotator.Plugin.Auth', ->
   it "sets annotator:headers data on its element with token data", ->
     data = $(mock.elem).data('annotator:headers')
     expect(data).not.toBeNull()
-    expect(data['x-annotator-auth-token-issue-time']).toEqual(validToken.authTokenIssueTime)
+    expect(data['x-annotator-auth-token']).toEqual(validToken)
 
   it "should call callbacks given to #withToken immediately if it has a valid token", ->
     callback = jasmine.createSpy()
@@ -46,28 +45,20 @@ describe 'Annotator.Plugin.Auth', ->
       expect(mock.auth.haveValidToken()).toBeTruthy()
 
     it "returns false when the current token is missing a consumerKey", ->
-      delete mock.auth.token.consumerKey
+      delete mock.auth._unsafeToken.consumerKey
       expect(mock.auth.haveValidToken()).toBeFalsy()
 
-    it "returns false when the current token is missing an authToken", ->
-      delete mock.auth.token.authToken
+    it "returns false when the current token is missing an issuedAt", ->
+      delete mock.auth._unsafeToken.issuedAt
       expect(mock.auth.haveValidToken()).toBeFalsy()
 
-    it "returns false when the current token is missing an authTokenIssueTime", ->
-      delete mock.auth.token.authTokenIssueTime
-      expect(mock.auth.haveValidToken()).toBeFalsy()
-
-    it "returns false when the current token is missing an authTokenTTL", ->
-      delete mock.auth.token.authTokenTTL
-      expect(mock.auth.haveValidToken()).toBeFalsy()
-
-    it "returns false when the current token is missing a userId", ->
-      delete mock.auth.token.userId
+    it "returns false when the current token is missing a ttl", ->
+      delete mock.auth._unsafeToken.ttl
       expect(mock.auth.haveValidToken()).toBeFalsy()
 
     it "returns false when the current token expires in the past", ->
-      mock.auth.token.authTokenTTL = 0
+      mock.auth._unsafeToken.ttl = 0
       expect(mock.auth.haveValidToken()).toBeFalsy()
-      mock.auth.token.authTokenTTL = 86400
-      mock.auth.token.authTokenIssueTime = "1970-01-01T00:00"
+      mock.auth._unsafeToken.ttl = 86400
+      mock.auth._unsafeToken.issuedAt = "1970-01-01T00:00"
       expect(mock.auth.haveValidToken()).toBeFalsy()
