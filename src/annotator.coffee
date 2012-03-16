@@ -40,7 +40,8 @@ class Annotator extends Delegator
     adder:   '<div class="annotator-adder"><button>' + _t('Annotate') + '</button></div>'
     wrapper: '<div class="annotator-wrapper"></div>'
 
-  options: {} # Configuration options
+  options: # Configuration options
+    readOnly: false # Start Annotator in read-only mode. No controls will be shown.
 
   plugins: {}
 
@@ -85,7 +86,8 @@ class Annotator extends Delegator
 
     # Return early if the annotator is not supported.
     return this unless Annotator.supported()
-    this._setupDocumentEvents()._setupWrapper()._setupViewer()._setupEditor()
+    this._setupDocumentEvents() unless @options.readOnly
+    this._setupWrapper()._setupViewer()._setupEditor()
 
     # Create model dom elements
     for name, src of @html
@@ -113,7 +115,7 @@ class Annotator extends Delegator
   #
   # Returns itself to allow chaining.
   _setupViewer: ->
-    @viewer = new Annotator.Viewer()
+    @viewer = new Annotator.Viewer(readOnly: @options.readOnly)
     @viewer.hide()
       .on("edit", this.onEditAnnotation)
       .on("delete", this.onDeleteAnnotation)

@@ -36,26 +36,42 @@ describe 'Annotator', ->
       spyOn(annotator, '_setupWrapper').andReturn(annotator)
       spyOn(annotator, '_setupViewer').andReturn(annotator)
       spyOn(annotator, '_setupEditor').andReturn(annotator)
-      Annotator.prototype.constructor.call(annotator, annotator.element[0])
+      spyOn(annotator, '_setupDocumentEvents').andReturn(annotator)
 
     it "should have a jQuery wrapper as @element", ->
+      Annotator.prototype.constructor.call(annotator, annotator.element[0])
       expect(annotator.element instanceof $).toBeTruthy()
 
     it "should create an empty @plugin object", ->
+      Annotator.prototype.constructor.call(annotator, annotator.element[0])
       expect(annotator.hasOwnProperty('plugins')).toBeTruthy()
 
     it "should create the adder and highlight properties from the @html strings", ->
+      Annotator.prototype.constructor.call(annotator, annotator.element[0])
       expect(annotator.adder instanceof $).toBeTruthy()
       expect(annotator.hl instanceof $).toBeTruthy()
 
     it "should call Annotator#_setupWrapper()", ->
+      Annotator.prototype.constructor.call(annotator, annotator.element[0])
       expect(annotator._setupWrapper).toHaveBeenCalled()
 
     it "should call Annotator#_setupViewer()", ->
+      Annotator.prototype.constructor.call(annotator, annotator.element[0])
       expect(annotator._setupViewer).toHaveBeenCalled()
 
     it "should call Annotator#_setupEditor()", ->
+      Annotator.prototype.constructor.call(annotator, annotator.element[0])
       expect(annotator._setupEditor).toHaveBeenCalled()
+
+    it "should call Annotator#_setupDocumentEvents()", ->
+      Annotator.prototype.constructor.call(annotator, annotator.element[0])
+      expect(annotator._setupDocumentEvents).toHaveBeenCalled()
+
+    it "should NOT call Annotator#_setupDocumentEvents() if options.readOnly is true", ->
+      Annotator.prototype.constructor.call(annotator, annotator.element[0], {
+        readOnly: true
+      })
+      expect(annotator._setupDocumentEvents).not.toHaveBeenCalled()
 
   describe "_setupDocumentEvents", ->
     beforeEach: ->

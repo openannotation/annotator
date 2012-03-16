@@ -71,17 +71,19 @@ Look at the existing plugins to get a feel for how they work. The Markdown plugi
 
 Useful events are triggered on the Annotator `element` (passed to the constructor of the plugin):
 
-- `annotationsLoaded(annotations)`: called when annotations are loaded into the DOM. Provides an array of all annotations.
-- `beforeAnnotationCreated(annotation)`: called immediately before an annotation is created. If you need to modify the annotation before it is saved to the server by the Store plugin, use this event.
-- `annotationCreated(annotation)`: called when the annotation is created. Used by the Store plugin to save new annotations.
-- `beforeAnnotationUpdated(annotation)`: as above, but just before an existing annotation is saved.
-- `annotationUpdated(annotation)`: as above, but for an existing annotation which has just been edited.
-- `annotationDeleted(annotation)`: called when the user deletes an annotation.
-- `annotationEditorShown(editor, annotation)`: called when the annotation editor is presented to the user. Allows a plugin to add extra form fields. See the Tags plugin for an example of its use.
-- `annotationEditorHidden(editor)`: called when the annotation editor is hidden, both when submitted and when editing is cancelled.
-- `annotationEditorSubmit(editor, annotation)`: called when the annotation editor is submitted.
-- `annotationViewerShown(viewer, annotations)`: called when the annotation viewer is displayed provides the annotations being displayed
-- `annotationViewerTextField(field, annotation)`: called when the text field displaying the annotation in the viewer is created
+Callback name                                  | Description
+---------------------------------------------- | -----------
+`annotationsLoaded(annotations)`               | called when annotations are loaded into the DOM. Provides an array of all annotations.
+`beforeAnnotationCreated(annotation)`          | called immediately before an annotation is created. If you need to modify the annotation before it is saved to the server by the Store plugin, use this event.
+`annotationCreated(annotation)`                | called when the annotation is created. Used by the Store plugin to save new annotations.
+`beforeAnnotationUpdated(annotation)`          | as above, but just before an existing annotation is saved.
+`annotationUpdated(annotation)`                | as above, but for an existing annotation which has just been edited.
+`annotationDeleted(annotation)`                | called when the user deletes an annotation.
+`annotationEditorShown(editor, annotation)`    | called when the annotation editor is presented to the user. Allows a plugin to add extra form fields. See the Tags plugin for an example of its use.
+`annotationEditorHidden(editor)`               | called when the annotation editor is hidden, both when submitted and when editing is cancelled.
+`annotationEditorSubmit(editor, annotation)`   | called when the annotation editor is submitted.
+`annotationViewerShown(viewer, annotations)`   | called when the annotation viewer is displayed provides the annotations being displayed
+`annotationViewerTextField(field, annotation)` | called when the text field displaying the annotation in the viewer is created
 
 Development
 -----------
@@ -90,30 +92,30 @@ If you wish to develop Annotator, you'll need to have a working installation of 
 
     $ npm install .
 
-If that worked, you should be able to run the tests:
-
-    $ `npm bin`/cake test
-    Started
-    .....................................................
-
-    Finished in 0.385 seconds
-    18 tests, 85 assertions, 0 failures
-
-Note that *some* tests may fail, due to brokenness in jsdom. There should be a note at the end of the output for that command informing you if we're expecting any tests to fail. The reason we don't simply comment these tests out until jsdom is fixed is that the tests can also be run by opening `test/runner.html` in a browser.
-
-[node]: http://nodejs.org
-[coffee]: http://jashkenas.github.com/coffee-script/
-[npm]: http://npmjs.org
-
-The Annotator source is found in `src/`, and is written in CoffeeScript, which is a little language that compiles to Javascript. See the [CoffeeScript website][coffee] for more information. For ease of development, you can run a watcher (`cake watch`) that will notice any changes you make in `src/` and compile them into `lib/`.
+The Annotator source is found in `src/`, and is written in CoffeeScript, which is a little language that compiles to Javascript. See the [CoffeeScript website][coffee] for more information.
 
 `dev.html` loads the raw development files from `lib/` and can be useful when developing.
 
 The tests are to be found in `test/spec/`, and use [Jasmine][jas] to support a BDD process.
 
-[jas]: http://pivotal.github.com/jasmine/
-
 For inline documentation we use [TomDoc][tom]. It's a Ruby specification but it
 also works nicely with CoffeeScript.
 
+
+The `Cakefile` provides a number of useful tasks. (**NB**: If `cake` doesn't work for you, try `` `npm bin`/cake`` instead.)
+
+    $ cake serve        # serves the directory at http://localhost:8000 (requires python)
+    $ cake test         # opens the test suite in your browser
+    $ cake test:phantom # runs the test suite with PhantomJS
+    $ cake watch        # compiles src/*.coffee files into lib/*.js when they change
+    $ cake package[:*]  # builds the production version of Annotator in pkg/
+
+Run `cake` (or `` `npm bin`/cake``) to see the list of all available tasks.
+
+[node]: http://nodejs.org/
+[npm]: http://npmjs.org/
+[coffee]: http://coffeescript.org/ 
+[jas]: http://pivotal.github.com/jasmine/
 [tom]: http://tomdoc.org/
+
+

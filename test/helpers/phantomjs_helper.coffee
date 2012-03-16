@@ -1,12 +1,11 @@
-fs     = require 'fs'
-path   = require 'path'
-util   = require 'util'
+print = (msg, newline=true) ->
+  if newline
+    console.log(msg)
+  else
+    console.log(msg + '%%') # Append "%%" to signal direct write to STDOUT
 
-jasmine = {}
-jasmine.node = {}
-
-class jasmine.node.ConsoleReporter
-  constructor: (@callback, @colors=true, @verbose=false) ->
+class this.jasmine.PhantomJSReporter
+  constructor: (@callback, @colors=true) ->
     @logger = []
     @start = 0
     @elapsed = 0
@@ -21,11 +20,12 @@ class jasmine.node.ConsoleReporter
   reportSpecStarting: (runner) ->
 
   reportRunnerStarting: (runner) ->
-    util.puts('Started')
+    print('Started')
     @start = Number(new Date)
 
   reportSuiteResults: (suite) ->
     specResults = suite.results()
+
     path = []
 
     while (suite)
@@ -34,20 +34,17 @@ class jasmine.node.ConsoleReporter
 
     description = path.join(' ')
 
-    if (@verbose)
-      @logger.push('Spec ' + description)
-
     for spec in specResults.items_
       if (spec.failedCount > 0 && spec.description)
-        if (!@verbose)
-          @logger.push(description)
-        @logger.push('  it ' + spec.description)
+        @logger.push('\n' + description)
+        @logger.push('  "it ' + spec.description + '"')
         for result in spec.items_
-          @logger.push('  ' + result.trace.stack + '\n')
+          if not result.passed_
+            @logger.push('    ' + result.message)
 
   reportSpecResults: (spec) ->
     result = spec.results()
-    msg = ''
+
     if result.passed()
       msg = if @colors then @ansi.green + '.' + @ansi.none else '.'
     else if result.skipped # TODO: Research why "result.skipped" returns false when "xit" is called on a spec?
@@ -55,36 +52,35 @@ class jasmine.node.ConsoleReporter
     else
       msg = if @colors then @ansi.red + 'F' + @ansi.none else 'F'
 
-    util.print(msg)
+    print(msg, false)
 
   reportRunnerResults: (runner) ->
     @elapsed = (Number(new Date) - @start) / 1000
-    util.puts('\n')
+    print('')
     for l in @logger
-      util.puts(l)
-    util.puts('Finished in ' + @elapsed + ' seconds')
+      print(l)
+    print('\nFinished in ' + @elapsed + ' seconds')
 
     summary = this.runnerResultsSummary(runner)
     if @colors
       if runner.results().failedCount is 0
-        util.puts(@ansi.green + summary + @ansi.none)
+        print(@ansi.green + summary + @ansi.none)
       else
-        util.puts(@ansi.red + summary + @ansi.none)
+        print(@ansi.red + summary + @ansi.none)
     else
-      util.puts(summary)
+      print(summary)
 
+    print('phantom:testsComplete:' + runner.results().failedCount)
     @callback(runner, @logger) if @callback
 
   runnerResultsSummary: (runner) ->
     results = runner.results()
-    suites = runner.suites()
+    specs = runner.specs()
 
     plural = (n) -> if n is 1 then '' else 's'
 
     msg = ''
-    msg += suites.length + ' test' + plural(suites.length) + ', '
+    msg += specs.length + ' spec' + plural(specs.length) + ', '
     msg += results.totalCount + ' assertion' + plural(results.totalCount) + ', '
-    msg += results.failedCount + ' failure' + plural(results.failedCount) + '\n'
+    msg += results.failedCount + ' failure' + plural(results.failedCount)
     msg
-
-exports.jasmine = jasmine
