@@ -85,7 +85,7 @@ Callback name                                  | Description
 `annotationViewerShown(viewer, annotations)`   | called when the annotation viewer is displayed provides the annotations being displayed
 `annotationViewerTextField(field, annotation)` | called when the text field displaying the annotation in the viewer is created
 
-velopment
+Development
 -----------
 
 If you wish to develop Annotator, you'll need to have a working installation of [Node.js][node] (v0.6.x). I'd highly recommend installing both Node.js and the [Node Package Manager][npm], after which you can run the following to get up and running:
