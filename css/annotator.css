@@ -293,47 +293,34 @@
 
 
 
-
-
+.replyentry textarea{
+        background-color: #CECECE;
+}
 
 .replybox {
-        position: fixed;
+        position: relative;
         float:bottom;
-        background: white;
-        border: solid;
-        border-width: 1px;
-        border-radius:5px;
 }
 
 
 #Replies {
-        position: fixed;
+        position: relative;
         float:bottom;
         overflow:auto;
-        height:200px;
-        width:250px;
+        height:100px;
         background: white;
         border: solid;
-        border-width: 1px;
+        border-width: 0px;
         border-radius:5px;
+        padding:3px;
+
+}
+
+.Replies {
+    padding:5px;
 }
 
 
-
-.annotator-reply {
-        cursor:pointer;
-	display: inline-block;
-	padding: 0 8px;
-	margin-bottom: 2px;
-	line-height: 1.6;
-	font-weight: bold;
-	background-color: rgb(230, 230, 230);
-	-webkit-border-radius: 8px;
-	-moz-border-radius: 8px;
-	-o-border-radius: 8px;
-	border-radius: 8px;
-
-}
 
 /* Annotator Editor
 -------------------------------------------------------------------- */
@@ -349,7 +336,7 @@
 	font-size: 12px;
 }
 
-.replybox .replyentry,
+.replybox textarea,
 .annotator-editor .annotator-item input,
 .annotator-editor .annotator-item textarea {
 	display: block;
@@ -421,7 +408,7 @@
 
 
 
-.annotator-filter, .numberOfReplies,
+.annotator-filter, .annotator-reply-controls,
 .annotator-filter .annotator-filter-navigation button,
 .annotator-editor .annotator-controls {
 	text-align: right;
@@ -554,9 +541,8 @@
 	background-position: 0 -90px;
 }
 
-.annotator-reply span:hover,
-.numberOfReplies a:hover,
-.numberOfReplies a:focus,
+.replybuttons a:hover,
+.replybuttons a:focus,
 .annotator-editor a:hover,
 .annotator-editor a:focus,
 .annotator-editor a.annotator-focus,
@@ -603,7 +589,7 @@
 	background-position: 0 -105px;
 }
 
-.numberOfReplies a:active,
+.replybuttons a:active,
 .annotator-editor a:active,
 .annotator-filter .annotator-filter-navigation button:active {
 	border-color: rgb(112, 12, 73);

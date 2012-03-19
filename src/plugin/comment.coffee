@@ -4,7 +4,8 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
   
     'annotationViewerShown' : 'addReplyButton'
     '.annotator-reply click': 'onReplyClick'
-    '.annotator-reply-entry click': 'onReplyEntryClick'
+    '.annotator-save click': 'onReplyEntryClick'
+    '.annotator-cancel click': 'hide'
     '.numberOfReplies click'    :   'showReplies'
     '.replyentry keydown' : 'processKeypress'
 
@@ -30,21 +31,44 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
   addReplyButton: (viewer, annotations) ->
     # Annotations are displayed in the order they they were entered into the viewer
     #
-    annotations = viewer.annotations
+ #  annotations = viewer.annotations
+    console.log(annotations)
     annotator_listing = @annotator.element.find('.annotator-annotation.annotator-item')
-    console.log('listing: ', annotator_listing)
+#    console.log('listing: ', annotator_listing)
     for l, i in annotator_listing
-     replies = annotations[i].replies
-     $(l).append('''<div id="Replies">
-        <li class="Replies">
-        </li></div>''')
-     console.log('l', l) 
-     if replies.length > 0
-       replylist = @annotator.element.find('.Replies')
-       for reply in replies
-         replylist.append('''<div class='reply'>
-            <span class='replyuser'>''' + reply.user + '''</span>
-            <div class='replytext'>''' + reply.reply + '''</div></div>''')
+      console.log(annotations[i], l)
+      l = $(l)
+
+      replies = annotations[i].replies
+      # if there are replies, add them to each annotation view
+      if replies?
+        console.log('replies', replies)
+        l.append('''<div style='padding:5px'> <span> Replies </span></div>
+            <div id="Replies">
+          
+          <li class="Replies">
+          </li></div>''')
+        console.log('l', l) 
+        if replies.length > 0
+          replylist = @annotator.element.find('.Replies')
+          for reply in replies
+            replylist.append('''<div class='reply'>
+              <span class='replyuser'>''' + reply.user + '''</span>
+              <div class='replytext'>''' + reply.reply + '''</div></div>''')
+
+      # Add the textarea
+      l.append('''<div class='replybox'>
+          <textarea class="replyentry" placeholder="Reply to this annotation..."></textarea>
+          <div class="annotator-reply-controls">
+          <a href="#save" class="annotator-save">Save</a>
+          <a href="#cancel" class="annotator-cancel">Cancel</a>
+          </div>
+          </div>
+          ''')
+
+    viewer.checkOrientation()
+
+
 
 
 #   # add the reply button to the viewer element's controls element 
@@ -170,4 +194,6 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
     else if event.keyCode is 13 and !event.shiftKey
       # If "return" was pressed without the shift key, we're done.
       @onReplyEntryClick(event)
-  
+ 
+  hide: ->
+    @annotator.viewer.hide()
