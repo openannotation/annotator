@@ -190,6 +190,7 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
           </div>
           </div>
           ''')
+      @annotator.viewer.checkOrientation()
 
     console.log(item)
     if event.keyCode is 27 # "Escape" key => abort.
