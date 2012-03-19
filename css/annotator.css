@@ -31,7 +31,7 @@
 
 .annotator-resize,
 .annotator-widget::after,
-.annotator-editor a::after,
+.annotator-editor a::after, .annotator-reply-controls a::after,
 .annotator-viewer .annotator-controls button,
 .annotator-filter .annotator-filter-navigation button::after,
 .annotator-filter .annotator-filter-property .annotator-filter-clear {
@@ -293,9 +293,6 @@
 
 
 
-.replyentry textarea{
-        background-color: #CECECE;
-}
 
 .replybox {
         position: relative;
@@ -408,7 +405,7 @@
 
 
 
-.annotator-filter, .annotator-reply-controls,
+.annotator-filter, 
 .annotator-filter .annotator-filter-navigation button,
 .annotator-editor .annotator-controls {
 	text-align: right;
@@ -470,7 +467,7 @@
 	border-radius: 5px 5px 0 0;
 }
 
-.annotator-editor a, .repliesView,
+.annotator-editor a, .annotator-reply-controls a, 
 .annotator-filter .annotator-filter-property label {
 	position: relative;
 	display: inline-block;
@@ -541,8 +538,8 @@
 	background-position: 0 -90px;
 }
 
-.replybuttons a:hover,
-.replybuttons a:focus,
+.annotator-reply-controls a:hover,
+.annotator-reply-controls a:focus,
 .annotator-editor a:hover,
 .annotator-editor a:focus,
 .annotator-editor a.annotator-focus,
@@ -589,7 +586,7 @@
 	background-position: 0 -105px;
 }
 
-.replybuttons a:active,
+.annotator-reply-controls a:active,
 .annotator-editor a:active,
 .annotator-filter .annotator-filter-navigation button:active {
 	border-color: rgb(112, 12, 73);

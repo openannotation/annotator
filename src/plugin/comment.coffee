@@ -6,8 +6,8 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
     '.annotator-reply click': 'onReplyClick'
     '.annotator-save click': 'onReplyEntryClick'
     '.annotator-cancel click': 'hide'
-    '.numberOfReplies click'    :   'showReplies'
     '.replyentry keydown' : 'processKeypress'
+    '.replyentry click' : 'processKeypress'
 
   constructor: (element) ->
       super
@@ -59,12 +59,13 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
       # Add the textarea
       l.append('''<div class='replybox'>
           <textarea class="replyentry" placeholder="Reply to this annotation..."></textarea>
-          <div class="annotator-reply-controls">
-          <a href="#save" class="annotator-save">Save</a>
-          <a href="#cancel" class="annotator-cancel">Cancel</a>
-          </div>
-          </div>
           ''')
+#         <div class="annotator-reply-controls">
+#         <a href="#save" class="annotator-save">Save</a>
+#         <a href="#cancel" class="annotator-cancel">Cancel</a>
+#         </div>
+#         </div>
+#         ''')
 
     viewer.checkOrientation()
 
@@ -119,38 +120,29 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
     # get content of the textarea
     textarea = @annotator.element.find('.replyentry')
     reply = textarea.val()
-    
-    replyObject = @getReplyObject()
-    
-    if @annotator.plugins.Permissions.user 
-      replyObject.user = @annotator.plugins.Permissions.user
-    else
-      replyObject.user = "Anonymous"
+    if reply != '' 
+      replyObject = @getReplyObject()
+      
+      if @annotator.plugins.Permissions.user 
+        replyObject.user = @annotator.plugins.Permissions.user
+      else
+        replyObject.user = "Anonymous"
 
-    replyObject.reply = reply
+      replyObject.reply = reply
 
-    #TODO DEBUG info
-#    console.log(reply)
-    item = $(event.target).parents('.annotator-annotation')
-    
-    #TODO DEBUG
-    #console.log('item-data', item.data('annotation'))
-    annotation = item.data('annotation')  
-    if not annotation.replies?
-      annotation.replies = []
+      item = $(event.target).parents('.annotator-annotation')
+      
+      annotation = item.data('annotation')  
+      if not annotation.replies?
+        annotation.replies = []
 
-    #TODO DEBUG
-#    if @annotator.plugins.Permissions?
-        #console.log('New reply by: ', @annotator.plugins.Permissions.user)
-    annotation.replies.push replyObject
- #   else
-        #console.log('New reply by: Anonymous')
-
-    # publish annotationUpdated event so that the store can save the changes
-    this.publish('annotationUpdated', [annotation])
-    
-    # hide the viewer
-    @annotator.viewer.hide()
+      annotation.replies.push replyObject
+      
+      # publish annotationUpdated event so that the store can save the changes
+      this.publish('annotationUpdated', [annotation])
+      
+      # hide the viewer
+      @annotator.viewer.hide()
     
   showReplies: (event) ->
     # here we show the replies attached to the annotation
@@ -189,6 +181,17 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
     
     
   processKeypress: (event) =>
+    item =  $(event.target).parent()
+    controls = item.find('.annotator-reply-controls')
+    if controls.length == 0
+      item.append('''<div class="annotator-reply-controls">
+          <a href="#save" class="annotator-save">Save</a>
+          <a href="#cancel" class="annotator-cancel">Cancel</a>
+          </div>
+          </div>
+          ''')
+
+    console.log(item)
     if event.keyCode is 27 # "Escape" key => abort.
       @annotator.viewer.hide()
     else if event.keyCode is 13 and !event.shiftKey
