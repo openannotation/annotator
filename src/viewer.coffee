@@ -21,8 +21,9 @@ class Annotator.Viewer extends Annotator.Widget
     item:   """
             <li class="annotator-annotation annotator-item">
               <span class="annotator-controls">
-                <button class="annotator-edit">Edit</button>
-                <button class="annotator-delete">Delete</button>
+                <a href="#" title="View as webpage" class="annotator-link">View as webpage</a>
+                <button title="Edit" class="annotator-edit">Edit</button>
+                <button title="Delete" class="annotator-delete">Delete</button>
               </span>
             </li>
             """
@@ -121,7 +122,7 @@ class Annotator.Viewer extends Annotator.Widget
   #
   # Examples
   #
-  #   viewer.load([annotration1, annotation2, annotation3])
+  #   viewer.load([annotation1, annotation2, annotation3])
   #
   # Returns itslef.
   load: (annotations) =>
@@ -132,11 +133,19 @@ class Annotator.Viewer extends Annotator.Widget
       item = $(@item).clone().appendTo(list).data('annotation', annotation)
       controls = item.find('.annotator-controls')
 
-      if @options.readOnly
-        controls.empty()
+      link = controls.find('.annotator-link')
+      edit = controls.find('.annotator-edit')
+      del  = controls.find('.annotator-delete')
+
+      unless annotation?.links?.alternate?.href
+        link.remove()
       else
-        edit = controls.find('.annotator-edit')
-        del  = controls.find('.annotator-delete')
+        link.attr('href', annotation.links.alternate.href)
+
+      if @options.readOnly
+        edit.remove()
+        del.remove()
+      else
         controller = {
           showEdit: -> edit.removeAttr('disabled')
           hideEdit: -> edit.attr('disabled', 'disabled')
