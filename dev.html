@@ -98,7 +98,9 @@
         var elem = document.getElementById('airlock');
 
         devAnnotator = new Annotator(elem)
-          //.addPlugin('Auth')
+          .addPlugin('Auth', {
+            tokenUrl: 'http://localhost:5000/api/token'
+          })
           .addPlugin('Unsupported')
           .addPlugin('Filter', {
             addAnnotationFilter: false
@@ -109,10 +111,15 @@
             permissions: {
               update: ['alice']
             }
+          })
+          .addPlugin('Store', {
+            prefix: 'http://localhost:5000/api',
+            annotationData: {
+              links: {
+                alternate: { href: "http://google.com" }
+              }
+            }
           });
-          // .addPlugin('Store', {
-          //   prefix: 'http://localhost:5000'
-          // });
           
       }(jQuery));
     </script>
