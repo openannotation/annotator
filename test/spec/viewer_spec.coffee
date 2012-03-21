@@ -22,6 +22,14 @@ describe 'Annotator.Viewer', ->
       viewer.load([{text: "Hello there"}])
       expect(viewer.element.find('.annotator-controls:first button').length).toBe(0)
 
+    it "should contain an external link to the annotation if the annotation provides one", ->
+      viewer.load([{links:[{rel: "alternate", href: "http://example.com/foo", type: "text/html"}]}])
+      expect(viewer.element.find('.annotator-controls:first a.annotator-link').attr('href')).toBe('http://example.com/foo')
+
+    it "should NOT contain an external link to the annotation if the annotation doesn't provide one", ->
+      viewer.load([{text: "Hello there"}])
+      expect(viewer.element.find('.annotator-controls:first a.annotator-link').length).toBe(0)
+
   describe "events", ->
     beforeEach ->
       viewer.element.find('ul').append(viewer.html.item)

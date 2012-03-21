@@ -137,10 +137,11 @@ class Annotator.Viewer extends Annotator.Widget
       edit = controls.find('.annotator-edit')
       del  = controls.find('.annotator-delete')
 
-      unless annotation?.links?.alternate?.href
+      links = new LinkParser(annotation.links or []).get('alternate', {'type': 'text/html'})
+      if links.length is 0 or not links[0].href?
         link.remove()
       else
-        link.attr('href', annotation.links.alternate.href)
+        link.attr('href', links[0].href)
 
       if @options.readOnly
         edit.remove()
@@ -221,3 +222,29 @@ class Annotator.Viewer extends Annotator.Widget
     item = $(event.target).parents('.annotator-annotation')
 
     this.publish(type, [item.data('annotation')])
+
+# Private: simple parser for hypermedia link structure
+#
+# Examples:
+#
+#   links = [
+#     { rel: 'alternate', href: 'http://example.com/pages/14.json', type: 'application/json' },
+#     { rel: 'prev': href: 'http://example.com/pages/13' }
+#   ]
+#
+#   lp = LinkParser(links)
+#   lp.get('alternate')                      # => [ { rel: 'alternate', href: 'http://...', ... } ]
+#   lp.get('alternate', {type: 'text/html'}) # => []
+#
+class LinkParser
+  constructor: (@data) ->
+
+  get: (rel, cond={}) ->
+    cond = $.extend({}, cond, {rel: rel})
+    keys = (k for own k, v of cond)
+    for d in @data
+      match = keys.reduce ((m, k) -> m and (d[k] is cond[k])), true
+      if match
+        d
+      else
+        continue
