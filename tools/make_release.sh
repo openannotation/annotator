@@ -64,9 +64,12 @@ VERSION_PATCH="$(echo $OLD_VERSION | cut -d. -f3)"
 case "${BUMP}" in
   major)
     ((VERSION_MAJOR+=1))
+    ((VERSION_MINOR=0))
+    ((VERSION_PATCH=0))
     ;;
   minor)
     ((VERSION_MINOR+=1))
+    ((VERSION_PATCH=0))
     ;;
   patch)
     ((VERSION_PATCH+=1))
