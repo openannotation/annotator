@@ -100,7 +100,7 @@ confirm_proceed "Going to release v${VERSION} -- proceed?"
 # Update version in package.json
 
 echo "Bumping version in package.json and committing version bump"
-perl -pi -e 's/"version":\s*"[^"]*"/"version": "'"${VERSION}"'"/'
+perl -pi -e 's/"version":\s*"[^"]*"/"version": "'"${VERSION}"'"/' package.json
 git commit package.json -m "Bump version -> v${VERSION}"
 
 # Generate package files
