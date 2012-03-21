@@ -116,9 +116,9 @@ git add -f pkg/*
 tree=$(git write-tree)
 parent=$(git rev-parse master)
 
-commit=$(echo "Annotator release ${TAG}" | git commit-tree "${tree}" -p "${parent}")
+commit=$(echo "Annotator release v${VERSION}" | git commit-tree "${tree}" -p "${parent}")
 
-git tag "${TAG}" "${commit}"
+git tag "v${VERSION}" "${commit}"
 git reset HEAD pkg/
 
 # Upload release to S3
