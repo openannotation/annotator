@@ -1,5 +1,13 @@
 Date::toISO8601String = DateToISO8601String
 
+base64UrlEncode = (data) ->
+  data = btoa(data)
+  data = data.replace(/\+/g, '-')
+  data = data.replace(/\//g, '_')
+  while data[-1..] is '='
+    data = data[..-2]
+  data
+
 describe 'Annotator.Plugin.Auth', ->
   mock = null
   validToken = null
@@ -14,12 +22,12 @@ describe 'Annotator.Plugin.Auth', ->
     }
 
   beforeEach ->
-    validToken = JSON.stringify({
+    validToken = 'header.' + base64UrlEncode(JSON.stringify({
       consumerKey: "key"
       issuedAt: new Date().toISO8601String()
       ttl: 300
       userId: "testUser"
-    }) + ".timestamp.signature"
+    })) + ".signature"
 
     mock = mockAuth({token: validToken, autoFetch: false})
 
