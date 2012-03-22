@@ -8,9 +8,23 @@ base64UrlEncode = (data) ->
     data = data[..-2]
   data
 
+makeToken = () ->
+  rawToken = {
+    consumerKey: "key"
+    issuedAt: new Date().toISO8601String()
+    ttl: 300
+    userId: "testUser"
+  }
+  {
+    rawToken: rawToken
+    encodedToken: 'header.' + base64UrlEncode(JSON.stringify(rawToken)) + '.signature'
+  }
+
+
 describe 'Annotator.Plugin.Auth', ->
   mock = null
-  validToken = null
+  rawToken = null
+  encodedToken = null
 
   mockAuth = (options) ->
     el = $('<div></div>')[0]
@@ -22,29 +36,23 @@ describe 'Annotator.Plugin.Auth', ->
     }
 
   beforeEach ->
-    validToken = 'header.' + base64UrlEncode(JSON.stringify({
-      consumerKey: "key"
-      issuedAt: new Date().toISO8601String()
-      ttl: 300
-      userId: "testUser"
-    })) + ".signature"
-
-    mock = mockAuth({token: validToken, autoFetch: false})
+    {rawToken, encodedToken} = makeToken()
+    mock = mockAuth({token: encodedToken, autoFetch: false})
 
   it "uses token supplied in options by default", ->
-    expect(mock.auth.token).toEqual(validToken)
+    expect(mock.auth.token).toEqual(encodedToken)
 
   xit "makes an ajax request to tokenUrl to retrieve token otherwise"
 
   it "sets annotator:headers data on its element with token data", ->
     data = $(mock.elem).data('annotator:headers')
     expect(data).not.toBeNull()
-    expect(data['x-annotator-auth-token']).toEqual(validToken)
+    expect(data['x-annotator-auth-token']).toEqual(encodedToken)
 
   it "should call callbacks given to #withToken immediately if it has a valid token", ->
     callback = jasmine.createSpy()
     mock.auth.withToken(callback)
-    expect(callback).toHaveBeenCalled()
+    expect(callback).toHaveBeenCalledWith(rawToken)
 
   xit "should call callbacks given to #withToken after retrieving a token"
 

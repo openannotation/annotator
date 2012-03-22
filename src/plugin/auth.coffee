@@ -239,7 +239,7 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
       return
 
     if this.haveValidToken()
-      callback(@token)
+      callback(@_unsafeToken)
     else
       this.waitingForToken.push(callback)
       if not @requestInProgress
