@@ -132,9 +132,9 @@ task 'bookmarklet:watch', 'Watch the bookmarklet source for changes', ->
 
 task 'bookmarklet:upload', 'Upload bookmarklet source files to S3', ->
   invoke 'bookmarklet:prereqs'
-  console.log "Uploading bookmarklet source files."
+  console.log("Uploading bookmarklet source files."
               "Don't expect this to work unless you have `s3cmd` and have configured it"
-              "for access to the OKF's S3 account."
+              "for access to the OKF's S3 account.")
   run "s3cmd --acl-public sync contrib/bookmarklet/pkg/*.{js,css} s3://assets.annotateit.org/bookmarklet/"
 
 task 'i18n:update', 'Update the annotator.pot template', ->
