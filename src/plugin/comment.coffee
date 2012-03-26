@@ -56,10 +56,7 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
 
     viewer.checkOrientation()
 
-
-
-
-    
+ 
     
   #
   # Add a textarea to the viewer widget if the reply button is clicked
