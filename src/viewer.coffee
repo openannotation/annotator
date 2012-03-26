@@ -138,6 +138,28 @@ class Annotator.Viewer extends Annotator.Widget
         hideDelete: -> del.attr('disabled', 'disabled')
       }
 
+      link = controls.find('.annotator-link')
+      edit = controls.find('.annotator-edit')
+      del  = controls.find('.annotator-delete')
+
+      links = new LinkParser(annotation.links or []).get('alternate', {'type': 'text/html'})
+      if links.length is 0 or not links[0].href?
+        link.remove()
+      else
+        link.attr('href', links[0].href)
+
+      if @options.readOnly
+        edit.remove()
+        del.remove()
+      else
+        controller = {
+          showEdit: -> edit.removeAttr('disabled')
+          hideEdit: -> edit.attr('disabled', 'disabled')
+          showDelete: -> del.removeAttr('disabled')
+          hideDelete: -> del.attr('disabled', 'disabled')
+        }
+
+
       for field in @fields
         element = $(field.element).clone().appendTo(item)[0]
         field.load(element, annotation, controller)
