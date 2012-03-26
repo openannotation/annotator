@@ -14,8 +14,7 @@
   <link href='http://fonts.googleapis.com/css?family=Arvo:regular,bold&amp;subset=latin' rel='stylesheet' />
   <link href='http://fonts.googleapis.com/css?family=Inconsolata&amp;subset=latin' rel='stylesheet' />
   
-  <!-- Local copy of Annotator CSS because we cannot link to it on GitHub as it is served as text/plain -->
-  <link href="http://assets.annotateit.org/annotator/v1.1.0/annotator.min.css" rel="stylesheet" />
+  <link href="http://assets.annotateit.org/annotator/v1.2.2/annotator.min.css" rel="stylesheet" />
   <link href="../main.css" rel="stylesheet" />
 </head>
 <body>
@@ -131,8 +130,8 @@
     </footer>
   </div>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
-  <script src="sha256.js"></script>
-  <script src="http://assets.annotateit.org/annotator/v1.1.0/annotator-full.min.js"></script>
+  <script src="jwt.js"></script>
+  <script src="http://assets.annotateit.org/annotator/v1.2.2/annotator-full.min.js"></script>
   <script src="../main.js"></script>
   <script>
     if (!Date.prototype.toISOString) {
@@ -153,23 +152,34 @@
     var demoConsumerSecret = '36977e7b-be7f-4b57-a9eb-9617e4740b6a';
 
     function getAuthToken(consumerKey, consumerSecret, userId) {
-      var date = new Date(new Date() - 1 * 60 * 60 * 1000), // 1 hour ago
-          token = Sha256.hash(consumerSecret + userId + date.toISOString());
+      "use strict";
 
-      return {
-        consumerKey: consumerKey,
-        userId: userId,
-        authTokenIssueTime: date.toISOString(),
-        authTokenTTL: 86400,
-        authToken: token
-      };
+      var date = new Date(new Date() - 1 * 60 * 60 * 1000), // 1 hour ago
+          alg = { typ:'JWT', alg:'HS256' },
+          payload = {
+            consumerKey: consumerKey,
+            userId: userId,
+            issuedAt: date.toISOString(),
+            ttl: 86400
+          },
+          token;
+
+      alg = JSON.stringify(alg);
+      payload = JSON.stringify(payload);
+      token = new jwt.WebToken(payload, alg);
+
+      return token.serialize(consumerSecret);
     }
 
     function initAnnotator(json) {
+      "use strict";
+
       $('article').annotator().annotator('setupPlugins', null, {
         Auth: {
           token: getAuthToken(demoConsumerKey, demoConsumerSecret, json.ip)
-        }
+        },
+        Permissions: false,
+        AnnotateItPermissions: {}
       });
     }
   </script>
