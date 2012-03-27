@@ -20,7 +20,6 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
   # Returns nothing.
   pluginInit: ->
     return unless Annotator.supported()
-    console.log('loaded Comment plugin')
   
   # Add a reply button to the viewer widget's controls span
   addReplyButton: (viewer, annotations) ->
@@ -30,18 +29,16 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
     for l, i in annotator_listing
       l = $(l)
 
-      replies = annotations[i].replies
       # if there are replies, add them to each annotation view
-      if replies?
+      if annotations[i].replies?
+        replies = annotations[i].replies
         l.append('''<div style='padding:5px'> <span> Replies </span></div>
             <div id="Replies">
           
           <li class="Replies">
           </li></div>''')
-        #console.log('l', l) 
         if replies.length > 0
           replylist = @annotator.element.find('.Replies')
-          console.log(annotations[i], replylist)  
           
           # write the replies into the correct places of the viewer. This algorithm handles overlapping annotations 
           for reply in replies
@@ -62,9 +59,7 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
   # Add a textarea to the viewer widget if the reply button is clicked
   #
   onReplyClick: (event) ->
-    console.log("You clicked on the reply button")
     item = $(event.target).parents('.annotator-annotation')
-    #console.log(item)
  
     # add a text entry area to the viewer
     viewer = @annotator.element.find('.annotator-annotation.annotator-item')
@@ -89,9 +84,7 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
   onReplyEntryClick: (event) ->
     # get content of the textarea
     item =  $(event.target).parent().parent()
-    console.log('item', item)
     textarea = item.find('.replyentry')
-    console.log('textarea', textarea)
     reply = textarea.val()
     if reply != '' 
       replyObject = @getReplyObject()
@@ -131,7 +124,6 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
         <li class="Replies">
         </li></div>''')
     replylist = viewer.find('.Replies')
-    console.log(replylist.children())
 
     if replylist.children().length == 0
       # add all the replies into the div
@@ -140,7 +132,6 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
             <span class='replyuser'>''' + reply.user + '''</span>
             <div class='replytext'>''' + reply.reply + '''</div></div>''')
 
-    console.log(replylist)
 
 
 
@@ -165,7 +156,6 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
           ''')
       @annotator.viewer.checkOrientation()
 
-    console.log(item)
     if event.keyCode is 27 # "Escape" key => abort.
       @annotator.viewer.hide()
     else if event.keyCode is 13 and !event.shiftKey

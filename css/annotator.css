@@ -32,7 +32,7 @@
 .annotator-resize,
 .annotator-widget::after,
 .annotator-editor a::after, .annotator-reply-controls a::after,
-.annotator-viewer .annotator-controls button,
+/*.annotator-viewer .annotator-controls button,*/
 .annotator-viewer .annotator-controls a,
 .annotator-filter .annotator-filter-navigation button::after,
 .annotator-filter .annotator-filter-property .annotator-filter-clear {
@@ -244,13 +244,14 @@
 	position: relative;
 	top: 5px;
 	right: 5px;
-	padding-left: 5px;
+        padding:7px;
 	opacity: 0;
 	-webkit-transition: opacity 0.2s ease-in;
 	-moz-transition: opacity 0.2s ease-in;
 	-o-transition: opacity 0.2s ease-in;
 	transition: opacity 0.2s ease-in;
-	float: right;
+	float:right;
+        width:90%;
 }
 
 .annotator-viewer li:hover .annotator-controls,
@@ -258,7 +259,25 @@
 	opacity: 1;
 }
 
-.annotator-viewer .annotator-controls button,
+
+.annotator-viewer .annotator-controls button {
+    display: inline-block;
+    position:relative;
+    margin:0 7px 0 0;
+    background-color:#f5f5f5;
+    border:1px solid #dedede;
+    border-top:1px solid #eee;
+    border-left:1px solid #eee;
+    float:right;
+    font-size:10px;
+    line-height:130%;
+    text-decoration:none;
+    font-weight:bold;
+    color:#565656;
+    cursor:pointer;
+    padding:5px 10px 6px 7px; /* Links */
+}
+
 .annotator-viewer .annotator-controls a {
 	cursor: pointer;
 	display: inline-block;
@@ -469,7 +488,7 @@
 
 .annotator-invert-y .annotator-controls {
 	border-top: none;
-	border-bottom: 1px solid rgb(180, 180, 180);
+	border-bottom: none;
 	-webkit-border-radius: 5px 5px 0 0;
 	-moz-border-radius: 5px 5px 0 0;
 	-o-border-radius: 5px 5px 0 0;

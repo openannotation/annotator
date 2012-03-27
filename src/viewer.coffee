@@ -244,3 +244,30 @@ class Annotator.Viewer extends Annotator.Widget
     item = $(event.target).parents('.annotator-annotation')
 
     this.publish(type, [item.data('annotation')])
+
+
+# Private: simple parser for hypermedia link structure
+#
+# Examples:
+#
+#   links = [
+#     { rel: 'alternate', href: 'http://example.com/pages/14.json', type: 'application/json' },
+#     { rel: 'prev': href: 'http://example.com/pages/13' }
+#   ]
+#
+#   lp = LinkParser(links)
+#   lp.get('alternate')                      # => [ { rel: 'alternate', href: 'http://...', ... } ]
+#   lp.get('alternate', {type: 'text/html'}) # => []
+#
+class LinkParser
+  constructor: (@data) ->
+
+  get: (rel, cond={}) ->
+    cond = $.extend({}, cond, {rel: rel})
+    keys = (k for own k, v of cond)
+    for d in @data
+      match = keys.reduce ((m, k) -> m and (d[k] is cond[k])), true
+      if match
+        d
+      else
+        continue
