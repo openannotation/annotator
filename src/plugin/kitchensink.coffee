@@ -29,7 +29,7 @@ Annotator::setupPlugins = (config={}, options={}) ->
   win = util.getGlobal()
 
   # Set up the default plugins.
-  plugins = ['Unsupported', 'Auth', 'Tags', 'Filter', 'Store', 'Permissions']
+  plugins = ['Unsupported', 'Auth', 'Tags', 'Filter', 'Store', 'AnnotateItPermissions']
 
   # If Showdown is included add the Markdown plugin.
   if win.Showdown
