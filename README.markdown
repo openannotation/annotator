@@ -115,7 +115,7 @@ Run `cake` (or `` `npm bin`/cake``) to see the list of all available tasks.
 Community
 ---------
 
-The annotator project has a [mailing list](dev) for developer discussion and community members can sometimes be found in the #annotator channel on [freenode IRC](irc).
+The annotator project has a [mailing list][dev] for developer discussion and community members can sometimes be found in the #annotator channel on [freenode IRC][irc].
 
 [node]: http://nodejs.org/
 [npm]: http://npmjs.org/
