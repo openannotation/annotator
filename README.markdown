@@ -112,10 +112,17 @@ The `Cakefile` provides a number of useful tasks. (**NB**: If `cake` doesn't wor
 
 Run `cake` (or `` `npm bin`/cake``) to see the list of all available tasks.
 
+Community
+---------
+
+The annotator project has a [mailing list][dev] for developer discussion and community members can sometimes be found in the #annotator channel on [freenode IRC][irc].
+
 [node]: http://nodejs.org/
 [npm]: http://npmjs.org/
 [coffee]: http://coffeescript.org/ 
 [jas]: http://pivotal.github.com/jasmine/
 [tom]: http://tomdoc.org/
+[dev]: http://lists.okfn.org/mailman/listinfo/annotator-dev
+[irc]: http://freenode.net/
 
 

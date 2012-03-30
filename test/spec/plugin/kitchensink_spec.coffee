@@ -1,10 +1,14 @@
 describe 'Annotator::setupPlugins', ->
   annotator = null
+  $fix = null
 
   beforeEach ->
-    window.location = {href: 'http://www.example.com'}
+    addFixture('kitchensink')
+    $fix = $(fix())
     this.addMatchers
       toContainFilter: (prop) -> prop in (f.property for f in this.actual.filters)
+
+  afterEach -> clearFixtures()
 
   it 'should added to the Annotator prototype', ->
     expect(typeof Annotator::setupPlugins).toBe('function')
@@ -12,7 +16,7 @@ describe 'Annotator::setupPlugins', ->
   it 'should be callable via jQuery.fn.Annotator', ->
     spyOn Annotator.prototype, 'setupPlugins'
 
-    $('<div />').annotator().annotator('setupPlugins')
+    $fix.annotator().annotator('setupPlugins', {}, {Filter: {appendTo: fix()}})
     expect(Annotator::setupPlugins).toHaveBeenCalled()
 
   describe 'called with no parameters', ->
@@ -20,8 +24,8 @@ describe 'Annotator::setupPlugins', ->
 
     beforeEach ->
       _Showdown = window.Showdown
-      annotator = new Annotator $('<div />')[0]
-      annotator.setupPlugins()
+      annotator = new Annotator(fix())
+      annotator.setupPlugins({}, {Filter: {appendTo: fix()}})
 
     afterEach -> window.Showdown = _Showdown
 
@@ -54,32 +58,32 @@ describe 'Annotator::setupPlugins', ->
       # Prevent store making initial AJAX requests.
       spyOn Annotator.Plugin.Store.prototype, 'pluginInit'
 
-      annotator = new Annotator $('<div />')[0]
+      annotator = new Annotator(fix())
       annotator.setupPlugins()
-
 
   it 'should add the Store plugin', ->
     expect(annotator.plugins.Store).toBeDefined()
 
-  it 'should add the Permissions plugin', ->
-    expect(annotator.plugins.Permissions).toBeDefined()
+  it 'should add the AnnotateItPermissions plugin', ->
+    expect(annotator.plugins.AnnotateItPermissions).toBeDefined()
 
   it 'should add the Auth plugin', ->
     expect(annotator.plugins.Auth).toBeDefined()
 
-
   describe 'called with plugin options', ->
-    beforeEach -> annotator = new Annotator $('<div />')[0]
+    beforeEach -> annotator = new Annotator(fix())
 
     it 'should override default plugin options', ->
       annotator.setupPlugins null,
+        AnnotateItPermissions: false
         Filter:
-          filters: []
+          filters: null
           addAnnotationFilter: false
+          appendTo: fix()
 
       expect(annotator.plugins.Filter.filters.length).toBe(0)
 
-    it 'should NOT load a plugin if it\'s key is set to null OR false', ->
+    it 'should NOT load a plugin if its key is set to null OR false', ->
       annotator.setupPlugins null, {Filter: false, Tags: null}
       expect(annotator.plugins.Tags).not.toBeDefined()
       expect(annotator.plugins.Filter).not.toBeDefined()

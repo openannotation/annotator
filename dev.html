@@ -114,13 +114,14 @@
           })
           .addPlugin('Store', {
             prefix: 'http://localhost:5000/api',
+            loadFromSearch: {
+              uri: 'http://localhost/annotator/dev.html'
+            },
             annotationData: {
-              links: {
-                alternate: { href: "http://google.com" }
-              }
+              uri: 'http://localhost/annotator/dev.html'
             }
           });
-          
+
       }(jQuery));
     </script>
   </body>
