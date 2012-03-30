@@ -88,9 +88,9 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
     reply = textarea.val()
     if reply != '' 
       replyObject = @getReplyObject()
-      
+      console.log( @annotator.plugins.Permissions)
       if @annotator.plugins.Permissions.user 
-        replyObject.user = @annotator.plugins.Permissions.user
+        replyObject.user = @annotator.plugins.Permissions.user.name
       else
         replyObject.user = "Anonymous"
 
