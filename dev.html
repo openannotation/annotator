@@ -113,7 +113,13 @@
             }
           })
           .addPlugin('Store', {
-            prefix: 'http://localhost:5000/api'
+            prefix: 'http://localhost:5000/api',
+            loadFromSearch: {
+              uri: 'http://localhost/annotator/dev.html'
+            },
+            annotationData: {
+              uri: 'http://localhost/annotator/dev.html'
+            }
           });
 
       }(jQuery));
