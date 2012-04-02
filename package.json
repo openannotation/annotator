@@ -1,6 +1,6 @@
 {
   "name": "annotator",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Inline annotation for the web. Select text, images, or (nearly) anything else, and add your notes.",
   "repositories": [
     {
@@ -8,7 +8,7 @@
       "url": "https://github.com/okfn/annotator.git"
     }
   ],
-  "dependencies": {
+  "devDependencies": {
     "coffee-script": "1.2.0",
     "node-ffi": "0.5.0",
     "uglify-js": "1.2.5",
