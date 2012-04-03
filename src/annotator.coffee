@@ -248,14 +248,19 @@ class Annotator extends Delegator
   #
   # Returns the initialised annotation.
   setupAnnotation: (annotation, fireEvents=true) ->
+    root = @wrapper[0]
     annotation.ranges or= @selectedRanges
 
-    normedRanges = for r in annotation.ranges
-      sniffed    = Range.sniff(r)
-      sniffed.normalize(@wrapper[0])
-
-    # Filter out any ranges that failed to normalize.
-    normedRanges = $.grep normedRanges, (range) -> range != null
+    normedRanges = []
+    for r in annotation.ranges
+      try
+        normedRanges.push(Range.sniff(r).normalize(root))
+      catch e
+        if e instanceof Range.RangeError
+          this.publish('rangeNormalizeFail', [r, e])
+        else
+          # Oh Javascript, why you so crap? This will lose the traceback.
+          throw e
 
     annotation.quote      = []
     annotation.ranges     = []

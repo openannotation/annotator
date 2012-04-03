@@ -23,6 +23,10 @@ Range.sniff = (r) ->
     console.error(_t("Could not sniff range type"))
     false
 
+class Range.RangeError extends Error
+  constructor: (@type, @message) ->
+    super(@message)
+
 # Public: Creates a wrapper around a range object obtained from a DOMSelection.
 class Range.BrowserRange
 
@@ -278,9 +282,9 @@ class Range.SerializedRange
   #     # Do something with the node.
   #
   # Returns the Node if found otherwise null.
-  _nodeFromXPath: (xpath) ->
+  _nodeFromXPath: (xpath, root=document) ->
     evaluateXPath = (xp, nsResolver=null) ->
-      document.evaluate(xp, document, nsResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
+      document.evaluate('.' + xp, root, nsResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
 
     if not $.isXMLDoc document.documentElement
       evaluateXPath xpath
@@ -325,40 +329,33 @@ class Range.SerializedRange
   #
   # Returns a NormalizedRange instance.
   normalize: (root) ->
-    parentXPath   = $(root).xpath()[0]
-    startAncestry = @start.split("/")
-    endAncestry   = @end.split("/")
-    common = []
     range = {}
 
-    # Crudely find a near common ancestor by walking down the XPath from
-    # the root until the segments no longer match.
-    for i in [0...startAncestry.length]
-      if startAncestry[i] is endAncestry[i]
-        common.push(startAncestry[i])
-      else
-        break
-
-    cacXPath = parentXPath + common.join("/")
-    range.commonAncestorContainer = this._nodeFromXPath(cacXPath)
-
-    if not range.commonAncestorContainer
-      console.error(_t("Error deserializing range: can't find XPath '") + cacXPath + _t("'. Is this the right document?"))
-      return null
-
-    # Unfortunately, we *can't* guarantee only one textNode per
-    # elementNode, so we have to walk along the element's textNodes until
-    # the combined length of the textNodes to that point exceeds or
-    # matches the value of the offset.
     for p in ['start', 'end']
+      node = this._nodeFromXPath(this[p], root)
+      if not node
+        throw new Range.RangeError(p, "Couldn't find #{p} node: #{this[p]}")
+
+      # Unfortunately, we *can't* guarantee only one textNode per
+      # elementNode, so we have to walk along the element's textNodes until
+      # the combined length of the textNodes to that point exceeds or
+      # matches the value of the offset.
       length = 0
-      for tn in $(this._nodeFromXPath(parentXPath + this[p])).textNodes()
+      for tn in $(node).textNodes()
         if (length + tn.nodeValue.length >= this[p + 'Offset'])
           range[p + 'Container'] = tn
           range[p + 'Offset'] = this[p + 'Offset'] - length
           break
         else
           length += tn.nodeValue.length
+
+      # If we fall off the end of the for loop without having set
+      # 'startOffset'/'endOffset', the element has shorter content than when
+      # we annotated, so throw an error:
+      if not range[p + 'Offset']
+        throw new Range.RangeError("#{p}offset", "Couldn't find offset #{this[p + 'Offset']} in element #{this[p]}")
+
+    range.commonAncestorContainer = $(range.startContainer).parents().has(range.endContainer)[0]
 
     new Range.BrowserRange(range).normalize(root)
 

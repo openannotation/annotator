@@ -338,13 +338,27 @@ describe 'Annotator', ->
     it "should set the annotation.ranges", ->
       expect(annotation.ranges).toEqual([{}])
 
-    it "should exclude any ranges that could not be normalised", ->
-      sniffedRange.normalize = jasmine.createSpy('sniffedRange#normalize()').andReturn(null)
+    it "should exclude any ranges that could not be normalized", ->
+      e = new Range.RangeError("typ", "msg")
+      sniffedRange.normalize = jasmine.createSpy('sniffedRange#normalize()').andThrow(e)
       annotation = annotator.setupAnnotation({
         text: comment,
-        ranges: [1, 2]
+        ranges: [1]
       })
+
       expect(annotation.ranges).toEqual([])
+
+    it "should trigger rangeNormalizeFail for each range that can't be normalized", ->
+      e = new Range.RangeError("typ", "msg")
+      sniffedRange.normalize = jasmine.createSpy('sniffedRange#normalize()').andThrow(e)
+      annotator.publish = jasmine.createSpy('Annotator#publish()')
+      annotation = annotator.setupAnnotation({
+        text: comment,
+        ranges: [1]
+      })
+
+      expect(annotator.publish).toHaveBeenCalledWith('rangeNormalizeFail', [1, e])
+      expect(annotator.publish).toHaveBeenCalledWith('annotationCreated', [annotation])
 
     it "should call Annotator#highlightRange() with the normed range", ->
       expect(annotator.highlightRange).toHaveBeenCalledWith(normalizedRange)
