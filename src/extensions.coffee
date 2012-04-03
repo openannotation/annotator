@@ -80,7 +80,7 @@ $.fn.xpath = (relativeRoot) ->
     while elem and elem.nodeType == 1 and elem isnt relativeRoot
       idx = $(elem.parentNode).children(elem.tagName).index(elem) + 1
 
-      idx  =  if idx > 1 then "[#{idx}]" else ""
+      idx  = "[#{idx}]"
       path = "/" + elem.tagName.toLowerCase() + idx + path
       elem = elem.parentNode
 

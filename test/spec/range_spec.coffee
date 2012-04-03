@@ -45,9 +45,9 @@ describe 'Range', ->
 
     it "serialize() returns a serialized range", ->
       seri = r.serialize(fix())
-      expect(seri.start).toEqual("/p/strong")
+      expect(seri.start).toEqual("/p[1]/strong[1]")
       expect(seri.startOffset).toEqual(13)
-      expect(seri.end).toEqual("/p/strong")
+      expect(seri.end).toEqual("/p[1]/strong[1]")
       expect(seri.endOffset).toEqual(27)
       expect(seri instanceof Range.SerializedRange).toBeTruthy()
 
