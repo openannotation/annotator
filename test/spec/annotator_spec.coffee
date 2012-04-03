@@ -357,7 +357,7 @@ describe 'Annotator', ->
         ranges: [1]
       })
 
-      expect(annotator.publish).toHaveBeenCalledWith('rangeNormalizeFail', [1, e])
+      expect(annotator.publish).toHaveBeenCalledWith('rangeNormalizeFail', [annotation, 1, e])
       expect(annotator.publish).toHaveBeenCalledWith('annotationCreated', [annotation])
 
     it "should call Annotator#highlightRange() with the normed range", ->

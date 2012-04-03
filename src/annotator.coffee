@@ -257,7 +257,7 @@ class Annotator extends Delegator
         normedRanges.push(Range.sniff(r).normalize(root))
       catch e
         if e instanceof Range.RangeError
-          this.publish('rangeNormalizeFail', [r, e])
+          this.publish('rangeNormalizeFail', [annotation, r, e])
         else
           # Oh Javascript, why you so crap? This will lose the traceback.
           throw e
