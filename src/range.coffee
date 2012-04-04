@@ -23,6 +23,61 @@ Range.sniff = (r) ->
     console.error(_t("Could not sniff range type"))
     false
 
+# Public: Finds an Element Node using an XPath relative to the document root.
+#
+# If the document is served as application/xhtml+xml it will try and resolve
+# any namespaces within the XPath.
+#
+# xpath - An XPath String to query.
+#
+# Examples
+#
+#   node = Range.nodeFromXPath('/html/body/div/p[2]')
+#   if node
+#     # Do something with the node.
+#
+# Returns the Node if found otherwise null.
+Range.nodeFromXPath = (xpath, root=document) ->
+  evaluateXPath = (xp, nsResolver=null) ->
+    document.evaluate('.' + xp, root, nsResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
+
+  if not $.isXMLDoc document.documentElement
+    evaluateXPath xpath
+  else
+    # We're in an XML document, create a namespace resolver function to try
+    # and resolve any namespaces in the current document.
+    # https://developer.mozilla.org/en/DOM/document.createNSResolver
+    customResolver = document.createNSResolver(
+      if document.ownerDocument == null
+        document.documentElement
+      else
+        document.ownerDocument.documentElement
+    )
+    node = evaluateXPath xpath, customResolver
+
+    unless node
+      # If the previous search failed to find a node then we must try to
+      # provide a custom namespace resolver to take into account the default
+      # namespace. We also prefix all node names with a custom xhtml namespace
+      # eg. 'div' => 'xhtml:div'.
+      xpath = (for segment in xpath.split '/'
+        if segment and segment.indexOf(':') == -1
+          segment.replace(/^([a-z]+)/, 'xhtml:$1')
+        else segment
+      ).join('/')
+
+      # Find the default document namespace.
+      namespace = document.lookupNamespaceURI null
+
+      # Try and resolve the namespace, first seeing if it is an xhtml node
+      # otherwise check the head attributes.
+      customResolver  = (ns) ->
+        if ns == 'xhtml' then namespace
+        else document.documentElement.getAttribute('xmlns:' + ns)
+
+      node = evaluateXPath xpath, customResolver
+    node
+
 class Range.RangeError extends Error
   constructor: (@type, @message) ->
     super(@message)
@@ -268,61 +323,6 @@ class Range.SerializedRange
     @end         = obj.end
     @endOffset   = obj.endOffset
 
-  # Finds an Element Node using an XPath relative to the document root.
-  #
-  # If the document is served as application/xhtml+xml it will try and resolve
-  # any namespaces within the XPath.
-  #
-  # xpath - An XPath String to query.
-  #
-  # Examples
-  #
-  #   node = this._nodeFromXPath('/html/body/div/p[2]')
-  #   if node
-  #     # Do something with the node.
-  #
-  # Returns the Node if found otherwise null.
-  _nodeFromXPath: (xpath, root=document) ->
-    evaluateXPath = (xp, nsResolver=null) ->
-      document.evaluate('.' + xp, root, nsResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
-
-    if not $.isXMLDoc document.documentElement
-      evaluateXPath xpath
-    else
-      # We're in an XML document, create a namespace resolver function to try
-      # and resolve any namespaces in the current document.
-      # https://developer.mozilla.org/en/DOM/document.createNSResolver
-      customResolver = document.createNSResolver(
-        if document.ownerDocument == null
-          document.documentElement
-        else
-          document.ownerDocument.documentElement
-      )
-      node = evaluateXPath xpath, customResolver
-
-      unless node
-        # If the previous search failed to find a node then we must try to
-        # provide a custom namespace resolver to take into account the default
-        # namespace. We also prefix all node names with a custom xhtml namespace
-        # eg. 'div' => 'xhtml:div'.
-        xpath = (for segment in xpath.split '/'
-          if segment and segment.indexOf(':') == -1
-            segment.replace(/^([a-z]+)/, 'xhtml:$1')
-          else segment
-        ).join('/')
-
-        # Find the default document namespace.
-        namespace = document.lookupNamespaceURI null
-
-        # Try and resolve the namespace, first seeing if it is an xhtml node
-        # otherwise check the head attributes.
-        customResolver  = (ns) ->
-          if ns == 'xhtml' then namespace
-          else document.documentElement.getAttribute('xmlns:' + ns)
-
-        node = evaluateXPath xpath, customResolver
-      node
-
   # Public: Creates a NormalizedRange.
   #
   # root - The root Element from which the XPaths were generated.
@@ -332,7 +332,7 @@ class Range.SerializedRange
     range = {}
 
     for p in ['start', 'end']
-      node = this._nodeFromXPath(this[p], root)
+      node = Range.nodeFromXPath(this[p], root)
       if not node
         throw new Range.RangeError(p, "Couldn't find #{p} node: #{this[p]}")
 
