@@ -24,27 +24,47 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
   # Add a reply button to the viewer widget's controls span
   addReplyButton: (viewer, annotations) ->
     # Annotations are displayed in the order they they were entered into the viewer
-    #
+    
+    # now look for annotations with the 'parent' field
+    # and load them into
+#   console.log(viewer)
+#   reply_annotations = []
+#   for ann in @annotator.dumpAnnotations()
+#     if ann.parent
+#       if ann.parent == annotation.id
+#         reply_annotations.push ann
+#   console.log('Reply annotations :', reply_annotations)
+
     annotator_listing = @annotator.element.find('.annotator-annotation.annotator-item')
     for l, i in annotator_listing
       l = $(l)
 
       # if there are replies, add them to each annotation view
-      if annotations[i].replies?
-        replies = annotations[i].replies
+      #if annotations[i].replies?
+        
+      #
+      # replies = annotations[i].replies
+      replies = []
+      for ann in @annotator.dumpAnnotations()
+          #console.log('ann', ann)
+        if ann.parent?
+          if ann.parent == annotations[i].id
+            replies.push ann.reply
+      console.log(replies)
+      if replies.length > 0
         l.append('''<div style='padding:5px'> <span> Replies </span></div>
             <div id="Replies">
           
           <li class="Replies">
           </li></div>''')
-        if replies.length > 0
-          replylist = @annotator.element.find('.Replies')
-          
-          # write the replies into the correct places of the viewer. This algorithm handles overlapping annotations 
-          for reply in replies
-            $(replylist[i]).append('''<div class='reply'>
-              <span class='replyuser'>''' + reply.user + '''</span>
-              <div class='replytext'>''' + reply.reply + '''</div></div>''')
+      if replies.length > 0
+        replylist = @annotator.element.find('.Replies')
+        
+        # write the replies into the correct places of the viewer. This algorithm handles overlapping annotations 
+        for reply in replies
+          $(replylist[i]).append('''<div class='reply'>
+            <span class='replyuser'>''' + reply.user + '''</span>
+            <div class='replytext'>''' + reply.reply + '''</div></div>''')
 
       # Add the textarea
       l.append('''<div class='replybox'>
@@ -88,7 +108,7 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
     reply = textarea.val()
     if reply != '' 
       replyObject = @getReplyObject()
-      console.log( @annotator.plugins.Permissions)
+      #console.log( @annotator.plugins.Permissions)
       if @annotator.plugins.Permissions.user 
         replyObject.user = @annotator.plugins.Permissions.user.name
       else
@@ -99,26 +119,39 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
       item = $(event.target).parents('.annotator-annotation')
       
       annotation = item.data('annotation')  
-      if not annotation.replies?
-        annotation.replies = []
+      #if not annotation.replies?
+      #  annotation.replies = []
 
-      annotation.replies.push replyObject
+      #annotation.replies.push replyObject
       
+      # make a new annotation object in which we can save the reply.
+      @new_annotation = @annotator.createAnnotation()
+      @new_annotation.ranges = [] 
+      @new_annotation.parent = annotation.id
+#      @new_annotation.text = reply
+      replyObject = @getReplyObject()
+      replyObject.user = @new_annotation.user
+      replyObject.reply = reply
+      @new_annotation.reply = replyObject
+        
+
       # publish annotationUpdated event so that the store can save the changes
-      this.publish('annotationUpdated', [annotation])
+      this.publish('annotationUpdated', [annotation, @new_annotation])
+      this.publish('annotationCreated', [@new_annotation])
       
       # hide the viewer
       @annotator.viewer.hide()
     
   showReplies: (event) ->
+    console.log("show replies")
     # here we show the replies attached to the annotation
     viewer = @annotator.element.find('.annotator-annotation.annotator-item')
     replylist = viewer.find('.Replies')
     # get the annotation
     item = $(event.target).parents('.annotator-annotation')
     annotation = item.data('annotation')
-
-
+     
+    
     if replylist.length == 0
       viewer.append('''<div id="Replies">
         <li class="Replies">
