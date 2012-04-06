@@ -1,0 +1,28 @@
+{
+  "name": "Annotator",
+  "version": "0.0.9",
+  "manifest_version": 2,
+  "description": "Inline annotation for the web. Select text, images, or (nearly) anything else, and add your notes.",
+  "background": {
+    "scripts": ["contrib/chrome/background.js"]
+  },
+  "browser_action": {
+    "scripts": []
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "lib/vendor/jquery.js",
+        "pkg/annotator-full.min.js",
+        "contrib/chrome/content.js"
+      ],
+      "css": [
+        "pkg/annotator.min.css"
+      ]
+    }
+  ],
+  "permissions": [
+    "tabs", "http://*/", "https://*/"
+  ]
+}
