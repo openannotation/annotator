@@ -1,9 +1,6 @@
 class Annotator.Plugin.Comment extends Annotator.Plugin
   events:
-#   'annotationViewerTextField' : 'test'
-  
     'annotationViewerShown' : 'addReplyButton'
-    '.annotator-reply click': 'onReplyClick'
     '.annotator-save click': 'onReplyEntryClick'
     '.annotator-cancel click': 'hide'
     '.replyentry keydown' : 'processKeypress'
@@ -38,15 +35,14 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
     annotator_listing = @annotator.element.find('.annotator-annotation.annotator-item')
     for l, i in annotator_listing
       l = $(l)
-
-      # if there are replies, add them to each annotation view
-      #if annotations[i].replies?
-        
-      #
-      # replies = annotations[i].replies
+      
       replies = []
-      for ann in @annotator.dumpAnnotations()
-          #console.log('ann', ann)
+      # sort the annotations by creation time
+      unsorted = @annotator.dumpAnnotations()
+      sorted = unsorted.sort (a,b) ->
+        return if a.created.toUpperCase() >= b.created.toUpperCase() then 1 else -1
+
+      for ann in sorted.reverse()
         if ann.parent?
           if ann.parent == annotations[i].id
             replies.push ann.reply
@@ -61,9 +57,9 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
         replylist = @annotator.element.find('.Replies')
         
         # write the replies into the correct places of the viewer. This algorithm handles overlapping annotations 
-        for reply in replies
+        for reply in replies.reverse()
           $(replylist[i]).append('''<div class='reply'>
-            <span class='replyuser'>''' + reply.user + '''</span>
+            <span class='replyuser'>''' + reply.user + '''</span><button class='annotator-delete-reply'>Delete</button>
             <div class='replytext'>''' + reply.reply + '''</div></div>''')
 
       # Add the textarea
@@ -75,30 +71,6 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
 
  
     
-  #
-  # Add a textarea to the viewer widget if the reply button is clicked
-  #
-  onReplyClick: (event) ->
-    item = $(event.target).parents('.annotator-annotation')
- 
-    # add a text entry area to the viewer
-    viewer = @annotator.element.find('.annotator-annotation.annotator-item')
-    textarea = item.find('.replyentry')
-    # add the textarea to the annotation which contains the reply button that was clicked.
-    # item contains only the elements of that part of the viewer, instead of all current visible viewers
-    # like when annotations overlap.
-    if textarea.length == 0
-      item.append('''<div class='replybox'><label> Reply to this annotation </label> 
-          <br/> 
-          <textarea class="replyentry" rows="6" cols="40"> </textarea>
-          <br/>
-          <div class="annotator-controls">
-          <a href="#save" class="annotator-reply-entry">Reply</a>
-          </div>
-          </div>
-          ''')
-
-
   # Handle the event when the submit button is clicked
   #
   onReplyEntryClick: (event) ->
@@ -119,16 +91,13 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
       item = $(event.target).parents('.annotator-annotation')
       
       annotation = item.data('annotation')  
-      #if not annotation.replies?
-      #  annotation.replies = []
 
-      #annotation.replies.push replyObject
       
       # make a new annotation object in which we can save the reply.
       @new_annotation = @annotator.createAnnotation()
       @new_annotation.ranges = [] 
       @new_annotation.parent = annotation.id
-#      @new_annotation.text = reply
+      
       replyObject = @getReplyObject()
       replyObject.user = @new_annotation.user
       replyObject.reply = reply
