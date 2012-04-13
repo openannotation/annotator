@@ -1,11 +1,11 @@
 class Annotator.Plugin.Comment extends Annotator.Plugin
   events:
     'annotationViewerShown' : 'addReplyButton'
-    '.annotator-save click': 'onReplyEntryClick'
+    '.annotator-reply-save click': 'onReplyEntryClick'
     '.annotator-cancel click': 'hide'
     '.replyentry keydown' : 'processKeypress'
     '.replyentry click' : 'processKeypress'
-
+    '.annotator-delete-reply click' : 'deleteReply'
   constructor: (element) ->
       super
 
@@ -21,16 +21,6 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
   # Add a reply button to the viewer widget's controls span
   addReplyButton: (viewer, annotations) ->
     # Annotations are displayed in the order they they were entered into the viewer
-    
-    # now look for annotations with the 'parent' field
-    # and load them into
-#   console.log(viewer)
-#   reply_annotations = []
-#   for ann in @annotator.dumpAnnotations()
-#     if ann.parent
-#       if ann.parent == annotation.id
-#         reply_annotations.push ann
-#   console.log('Reply annotations :', reply_annotations)
 
     annotator_listing = @annotator.element.find('.annotator-annotation.annotator-item')
     for l, i in annotator_listing
@@ -46,7 +36,6 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
         if ann.parent?
           if ann.parent == annotations[i].id
             replies.push ann.reply
-      console.log(replies)
       if replies.length > 0
         l.append('''<div style='padding:5px'> <span> Replies </span></div>
             <div id="Replies">
@@ -59,8 +48,7 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
         # write the replies into the correct places of the viewer. This algorithm handles overlapping annotations 
         for reply in replies.reverse()
           $(replylist[i]).append('''<div class='reply'>
-            <span class='replyuser'>''' + reply.user + '''</span><button class='annotator-delete-reply'>Delete</button>
-            <div class='replytext'>''' + reply.reply + '''</div></div>''')
+            <span class='replyuser'>''' + reply.user + '''</span><button TITLE="Delete" class='annotator-delete-reply'>x</button><div class='replytext'>''' + reply.reply + '''</div></div>''')
 
       # Add the textarea
       l.append('''<div class='replybox'>
@@ -90,52 +78,40 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
 
       item = $(event.target).parents('.annotator-annotation')
       
-      annotation = item.data('annotation')  
-
-      
       # make a new annotation object in which we can save the reply.
-      @new_annotation = @annotator.createAnnotation()
-      @new_annotation.ranges = [] 
-      @new_annotation.parent = annotation.id
-      
-      replyObject = @getReplyObject()
-      replyObject.user = @new_annotation.user
-      replyObject.reply = reply
-      @new_annotation.reply = replyObject
-        
+      new_annotation = @annotator.createAnnotation()
 
-      # publish annotationUpdated event so that the store can save the changes
-      this.publish('annotationUpdated', [annotation, @new_annotation])
-      this.publish('annotationCreated', [@new_annotation])
+      new_annotation.ranges = []
+      new_annotation.parent = item.data('annotation').id
+      new_annotation.highlights = item.data('annotation').highlights      
+      replyObject = @getReplyObject()
+      replyObject.user = new_annotation.user
+      replyObject.reply = reply
+      new_annotation.reply = replyObject
       
+      new_annotation = @annotator.setupAnnotation(new_annotation)
+      console.log('setup complete', new_annotation)
+
       # hide the viewer
       @annotator.viewer.hide()
     
-  showReplies: (event) ->
-    console.log("show replies")
-    # here we show the replies attached to the annotation
-    viewer = @annotator.element.find('.annotator-annotation.annotator-item')
-    replylist = viewer.find('.Replies')
-    # get the annotation
-    item = $(event.target).parents('.annotator-annotation')
-    annotation = item.data('annotation')
-     
+
+  deleteReply: (event) ->
+    # delete the reply
+    reply_item = $(event.target).parents('.reply')
+    parent_id = reply_item.parents('.annotator-annotation').data('annotation').id
+    reply_text = reply_item.find('.replytext')[0].innerHTML
     
-    if replylist.length == 0
-      viewer.append('''<div id="Replies">
-        <li class="Replies">
-        </li></div>''')
-    replylist = viewer.find('.Replies')
-
-    if replylist.children().length == 0
-      # add all the replies into the div
-      for reply in annotation.replies
-        replylist.append('''<div class='reply'>
-            <span class='replyuser'>''' + reply.user + '''</span>
-            <div class='replytext'>''' + reply.reply + '''</div></div>''')
-
-
-
+    # now look for annotations with parent == parent_id AND reply that matches reply_text and delete them
+    for ann in @annotator.dumpAnnotations()
+      if ann.parent == parent_id
+        if ann.reply.reply == reply_text
+            #          console.log('match, ', ann)
+          ann.highlights = []
+          @annotator.deleteAnnotation(ann)
+          # remove reply from DOM
+          $(reply_item).replaceWith('')
+          break
 
 
   getReplyObject: ->
@@ -151,7 +127,7 @@ class Annotator.Plugin.Comment extends Annotator.Plugin
     controls = item.find('.annotator-reply-controls')
     if controls.length == 0
       item.append('''<div class="annotator-reply-controls">
-          <a href="#save" class="annotator-save">Save</a>
+          <a href="#save" class="annotator-reply-save">Save</a>
           <a href="#cancel" class="annotator-cancel">Cancel</a>
           </div>
           </div>

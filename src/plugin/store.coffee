@@ -131,7 +131,6 @@ class Annotator.Plugin.Store extends Annotator.Plugin
     # elements.
     if annotation not in @annotations
       this.registerAnnotation(annotation)
-
       this._apiRequest('create', annotation, (data) =>
         # Update with (e.g.) ID from server.
         if not data.id?
@@ -172,8 +171,13 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   #
   # Returns nothing.
   annotationDeleted: (annotation) ->
-    if annotation in this.annotations
-      this._apiRequest 'destroy', annotation, (() => this.unregisterAnnotation(annotation))
+      #    console.log(annotation, this.annotations)
+    for stored_ann in this.annotations
+      if annotation.id == stored_ann.id
+          #        console.log(annotation)
+        annotation=stored_ann
+        this._apiRequest 'destroy', annotation, (() => this.unregisterAnnotation(annotation))
+        break
 
   # Public: Registers an annotation with the Store. Used to check whether an
   # annotation has already been created when using Store#annotationCreated().

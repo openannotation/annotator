@@ -326,7 +326,7 @@
         position: relative;
         float:bottom;
         overflow:auto;
-        height:100px;
+        height:200px;
         background: white;
         border: solid;
         border-width: 0px;
@@ -339,7 +339,8 @@
     padding:5px;
 }
 
-.annotator-delete-reply button{
+.del-button-div button {
+    position:relative;
     float: right;
     font-size: 10px;
     line-height: 130%;
@@ -347,9 +348,31 @@
     font-weight: bold;
     color: #565656;
     cursor: pointer;
-    padding: 5px 10px 6px 7px;  
 }
 
+.annotator-delete-reply {
+	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	box-shadow:inset 0px 1px 0px 0px #ffffff;
+	background-color:transparent;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
+	border:1px solid #dcdcdc;
+	display:inline-block;
+	color:#777777;
+	font-family:arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:2px 6px;
+	text-decoration:none;
+	text-shadow:1px 1px 0px #ffffff;
+        position:absolute;
+        right:10px;
+}
+.annotator-delete-reply:hover {
+        background-color:#F5F5F5;
+}
 
 
 .annotator-viewer .annotator-controls .annotator-link {
