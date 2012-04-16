@@ -156,8 +156,8 @@ class Annotator extends Delegator
   #
   # Returns itself for chaining.
   _setupSelector: ->
-    @subscribe('selectionStart', => @isSelectionActive = true)
-    @subscribe('selectionEnd', (ranges...) =>
+    this.subscribe('selectionStart', => @isSelectionActive = true)
+    this.subscribe('selectionEnd', (ranges...) =>
       @isSelectionActive = false
       unless @viewer.isShown()
         if ranges?.length then @adder.show() else @adder.hide()
