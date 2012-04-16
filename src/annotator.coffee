@@ -31,7 +31,6 @@ class Annotator extends Delegator
   # Events to be bound on Annotator#element.
   events:
     ".annotator-adder button click":     "onAdderClick"
-    ".annotator-adder button mousedown": "onAdderMousedown"
     ".annotator-hl mouseover":           "onHighlightMouseover"
     ".annotator-hl mouseout":            "startViewerHideTimer"
 
@@ -51,9 +50,7 @@ class Annotator extends Delegator
 
   selectedRanges: null
 
-  mouseIsDown: false
-
-  ignoreMouseup: false
+  isSelectionActive: false
 
   viewerHideTimer: null
 
@@ -86,8 +83,8 @@ class Annotator extends Delegator
 
     # Return early if the annotator is not supported.
     return this unless Annotator.supported()
-    this._setupDocumentEvents() unless @options.readOnly
-    this._setupWrapper()._setupViewer()._setupEditor()
+    this._setupWrapper()._setupViewer()
+    this._setupEditor()._setupSelector() unless @options.readOnly
 
     # Create model dom elements
     for name, src of @html
@@ -154,61 +151,21 @@ class Annotator extends Delegator
     @editor.element.appendTo(@wrapper)
     this
 
-  # Sets up the selection event listeners to watch mouse actions on the document.
+  # Sets up the selection event listeners to watch selection actions on the
+  # document.
   #
   # Returns itself for chaining.
-  _setupDocumentEvents: ->
-    $(document).bind({
-      "mouseup":   this.checkForEndSelection
-      "mousedown": this.checkForStartSelection
-    })
+  _setupSelector: ->
+    @subscribe('selectionStart', => @isSelectionActive = true)
+    @subscribe('selectionEnd', (ranges...) =>
+      @isSelectionActive = false
+      unless @viewer.isShown()
+        @adder.show()
+        @selectedRanges = ranges)
+    @wrapper.on('mouseup', (event) =>
+      unless @viewer.isShown()
+        @adder.css(util.mousePosition(event, @wrapper[0])))
     this
-
-  # Public: Gets the current selection excluding any nodes that fall outside of
-  # the @wrapper. Then returns and Array of NormalizedRange instances.
-  #
-  # Examples
-  #
-  #   # A selection inside @wrapper
-  #   annotation.getSelectedRanges()
-  #   # => Returns [NormalizedRange]
-  #
-  #   # A selection outside of @wrapper
-  #   annotation.getSelectedRanges()
-  #   # => Returns []
-  #
-  # Returns Array of NormalizedRange instances.
-  getSelectedRanges: ->
-    selection = util.getGlobal().getSelection()
-
-    ranges = []
-    rangesToIgnore = []
-    unless selection.isCollapsed
-      ranges = for i in [0...selection.rangeCount]
-        r = selection.getRangeAt(i)
-        browserRange = new Range.BrowserRange(r)
-        normedRange = browserRange.normalize().limit(@wrapper[0])
-
-        # If the new range falls fully outside the wrapper, we
-        # should add it back to the document but not return it from
-        # this method
-        rangesToIgnore.push(r) if normedRange is null
-
-        normedRange
-
-      # BrowserRange#normalize() modifies the DOM structure and deselects the
-      # underlying text as a result. So here we remove the selected ranges and
-      # reapply the new ones.
-      selection.removeAllRanges()
-
-    for r in rangesToIgnore
-      selection.addRange(r)
-
-    # Remove any ranges that fell outside of @wrapper.
-    $.grep ranges, (range) ->
-      # Add the normed range back to the selection if it exists.
-      selection.addRange(range.toRange()) if range
-      range
 
   # Public: Creates and returns a new annotation object. Publishes the
   # 'beforeAnnotationCreated' event to allow the new annotation to be modified.
@@ -420,14 +377,12 @@ class Annotator extends Delegator
     @editor.load(annotation)
     this
 
-  # Callback method called when the @editor fires the "hide" event. Itself
-  # publishes the 'annotationEditorHidden' event and resets the @ignoreMouseup
-  # property to allow listening to mouse events.
+  # Callback method called when the @editor fires the "hide" event. Publishes
+  # the 'annotationEditorHidden' event.
   #
   # Returns nothing.
   onEditorHide: =>
     this.publish('annotationEditorHidden', [@editor])
-    @ignoreMouseup = false
 
   # Callback method called when the @editor fires the "save" event. Itself
   # publishes the 'annotationEditorSubmit' event and creates/updates the
@@ -480,47 +435,6 @@ class Annotator extends Delegator
     clearTimeout(@viewerHideTimer)
     @viewerHideTimer = false
 
-  # Annotator#element callback. Sets the @mouseIsDown property used to
-  # determine if a selection may have started to true. Also calls
-  # Annotator#startViewerHideTimer() to hide the Annotator#viewer.
-  #
-  # event - A mousedown Event object.
-  #
-  # Returns nothing.
-  checkForStartSelection: (event) =>
-    unless event and this.isAnnotator(event.target)
-      this.startViewerHideTimer()
-      @mouseIsDown = true
-
-  # Annotator#element callback. Checks to see if a selection has been made
-  # on mouseup and if so displays the Annotator#adder. If @ignoreMouseup is
-  # set will do nothing. Also resets the @mouseIsDown property.
-  #
-  # event - A mouseup Event object.
-  #
-  # Returns nothing.
-  checkForEndSelection: (event) =>
-    @mouseIsDown = false
-
-    # This prevents the note image from jumping away on the mouseup
-    # of a click on icon.
-    if @ignoreMouseup
-      return
-
-    # Get the currently selected ranges.
-    @selectedRanges = this.getSelectedRanges()
-
-    for range in @selectedRanges
-      container = range.commonAncestor
-      return if this.isAnnotator(container)
-
-    if event and @selectedRanges.length
-      @adder
-        .css(util.mousePosition(event, @wrapper[0]))
-        .show()
-    else
-      @adder.hide()
-
   # Public: Determines if the provided element is part of the annotator plugin.
   # Useful for ignoring mouse actions on the annotator elements.
   # NOTE: The @wrapper is not included in this check.
@@ -550,7 +464,7 @@ class Annotator extends Delegator
 
     # Don't do anything if we're making a selection or
     # already displaying the viewer
-    return false if @mouseIsDown or @viewer.isShown()
+    return false if @isSelectionActive or @viewer.isShown()
 
     annotations = $(event.target)
       .parents('.annotator-hl')
@@ -559,21 +473,11 @@ class Annotator extends Delegator
 
     this.showViewer($.makeArray(annotations), util.mousePosition(event, @wrapper[0]))
 
-  # Annotator#element callback. Sets @ignoreMouseup to true to prevent
-  # the annotation selection events firing when the adder is clicked.
-  #
-  # event - A mousedown Event object
-  #
-  # Returns nothing.
-  onAdderMousedown: (event) =>
-    event?.preventDefault()
-    @ignoreMouseup = true
-
   # Annotator#element callback. Displays the @editor in place of the @adder and
   # loads in a newly created annotation Object. The click event is used as well
   # as the mousedown so that we get the :active state on the @adder when clicked
   #
-  # event - A mousedown Event object
+  # event - A click Event object
   #
   # Returns nothing.
   onAdderClick: (event) =>

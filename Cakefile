@@ -24,6 +24,7 @@ CORE = [ 'extensions'
 
 PLUGINS = [ 'tags'
           , 'auth'
+          , 'selector'
           , 'store'
           , 'filter'
           , 'markdown'
