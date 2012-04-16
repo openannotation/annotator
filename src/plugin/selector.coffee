@@ -23,12 +23,6 @@ class Annotator.Plugin.Selector extends Annotator.Plugin
       return if @annotator.isAnnotator(container)
 
     @annotator.publish('selectionEnd', selectedRanges)
-    if event and selectedRanges.length
-      @annotator.adder
-        .css(util.mousePosition(event, @annotator.wrapper[0]))
-        .show()
-    else
-      @annotator.adder.hide()
 
   # Public: Gets the current selection excluding any nodes that fall outside of
   # the @wrapper. Then returns and Array of NormalizedRange instances.
