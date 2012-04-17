@@ -156,15 +156,16 @@ class Annotator extends Delegator
   #
   # Returns itself for chaining.
   _setupSelector: ->
-    this.subscribe('selectionStart', => @isSelectionActive = true)
-    this.subscribe('selectionEnd', (ranges...) =>
+    this.subscribe 'selectionStart', =>
+      @isSelectionActive = true
+    this.subscribe 'selectionEnd', (ranges...) =>
       @isSelectionActive = false
       unless @editor.isShown()
         if ranges?.length then @adder.show() else @adder.hide()
-        @selectedRanges = ranges)
-    @wrapper.on('mouseup', (event) =>
+        @selectedRanges = ranges
+    @wrapper.on 'mouseup', (event) =>
       unless @viewer.isShown()
-        @adder.css(util.mousePosition(event, @wrapper[0])))
+        @adder.css(util.mousePosition(event, @wrapper[0]))
     this
 
   # Public: Creates and returns a new annotation object. Publishes the
