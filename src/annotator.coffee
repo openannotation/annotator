@@ -111,7 +111,7 @@ class Annotator extends Delegator
     this
 
   # Creates an instance of Annotator.Viewer and assigns it to the @viewer
-  # property, appends it to the @wrapper and sets up event listeners.
+  # property, appends it to the @wrapper and sets up event listeneviewerrs.
   #
   # Returns itself to allow chaining.
   _setupViewer: ->
@@ -276,6 +276,16 @@ class Annotator extends Delegator
 
     # Save the annotation data on each highlighter element.
     $(annotation.highlights).data('annotation', annotation)
+    
+    
+    # let the categories plugin set the highlights if it is present
+    if @plugins['Categories']
+      @plugins['Categories'].setHighlights(annotation)
+      
+    if @plugins['RoundupStatus']
+      if not annotation.status?
+        annotation.status='new'
+    
 
     # Fire annotationCreated events so that plugins can react to them.
     if fireEvents
@@ -333,13 +343,14 @@ class Annotator extends Delegator
     loader = (annList=[]) =>
       now = annList.splice(0,10)
 
+
       for n in now
         this.setupAnnotation(n, false) # 'false' suppresses event firing
-
-      # If there are more to do, do them after a 1ms break (for browser
+        
+      # If there are more to do, do them after a 100ms break (for browser
       # responsiveness).
       if annList.length > 0
-        setTimeout((-> loader(annList)), 1)
+        setTimeout((-> loader(annList)), 100)
       else
         this.publish 'annotationsLoaded', [clone]
 
@@ -464,7 +475,7 @@ class Annotator extends Delegator
   showViewer: (annotations, location) =>
     @viewer.element.css(location)
     @viewer.load(annotations)
-
+    
     this.publish('annotationViewerShown', [@viewer, annotations])
 
   # Annotator#element event callback. Allows 250ms for mouse pointer to get from
@@ -487,15 +498,19 @@ class Annotator extends Delegator
 
   # Annotator#element callback. Sets the @mouseIsDown property used to
   # determine if a selection may have started to true. Also calls
-  # Annotator#startViewerHideTimer() to hide the Annotator#viewer.
+  # Annotator#startViewerHideTimer() to hide the Annotator#viewer
   #
   # event - A mousedown Event object.
   #
   # Returns nothing.
   checkForStartSelection: (event) =>
-    unless event and this.isAnnotator(event.target)
+    unless event #and this.isAnnotator(event.target)
       this.startViewerHideTimer()
       @mouseIsDown = true
+#       console.log('mouse down!')
+      
+    
+    
 
   # Annotator#element callback. Checks to see if a selection has been made
   # on mouseup and if so displays the Annotator#adder. If @ignoreMouseup is
@@ -517,7 +532,9 @@ class Annotator extends Delegator
 
     for range in @selectedRanges
       container = range.commonAncestor
-      return if this.isAnnotator(container)
+      return if this.isAnnotatorViewer(container)
+      return if this.isAnnotatorEditor(container)
+      return if this.isAnnotatorWidget(container)
 
     if event and @selectedRanges.length
       @adder
@@ -543,6 +560,19 @@ class Annotator extends Delegator
   isAnnotator: (element) ->
     !!$(element).parents().andSelf().filter('[class^=annotator-]').not(@wrapper).length
 
+
+  # check if the element is the viewer
+  isAnnotatorViewer: (element) ->
+    !!$(element).parents().andSelf().filter('[class^=annotator-viewer]').not(@wrapper).length
+    
+    # check if the element is the editor
+  isAnnotatorEditor: (element) ->
+    !!$(element).parents().andSelf().filter('[class^=annotator-editor]').not(@wrapper).length
+
+  isAnnotatorWidget: (element) ->
+    !!$(element).parents().andSelf().filter('[class^=annotator-widget]').not(@wrapper).length
+
+
   # Annotator#element callback. Displays viewer with all annotations
   # associated with highlight Elements under the cursor.
   #
@@ -556,7 +586,7 @@ class Annotator extends Delegator
     # Don't do anything if we're making a selection or
     # already displaying the viewer
     return false if @mouseIsDown or @viewer.isShown()
-
+    
     annotations = $(event.target)
       .parents('.annotator-hl')
       .andSelf()
