@@ -98,7 +98,7 @@ task 'bookmarklet:prereqs', 'Compile the annotator for the bookmarklet', (option
     fs.writeFile bookmarklet.annotator_css, css
 
 task 'bookmarklet:build', 'Output bookmarklet source', (options) ->
-  bookmarklet.build !options['no-config'], (output) -> print(output)
+  bookmarklet.build !options['no-config'], !options['no-minify'], (output) -> print(output)
 
 task 'bookmarklet:build_demo', 'Create the bookmarklet demo files', ->
   invoke 'bookmarklet:prereqs'
@@ -189,7 +189,7 @@ bookmarklet =
   test_runner:   "#{BOOKMARKLET_PATH}/test/runner.html"
 
   # Create the bookmarklet
-  build: (embedConfig, callback) ->
+  build: (embedConfig, minify, callback) ->
     source = fs.readFileSync(bookmarklet.source, 'utf8')
 
     if arguments.length == 1
@@ -199,6 +199,7 @@ bookmarklet =
       config = fs.readFileSync(bookmarklet.config, 'utf8')
       source = source.replace('__config__', config)
 
+    return callback(source) unless minify
     proc = exec UGLIFY_JS, (e, stdout, stderr) ->
       throw e if e
       callback(stdout)
