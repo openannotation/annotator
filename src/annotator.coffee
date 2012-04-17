@@ -159,7 +159,7 @@ class Annotator extends Delegator
     this.subscribe('selectionStart', => @isSelectionActive = true)
     this.subscribe('selectionEnd', (ranges...) =>
       @isSelectionActive = false
-      unless @viewer.isShown()
+      unless @editor.isShown()
         if ranges?.length then @adder.show() else @adder.hide()
         @selectedRanges = ranges)
     @wrapper.on('mouseup', (event) =>
