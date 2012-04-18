@@ -91,3 +91,16 @@ class Annotator.Widget extends Delegator
   isInvertedX: ->
     @element.hasClass @classes.invert.x
 
+  # Public: Checks to see if the Viewer is currently displayed.
+  #
+  # Examples
+  #
+  #   viewer.show()
+  #   viewer.isShown() # => Returns true
+  #
+  #   viewer.hide()
+  #   viewer.isShown() # => Returns false
+  #
+  # Returns true if the Viewer is visible.
+  isShown: ->
+    not @element.hasClass(@classes.hide)

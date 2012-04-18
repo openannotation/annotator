@@ -29,7 +29,10 @@ Annotator::setupPlugins = (config={}, options={}) ->
   win = util.getGlobal()
 
   # Set up the default plugins.
-  plugins = ['Unsupported', 'Auth', 'Tags', 'Filter', 'Store', 'AnnotateItPermissions']
+  plugins = [
+    'Unsupported', 'Auth', 'Tags', 'Filter', 'Store', 'AnnotateItPermissions',
+    'Selector'
+  ]
 
   # If Showdown is included add the Markdown plugin.
   if win.Showdown
@@ -47,6 +50,7 @@ Annotator::setupPlugins = (config={}, options={}) ->
       ]
     Auth:
       tokenUrl: config.tokenUrl or 'http://annotateit.org/api/token'
+    Selector: {}
     Store:
       prefix: config.storeUrl or 'http://annotateit.org/api'
       annotationData:
