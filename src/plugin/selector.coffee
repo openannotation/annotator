@@ -4,12 +4,18 @@ class Annotator.Plugin.Selector extends Annotator.Plugin
     ".annotator-wrapper mousedown":    "checkForSelectionStart"
     ".annotator-wrapper mouseup":      "checkForSelectionEnd"
 
+
+  # Annotator#element callback. Publishes 'selectionStart' on the annotator.
+  #
+  # event - A mousedown Event object.
+  #
+  # Returns nothing.
   checkForSelectionStart: (event) =>
     @annotator.publish('selectionStart')
 
   # Annotator#element callback. Checks to see if a selection has been made
-  # on mouseup and if so displays the Annotator#adder. If @ignoreMouseup is
-  # set will do nothing.
+  # on mouseup and if so publishes a 'selectionEnd' on the annotator with the
+  # selected ranges passed as arguments.
   #
   # event - A mouseup Event object.
   #
