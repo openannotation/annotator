@@ -102,16 +102,7 @@
             tokenUrl: 'http://localhost:5000/api/token'
           })
           .addPlugin('Unsupported')
-          .addPlugin('Filter', {
-            addAnnotationFilter: false
-          })
-          .addPlugin('Tags')
-          .addPlugin('Permissions', {
-            user: 'alice',
-            permissions: {
-              update: ['alice']
-            }
-          })
+          .addPlugin('AnnotateItPermissions')
           .addPlugin('Store', {
             prefix: 'http://localhost:5000/api',
             loadFromSearch: {
@@ -121,6 +112,10 @@
               uri: 'http://localhost/annotator/dev.html'
             }
           });
+
+        devAnnotator.plugins.Auth.withToken(function (tok) {
+          console.log(tok);
+        })
 
       }(jQuery));
     </script>
