@@ -105,7 +105,7 @@ task 'bookmarklet:build_demo', 'Create the bookmarklet demo files', ->
 
   html = fs.readFileSync(bookmarklet.tpl, 'utf8')
 
-  bookmarklet.build true, (source) ->
+  bookmarklet.build true, true, (source) ->
     html = html.replace '__bookmarklet__', source.replace(/\$/g, '$$$$').replace(/"/g, '&quot;')
     fs.writeFile bookmarklet.demo, html
     console.log "Updated #{bookmarklet.demo}"
@@ -115,7 +115,7 @@ task 'bookmarklet:build_testrunner', 'Update bookmarklet test runner', ->
 
   html = fs.readFileSync(bookmarklet.test_tpl, 'utf8')
 
-  bookmarklet.build false, (source) ->
+  bookmarklet.build false, false, (source) ->
     html = html.replace '__bookmarklet__', source
     fs.writeFile bookmarklet.test_runner, html
     console.log "Updated #{bookmarklet.test_runner}"
