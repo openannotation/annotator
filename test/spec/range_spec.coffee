@@ -35,18 +35,23 @@ describe 'Range', ->
 
   describe "SerializedRange", ->
     beforeEach ->
-      r = new Range.SerializedRange({
+      r = new Range.SerializedRange
         start: "/p/strong"
         startOffset: 13
         end: "/p/strong"
         endOffset: 27
-      })
 
     describe "normalize", ->
       it "should return a normalized range", ->
         norm = r.normalize(fix())
         expect(norm instanceof Range.NormalizedRange).toBeTruthy()
         expect(norm.text()).toEqual("habitant morbi")
+
+      it "should return a normalized range with 0 offsets", ->
+        r.startOffset = 0
+        norm = r.normalize(fix())
+        expect(norm instanceof Range.NormalizedRange).toBeTruthy()
+        expect(norm.text()).toEqual("Pellentesque habitant morbi")
 
       it "should raise Range.RangeError if it cannot normalize the range", ->
         check = false

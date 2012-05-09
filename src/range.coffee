@@ -352,7 +352,7 @@ class Range.SerializedRange
       # If we fall off the end of the for loop without having set
       # 'startOffset'/'endOffset', the element has shorter content than when
       # we annotated, so throw an error:
-      if not range[p + 'Offset']
+      if not range[p + 'Offset']?
         throw new Range.RangeError("#{p}offset", "Couldn't find offset #{this[p + 'Offset']} in element #{this[p]}")
 
     range.commonAncestorContainer = $(range.startContainer).parents().has(range.endContainer)[0]
