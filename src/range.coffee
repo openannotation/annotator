@@ -355,7 +355,38 @@ class Range.SerializedRange
       if not range[p + 'Offset']?
         throw new Range.RangeError("#{p}offset", "Couldn't find offset #{this[p + 'Offset']} in element #{this[p]}")
 
-    range.commonAncestorContainer = $(range.startContainer).parents().has(range.endContainer)[0]
+    # Here's an elegant next step...
+    #
+    #   range.commonAncestorContainer = $(range.startContainer).parents().has(range.endContainer)[0]
+    #
+    # ...but unfortunately Node.contains() is broken in Safari 5.1.5 (7534.55.3)
+    # and presumably other earlier versions of WebKit. In particular, in a
+    # document like
+    #
+    #   <p>Hello</p>
+    #
+    # the code
+    #
+    #   p = document.getElementsByTagName('p')[0]
+    #   p.contains(p.firstChild)
+    #
+    # returns `false`. Yay.
+    #
+    # So instead, we step through the parents from the bottom up and use
+    # Node.compareDocumentPosition() to decide when to set the
+    # commonAncestorContainer and bail out.
+
+    contains = if not document.compareDocumentPosition?
+                 # IE
+                 (a, b) -> a.contains(b)
+               else
+                 # Everyone else
+                 (a, b) -> a.compareDocumentPosition(b) & 16
+
+    $(range.startContainer).parents().reverse().each ->
+      if contains(this, range.endContainer)
+        range.commonAncestorContainer = this
+        return false
 
     new Range.BrowserRange(range).normalize(root)
 

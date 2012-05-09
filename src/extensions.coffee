@@ -96,3 +96,5 @@ $.fn.escape = (html) ->
     return this.html($.escape(html))
 
   this.html()
+
+$.fn.reverse = [].reverse

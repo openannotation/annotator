@@ -112,3 +112,7 @@ describe 'jQuery.fn.escape()', ->
   it "should return the equivalent of .html() if no arguments are passed", ->
     div = $('<div><strong>My div</strong></div>').escape('<>"&')
     expect(div.escape()).toEqual(div.html())
+
+describe 'jQuery.fn.reverse()', ->
+  it "should, uh, reverse stuff", ->
+    expect($([1,2,3]).reverse().get()).toEqual([3,2,1])
