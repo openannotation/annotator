@@ -54,10 +54,16 @@
 	position: relative;
 }
 
+/* NB: If you change the list of classes for which z-index is set,
+       you should update Annotator._setupDynamicStyle() */
 .annotator-adder,
 .annotator-outer,
 .annotator-notice {
-	z-index: 9999;
+	z-index: 1020;
+}
+
+.annotator-filter {
+	z-index: 1010;
 }
 
 .annotator-adder,
@@ -694,7 +700,6 @@
 -------------------------------------------------------------------- */
 
 .annotator-filter {
-	z-index: 9998; /* notifications/popups at 9999; filter bar should be lower */
 	position: fixed;
 	top: 0;
 	right: 0;

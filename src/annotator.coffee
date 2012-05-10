@@ -9,6 +9,15 @@ util =
 
   getGlobal: -> (-> this)()
 
+  # Return the maximum z-index of any element in $elements (a jQuery collection).
+  maxZIndex: ($elements) ->
+    all = $elements.map ->
+      if $(this).css('position') == 'static'
+        -1
+      else
+        parseInt($(this).css('z-index'), 10) or -1
+    Math.max.apply(Math, all)
+
   mousePosition: (e, offsetEl) ->
     offset = $(offsetEl).offset()
     {
@@ -88,6 +97,7 @@ class Annotator extends Delegator
     return this unless Annotator.supported()
     this._setupDocumentEvents() unless @options.readOnly
     this._setupWrapper()._setupViewer()._setupEditor()
+    this._setupDynamicStyle()
 
     # Create model dom elements
     for name, src of @html
@@ -162,6 +172,36 @@ class Annotator extends Delegator
       "mouseup":   this.checkForEndSelection
       "mousedown": this.checkForStartSelection
     })
+    this
+
+  # Sets up any dynamically calculated CSS for the Annotator.
+  #
+  # Returns itself for chaining.
+  _setupDynamicStyle: ->
+    style = $('#annotator-dynamic-style')
+
+    if (!style.length)
+      style = $('<style id="annotator-dynamic-style"></style>').appendTo(document.head)
+
+    sel = '*' + (":not(.annotator-#{x})" for x in ['adder', 'outer', 'notice', 'filter']).join('')
+
+    # use the maximum z-index in the page
+    max = util.maxZIndex($(document.body).find(sel))
+
+    # but don't go smaller than 1010, because this isn't bulletproof --
+    # dynamic elements in the page (notifications, dialogs, etc.) may well
+    # have high z-indices that we can't catch using the above method.
+    max = Math.max(max, 1000)
+
+    style.text [
+      ".annotator-adder, .annotator-outer, .annotator-notice {"
+      "  z-index: #{max + 20};"
+      "}"
+      ".annotator-filter {"
+      "  z-index: #{max + 10};"
+      "}"
+    ].join("\n")
+
     this
 
   # Public: Gets the current selection excluding any nodes that fall outside of

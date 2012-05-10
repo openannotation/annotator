@@ -37,6 +37,7 @@ describe 'Annotator', ->
       spyOn(annotator, '_setupViewer').andReturn(annotator)
       spyOn(annotator, '_setupEditor').andReturn(annotator)
       spyOn(annotator, '_setupDocumentEvents').andReturn(annotator)
+      spyOn(annotator, '_setupDynamicStyle').andReturn(annotator)
 
     it "should have a jQuery wrapper as @element", ->
       Annotator.prototype.constructor.call(annotator, annotator.element[0])
@@ -72,6 +73,10 @@ describe 'Annotator', ->
         readOnly: true
       })
       expect(annotator._setupDocumentEvents).not.toHaveBeenCalled()
+
+    it "should call Annotator#_setupDynamicStyle()", ->
+      Annotator.prototype.constructor.call(annotator, annotator.element[0])
+      expect(annotator._setupDynamicStyle).toHaveBeenCalled()
 
   describe "_setupDocumentEvents", ->
     beforeEach: ->
@@ -221,6 +226,40 @@ describe 'Annotator', ->
 
     it "should append the Editor#element to the Annotator#wrapper", ->
       expect(mockEditor.element.appendTo).toHaveBeenCalledWith(annotator.wrapper)
+
+  describe "_setupDynamicStyle", ->
+    $fix = null
+
+    beforeEach ->
+      addFixture 'annotator'
+      $fix = $(fix())
+
+    afterEach -> clearFixtures()
+
+    it 'should ensure Annotator z-indices are larger than others in the page', ->
+      $fix.show()
+
+      $adder = $('<div style="position:relative;" class="annotator-adder">&nbsp;</div>').appendTo($fix)
+      $filter = $('<div style="position:relative;" class="annotator-filter">&nbsp;</div>').appendTo($fix)
+
+      check = (minimum) ->
+        adderZ = parseInt($adder.css('z-index'), 10)
+        filterZ = parseInt($filter.css('z-index'), 10)
+        expect(adderZ > minimum).toBeTruthy()
+        expect(filterZ > minimum).toBeTruthy()
+        expect(adderZ > filterZ).toBeTruthy()
+
+      check(1000)
+
+      $fix.append('<div style="position: relative; z-index: 2000"></div>')
+      annotator._setupDynamicStyle()
+      check(2000)
+
+      $fix.append('<div style="position: relative; z-index: 10000"></div>')
+      annotator._setupDynamicStyle()
+      check(10000)
+
+      $fix.hide()
 
   describe "getSelectedRanges", ->
     mockGlobal = null
