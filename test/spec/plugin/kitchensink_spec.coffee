@@ -1,8 +1,15 @@
+class MockPlugin
+  constructor: ->
+  pluginInit: ->
+
 describe 'Annotator::setupPlugins', ->
   annotator = null
   $fix = null
 
   beforeEach ->
+    for p in ['AnnotateItPermissions', 'Auth', 'Markdown', 'Store', 'Tags', 'Unsupported']
+      Annotator.Plugin[p] = MockPlugin
+
     addFixture('kitchensink')
     $fix = $(fix())
     this.addMatchers
