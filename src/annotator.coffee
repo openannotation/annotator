@@ -45,7 +45,6 @@ class Annotator extends Delegator
     ".annotator-hl mouseout":            "startViewerHideTimer"
 
   html:
-    hl:      '<span class="annotator-hl"></span>'
     adder:   '<div class="annotator-adder"><button>' + _t('Annotate') + '</button></div>'
     wrapper: '<div class="annotator-wrapper"></div>'
 
@@ -99,9 +98,8 @@ class Annotator extends Delegator
     this._setupWrapper()._setupViewer()._setupEditor()
     this._setupDynamicStyle()
 
-    # Create model dom elements
-    for name, src of @html
-      this[name] = $(src).appendTo(@wrapper).hide() unless name == 'wrapper'
+    # Create adder
+    this.adder = $(this.html.adder).appendTo(@wrapper).hide()
 
   # Wraps the children of @element in a @wrapper div. NOTE: This method will also
   # remove any script elements inside @element to prevent them re-executing.
@@ -396,14 +394,17 @@ class Annotator extends Delegator
     else
       console.warn(_t("Can't dump annotations without Store plugin."))
 
-  # Public: Wraps the DOM Nodes within the provided range in the @hl wrapper
-  # and returns the highlight Elements.
+  # Public: Wraps the DOM Nodes within the provided range with a highlight
+  # element of the specified class and returns the highlight Elements.
   #
   # normedRange - A NormalizedRange to be highlighted.
+  # cssClass - A CSS class to use for the highlight (default: 'annotator-hl')
   #
   # Returns an array of highlight Elements.
-  highlightRange: (normedRange) ->
+  highlightRange: (normedRange, cssClass='annotator-hl') ->
     white = /^\s*$/
+
+    hl = $("<span class='#{cssClass}'></span>")
 
     # Ignore text nodes that contain only whitespace characters. This prevents
     # spans being injected between elements that can only contain a restricted
@@ -411,7 +412,19 @@ class Annotator extends Delegator
     # may be the odd abandoned whitespace node in a paragraph that is skipped
     # but better than breaking table layouts.
     for node in normedRange.textNodes() when not white.test(node.nodeValue)
-      $(node).wrapAll(@hl).parent().show()[0]
+      $(node).wrapAll(hl).parent().show()[0]
+
+  # Public: highlight a list of ranges
+  #
+  # normedRanges - An array of NormalizedRanges to be highlighted.
+  # cssClass - A CSS class to use for the highlight (default: 'annotator-hl')
+  #
+  # Returns an array of highlight Elements.
+  highlightRanges: (normedRanges, cssClass='annotator-hl') ->
+    highlights = []
+    for r in normedRanges
+      $.merge highlights, this.highlightRange(r, cssClass)
+    highlights
 
   # Public: Registers a plugin with the Annotator. A plugin can only be
   # registered once. The plugin will be instantiated in the following order.
@@ -624,8 +637,18 @@ class Annotator extends Delegator
   onAdderClick: (event) =>
     event?.preventDefault()
 
+    # Hide the adder
     position = @adder.position()
     @adder.hide()
+
+    # Show a temporary highlight so the user can see what they selected
+    if @selectedRanges and @selectedRanges.length
+      ranges = (Range.sniff(r).normalize() for r in @selectedRanges)
+      highlights = this.highlightRanges(ranges, 'annotator-hl-temporary')
+
+      @editor.element.one 'hide', ->
+        for h in highlights
+          $(h).replaceWith(h.childNodes)
 
     # Create an annotation and display the editor.
     this.showEditor(this.createAnnotation(), position)
