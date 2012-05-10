@@ -79,7 +79,7 @@ Range.nodeFromXPath = (xpath, root=document) ->
     node
 
 class Range.RangeError extends Error
-  constructor: (@type, @message) ->
+  constructor: (@type, @message, @parent=null) ->
     super(@message)
 
 # Public: Creates a wrapper around a range object obtained from a DOMSelection.
@@ -332,7 +332,11 @@ class Range.SerializedRange
     range = {}
 
     for p in ['start', 'end']
-      node = Range.nodeFromXPath(this[p], root)
+      try
+        node = Range.nodeFromXPath(this[p], root)
+      catch e
+        throw new Range.RangeError(p, "Error while finding #{p} node: #{this[p]}: " + e, e)
+
       if not node
         throw new Range.RangeError(p, "Couldn't find #{p} node: #{this[p]}")
 
