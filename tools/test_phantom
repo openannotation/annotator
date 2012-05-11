@@ -1,0 +1,11 @@
+cd "$(dirname "$0")"
+cd ..
+
+python -m SimpleHTTPServer 8000 2>/dev/null &
+SERVERPID="${!}"
+cleanup () {
+  kill $SERVERPID
+}
+trap cleanup EXIT
+
+phantomjs test/runner.coffee http://localhost:8000/test/runner.html

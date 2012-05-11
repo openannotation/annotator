@@ -101,16 +101,19 @@ The tests are to be found in `test/spec/`, and use [Jasmine][jas] to support a B
 For inline documentation we use [TomDoc][tom]. It's a Ruby specification but it
 also works nicely with CoffeeScript.
 
+There are a number of useful development tools shipped in the `tools/` directory.
+ 
+    $ ./tools/test_phantom   # runs the test suite with PhantomJS (requires Python and PhantomJS)
+    $ ./tools/watch          # compiles src/*.coffee files into lib/*.js when they change
 
-The `Cakefile` provides a number of useful tasks. (**NB**: If `cake` doesn't work for you, try `` `npm bin`/cake`` instead.)
+Building the packaged version of Annotator requires Avery Pennarun's excellent [redo build tool](https://github.com/apenwarr/redo).
 
-    $ cake serve        # serves the directory at http://localhost:8000 (requires python)
-    $ cake test         # opens the test suite in your browser
-    $ cake test:phantom # runs the test suite with PhantomJS
-    $ cake watch        # compiles src/*.coffee files into lib/*.js when they change
-    $ cake package[:*]  # builds the production version of Annotator in pkg/
+    $ redo                   # just build everything
+    $ redo help              # show available build tasks
 
-Run `cake` (or `` `npm bin`/cake``) to see the list of all available tasks.
+If you really can't be bothered to install `redo` (you should: it's awesome) you can just run the included minimal `do` script:
+
+    $ ./tools/do
 
 Community
 ---------

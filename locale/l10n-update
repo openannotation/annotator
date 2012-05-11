@@ -1,8 +1,0 @@
-#!/bin/sh
-
-if [ -z "${1}" ]; then
-  echo "Usage: l10n-update <localename>"
-  exit 1
-fi
-
-msgmerge -U "${1}"/annotator.po annotator.pot

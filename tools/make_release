@@ -5,6 +5,8 @@
 # jsontool: `npm install -g jsontool`
 # s3cmd: `brew install s3cmd && s3cmd --configure`
 #
+cd "$(dirname "$0")"
+cd ..
 
 print_usage () {
   echo "Usage: $(basename "${0}") <bump>"
@@ -94,7 +96,7 @@ fi
 
 # Confirm new version
 
-VERSION="${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
+export VERSION="${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
 confirm_proceed "Going to release v${VERSION} -- proceed?"
 
 # Update version in package.json
@@ -106,12 +108,12 @@ git commit package.json -m "Bump version -> v${VERSION}"
 # Generate package files
 
 echo "Generating package files"
-cake package
-cake package:kitchensink
+redo clean
+redo pkg/annotator/all
 
 echo "Committing release and creating tag"
 git co master
-git add -f pkg/*
+git add -f pkg/annotator/*
 
 tree=$(git write-tree)
 parent=$(git rev-parse master)
@@ -119,20 +121,20 @@ parent=$(git rev-parse master)
 commit=$(echo "Annotator release v${VERSION}" | git commit-tree "${tree}" -p "${parent}")
 
 git tag "v${VERSION}" "${commit}"
-git reset HEAD pkg/
+git reset HEAD pkg/annotator/
 
 # Upload release to S3
 
 echo "Uploading release to S3"
-s3cmd --acl-public sync pkg/*.{js,css} "s3://assets.annotateit.org/annotator/v${VERSION}/"
+s3cmd --acl-public sync pkg/annotator/*.{js,css} "s3://assets.annotateit.org/annotator/v${VERSION}/"
 
 # Make zips and upload to GitHub
 
 echo "Making zips for GitHub"
-pushd pkg
+pushd pkg/annotator
 
 mkdir "annotator.${VERSION}"
-ln annotator.*.{js,css} "annotator.${VERSION}"
+ln annotator.*.min.{js,css} "annotator.${VERSION}"
 zip -r9 "annotator.${VERSION}.zip" "annotator.${VERSION}"
 
 mkdir "annotator-full.${VERSION}"
@@ -146,8 +148,8 @@ read -p "GitHub password: " passw; echo
 stty echo
 
 echo "Uploading zips to GitHub"
-upload_zip "${uname}" "${passw}" "annotator.${VERSION}.zip" "Annotator ${VERSION} with plugins in individual minified files"
-upload_zip "${uname}" "${passw}" "annotator-full.${VERSION}.zip" "Annotator ${VERSION} with plugins all in one minified file"
+echo upload_zip "${uname}" "${passw}" "annotator.${VERSION}.zip" "Annotator ${VERSION} with plugins in individual minified files"
+echo upload_zip "${uname}" "${passw}" "annotator-full.${VERSION}.zip" "Annotator ${VERSION} with plugins all in one minified file"
 
 popd pkg
 

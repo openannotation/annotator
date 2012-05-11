@@ -1,0 +1,7 @@
+cd "$(dirname "$0")"
+./annotator.deps
+find ../../src/plugin -name '*.coffee' | while read f; do
+  f="${f#../../src/}"
+  f="${f%.coffee}"
+  echo $f
+done
