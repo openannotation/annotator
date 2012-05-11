@@ -108,7 +108,7 @@ git commit package.json -m "Bump version -> v${VERSION}"
 # Generate package files
 
 echo "Generating package files"
-redo clean
+redo pkg/clean
 redo pkg/annotator/all
 
 echo "Committing release and creating tag"
