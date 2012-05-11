@@ -686,6 +686,18 @@ class Annotator.Plugin extends Delegator
 
   pluginInit: ->
 
+# Sniff the browser environment and attempt to add missing functionality.
+g = util.getGlobal()
+
+if not g.document?.evaluate?
+  $.getScript('http://assets.annotateit.org/vendor/xpath.min.js')
+
+if not g.getSelection?
+  $.getScript('http://assets.annotateit.org/vendor/ierange.min.js')
+
+if not g.JSON?
+  $.getScript('http://assets.annotateit.org/vendor/json2.min.js')
+
 # Bind our local copy of jQuery so plugins can use the extensions.
 Annotator.$ = $
 
