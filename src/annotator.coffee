@@ -11,11 +11,11 @@ util =
 
   # Return the maximum z-index of any element in $elements (a jQuery collection).
   maxZIndex: ($elements) ->
-    all = $elements.map ->
-      if $(this).css('position') == 'static'
-        -1
-      else
-        parseInt($(this).css('z-index'), 10) or -1
+    all = for el in $elements
+            if $(el).css('position') == 'static'
+              -1
+            else
+              parseInt($(el).css('z-index'), 10) or -1
     Math.max.apply(Math, all)
 
   mousePosition: (e, offsetEl) ->
