@@ -108,6 +108,13 @@ There are a number of useful development tools shipped in the `tools/` directory
 
 Building the packaged version of Annotator requires Avery Pennarun's excellent [redo build tool](https://github.com/apenwarr/redo).
 
+    $ git clone git://github.com/apenwarr/redo.git
+    $ cd redo
+    $ make
+    $ make install
+    
+    $ cd ../annotator  # Go back to wherever annotator source is...
+
     $ redo                   # just build everything
     $ redo help              # show available build tasks
 
