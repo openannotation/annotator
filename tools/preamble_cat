@@ -7,7 +7,7 @@ DATE=$(date -u "+%Y-%m-%d %H:%M:%SZ")
 if [ -n "$VERSION" ]; then
   VERSION="v${VERSION}"
 else
-  VERSION="$(echo "$(grep version package.json | cut -d\" -f4)-dev-$(git describe --always)")"
+  VERSION="$(echo "$(grep version ../package.json | cut -d\" -f4)-dev-$(git describe --always)")"
 fi
 
 # print preamble, substituting variables
