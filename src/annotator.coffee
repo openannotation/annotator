@@ -374,10 +374,10 @@ class Annotator extends Delegator
       for n in now
         this.setupAnnotation(n, false) # 'false' suppresses event firing
 
-      # If there are more to do, do them after a 1ms break (for browser
+      # If there are more to do, do them after a 10ms break (for browser
       # responsiveness).
       if annList.length > 0
-        setTimeout((-> loader(annList)), 1)
+        setTimeout((-> loader(annList)), 10)
       else
         this.publish 'annotationsLoaded', [clone]
 
