@@ -1,8 +1,8 @@
 The quickstart guide for hacking annotator source!
 
 # On a Mac
-# First install Homebrew from http://mxcl.github.com/homebrew/
-# Next install redo
+First install Homebrew from http://mxcl.github.com/homebrew/
+Next install redo
     $ brew install redo
 
 # On Linux (Debian, Ubuntu, etc.)
