@@ -1,0 +1,17 @@
+The quickstart guide for hacking annotator source!
+
+# On a Mac
+# First install Homebrew from http://mxcl.github.com/homebrew/
+# Next install redo
+    $ brew install redo
+
+# On Linux (Debian, Ubuntu, etc.)
+Building the packaged version of Annotator requires Avery Pennarun's excellent [redo build tool](https://github.com/apenwarr/redo).
+
+    $ git clone git://github.com/apenwarr/redo.git
+    $ cd redo && make install
+    
+# Then, once redo is installed
+
+    $ redo                   # just build everything
+    $ redo help              # show available build tasks
