@@ -1,7 +1,11 @@
 cd "$(dirname "$0")"
 ./annotator.deps
-find ../../src/plugin -name '*.coffee' | while read f; do
-  f="${f#../../src/}"
-  f="${f%.coffee}"
-  echo $f
-done
+echo plugin/unsupported
+echo plugin/auth
+echo plugin/store
+echo plugin/permissions
+echo plugin/annotateitpermissions
+echo plugin/filter
+echo plugin/markdown
+echo plugin/tags
+echo plugin/kitchensink
