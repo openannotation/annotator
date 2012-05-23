@@ -52,5 +52,15 @@ else
   fi
 fi
 
-echo "Running npm install..."
+echo "Running 'npm install .'..."
 npm install .
+
+echo
+echo "Excellent. You should now be able to run the tests by hosting this directory"
+echo "with a web server and opening test/runner.html"
+echo
+echo "You can auto-compile any changes to development sources by running"
+echo
+echo "  ./tools/watch"
+echo 
+echo "and you may find dev.html useful when developing Annotator."
