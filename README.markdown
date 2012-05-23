@@ -88,7 +88,7 @@ Callback name                                  | Description
 Development
 -----------
 
-See [HACKING.markdown](blob/master/HACKING.markdown)
+See [HACKING.markdown](/okfn/annotator/blob/master/HACKING.markdown)
 
 Community
 ---------
