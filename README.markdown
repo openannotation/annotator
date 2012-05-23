@@ -88,43 +88,13 @@ Callback name                                  | Description
 Development
 -----------
 
-If you wish to develop Annotator, you'll need to have a working installation of [Node.js][node] (v0.6.x). I'd highly recommend installing both Node.js and the [Node Package Manager][npm], after which you can run the following to get up and running:
-
-    $ npm install .
-
-The Annotator source is found in `src/`, and is written in CoffeeScript, which is a little language that compiles to Javascript. See the [CoffeeScript website][coffee] for more information.
-
-`dev.html` loads the raw development files from `lib/` and can be useful when developing.
-
-The tests are to be found in `test/spec/`, and use [Jasmine][jas] to support a BDD process.
-
-For inline documentation we use [TomDoc][tom]. It's a Ruby specification but it
-also works nicely with CoffeeScript.
-
-There are a number of useful development tools shipped in the `tools/` directory.
- 
-    $ ./tools/test_phantom   # runs the test suite with PhantomJS (requires Python and PhantomJS)
-    $ ./tools/watch          # compiles src/*.coffee files into lib/*.js when they change
-
-Building the packaged version of Annotator requires Avery Pennarun's excellent [redo build tool](https://github.com/apenwarr/redo).
-
-    $ redo                   # just build everything
-    $ redo help              # show available build tasks
-
-If you really can't be bothered to install `redo` (you should: it's awesome) you can just run the included minimal `do` script:
-
-    $ ./tools/do
+See [HACKING.markdown](blob/master/HACKING.markdown)
 
 Community
 ---------
 
 The annotator project has a [mailing list][dev] for developer discussion and community members can sometimes be found in the #annotator channel on [freenode IRC][irc].
 
-[node]: http://nodejs.org/
-[npm]: http://npmjs.org/
-[coffee]: http://coffeescript.org/ 
-[jas]: http://pivotal.github.com/jasmine/
-[tom]: http://tomdoc.org/
 [dev]: http://lists.okfn.org/mailman/listinfo/annotator-dev
 [irc]: http://freenode.net/
 
