@@ -156,4 +156,4 @@ popd pkg
 
 # Clean up
 echo "Cleaning up"
-rm -Rf pkg/*
+redo pkg/clean
