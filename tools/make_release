@@ -149,8 +149,8 @@ read -p "GitHub password: " passw; echo
 stty echo
 
 echo "Uploading zips to GitHub"
-echo upload_zip "${uname}" "${passw}" "annotator.${VERSION}.zip" "Annotator ${VERSION} with plugins in individual minified files"
-echo upload_zip "${uname}" "${passw}" "annotator-full.${VERSION}.zip" "Annotator ${VERSION} with plugins all in one minified file"
+upload_zip "${uname}" "${passw}" "annotator.${VERSION}.zip" "Annotator ${VERSION} with plugins in individual minified files"
+upload_zip "${uname}" "${passw}" "annotator-full.${VERSION}.zip" "Annotator ${VERSION} with plugins all in one minified file"
 
 popd pkg
 
