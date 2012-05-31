@@ -6,10 +6,10 @@ Quick setup for lazy people (on a Mac)
 
     $ ./tools/setup
 
-Slower introduction for industrious people (and those without Macs)
--------------------------------------------------------------------
+Slower introduction for industrious people (and those on Linux/Windows)
+-----------------------------------------------------------------------
 
-If you wish to develop Annotator, you'll need to have a working installation of [Node.js][node] (v0.6.x). Once installed (on most systems Node comes bundled with [NPM](npm)) you should run the following to install Annotator's development dependencies.
+If you wish to develop Annotator, you'll need to have a working installation of [Node.js][node] (v0.6.x). Once installed (on most systems Node comes bundled with [NPM][npm]) you should run the following to install Annotator's development dependencies.
 
     $ npm install .
 
