@@ -1,6 +1,6 @@
 {
   "name": "annotator",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Inline annotation for the web. Select text, images, or (nearly) anything else, and add your notes.",
   "repositories": [
     {
