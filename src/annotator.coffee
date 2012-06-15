@@ -644,7 +644,7 @@ class Annotator extends Delegator
     # Show a temporary highlight so the user can see what they selected
     if @selectedRanges and @selectedRanges.length
       ranges = (Range.sniff(r).normalize() for r in @selectedRanges)
-      highlights = this.highlightRanges(ranges, 'annotator-hl-temporary')
+      highlights = this.highlightRanges(ranges, 'annotator-hl annotator-hl-temporary')
 
       @editor.element.one 'hide', ->
         for h in highlights
