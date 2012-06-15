@@ -845,7 +845,7 @@ describe 'Annotator', ->
       expect(annotator.showEditor).toHaveBeenCalledWith(annotation, mockOffset)
 
     it "should add temporary highlights to the document to show the user what they selected", ->
-      expect(annotator.highlightRanges).toHaveBeenCalledWith(['normalized', 'normalized'], 'annotator-hl-temporary')
+      expect(annotator.highlightRanges).toHaveBeenCalledWith(['normalized', 'normalized'], 'annotator-hl annotator-hl-temporary')
 
   describe "onEditAnnotation", ->
     it "should display the Annotator#editor in the same positions as Annotatorviewer", ->
