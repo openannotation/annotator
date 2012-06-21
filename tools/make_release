@@ -135,7 +135,7 @@ echo "Making zips for GitHub"
 pushd pkg/annotator
 
 mkdir "annotator.${VERSION}"
-ln annotator.*.min.{js,css} "annotator.${VERSION}"
+ln annotator.*min.{js,css} "annotator.${VERSION}"
 zip -r9 "annotator.${VERSION}.zip" "annotator.${VERSION}"
 
 mkdir "annotator-full.${VERSION}"
