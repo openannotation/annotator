@@ -21,7 +21,7 @@ Usage
 
 To use Annotator, it's easiest to [download a packaged release][dl]. The most important files in these packages are `annotator.min.js` (or `annotator-full.min.js`), which contains the core Annotator code, and `annotator.min.css`, which contains all the CSS and embedded images for the annotator.
 
-Annotator requires [jQuery][$]. The quickest way to get going with Annotator is to include the following in the `<head>` of your document (paths relative to the repository root):
+Annotator requires [jQuery][$]. The quickest way to get going with Annotator is to include the following in the `<head>` of your document (paths relative to the root of the unzipped download):
 
     <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js'></script>
 
