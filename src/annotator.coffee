@@ -476,6 +476,7 @@ class Annotator extends Delegator
   showEditor: (annotation, location) =>
     @editor.element.css(location)
     @editor.load(annotation)
+    this.publish('annotationEditorShown', [@editor, annotation])
     this
 
   # Callback method called when the @editor fires the "hide" event. Itself

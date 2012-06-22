@@ -582,6 +582,7 @@ describe 'Annotator', ->
 
   describe "showEditor", ->
     beforeEach ->
+      spyOn(annotator, 'publish')
       spyOn(annotator.editor, 'load')
       spyOn(annotator.editor.element, 'css')
 
@@ -594,6 +595,13 @@ describe 'Annotator', ->
       location = {top: 20, left: 20}
       annotator.showEditor({}, location)
       expect(annotator.editor.element.css).toHaveBeenCalledWith(location)
+
+    it "should publish the 'annotationEditorShown' event passing the editor and annotations", ->
+      annotation = {text: 'my annotation comment'}
+      annotator.showEditor(annotation, {})
+      expect(annotator.publish).toHaveBeenCalledWith(
+        'annotationEditorShown', [annotator.editor, annotation]
+      )
 
   describe "onEditorHide", ->
     it "should publish the 'annotationEditorHidden' event and provide the Editor and annotation", ->
