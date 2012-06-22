@@ -19,20 +19,16 @@ The Annotator project also has a simple but powerful plugin architecture. While 
 Usage
 -----
 
-To use Annotator, it's easiest to [download a packaged release][dl].
+To use Annotator, it's easiest to [download a packaged release][dl]. The most important files in these packages are `annotator.min.js` (or `annotator-full.min.js`), which contains the core Annotator code, and `annotator.min.css`, which contains all the CSS and embedded images for the annotator.
 
-In a tagged release, the `pkg/` directory will contain all the files you need to get going. The most important are `annotator.min.js`, which contains the core Annotator code, and `annotator.min.css`, which contains all the CSS and embedded images for the annotator.
+Annotator requires [jQuery][$]. The quickest way to get going with annotator is to include the following in the `<head>` of your document (paths relative to the repository root):
 
-Annotator requires [jQuery][$] and [an implementation][json2] of `JSON.parse` and `JSON.stringify`. In short, the quickest way to get going with annotator is to include the following in the `<head>` of your document (paths relative to the repository root):
+    <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js'></script>
 
-    <script src='lib/vendor/jquery.js'></script>
-    <script src='lib/vendor/json2.js'></script>
-
-    <script src='pkg/annotator.min.js'></script>
-    <link rel='stylesheet' href='pkg/annotator.min.css'>
+    <script src='annotator.min.js'></script>
+    <link rel='stylesheet' href='annotator.min.css'>
 
 [$]: http://jquery.com/
-[json2]: https://github.com/douglascrockford/JSON-js/blob/master/json2.js
 
 You can then initialize Annotator for the whole document by including the following at the end of the `<body>` tag:
 
