@@ -152,7 +152,7 @@ echo "Uploading zips to GitHub"
 upload_zip "${uname}" "${passw}" "annotator.${VERSION}.zip" "Annotator ${VERSION} with plugins in individual minified files"
 upload_zip "${uname}" "${passw}" "annotator-full.${VERSION}.zip" "Annotator ${VERSION} with plugins all in one minified file"
 
-popd pkg
+popd
 
 # Clean up
 echo "Cleaning up"
