@@ -425,7 +425,7 @@
 	border-radius: 0 0 5px 5px;
 }
 
-.annotator-invert-y .annotator-controls {
+.annotator-editor.annotator-invert-y .annotator-controls {
 	border-top: none;
 	border-bottom: 1px solid rgb(180, 180, 180);
 	-webkit-border-radius: 5px 5px 0 0;
