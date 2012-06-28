@@ -8,4 +8,5 @@ cleanup () {
 }
 trap cleanup EXIT
 
+sleep 1
 phantomjs test/runner.coffee http://localhost:8000/test/runner.html
