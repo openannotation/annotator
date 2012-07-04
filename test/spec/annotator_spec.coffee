@@ -396,20 +396,12 @@ describe 'Annotator', ->
       })
 
       expect(annotator.publish).toHaveBeenCalledWith('rangeNormalizeFail', [annotation, 1, e])
-      expect(annotator.publish).toHaveBeenCalledWith('annotationCreated', [annotation])
 
     it "should call Annotator#highlightRange() with the normed range", ->
       expect(annotator.highlightRange).toHaveBeenCalledWith(normalizedRange)
 
     it "should store the annotation in the highlighted element's data store", ->
       expect(element.data('annotation')).toBe(annotation)
-
-    it "should publish the 'annotationCreated' event", ->
-      expect(annotator.publish).toHaveBeenCalledWith('annotationCreated', [annotation])
-
-    it "should NOT publish the 'annotationCreated' event if fireEvents is false", ->
-      annotator.setupAnnotation(annotationObj, false)
-      expect(annotator.publish.callCount).toBe(1)
 
   describe "updateAnnotation", ->
     it "should publish the 'beforeAnnotationUpdated' and 'annotationUpdated' events", ->
@@ -464,11 +456,6 @@ describe 'Annotator', ->
       annotations = [{}, {}, {}, {}]
       annotator.loadAnnotations(annotations.slice())
       expect(annotator.publish).toHaveBeenCalledWith('annotationsLoaded', [annotations])
-
-    it "should suppress the 'annotationCreated' event", ->
-      annotations = [{}]
-      annotator.loadAnnotations(annotations)
-      expect(annotator.setupAnnotation).toHaveBeenCalledWith({}, false)
 
     it "should break the annotations into blocks of 10", ->
       annotations = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
@@ -630,15 +617,6 @@ describe 'Annotator', ->
       expect(annotator.publish).toHaveBeenCalledWith(
         'annotationEditorSubmit', [annotator.editor, annotation]
       )
-
-    it "should pass the annotation to Annotator#setupAnnotation() if has no ranges", ->
-      annotator.onEditorSubmit(annotation)
-      expect(annotator.setupAnnotation).toHaveBeenCalledWith(annotation)
-
-    it "should pass the annotation to Annotator#updateAnnotation() if has ranges", ->
-      annotation.ranges = []
-      annotator.onEditorSubmit(annotation)
-      expect(annotator.updateAnnotation).toHaveBeenCalledWith(annotation)
 
   describe "showViewer", ->
     beforeEach ->
@@ -828,18 +806,40 @@ describe 'Annotator', ->
   describe "onAdderClick", ->
     annotation = null
     mockOffset = null
+    mockSubscriber = null
+    quote = null
+    element = null
+    normalizedRange = null
+    sniffedRange = null
 
     beforeEach ->
-      annotation = {text: "test"}
+      annotation =
+        text: "test"
+      quote = 'This is some annotated text'
+      element = $('<span />').addClass('annotator-hl')
+
       mockOffset = {top: 0, left:0}
+
+      mockSubscriber = jasmine.createSpy('mockSubscriber')
+      annotator.subscribe('annotationCreated', mockSubscriber)
+
+      normalizedRange = {
+        text: jasmine.createSpy('normalizedRange#text()').andReturn(quote)
+        serialize: jasmine.createSpy('normalizedRange#serialize()').andReturn({})
+      }
+      sniffedRange = {
+        normalize: jasmine.createSpy('sniffedRange#normalize()').andReturn(normalizedRange)
+      }
+
       spyOn(annotator.adder, 'hide')
       spyOn(annotator.adder, 'position').andReturn(mockOffset)
       spyOn(annotator, 'createAnnotation').andReturn(annotation)
+      spyOn(annotator, 'setupAnnotation').andCallThrough()
       spyOn(annotator, 'showEditor')
-      spyOn(Range, 'sniff').andReturn({ normalize: -> 'normalized' })
-      spyOn(annotator, 'highlightRanges').andReturn(['baz', 'bat'])
-      annotator.selectedRanges = ['foo', 'bar']
-
+      spyOn(Range, 'sniff').andReturn(sniffedRange)
+      spyOn(annotator, 'highlightRange').andReturn(element)
+      spyOn(element, 'addClass')
+      annotator.selectedRanges = ['foo']
       annotator.onAdderClick()
 
     it "should hide the Annotation#adder", ->
@@ -848,26 +848,57 @@ describe 'Annotator', ->
     it "should create a new annotation", ->
       expect(annotator.createAnnotation).toHaveBeenCalled()
 
+    it "should set up the annotation", ->
+      expect(annotator.setupAnnotation).toHaveBeenCalledWith(annotation)
+
     it "should display the Annotation#editor in the same place as the Annotation#adder", ->
       expect(annotator.adder.position).toHaveBeenCalled()
       expect(annotator.showEditor).toHaveBeenCalledWith(annotation, mockOffset)
 
     it "should add temporary highlights to the document to show the user what they selected", ->
-      expect(annotator.highlightRanges).toHaveBeenCalledWith(['normalized', 'normalized'], 'annotator-hl annotator-hl-temporary')
+      expect(annotator.highlightRange).toHaveBeenCalledWith(normalizedRange)
+      expect(element[0].className).toBe('annotator-hl annotator-hl-temporary')
+
+    it "should persist the temporary highlights if the annotation is saved", ->
+      annotator.publish('annotationEditorSubmit')
+      expect(element[0].className).toBe('annotator-hl')
+
+    it "should trigger the 'annotationCreated' event if the edit is saved", ->
+      annotator.onEditorSubmit(annotation)
+      expect(mockSubscriber).toHaveBeenCalledWith(annotation)
+
+    it "should suppress the 'annotationCreated' event if editing is cancelled", ->
+      do annotator.onEditorHide
+      do annotator.onEditorSubmit
+      expect(mockSubscriber).not.toHaveBeenCalledWith('annotationCreated')
 
   describe "onEditAnnotation", ->
-    it "should display the Annotator#editor in the same positions as Annotatorviewer", ->
+    annotation = null
+    mockOffset = null
+    mockSubscriber = null
+
+    beforeEach ->
       annotation = {text: "my mock annotation"}
       mockOffset = {top: 0, left: 0}
-
+      mockSubscriber = jasmine.createSpy('mockSubscriber')
       spyOn(annotator, "showEditor")
       spyOn(annotator.viewer, "hide")
       spyOn(annotator.viewer.element, "position").andReturn(mockOffset)
-
+      spyOn(annotator, "updateAnnotation")
       annotator.onEditAnnotation(annotation)
 
+    it "should display the Annotator#editor in the same positions as Annotatorviewer", ->
       expect(annotator.viewer.hide).toHaveBeenCalled()
       expect(annotator.showEditor).toHaveBeenCalledWith(annotation, mockOffset)
+
+    it "should call 'updateAnnotation' event if the edit is saved", ->
+      annotator.onEditorSubmit(annotation)
+      expect(annotator.updateAnnotation).toHaveBeenCalledWith(annotation)
+
+    it "should not call 'updateAnnotation' if editing is cancelled", ->
+      do annotator.onEditorHide
+      annotator.onEditorSubmit(annotation)
+      expect(annotator.updateAnnotation).not.toHaveBeenCalledWith(annotation)
 
   describe "onDeleteAnnotation", ->
     it "should pass the annotation on to Annotator#deleteAnnotation()", ->
