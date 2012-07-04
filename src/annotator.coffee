@@ -270,7 +270,6 @@ class Annotator extends Delegator
   # selected range and higlights the selection in the DOM.
   #
   # annotation - An annotation Object to initialise.
-  # fireEvents - Will fire the 'annotationCreated' event if true.
   #
   # Examples
   #
@@ -285,7 +284,7 @@ class Annotator extends Delegator
   #   annotation = annotator.setupAnnotation(annotation)
   #
   # Returns the initialised annotation.
-  setupAnnotation: (annotation, fireEvents=true) ->
+  setupAnnotation: (annotation) ->
     root = @wrapper[0]
     annotation.ranges or= @selectedRanges
 
@@ -314,10 +313,6 @@ class Annotator extends Delegator
 
     # Save the annotation data on each highlighter element.
     $(annotation.highlights).data('annotation', annotation)
-
-    # Fire annotationCreated events so that plugins can react to them.
-    if fireEvents
-      this.publish('annotationCreated', [annotation])
 
     annotation
 
@@ -372,7 +367,7 @@ class Annotator extends Delegator
       now = annList.splice(0,10)
 
       for n in now
-        this.setupAnnotation(n, false) # 'false' suppresses event firing
+        this.setupAnnotation(n)
 
       # If there are more to do, do them after a 10ms break (for browser
       # responsiveness).
@@ -495,11 +490,6 @@ class Annotator extends Delegator
   # Returns nothing.
   onEditorSubmit: (annotation) =>
     this.publish('annotationEditorSubmit', [@editor, annotation])
-
-    if annotation.ranges == undefined
-      this.setupAnnotation(annotation)
-    else
-      this.updateAnnotation(annotation)
 
   # Public: Loads the @viewer with an Array of annotations and positions it
   # at the location provided. Calls the 'annotationViewerShown' event.
@@ -645,16 +635,35 @@ class Annotator extends Delegator
     @adder.hide()
 
     # Show a temporary highlight so the user can see what they selected
-    if @selectedRanges and @selectedRanges.length
-      ranges = (Range.sniff(r).normalize() for r in @selectedRanges)
-      highlights = this.highlightRanges(ranges, 'annotator-hl annotator-hl-temporary')
+    # Also extract the quotation and serialize the ranges
+    annotation = this.setupAnnotation(this.createAnnotation())
+    $(annotation.highlights).addClass('annotator-hl-temporary')
 
-      @editor.element.one 'hide', ->
-        for h in highlights
-          $(h).replaceWith(h.childNodes)
+    # Subscribe to the editor events
 
-    # Create an annotation and display the editor.
-    this.showEditor(this.createAnnotation(), position)
+    # Make the highlights permanent if the annotation is saved
+    save = =>
+      do cleanup
+      $(annotation.highlights).removeClass('annotator-hl-temporary')
+      # Fire annotationCreated events so that plugins can react to them
+      this.publish('annotationCreated', [annotation])
+
+    # Remove the highlights if the edit is cancelled
+    cancel = =>
+      do cleanup
+      for h in annotation.highlights
+        $(h).replaceWith(h.childNodes)
+
+    # Don't leak handlers at the end
+    cleanup = =>
+      this.unsubscribe('annotationEditorHidden', cancel)
+      this.unsubscribe('annotationEditorSubmit', save)
+
+    this.subscribe('annotationEditorHidden', cancel)
+    this.subscribe('annotationEditorSubmit', save)
+
+    # Display the editor.
+    this.showEditor(annotation, position)
 
   # Annotator#viewer callback function. Displays the Annotator#editor in the
   # positions of the Annotator#viewer and loads the passed annotation for
@@ -666,7 +675,22 @@ class Annotator extends Delegator
   onEditAnnotation: (annotation) =>
     offset = @viewer.element.position()
 
-    # Replace the viewer with the editor.
+    # Subscribe once to editor events
+
+    # Update the annotation when the editor is saved
+    update = =>
+      do cleanup
+      this.updateAnnotation(annotation)
+
+    # Remove handlers when the editor is hidden
+    cleanup = =>
+      this.unsubscribe('annotationEditorHidden', cleanup)
+      this.unsubscribe('annotationEditorSubmit', update)
+
+    this.subscribe('annotationEditorHidden', cleanup)
+    this.subscribe('annotationEditorSubmit', update)
+
+    # Replace the viewer with the editor
     @viewer.hide()
     this.showEditor(annotation, offset)
 
