@@ -496,7 +496,7 @@ class Annotator extends Delegator
   onEditorSubmit: (annotation) =>
     this.publish('annotationEditorSubmit', [@editor, annotation])
 
-    if annotation.id == undefined
+    if annotation.ranges == undefined
       this.setupAnnotation(annotation)
     else
       this.updateAnnotation(annotation)
