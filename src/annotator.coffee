@@ -267,7 +267,8 @@ class Annotator extends Delegator
 
   # Public: Initialises an annotation either from an object representation or
   # an annotation created with Annotator#createAnnotation(). It finds the
-  # selected range and higlights the selection in the DOM.
+  # selected range and higlights the selection in the DOM, extracts the
+  # quoted text and serializes the range.
   #
   # annotation - An annotation Object to initialise.
   #
@@ -634,12 +635,14 @@ class Annotator extends Delegator
     position = @adder.position()
     @adder.hide()
 
-    # Show a temporary highlight so the user can see what they selected
-    # Also extract the quotation and serialize the ranges
-    annotation = this.setupAnnotation(this.createAnnotation())
-    $(annotation.highlights).addClass('annotator-hl-temporary')
+    # Create a new annotation.
+    annotation = this.createAnnotation()
 
-    # Subscribe to the editor events
+    # Extract the quotation and serialize the ranges
+    annotation = this.setupAnnotation(annotation)
+
+    # Show a temporary highlight so the user can see what they selected
+    $(annotation.highlights).addClass('annotator-hl-temporary')
 
     # Make the highlights permanent if the annotation is saved
     save = =>
@@ -654,11 +657,12 @@ class Annotator extends Delegator
       for h in annotation.highlights
         $(h).replaceWith(h.childNodes)
 
-    # Don't leak handlers at the end
+    # Remove handlers when finished
     cleanup = =>
       this.unsubscribe('annotationEditorHidden', cancel)
       this.unsubscribe('annotationEditorSubmit', save)
 
+    # Subscribe to the editor events
     this.subscribe('annotationEditorHidden', cancel)
     this.subscribe('annotationEditorSubmit', save)
 
@@ -675,18 +679,17 @@ class Annotator extends Delegator
   onEditAnnotation: (annotation) =>
     offset = @viewer.element.position()
 
-    # Subscribe once to editor events
-
     # Update the annotation when the editor is saved
     update = =>
       do cleanup
       this.updateAnnotation(annotation)
 
-    # Remove handlers when the editor is hidden
+    # Remove handlers when finished
     cleanup = =>
       this.unsubscribe('annotationEditorHidden', cleanup)
       this.unsubscribe('annotationEditorSubmit', update)
 
+    # Subscribe to the editor events
     this.subscribe('annotationEditorHidden', cleanup)
     this.subscribe('annotationEditorSubmit', update)
 
