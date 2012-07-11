@@ -97,4 +97,5 @@ $.fn.escape = (html) ->
 
   this.html()
 
-$.fn.reverse = [].reverse
+# Create a jQuery reverse function, but watch out for prototype.js
+$.fn.reverse = []._reverse or [].reverse
