@@ -33,6 +33,7 @@
 .annotator-widget::after,
 .annotator-editor a::after,
 .annotator-viewer .annotator-controls button,
+.annotator-viewer .annotator-controls a,
 .annotator-filter .annotator-filter-navigation button::after,
 .annotator-filter .annotator-filter-property .annotator-filter-clear {
 	background-image: url(../img/annotator-glyph-sprite.png);
@@ -46,6 +47,10 @@
 	background: rgba(255, 255, 10, 0.3);
 }
 
+.annotator-hl-temporary {
+	background: rgba(0, 124, 255, 0.3);
+}
+
 /* Annotator Wrapper
 -------------------------------------------------------------------- */
 
@@ -53,10 +58,16 @@
 	position: relative;
 }
 
+/* NB: If you change the list of classes for which z-index is set,
+       you should update Annotator._setupDynamicStyle() */
 .annotator-adder,
 .annotator-outer,
 .annotator-notice {
-	z-index: 9999;
+	z-index: 1020;
+}
+
+.annotator-filter {
+	z-index: 1010;
 }
 
 .annotator-adder,
@@ -116,7 +127,7 @@
 .annotator-widget {
 	margin: 0;
 	padding: 0;
-	bottom: 8px;
+	bottom: 15px;
 	left: -18px;
 	min-width: 265px;
 	background-color: rgba(251, 251, 251, 0.98);
@@ -237,7 +248,8 @@
 	opacity: 1;
 }
 
-.annotator-viewer .annotator-controls button {
+.annotator-viewer .annotator-controls button,
+.annotator-viewer .annotator-controls a {
 	cursor: pointer;
 	display: inline-block;
 	width: 13px;
@@ -251,11 +263,14 @@
 }
 
 .annotator-viewer .annotator-controls button:hover,
-.annotator-viewer .annotator-controls button:focus {
+.annotator-viewer .annotator-controls button:focus,
+.annotator-viewer .annotator-controls a:hover,
+.annotator-viewer .annotator-controls a:focus {
 	opacity: 0.9;
 }
 
-.annotator-viewer .annotator-controls button:active {
+.annotator-viewer .annotator-controls button:active,
+.annotator-viewer .annotator-controls a:active {
 	opacity: 1;
 }
 
@@ -269,6 +284,10 @@
 
 .annotator-viewer .annotator-controls .annotator-delete {
 	background-position: 0 -75px;
+}
+
+.annotator-viewer .annotator-controls .annotator-link {
+	background-position: 0 -270px;
 }
 
 /* Annotator Editor
@@ -406,7 +425,7 @@
 	border-radius: 0 0 5px 5px;
 }
 
-.annotator-invert-y .annotator-controls {
+.annotator-editor.annotator-invert-y .annotator-controls {
 	border-top: none;
 	border-bottom: 1px solid rgb(180, 180, 180);
 	-webkit-border-radius: 5px 5px 0 0;
@@ -685,7 +704,6 @@
 -------------------------------------------------------------------- */
 
 .annotator-filter {
-	z-index: 9998; /* notifications/popups at 9999; filter bar should be lower */
 	position: fixed;
 	top: 0;
 	right: 0;
@@ -829,12 +847,12 @@
 
 .annotator-filter .annotator-filter-navigation button::after {
 	position: absolute;
-	top: 9px;
+	top: 8px;
 	left: 8px;
 	content: "";
 	display: block;
-	width: 7px;
-	height: 7px;
+	width: 9px;
+	height: 9px;
 	background-position: 0 -210px;
 }
 
@@ -852,12 +870,12 @@
 
 .annotator-filter .annotator-filter-navigation .annotator-filter-next::after {
 	left: auto;
-	right: 9px;
+	right: 7px;
 	background-position: 0 -240px;
 }
 
 .annotator-filter .annotator-filter-navigation .annotator-filter-next:hover::after {
-	background-position: 0 -256px;
+	background-position: 0 -255px;
 }
 
 .annotator-hl-active {

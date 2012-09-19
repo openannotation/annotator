@@ -1,0 +1,32 @@
+#!/usr/bin/env node
+
+var fs = require('fs');
+var data = [];
+
+function data_uri_ify (css) {
+
+  function b64_img (name) { 
+    // NB: path to image is "../src/..." because the CSS urls start with "../img"
+    return fs.readFileSync("../src/" + name + ".png").toString('base64');
+  }
+
+  function b64_url () {
+    return "url('data:image/png;base64," + b64_img(arguments[2]) + "')";
+  }
+
+  return css.replace(/(url\(([^)]+)\.png\))/g, b64_url);
+}
+
+// // // // // // // // // // // // // // // // // // // // // // // // // //
+
+process.chdir(__dirname);
+
+process.stdin.on('data', function (d) {
+  data.push(d);
+});
+
+process.stdin.on('end', function () {
+  console.log(data_uri_ify(data.join('')));
+});
+
+process.stdin.resume();

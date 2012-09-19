@@ -1,0 +1,7 @@
+echo "Generating package files"
+redo pkg/annotator/all
+
+# Upload release to S3
+echo "Uploading 'next' to S3"
+[ -n "$S3CFG" ] && S3ARGS="-c $S3CFG"
+s3cmd $S3ARGS --acl-public sync pkg/annotator/*.{js,css} "s3://assets.annotateit.org/annotator/next/"

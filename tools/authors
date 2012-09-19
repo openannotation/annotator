@@ -1,0 +1,5 @@
+cd "$(dirname "$0")"
+
+<../AUTHORS cut -d'<' -f1 | 
+  awk '{ if (prev) { print prev"," }; gsub(/ *$/, "", $0); prev=$0 } END { print "and "prev }' |
+  xargs

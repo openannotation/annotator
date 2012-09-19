@@ -9,6 +9,15 @@ util =
 
   getGlobal: -> (-> this)()
 
+  # Return the maximum z-index of any element in $elements (a jQuery collection).
+  maxZIndex: ($elements) ->
+    all = for el in $elements
+            if $(el).css('position') == 'static'
+              -1
+            else
+              parseInt($(el).css('z-index'), 10) or -1
+    Math.max.apply(Math, all)
+
   mousePosition: (e, offsetEl) ->
     offset = $(offsetEl).offset()
     {
@@ -36,11 +45,11 @@ class Annotator extends Delegator
     ".annotator-hl mouseout":            "startViewerHideTimer"
 
   html:
-    hl:      '<span class="annotator-hl"></span>'
     adder:   '<div class="annotator-adder"><button>' + _t('Annotate') + '</button></div>'
     wrapper: '<div class="annotator-wrapper"></div>'
 
-  options: {} # Configuration options
+  options: # Configuration options
+    readOnly: false # Start Annotator in read-only mode. No controls will be shown.
 
   plugins: {}
 
@@ -85,11 +94,12 @@ class Annotator extends Delegator
 
     # Return early if the annotator is not supported.
     return this unless Annotator.supported()
-    this._setupDocumentEvents()._setupWrapper()._setupViewer()._setupEditor()
+    this._setupDocumentEvents() unless @options.readOnly
+    this._setupWrapper()._setupViewer()._setupEditor()
+    this._setupDynamicStyle()
 
-    # Create model dom elements
-    for name, src of @html
-      this[name] = $(src).appendTo(@wrapper).hide() unless name == 'wrapper'
+    # Create adder
+    this.adder = $(this.html.adder).appendTo(@wrapper).hide()
 
   # Wraps the children of @element in a @wrapper div. NOTE: This method will also
   # remove any script elements inside @element to prevent them re-executing.
@@ -113,7 +123,7 @@ class Annotator extends Delegator
   #
   # Returns itself to allow chaining.
   _setupViewer: ->
-    @viewer = new Annotator.Viewer()
+    @viewer = new Annotator.Viewer(readOnly: @options.readOnly)
     @viewer.hide()
       .on("edit", this.onEditAnnotation)
       .on("delete", this.onDeleteAnnotation)
@@ -160,6 +170,36 @@ class Annotator extends Delegator
       "mouseup":   this.checkForEndSelection
       "mousedown": this.checkForStartSelection
     })
+    this
+
+  # Sets up any dynamically calculated CSS for the Annotator.
+  #
+  # Returns itself for chaining.
+  _setupDynamicStyle: ->
+    style = $('#annotator-dynamic-style')
+
+    if (!style.length)
+      style = $('<style id="annotator-dynamic-style"></style>').appendTo(document.head)
+
+    sel = '*' + (":not(.annotator-#{x})" for x in ['adder', 'outer', 'notice', 'filter']).join('')
+
+    # use the maximum z-index in the page
+    max = util.maxZIndex($(document.body).find(sel))
+
+    # but don't go smaller than 1010, because this isn't bulletproof --
+    # dynamic elements in the page (notifications, dialogs, etc.) may well
+    # have high z-indices that we can't catch using the above method.
+    max = Math.max(max, 1000)
+
+    style.text [
+      ".annotator-adder, .annotator-outer, .annotator-notice {"
+      "  z-index: #{max + 20};"
+      "}"
+      ".annotator-filter {"
+      "  z-index: #{max + 10};"
+      "}"
+    ].join("\n")
+
     this
 
   # Public: Gets the current selection excluding any nodes that fall outside of
@@ -246,14 +286,19 @@ class Annotator extends Delegator
   #
   # Returns the initialised annotation.
   setupAnnotation: (annotation, fireEvents=true) ->
+    root = @wrapper[0]
     annotation.ranges or= @selectedRanges
 
-    normedRanges = for r in annotation.ranges
-      sniffed    = Range.sniff(r)
-      sniffed.normalize(@wrapper[0])
-
-    # Filter out any ranges that failed to normalize.
-    normedRanges = $.grep normedRanges, (range) -> range != null
+    normedRanges = []
+    for r in annotation.ranges
+      try
+        normedRanges.push(Range.sniff(r).normalize(root))
+      catch e
+        if e instanceof Range.RangeError
+          this.publish('rangeNormalizeFail', [annotation, r, e])
+        else
+          # Oh Javascript, why you so crap? This will lose the traceback.
+          throw e
 
     annotation.quote      = []
     annotation.ranges     = []
@@ -329,10 +374,10 @@ class Annotator extends Delegator
       for n in now
         this.setupAnnotation(n, false) # 'false' suppresses event firing
 
-      # If there are more to do, do them after a 100ms break (for browser
+      # If there are more to do, do them after a 10ms break (for browser
       # responsiveness).
       if annList.length > 0
-        setTimeout((-> loader(annList)), 100)
+        setTimeout((-> loader(annList)), 10)
       else
         this.publish 'annotationsLoaded', [clone]
 
@@ -349,14 +394,17 @@ class Annotator extends Delegator
     else
       console.warn(_t("Can't dump annotations without Store plugin."))
 
-  # Public: Wraps the DOM Nodes within the provided range in the @hl wrapper
-  # and returns the highlight Elements.
+  # Public: Wraps the DOM Nodes within the provided range with a highlight
+  # element of the specified class and returns the highlight Elements.
   #
   # normedRange - A NormalizedRange to be highlighted.
+  # cssClass - A CSS class to use for the highlight (default: 'annotator-hl')
   #
   # Returns an array of highlight Elements.
-  highlightRange: (normedRange) ->
+  highlightRange: (normedRange, cssClass='annotator-hl') ->
     white = /^\s*$/
+
+    hl = $("<span class='#{cssClass}'></span>")
 
     # Ignore text nodes that contain only whitespace characters. This prevents
     # spans being injected between elements that can only contain a restricted
@@ -364,7 +412,19 @@ class Annotator extends Delegator
     # may be the odd abandoned whitespace node in a paragraph that is skipped
     # but better than breaking table layouts.
     for node in normedRange.textNodes() when not white.test(node.nodeValue)
-      $(node).wrapAll(@hl).parent().show()[0]
+      $(node).wrapAll(hl).parent().show()[0]
+
+  # Public: highlight a list of ranges
+  #
+  # normedRanges - An array of NormalizedRanges to be highlighted.
+  # cssClass - A CSS class to use for the highlight (default: 'annotator-hl')
+  #
+  # Returns an array of highlight Elements.
+  highlightRanges: (normedRanges, cssClass='annotator-hl') ->
+    highlights = []
+    for r in normedRanges
+      $.merge highlights, this.highlightRange(r, cssClass)
+    highlights
 
   # Public: Registers a plugin with the Annotator. A plugin can only be
   # registered once. The plugin will be instantiated in the following order.
@@ -416,6 +476,7 @@ class Annotator extends Delegator
   showEditor: (annotation, location) =>
     @editor.element.css(location)
     @editor.load(annotation)
+    this.publish('annotationEditorShown', [@editor, annotation])
     this
 
   # Callback method called when the @editor fires the "hide" event. Itself
@@ -510,6 +571,8 @@ class Annotator extends Delegator
 
     for range in @selectedRanges
       container = range.commonAncestor
+      if $(container).hasClass('annotator-hl')
+        container = $(container).parents('[class^=annotator-hl]')[0]
       return if this.isAnnotator(container)
 
     if event and @selectedRanges.length
@@ -577,8 +640,18 @@ class Annotator extends Delegator
   onAdderClick: (event) =>
     event?.preventDefault()
 
+    # Hide the adder
     position = @adder.position()
     @adder.hide()
+
+    # Show a temporary highlight so the user can see what they selected
+    if @selectedRanges and @selectedRanges.length
+      ranges = (Range.sniff(r).normalize() for r in @selectedRanges)
+      highlights = this.highlightRanges(ranges, 'annotator-hl annotator-hl-temporary')
+
+      @editor.element.one 'hide', ->
+        for h in highlights
+          $(h).replaceWith(h.childNodes)
 
     # Create an annotation and display the editor.
     this.showEditor(this.createAnnotation(), position)
@@ -615,6 +688,18 @@ class Annotator.Plugin extends Delegator
     super
 
   pluginInit: ->
+
+# Sniff the browser environment and attempt to add missing functionality.
+g = util.getGlobal()
+
+if not g.document?.evaluate?
+  $.getScript('http://assets.annotateit.org/vendor/xpath.min.js')
+
+if not g.getSelection?
+  $.getScript('http://assets.annotateit.org/vendor/ierange.min.js')
+
+if not g.JSON?
+  $.getScript('http://assets.annotateit.org/vendor/json2.min.js')
 
 # Bind our local copy of jQuery so plugins can use the extensions.
 Annotator.$ = $

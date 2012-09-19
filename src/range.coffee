@@ -23,6 +23,65 @@ Range.sniff = (r) ->
     console.error(_t("Could not sniff range type"))
     false
 
+# Public: Finds an Element Node using an XPath relative to the document root.
+#
+# If the document is served as application/xhtml+xml it will try and resolve
+# any namespaces within the XPath.
+#
+# xpath - An XPath String to query.
+#
+# Examples
+#
+#   node = Range.nodeFromXPath('/html/body/div/p[2]')
+#   if node
+#     # Do something with the node.
+#
+# Returns the Node if found otherwise null.
+Range.nodeFromXPath = (xpath, root=document) ->
+  evaluateXPath = (xp, nsResolver=null) ->
+    document.evaluate('.' + xp, root, nsResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
+
+  if not $.isXMLDoc document.documentElement
+    evaluateXPath xpath
+  else
+    # We're in an XML document, create a namespace resolver function to try
+    # and resolve any namespaces in the current document.
+    # https://developer.mozilla.org/en/DOM/document.createNSResolver
+    customResolver = document.createNSResolver(
+      if document.ownerDocument == null
+        document.documentElement
+      else
+        document.ownerDocument.documentElement
+    )
+    node = evaluateXPath xpath, customResolver
+
+    unless node
+      # If the previous search failed to find a node then we must try to
+      # provide a custom namespace resolver to take into account the default
+      # namespace. We also prefix all node names with a custom xhtml namespace
+      # eg. 'div' => 'xhtml:div'.
+      xpath = (for segment in xpath.split '/'
+        if segment and segment.indexOf(':') == -1
+          segment.replace(/^([a-z]+)/, 'xhtml:$1')
+        else segment
+      ).join('/')
+
+      # Find the default document namespace.
+      namespace = document.lookupNamespaceURI null
+
+      # Try and resolve the namespace, first seeing if it is an xhtml node
+      # otherwise check the head attributes.
+      customResolver  = (ns) ->
+        if ns == 'xhtml' then namespace
+        else document.documentElement.getAttribute('xmlns:' + ns)
+
+      node = evaluateXPath xpath, customResolver
+    node
+
+class Range.RangeError extends Error
+  constructor: (@type, @message, @parent=null) ->
+    super(@message)
+
 # Public: Creates a wrapper around a range object obtained from a DOMSelection.
 class Range.BrowserRange
 
@@ -264,101 +323,74 @@ class Range.SerializedRange
     @end         = obj.end
     @endOffset   = obj.endOffset
 
-  # Finds an Element Node using an XPath relative to the document root.
-  #
-  # If the document is served as application/xhtml+xml it will try and resolve
-  # any namespaces within the XPath.
-  #
-  # xpath - An XPath String to query.
-  #
-  # Examples
-  #
-  #   node = this._nodeFromXPath('/html/body/div/p[2]')
-  #   if node
-  #     # Do something with the node.
-  #
-  # Returns the Node if found otherwise null.
-  _nodeFromXPath: (xpath) ->
-    evaluateXPath = (xp, nsResolver=null) ->
-      document.evaluate(xp, document, nsResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
-
-    if not $.isXMLDoc document.documentElement
-      evaluateXPath xpath
-    else
-      # We're in an XML document, create a namespace resolver function to try
-      # and resolve any namespaces in the current document.
-      # https://developer.mozilla.org/en/DOM/document.createNSResolver
-      customResolver = document.createNSResolver(
-        if document.ownerDocument == null
-          document.documentElement
-        else
-          document.ownerDocument.documentElement
-      )
-      node = evaluateXPath xpath, customResolver
-
-      unless node
-        # If the previous search failed to find a node then we must try to
-        # provide a custom namespace resolver to take into account the default
-        # namespace. We also prefix all node names with a custom xhtml namespace
-        # eg. 'div' => 'xhtml:div'.
-        xpath = (for segment in xpath.split '/'
-          if segment and segment.indexOf(':') == -1
-            segment.replace(/^([a-z]+)/, 'xhtml:$1')
-          else segment
-        ).join('/')
-
-        # Find the default document namespace.
-        namespace = document.lookupNamespaceURI null
-
-        # Try and resolve the namespace, first seeing if it is an xhtml node
-        # otherwise check the head attributes.
-        customResolver  = (ns) ->
-          if ns == 'xhtml' then namespace
-          else document.documentElement.getAttribute('xmlns:' + ns)
-
-        node = evaluateXPath xpath, customResolver
-      node
-
   # Public: Creates a NormalizedRange.
   #
   # root - The root Element from which the XPaths were generated.
   #
   # Returns a NormalizedRange instance.
   normalize: (root) ->
-    parentXPath   = $(root).xpath()[0]
-    startAncestry = @start.split("/")
-    endAncestry   = @end.split("/")
-    common = []
     range = {}
 
-    # Crudely find a near common ancestor by walking down the XPath from
-    # the root until the segments no longer match.
-    for i in [0...startAncestry.length]
-      if startAncestry[i] is endAncestry[i]
-        common.push(startAncestry[i])
-      else
-        break
-
-    cacXPath = parentXPath + common.join("/")
-    range.commonAncestorContainer = this._nodeFromXPath(cacXPath)
-
-    if not range.commonAncestorContainer
-      console.error(_t("Error deserializing range: can't find XPath '") + cacXPath + _t("'. Is this the right document?"))
-      return null
-
-    # Unfortunately, we *can't* guarantee only one textNode per
-    # elementNode, so we have to walk along the element's textNodes until
-    # the combined length of the textNodes to that point exceeds or
-    # matches the value of the offset.
     for p in ['start', 'end']
+      try
+        node = Range.nodeFromXPath(this[p], root)
+      catch e
+        throw new Range.RangeError(p, "Error while finding #{p} node: #{this[p]}: " + e, e)
+
+      if not node
+        throw new Range.RangeError(p, "Couldn't find #{p} node: #{this[p]}")
+
+      # Unfortunately, we *can't* guarantee only one textNode per
+      # elementNode, so we have to walk along the element's textNodes until
+      # the combined length of the textNodes to that point exceeds or
+      # matches the value of the offset.
       length = 0
-      for tn in $(this._nodeFromXPath(parentXPath + this[p])).textNodes()
+      for tn in $(node).textNodes()
         if (length + tn.nodeValue.length >= this[p + 'Offset'])
           range[p + 'Container'] = tn
           range[p + 'Offset'] = this[p + 'Offset'] - length
           break
         else
           length += tn.nodeValue.length
+
+      # If we fall off the end of the for loop without having set
+      # 'startOffset'/'endOffset', the element has shorter content than when
+      # we annotated, so throw an error:
+      if not range[p + 'Offset']?
+        throw new Range.RangeError("#{p}offset", "Couldn't find offset #{this[p + 'Offset']} in element #{this[p]}")
+
+    # Here's an elegant next step...
+    #
+    #   range.commonAncestorContainer = $(range.startContainer).parents().has(range.endContainer)[0]
+    #
+    # ...but unfortunately Node.contains() is broken in Safari 5.1.5 (7534.55.3)
+    # and presumably other earlier versions of WebKit. In particular, in a
+    # document like
+    #
+    #   <p>Hello</p>
+    #
+    # the code
+    #
+    #   p = document.getElementsByTagName('p')[0]
+    #   p.contains(p.firstChild)
+    #
+    # returns `false`. Yay.
+    #
+    # So instead, we step through the parents from the bottom up and use
+    # Node.compareDocumentPosition() to decide when to set the
+    # commonAncestorContainer and bail out.
+
+    contains = if not document.compareDocumentPosition?
+                 # IE
+                 (a, b) -> a.contains(b)
+               else
+                 # Everyone else
+                 (a, b) -> a.compareDocumentPosition(b) & 16
+
+    $(range.startContainer).parents().reverse().each ->
+      if contains(this, range.endContainer)
+        range.commonAncestorContainer = this
+        return false
 
     new Range.BrowserRange(range).normalize(root)
 

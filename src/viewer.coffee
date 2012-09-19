@@ -21,24 +21,28 @@ class Annotator.Viewer extends Annotator.Widget
     item:   """
             <li class="annotator-annotation annotator-item">
               <span class="annotator-controls">
-                <button class="annotator-edit">Edit</button>
-                <button class="annotator-delete">Delete</button>
+                <a href="#" title="View as webpage" class="annotator-link">View as webpage</a>
+                <button title="Edit" class="annotator-edit">Edit</button>
+                <button title="Delete" class="annotator-delete">Delete</button>
               </span>
             </li>
             """
 
+  # Configuration options
+  options:
+    readOnly: false # Start the viewer in read-only mode. No controls will be shown.
+
   # Public: Creates an instance of the Viewer object. This will create the
   # @element from the @html.element string and set up all events.
   #
-  # options - An Object literal containing options. There are currently no
-  #           options implemented.
+  # options - An Object literal containing options.
   #
   # Examples
   #
   #   # Creates a new viewer, adds a custom field and displays an annotation.
-  #   viewer = new Annotator.Viewer
+  #   viewer = new Annotator.Viewer()
   #   viewer.addField({
-  #     load:  someLoadCallback
+  #     load: someLoadCallback
   #   })
   #   viewer.load(annotation)
   #
@@ -118,7 +122,7 @@ class Annotator.Viewer extends Annotator.Widget
   #
   # Examples
   #
-  #   viewer.load([annotration1, annotation2, annotation3])
+  #   viewer.load([annotation1, annotation2, annotation3])
   #
   # Returns itslef.
   load: (annotations) =>
@@ -129,14 +133,26 @@ class Annotator.Viewer extends Annotator.Widget
       item = $(@item).clone().appendTo(list).data('annotation', annotation)
       controls = item.find('.annotator-controls')
 
+      link = controls.find('.annotator-link')
       edit = controls.find('.annotator-edit')
       del  = controls.find('.annotator-delete')
-      controller = {
-        showEdit: -> edit.removeAttr('disabled')
-        hideEdit: -> edit.attr('disabled', 'disabled')
-        showDelete: -> del.removeAttr('disabled')
-        hideDelete: -> del.attr('disabled', 'disabled')
-      }
+
+      links = new LinkParser(annotation.links or []).get('alternate', {'type': 'text/html'})
+      if links.length is 0 or not links[0].href?
+        link.remove()
+      else
+        link.attr('href', links[0].href)
+
+      if @options.readOnly
+        edit.remove()
+        del.remove()
+      else
+        controller = {
+          showEdit: -> edit.removeAttr('disabled')
+          hideEdit: -> edit.attr('disabled', 'disabled')
+          showDelete: -> del.removeAttr('disabled')
+          hideDelete: -> del.attr('disabled', 'disabled')
+        }
 
       for field in @fields
         element = $(field.element).clone().appendTo(item)[0]
@@ -144,7 +160,7 @@ class Annotator.Viewer extends Annotator.Widget
 
     this.publish('load', [@annotations])
 
-    this.show();
+    this.show()
 
   # Public: Adds an addional field to an annotation view. A callback can be
   # provided to update the view on load.
@@ -206,3 +222,29 @@ class Annotator.Viewer extends Annotator.Widget
     item = $(event.target).parents('.annotator-annotation')
 
     this.publish(type, [item.data('annotation')])
+
+# Private: simple parser for hypermedia link structure
+#
+# Examples:
+#
+#   links = [
+#     { rel: 'alternate', href: 'http://example.com/pages/14.json', type: 'application/json' },
+#     { rel: 'prev': href: 'http://example.com/pages/13' }
+#   ]
+#
+#   lp = LinkParser(links)
+#   lp.get('alternate')                      # => [ { rel: 'alternate', href: 'http://...', ... } ]
+#   lp.get('alternate', {type: 'text/html'}) # => []
+#
+class LinkParser
+  constructor: (@data) ->
+
+  get: (rel, cond={}) ->
+    cond = $.extend({}, cond, {rel: rel})
+    keys = (k for own k, v of cond)
+    for d in @data
+      match = keys.reduce ((m, k) -> m and (d[k] is cond[k])), true
+      if match
+        d
+      else
+        continue

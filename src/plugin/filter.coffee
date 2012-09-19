@@ -85,9 +85,12 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
     # As most events for this plugin are relative to the toolbar which is
     # not inside the Annotator#Element we override the element property.
     # Annotator#Element can still be accessed via @annotator.element.
-    element = $(@html.element).appendTo(@options.appendTo)
+    element = $(@html.element).appendTo(options?.appendTo or @options.appendTo)
 
     super element, options
+
+    @options.filters or= []
+
     @filter  = $(@html.filter)
     @filters = []
     @current  = 0

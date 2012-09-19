@@ -1,0 +1,66 @@
+#!/bin/bash
+
+abort () {
+  echo "Aborting."
+  exit 1
+}
+
+cd "$(dirname "$0")"
+cd ..
+
+if [ "$(uname)" != "Darwin" ]; then
+  echo "This script will only work on a Mac at the moment, sorry!"
+  abort
+fi
+
+which brew >/dev/null 2>&1
+if [ $? -eq 0 ]; then
+  echo "Found homebrew..."
+else
+  printf "Shall I install homebrew for you? "
+  read REPLY
+  if [ "$REPLY" =~ "^(y|Y)" ]; then
+    /usr/bin/ruby -e "$(/usr/bin/curl -fsSL https://raw.github.com/mxcl/homebrew/master/Library/Contributions/install_homebrew.rb)"
+  else
+    abort
+  fi
+fi
+
+brew ls node >/dev/null 2>&1
+if [ $? -eq 0 ]; then
+  echo "Found node..."
+else
+  printf "Shall I install node for you? "
+  read REPLY
+  if [ "$REPLY" =~ "^(y|Y)" ]; then
+    brew install node
+  else
+    abort
+  fi
+fi
+
+which npm >/dev/null 2>&1
+if [ $? -eq 0 ]; then
+  echo "Found npm..."
+else
+  printf "Shall I install npm for you? "
+  read REPLY
+  if [ "$REPLY" =~ "^(y|Y)" ]; then
+    curl http://npmjs.org/install.sh | sh
+  else
+    abort
+  fi
+fi
+
+echo "Running 'npm install .'..."
+npm install .
+
+echo
+echo "Excellent. You should now be able to run the tests by hosting this directory"
+echo "with a web server and opening test/runner.html"
+echo
+echo "You can auto-compile any changes to development sources by running"
+echo
+echo "  ./tools/watch"
+echo 
+echo "and you may find dev.html useful when developing Annotator."

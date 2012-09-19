@@ -144,7 +144,7 @@
 
       timer = setTimeout(function () {
         notification.error('Sorry, we were unable to load jQuery which is required by the annotator');
-      }, this.config('timeout', 3000));
+      }, this.config('timeout', 30000));
 
       script.src = this.config('externals.jQuery', fallback);
       script.onload = function () {
@@ -172,7 +172,7 @@
         href: annotatorStyles
       })[0]);
 
-      jQuery.ajaxSetup({timeout: this.config('timeout', 3000)});
+      jQuery.ajaxSetup({timeout: this.config('timeout', 30000)});
       jQuery.getScript(annotatorSource, callback)
             .error(function () {
               notification.error('Sorry, we\'re unable to load Annotator at the moment...');

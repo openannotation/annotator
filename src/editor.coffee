@@ -23,7 +23,6 @@ class Annotator.Editor extends Annotator.Widget
               <a href="#cancel" class="annotator-cancel">""" + _t('Cancel') + """</a>
               <a href="#save" class="annotator-save annotator-focus">""" + _t('Save') + """</a>
             </div>
-            <span class="annotator-resize"></span>
           </form>
         </div>
         """
@@ -56,8 +55,6 @@ class Annotator.Editor extends Annotator.Widget
     @fields = []
     @annotation = {}
 
-    this.setupDraggables()
-
   # Public: Displays the Editor and fires a "show" event.
   # Can be used as an event callback and will call Event#preventDefault()
   # on the supplied event.
@@ -85,6 +82,8 @@ class Annotator.Editor extends Annotator.Widget
 
     # give main textarea focus
     @element.find(":input:first").focus()
+
+    this.setupDraggables()
 
     this.publish('show')
 
@@ -267,15 +266,10 @@ class Annotator.Editor extends Annotator.Widget
     list = @element.find('ul')
     controls = @element.find('.annotator-controls')
 
-    flipFields = ->
-      list.children().each -> $(this).parent().prepend(this)
-
-    if @element.hasClass(@classes.invert.y) and list.is(':first-child')
+    if @element.hasClass(@classes.invert.y)
       controls.insertBefore(list)
-      flipFields()
     else if controls.is(':first-child')
       controls.insertAfter(list)
-      flipFields()
 
     this
 
@@ -306,6 +300,17 @@ class Annotator.Editor extends Annotator.Widget
   #
   # Returns nothing.
   setupDraggables: () ->
+    @element.find('.annotator-resize').remove()
+
+    # Find the first/last item element depending on orientation
+    if @element.hasClass(@classes.invert.y)
+      cornerItem = @element.find('.annotator-item:last')
+    else
+      cornerItem = @element.find('.annotator-item:first')
+
+    if cornerItem
+      $('<span class="annotator-resize"></span>').appendTo(cornerItem)
+
     mousedown = null
     classes   = @classes
     editor    = @element
@@ -353,7 +358,7 @@ class Annotator.Editor extends Annotator.Widget
           textarea.width  width  + (diff.left * directionX)
 
           # Only update the mousedown object if the dimensions
-          # have changed, otherwise they have reached thier minimum
+          # have changed, otherwise they have reached their minimum
           # values.
           mousedown.top  = event.pageY unless textarea.outerHeight() == height
           mousedown.left = event.pageX unless textarea.outerWidth()  == width

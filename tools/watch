@@ -1,0 +1,3 @@
+cd "$(dirname "$0")"
+cd ..
+$(npm bin)/coffee -wbco lib src

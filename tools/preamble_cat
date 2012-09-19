@@ -1,0 +1,20 @@
+cd "$(dirname "$0")"
+
+AUTHORS=$(./authors)
+DATE=$(date -u "+%Y-%m-%d %H:%M:%SZ")
+
+# ./tools/make_release exports VERSION, so use that if available
+if [ -n "$VERSION" ]; then
+  VERSION="v${VERSION}"
+else
+  VERSION="$(echo "$(grep version ../package.json | cut -d\" -f4)-dev-$(git describe --always)")"
+fi
+
+# print preamble, substituting variables
+cat ../src/preamble.coffee | 
+sed -e "s/{{VERSION}}/$VERSION/g" \
+    -e "s/{{AUTHORS}}/$AUTHORS/g" \
+    -e "s/{{DATE}}/$DATE/g"
+
+# if any args provided, function like cat(1)
+[ "$#" != "0" ] && cat ${@}

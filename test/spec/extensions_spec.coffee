@@ -80,19 +80,17 @@ describe 'jQuery.fn.xpath()', ->
   it "generates an XPath string for an element's position in the document", ->
     # FIXME: this is quite fragile. A change to dom.html may well break these tests and the
     #        resulting xpaths will need to be changed.
-    if /Node\.js/.test(navigator.userAgent)
-      pathToFixHTML = '/html/body'
-    else
-      pathToFixHTML = '/html/body/div'
 
-    expect($fix.find('p').xpath()).toEqual([pathToFixHTML + '/p', pathToFixHTML + '/p[2]'])
-    expect($fix.find('span').xpath()).toEqual([pathToFixHTML + '/ol/li[2]/span'])
-    expect($fix.find('strong').xpath()).toEqual([pathToFixHTML + '/p[2]/strong'])
+    pathToFixHTML = '/html[1]/body[1]/div[1]'
+
+    expect($fix.find('p').xpath()).toEqual([pathToFixHTML + '/p[1]', pathToFixHTML + '/p[2]'])
+    expect($fix.find('span').xpath()).toEqual([pathToFixHTML + '/ol[1]/li[2]/span[1]'])
+    expect($fix.find('strong').xpath()).toEqual([pathToFixHTML + '/p[2]/strong[1]'])
 
   it "takes an optional parameter determining the element from which XPaths should be calculated", ->
     ol = $fix.find('ol').get(0)
-    expect($fix.find('li').xpath(ol)).toEqual(['/li', '/li[2]', '/li[3]'])
-    expect($fix.find('span').xpath(ol)).toEqual(['/li[2]/span'])
+    expect($fix.find('li').xpath(ol)).toEqual(['/li[1]', '/li[2]', '/li[3]'])
+    expect($fix.find('span').xpath(ol)).toEqual(['/li[2]/span[1]'])
 
 describe 'jQuery.escape()', ->
   it "should escape any HTML special characters into entities", ->
@@ -114,3 +112,7 @@ describe 'jQuery.fn.escape()', ->
   it "should return the equivalent of .html() if no arguments are passed", ->
     div = $('<div><strong>My div</strong></div>').escape('<>"&')
     expect(div.escape()).toEqual(div.html())
+
+describe 'jQuery.fn.reverse()', ->
+  it "should, uh, reverse stuff", ->
+    expect($([1,2,3]).reverse().get()).toEqual([3,2,1])

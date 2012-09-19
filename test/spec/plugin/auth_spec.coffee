@@ -1,8 +1,69 @@
 Date::toISO8601String = DateToISO8601String
 
+B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
+
+base64Encode = (data) ->
+  if btoa?
+    # Gecko and Webkit provide native code for this
+    btoa(data)
+  else
+    # Adapted from MIT/BSD licensed code at http://phpjs.org/functions/base64_encode
+    # version 1109.2015
+    i = 0
+    ac = 0
+    enc = ""
+    tmp_arr = []
+
+    if not data
+      return data
+
+    data += ''
+
+    while i < data.length
+      # pack three octets into four hexets
+      o1 = data.charCodeAt(i++)
+      o2 = data.charCodeAt(i++)
+      o3 = data.charCodeAt(i++)
+
+      bits = o1 << 16 | o2 << 8 | o3
+
+      h1 = bits >> 18 & 0x3f
+      h2 = bits >> 12 & 0x3f
+      h3 = bits >> 6 & 0x3f
+      h4 = bits & 0x3f
+
+      # use hexets to index into b64, and append result to encoded string
+      tmp_arr[ac++] = B64.charAt(h1) + B64.charAt(h2) + B64.charAt(h3) + B64.charAt(h4)
+
+    enc = tmp_arr.join('')
+
+    r = data.length % 3
+    return (if r then enc.slice(0, r - 3) else enc) + '==='.slice(r or 3)
+
+base64UrlEncode = (data) ->
+  data = base64Encode(data)
+  chop = data.indexOf('=')
+  data = data[...chop] if chop isnt -1
+  data = data.replace(/\+/g, '-')
+  data = data.replace(/\//g, '_')
+  data
+
+makeToken = () ->
+  rawToken = {
+    consumerKey: "key"
+    issuedAt: new Date().toISO8601String()
+    ttl: 300
+    userId: "testUser"
+  }
+  {
+    rawToken: rawToken
+    encodedToken: 'header.' + base64UrlEncode(JSON.stringify(rawToken)) + '.signature'
+  }
+
 describe 'Annotator.Plugin.Auth', ->
   mock = null
-  validToken = null
+  rawToken = null
+  encodedToken = null
 
   mockAuth = (options) ->
     el = $('<div></div>')[0]
@@ -14,30 +75,23 @@ describe 'Annotator.Plugin.Auth', ->
     }
 
   beforeEach ->
-    validToken = {
-      consumerKey: "key"
-      authToken: "foobar"
-      authTokenIssueTime: new Date().toISO8601String()
-      authTokenTTL: 300
-      userId: "testUser"
-    }
-
-    mock = mockAuth({token: validToken, autoFetch: false})
+    {rawToken, encodedToken} = makeToken()
+    mock = mockAuth({token: encodedToken, autoFetch: false})
 
   it "uses token supplied in options by default", ->
-    expect(mock.auth.token).toEqual(validToken)
+    expect(mock.auth.token).toEqual(encodedToken)
 
   xit "makes an ajax request to tokenUrl to retrieve token otherwise"
 
   it "sets annotator:headers data on its element with token data", ->
     data = $(mock.elem).data('annotator:headers')
     expect(data).not.toBeNull()
-    expect(data['x-annotator-auth-token-issue-time']).toEqual(validToken.authTokenIssueTime)
+    expect(data['x-annotator-auth-token']).toEqual(encodedToken)
 
   it "should call callbacks given to #withToken immediately if it has a valid token", ->
     callback = jasmine.createSpy()
     mock.auth.withToken(callback)
-    expect(callback).toHaveBeenCalled()
+    expect(callback).toHaveBeenCalledWith(rawToken)
 
   xit "should call callbacks given to #withToken after retrieving a token"
 
@@ -46,28 +100,20 @@ describe 'Annotator.Plugin.Auth', ->
       expect(mock.auth.haveValidToken()).toBeTruthy()
 
     it "returns false when the current token is missing a consumerKey", ->
-      delete mock.auth.token.consumerKey
+      delete mock.auth._unsafeToken.consumerKey
       expect(mock.auth.haveValidToken()).toBeFalsy()
 
-    it "returns false when the current token is missing an authToken", ->
-      delete mock.auth.token.authToken
+    it "returns false when the current token is missing an issuedAt", ->
+      delete mock.auth._unsafeToken.issuedAt
       expect(mock.auth.haveValidToken()).toBeFalsy()
 
-    it "returns false when the current token is missing an authTokenIssueTime", ->
-      delete mock.auth.token.authTokenIssueTime
-      expect(mock.auth.haveValidToken()).toBeFalsy()
-
-    it "returns false when the current token is missing an authTokenTTL", ->
-      delete mock.auth.token.authTokenTTL
-      expect(mock.auth.haveValidToken()).toBeFalsy()
-
-    it "returns false when the current token is missing a userId", ->
-      delete mock.auth.token.userId
+    it "returns false when the current token is missing a ttl", ->
+      delete mock.auth._unsafeToken.ttl
       expect(mock.auth.haveValidToken()).toBeFalsy()
 
     it "returns false when the current token expires in the past", ->
-      mock.auth.token.authTokenTTL = 0
+      mock.auth._unsafeToken.ttl = 0
       expect(mock.auth.haveValidToken()).toBeFalsy()
-      mock.auth.token.authTokenTTL = 86400
-      mock.auth.token.authTokenIssueTime = "1970-01-01T00:00"
+      mock.auth._unsafeToken.ttl = 86400
+      mock.auth._unsafeToken.issuedAt = "1970-01-01T00:00"
       expect(mock.auth.haveValidToken()).toBeFalsy()
