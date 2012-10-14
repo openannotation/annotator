@@ -302,8 +302,9 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     else
       field.remove()
 
-    controls.hideEdit()   unless this.authorize('update', annotation)
-    controls.hideDelete() unless this.authorize('delete', annotation)
+    if controls
+      controls.hideEdit()   unless this.authorize('update', annotation)
+      controls.hideDelete() unless this.authorize('delete', annotation)
 
   # Sets the Permissions#user property on the basis of a received authToken.
   #
