@@ -387,7 +387,7 @@ class Range.SerializedRange
                  # Everyone else
                  (a, b) -> a.compareDocumentPosition(b) & 16
 
-    $(range.startContainer).parents().reverse().each ->
+    $(range.startContainer).parents().each ->
       if contains(this, range.endContainer)
         range.commonAncestorContainer = this
         return false
