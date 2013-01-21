@@ -28,10 +28,6 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   # User customisable options available.
   options:
 
-    # This is the API endpoint. If the server supports Cross Origin Resource
-    # Sharring (CORS) a full URL can be used here.
-    prefix: '/store'
-
     # Custom meta data that will be attached to every annotation that is sent
     # to the server. This _will_ override previous values.
     annotationData: {}
@@ -46,6 +42,10 @@ class Annotator.Plugin.Store extends Annotator.Plugin
     #       'uri': 'http://this/document/only'
     #     }
     loadFromSearch: false
+
+    # This is the API endpoint. If the server supports Cross Origin Resource
+    # Sharing (CORS) a full URL can be used here.
+    prefix: '/store'
 
     # The server URLs for each available action. These URLs can be anything but
     # must respond to the appropraite HTTP method. The token ":id" can be used
