@@ -287,15 +287,16 @@ describe "Annotator.Plugin.Store", ->
 
   describe "_apiRequestOptions", ->
     beforeEach ->
-      spyOn(store, '_methodFor').andReturn('GET')
       spyOn(store, '_dataFor').andReturn('{}')
 
     it "should call Store#_methodFor() with the action", ->
+      spyOn(store, '_methodFor').andReturn('GET')
       action = 'read'
       store._apiRequestOptions(action)
       expect(store._methodFor).toHaveBeenCalledWith(action)
 
     it "should return options for jQuery.ajax()", ->
+      spyOn(store, '_methodFor').andReturn('GET')
       action   = 'read'
       data     = {}
       callback = ->
@@ -312,6 +313,7 @@ describe "Annotator.Plugin.Store", ->
       })
 
     it "should set custom headers from the data property 'annotator:headers'", ->
+      spyOn(store, '_methodFor').andReturn('GET')
       spyOn(store.element, 'data').andReturn({
         'x-custom-header-one':   'mycustomheader'
         'x-custom-header-two':   'mycustomheadertwo'
@@ -330,24 +332,38 @@ describe "Annotator.Plugin.Store", ->
       })
 
     it "should call Store#_dataFor() with the data if action is NOT search", ->
+      spyOn(store, '_methodFor').andReturn('GET')
       action = 'read'
       data   = {}
       store._apiRequestOptions(action, data)
       expect(store._dataFor).toHaveBeenCalledWith(data)
 
     it "should NOT call Store#_dataFor() if action is search", ->
+      spyOn(store, '_methodFor').andReturn('GET')
       action = 'search'
       data   = {}
       store._apiRequestOptions(action, data)
       expect(store._dataFor).not.toHaveBeenCalled()
 
     it "should NOT add the contentType property if the action is search", ->
+      spyOn(store, '_methodFor').andReturn('GET')
       action   = 'search'
       data     = {}
 
       options = store._apiRequestOptions(action, data)
       expect(options.contentType).toBeUndefined()
       expect(options.data).toBe(data)
+
+    it "should emulate new-fangled HTTP if emulateHTTP is true", ->
+      spyOn(store, '_methodFor').andReturn('DELETE')
+
+      store.options.emulateHTTP = true
+      options = store._apiRequestOptions('destroy', {id: 4})
+
+      expect(options.type).toEqual('POST')
+      expect(options.headers).toEqual({
+        'X-HTTP-Method-Override': 'DELETE'
+      })
 
   describe "_urlFor", ->
     it "should generate RESTful URLs by default", ->

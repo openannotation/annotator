@@ -32,6 +32,13 @@ class Annotator.Plugin.Store extends Annotator.Plugin
     # to the server. This _will_ override previous values.
     annotationData: {}
 
+    # Should the plugin emulate HTTP methods like PUT and DELETE for
+    # interaction with legacy web servers? Setting this to `true` will fake
+    # HTTP `PUT` and `DELETE` requests with an HTTP `POST`, and will set the
+    # request header `X-HTTP-Method-Override` with the name of the desired
+    # method.
+    emulateHTTP: false
+
     # If loadFromSearch is set, then we load the first batch of
     # annotations from the 'search' URL as set in `options.urls`
     # instead of the registry path 'prefix/read'.
@@ -350,6 +357,10 @@ class Annotator.Plugin.Store extends Annotator.Plugin
       success:    (onSuccess or ->),
       error:      this._onError
     }
+
+    if @options.emulateHTTP and opts.type in ['PUT', 'DELETE']
+      opts.headers = $.extend(opts.headers, {'X-HTTP-Method-Override': opts.type})
+      opts.type = 'POST'
 
     # Don't JSONify obj if making search request.
     if action is "search"
