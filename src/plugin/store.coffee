@@ -382,7 +382,7 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   _urlFor: (action, id) ->
     replaceWith = if id? then '/' + id else ''
 
-    url = @options.prefix or '/'
+    url = if @options.prefix? then @options.prefix else ''
     url += @options.urls[action]
     url = url.replace(/\/:id/, replaceWith)
 
