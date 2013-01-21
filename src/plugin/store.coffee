@@ -32,10 +32,6 @@ class Annotator.Plugin.Store extends Annotator.Plugin
     # Sharring (CORS) a full URL can be used here.
     prefix: '/store'
 
-    # Fetch the latest annotations on plugin initialisation.
-    # NOTE: Not currently implemented.
-    autoFetch: true
-
     # Custom meta data that will be attached to every annotation that is sent
     # to the server. This _will_ override previous values.
     annotationData: {}
