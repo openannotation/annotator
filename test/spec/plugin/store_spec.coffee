@@ -358,16 +358,28 @@ describe "Annotator.Plugin.Store", ->
       expect(store._urlFor('destroy', 'baz')).toEqual('/store/annotations/baz')
 
     it "should generate URLs as specified by its options otherwise", ->
-      store.options.prefix = '/some/prefix/'
-      store.options.urls.create = 'createMe'
-      store.options.urls.read = ':id/readMe'
-      store.options.urls.update = ':id/updateMe'
-      store.options.urls.destroy = ':id/destroyMe'
+      store.options.prefix = '/some/prefix'
+      store.options.urls.create = '/createMe'
+      store.options.urls.read = '/:id/readMe'
+      store.options.urls.update = '/:id/updateMe'
+      store.options.urls.destroy = '/:id/destroyMe'
       expect(store._urlFor('create')).toEqual('/some/prefix/createMe')
       expect(store._urlFor('read')).toEqual('/some/prefix/readMe')
       expect(store._urlFor('read', 'foo')).toEqual('/some/prefix/foo/readMe')
       expect(store._urlFor('update', 'bar')).toEqual('/some/prefix/bar/updateMe')
       expect(store._urlFor('destroy', 'baz')).toEqual('/some/prefix/baz/destroyMe')
+
+    it "should generate URLs correctly with an empty prefix", ->
+      store.options.prefix = ''
+      store.options.urls.create = '/createMe'
+      store.options.urls.read = '/:id/readMe'
+      store.options.urls.update = '/:id/updateMe'
+      store.options.urls.destroy = '/:id/destroyMe'
+      expect(store._urlFor('create')).toEqual('/createMe')
+      expect(store._urlFor('read')).toEqual('/readMe')
+      expect(store._urlFor('read', 'foo')).toEqual('/foo/readMe')
+      expect(store._urlFor('update', 'bar')).toEqual('/bar/updateMe')
+      expect(store._urlFor('destroy', 'baz')).toEqual('/baz/destroyMe')
 
   describe "_methodFor", ->
     it "should return the appropriate method for the action", ->
