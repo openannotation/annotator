@@ -365,6 +365,29 @@ describe "Annotator.Plugin.Store", ->
         'X-HTTP-Method-Override': 'DELETE'
       })
 
+    it "should emulate proper JSON handling if emulateJSON is true", ->
+      spyOn(store, '_methodFor').andReturn('DELETE')
+
+      store.options.emulateJSON = true
+      options = store._apiRequestOptions('destroy', {})
+
+      expect(options.data).toEqual({
+        json: '{}',
+      })
+      expect(options.contentType).toBeUndefined()
+
+    it "should append _method to the form data if emulateHTTP and emulateJSON are both true", ->
+      spyOn(store, '_methodFor').andReturn('DELETE')
+
+      store.options.emulateHTTP = true
+      store.options.emulateJSON = true
+      options = store._apiRequestOptions('destroy', {})
+
+      expect(options.data).toEqual({
+        _method: 'DELETE',
+        json: '{}',
+      })
+
   describe "_urlFor", ->
     it "should generate RESTful URLs by default", ->
       expect(store._urlFor('create')).toEqual('/store/annotations')

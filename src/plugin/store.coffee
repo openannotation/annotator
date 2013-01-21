@@ -350,27 +350,43 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   #
   # Returns Object literal of $.ajax() options.
   _apiRequestOptions: (action, obj, onSuccess) ->
+    method = this._methodFor(action)
+
     opts = {
-      type:       this._methodFor(action),
+      type:       method,
       headers:    @element.data('annotator:headers'),
       dataType:   "json",
       success:    (onSuccess or ->),
       error:      this._onError
     }
 
-    if @options.emulateHTTP and opts.type in ['PUT', 'DELETE']
-      opts.headers = $.extend(opts.headers, {'X-HTTP-Method-Override': opts.type})
+    # If emulateHTTP is enabled, we send a POST and put the real method in an
+    # HTTP request header.
+    if @options.emulateHTTP and method in ['PUT', 'DELETE']
+      opts.headers = $.extend(opts.headers, {'X-HTTP-Method-Override': method})
       opts.type = 'POST'
 
     # Don't JSONify obj if making search request.
     if action is "search"
-      opts = $.extend(opts, {data: obj})
-    else
-      opts = $.extend(opts, {
-        data:        obj && this._dataFor(obj)
-        contentType: "application/json; charset=utf-8"
-      })
-    opts
+      opts = $.extend(opts, data: obj)
+      return opts
+
+    data = obj && this._dataFor(obj)
+
+    # If emulateJSON is enabled, we send a form request (the correct
+    # contentType will be set automatically by jQuery), and put the
+    # JSON-encoded payload in the "json" key.
+    if @options.emulateJSON
+      opts.data = {json: data}
+      if @options.emulateHTTP
+        opts.data._method = method
+      return opts
+
+    opts = $.extend(opts, {
+      data: data
+      contentType: "application/json; charset=utf-8"
+    })
+    return opts
 
   # Builds the appropriate URL from the options for the action provided.
   #
