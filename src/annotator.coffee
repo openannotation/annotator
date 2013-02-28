@@ -265,6 +265,46 @@ class Annotator extends Delegator
     this.publish('beforeAnnotationCreated', [annotation])
     annotation
 
+
+  # Find the given type of selector from an array of selectors, if it exists.
+  # If it does not exist, null is returned.
+  findSelector: (selectors, type) ->
+    for selector in selectors
+      if selector.type is type then return selector
+    null
+
+  # Try to determine the anchor position for a target
+  # using the saved xpath range selector
+  findAnchorFromXPathRangeSelector: (target) ->
+    mySelector = this.findSelector target.selector, "xpath range"
+    if mySelector?
+      try
+        root = @wrapper[0]        
+        range =
+          start: mySelector.startXpath
+          end: mySelector.endXpath
+          startOffset: mySelector.startOffset
+          endOffset: mySelector.endOffset
+        nRange = Range.sniff(range).normalize(root)
+        return nRange
+      catch e
+        if e instanceof Range.RangeError
+          console.log "Could not apply XPath selector to current document. Must have changed."
+          return null
+        else
+          throw e
+    else
+      console.log "Uh-oh. No XPath selector found."
+    null
+ 
+  # Try to find the rigth anchoring point for a given target
+  #
+  # Returns a normalized range if succeeded, null otherwise
+  findAnchor: (target) ->
+    anchor = this.findAnchorFromXPathRangeSelector target
+    # TODO: implement other strategies
+    anchor
+
   # Public: Initialises an annotation either from an object representation or
   # an annotation created with Annotator#createAnnotation(). It finds the
   # selected range and higlights the selection in the DOM, extracts the
@@ -287,12 +327,20 @@ class Annotator extends Delegator
   # Returns the initialised annotation.
   setupAnnotation: (annotation) ->
     root = @wrapper[0]
-    annotation.ranges or= @selectedRanges
+    annotation.targets or= @selectedTargets
+
+    unless annotation.target instanceof Array
+      annotation.target = [annotation.target]
 
     normedRanges = []
-    for r in annotation.ranges
+    for t in annotation.target
       try
-        normedRanges.push(Range.sniff(r).normalize(root))
+        r = this.findAnchor t
+        if r?
+          normedRanges.push r
+        else
+          console.log "Could not find anchor for annotation target '" + t.id + "' (for annotation '" + annotation.id + "')."
+
       catch e
         if e instanceof Range.RangeError
           this.publish('rangeNormalizeFail', [annotation, r, e])
@@ -300,17 +348,17 @@ class Annotator extends Delegator
           # Oh Javascript, why you so crap? This will lose the traceback.
           throw e
 
-    annotation.quote      = []
-    annotation.ranges     = []
+    annotation.currentQuote      = []
+    annotation.currentRanges     = []
     annotation.highlights = []
 
     for normed in normedRanges
-      annotation.quote.push      $.trim(normed.text())
-      annotation.ranges.push     normed.serialize(@wrapper[0], '.annotator-hl')
+      annotation.currentQuote.push      $.trim(normed.text())
+      annotation.currentRanges.push     normed.serialize(@wrapper[0], '.annotator-hl')
       $.merge annotation.highlights, this.highlightRange(normed)
 
     # Join all the quotes into one string.
-    annotation.quote = annotation.quote.join(' / ')
+    annotation.currentQuote = annotation.currentQuote.join(' / ')
 
     # Save the annotation data on each highlighter element.
     $(annotation.highlights).data('annotation', annotation)
