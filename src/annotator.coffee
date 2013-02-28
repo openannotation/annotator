@@ -57,7 +57,7 @@ class Annotator extends Delegator
 
   viewer: null
 
-  selectedRanges: null
+  selectedTargets: null
 
   mouseIsDown: false
 
@@ -202,6 +202,56 @@ class Annotator extends Delegator
 
     this
 
+  getHref: =>
+    uri = decodeURIComponent document.location.href
+    if document.location.hash then uri = uri.slice 0, (-1 * location.hash.length)            
+    $('meta[property^="og:url"]').each -> uri = decodeURIComponent this.content
+    $('link[rel^="canonical"]').each -> uri = decodeURIComponent this.href
+    return uri
+
+  getSerializedRangeFromXPathRangeSelector: (selector) ->
+    r =
+      start: selector.startXpath
+      startOffset: selector.startOffset
+      end: selector.endXpath
+      endOffset: selector.endOffset
+    new Range.SerializedRange r
+
+  getNormalizedRangeFromXPathRangeSelector: (selector) ->
+    sr = this.getSerializedRangeFromXPathRangeSelector selector
+    sr.normalize @wrapper[0]
+        
+  getXPathRangeSelectorFromRange: (range) ->
+    sr = range.serialize @wrapper[0]
+    selector =        
+      source: this.getHref()
+      type: "xpath range"
+      startXpath: sr.start
+      startOffset: sr.startOffset
+      endXpath: sr.end
+      endOffset: sr.endOffset
+
+  getContextQuoteSelectorFromRange: (range) ->
+    r = range.normalize @wrapper[0]
+    quote = $.trim(r.text())
+    selector =
+      source: this.getHref()
+      type: "context+quote"
+      exact: quote
+      prefix: "TODO prefix"
+      suffix: "TODO suffix"
+
+  getPositionSelectorFromRange: (range) ->
+    selector =
+      source: this.getHref()
+      type: "position"
+      start: "100" # TODO
+      end: "200" # TODO
+
+  getQuoteForTarget: (target) ->
+    mySelector = this.findSelector target.selector, "context+quote"
+    mySelector?.exact
+
   # Public: Gets the current selection excluding any nodes that fall outside of
   # the @wrapper. Then returns and Array of NormalizedRange instances.
   #
@@ -216,13 +266,13 @@ class Annotator extends Delegator
   #   # => Returns []
   #
   # Returns Array of NormalizedRange instances.
-  getSelectedRanges: ->
+  getSelectedTargets: ->
     selection = util.getGlobal().getSelection()
 
-    ranges = []
+    targets = []
     rangesToIgnore = []
     unless selection.isCollapsed
-      ranges = for i in [0...selection.rangeCount]
+      targets = for i in [0...selection.rangeCount]
         r = selection.getRangeAt(i)
         browserRange = new Range.BrowserRange(r)
         normedRange = browserRange.normalize().limit(@wrapper[0])
@@ -232,7 +282,13 @@ class Annotator extends Delegator
         # this method
         rangesToIgnore.push(r) if normedRange is null
 
-        normedRange
+        t =
+          id: ""
+          selector: [
+            this.getXPathRangeSelectorFromRange normedRange
+            this.getContextQuoteSelectorFromRange normedRange
+            this.getPositionSelectorFromRange normedRange
+          ]
 
       # BrowserRange#normalize() modifies the DOM structure and deselects the
       # underlying text as a result. So here we remove the selected ranges and
@@ -242,10 +298,12 @@ class Annotator extends Delegator
     for r in rangesToIgnore
       selection.addRange(r)
 
-    # Remove any ranges that fell outside of @wrapper.
-    $.grep ranges, (range) ->
+    # Remove any targets that's range fell outside of @wrapper.
+    $.grep targets, (target) =>
       # Add the normed range back to the selection if it exists.
-      selection.addRange(range.toRange()) if range
+      mySelector = this.findSelector target.selector, "xpath range"
+      if mySelector? then range = this.getNormalizedRangeFromXPathRangeSelector mySelector
+      selection.addRange( range.toRange()) if range
       range
 
   # Public: Creates and returns a new annotation object. Publishes the
@@ -279,28 +337,23 @@ class Annotator extends Delegator
     mySelector = this.findSelector target.selector, "xpath range"
     if mySelector?
       try
-        root = @wrapper[0]        
-        range =
-          start: mySelector.startXpath
-          end: mySelector.endXpath
-          startOffset: mySelector.startOffset
-          endOffset: mySelector.endOffset
-        nRange = Range.sniff(range).normalize(root)
+        root = @wrapper[0]
+        nRange = this.getNormalizedRangeFromXPathRangeSelector mySelector
         return nRange
-      catch e
-        if e instanceof Range.RangeError
+      catch exception
+        if exception instanceof Range.RangeError
           console.log "Could not apply XPath selector to current document. Must have changed."
           return null
         else
-          throw e
-    else
-      console.log "Uh-oh. No XPath selector found."
+          throw exception
     null
  
   # Try to find the rigth anchoring point for a given target
   #
   # Returns a normalized range if succeeded, null otherwise
   findAnchor: (target) ->
+#    console.log "Trying to find anchor for target: "
+#    console.log target
     anchor = this.findAnchorFromXPathRangeSelector target
     # TODO: implement other strategies
     anchor
@@ -327,26 +380,19 @@ class Annotator extends Delegator
   # Returns the initialised annotation.
   setupAnnotation: (annotation) ->
     root = @wrapper[0]
-    annotation.targets or= @selectedTargets
+    annotation.target or= @selectedTargets
 
     unless annotation.target instanceof Array
       annotation.target = [annotation.target]
 
     normedRanges = []
     for t in annotation.target
-      try
-        r = this.findAnchor t
-        if r?
-          normedRanges.push r
-        else
-          console.log "Could not find anchor for annotation target '" + t.id + "' (for annotation '" + annotation.id + "')."
-
-      catch e
-        if e instanceof Range.RangeError
-          this.publish('rangeNormalizeFail', [annotation, r, e])
-        else
-          # Oh Javascript, why you so crap? This will lose the traceback.
-          throw e
+      r = this.findAnchor t
+      if r?
+        normedRanges.push r
+      else
+        console.log "Could not find anchor for annotation target '" + t.id + "' (for annotation '" + annotation.id + "')."
+        this.publish('findAnchorFail', [annotation, t])        
 
     annotation.currentQuote      = []
     annotation.currentRanges     = []
@@ -606,15 +652,16 @@ class Annotator extends Delegator
       return
 
     # Get the currently selected ranges.
-    @selectedRanges = this.getSelectedRanges()
-
-    for range in @selectedRanges
+    @selectedTargets = this.getSelectedTargets()
+    for target in @selectedTargets
+      mySelector = this.findSelector target.selector, "xpath range"
+      range = this.getNormalizedRangeFromXPathRangeSelector mySelector        
       container = range.commonAncestor
       if $(container).hasClass('annotator-hl')
         container = $(container).parents('[class^=annotator-hl]')[0]
       return if this.isAnnotator(container)
 
-    if event and @selectedRanges.length
+    if event and @selectedTargets.length
       @adder
         .css(util.mousePosition(event, @wrapper[0]))
         .show()
