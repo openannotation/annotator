@@ -164,6 +164,8 @@ class Range.BrowserRange
     while nr.commonAncestor.nodeType isnt 1
       nr.commonAncestor = nr.commonAncestor.parentNode
 
+    if window.DomTextMapper? then window.DomTextMapper.changed nr.commonAncestor, "range normalization"
+
     new Range.NormalizedRange(nr)
 
   # Public: Creates a range suitable for storage.

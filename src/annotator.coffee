@@ -94,6 +94,8 @@ class Annotator extends Delegator
 
     # Return early if the annotator is not supported.
     return this unless Annotator.supported()
+    this.domMapper = new DomTextMapper()
+    this.domMatcher = new DomTextMatcher @domMapper
     this._setupDocumentEvents() unless @options.readOnly
     this._setupWrapper()._setupViewer()._setupEditor()
     this._setupDynamicStyle()
@@ -115,6 +117,9 @@ class Annotator extends Delegator
     @element.find('script').remove()
     @element.wrapInner(@wrapper)
     @wrapper = @element.find('.annotator-wrapper')
+
+    # TODO: do somthing like this:
+    # this.domMapper.setRootNode @wrapper[0].get()
 
     this
 
@@ -232,21 +237,28 @@ class Annotator extends Delegator
       endOffset: sr.endOffset
 
   getContextQuoteSelectorFromRange: (range) ->
-    r = range.normalize @wrapper[0]
-    quote = $.trim(r.text())
+    startOffset = (@domMapper.getMappingsForNode range.start).start
+    endOffset = (@domMapper.getMappingsForNode range.end).end
+        
+#   quote = $.trim(range.text())
+    quote = @domMapper.getContentForRange startOffset, endOffset
+    [prefix, suffix] = @domMapper.getContextForRange startOffset, endOffset
     selector =
       source: this.getHref()
       type: "context+quote"
       exact: quote
-      prefix: "TODO prefix"
-      suffix: "TODO suffix"
+      prefix: prefix
+      suffix: suffix
 
   getPositionSelectorFromRange: (range) ->
+    startOffset = (@domMapper.getMappingsForNode range.start).start
+    endOffset = (@domMapper.getMappingsForNode range.end).end
+
     selector =
       source: this.getHref()
       type: "position"
-      start: "100" # TODO
-      end: "200" # TODO
+      start: startOffset
+      end: endOffset
 
   getQuoteForTarget: (target) ->
     mySelector = this.findSelector target.selector, "context+quote"
@@ -441,7 +453,9 @@ class Annotator extends Delegator
   # Returns deleted annotation.
   deleteAnnotation: (annotation) ->
     for h in annotation.highlights
+      child = h.childNodes[0]        
       $(h).replaceWith(h.childNodes)
+      window.DomTextMapper.changed child.parentNode, "removed hilite (annotation deleted)"
 
     this.publish('annotationDeleted', [annotation])
     annotation
@@ -472,7 +486,10 @@ class Annotator extends Delegator
         this.publish 'annotationsLoaded', [clone]
 
     clone = annotations.slice()
-    loader(annotations) if annotations.length
+    if annotations.length
+      loader(annotations)
+    else
+      this.publish 'foundNoAnnotations'
     this
 
   # Public: Calls the Store#dumpAnnotations() method.
@@ -493,7 +510,7 @@ class Annotator extends Delegator
   # Returns an array of highlight Elements.
   highlightRange: (normedRange, cssClass='annotator-hl') ->
     white = /^\s*$/
-
+  
     hl = $("<span class='#{cssClass}'></span>")
 
     # Ignore text nodes that contain only whitespace characters. This prevents
@@ -501,8 +518,11 @@ class Annotator extends Delegator
     # subset of nodes such as table rows and lists. This does mean that there
     # may be the odd abandoned whitespace node in a paragraph that is skipped
     # but better than breaking table layouts.
-    for node in normedRange.textNodes() when not white.test(node.nodeValue)
-      $(node).wrapAll(hl).parent().show()[0]
+
+    for node in normedRange.textNodes() when not white.test node.nodeValue
+      r = $(node).wrapAll(hl).parent().show()[0]
+      window.DomTextMapper.changed node, "created hilite"
+      r  
 
   # Public: highlight a list of ranges
   #
@@ -750,7 +770,9 @@ class Annotator extends Delegator
     cancel = =>
       do cleanup
       for h in annotation.highlights
+        child = h.childNodes[0]
         $(h).replaceWith(h.childNodes)
+        window.DomTextMapper.changed child.parentNode, "removed hilite, edit cancelled"
 
     # Remove handlers when finished
     cleanup = =>
