@@ -237,8 +237,8 @@ class Annotator extends Delegator
       endOffset: sr.endOffset
 
   getContextQuoteSelectorFromRange: (range) ->
-    startOffset = (@domMapper.getMappingsForNode range.start).start
-    endOffset = (@domMapper.getMappingsForNode range.end).end
+    startOffset = (@domMapper.getInfoForNode range.start).start
+    endOffset = (@domMapper.getInfoForNode range.end).end
         
 #   quote = $.trim(range.text())
     quote = @domMapper.getContentForRange startOffset, endOffset
@@ -251,8 +251,8 @@ class Annotator extends Delegator
       suffix: suffix
 
   getPositionSelectorFromRange: (range) ->
-    startOffset = (@domMapper.getMappingsForNode range.start).start
-    endOffset = (@domMapper.getMappingsForNode range.end).end
+    startOffset = (@domMapper.getInfoForNode range.start).start
+    endOffset = (@domMapper.getInfoForNode range.end).end
 
     selector =
       source: this.getHref()
@@ -346,17 +346,37 @@ class Annotator extends Delegator
   # Try to determine the anchor position for a target
   # using the saved xpath range selector
   findAnchorFromXPathRangeSelector: (target) ->
-    mySelector = this.findSelector target.selector, "xpath range"
-    if mySelector?
+    selector = this.findSelector target.selector, "xpath range"
+    if selector?
       try
-        root = @wrapper[0]
-        nRange = this.getNormalizedRangeFromXPathRangeSelector mySelector
+        # Try to apply the saved XPath
+        nRange = this.getNormalizedRangeFromXPathRangeSelector selector
+
+        # OK, we have a range.
+
+        # Look up the saved quote
+        quoteSelector = this.findSelector target.selector, "context+quote"
+        savedQuote = quoteSelector?.exact
+        if savedQuote?
+          # We have a saved quote, let's compare it to current content
+          startOffset = (@domMapper.getInfoForNode nRange.start).start
+          endOffset = (@domMapper.getInfoForNode nRange.end).end
+          currentQuote = @domMapper.getContentForRange startOffset, endOffset
+          if currentQuote isnt savedQuote
+            console.log "Could not apply XPath selector to current document, because the quote has changed."
+            console.log "Saved quote is '" + savedQuote + "'."
+            console.log "Current quote is '" + currentQuote + "'."
+            return null
+        else
+          # No saved quote, nothing to compare. Assume that it's OK.
+        
         return nRange
       catch exception
         if exception instanceof Range.RangeError
-          console.log "Could not apply XPath selector to current document. Must have changed."
+          console.log "Could not apply XPath selector to current document. Structure must have changed."
           return null
         else
+          console.log exception.stack
           throw exception
     null
  
@@ -366,7 +386,10 @@ class Annotator extends Delegator
   findAnchor: (target) ->
 #    console.log "Trying to find anchor for target: "
 #    console.log target
+
+    # Simple xpath range based strategy (this is what we used to have)
     anchor = this.findAnchorFromXPathRangeSelector target
+
     # TODO: implement other strategies
     anchor
 
@@ -472,6 +495,7 @@ class Annotator extends Delegator
   #
   # Returns itself for chaining.
   loadAnnotations: (annotations=[]) ->
+    this.publish 'loadingAnnotations'
     loader = (annList=[]) =>
       now = annList.splice(0,10)
 
@@ -488,8 +512,6 @@ class Annotator extends Delegator
     clone = annotations.slice()
     if annotations.length
       loader(annotations)
-    else
-      this.publish 'foundNoAnnotations'
     this
 
   # Public: Calls the Store#dumpAnnotations() method.
