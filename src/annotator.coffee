@@ -344,41 +344,95 @@ class Annotator extends Delegator
     null
 
   # Try to determine the anchor position for a target
-  # using the saved xpath range selector
+  # using the saved xpath range selector. The quote is verified.
   findAnchorFromXPathRangeSelector: (target) ->
     selector = this.findSelector target.selector, "xpath range"
-    if selector?
-      try
-        # Try to apply the saved XPath
-        nRange = this.getNormalizedRangeFromXPathRangeSelector selector
-
-        # OK, we have a range.
-
-        # Look up the saved quote
-        quoteSelector = this.findSelector target.selector, "context+quote"
-        savedQuote = quoteSelector?.exact
-        if savedQuote?
-          # We have a saved quote, let's compare it to current content
-          startOffset = (@domMapper.getInfoForNode nRange.start).start
-          endOffset = (@domMapper.getInfoForNode nRange.end).end
-          currentQuote = @domMapper.getContentForRange startOffset, endOffset
-          if currentQuote isnt savedQuote
-            console.log "Could not apply XPath selector to current document, because the quote has changed."
-            console.log "Saved quote is '" + savedQuote + "'."
-            console.log "Current quote is '" + currentQuote + "'."
-            return null
-        else
-          # No saved quote, nothing to compare. Assume that it's OK.
-        
-        return nRange
-      catch exception
-        if exception instanceof Range.RangeError
-          console.log "Could not apply XPath selector to current document. Structure must have changed."
+    unless selector? then return null
+    try
+      # Try to apply the saved XPath
+      nRange = this.getNormalizedRangeFromXPathRangeSelector selector
+       # OK, we have a range.
+       # Look up the saved quote
+      savedQuote = this.getQuoteForTarget target
+      if savedQuote?
+        # We have a saved quote, let's compare it to current content
+        startOffset = (@domMapper.getInfoForNode nRange.start).start
+        endOffset = (@domMapper.getInfoForNode nRange.end).end
+        currentQuote = @domMapper.getContentForRange startOffset, endOffset
+        if currentQuote isnt savedQuote
+          console.log "Could not apply XPath selector to current document, because the quote has changed. (Saved quote is '" + savedQuote + "', current quote is '" + currentQuote + "'.)"
           return null
         else
-          console.log exception.stack
-          throw exception
-    null
+          # console.log "Saved quote matches."        
+      else
+        #console.log "No saved quote, nothing to compare. Assume that it's OK."
+     
+      return nRange
+    catch exception
+      if exception instanceof Range.RangeError
+        console.log "Could not apply XPath selector to current document. Structure must have changed."
+        return null
+      else
+        throw exception
+
+
+  # Try to determine the anchor position for a target
+  # using the saved position selector. The quote is verified.
+  findAnchorFromPositionSelector: (target) ->
+    selector = this.findSelector target.selector, "position"
+    unless selector? then return null
+    savedQuote = this.getQuoteForTarget target
+    if savedQuote?
+      # We have a saved quote, let's compare it to current content
+      savedQuote = this.getQuoteForTarget target
+      currentQuote = @domMapper.getContentForRange selector.start, selector.end
+      if currentQuote isnt savedQuote
+        console.log "Could not apply position selector to current document, because the quote has changed. (Saved quote is '" + savedQuote + "', current quote is '" + currentQuote + "'.)"
+        return null
+      else
+#        console.log "Saved quote matches."
+    else
+#      console.log "No saved quote, nothing to compare. Assume that it's OK."
+
+    # OK, we have everything. Create a magic range from this.
+    mappings = this.domMapper.getMappingsForRange selector.start, selector.end
+    browserRange = new Range.BrowserRange mappings.range
+    browserRange.normalize()
+
+  findAnchorWithFuzzyMatching: (target) ->
+    # Fetch the quote    
+    quoteSelector = this.findSelector target.selector, "context+quote"
+    quote = quoteSelector?.exact
+
+    # No quote, no joy
+    unless quote? then return null
+
+    # Get a starting position for the search
+    posSelector = this.findSelector target.selector, "position"
+    start = posSelector?.start
+
+    # If we don't have the position saved, start at the middle of the doc
+    start or= this.domMapper.getDocLength() / 2
+
+    # Do the fuzzy search
+    result = this.domMatcher.searchFuzzy quote, start
+
+    # If we did not got a result, give up
+    unless result.matches.length is 1
+#      console.log "Fuzzy matching did not return any results"
+      return null
+
+    # here is our result
+    match = result.matches[0]
+#    console.log "Found match:"
+#    console.log match
+
+    unless match.exact
+      console.log "Using fuzzy matching, found '" + match.found + "', instead of '" + quote + "'."
+
+    # convert it tp a magic range
+    browserRange = new Range.BrowserRange match.range
+    browserRange.normalize()
  
   # Try to find the rigth anchoring point for a given target
   #
@@ -389,6 +443,16 @@ class Annotator extends Delegator
 
     # Simple xpath range based strategy (this is what we used to have)
     anchor = this.findAnchorFromXPathRangeSelector target
+
+    # Position-based strategy. (The quote is verified.)
+    # This can handle document structure changes,
+    # but not the content changes.
+    anchor or= this.findAnchorFromPositionSelector target
+
+    # Fuzzy text matching strategy.
+    # This can handle document structure changes,
+    # and also content changes.
+    anchor or= this.findAnchorWithFuzzyMatching target
 
     # TODO: implement other strategies
     anchor
@@ -422,24 +486,32 @@ class Annotator extends Delegator
 
     normedRanges = []
     for t in annotation.target
-      r = this.findAnchor t
-      if r?
-        normedRanges.push r
-      else
-        console.log "Could not find anchor for annotation target '" + t.id + "' (for annotation '" + annotation.id + "')."
-        this.publish('findAnchorFail', [annotation, t])        
+      try  
+        r = this.findAnchor t
+        if r?
+          normedRanges.push r
+        else
+          console.log "Could not find anchor for annotation target '" + t.id + "' (for annotation '" + annotation.id + "')."
+          this.publish('findAnchorFail', [annotation, t])
+      catch exception
+        if exception.stack? then console.log exception.stack
+        console.log exception.message
+        console.log exception
 
-    annotation.currentQuote      = []
-    annotation.currentRanges     = []
+# TODO
+#    annotation.currentQuote      = []
+#    annotation.currentRanges     = []
     annotation.highlights = []
 
     for normed in normedRanges
-      annotation.currentQuote.push      $.trim(normed.text())
-      annotation.currentRanges.push     normed.serialize(@wrapper[0], '.annotator-hl')
+# TODO
+#      annotation.currentQuote.push      $.trim(normed.text())
+#      annotation.currentRanges.push     normed.serialize(@wrapper[0], '.annotator-hl')
       $.merge annotation.highlights, this.highlightRange(normed)
 
     # Join all the quotes into one string.
-    annotation.currentQuote = annotation.currentQuote.join(' / ')
+# TODO
+#    annotation.currentQuote = annotation.currentQuote.join(' / ')
 
     # Save the annotation data on each highlighter element.
     $(annotation.highlights).data('annotation', annotation)
