@@ -356,8 +356,11 @@ class Annotator extends Delegator
       savedQuote = this.getQuoteForTarget target
       if savedQuote?
         # We have a saved quote, let's compare it to current content
-        startOffset = (@domMapper.getInfoForNode nRange.start).start
-        endOffset = (@domMapper.getInfoForNode nRange.end).end
+
+        startInfo = @domMapper.getInfoForNode nRange.start
+        startOffset = startInfo.start        
+        endInfo = @domMapper.getInfoForNode nRange.end
+        endOffset = endInfo.end
         currentQuote = @domMapper.getContentForRange startOffset, endOffset
         if currentQuote isnt savedQuote
           console.log "Could not apply XPath selector to current document, because the quote has changed. (Saved quote is '" + savedQuote + "', current quote is '" + currentQuote + "'.)"
@@ -411,15 +414,18 @@ class Annotator extends Delegator
     posSelector = this.findSelector target.selector, "position"
     start = posSelector?.start
 
+    # Get full document length
+    len = this.domMapper.getDocLength()
+
     # If we don't have the position saved, start at the middle of the doc
-    start or= this.domMapper.getDocLength() / 2
+    start or= len / 2
 
     # Do the fuzzy search
-    result = this.domMatcher.searchFuzzy quote, start
+    result = this.domMatcher.searchFuzzy quote, start, false, len
 
     # If we did not got a result, give up
     unless result.matches.length is 1
-#      console.log "Fuzzy matching did not return any results"
+#      console.log "Fuzzy matching did not return any results. Give up"
       return null
 
     # here is our result
