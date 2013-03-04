@@ -131,8 +131,10 @@ class Annotator.Plugin.Store extends Annotator.Plugin
     # elements.
     if annotation not in @annotations
       this.registerAnnotation(annotation)
-
+      quote = annotation.quote
+      delete annotation.quote
       this._apiRequest('create', annotation, (data) =>
+        annotation.quote = quote
         # Update with (e.g.) ID from server.
         if not data.id?
           console.warn Annotator._t("Warning: No ID returned from server for annotation "), annotation
@@ -157,7 +159,12 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   # Returns nothing.
   annotationUpdated: (annotation) ->
     if annotation in this.annotations
-      this._apiRequest 'update', annotation, ((data) => this.updateAnnotation(annotation, data))
+      quote = annotation.quote
+      delete annotation.quote
+      this._apiRequest 'update', annotation, ((data) => 
+        annotation.quote = quote
+        this.updateAnnotation(annotation, data)
+      )
 
   # Public: Callback method for annotationDeleted event. Receives an annotation
   # and sends a DELETE request to the server using the URI for the destroy
