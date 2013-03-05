@@ -19,8 +19,8 @@ if [ $? -eq 0 ]; then
 else
   printf "Shall I install homebrew for you? "
   read REPLY
-  if [ "$REPLY" =~ "^(y|Y)" ]; then
-    /usr/bin/ruby -e "$(/usr/bin/curl -fsSL https://raw.github.com/mxcl/homebrew/master/Library/Contributions/install_homebrew.rb)"
+  if [[ "$REPLY" =~ ^(y|Y) ]]; then
+    /usr/bin/ruby -e "$(/usr/bin/curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
   else
     abort
   fi
@@ -32,7 +32,7 @@ if [ $? -eq 0 ]; then
 else
   printf "Shall I install node for you? "
   read REPLY
-  if [ "$REPLY" =~ "^(y|Y)" ]; then
+  if [[ "$REPLY" =~ ^(y|Y) ]]; then
     brew install node
   else
     abort
@@ -45,7 +45,7 @@ if [ $? -eq 0 ]; then
 else
   printf "Shall I install npm for you? "
   read REPLY
-  if [ "$REPLY" =~ "^(y|Y)" ]; then
+  if [[ "$REPLY" =~ ^(y|Y) ]]; then
     curl http://npmjs.org/install.sh | sh
   else
     abort
