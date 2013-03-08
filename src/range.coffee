@@ -131,30 +131,37 @@ class Range.BrowserRange
         # previous one.
         node = it or node.childNodes[offset - 1]
 
-        # if node doesn't have any children, it's a <br> or <hr> or
-        # other self-closing tag, and we actually want the textNode
-        # that ends just before it
-        if node.nodeType is 1 and not node.firstChild
-          it = null # null out ref to node so offset is correctly calculated below.
-          node = node.previousSibling
+        # Is this an IMG?
+        isImg = node.nodeType is 1 and node.tagName.toLowerCase() is "img"
+        if isImg
+          # This is an img. Don't do anything.
+          offset = 0
+        else
+          # if node doesn't have any children, it's a <br> or <hr> or
+          # other self-closing tag, and we actually want the textNode
+          # that ends just before it
+          if node.nodeType is 1 and not node.firstChild and not isImg
+            it = null # null out ref to node so offset is correctly calculated below.
+            node = node.previousSibling
 
-        # textNode nodeType == 3
-        while node.nodeType isnt 3
-          node = node.firstChild
+          # textNode nodeType == 3
+          while node.nodeType isnt 3
+            node = node.firstChild
 
-        offset = if it then 0 else node.nodeValue.length
+          offset = if it then 0 else node.nodeValue.length
 
       r[p] = node
       r[p + 'Offset'] = offset
+      r[p + 'Img'] = isImg
 
     nr.start = if r.startOffset > 0 then r.start.splitText(r.startOffset) else r.start
 
-    if r.start is r.end
+    if not r.startImg and r.start is r.end
       if (r.endOffset - r.startOffset) < nr.start.nodeValue.length
         nr.start.splitText(r.endOffset - r.startOffset)
       nr.end = nr.start
     else
-      if r.endOffset < r.end.nodeValue.length
+      if not r.endImg and r.endOffset < r.end.nodeValue.length
         r.end.splitText(r.endOffset)
       nr.end = r.end
 
@@ -256,7 +263,9 @@ class Range.NormalizedRange
       for n in nodes
         offset += n.nodeValue.length
 
-      if isEnd then [xpath, offset + node.nodeValue.length] else [xpath, offset]
+      isImg = node.nodeType is 1 and node.tagName.toLowerCase() is "img"
+
+      if isEnd and not isImg then [xpath, offset + node.nodeValue.length] else [xpath, offset]
 
     start = serialization(@start)
     end   = serialization(@end, true)
@@ -296,10 +305,10 @@ class Range.NormalizedRange
   #
   #   selection = window.getSelection()
   #   selection.removeAllRanges()
-  #   selection.addRange(normedRange.toRange())
+  #   selection.addRange(normedRange.toRealRange())
   #
   # Returns a Range object.
-  toRange: ->
+  toRealRange: ->
     range = document.createRange()
     range.setStartBefore(@start)
     range.setEndAfter(@end)

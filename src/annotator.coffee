@@ -226,8 +226,8 @@ class Annotator extends Delegator
     sr = this.getSerializedRangeFromXPathRangeSelector selector
     sr.normalize @wrapper[0]
         
-  getXPathRangeSelectorFromRange: (range) ->
-    sr = range.serialize @wrapper[0]
+  getXPathRangeSelectorFromMagicRange: (magicRange) ->
+    sr = magicRange.serialize @wrapper[0]
     selector =        
       source: this.getHref()
       type: "xpath range"
@@ -236,13 +236,13 @@ class Annotator extends Delegator
       endXpath: sr.end
       endOffset: sr.endOffset
 
-  getContextQuoteSelectorFromRange: (range) ->
-    startOffset = (@domMapper.getInfoForNode range.start).start
-    endOffset = (@domMapper.getInfoForNode range.end).end
+  getContextQuoteSelectorFromMagicRange: (magicRange) ->
+    startOffset = (@domMapper.getInfoForNode magicRange.start).start
+    endOffset = (@domMapper.getInfoForNode magicRange.end).end
         
-#   quote = $.trim(range.text())
-    quote = @domMapper.getContentForRange startOffset, endOffset
-    [prefix, suffix] = @domMapper.getContextForRange startOffset, endOffset
+#   quote = $.trim(magicRange.text())
+    quote = @domMapper.getContentForCharRange startOffset, endOffset
+    [prefix, suffix] = @domMapper.getContextForCharRange startOffset, endOffset
     selector =
       source: this.getHref()
       type: "context+quote"
@@ -250,9 +250,9 @@ class Annotator extends Delegator
       prefix: prefix
       suffix: suffix
 
-  getPositionSelectorFromRange: (range) ->
-    startOffset = (@domMapper.getInfoForNode range.start).start
-    endOffset = (@domMapper.getInfoForNode range.end).end
+  getPositionSelectorFromMagicRange: (magicRange) ->
+    startOffset = (@domMapper.getInfoForNode magicRange.start).start
+    endOffset = (@domMapper.getInfoForNode magicRange.end).end
 
     selector =
       source: this.getHref()
@@ -285,9 +285,9 @@ class Annotator extends Delegator
     rangesToIgnore = []
     unless selection.isCollapsed
       targets = for i in [0...selection.rangeCount]
-        r = selection.getRangeAt(i)
-        browserRange = new Range.BrowserRange(r)
-        normedRange = browserRange.normalize().limit(@wrapper[0])
+        realRange = selection.getRangeAt i
+        browserRange = new Range.BrowserRange realRange
+        normedRange = browserRange.normalize().limit @wrapper[0]
 
         # If the new range falls fully outside the wrapper, we
         # should add it back to the document but not return it from
@@ -297,9 +297,9 @@ class Annotator extends Delegator
         t =
           id: ""
           selector: [
-            this.getXPathRangeSelectorFromRange normedRange
-            this.getContextQuoteSelectorFromRange normedRange
-            this.getPositionSelectorFromRange normedRange
+            this.getXPathRangeSelectorFromMagicRange normedRange
+            this.getContextQuoteSelectorFromMagicRange normedRange
+            this.getPositionSelectorFromMagicRange normedRange
           ]
 
       # BrowserRange#normalize() modifies the DOM structure and deselects the
@@ -307,16 +307,16 @@ class Annotator extends Delegator
       # reapply the new ones.
       selection.removeAllRanges()
 
-    for r in rangesToIgnore
-      selection.addRange(r)
+    for realRange in rangesToIgnore
+      selection.addRange realRange
 
     # Remove any targets that's range fell outside of @wrapper.
     $.grep targets, (target) =>
       # Add the normed range back to the selection if it exists.
       mySelector = this.findSelector target.selector, "xpath range"
-      if mySelector? then range = this.getNormalizedRangeFromXPathRangeSelector mySelector
-      selection.addRange( range.toRange()) if range
-      range
+      if mySelector? then magicRange = this.getNormalizedRangeFromXPathRangeSelector mySelector
+      if magicRange? then selection.addRange magicRange.toRealRange()
+      magicRange
 
   # Public: Creates and returns a new annotation object. Publishes the
   # 'beforeAnnotationCreated' event to allow the new annotation to be modified.
@@ -350,18 +350,18 @@ class Annotator extends Delegator
     unless selector? then return null
     try
       # Try to apply the saved XPath
-      nRange = this.getNormalizedRangeFromXPathRangeSelector selector
+      normalizedRange = this.getNormalizedRangeFromXPathRangeSelector selector
        # OK, we have a range.
        # Look up the saved quote
       savedQuote = this.getQuoteForTarget target
       if savedQuote?
         # We have a saved quote, let's compare it to current content
 
-        startInfo = @domMapper.getInfoForNode nRange.start
+        startInfo = @domMapper.getInfoForNode normalizedRange.start
         startOffset = startInfo.start        
-        endInfo = @domMapper.getInfoForNode nRange.end
+        endInfo = @domMapper.getInfoForNode normalizedRange.end
         endOffset = endInfo.end
-        currentQuote = @domMapper.getContentForRange startOffset, endOffset
+        currentQuote = @domMapper.getContentForCharRange startOffset, endOffset
         if currentQuote isnt savedQuote
           console.log "Could not apply XPath selector to current document, because the quote has changed. (Saved quote is '" + savedQuote + "', current quote is '" + currentQuote + "'.)"
           return null
@@ -370,7 +370,7 @@ class Annotator extends Delegator
       else
         #console.log "No saved quote, nothing to compare. Assume that it's OK."
      
-      return nRange
+      return normalizedRange
     catch exception
       if exception instanceof Range.RangeError
         console.log "Could not apply XPath selector to current document. Structure must have changed."
@@ -388,7 +388,7 @@ class Annotator extends Delegator
     if savedQuote?
       # We have a saved quote, let's compare it to current content
       savedQuote = this.getQuoteForTarget target
-      currentQuote = @domMapper.getContentForRange selector.start, selector.end
+      currentQuote = @domMapper.getContentForCharRange selector.start, selector.end
       if currentQuote isnt savedQuote
         console.log "Could not apply position selector to current document, because the quote has changed. (Saved quote is '" + savedQuote + "', current quote is '" + currentQuote + "'.)"
         return null
@@ -398,8 +398,8 @@ class Annotator extends Delegator
 #      console.log "No saved quote, nothing to compare. Assume that it's OK."
 
     # OK, we have everything. Create a magic range from this.
-    mappings = this.domMapper.getMappingsForRange selector.start, selector.end
-    browserRange = new Range.BrowserRange mappings.range
+    mappings = this.domMapper.getMappingsForCharRange selector.start, selector.end
+    browserRange = new Range.BrowserRange mappings.realRange
     browserRange.normalize()
 
   findAnchorWithFuzzyMatching: (target) ->
@@ -437,7 +437,7 @@ class Annotator extends Delegator
       console.log "Using fuzzy matching, found '" + match.found + "', instead of '" + quote + "'."
 
     # convert it tp a magic range
-    browserRange = new Range.BrowserRange match.range
+    browserRange = new Range.BrowserRange match.realRange
     browserRange.normalize()
  
   # Try to find the rigth anchoring point for a given target
