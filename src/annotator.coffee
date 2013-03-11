@@ -262,7 +262,10 @@ class Annotator extends Delegator
 
   getQuoteForTarget: (target) ->
     mySelector = this.findSelector target.selector, "context+quote"
-    mySelector?.exact
+    if mySelector?
+      this.normalizeString mySelector.exact
+    else
+      null
 
   # Public: Gets the current selection excluding any nodes that fall outside of
   # the @wrapper. Then returns and Array of NormalizedRange instances.
@@ -318,6 +321,9 @@ class Annotator extends Delegator
       if magicRange? then selection.addRange magicRange.toRealRange()
       magicRange
 
+  cleanSpecialQuotes: () ->
+    this.specialQuotes = {}
+
   # Public: Creates and returns a new annotation object. Publishes the
   # 'beforeAnnotationCreated' event to allow the new annotation to be modified.
   #
@@ -335,6 +341,10 @@ class Annotator extends Delegator
     this.publish('beforeAnnotationCreated', [annotation])
     annotation
 
+  # Do some normalization to get a "canonical" form of a string.
+  # Used to even out some browser differences.  
+  normalizeString: (string) -> string.replace /\s{2,}/g, " "
+        
 
   # Find the given type of selector from an array of selectors, if it exists.
   # If it does not exist, null is returned.
@@ -356,12 +366,11 @@ class Annotator extends Delegator
       savedQuote = this.getQuoteForTarget target
       if savedQuote?
         # We have a saved quote, let's compare it to current content
-
         startInfo = @domMapper.getInfoForNode normalizedRange.start
         startOffset = startInfo.start        
         endInfo = @domMapper.getInfoForNode normalizedRange.end
         endOffset = endInfo.end
-        currentQuote = @domMapper.getContentForCharRange startOffset, endOffset
+        currentQuote = this.normalizeString @domMapper.getContentForCharRange startOffset, endOffset
         if currentQuote isnt savedQuote
           console.log "Could not apply XPath selector to current document, because the quote has changed. (Saved quote is '" + savedQuote + "', current quote is '" + currentQuote + "'.)"
           return null
@@ -387,8 +396,7 @@ class Annotator extends Delegator
     savedQuote = this.getQuoteForTarget target
     if savedQuote?
       # We have a saved quote, let's compare it to current content
-      savedQuote = this.getQuoteForTarget target
-      currentQuote = @domMapper.getContentForCharRange selector.start, selector.end
+      currentQuote = this.normalizeString @domMapper.getContentForCharRange selector.start, selector.end
       if currentQuote isnt savedQuote
         console.log "Could not apply position selector to current document, because the quote has changed. (Saved quote is '" + savedQuote + "', current quote is '" + currentQuote + "'.)"
         return null
@@ -433,12 +441,12 @@ class Annotator extends Delegator
 #    console.log "Found match:"
 #    console.log match
 
-    unless match.exact
-      console.log "Using fuzzy matching, found '" + match.found + "', instead of '" + quote + "'."
+    quoteHTML = unless match.exact then match.hiddenData.diff
 
     # convert it tp a magic range
     browserRange = new Range.BrowserRange match.realRange
-    browserRange.normalize()
+    normalizedRange = browserRange.normalize()
+    [normalizedRange, quoteHTML]
  
   # Try to find the rigth anchoring point for a given target
   #
@@ -458,10 +466,11 @@ class Annotator extends Delegator
     # Fuzzy text matching strategy.
     # This can handle document structure changes,
     # and also content changes.
-    anchor or= this.findAnchorWithFuzzyMatching target
+    unless anchor?
+      [anchor, quoteHTML] = this.findAnchorWithFuzzyMatching target
 
     # TODO: implement other strategies
-    anchor
+    [anchor, quoteHTML]
 
   # Public: Initialises an annotation either from an object representation or
   # an annotation created with Annotator#createAnnotation(). It finds the
@@ -493,7 +502,15 @@ class Annotator extends Delegator
     normedRanges = []
     for t in annotation.target
       try  
-        r = this.findAnchor t
+        [r, quoteHTML] = this.findAnchor t
+        if quoteHTML?
+          # We have found a special quote. (Probaby a diff, because of changes.)
+        
+          # Save it for this target (currently not used)
+          t.quoteHTML = quoteHTML
+
+          # Collect it into this map
+          this.specialQuotes[annotation.id] = quoteHTML
         if r?
           normedRanges.push r
         else
