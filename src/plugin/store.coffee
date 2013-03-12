@@ -403,11 +403,13 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   #
   # Returns URL String.
   _urlFor: (action, id) ->
-    replaceWith = if id? then '/' + id else ''
-
     url = if @options.prefix? then @options.prefix else ''
     url += @options.urls[action]
-    url = url.replace(/\/:id/, replaceWith)
+    # If there's a '/:id' in the URL, either fill in the ID or remove the
+    # slash:
+    url = url.replace(/\/:id/, if id? then '/' + id else '')
+    # If there's a bare ':id' in the URL, then substitute directly:
+    url = url.replace(/:id/, if id? then id else '')
 
     url
 

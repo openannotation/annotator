@@ -420,6 +420,16 @@ describe "Annotator.Plugin.Store", ->
       expect(store._urlFor('update', 'bar')).toEqual('/bar/updateMe')
       expect(store._urlFor('destroy', 'baz')).toEqual('/baz/destroyMe')
 
+    it "should generate URLs with substitution markers in query strings", ->
+      store.options.prefix = '/some/prefix'
+      store.options.urls.read = '/read?id=:id'
+      store.options.urls.update = '/update?foo&id=:id'
+      store.options.urls.destroy = '/delete?id=:id&foo'
+      expect(store._urlFor('read')).toEqual('/some/prefix/read?id=')
+      expect(store._urlFor('read', 'foo')).toEqual('/some/prefix/read?id=foo')
+      expect(store._urlFor('update', 'bar')).toEqual('/some/prefix/update?foo&id=bar')
+      expect(store._urlFor('destroy', 'baz')).toEqual('/some/prefix/delete?id=baz&foo')
+
   describe "_methodFor", ->
     it "should return the appropriate method for the action", ->
       table = {
