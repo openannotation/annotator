@@ -94,14 +94,22 @@ class Annotator extends Delegator
 
     # Return early if the annotator is not supported.
     return this unless Annotator.supported()
-    this.domMapper = new DomTextMapper()
-    this.domMatcher = new DomTextMatcher @domMapper
     this._setupDocumentEvents() unless @options.readOnly
     this._setupWrapper()._setupViewer()._setupEditor()
     this._setupDynamicStyle()
 
     # Create adder
     this.adder = $(this.html.adder).appendTo(@wrapper).hide()
+
+  _setupMatching: ->
+    this.domMapper = new DomTextMapper()
+    this.domMatcher = new DomTextMatcher @domMapper
+    if DTM_DMPMatcher?
+      this.fuzzyMatcher = new DTM_DMPMatcher()
+      @fuzzyMatcher.setCaseSensitive false
+    else
+      console.log "Could not init fuzzy matcher. Expect problems."
+        
 
   # Wraps the children of @element in a @wrapper div. NOTE: This method will also
   # remove any script elements inside @element to prevent them re-executing.
@@ -410,6 +418,97 @@ class Annotator extends Delegator
     browserRange = new Range.BrowserRange mappings.realRange
     browserRange.normalize()
 
+  findAnchorWithTwoPhaseFuzzyMatching: (target) ->
+    # Fetch the quote and the context
+    quoteSelector = this.findSelector target.selector, "context+quote"
+    prefix = quoteSelector?.prefix
+    suffix = quoteSelector?.suffix
+    quote = quoteSelector?.exact
+
+    # No context, to joy
+    unless (prefix? and suffix?) then return [null, null]
+
+    # Get a starting position for the prefix search
+    posSelector = this.findSelector target.selector, "position"
+    expectedPrefixStart = posSelector?.start
+
+    # Get full document length
+    len = @domMapper.getDocLength()
+
+    # If we don't have the position saved, start at the middle of the doc
+    expectedPrefixStart ?= len / 2
+
+    # Do the fuzzy search for the prefix
+    @fuzzyMatcher.setMatchThreshold = 0.5
+    @fuzzyMatcher.setMatchDistance = len
+    prefixResult = @fuzzyMatcher.search @domMapper.corpus, prefix, expectedPrefixStart
+
+    # If the prefix is not found, give up
+    unless prefixResult.length
+      return [null, null]
+
+    # This is where the prefix ends
+    prefixEnd = prefixResult[0].end
+
+    # Let's find out where do we expect to find the suffix! We need it's length.
+    # If we have a quote, use it's length
+    quoteLength = quote?.length
+
+    if posSelector?
+      # If we don't have a quote, but at least have a pos selector, get a length from that.
+      quoteLength or= posSelector.end - posSelector.start
+
+    # If we have no idea about where the suffix could be. Let's just pull a number out of ... thin air.
+    quoteLength or= 64
+
+    # Get the part of text that is after the prefix
+    remainingText = @domMapper.corpus.substr prefixEnd
+
+    # Calculate expected position
+    expectedSuffixStart = quoteLength
+
+    # Do the fuzzy search for the suffix
+    suffixResult = @fuzzyMatcher.search remainingText, suffix, expectedSuffixStart
+
+    # If the suffix is not found, give up
+    unless suffixResult.length
+      return [null, null]
+
+    # This is where the suffix starts
+    suffixStart = prefixEnd + suffixResult[0].start
+
+    # Now we have a position. Create a magic range from it.
+    mappings = this.domMapper.getMappingsForCharRange prefixEnd, suffixStart
+    browserRange = new Range.BrowserRange mappings.realRange
+    normalizedRange = browserRange.normalize()
+
+    # Do we have to check this agains what we have saved?
+    if quote?
+      # We have a saved quote, let's compare it to current content
+      savedQuote = this.normalizeString quote
+      currentQuote = this.normalizeString @domMapper.getContentForCharRange prefixEnd, suffixStart
+      if currentQuote isnt savedQuote
+        # Compare the saved and the current quote
+        comparison = @fuzzyMatcher.compare savedQuote, currentQuote
+
+        # Calculate an error level
+        errorLevel = comparison.lev / savedQuote.length
+
+        # Is this acceptable?
+        if errorLevel < 0.5
+          # Yes, this is fine
+          return [normalizedRange, comparison.diffHTML]
+        else
+ #         console.log "Rejecting fuzzy-matched anchor, because error level is too high. (" + errorLevel + ")"
+          # Nah, this is soo wrong
+          return [null, null]
+      else
+#        console.log "Saved quote matches exactly."
+        return [normalizedRange, null]
+    else
+#      console.log "No saved quote, nothing to compare. Assume that it's OK."
+      return [normalizedRange, null]
+
   findAnchorWithFuzzyMatching: (target) ->
     # Fetch the quote    
     quoteSelector = this.findSelector target.selector, "context+quote"
@@ -466,13 +565,18 @@ class Annotator extends Delegator
     # but not the content changes.
     anchor or= this.findAnchorFromPositionSelector target
 
-    # Fuzzy text matching strategy.
+    # Two-phased fuzzy text matching strategy. (Using context and quote.)
+    # This can handle document structure changes,
+    # and also content changes.
+    unless anchor?
+      [anchor, quoteHTML] = this.findAnchorWithTwoPhaseFuzzyMatching target
+
+    # Naive fuzzy text matching strategy. (Using only the quote.)
     # This can handle document structure changes,
     # and also content changes.
     unless anchor?
       [anchor, quoteHTML] = this.findAnchorWithFuzzyMatching target
 
-    # TODO: implement other strategies
     [anchor, quoteHTML]
 
   # Public: Initialises an annotation either from an object representation or
