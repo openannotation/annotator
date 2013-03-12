@@ -269,4 +269,9 @@
     // always check window.jQuery.
     jQuery = window.jQuery;
   }
-}(__config__, this, this.document));
+}(
+
+// Leave __config__ on a line of its own
+__config__
+
+, this, this.document));
