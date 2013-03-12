@@ -416,7 +416,7 @@ class Annotator extends Delegator
     quote = quoteSelector?.exact
 
     # No quote, no joy
-    unless quote? then return null
+    unless quote? then return [null, null]
 
     # Get a starting position for the search
     posSelector = this.findSelector target.selector, "position"
@@ -429,19 +429,22 @@ class Annotator extends Delegator
     start or= len / 2
 
     # Do the fuzzy search
-    result = this.domMatcher.searchFuzzy quote, start, false, len
+    options =
+      matchDistance: len
+      withDiff: true
+    result = this.domMatcher.searchFuzzy quote, start, false, null, options
 
     # If we did not got a result, give up
     unless result.matches.length is 1
 #      console.log "Fuzzy matching did not return any results. Give up"
-      return null
+      return [null, null]
 
     # here is our result
     match = result.matches[0]
 #    console.log "Found match:"
 #    console.log match
 
-    quoteHTML = unless match.exact then match.hiddenData.diff
+    quoteHTML = unless match.exact then match.diffHTML
 
     # convert it tp a magic range
     browserRange = new Range.BrowserRange match.realRange
