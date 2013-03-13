@@ -132,9 +132,12 @@ class Annotator.Plugin.Store extends Annotator.Plugin
     if annotation not in @annotations
       this.registerAnnotation(annotation)
       quote = annotation.quote
+      quoteHTML = annotation.quoteHTML
       delete annotation.quote
+      delete annotation.quoteHTML
       this._apiRequest('create', annotation, (data) =>
         annotation.quote = quote
+        annotation.quoteHTML = quoteHTML
         # Update with (e.g.) ID from server.
         if not data.id?
           console.warn Annotator._t("Warning: No ID returned from server for annotation "), annotation
@@ -160,9 +163,12 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   annotationUpdated: (annotation) ->
     if annotation in this.annotations
       quote = annotation.quote
+      quoteHTML = annotation.quoteHTML
       delete annotation.quote
+      delete annotation.quoteHTML
       this._apiRequest 'update', annotation, ((data) => 
         annotation.quote = quote
+        annotation.quoteHTML = quoteHTML        
         this.updateAnnotation(annotation, data)
       )
 
