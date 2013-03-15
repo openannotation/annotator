@@ -427,7 +427,7 @@ class Annotator extends Delegator
     quote = quoteSelector?.exact
 
     # No context, to joy
-    unless (prefix? and suffix?) then return [null, null, null]
+    unless (prefix? and suffix?) then return null
 
     # Get a starting position for the prefix search
     posSelector = this.findSelector target.selector, "position"
@@ -445,8 +445,7 @@ class Annotator extends Delegator
     prefixResult = @fuzzyMatcher.search @domMapper.corpus, prefix, expectedPrefixStart
 
     # If the prefix is not found, give up
-    unless prefixResult.length
-      return [null, null, null]
+    unless prefixResult.length then return null
 
     # This is where the prefix ends
     prefixEnd = prefixResult[0].end
@@ -472,8 +471,7 @@ class Annotator extends Delegator
     suffixResult = @fuzzyMatcher.search remainingText, suffix, expectedSuffixStart
 
     # If the suffix is not found, give up
-    unless suffixResult.length
-      return [null, null, null]
+    unless suffixResult.length then return null
 
     # This is where the suffix starts
     suffixStart = prefixEnd + suffixResult[0].start
@@ -498,17 +496,21 @@ class Annotator extends Delegator
         # Is this acceptable?
         if errorLevel < 0.5
           # Yes, this is fine
-          return [normalizedRange, currentQuote, comparison.diffHTML]
+          anchor =
+            range: normalizedRange
+            quote: currentQuote
+            quoteHTML: comparison.diffHTML
+          return anchor
         else
  #         console.log "Rejecting fuzzy-matched anchor, because error level is too high. (" + errorLevel + ")"
           # Nah, this is soo wrong
-          return [null, null, null]
+          return null
       else
 #        console.log "Saved quote matches exactly."
-        return [normalizedRange, null, null]
+        return range: normalizedRange
     else
 #      console.log "No saved quote, nothing to compare. Assume that it's OK."
-      return [normalizedRange, null, null]
+      return range: normalizedRange
 
   findAnchorWithFuzzyMatching: (target) ->
     # Fetch the quote    
@@ -575,7 +577,7 @@ class Annotator extends Delegator
     # Two-phased fuzzy text matching strategy. (Using context and quote.)
     # This can handle document structure changes,
     # and also content changes.
-#    anchor ?= this.findAnchorWithTwoPhaseFuzzyMatching target
+    anchor ?= this.findAnchorWithTwoPhaseFuzzyMatching target
 
     # Naive fuzzy text matching strategy. (Using only the quote.)
     # This can handle document structure changes,
