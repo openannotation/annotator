@@ -352,7 +352,7 @@ class Annotator extends Delegator
   # Do some normalization to get a "canonical" form of a string.
   # Used to even out some browser differences.  
   normalizeString: (string) -> string.replace /\s{2,}/g, " "
-        
+
 
   # Find the given type of selector from an array of selectors, if it exists.
   # If it does not exist, null is returned.
@@ -429,88 +429,39 @@ class Annotator extends Delegator
     # No context, to joy
     unless (prefix? and suffix?) then return null
 
-    # Get a starting position for the prefix search
+    # Fetch the expected start and end positions
     posSelector = this.findSelector target.selector, "position"
-    expectedPrefixStart = posSelector?.start
+    expectedStart = posSelector?.start
+    expectedEnd = posSelector?.end
 
-    # Get full document length
-    len = @domMapper.getDocLength()
+    options =
+      contextMatchDistance: @domMapper.getDocLength() * 2
+      contextMatchThreshold: 0.5
+      patternMatchThreshold: 0.5
+    result = @domMatcher.searchFuzzyWithContext prefix, suffix, quote,
+      expectedStart, expectedEnd, false, null, options
 
-    # If we don't have the position saved, start at the middle of the doc
-    expectedPrefixStart ?= len / 2
+    # If we did not got a result, give up
+    unless result.matches.length
+#      console.log "Fuzzy matching did not return any results. Give up"
+      return null
 
-    # Do the fuzzy search for the prefix
-    @fuzzyMatcher.setMatchThreshold = 0.5
-    @fuzzyMatcher.setMatchDistance = len
-    prefixResult = @fuzzyMatcher.search @domMapper.corpus, prefix, expectedPrefixStart
+    # here is our result
+    match = result.matches[0]
+ #   console.log "Fuzzy found match:"
+#    console.log match
 
-    # If the prefix is not found, give up
-    unless prefixResult.length then return null
-
-    # This is where the prefix ends
-    prefixEnd = prefixResult[0].end
-
-    # Let's find out where do we expect to find the suffix! We need it's length.
-    # If we have a quote, use it's length
-    quoteLength = quote?.length
-
-    if posSelector?
-      # If we don't have a quote, but at least have a pos selector, get a length from that.
-      quoteLength or= posSelector.end - posSelector.start
-
-    # If we have no idea about where the suffix could be. Let's just pull a number out of ... thin air.
-    quoteLength or= 64
-
-    # Get the part of text that is after the prefix
-    remainingText = @domMapper.corpus.substr prefixEnd
-
-    # Calculate expected position
-    expectedSuffixStart = quoteLength
-
-    # Do the fuzzy search for the suffix
-    suffixResult = @fuzzyMatcher.search remainingText, suffix, expectedSuffixStart
-
-    # If the suffix is not found, give up
-    unless suffixResult.length then return null
-
-    # This is where the suffix starts
-    suffixStart = prefixEnd + suffixResult[0].start
-
-    # Now we have a position. Create a magic range from it.
-    mappings = this.domMapper.getMappingsForCharRange prefixEnd, suffixStart
-    browserRange = new Range.BrowserRange mappings.realRange
+    # convert it tp a magic range
+    browserRange = new Range.BrowserRange match.realRange
     normalizedRange = browserRange.normalize()
 
-    # Do we have to check this agains what we have saved?
-    if quote?
-      # We have a saved quote, let's compare it to current content
-      savedQuote = this.normalizeString quote
-      currentQuote = this.normalizeString @domMapper.getContentForCharRange prefixEnd, suffixStart
-      if currentQuote isnt savedQuote
-        # Compare the saved and the current quote
-        comparison = @fuzzyMatcher.compare savedQuote, currentQuote
+    # return the anchor
+    anchor = 
+      range: normalizedRange
+      quote: unless match.exact then match.found
+      quoteHTML: unless match.exact then match.comparison.diffHTML
 
-        # Calculate an error level
-        errorLevel = comparison.lev / savedQuote.length
-
-        # Is this acceptable?
-        if errorLevel < 0.5
-          # Yes, this is fine
-          anchor =
-            range: normalizedRange
-            quote: currentQuote
-            quoteHTML: comparison.diffHTML
-          return anchor
-        else
- #         console.log "Rejecting fuzzy-matched anchor, because error level is too high. (" + errorLevel + ")"
-          # Nah, this is soo wrong
-          return null
-      else
-#        console.log "Saved quote matches exactly."
-        return range: normalizedRange
-    else
-#      console.log "No saved quote, nothing to compare. Assume that it's OK."
-      return range: normalizedRange
+    anchor
 
   findAnchorWithFuzzyMatching: (target) ->
     # Fetch the quote    
@@ -522,22 +473,22 @@ class Annotator extends Delegator
 
     # Get a starting position for the search
     posSelector = this.findSelector target.selector, "position"
-    start = posSelector?.start
+    expectedStart = posSelector?.start
 
     # Get full document length
     len = this.domMapper.getDocLength()
 
     # If we don't have the position saved, start at the middle of the doc
-    start or= len / 2
+    expectedStart ?= len / 2
 
     # Do the fuzzy search
     options =
       matchDistance: len
-      withDiff: true
-    result = this.domMatcher.searchFuzzy quote, start, false, null, options
+      withFuzzyComparison: true
+    result = @domMatcher.searchFuzzy quote, expectedStart, false, null, options
 
     # If we did not got a result, give up
-    unless result.matches.length is 1
+    unless result.matches.length
 #      console.log "Fuzzy matching did not return any results. Give up"
       return null
 
@@ -546,8 +497,6 @@ class Annotator extends Delegator
  #   console.log "Fuzzy found match:"
 #    console.log match
 
-    quoteHTML = unless match.exact then match.diffHTML
-
     # convert it tp a magic range
     browserRange = new Range.BrowserRange match.realRange
     normalizedRange = browserRange.normalize()
@@ -555,8 +504,10 @@ class Annotator extends Delegator
     # return the anchor
     anchor = 
       range: normalizedRange
-      quote: match.found
-      quoteHTML: quoteHTML
+      quote: unless match.exact then match.found
+      quoteHTML: unless match.exact then match.comparison.diffHTML
+
+    anchor
 
  
   # Try to find the rigth anchoring point for a given target
