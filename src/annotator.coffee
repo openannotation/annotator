@@ -104,12 +104,8 @@ class Annotator extends Delegator
   _setupMatching: ->
     this.domMapper = new DomTextMapper()
     this.domMatcher = new DomTextMatcher @domMapper
-    if DTM_DMPMatcher?
-      this.fuzzyMatcher = new DTM_DMPMatcher()
-      @fuzzyMatcher.setCaseSensitive false
-    else
-      console.log "Could not init fuzzy matcher. Expect problems."
-        
+
+    this
 
   # Wraps the children of @element in a @wrapper div. NOTE: This method will also
   # remove any script elements inside @element to prevent them re-executing.
@@ -325,7 +321,8 @@ class Annotator extends Delegator
     $.grep targets, (target) =>
       # Add the normed range back to the selection if it exists.
       mySelector = this.findSelector target.selector, "xpath range"
-      if mySelector? then magicRange = this.getNormalizedRangeFromXPathRangeSelector mySelector
+      if mySelector?
+        magicRange = this.getNormalizedRangeFromXPathRangeSelector mySelector
       if magicRange? then selection.addRange magicRange.toRealRange()
       magicRange
 
@@ -378,9 +375,12 @@ class Annotator extends Delegator
         startOffset = startInfo.start        
         endInfo = @domMapper.getInfoForNode normalizedRange.end
         endOffset = endInfo.end
-        currentQuote = this.normalizeString @domMapper.getContentForCharRange startOffset, endOffset
+        content = @domMapper.getContentForCharRange startOffset, endOffset
+        currentQuote = this.normalizeString content
         if currentQuote isnt savedQuote
-#          console.log "Could not apply XPath selector to current document, because the quote has changed. (Saved quote is '" + savedQuote + "', current quote is '" + currentQuote + "'.)"
+#          console.log "Could not apply XPath selector to current document,
+# because the quote has changed. (Saved quote is '" + savedQuote + "',
+# current quote is '" + currentQuote + "'.)"
           return null
         else
 #          console.log "Saved quote matches."        
@@ -390,7 +390,8 @@ class Annotator extends Delegator
       return range: normalizedRange
     catch exception
       if exception instanceof Range.RangeError
-#        console.log "Could not apply XPath selector to current document. Structure must have changed."
+#        console.log "Could not apply XPath selector to current document.
+# Structure must have changed."
         return null
       else
         throw exception
@@ -404,9 +405,12 @@ class Annotator extends Delegator
     savedQuote = this.getQuoteForTarget target
     if savedQuote?
       # We have a saved quote, let's compare it to current content
-      currentQuote = this.normalizeString @domMapper.getContentForCharRange selector.start, selector.end
+      content = @domMapper.getContentForCharRange selector.start, selector.end
+      currentQuote = this.normalizeString content
       if currentQuote isnt savedQuote
-#        console.log "Could not apply position selector to current document, because the quote has changed. (Saved quote is '" + savedQuote + "', current quote is '" + currentQuote + "'.)"
+#        console.log "Could not apply position selector to current document,
+# because the quote has changed. (Saved quote is '" + savedQuote + "',
+# current quote is '" + currentQuote + "'.)"
         return null
       else
 #        console.log "Saved quote matches."
@@ -414,7 +418,8 @@ class Annotator extends Delegator
 #      console.log "No saved quote, nothing to compare. Assume that it's OK."
 
     # OK, we have everything. Create a magic range from this.
-    mappings = this.domMapper.getMappingsForCharRange selector.start, selector.end
+    mappings = this.domMapper.getMappingsForCharRange selector.start,
+        selector.end
     browserRange = new Range.BrowserRange mappings.realRange
     normalizedRange = browserRange.normalize()
     return range: normalizedRange
@@ -582,26 +587,27 @@ class Annotator extends Delegator
         if anchor?.range?
           normedRanges.push anchor.range
         else
-          console.log "Could not find anchor for annotation target '" + t.id + "' (for annotation '" + annotation.id + "')."
+          console.log "Could not find anchor for annotation target '" + t.id +
+              "' (for annotation '" + annotation.id + "')."
           this.publish 'findAnchorFail', [annotation, t]
       catch exception
         if exception.stack? then console.log exception.stack
         console.log exception.message
         console.log exception
 
-# TODO
+# TODO for resurrecting Annotator
 #    annotation.currentQuote      = []
 #    annotation.currentRanges     = []
     annotation.highlights = []
 
     for normed in normedRanges
-# TODO
+# TODO for resurrecting Annotator
 #      annotation.currentQuote.push      $.trim(normed.text())
 #      annotation.currentRanges.push     normed.serialize(@wrapper[0], '.annotator-hl')
       $.merge annotation.highlights, this.highlightRange(normed)
 
     # Join all the quotes into one string.
-# TODO
+# TODO for resurrecting Annotator# 
 #    annotation.currentQuote = annotation.currentQuote.join(' / ')
 
     # Save the annotation data on each highlighter element.
@@ -641,7 +647,8 @@ class Annotator extends Delegator
     for h in annotation.highlights
       child = h.childNodes[0]        
       $(h).replaceWith(h.childNodes)
-      window.DomTextMapper.changed child.parentNode, "removed hilite (annotation deleted)"
+      window.DomTextMapper.changed child.parentNode,
+          "removed hilite (annotation deleted)"
 
     this.publish('annotationDeleted', [annotation])
     annotation
@@ -957,7 +964,8 @@ class Annotator extends Delegator
       for h in annotation.highlights
         child = h.childNodes[0]
         $(h).replaceWith(h.childNodes)
-        window.DomTextMapper.changed child.parentNode, "removed hilite, edit cancelled"
+        window.DomTextMapper.changed child.parentNode,
+            "removed hilite, edit cancelled"
 
     # Remove handlers when finished
     cleanup = =>
