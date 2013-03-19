@@ -617,10 +617,11 @@ class Annotator extends Delegator
   #
   # Returns deleted annotation.
   deleteAnnotation: (annotation) ->
-    for h in annotation.highlights when h.parentNode?
-      child = h.childNodes[0]
-      $(h).replaceWith(h.childNodes)
-      window.DomTextMapper.changed child.parentNode,
+    if annotation.highlights?
+      for h in annotation.highlights when h.parentNode?
+        child = h.childNodes[0]
+        $(h).replaceWith(h.childNodes)
+        window.DomTextMapper.changed child.parentNode,
           "removed hilite (annotation deleted)"
 
     this.publish('annotationDeleted', [annotation])
@@ -932,11 +933,7 @@ class Annotator extends Delegator
     # Remove the highlights if the edit is cancelled
     cancel = =>
       do cleanup
-      for h in annotation.highlights when h.parentNode?
-        child = h.childNodes[0]
-        $(h).replaceWith(h.childNodes)
-        window.DomTextMapper.changed child.parentNode,
-          "removed hilite, edit cancelled"
+      this.deleteAnnotation(annotation)
 
     # Don't leak handlers at the end
     cleanup = =>
