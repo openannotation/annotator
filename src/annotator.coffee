@@ -617,7 +617,7 @@ class Annotator extends Delegator
   #
   # Returns deleted annotation.
   deleteAnnotation: (annotation) ->
-    for h in annotation.highlights
+    for h in annotation.highlights when h.parentNode?
       child = h.childNodes[0]
       $(h).replaceWith(h.childNodes)
       window.DomTextMapper.changed child.parentNode,
@@ -932,7 +932,7 @@ class Annotator extends Delegator
     # Remove the highlights if the edit is cancelled
     cancel = =>
       do cleanup
-      for h in annotation.highlights
+      for h in annotation.highlights when h.parentNode?
         child = h.childNodes[0]
         $(h).replaceWith(h.childNodes)
         window.DomTextMapper.changed child.parentNode,
