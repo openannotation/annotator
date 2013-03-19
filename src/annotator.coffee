@@ -345,8 +345,10 @@ class Annotator extends Delegator
   #
   # Returns deleted annotation.
   deleteAnnotation: (annotation) ->
-    for h in annotation.highlights
-      $(h).replaceWith(h.childNodes)
+    if annotation.highlights?
+      for h in annotation.highlights when h.parentNode?
+        child = h.childNodes[0]
+        $(h).replaceWith(h.childNodes)
 
     this.publish('annotationDeleted', [annotation])
     annotation
@@ -651,8 +653,7 @@ class Annotator extends Delegator
     # Remove the highlights if the edit is cancelled
     cancel = =>
       do cleanup
-      for h in annotation.highlights
-        $(h).replaceWith(h.childNodes)
+      this.deleteAnnotation(annotation)
 
     # Don't leak handlers at the end
     cleanup = =>
