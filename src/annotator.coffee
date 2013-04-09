@@ -429,7 +429,7 @@ class Annotator extends Delegator
 
     # If we did not got a result, give up
     unless result.matches.length
-      console.log "Fuzzy matching did not return any results. Giving up."
+      console.log "Fuzzy matching did not return any results. Giving up on two-phase strategy."
       return null
 
     # here is our result
@@ -475,7 +475,7 @@ class Annotator extends Delegator
 
     # If we did not got a result, give up
     unless result.matches.length
-      console.log "Fuzzy matching did not return any results. Giving up."
+      console.log "Fuzzy matching did not return any results. Giving up on one-phase strategy."
       return null
 
     # here is our result
