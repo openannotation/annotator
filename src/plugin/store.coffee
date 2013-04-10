@@ -259,7 +259,7 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   #
   # Returns nothing.
   _onLoadAnnotations: (data=[]) =>
-    @annotations = data
+    @annotations = @annotations.concat(data)
     @annotator.loadAnnotations(data.slice()) # Clone array
 
   # Public: Performs the same task as Store.#loadAnnotations() but calls the

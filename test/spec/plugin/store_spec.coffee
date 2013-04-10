@@ -204,7 +204,7 @@ describe "Annotator.Plugin.Store", ->
     it "should set the Store#annotations property with received annotations", ->
       data = [1,2,3];
       store._onLoadAnnotations(data)
-      expect(store.annotations).toBe(data)
+      expect(store.annotations).toEqual(data)
 
     it "should default to an empty array if no data is provided", ->
       store._onLoadAnnotations()
@@ -219,6 +219,14 @@ describe "Annotator.Plugin.Store", ->
       store._onLoadAnnotations(data)
       expect(store.annotator.loadAnnotations.mostRecentCall.args[0]).not.toBe(data)
       expect(store.annotator.loadAnnotations.mostRecentCall.args[0]).toEqual(data)
+
+    it "should concatenate new annotations when called a second time", ->
+      data = [1,2,3];
+      data2 = [4,5,6];
+      dataAll = data.concat(data2);
+      store._onLoadAnnotations(data)
+      store._onLoadAnnotations(data2)
+      expect(store.annotations).toEqual(dataAll)
 
   describe "_onLoadAnnotationsFromSearch", ->
     it "should call Store#_onLoadAnnotations() with data.rows", ->
