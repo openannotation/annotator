@@ -9,7 +9,7 @@
     }
   ],
   "devDependencies": {
-    "coffee-script": "1.2.0",
+    "coffee-script": "1.6.x",
     "uglify-js": "1.2.5",
     "uglifycss": "0.0.5"
   },
