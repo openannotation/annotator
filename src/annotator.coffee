@@ -380,7 +380,7 @@ class Annotator extends Delegator
   # Try to determine the anchor position for a target
   # using the saved position selector. The quote is verified.
   findAnchorFromPositionSelector: (target) ->
-    selector = this.findSelector target.selector, "TextPosition"
+    selector = this.findSelector target.selector, "TextPositionSelector"
     unless selector? then return null
     savedQuote = this.getQuoteForTarget target
     if savedQuote?
