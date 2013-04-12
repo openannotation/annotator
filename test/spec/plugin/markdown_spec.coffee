@@ -12,24 +12,25 @@ describe 'Annotator.Plugin.Markdown', ->
       field = $('<div />')[0]
       annotation = {text: 'test'}
 
-      spyOn(plugin, 'updateTextField')
+      sinon.spy(plugin, 'updateTextField')
       plugin.publish('annotationViewerTextField', [field, annotation])
-      expect(plugin.updateTextField).toHaveBeenCalledWith(field, annotation)
+      assert.isTrue(plugin.updateTextField.calledWith(field, annotation))
 
   describe "constructor", ->
     it "should create a new instance of Showdown", ->
-      expect(plugin.converter).toBeTruthy()
+      assert.ok(plugin.converter)
 
     it "should log an error if Showdown is not loaded", ->
-      spyOn(console, 'error')
+      sinon.stub(console, 'error')
 
       converter = Showdown.converter
       Showdown.converter = null
 
       plugin = new Annotator.Plugin.Markdown($('<div />')[0])
-      expect(console.error).toHaveBeenCalled()
-      
+      assert(console.error.calledOnce)
+
       Showdown.converter = converter
+      console.error.restore()
 
   describe "updateTextField", ->
     field      = null
@@ -38,20 +39,23 @@ describe 'Annotator.Plugin.Markdown', ->
     beforeEach ->
       field = $('<div />')[0]
       annotation = {text: input}
-      spyOn(plugin, 'convert').andReturn(output)
-      spyOn(Annotator.$, 'escape').andReturn(input)
-      
+      sinon.stub(plugin, 'convert').returns(output)
+      sinon.stub(Annotator.$, 'escape').returns(input)
+
       plugin.updateTextField(field, annotation)
 
+    afterEach ->
+      Annotator.$.escape.restore()
+
     it 'should process the annotation text as Markdown', ->
-      expect(plugin.convert).toHaveBeenCalledWith(input)
+      assert.isTrue(plugin.convert.calledWith(input))
 
     it 'should update the content in the field', ->
-      expect($(field).html()).toBe(output)
+      assert.equal($(field).html(), output)
 
     it "should escape any existing HTML to prevent XSS", ->
-      expect(Annotator.$.escape).toHaveBeenCalledWith(input)
+      assert.isTrue(Annotator.$.escape.calledWith(input))
 
   describe "convert", ->
     it "should convert the provided text into markdown", ->
-      expect(plugin.convert(input)).toBe(output)
+      assert.equal(plugin.convert(input), output)

@@ -390,6 +390,7 @@ class Annotator extends Delegator
       @plugins['Store'].dumpAnnotations()
     else
       console.warn(_t("Can't dump annotations without Store plugin."))
+      return false
 
   # Public: Wraps the DOM Nodes within the provided range with a highlight
   # element of the specified class and returns the highlight Elements.

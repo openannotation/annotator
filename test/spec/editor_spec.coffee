@@ -8,58 +8,58 @@ describe 'Annotator.Editor', ->
     editor.element.remove()
 
   it "should have an element property", ->
-    expect(editor.element).toBeTruthy()
-    expect(editor.element.hasClass('annotator-editor')).toBeTruthy()
+    assert.ok(editor.element)
+    assert.isTrue(editor.element.hasClass('annotator-editor'))
 
   describe "events", ->
     it "should call Editor#submit() when the form is submitted", ->
-      spyOn(editor, 'submit')
+      sinon.spy(editor, 'submit')
       # Prevent the default form submission in the browser.
       editor.element.find('form').submit((e) -> e.preventDefault()).submit()
-      expect(editor.submit).toHaveBeenCalled()
+      assert(editor.submit.calledOnce)
 
     it "should call Editor#submit() when the save button is clicked", ->
-      spyOn(editor, 'submit')
+      sinon.spy(editor, 'submit')
       editor.element.find('.annotator-save').click()
-      expect(editor.submit).toHaveBeenCalled()
+      assert(editor.submit.calledOnce)
 
     it "should call Editor#hide() when the cancel button is clicked", ->
-      spyOn(editor, 'hide')
+      sinon.spy(editor, 'hide')
       editor.element.find('.annotator-cancel').click()
-      expect(editor.hide).toHaveBeenCalled()
+      assert(editor.hide.calledOnce)
 
     it "should call Editor#onCancelButtonMouseover() when mouse moves over cancel", ->
-      spyOn(editor, 'onCancelButtonMouseover')
+      sinon.spy(editor, 'onCancelButtonMouseover')
       editor.element.find('.annotator-cancel').mouseover()
-      expect(editor.onCancelButtonMouseover).toHaveBeenCalled()
+      assert(editor.onCancelButtonMouseover.calledOnce)
 
     it "should call Editor#processKeypress() when a key is pressed in a textarea", ->
       # Editor needs a text area field.
       editor.element.find('ul').append('<li><textarea></textarea></li>')
 
-      spyOn(editor, 'processKeypress')
+      sinon.spy(editor, 'processKeypress')
       editor.element.find('textarea').keydown()
-      expect(editor.processKeypress).toHaveBeenCalled()
+      assert(editor.processKeypress.calledOnce)
 
   describe "show", ->
     it "should make the editor visible", ->
       editor.show()
-      expect(editor.element.hasClass('annotator-hide')).toBeFalsy()
+      assert.isFalse(editor.element.hasClass('annotator-hide'))
 
     it "should publish the 'show' event", ->
-      spyOn(editor, 'publish')
+      sinon.spy(editor, 'publish')
       editor.show()
-      expect(editor.publish).toHaveBeenCalledWith('show')
+      assert.isTrue(editor.publish.calledWith('show'))
 
   describe "hide", ->
     it "should hide the editor from view", ->
       editor.hide()
-      expect(editor.element.hasClass('annotator-hide')).toBeTruthy()
+      assert.isTrue(editor.element.hasClass('annotator-hide'))
 
     it "should publish the 'show' event", ->
-      spyOn(editor, 'publish')
+      sinon.spy(editor, 'publish')
       editor.hide()
-      expect(editor.publish).toHaveBeenCalledWith('hide')
+      assert.isTrue(editor.publish.calledWith('hide'))
 
   describe "load", ->
     beforeEach ->
@@ -67,43 +67,40 @@ describe 'Annotator.Editor', ->
       editor.fields = [
         {
           element: 'element0',
-          load: jasmine.createSpy()
+          load: sinon.spy()
         },
         {
           element: 'element1',
-          load: jasmine.createSpy()
+          load: sinon.spy()
         }
       ]
 
       # TODO: investigate why the following tests fail (editor.load blocks)
       #       unless the following has been called.
-      # spyOn(editor, 'show')
+      # sinon.spy(editor, 'show')
 
     it "should call #show()", ->
-      spyOn(editor, 'show')
+      sinon.spy(editor, 'show')
       editor.load()
-      expect(editor.show).toHaveBeenCalled()
+      assert(editor.show.calledOnce)
 
     it "should set the current annotation", ->
       editor.load({text: 'Hello there'})
-      expect(editor.annotation.text).toEqual('Hello there')
+      assert.equal(editor.annotation.text, 'Hello there')
 
     it "should call the load callback on each field in the group", ->
       editor.load()
-      expect(editor.fields[0].load).toHaveBeenCalled()
-      expect(editor.fields[1].load).toHaveBeenCalled()
+      assert(editor.fields[0].load.calledOnce)
+      assert(editor.fields[1].load.calledOnce)
 
     it "should pass the field element and an annotation to the callback", ->
       editor.load()
-      expect(editor.fields[0].load).toHaveBeenCalledWith(
-        editor.fields[0].element,
-        editor.annotation
-      )
+      assert(editor.fields[0].load.calledWith(editor.fields[0].element, editor.annotation))
 
     it "should publish the 'load' event", ->
-      spyOn(editor, 'publish')
+      sinon.spy(editor, 'publish')
       editor.load()
-      expect(editor.publish).toHaveBeenCalledWith('load', [editor.annotation])
+      assert.isTrue(editor.publish.calledWith('load', [editor.annotation]))
 
   describe "submit", ->
     beforeEach ->
@@ -111,35 +108,32 @@ describe 'Annotator.Editor', ->
       editor.fields = [
         {
           element: 'element0',
-          submit: jasmine.createSpy()
+          submit: sinon.spy()
         },
         {
           element: 'element1',
-          submit: jasmine.createSpy()
+          submit: sinon.spy()
         }
       ]
 
     it "should call #hide()", ->
-      spyOn(editor, 'hide');
+      sinon.spy(editor, 'hide')
       editor.submit()
-      expect(editor.hide).toHaveBeenCalled()
+      assert(editor.hide.calledOnce)
 
     it "should call the submit callback on each field in the group", ->
       editor.submit()
-      expect(editor.fields[0].submit).toHaveBeenCalled()
-      expect(editor.fields[1].submit).toHaveBeenCalled()
+      assert(editor.fields[0].submit.calledOnce)
+      assert(editor.fields[1].submit.calledOnce)
 
     it "should pass the field element and an annotation to the callback", ->
       editor.submit()
-      expect(editor.fields[0].submit).toHaveBeenCalledWith(
-        editor.fields[0].element,
-        editor.annotation
-      )
+      assert(editor.fields[0].submit.calledWith(editor.fields[0].element, editor.annotation))
 
     it "should publish the 'save' event", ->
-      spyOn(editor, 'publish')
+      sinon.spy(editor, 'publish')
       editor.submit()
-      expect(editor.publish).toHaveBeenCalledWith('save', [editor.annotation])
+      assert.isTrue(editor.publish.calledWith('save', [editor.annotation]))
 
   describe "addField", ->
     content = null
@@ -154,23 +148,23 @@ describe 'Annotator.Editor', ->
       length = editor.fields.length
 
       editor.addField()
-      expect(editor.fields.length).toEqual(length + 1)
+      assert.lengthOf(editor.fields, length + 1)
 
       editor.addField()
-      expect(editor.fields.length).toEqual(length + 2)
+      assert.lengthOf(editor.fields, length + 2)
 
     it "should append a new list element to the editor", ->
       length = editor.element.find('li').length
 
       editor.addField()
-      expect(editor.element.find('li').length).toEqual(length + 1)
+      assert.lengthOf(editor.element.find('li'), length + 1)
 
       editor.addField()
-      expect(editor.element.find('li').length).toEqual(length + 2)
+      assert.lengthOf(editor.element.find('li'), length + 2)
 
     it "should append an input element if no type is specified", ->
       editor.addField()
-      expect(editor.element.find('li:last :input').prop('type')).toEqual('text')
+      assert.equal(editor.element.find('li:last :input').prop('type'), 'text')
 
     it "should give each element a new id", ->
       editor.addField()
@@ -178,50 +172,49 @@ describe 'Annotator.Editor', ->
 
       editor.addField()
       secondID = editor.element.find('li:last :input').attr('id')
-      expect(firstID).not.toEqual(secondID)
+      assert.notEqual(firstID, secondID)
 
     it "should append a textarea element if 'textarea' type is specified", ->
       editor.addField({type: 'textarea'})
-      expect(editor.element.find('li:last :input').prop('type')).toEqual('textarea')
+      assert.equal(editor.element.find('li:last :input').prop('type'), 'textarea')
 
     it "should append a checkbox element if 'checkbox' type is specified", ->
       editor.addField({type: 'checkbox'})
-      expect(editor.element.find('li:last :input').prop('type')).toEqual('checkbox')
+      assert.equal(editor.element.find('li:last :input').prop('type'), 'checkbox')
 
     it "should append a label element with a for attribute matching the checkbox id", ->
       editor.addField({type: 'checkbox'})
-      expect(
-        editor.element.find('li:last :input').attr('id')
-      ).toEqual(
+      assert.equal(
+        editor.element.find('li:last :input').attr('id'),
         editor.element.find('li:last label').attr('for')
       )
 
     it "should set placeholder text if a label is provided", ->
       editor.addField({type: 'textarea', label: 'Tags…'})
-      expect(editor.element.find('li:last :input').attr('placeholder')).toEqual('Tags…')
+      assert.equal(editor.element.find('li:last :input').attr('placeholder'), 'Tags…')
 
     it "should return the created list item", ->
-      expect(editor.addField().tagName).toEqual('LI')
+      assert.equal(editor.addField().tagName, 'LI')
 
   describe "processKeypress", ->
     beforeEach ->
-      spyOn(editor, 'hide')
-      spyOn(editor, 'submit')
+      sinon.spy(editor, 'hide')
+      sinon.spy(editor, 'submit')
 
     it "should call Editor#hide() if the escape key is pressed", ->
       editor.processKeypress({keyCode: 27})
-      expect(editor.hide).toHaveBeenCalled()
+      assert(editor.hide.calledOnce)
 
     it "should call Editor#submit() if the enter key is pressed", ->
       editor.processKeypress({keyCode: 13})
-      expect(editor.submit).toHaveBeenCalled()
+      assert(editor.submit.calledOnce)
 
     it "should NOT call Editor#submit() if the shift key is held down", ->
       editor.processKeypress({keyCode: 13, shiftKey: true})
-      expect(editor.submit).not.toHaveBeenCalled()
+      assert.isFalse(editor.submit.called)
 
   describe "onCancelButtonMouseover", ->
     it "should remove the focus class from submit when cancel is hovered", ->
       editor.element.find('.annotator-save').addClass('annotator-focus')
       editor.onCancelButtonMouseover()
-      expect(editor.element.find('.annotator-focus').length).toBe(0)
+      assert.lengthOf(editor.element.find('.annotator-focus'), 0)

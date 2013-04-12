@@ -58,6 +58,8 @@ class Annotator.Plugin.AnnotateItPermissions extends Annotator.Plugin.Permission
           return true
         else
           return false
+      else
+        return false
 
     # Default permissions for all annotations. Anyone can
     # read, but only annotation owners can update/delete/admin.

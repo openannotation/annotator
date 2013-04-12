@@ -26,12 +26,12 @@ describe 'Range', ->
     xpath = if window.require then "/html/body/p/strong" else "/html/body/div/p/strong"
     it "should parse a standard xpath string", ->
       node = Range.nodeFromXPath xpath
-      expect(node).toBe($('strong')[0])
+      assert.equal(node, $('strong')[0])
 
     it "should parse an standard xpath string for an xml document", ->
       Annotator.$.isXMLDoc = -> true
       node = Range.nodeFromXPath xpath
-      expect(node).toBe($('strong')[0])
+      assert.equal(node, $('strong')[0])
 
   describe "SerializedRange", ->
     beforeEach ->
@@ -44,14 +44,14 @@ describe 'Range', ->
     describe "normalize", ->
       it "should return a normalized range", ->
         norm = r.normalize(fix())
-        expect(norm instanceof Range.NormalizedRange).toBeTruthy()
-        expect(norm.text()).toEqual("habitant morbi")
+        assert.isTrue(norm instanceof Range.NormalizedRange)
+        assert.equal(norm.text(), "habitant morbi")
 
       it "should return a normalized range with 0 offsets", ->
         r.startOffset = 0
         norm = r.normalize(fix())
-        expect(norm instanceof Range.NormalizedRange).toBeTruthy()
-        expect(norm.text()).toEqual("Pellentesque habitant morbi")
+        assert.isTrue(norm instanceof Range.NormalizedRange)
+        assert.equal(norm.text(), "Pellentesque habitant morbi")
 
       it "should raise Range.RangeError if it cannot normalize the range", ->
         check = false
@@ -61,23 +61,23 @@ describe 'Range', ->
           if e instanceof Range.RangeError
             check = true
 
-        expect(check).toBeTruthy()
+        assert.isTrue(check)
 
     it "serialize() returns a serialized range", ->
       seri = r.serialize(fix())
-      expect(seri.start).toEqual("/p[1]/strong[1]")
-      expect(seri.startOffset).toEqual(13)
-      expect(seri.end).toEqual("/p[1]/strong[1]")
-      expect(seri.endOffset).toEqual(27)
-      expect(seri instanceof Range.SerializedRange).toBeTruthy()
+      assert.equal(seri.start, "/p[1]/strong[1]")
+      assert.equal(seri.startOffset, 13)
+      assert.equal(seri.end, "/p[1]/strong[1]")
+      assert.equal(seri.endOffset, 27)
+      assert.isTrue(seri instanceof Range.SerializedRange)
 
     it "toObject() returns a simple object", ->
       obj = r.toObject()
-      expect(obj.start).toEqual("/p/strong")
-      expect(obj.startOffset).toEqual(13)
-      expect(obj.end).toEqual("/p/strong")
-      expect(obj.endOffset).toEqual(27)
-      expect(JSON.stringify(obj)).toEqual('{"start":"/p/strong","startOffset":13,"end":"/p/strong","endOffset":27}')
+      assert.equal(obj.start, "/p/strong")
+      assert.equal(obj.startOffset, 13)
+      assert.equal(obj.end, "/p/strong")
+      assert.equal(obj.endOffset, 27)
+      assert.equal(JSON.stringify(obj), '{"start":"/p/strong","startOffset":13,"end":"/p/strong","endOffset":27}')
 
   describe "BrowserRange", ->
     beforeEach ->
@@ -86,8 +86,8 @@ describe 'Range', ->
 
     it "normalize() returns a normalized range", ->
       norm = r.normalize()
-      expect(norm.start).toBe(norm.end)
-      expect(textInNormedRange(norm)).toEqual('habitant morbi')
+      assert.equal(norm.start, norm.end)
+      assert.equal(textInNormedRange(norm), 'habitant morbi')
 
     testBrowserRange = (i) ->
       ->
@@ -95,7 +95,7 @@ describe 'Range', ->
         range = new Range.BrowserRange(sel.getRangeAt(0))
         norm  = range.normalize(fix())
 
-        expect(textInNormedRange(norm)).toEqual(sel.expectation)
+        assert.equal(textInNormedRange(norm), sel.expectation)
 
     for i in [0...testData.length]
       it "should parse test range #{i} (#{testData[i][5]})", testBrowserRange(i)
@@ -111,14 +111,14 @@ describe 'Range', ->
     it "textNodes() returns an array of textNodes", ->
       textNodes = r.textNodes()
 
-      expect($.type(textNodes)).toEqual('array')
-      expect(textNodes.length).toEqual(sel.endOffset)
+      assert.equal($.type(textNodes), 'array')
+      assert.lengthOf(textNodes, sel.endOffset)
 
       # Should contain the contents of the first <strong> element.
-      expect(textNodes[0].nodeValue).toEqual('Pellentesque habitant morbi tristique')
+      assert.equal(textNodes[0].nodeValue, 'Pellentesque habitant morbi tristique')
 
     it "text() returns the textual contents of the range", ->
-      expect(r.text()).toEqual(sel.expectation)
+      assert.equal(r.text(), sel.expectation)
 
     describe "limit", ->
       headText = null
@@ -150,9 +150,9 @@ describe 'Range', ->
         })
 
         range = range.limit(para)
-        expect(range.commonAncestor).toBe(para)
-        expect(range.start).toBe(paraText)
-        expect(range.end).toBe(paraText2)
+        assert.equal(range.commonAncestor, para)
+        assert.equal(range.start, paraText)
+        assert.equal(range.end, paraText2)
 
       it "should return null if no nodes fall within the bounds", ->
         otherDiv = document.createElement('div')
@@ -161,20 +161,21 @@ describe 'Range', ->
           start: headText
           end: paraText2
         })
-        expect(range.limit(otherDiv)).toBe(null)
+        assert.equal(range.limit(otherDiv), null)
 
     describe "toRange", ->
       it "should return a new Range object", ->
         mockRange =
-          setStartBefore: jasmine.createSpy('Range#setStartBefore()')
-          setEndAfter: jasmine.createSpy('Range#setEndAfter()')
+          setStartBefore: sinon.spy()
+          setEndAfter: sinon.spy()
 
-        document.createRange = jasmine.createSpy('document.createRange()')
-        document.createRange.andReturn(mockRange)
+        sinon.stub(document, 'createRange').returns(mockRange)
         r.toRange()
 
-        expect(document.createRange).toHaveBeenCalled()
-        expect(mockRange.setStartBefore).toHaveBeenCalled()
-        expect(mockRange.setStartBefore).toHaveBeenCalledWith(r.start)
-        expect(mockRange.setEndAfter).toHaveBeenCalled()
-        expect(mockRange.setEndAfter).toHaveBeenCalledWith(r.end)
+        assert(document.createRange.calledOnce)
+        assert(mockRange.setStartBefore.calledOnce)
+        assert.isTrue(mockRange.setStartBefore.calledWith(r.start))
+        assert(mockRange.setEndAfter.calledOnce)
+        assert.isTrue(mockRange.setEndAfter.calledWith(r.end))
+
+        document.createRange.restore()
