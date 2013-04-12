@@ -1,22 +1,46 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Jasmine Test Runner</title>
-  <link rel="stylesheet" href="../lib/vendor/jasmine/jasmine.css">
-  <!--[if IE]><script src="../lib/vendor/xpath.js"></script><![endif]-->
-  <script src="../lib/vendor/jquery.js"></script>
-  <script src="../lib/vendor/json2.js"></script>
-  <script src="../lib/vendor/showdown.js"></script>
+  <head>
+    <title>Mocha</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../node_modules/mocha/mocha.css">
+  </head>
+  <body>
+    <div id="fixtures" style="display: none"></div>
+    <div id="mocha"></div>
 
-  <script src="../lib/vendor/jasmine/jasmine.js"></script>
-  <script src="../lib/vendor/jasmine/jasmine-html.js"></script>
-  <script src="../lib/vendor/jasmine-jquery.js"></script>
+    <!--[if IE]><script src="../lib/vendor/xpath.js"></script><![endif]-->
+    <script src="../lib/vendor/jquery.js"></script>
+    <script src="../lib/vendor/json2.js"></script>
+    <script src="../lib/vendor/showdown.js"></script>
+    <script src="../node_modules/mocha/mocha.js"></script>
+    <script src="../node_modules/chai/chai.js"></script>
+    <script src="../node_modules/sinon/pkg/sinon.js"></script>
+    <script>
+      // Use mocha's BDD interface
+      mocha.setup('bdd');
 
-  <script type="text/coffeescript">
-    # source files
-    SRC = [
-      'extensions'
-      'console'
+      // And chai.js assert
+      var assert = chai.assert;
+    </script>
+    <script src="../lib/helpers/spec_helper.js"></script>
+
+    <script src="../lib/extensions.js"></script>
+    <script src="../lib/spec/extensions_spec.js"></script>
+
+    <script src="../lib/console.js"></script>
+    <script src="../lib/spec/console_spec.js"></script>
+
+    <script src="../lib/class.js"></script>
+    <script src="../lib/spec/class_spec.js"></script>
+
+    <script src="../lib/annotator.js"></script>
+    <script src="../lib/widget.js"></script>
+    <script src="../lib/viewer.js"></script>
+    <script src="../lib/editor.js"></script>
+    <script src="../lib/spec/annotator_spec.js"></script>
+    <!--
       'class'
       'range'
       'annotator'
@@ -33,54 +57,14 @@
       'plugin/tags'
       'plugin/filter'
       'plugin/kitchensink'
-    ]
+    -->
 
-    # spec helpers
-    OTHER = [
-      'helpers/spec_helper'
-      'helpers/phantomjs_helper'
-    ]
-
-    $.ajaxSetup {cache: false}
-
-    loadScript = (file, callback) ->
-      script = document.createElement('script')
-      script.src = "../lib/#{file}.js?" + (new Date).getTime()
-      script.onload = callback
-      document.body.appendChild(script)
-
-    loadTests = (callback) ->
-      promises = []
-      for o in OTHER then promises.push $.get("#{o}.coffee")
-      for s in SRC then promises.push $.get("spec/#{s}_spec.coffee")
-
-      $.when.apply($, promises).then ->
-        for result in promises
-          CoffeeScript.run(result.responseText) if result.status == 200
-        callback()
-
-    loadAnnotator = (callback) ->
-      files = SRC.slice()
-      (loadNext = ->
-        if files.length then loadScript(files.shift(), loadNext)
-        else callback()
-      )()
-
-    $(window).bind 'load', ->
-      loadAnnotator -> loadTests -> 
-        e = jasmine.getEnv()
-
-        if navigator.userAgent.indexOf("PhantomJS") isnt -1
-          e.addReporter(new jasmine.PhantomJSReporter())
-        else
-          e.addReporter(new jasmine.TrivialReporter())
-
-        e.afterEach -> $(document).unbind?()
-        e.execute()
-  </script>
-</head>
-<body>
-  <div id="fixtures" style="display: none"></div>
-  <script src="../lib/vendor/coffee-script.js"></script>
-</body>
+    <script>
+      if (window.mochaPhantomJS) {
+        mochaPhantomJS.run();
+      } else {
+        mocha.run();
+      }
+    </script>
+  </body>
 </html>

@@ -1,3 +1,3 @@
 cd "$(dirname "$0")"
 cd ..
-$(npm bin)/coffee -wbcmo lib src
+$(npm bin)/coffee -wbcmo lib src test
