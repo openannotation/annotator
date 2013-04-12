@@ -131,7 +131,7 @@ class Range.BrowserRange
       offset = this[p + 'Offset']
 
       # elementNode nodeType == 1
-      if node.nodeType is 1
+      if node.nodeType is Node.ELEMENT_NODE
         # Get specified node.
         it = node.childNodes[offset]
         # If it doesn't exist, that means we need the end of the
@@ -139,7 +139,7 @@ class Range.BrowserRange
         node = it or node.childNodes[offset - 1]
 
         # Is this an IMG?
-        isImg = node.nodeType is 1 and node.tagName.toLowerCase() is "img"
+        isImg = node.nodeType is Node.ELEMENT_NODE and node.tagName.toLowerCase() is "img"
         if isImg
           # This is an img. Don't do anything.
           offset = 0
@@ -147,12 +147,12 @@ class Range.BrowserRange
           # if node doesn't have any children, it's a <br> or <hr> or
           # other self-closing tag, and we actually want the textNode
           # that ends just before it
-          if node.nodeType is 1 and not node.firstChild and not isImg
+          while node.nodeType is Node.ELEMENT_NODE and not node.firstChild and not isImg
             it = null # null out ref to node so offset is correctly calculated below.
             node = node.previousSibling
 
-          # textNode nodeType == 3
-          while node.nodeType isnt 3
+          # Try to find a text child
+          while (node.nodeType isnt Node.TEXT_NODE)
             node = node.firstChild
 
           offset = if it then 0 else node.nodeValue.length
