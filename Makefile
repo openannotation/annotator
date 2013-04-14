@@ -1,6 +1,6 @@
 REPORTER=dot
 
 test:
-	./node_modules/.bin/mocha-phantomjs -R $(REPORTER) test/runner.html
+	./tools/test_phantom -R $(REPORTER)
 
 .PHONY: test
