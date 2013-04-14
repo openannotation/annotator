@@ -8,60 +8,59 @@ describe 'Annotator.Viewer', ->
     viewer.element.remove()
 
   it "should have an element property", ->
-    expect(viewer.element).toBeTruthy()
-
-    expect(viewer.element.hasClass('annotator-viewer')).toBeTruthy()
+    assert.ok(viewer.element)
+    assert.isTrue(viewer.element.hasClass('annotator-viewer'))
 
   describe "an annotation element", ->
     it "should contain some controls", ->
       viewer.load([{text: "Hello there"}])
-      expect(viewer.element.find('.annotator-controls:first button').length).toBeGreaterThan(0)
+      assert.operator(viewer.element.find('.annotator-controls:first button').length, '>', 0)
 
     it "should NOT contain any controls if options.readOnly is true", ->
       viewer = new Annotator.Viewer(readOnly: true)
       viewer.load([{text: "Hello there"}])
-      expect(viewer.element.find('.annotator-controls:first button').length).toBe(0)
+      assert.lengthOf(viewer.element.find('.annotator-controls:first button'), 0)
 
     it "should contain an external link to the annotation if the annotation provides one", ->
       viewer.load([{links:[{rel: "alternate", href: "http://example.com/foo", type: "text/html"}]}])
-      expect(viewer.element.find('.annotator-controls:first a.annotator-link').attr('href')).toBe('http://example.com/foo')
+      assert.equal(viewer.element.find('.annotator-controls:first a.annotator-link').attr('href'), 'http://example.com/foo')
 
     it "should NOT contain an external link to the annotation if the annotation doesn't provide one", ->
       viewer.load([{text: "Hello there"}])
-      expect(viewer.element.find('.annotator-controls:first a.annotator-link').length).toBe(0)
+      assert.lengthOf(viewer.element.find('.annotator-controls:first a.annotator-link'), 0)
 
   describe "events", ->
     beforeEach ->
       viewer.element.find('ul').append(viewer.html.item)
 
     it "should call Viewer#onEditClick() when the edit button is clicked", ->
-      spyOn(viewer, 'onEditClick')
+      sinon.spy(viewer, 'onEditClick')
       viewer.element.find('.annotator-edit').click()
-      expect(viewer.onEditClick).toHaveBeenCalled()
+      assert(viewer.onEditClick.calledOnce)
 
     it "should call Viewer#onDeleteClick() when the delete button is clicked", ->
-      spyOn(viewer, 'onDeleteClick')
+      sinon.spy(viewer, 'onDeleteClick')
       viewer.element.find('.annotator-delete').click()
-      expect(viewer.onDeleteClick).toHaveBeenCalled()
+      assert(viewer.onDeleteClick.calledOnce)
 
   describe "show", ->
     it "should make the viewer visible", ->
       viewer.show()
-      expect(viewer.element.hasClass(viewer.classes.hide)).toBeFalsy()
+      assert.isFalse(viewer.element.hasClass(viewer.classes.hide))
 
   describe "isShown", ->
     it "should return true if the viewer is visible", ->
       viewer.show()
-      expect(viewer.isShown()).toBeTruthy()
+      assert.isTrue(viewer.isShown())
 
     it "should return false if the viewer is not visible", ->
       viewer.hide()
-      expect(viewer.isShown()).toBeFalsy()
+      assert.isFalse(viewer.isShown())
 
   describe "hide", ->
     it "should hide the viewer from view", ->
       viewer.hide()
-      expect(viewer.element.hasClass(viewer.classes.hide)).toBeTruthy()
+      assert.isTrue(viewer.element.hasClass(viewer.classes.hide))
 
   describe "load", ->
     beforeEach ->
@@ -69,37 +68,37 @@ describe 'Annotator.Viewer', ->
       viewer.fields = [
         {
           element: $('<div />')[0],
-          load: jasmine.createSpy()
+          load: sinon.spy()
         },
         {
           element: $('<div />')[0],
-          load: jasmine.createSpy()
+          load: sinon.spy()
         }
       ]
       viewer.load([{text: 'Hello there'}])
 
     it "should call #show()", ->
-      spyOn(viewer, 'show');
+      sinon.spy(viewer, 'show')
       viewer.load()
-      expect(viewer.show).toHaveBeenCalled()
+      assert(viewer.show.calledOnce)
 
     it "should set the current annotation", ->
-      expect(viewer.annotations[0].text).toEqual('Hello there')
+      assert.equal(viewer.annotations[0].text, 'Hello there')
 
     it "should call the load callback on each field in the group", ->
-      expect(viewer.fields[0].load).toHaveBeenCalled()
-      expect(viewer.fields[1].load).toHaveBeenCalled()
+      assert(viewer.fields[0].load.calledOnce)
+      assert(viewer.fields[1].load.calledOnce)
 
     it "should pass the cloned field element and an annotation to the callback", ->
       # Have to find the element here as it is cloned on each iteration by the load function.
-      args = viewer.fields[0].load.mostRecentCall.args
+      args = viewer.fields[0].load.lastCall.args
 
-      expect(args[0]).toEqual(viewer.element.find('div:first')[0])
-      expect(args[1]).toEqual(viewer.annotations[0])
-      expect(args[2].showEdit).toBeTruthy()
-      expect(args[2].hideEdit).toBeTruthy()
-      expect(args[2].showDelete).toBeTruthy()
-      expect(args[2].hideDelete).toBeTruthy()
+      assert.equal(args[0], viewer.element.find('div:first')[0])
+      assert.equal(args[1], viewer.annotations[0])
+      assert.ok(args[2].showEdit)
+      assert.ok(args[2].hideEdit)
+      assert.ok(args[2].showDelete)
+      assert.ok(args[2].hideDelete)
 
   describe "addField", ->
 
@@ -107,41 +106,41 @@ describe 'Annotator.Viewer', ->
       length = viewer.fields.length
 
       viewer.addField()
-      expect(viewer.fields.length).toEqual(length + 1)
+      assert.lengthOf(viewer.fields, length + 1)
 
       viewer.addField()
-      expect(viewer.fields.length).toEqual(length + 2)
+      assert.lengthOf(viewer.fields, length + 2)
 
   describe "onEditClick", ->
     it "should call onButtonClick and provide an event to trigger", ->
-      spyOn(viewer, 'onButtonClick')
+      sinon.spy(viewer, 'onButtonClick')
 
       event = {}
       viewer.onEditClick(event)
 
-      expect(viewer.onButtonClick).toHaveBeenCalled()
-      expect(viewer.onButtonClick).toHaveBeenCalledWith(event, 'edit')
+      assert(viewer.onButtonClick.calledOnce)
+      assert.isTrue(viewer.onButtonClick.calledWith(event, 'edit'))
 
   describe "onDeleteClick", ->
     it "should call onButtonClick and provide an event to trigger", ->
-      spyOn(viewer, 'onButtonClick')
+      sinon.spy(viewer, 'onButtonClick')
 
       event = {}
       viewer.onDeleteClick(event)
 
-      expect(viewer.onButtonClick).toHaveBeenCalled()
-      expect(viewer.onButtonClick).toHaveBeenCalledWith(event, 'delete')
+      assert(viewer.onButtonClick.calledOnce)
+      assert.isTrue(viewer.onButtonClick.calledWith(event, 'delete'))
 
   describe "onButtonClick", ->
     listener = null
 
     beforeEach ->
-      listener = jasmine.createSpy()
+      listener = sinon.spy()
       viewer.element.bind('edit', listener)
 
     it "should trigger an 'edit' event", ->
       viewer.onButtonClick({}, 'edit')
-      expect(listener).toHaveBeenCalled()
+      assert(listener.calledOnce)
 
     it "should pass in the annotation object associated with the item", ->
       annotation = {}
@@ -152,4 +151,4 @@ describe 'Annotator.Viewer', ->
 
       # First argument will be an event so we must use a more convoluted method
       # of checking the annotation was passed.
-      expect(listener.mostRecentCall.args[1]).toEqual(annotation)
+      assert.equal(listener.lastCall.args[1], annotation)

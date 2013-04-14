@@ -198,7 +198,10 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
                 @_unsafeToken.ttl &&
                 @_unsafeToken.consumerKey
 
-    allFields && this.timeToExpiry() > 0
+    if allFields && this.timeToExpiry() > 0
+      return true
+    else
+      return false
 
   # Public: Calculates the time in seconds until the current token expires.
   #

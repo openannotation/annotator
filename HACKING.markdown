@@ -27,7 +27,8 @@ Tools
 
 There are a number of useful development tools shipped in the `tools/` directory.
  
-    $ ./tools/watch          # compiles src/*.coffee files into lib/*.js when they change
+    $ ./tools/build          # compiles src/*.coffee and test/*.coffee into lib/*.js
+    $ ./tools/watch          # like the above, but automatically recompiles files when they change
     $ ./tools/test_phantom   # runs the test suite with PhantomJS (requires Python and PhantomJS)
 
 Building the packaged version of Annotator requires Avery Pennarun's excellent [redo build tool][redo]. Instructions on installing redo can be found below:

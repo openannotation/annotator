@@ -1,103 +1,108 @@
 describe 'Annotator', ->
   annotator = null
+  mock = null
 
   beforeEach -> annotator = new Annotator($('<div></div>')[0], {})
   afterEach  -> $(document).unbind()
 
   describe "events", ->
     it "should call Annotator#onAdderClick() when adder is clicked", ->
-      spyOn(annotator, 'onAdderClick')
+      stub = sinon.stub(annotator, 'onAdderClick')
+
       annotator.element.find('.annotator-adder button').click()
-      expect(annotator.onAdderClick).toHaveBeenCalled()
+
+      assert(stub.calledOnce)
 
     it "should call Annotator#onAdderMousedown() when mouse button is held down on adder", ->
-      spyOn(annotator, 'onAdderMousedown')
+      stub = sinon.stub(annotator, 'onAdderMousedown')
+
       annotator.element.find('.annotator-adder button').mousedown()
-      expect(annotator.onAdderMousedown).toHaveBeenCalled()
+
+      assert(stub.calledOnce)
 
     it "should call Annotator#onHighlightMouseover() when mouse moves over a highlight", ->
-      spyOn(annotator, 'onHighlightMouseover')
+      stub = sinon.stub(annotator, 'onHighlightMouseover')
 
       highlight = $('<span class="annotator-hl" />').appendTo(annotator.element)
       highlight.mouseover()
 
-      expect(annotator.onHighlightMouseover).toHaveBeenCalled()
+      assert(stub.calledOnce)
 
     it "should call Annotator#startViewerHideTimer() when mouse moves off a highlight", ->
-      spyOn(annotator, 'startViewerHideTimer')
+      stub = sinon.stub(annotator, 'startViewerHideTimer')
 
       highlight = $('<span class="annotator-hl" />').appendTo(annotator.element)
       highlight.mouseout()
 
-      expect(annotator.startViewerHideTimer).toHaveBeenCalled()
+      assert(stub.calledOnce)
 
   describe "constructor", ->
     beforeEach ->
-      spyOn(annotator, '_setupWrapper').andReturn(annotator)
-      spyOn(annotator, '_setupViewer').andReturn(annotator)
-      spyOn(annotator, '_setupEditor').andReturn(annotator)
-      spyOn(annotator, '_setupDocumentEvents').andReturn(annotator)
-      spyOn(annotator, '_setupDynamicStyle').andReturn(annotator)
+      sinon.stub(annotator, '_setupWrapper').returns(annotator)
+      sinon.stub(annotator, '_setupViewer').returns(annotator)
+      sinon.stub(annotator, '_setupEditor').returns(annotator)
+      sinon.stub(annotator, '_setupDocumentEvents').returns(annotator)
+      sinon.stub(annotator, '_setupDynamicStyle').returns(annotator)
 
     it "should have a jQuery wrapper as @element", ->
       Annotator.prototype.constructor.call(annotator, annotator.element[0])
-      expect(annotator.element instanceof $).toBeTruthy()
+      assert.instanceOf(annotator.element, $)
 
     it "should create an empty @plugin object", ->
       Annotator.prototype.constructor.call(annotator, annotator.element[0])
-      expect(annotator.hasOwnProperty('plugins')).toBeTruthy()
+      assert.isTrue(annotator.hasOwnProperty('plugins'))
 
     it "should create the adder properties from the @html strings", ->
       Annotator.prototype.constructor.call(annotator, annotator.element[0])
-      expect(annotator.adder instanceof $).toBeTruthy()
+      assert.instanceOf(annotator.adder, $)
 
     it "should call Annotator#_setupWrapper()", ->
       Annotator.prototype.constructor.call(annotator, annotator.element[0])
-      expect(annotator._setupWrapper).toHaveBeenCalled()
+      assert(annotator._setupWrapper.called)
 
     it "should call Annotator#_setupViewer()", ->
       Annotator.prototype.constructor.call(annotator, annotator.element[0])
-      expect(annotator._setupViewer).toHaveBeenCalled()
+      assert(annotator._setupViewer.called)
 
     it "should call Annotator#_setupEditor()", ->
       Annotator.prototype.constructor.call(annotator, annotator.element[0])
-      expect(annotator._setupEditor).toHaveBeenCalled()
+      assert(annotator._setupEditor.called)
 
     it "should call Annotator#_setupDocumentEvents()", ->
       Annotator.prototype.constructor.call(annotator, annotator.element[0])
-      expect(annotator._setupDocumentEvents).toHaveBeenCalled()
+      assert(annotator._setupDocumentEvents.called)
 
     it "should NOT call Annotator#_setupDocumentEvents() if options.readOnly is true", ->
       Annotator.prototype.constructor.call(annotator, annotator.element[0], {
         readOnly: true
       })
-      expect(annotator._setupDocumentEvents).not.toHaveBeenCalled()
+      assert.isFalse(annotator._setupDocumentEvents.called)
 
     it "should call Annotator#_setupDynamicStyle()", ->
       Annotator.prototype.constructor.call(annotator, annotator.element[0])
-      expect(annotator._setupDynamicStyle).toHaveBeenCalled()
+      assert(annotator._setupDynamicStyle.called)
 
   describe "_setupDocumentEvents", ->
     beforeEach: ->
       $(document).unbind('mouseup').unbind('mousedown')
 
     it "should call Annotator#checkForStartSelection() when mouse button is pressed", ->
-      spyOn(annotator, 'checkForStartSelection')
+      stub = sinon.stub(annotator, 'checkForStartSelection')
       annotator._setupDocumentEvents()
       $(document).mousedown()
-      expect(annotator.checkForStartSelection).toHaveBeenCalled()
+      assert(stub.calledOnce)
 
     it "should call Annotator#checkForEndSelection() when mouse button is lifted", ->
-      spyOn(annotator, 'checkForEndSelection')
+      stub = sinon.stub(annotator, 'checkForEndSelection')
       annotator._setupDocumentEvents()
       $(document).mouseup()
-      expect(annotator.checkForEndSelection).toHaveBeenCalled()
+      assert(stub.calledOnce)
 
   describe "_setupWrapper", ->
     it "should wrap children of @element in the @html.wrapper element", ->
       annotator.element = $('<div><span>contents</span></div>')
       annotator._setupWrapper()
-      expect(annotator.wrapper.html()).toBe('<span>contents</span>')
+      assert.equal(annotator.wrapper.html(), '<span>contents</span>')
 
     it "should remove all script elements prior to wrapping", ->
       div = document.createElement('div')
@@ -106,7 +111,7 @@ describe 'Annotator', ->
       annotator.element = $(div)
       annotator._setupWrapper()
 
-      expect(annotator.wrapper[0].innerHTML).toBe('')
+      assert.equal(annotator.wrapper[0].innerHTML, '')
 
   describe "_setupViewer", ->
     mockViewer = null
@@ -114,74 +119,75 @@ describe 'Annotator', ->
     beforeEach ->
       element = $('<div />')
 
-      mockViewer = {
+      mockViewer =
         fields: []
         element: element
-        addField: jasmine.createSpy('Viewer#addField()')
-        hide: jasmine.createSpy('Viewer#hide()')
-        on: jasmine.createSpy('Viewer#on()')
-      }
-      mockViewer.on.andReturn(mockViewer)
-      mockViewer.hide.andReturn(mockViewer)
-      mockViewer.addField.andCallFake (options) ->
+
+      mockViewer.on = -> mockViewer
+      mockViewer.hide = -> mockViewer
+      mockViewer.addField = (options) ->
         mockViewer.fields.push options
         mockViewer
 
-      spyOn(element, 'bind').andReturn(element)
-      spyOn(element, 'appendTo').andReturn(element)
-      spyOn(Annotator, 'Viewer').andReturn(mockViewer)
+      sinon.spy(mockViewer, 'on')
+      sinon.spy(mockViewer, 'hide')
+      sinon.spy(mockViewer, 'addField')
+      sinon.stub(element, 'bind').returns(element)
+      sinon.stub(element, 'appendTo').returns(element)
+      sinon.stub(Annotator, 'Viewer').returns(mockViewer)
 
       annotator._setupViewer()
 
+    afterEach ->
+      Annotator.Viewer.restore()
+
     it "should create a new instance of Annotator.Viewer and set Annotator#viewer", ->
-      expect(annotator.viewer).toBe(mockViewer)
+      assert.strictEqual(annotator.viewer, mockViewer)
 
     it "should hide the annotator on creation", ->
-      expect(mockViewer.hide).toHaveBeenCalled()
+      assert(mockViewer.hide.calledOnce)
 
     it "should setup the default text field", ->
-      args = mockViewer.addField.mostRecentCall.args[0]
+      args = mockViewer.addField.lastCall.args[0]
 
-      expect(mockViewer.addField).toHaveBeenCalled()
-      expect(typeof args.load).toBe("function")
+      assert(mockViewer.addField.calledOnce)
+      assert.equal(typeof args.load, "function")
 
     it "should set the contents of the field on load", ->
       field = document.createElement('div')
       annotation = {text: "test"}
-      callback = jasmine.createSpy('callback')
 
       annotator.viewer.fields[0].load(field, annotation)
-      expect(jQuery(field).html()).toBe("test")
+      assert.equal(jQuery(field).html(), "test")
 
     it "should set the contents of the field to placeholder text when empty", ->
       field = document.createElement('div')
       annotation = {text: ""}
-      callback = jasmine.createSpy('callback')
 
       annotator.viewer.fields[0].load(field, annotation)
-      expect(jQuery(field).html()).toBe("<i>No Comment</i>")
+      assert.equal(jQuery(field).html(), "<i>No Comment</i>")
 
     it "should setup the default text field to publish an event on load", ->
       field = document.createElement('div')
       annotation = {text: "test"}
-      callback = jasmine.createSpy('callback')
+      callback = sinon.spy()
 
       annotator.on('annotationViewerTextField', callback)
       annotator.viewer.fields[0].load(field, annotation)
-      expect(callback).toHaveBeenCalledWith(field, annotation)
+      assert(callback.calledWith(field, annotation))
 
     it "should subscribe to custom events", ->
-      expect(mockViewer.on).toHaveBeenCalledWith('edit', annotator.onEditAnnotation)
-      expect(mockViewer.on).toHaveBeenCalledWith('delete', annotator.onDeleteAnnotation)
+      assert(mockViewer.on.calledWith('edit', annotator.onEditAnnotation))
+      assert(mockViewer.on.calledWith('delete', annotator.onDeleteAnnotation))
 
     it "should bind to browser mouseover and mouseout events", ->
-      expect(mockViewer.element.bind).toHaveBeenCalledWith({
+      assert(mockViewer.element.bind.calledWith({
         'mouseover': annotator.clearViewerHideTimer
         'mouseout':  annotator.startViewerHideTimer
-      })
+      }))
 
     it "should append the Viewer#element to the Annotator#wrapper", ->
-      expect(mockViewer.element.appendTo).toHaveBeenCalledWith(annotator.wrapper)
+      assert(mockViewer.element.appendTo.calledWith(annotator.wrapper))
 
   describe "_setupEditor", ->
     mockEditor = null
@@ -191,40 +197,43 @@ describe 'Annotator', ->
 
       mockEditor = {
         element: element
-        addField: jasmine.createSpy('Editor#addField()')
-        hide: jasmine.createSpy('Editor#hide()')
-        on: jasmine.createSpy('Editor#on()')
       }
-      mockEditor.on.andReturn(mockEditor)
-      mockEditor.hide.andReturn(mockEditor)
-      mockEditor.addField.andReturn(document.createElement('li'))
+      mockEditor.on = -> mockEditor
+      mockEditor.hide = -> mockEditor
+      mockEditor.addField = -> document.createElement('li')
 
-      spyOn(element, 'appendTo').andReturn(element)
-      spyOn(Annotator, 'Editor').andReturn(mockEditor)
+      sinon.spy(mockEditor, 'on')
+      sinon.spy(mockEditor, 'hide')
+      sinon.spy(mockEditor, 'addField')
+      sinon.stub(element, 'appendTo').returns(element)
+      sinon.stub(Annotator, 'Editor').returns(mockEditor)
 
       annotator._setupEditor()
 
+    afterEach ->
+      Annotator.Editor.restore()
+
     it "should create a new instance of Annotator.Editor and set Annotator#editor", ->
-      expect(annotator.editor).toBe(mockEditor)
+      assert.strictEqual(annotator.editor, mockEditor)
 
     it "should hide the annotator on creation", ->
-      expect(mockEditor.hide).toHaveBeenCalled()
+      assert(mockEditor.hide.calledOnce)
 
     it "should add the default textarea field", ->
-      options = mockEditor.addField.mostRecentCall.args[0]
+      options = mockEditor.addField.lastCall.args[0]
 
-      expect(mockEditor.addField).toHaveBeenCalled()
-      expect(options.type).toBe('textarea')
-      expect(options.label).toBe('Comments\u2026')
-      expect(typeof options.load).toBe('function')
-      expect(typeof options.submit).toBe('function')
+      assert(mockEditor.addField.calledOnce)
+      assert.equal(options.type, 'textarea')
+      assert.equal(options.label, 'Comments\u2026')
+      assert.typeOf(options.load, 'function')
+      assert.typeOf(options.submit, 'function')
 
     it "should subscribe to custom events", ->
-      expect(mockEditor.on).toHaveBeenCalledWith('hide', annotator.onEditorHide)
-      expect(mockEditor.on).toHaveBeenCalledWith('save', annotator.onEditorSubmit)
+      assert(mockEditor.on.calledWith('hide', annotator.onEditorHide))
+      assert(mockEditor.on.calledWith('save', annotator.onEditorSubmit))
 
     it "should append the Editor#element to the Annotator#wrapper", ->
-      expect(mockEditor.element.appendTo).toHaveBeenCalledWith(annotator.wrapper)
+      assert(mockEditor.element.appendTo.calledWith(annotator.wrapper))
 
   describe "_setupDynamicStyle", ->
     $fix = null
@@ -244,9 +253,9 @@ describe 'Annotator', ->
       check = (minimum) ->
         adderZ = parseInt($adder.css('z-index'), 10)
         filterZ = parseInt($filter.css('z-index'), 10)
-        expect(adderZ > minimum).toBeTruthy()
-        expect(filterZ > minimum).toBeTruthy()
-        expect(adderZ > filterZ).toBeTruthy()
+        assert.isTrue(adderZ > minimum)
+        assert.isTrue(filterZ > minimum)
+        assert.isTrue(adderZ > filterZ)
 
       check(1000)
 
@@ -268,68 +277,72 @@ describe 'Annotator', ->
 
     beforeEach ->
       mockBrowserRange = {
-        cloneRange: jasmine.createSpy('Range#cloneRange()')
+        cloneRange: sinon.stub()
       }
-      mockBrowserRange.cloneRange.andReturn(mockBrowserRange)
+      mockBrowserRange.cloneRange.returns(mockBrowserRange)
 
-      # This mock pretends to be both NomalizedRange and BrowserRange.
+      # This mock pretends to be both NormalizedRange and BrowserRange.
       mockRange = {
-        limit: jasmine.createSpy('NormalizedRange#limit()')
-        normalize: jasmine.createSpy('BrowserRange#normalize()')
-        toRange: jasmine.createSpy('NormalizedRange#toRange()').andReturn('range')
+        limit: sinon.stub()
+        normalize: sinon.stub()
+        toRange: sinon.stub().returns('range')
       }
-      mockRange.limit.andReturn(mockRange)
-      mockRange.normalize.andReturn(mockRange)
+      mockRange.limit.returns(mockRange)
+      mockRange.normalize.returns(mockRange)
 
       # https://developer.mozilla.org/en/nsISelection
       mockSelection = {
-        getRangeAt: jasmine.createSpy('Selection#getRangeAt()').andReturn(mockBrowserRange)
-        removeAllRanges: jasmine.createSpy('Selection#removeAllRanges()')
-        addRange: jasmine.createSpy('Selection#addRange()')
+        getRangeAt: sinon.stub().returns(mockBrowserRange)
+        removeAllRanges: sinon.spy()
+        addRange: sinon.spy()
         rangeCount: 1
       }
       mockGlobal = {
-        getSelection: jasmine.createSpy('window.getSelection()').andReturn(mockSelection)
+        getSelection: sinon.stub().returns(mockSelection)
       }
-      spyOn(util, 'getGlobal').andReturn(mockGlobal)
-      spyOn(Range, 'BrowserRange').andReturn(mockRange)
+      sinon.stub(util, 'getGlobal').returns(mockGlobal)
+      sinon.stub(Range, 'BrowserRange').returns(mockRange)
+
+    afterEach ->
+      util.getGlobal.restore()
+      Range.BrowserRange.restore()
 
     it "should retrieve the global object and call getSelection()", ->
       annotator.getSelectedRanges()
-      expect(mockGlobal.getSelection).toHaveBeenCalled()
+      assert(mockGlobal.getSelection.calledOnce)
 
     it "should retrieve the global object and call getSelection()", ->
       ranges = annotator.getSelectedRanges()
-      expect(ranges).toEqual([mockRange])
+      assert.deepEqual(ranges, [mockRange])
 
     it "should remove any failed calls to NormalizedRange#limit(), but re-add them to the global selection", ->
-      mockRange.limit.andReturn(null)
+      mockRange.limit.returns(null)
       ranges = annotator.getSelectedRanges()
-      expect(ranges).toEqual([])
-      expect(mockSelection.addRange).toHaveBeenCalledWith(mockBrowserRange)
+      assert.deepEqual(ranges, [])
+      assert.isTrue(mockSelection.addRange.calledWith(mockBrowserRange))
 
     it "should return an empty array if selection.isCollapsed is true", ->
       mockSelection.isCollapsed = true
       ranges = annotator.getSelectedRanges()
-      expect(ranges).toEqual([])
+      assert.deepEqual(ranges, [])
 
     it "should deselect all current ranges", ->
       ranges = annotator.getSelectedRanges()
-      expect(mockSelection.removeAllRanges).toHaveBeenCalled()
+      assert(mockSelection.removeAllRanges.calledOnce)
 
     it "should reassign the newly normalized ranges", ->
       ranges = annotator.getSelectedRanges()
-      expect(mockSelection.addRange).toHaveBeenCalled()
-      expect(mockSelection.addRange).toHaveBeenCalledWith('range')
+      assert(mockSelection.addRange.calledOnce)
+      assert.isTrue(mockSelection.addRange.calledWith('range'))
 
   describe "createAnnotation", ->
     it "should return an empty annotation", ->
-      expect(annotator.createAnnotation()).toEqual({})
+      assert.deepEqual(annotator.createAnnotation(), {})
 
     it "should fire the 'beforeAnnotationCreated' event providing the annotation", ->
-      spyOn(annotator, 'publish')
+      sinon.spy(annotator, 'publish')
       annotator.createAnnotation()
-      expect(annotator.publish).toHaveBeenCalledWith('beforeAnnotationCreated', [{}])
+      assert.isTrue(annotator.publish.calledWith('beforeAnnotationCreated', [{}]))
 
   describe "setupAnnotation", ->
     annotation = null
@@ -338,7 +351,7 @@ describe 'Annotator', ->
     element = null
     annotationObj = null
     normalizedRange = null
-    sniffedRange= null
+    sniffedRange = null
 
     beforeEach ->
       quote   = 'This is some annotated text'
@@ -346,15 +359,15 @@ describe 'Annotator', ->
       element = $('<span />')
 
       normalizedRange = {
-        text: jasmine.createSpy('normalizedRange#text()').andReturn(quote)
-        serialize: jasmine.createSpy('normalizedRange#serialize()').andReturn({})
+        text: sinon.stub().returns(quote)
+        serialize: sinon.stub().returns({})
       }
       sniffedRange = {
-        normalize: jasmine.createSpy('sniffedRange#normalize()').andReturn(normalizedRange)
+        normalize: sinon.stub().returns(normalizedRange)
       }
-      spyOn(Range, 'sniff').andReturn(sniffedRange)
-      spyOn(annotator, 'highlightRange').andReturn(element)
-      spyOn(annotator, 'publish')
+      sinon.stub(Range, 'sniff').returns(sniffedRange)
+      sinon.stub(annotator, 'highlightRange').returns(element)
+      sinon.spy(annotator, 'publish')
 
       annotationObj = {
         text: comment,
@@ -362,55 +375,58 @@ describe 'Annotator', ->
       }
       annotation = annotator.setupAnnotation(annotationObj)
 
+    afterEach ->
+      Range.sniff.restore()
+
     it "should return the annotation object with a comment", ->
-      expect(annotation.text).toEqual(comment)
+      assert.equal(annotation.text, comment)
 
     it "should return the annotation object with the quoted text", ->
-      expect(annotation.quote).toEqual(quote)
+      assert.equal(annotation.quote, quote)
 
     it "should trim whitespace from start and end of quote", ->
-      normalizedRange.text.andReturn('\n\t   ' + quote + '   \n')
+      normalizedRange.text.returns('\n\t   ' + quote + '   \n')
       annotation = annotator.setupAnnotation(annotationObj)
-      expect(annotation.quote).toEqual(quote)
+      assert.equal(annotation.quote, quote)
 
     it "should set the annotation.ranges", ->
-      expect(annotation.ranges).toEqual([{}])
+      assert.deepEqual(annotation.ranges, [{}])
 
     it "should exclude any ranges that could not be normalized", ->
       e = new Range.RangeError("typ", "msg")
-      sniffedRange.normalize = jasmine.createSpy('sniffedRange#normalize()').andThrow(e)
+      sniffedRange.normalize.throws(e)
       annotation = annotator.setupAnnotation({
         text: comment,
         ranges: [1]
       })
 
-      expect(annotation.ranges).toEqual([])
+      assert.deepEqual(annotation.ranges, [])
 
     it "should trigger rangeNormalizeFail for each range that can't be normalized", ->
       e = new Range.RangeError("typ", "msg")
-      sniffedRange.normalize = jasmine.createSpy('sniffedRange#normalize()').andThrow(e)
-      annotator.publish = jasmine.createSpy('Annotator#publish()')
+      sniffedRange.normalize.throws(e)
+      annotator.publish = sinon.spy()
       annotation = annotator.setupAnnotation({
         text: comment,
         ranges: [1]
       })
 
-      expect(annotator.publish).toHaveBeenCalledWith('rangeNormalizeFail', [annotation, 1, e])
+      assert.isTrue(annotator.publish.calledWith('rangeNormalizeFail', [annotation, 1, e]))
 
     it "should call Annotator#highlightRange() with the normed range", ->
-      expect(annotator.highlightRange).toHaveBeenCalledWith(normalizedRange)
+      assert.isTrue(annotator.highlightRange.calledWith(normalizedRange))
 
     it "should store the annotation in the highlighted element's data store", ->
-      expect(element.data('annotation')).toBe(annotation)
+      assert.equal(element.data('annotation'), annotation)
 
   describe "updateAnnotation", ->
     it "should publish the 'beforeAnnotationUpdated' and 'annotationUpdated' events", ->
       annotation = {text: "my annotation comment"}
-      spyOn(annotator, 'publish')
+      sinon.spy(annotator, 'publish')
       annotator.updateAnnotation(annotation)
 
-      expect(annotator.publish).toHaveBeenCalledWith('beforeAnnotationUpdated', [annotation])
-      expect(annotator.publish).toHaveBeenCalledWith('annotationUpdated', [annotation])
+      assert.isTrue(annotator.publish.calledWith('beforeAnnotationUpdated', [annotation]))
+      assert.isTrue(annotator.publish.calledWith('annotationUpdated', [annotation]))
 
   describe "deleteAnnotation", ->
     annotation = null
@@ -424,64 +440,62 @@ describe 'Annotator', ->
       div = $('<div />').append(annotation.highlights)
 
     it "should remove the highlights from the DOM", ->
-      spyOn(annotator, 'publish')
       annotation.highlights.each ->
-        expect($(this).parent().length).toBe(1)
+        assert.lengthOf($(this).parent(), 1)
 
       annotator.deleteAnnotation(annotation)
       annotation.highlights.each ->
-        expect($(this).parent().length).toBe(0)
+        assert.lengthOf($(this).parent(), 0)
 
     it "should leave the content of the highlights in place", ->
-      spyOn(annotator, 'publish')
       annotator.deleteAnnotation(annotation)
-      expect(div.html()).toBe('<em>Hats</em><em>Gloves</em>')
+      assert.equal(div.html(), '<em>Hats</em><em>Gloves</em>')
 
     it "should not choke when there are no highlights", ->
-      expect(-> annotator.deleteAnnotation({})).not.toThrow(Error)
+      assert.doesNotThrow((-> annotator.deleteAnnotation({})), Error)
 
     it "should publish the 'annotationDeleted' event", ->
-      spyOn(annotator, 'publish')
+      sinon.spy(annotator, 'publish')
       annotator.deleteAnnotation(annotation)
-      expect(annotator.publish).toHaveBeenCalledWith('annotationDeleted', [annotation])
+      assert.isTrue(annotator.publish.calledWith('annotationDeleted', [annotation]))
 
   describe "loadAnnotations", ->
     beforeEach ->
-      spyOn(annotator, 'setupAnnotation')
-      spyOn(annotator, 'publish')
+      sinon.stub(annotator, 'setupAnnotation')
+      sinon.spy(annotator, 'publish')
 
     it "should call Annotator#setupAnnotation for each annotation in the Array", ->
       annotations = [{}, {}, {}, {}]
       annotator.loadAnnotations(annotations)
-      expect(annotator.setupAnnotation.callCount).toBe(4)
+      assert.equal(annotator.setupAnnotation.callCount, 4)
 
     it "should publish the annotationsLoaded event with all loaded annotations", ->
       annotations = [{}, {}, {}, {}]
       annotator.loadAnnotations(annotations.slice())
-      expect(annotator.publish).toHaveBeenCalledWith('annotationsLoaded', [annotations])
+      assert.isTrue(annotator.publish.calledWith('annotationsLoaded', [annotations]))
 
     it "should break the annotations into blocks of 10", ->
+      clock = sinon.useFakeTimers()
       annotations = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
-      count = annotations.length
 
       annotator.loadAnnotations(annotations)
-      expect(annotator.setupAnnotation.callCount).toBe(10)
+      assert.equal(annotator.setupAnnotation.callCount, 10)
 
-      waitsFor ->
-        !annotations.length
+      while annotations.length > 0
+        clock.tick(10)
 
-      runs ->
-        expect(annotator.setupAnnotation.callCount).toBe(13)
+      assert.equal(annotator.setupAnnotation.callCount, 13)
+      clock.restore()
 
   describe "dumpAnnotations", ->
     it "returns false and prints a warning if no Store plugin is active", ->
-      spyOn(console, 'warn')
-      expect(annotator.dumpAnnotations()).toBeFalsy()
-      expect(console.warn).toHaveBeenCalled()
+      sinon.stub(console, 'warn')
+      assert.isFalse(annotator.dumpAnnotations())
+      assert(console.warn.calledOnce)
 
     it "returns the results of the Store plugins dumpAnnotations method", ->
       annotator.plugins.Store = { dumpAnnotations: -> [1,2,3] }
-      expect(annotator.dumpAnnotations()).toEqual([1,2,3])
+      assert.deepEqual(annotator.dumpAnnotations(), [1,2,3])
 
   describe "highlightRange", ->
     it "should return a highlight element for every textNode in the range", ->
@@ -490,10 +504,10 @@ describe 'Annotator', ->
         textNodes: -> textNodes
 
       elements = annotator.highlightRange(mockRange)
-      expect(elements.length).toBe(2)
-      expect(elements[0].className).toBe('annotator-hl')
-      expect(elements[0].firstChild).toBe(textNodes[0])
-      expect(elements[1].firstChild).toBe(textNodes[1])
+      assert.lengthOf(elements, 2)
+      assert.equal(elements[0].className, 'annotator-hl')
+      assert.equal(elements[0].firstChild, textNodes[0])
+      assert.equal(elements[1].firstChild, textNodes[1])
 
     it "should ignore textNodes that contain only whitespace", ->
       textNodes = (document.createTextNode(text) for text in ['hello', '\n ', '      '])
@@ -501,9 +515,9 @@ describe 'Annotator', ->
         textNodes: -> textNodes
 
       elements = annotator.highlightRange(mockRange)
-      expect(elements.length).toBe(1)
-      expect(elements[0].className).toBe('annotator-hl')
-      expect(elements[0].firstChild).toBe(textNodes[0])
+      assert.lengthOf(elements, 1)
+      assert.equal(elements[0].className, 'annotator-hl')
+      assert.equal(elements[0].firstChild, textNodes[0])
 
     it "should set highlight element class names to its second argument", ->
       textNodes = (document.createTextNode(text) for text in ['hello', 'world'])
@@ -511,7 +525,7 @@ describe 'Annotator', ->
         textNodes: -> textNodes
 
       elements = annotator.highlightRange(mockRange, 'monkeys')
-      expect(elements[0].className).toBe('monkeys')
+      assert.equal(elements[0].className, 'monkeys')
 
   describe "highlightRanges", ->
     it "should return a list of highlight elements all highlighted ranges", ->
@@ -520,8 +534,8 @@ describe 'Annotator', ->
         textNodes: -> textNodes
       ranges = [mockRange, mockRange, mockRange]
       elements = annotator.highlightRanges(ranges)
-      expect(elements.length).toBe(6)
-      expect(elements[0].className).toBe('annotator-hl')
+      assert.lengthOf(elements, 6)
+      assert.equal(elements[0].className, 'annotator-hl')
 
     it "should set highlight element class names to its second argument", ->
       textNodes = (document.createTextNode(text) for text in ['hello', 'world'])
@@ -529,162 +543,157 @@ describe 'Annotator', ->
         textNodes: -> textNodes
       ranges = [mockRange, mockRange, mockRange]
       elements = annotator.highlightRanges(ranges, 'monkeys')
-      expect(elements[0].className).toBe('monkeys')
+      assert.equal(elements[0].className, 'monkeys')
 
   describe "addPlugin", ->
     plugin = null
 
     beforeEach ->
       plugin = {
-        pluginInit: jasmine.createSpy('Plugin#pluginInit()')
+        pluginInit: sinon.spy()
       }
-      Annotator.Plugin.Foo = jasmine.createSpy('Plugin#constructor()').andReturn(plugin)
+      Annotator.Plugin.Foo = sinon.stub().returns(plugin)
 
     it "should add and instantiate a plugin of the specified name", ->
       annotator.addPlugin('Foo')
-      expect(Annotator.Plugin.Foo).toHaveBeenCalledWith(annotator.element[0], undefined)
+      assert.isTrue(Annotator.Plugin.Foo.calledWith(annotator.element[0], undefined))
 
     it "should pass on the provided options", ->
       options = {foo: 'bar'}
       annotator.addPlugin('Foo', options)
-      expect(Annotator.Plugin.Foo).toHaveBeenCalledWith(annotator.element[0], options)
+      assert.isTrue(Annotator.Plugin.Foo.calledWith(annotator.element[0], options))
 
     it "should attach the Annotator instance", ->
       annotator.addPlugin('Foo')
-      expect(plugin.annotator).toBe(annotator)
+      assert.equal(plugin.annotator, annotator)
 
     it "should call Plugin#pluginInit()", ->
       annotator.addPlugin('Foo')
-      expect(plugin.pluginInit).toHaveBeenCalled()
+      assert(plugin.pluginInit.calledOnce)
 
     it "should complain if you try and instantiate a plugin twice", ->
-      spyOn(console, 'error')
+      sinon.stub(console, 'error')
       annotator.addPlugin('Foo')
       annotator.addPlugin('Foo')
-      expect(Annotator.Plugin.Foo.callCount).toBe(1)
-      expect(console.error).toHaveBeenCalled()
+      assert.equal(Annotator.Plugin.Foo.callCount, 1)
+      assert(console.error.calledOnce)
+      console.error.restore()
 
     it "should complain if you try and instantiate a plugin that doesn't exist", ->
-      spyOn(console, 'error')
+      sinon.stub(console, 'error')
       annotator.addPlugin('Bar')
-      expect(annotator.plugins['Bar']?).toBeFalsy()
-      expect(console.error).toHaveBeenCalled()
+      assert.isFalse(annotator.plugins['Bar']?)
+      assert(console.error.calledOnce)
+      console.error.restore()
 
   describe "showEditor", ->
     beforeEach ->
-      spyOn(annotator, 'publish')
-      spyOn(annotator, 'deleteAnnotation')
-      spyOn(annotator.editor, 'load')
-      spyOn(annotator.editor.element, 'css')
+      sinon.spy(annotator, 'publish')
+      sinon.spy(annotator, 'deleteAnnotation')
+      sinon.spy(annotator.editor, 'load')
+      sinon.spy(annotator.editor.element, 'css')
 
     it "should call Editor#load() on the Annotator#editor", ->
       annotation = {text: 'my annotation comment'}
       annotator.showEditor(annotation, {})
-      expect(annotator.editor.load).toHaveBeenCalledWith(annotation)
+      assert.isTrue(annotator.editor.load.calledWith(annotation))
 
     it "should set the top/left properties of the Editor#element", ->
       location = {top: 20, left: 20}
       annotator.showEditor({}, location)
-      expect(annotator.editor.element.css).toHaveBeenCalledWith(location)
+      assert.isTrue(annotator.editor.element.css.calledWith(location))
 
     it "should publish the 'annotationEditorShown' event passing the editor and annotations", ->
       annotation = {text: 'my annotation comment'}
       annotator.showEditor(annotation, {})
-      expect(annotator.publish).toHaveBeenCalledWith(
-        'annotationEditorShown', [annotator.editor, annotation]
-      )
+      assert(annotator.publish.calledWith('annotationEditorShown', [annotator.editor, annotation]))
 
   describe "onEditorHide", ->
     it "should publish the 'annotationEditorHidden' event and provide the Editor and annotation", ->
-      spyOn(annotator, 'publish')
+      sinon.spy(annotator, 'publish')
       annotator.onEditorHide()
-      expect(annotator.publish).toHaveBeenCalledWith(
-        'annotationEditorHidden', [annotator.editor]
-      )
+      assert(annotator.publish.calledWith('annotationEditorHidden', [annotator.editor]))
 
     it "should set the Annotator#ignoreMouseup property to false", ->
       annotator.ignoreMouseup = true
       annotator.onEditorHide()
-      expect(annotator.ignoreMouseup).toBe(false)
+      assert.isFalse(annotator.ignoreMouseup)
 
   describe "onEditorSubmit", ->
     annotation = null
 
     beforeEach ->
       annotation = {"text": "bah"}
-      spyOn(annotator, 'publish')
-      spyOn(annotator, 'setupAnnotation')
-      spyOn(annotator, 'updateAnnotation')
+      sinon.spy(annotator, 'publish')
+      sinon.spy(annotator, 'setupAnnotation')
+      sinon.spy(annotator, 'updateAnnotation')
 
     it "should publish the 'annotationEditorSubmit' event and pass the Editor and annotation", ->
       annotator.onEditorSubmit(annotation)
-      expect(annotator.publish).toHaveBeenCalledWith(
-        'annotationEditorSubmit', [annotator.editor, annotation]
-      )
+      assert(annotator.publish.calledWith('annotationEditorSubmit', [annotator.editor, annotation]))
 
   describe "showViewer", ->
     beforeEach ->
-      spyOn(annotator, 'publish')
-      spyOn(annotator.viewer, 'load')
-      spyOn(annotator.viewer.element, 'css')
+      sinon.spy(annotator, 'publish')
+      sinon.spy(annotator.viewer, 'load')
+      sinon.spy(annotator.viewer.element, 'css')
 
     it "should call Viewer#load() on the Annotator#viewer", ->
       annotations = [{text: 'my annotation comment'}]
       annotator.showViewer(annotations, {})
-      expect(annotator.viewer.load).toHaveBeenCalledWith(annotations)
+      assert.isTrue(annotator.viewer.load.calledWith(annotations))
 
     it "should set the top/left properties of the Editor#element", ->
       location = {top: 20, left: 20}
       annotator.showViewer([], location)
-      expect(annotator.viewer.element.css).toHaveBeenCalledWith(location)
+      assert.isTrue(annotator.viewer.element.css.calledWith(location))
 
     it "should publish the 'annotationViewerShown' event passing the viewer and annotations", ->
       annotations = [{text: 'my annotation comment'}]
       annotator.showViewer(annotations, {})
-      expect(annotator.publish).toHaveBeenCalledWith(
-        'annotationViewerShown', [annotator.viewer, annotations]
-      )
+      assert(annotator.publish.calledWith('annotationViewerShown', [annotator.viewer, annotations]))
 
   describe "startViewerHideTimer", ->
     beforeEach ->
-      spyOn(annotator.viewer, 'hide')
+      sinon.spy(annotator.viewer, 'hide')
 
     it "should call Viewer.hide() on the Annotator#viewer after 250ms", ->
+      clock = sinon.useFakeTimers()
       annotator.startViewerHideTimer()
-      expect(annotator.viewerHideTimer).toBeTruthy()
-      waits 250
-      runs ->
-        expect(annotator.viewer.hide).toHaveBeenCalled()
+      clock.tick(250)
+      assert(annotator.viewer.hide.calledOnce)
+      clock.restore()
 
     it "should NOT call Viewer.hide() on the Annotator#viewer if @viewerHideTimer is set", ->
+      clock = sinon.useFakeTimers()
       annotator.viewerHideTimer = 60
       annotator.startViewerHideTimer()
-      waits 250
-      runs ->
-        expect(annotator.viewer.hide).not.toHaveBeenCalled()
+      clock.tick(250)
+      assert.isFalse(annotator.viewer.hide.calledOnce)
+      clock.restore()
 
   describe "clearViewerHideTimer", ->
     it "should clear the @viewerHideTimer property", ->
       annotator.viewerHideTimer = 456
       annotator.clearViewerHideTimer()
-      expect(annotator.viewerHideTimer).toBe(false)
+      assert.isFalse(annotator.viewerHideTimer)
 
   describe "checkForStartSelection", ->
     beforeEach ->
-      spyOn(annotator, 'startViewerHideTimer')
+      sinon.spy(annotator, 'startViewerHideTimer')
       annotator.mouseIsDown = false
       annotator.checkForStartSelection()
 
     it "should call Annotator#startViewerHideTimer()", ->
-      expect(annotator.startViewerHideTimer).toHaveBeenCalled()
+      assert(annotator.startViewerHideTimer.calledOnce)
 
     it "should NOT call #startViewerHideTimer() if mouse is over the annotator", ->
       annotator.startViewerHideTimer.reset()
       annotator.checkForStartSelection({target: annotator.viewer.element})
-      expect(annotator.startViewerHideTimer).not.toHaveBeenCalled()
+      assert.isFalse(annotator.startViewerHideTimer.called)
 
     it "should set @mouseIsDown to true", ->
-      expect(annotator.mouseIsDown).toBe(true)
+      assert.isTrue(annotator.mouseIsDown)
 
   describe "checkForEndSelection", ->
     mockEvent = null
@@ -696,38 +705,41 @@ describe 'Annotator', ->
       mockOffset = {top: 0, left: 0}
       mockRanges = [{}]
 
-      spyOn(util, 'mousePosition').andReturn(mockOffset)
-      spyOn(annotator.adder, 'show').andReturn(annotator.adder)
-      spyOn(annotator.adder, 'hide').andReturn(annotator.adder)
-      spyOn(annotator.adder, 'css').andReturn(annotator.adder)
-      spyOn(annotator, 'getSelectedRanges').andReturn(mockRanges)
+      sinon.stub(util, 'mousePosition').returns(mockOffset)
+      sinon.stub(annotator.adder, 'show').returns(annotator.adder)
+      sinon.stub(annotator.adder, 'hide').returns(annotator.adder)
+      sinon.stub(annotator.adder, 'css').returns(annotator.adder)
+      sinon.stub(annotator, 'getSelectedRanges').returns(mockRanges)
 
       annotator.mouseIsDown    = true
       annotator.selectedRanges = []
       annotator.checkForEndSelection(mockEvent)
 
+    afterEach ->
+      util.mousePosition.restore()
+
     it "should get the current selection from Annotator#getSelectedRanges()", ->
-      expect(annotator.getSelectedRanges).toHaveBeenCalled()
+      assert(annotator.getSelectedRanges.calledOnce)
 
     it "should set @mouseIsDown to false", ->
-      expect(annotator.mouseIsDown).toBe(false)
+      assert.isFalse(annotator.mouseIsDown)
 
     it "should set the Annotator#selectedRanges property", ->
-      expect(annotator.selectedRanges).toBe(mockRanges)
+      assert.equal(annotator.selectedRanges, mockRanges)
 
     it "should display the Annotator#adder if valid selection", ->
-      expect(annotator.adder.show).toHaveBeenCalled()
-      expect(annotator.adder.css).toHaveBeenCalledWith(mockOffset)
-      expect(util.mousePosition).toHaveBeenCalledWith(mockEvent, annotator.wrapper[0])
+      assert(annotator.adder.show.calledOnce)
+      assert.isTrue(annotator.adder.css.calledWith(mockOffset))
+      assert.isTrue(util.mousePosition.calledWith(mockEvent, annotator.wrapper[0]))
 
     it "should hide the Annotator#adder if NOT valid selection", ->
       annotator.adder.hide.reset()
       annotator.adder.show.reset()
-      annotator.getSelectedRanges.andReturn([])
+      annotator.getSelectedRanges.returns([])
 
       annotator.checkForEndSelection(mockEvent)
-      expect(annotator.adder.hide).toHaveBeenCalled()
-      expect(annotator.adder.show).not.toHaveBeenCalled()
+      assert(annotator.adder.hide.calledOnce)
+      assert.isFalse(annotator.adder.show.called)
 
     it "should hide the Annotator#adder if target is part of the annotator", ->
       annotator.adder.hide.reset()
@@ -736,20 +748,20 @@ describe 'Annotator', ->
       mockNode = document.createElement('span')
       mockEvent.target = annotator.viewer.element[0]
 
-      spyOn(annotator, 'isAnnotator').andReturn(true)
-      annotator.getSelectedRanges.andReturn([{commonAncestor: mockNode}])
+      sinon.stub(annotator, 'isAnnotator').returns(true)
+      annotator.getSelectedRanges.returns([{commonAncestor: mockNode}])
 
       annotator.checkForEndSelection(mockEvent)
-      expect(annotator.isAnnotator).toHaveBeenCalledWith(mockNode)
+      assert.isTrue(annotator.isAnnotator.calledWith(mockNode))
 
-      expect(annotator.adder.hide).not.toHaveBeenCalled()
-      expect(annotator.adder.show).not.toHaveBeenCalled()
+      assert.isFalse(annotator.adder.hide.called)
+      assert.isFalse(annotator.adder.show.called)
 
     it "should return if @ignoreMouseup is true", ->
       annotator.getSelectedRanges.reset()
       annotator.ignoreMouseup = true
       annotator.checkForEndSelection(mockEvent)
-      expect(annotator.getSelectedRanges).not.toHaveBeenCalled()
+      assert.isFalse(annotator.getSelectedRanges.called)
 
   describe "isAnnotator", ->
     it "should return true if the element is part of the annotator", ->
@@ -760,7 +772,7 @@ describe 'Annotator', ->
       ]
 
       for element in elements
-        expect(annotator.isAnnotator(element)).toBe(true)
+        assert.isTrue(annotator.isAnnotator(element))
 
     it "should return false if the element is NOT part of the annotator", ->
       elements = [
@@ -770,7 +782,7 @@ describe 'Annotator', ->
         annotator.wrapper
       ]
       for element in elements
-        expect(annotator.isAnnotator(element)).toBe(false)
+        assert.isFalse(annotator.isAnnotator(element))
 
   describe "onHighlightMouseover", ->
     element = null
@@ -786,26 +798,29 @@ describe 'Annotator', ->
       }
       mockOffset = {top: 0, left: 0}
 
-      spyOn(util, 'mousePosition').andReturn(mockOffset)
-      spyOn(annotator, 'showViewer')
+      sinon.stub(util, 'mousePosition').returns(mockOffset)
+      sinon.spy(annotator, 'showViewer')
 
       annotator.viewerHideTimer = 60
       annotator.onHighlightMouseover(mockEvent)
 
+    afterEach ->
+      util.mousePosition.restore()
+
     it "should clear the current @viewerHideTimer", ->
-      expect(annotator.viewerHideTimer).toBe(false)
+      assert.isFalse(annotator.viewerHideTimer)
 
     it "should fetch the current mouse position", ->
-      expect(util.mousePosition).toHaveBeenCalledWith(mockEvent, annotator.wrapper[0])
+      assert.isTrue(util.mousePosition.calledWith(mockEvent, annotator.wrapper[0]))
 
     it "should display the Annotation#viewer with annotations", ->
-      expect(annotator.showViewer).toHaveBeenCalledWith([annotation], mockOffset)
+      assert.isTrue(annotator.showViewer.calledWith([annotation], mockOffset))
 
   describe "onAdderMousedown", ->
     it "should set the @ignoreMouseup property to true", ->
       annotator.ignoreMouseup = false
       annotator.onAdderMousedown()
-      expect(annotator.ignoreMouseup).toBe(true)
+      assert.isTrue(annotator.ignoreMouseup)
 
   describe "onAdderClick", ->
     annotation = null
@@ -824,59 +839,62 @@ describe 'Annotator', ->
 
       mockOffset = {top: 0, left:0}
 
-      mockSubscriber = jasmine.createSpy('mockSubscriber')
+      mockSubscriber = sinon.spy()
       annotator.subscribe('annotationCreated', mockSubscriber)
 
       normalizedRange = {
-        text: jasmine.createSpy('normalizedRange#text()').andReturn(quote)
-        serialize: jasmine.createSpy('normalizedRange#serialize()').andReturn({})
+        text: sinon.stub().returns(quote)
+        serialize: sinon.stub().returns({})
       }
       sniffedRange = {
-        normalize: jasmine.createSpy('sniffedRange#normalize()').andReturn(normalizedRange)
+        normalize: sinon.stub().returns(normalizedRange)
       }
 
-      spyOn(annotator.adder, 'hide')
-      spyOn(annotator.adder, 'position').andReturn(mockOffset)
-      spyOn(annotator, 'createAnnotation').andReturn(annotation)
-      spyOn(annotator, 'setupAnnotation').andCallThrough()
-      spyOn(annotator, 'deleteAnnotation').andCallThrough()
-      spyOn(annotator, 'showEditor')
-      spyOn(Range, 'sniff').andReturn(sniffedRange)
-      spyOn(annotator, 'highlightRange').andReturn(element)
-      spyOn(element, 'addClass')
+      sinon.stub(annotator.adder, 'hide')
+      sinon.stub(annotator.adder, 'position').returns(mockOffset)
+      sinon.stub(annotator, 'createAnnotation').returns(annotation)
+      sinon.spy(annotator, 'setupAnnotation')
+      sinon.stub(annotator, 'deleteAnnotation')
+      sinon.stub(annotator, 'showEditor')
+      sinon.stub(Range, 'sniff').returns(sniffedRange)
+      sinon.stub(annotator, 'highlightRange').returns(element)
+      sinon.spy(element, 'addClass')
       annotator.selectedRanges = ['foo']
       annotator.onAdderClick()
 
+    afterEach ->
+      Range.sniff.restore()
+
     it "should hide the Annotation#adder", ->
-      expect(annotator.adder.hide).toHaveBeenCalled()
+      assert(annotator.adder.hide.calledOnce)
 
     it "should create a new annotation", ->
-      expect(annotator.createAnnotation).toHaveBeenCalled()
+      assert(annotator.createAnnotation.calledOnce)
 
     it "should set up the annotation", ->
-      expect(annotator.setupAnnotation).toHaveBeenCalledWith(annotation)
+      assert.isTrue(annotator.setupAnnotation.calledWith(annotation))
 
     it "should display the Annotation#editor in the same place as the Annotation#adder", ->
-      expect(annotator.adder.position).toHaveBeenCalled()
-      expect(annotator.showEditor).toHaveBeenCalledWith(annotation, mockOffset)
+      assert(annotator.adder.position.calledOnce)
+      assert.isTrue(annotator.showEditor.calledWith(annotation, mockOffset))
 
     it "should add temporary highlights to the document to show the user what they selected", ->
-      expect(annotator.highlightRange).toHaveBeenCalledWith(normalizedRange)
-      expect(element[0].className).toBe('annotator-hl annotator-hl-temporary')
+      assert.isTrue(annotator.highlightRange.calledWith(normalizedRange))
+      assert.equal(element[0].className, 'annotator-hl annotator-hl-temporary')
 
     it "should persist the temporary highlights if the annotation is saved", ->
       annotator.publish('annotationEditorSubmit')
-      expect(element[0].className).toBe('annotator-hl')
+      assert.equal(element[0].className, 'annotator-hl')
 
     it "should trigger the 'annotationCreated' event if the edit is saved", ->
       annotator.onEditorSubmit(annotation)
-      expect(mockSubscriber).toHaveBeenCalledWith(annotation)
+      assert.isTrue(mockSubscriber.calledWith(annotation))
 
     it "should call Annotator#deleteAnnotation if editing is cancelled", ->
       do annotator.onEditorHide
       do annotator.onEditorSubmit
-      expect(mockSubscriber).not.toHaveBeenCalledWith('annotationCreated')
-      expect(annotator.deleteAnnotation).toHaveBeenCalledWith(annotation)
+      assert.isFalse(mockSubscriber.calledWith('annotationCreated'))
+      assert.isTrue(annotator.deleteAnnotation.calledWith(annotation))
 
   describe "onEditAnnotation", ->
     annotation = null
@@ -886,36 +904,36 @@ describe 'Annotator', ->
     beforeEach ->
       annotation = {text: "my mock annotation"}
       mockOffset = {top: 0, left: 0}
-      mockSubscriber = jasmine.createSpy('mockSubscriber')
-      spyOn(annotator, "showEditor")
-      spyOn(annotator.viewer, "hide")
-      spyOn(annotator.viewer.element, "position").andReturn(mockOffset)
-      spyOn(annotator, "updateAnnotation")
+      mockSubscriber = sinon.spy()
+      sinon.spy(annotator, "showEditor")
+      sinon.spy(annotator.viewer, "hide")
+      sinon.stub(annotator.viewer.element, "position").returns(mockOffset)
+      sinon.spy(annotator, "updateAnnotation")
       annotator.onEditAnnotation(annotation)
 
     it "should display the Annotator#editor in the same positions as Annotatorviewer", ->
-      expect(annotator.viewer.hide).toHaveBeenCalled()
-      expect(annotator.showEditor).toHaveBeenCalledWith(annotation, mockOffset)
+      assert(annotator.viewer.hide.calledOnce)
+      assert.isTrue(annotator.showEditor.calledWith(annotation, mockOffset))
 
     it "should call 'updateAnnotation' event if the edit is saved", ->
       annotator.onEditorSubmit(annotation)
-      expect(annotator.updateAnnotation).toHaveBeenCalledWith(annotation)
+      assert.isTrue(annotator.updateAnnotation.calledWith(annotation))
 
     it "should not call 'updateAnnotation' if editing is cancelled", ->
       do annotator.onEditorHide
       annotator.onEditorSubmit(annotation)
-      expect(annotator.updateAnnotation).not.toHaveBeenCalledWith(annotation)
+      assert.isFalse(annotator.updateAnnotation.calledWith(annotation))
 
   describe "onDeleteAnnotation", ->
     it "should pass the annotation on to Annotator#deleteAnnotation()", ->
       annotation = {text: "my mock annotation"}
-      spyOn(annotator, "deleteAnnotation")
-      spyOn(annotator.viewer, "hide")
+      sinon.spy(annotator, "deleteAnnotation")
+      sinon.spy(annotator.viewer, "hide")
 
       annotator.onDeleteAnnotation(annotation)
 
-      expect(annotator.viewer.hide).toHaveBeenCalled()
-      expect(annotator.deleteAnnotation).toHaveBeenCalledWith(annotation)
+      assert(annotator.viewer.hide.calledOnce)
+      assert.isTrue(annotator.deleteAnnotation.calledWith(annotation))
 
 describe "Annotator.noConflict()", ->
   _Annotator = null
@@ -928,22 +946,22 @@ describe "Annotator.noConflict()", ->
 
   it "should restore the value previously occupied by window.Annotator", ->
     Annotator.noConflict()
-    expect(window.Annotator).not.toBeDefined()
+    assert.isUndefined(window.Annotator)
 
   it "should return the Annotator object", ->
     result = Annotator.noConflict()
-    expect(result).toBe(_Annotator)
+    assert.equal(result, _Annotator)
 
 describe "Annotator.supported()", ->
   it "should return true if the browser has window.getSelection method", ->
     window.getSelection = ->
-    expect(Annotator.supported()).toBeTruthy()
+    assert.isTrue(Annotator.supported())
 
   xit "should return false if the browser has no window.getSelection method", ->
     # The method currently checks for getSelection on load and will always
     # return that result.
     window.getSelection = undefined
-    expect(Annotator.supported()).toBeFalsy()
+    assert.isFalse(Annotator.supported())
 
 describe "util.uuid()", ->
   it "should return a unique id on each call", ->
@@ -952,15 +970,15 @@ describe "util.uuid()", ->
 
     while counter--
       current = util.uuid()
-      expect(results.indexOf(current)).toBe(-1)
+      assert.equal(results.indexOf(current), -1)
       results.push current
 
 describe "util.preventEventDefault()", ->
   it "should call prevent default if the method exists", ->
-    event = {preventDefault: jasmine.createSpy('preventDefault')}
+    event = {preventDefault: sinon.spy()}
     util.preventEventDefault(event)
-    expect(event.preventDefault).toHaveBeenCalled()
+    assert(event.preventDefault.calledOnce)
 
-    expect(-> util.preventEventDefault(1)).not.toThrow(Error)
-    expect(-> util.preventEventDefault(null)).not.toThrow(Error)
-    expect(-> util.preventEventDefault(undefined)).not.toThrow(Error)
+    assert.doesNotThrow((-> util.preventEventDefault(1)), Error)
+    assert.doesNotThrow((-> util.preventEventDefault(null)), Error)
+    assert.doesNotThrow((-> util.preventEventDefault(undefined)), Error)

@@ -37,65 +37,65 @@ describe 'Annotator.Plugin.AnnotateItPermissions', ->
 
     it 'should NOT allow any action for an annotation with no owner info and no permissions', ->
       a = annotations[0]
-      expect(permissions.authorize(null,  a)).toBeFalsy()
-      expect(permissions.authorize('foo', a)).toBeFalsy()
+      assert.isFalse(permissions.authorize(null,  a))
+      assert.isFalse(permissions.authorize('foo', a))
       permissions.setUser({userId: 'alice', consumerKey: 'annotateit'})
-      expect(permissions.authorize(null,  a)).toBeFalsy()
-      expect(permissions.authorize('foo', a)).toBeFalsy()
+      assert.isFalse(permissions.authorize(null,  a))
+      assert.isFalse(permissions.authorize('foo', a))
 
     it 'should NOT allow any action if an annotation has only user set (but no consumer)', ->
       a = annotations[1]
-      expect(permissions.authorize(null,  a)).toBeFalsy()
-      expect(permissions.authorize('foo', a)).toBeFalsy()
+      assert.isFalse(permissions.authorize(null,  a))
+      assert.isFalse(permissions.authorize('foo', a))
       permissions.setUser({userId: 'alice', consumerKey: 'annotateit'})
-      expect(permissions.authorize(null,  a)).toBeFalsy()
-      expect(permissions.authorize('foo', a)).toBeFalsy()
+      assert.isFalse(permissions.authorize(null,  a))
+      assert.isFalse(permissions.authorize('foo', a))
 
     it 'should allow any action if the current auth info identifies the owner of the annotation', ->
       a = annotations[2]
       permissions.setUser({userId: 'alice', consumerKey: 'annotateit'})
-      expect(permissions.authorize(null,  a)).toBeTruthy()
-      expect(permissions.authorize('foo', a)).toBeTruthy()
+      assert.isTrue(permissions.authorize(null,  a))
+      assert.isTrue(permissions.authorize('foo', a))
 
     it 'should NOT allow any action for an annotation with no owner info and empty permissions field', ->
       a = annotations[3]
-      expect(permissions.authorize(null,  a)).toBeFalsy()
-      expect(permissions.authorize('foo', a)).toBeFalsy()
+      assert.isFalse(permissions.authorize(null,  a))
+      assert.isFalse(permissions.authorize('foo', a))
       permissions.setUser({userId: 'alice', consumerKey: 'annotateit'})
-      expect(permissions.authorize(null,  a)).toBeFalsy()
-      expect(permissions.authorize('foo', a)).toBeFalsy()
+      assert.isFalse(permissions.authorize(null,  a))
+      assert.isFalse(permissions.authorize('foo', a))
 
     it 'should allow an action when the action field contains the world group', ->
       a = annotations[4]
-      expect(permissions.authorize('read', a)).toBeTruthy()
+      assert.isTrue(permissions.authorize('read', a))
       permissions.setUser({userId: 'alice', consumerKey: 'annotateit'})
-      expect(permissions.authorize('read', a)).toBeTruthy()
+      assert.isTrue(permissions.authorize('read', a))
 
     it 'should allow an action when the action field contains the authenticated group and the plugin has auth info', ->
       a = annotations[5]
-      expect(permissions.authorize('update', a)).toBeFalsy()
+      assert.isFalse(permissions.authorize('update', a))
       permissions.setUser({userId: 'anyone', consumerKey: 'anywhere'})
-      expect(permissions.authorize('update', a)).toBeTruthy()
+      assert.isTrue(permissions.authorize('update', a))
 
     it 'should allow an action when the action field contains the consumer group and the plugin has auth info with a matching consumer', ->
       a = annotations[6]
-      expect(permissions.authorize('read', a)).toBeFalsy()
+      assert.isFalse(permissions.authorize('read', a))
       permissions.setUser({userId: 'anyone', consumerKey: 'anywhere'})
-      expect(permissions.authorize('read', a)).toBeFalsy()
+      assert.isFalse(permissions.authorize('read', a))
       permissions.setUser({userId: 'anyone', consumerKey: 'annotateit'})
-      expect(permissions.authorize('read', a)).toBeTruthy()
+      assert.isTrue(permissions.authorize('read', a))
 
     it 'should allow an action when the action field contains the consumer group and the plugin has auth info with a matching consumer', ->
       a = annotations[6]
-      expect(permissions.authorize('read', a)).toBeFalsy()
+      assert.isFalse(permissions.authorize('read', a))
       permissions.setUser({userId: 'anyone', consumerKey: 'anywhere'})
-      expect(permissions.authorize('read', a)).toBeFalsy()
+      assert.isFalse(permissions.authorize('read', a))
       permissions.setUser({userId: 'anyone', consumerKey: 'annotateit'})
-      expect(permissions.authorize('read', a)).toBeTruthy()
+      assert.isTrue(permissions.authorize('read', a))
 
     it 'should allow an action when the user is an admin of the annotation\'s consumer', ->
       a = annotations[2]
       permissions.setUser({userId: 'anyone', consumerKey: 'anywhere', admin: true})
-      expect(permissions.authorize('read', a)).toBeFalsy()
+      assert.isFalse(permissions.authorize('read', a))
       permissions.setUser({userId: 'anyone', consumerKey: 'annotateit', admin: true})
-      expect(permissions.authorize('read', a)).toBeTruthy()
+      assert.isTrue(permissions.authorize('read', a))
