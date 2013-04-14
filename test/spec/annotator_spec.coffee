@@ -474,19 +474,18 @@ describe 'Annotator', ->
       annotator.loadAnnotations(annotations.slice())
       assert.isTrue(annotator.publish.calledWith('annotationsLoaded', [annotations]))
 
-    it "should break the annotations into blocks of 10", (done) ->
+    it "should break the annotations into blocks of 10", ->
+      clock = sinon.useFakeTimers()
       annotations = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
 
       annotator.loadAnnotations(annotations)
       assert.equal(annotator.setupAnnotation.callCount, 10)
 
-      wait = ->
-        if annotations.length
-          setTimeout(wait, 10)
-        else
-          assert.equal(annotator.setupAnnotation.callCount, 13)
-          done()
-      setTimeout(wait, 10)
+      while annotations.length > 0
+        clock.tick(10)
+
+      assert.equal(annotator.setupAnnotation.callCount, 13)
+      clock.restore()
 
   describe "dumpAnnotations", ->
     it "returns false and prints a warning if no Store plugin is active", ->
@@ -658,20 +657,20 @@ describe 'Annotator', ->
     beforeEach ->
       sinon.spy(annotator.viewer, 'hide')
 
-    it "should call Viewer.hide() on the Annotator#viewer after 250ms", (done) ->
+    it "should call Viewer.hide() on the Annotator#viewer after 250ms", ->
+      clock = sinon.useFakeTimers()
       annotator.startViewerHideTimer()
-      chk = ->
-        assert(annotator.viewer.hide.calledOnce)
-        done()
-      setTimeout(chk, 250)
+      clock.tick(250)
+      assert(annotator.viewer.hide.calledOnce)
+      clock.restore()
 
-    it "should NOT call Viewer.hide() on the Annotator#viewer if @viewerHideTimer is set", (done) ->
+    it "should NOT call Viewer.hide() on the Annotator#viewer if @viewerHideTimer is set", ->
+      clock = sinon.useFakeTimers()
       annotator.viewerHideTimer = 60
       annotator.startViewerHideTimer()
-      chk = ->
-        assert.isFalse(annotator.viewer.hide.calledOnce)
-        done()
-      setTimeout(chk, 250)
+      clock.tick(250)
+      assert.isFalse(annotator.viewer.hide.calledOnce)
+      clock.restore()
 
   describe "clearViewerHideTimer", ->
     it "should clear the @viewerHideTimer property", ->
