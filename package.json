@@ -17,5 +17,8 @@
     "chai": "1.5.0",
     "sinon": "1.6.0"
   },
-  "engines": { "node" : "~0.6.0" }
+  "engines": { "node" : "~0.6.0" },
+  "scripts": {
+    "test": "make test"
+  }
 }
