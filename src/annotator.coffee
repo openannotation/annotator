@@ -561,8 +561,8 @@ class Annotator extends Delegator
         if anchor?.range?
           normedRanges.push anchor.range
         else
-          console.log "Could not find anchor for annotation target '" + t.id +
-              "' (for annotation '" + annotation.id + "')."
+          console.log "Could not find anchor target for annotation '" +
+              annotation.id + "'."
       catch exception
         if exception.stack? then console.log exception.stack
         console.log exception.message
