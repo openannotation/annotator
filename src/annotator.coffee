@@ -469,7 +469,7 @@ class Annotator extends Delegator
 
     # Do the fuzzy search
     options =
-      matchDistance: len
+      matchDistance: len * 2
       withFuzzyComparison: true
     result = @domMatcher.searchFuzzy quote, expectedStart, false, null, options
 
