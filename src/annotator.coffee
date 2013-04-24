@@ -836,7 +836,14 @@ class Annotator extends Delegator
       return
 
     # Get the currently selected ranges.
-    @selectedTargets = this.getSelectedTargets()
+    try
+      @selectedTargets = this.getSelectedTargets()
+    catch exception
+      console.log "Error while checking selection:"
+      console.log exception.stack
+      alert "There is something very strange about the current selection. Sorry, but I can not annotate this."
+      return
+
     for target in @selectedTargets
       selector = this.findSelector target.selector, "RangeSelector"
       range = (Range.sniff selector).normalize @wrapper[0]
