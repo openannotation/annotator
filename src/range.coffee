@@ -130,7 +130,6 @@ class Range.BrowserRange
       node = this[p + 'Container']
       offset = this[p + 'Offset']
 
-      # elementNode nodeType == 1
       if node.nodeType is Node.ELEMENT_NODE
         # Get specified node.
         it = node.childNodes[offset]
@@ -161,15 +160,30 @@ class Range.BrowserRange
       r[p + 'Offset'] = offset
       r[p + 'Img'] = isImg
 
-    nr.start = if r.startOffset > 0 then r.start.splitText(r.startOffset) else r.start
+
+    changed = false
+
+    if r.startOffset > 0
+      if r.start.data.length > r.startOffset
+        nr.start = r.start.splitText r.startOffset
+#        console.log "Had to split element at start, at offset " + r.startOffset
+        changed = true
+      else
+        nr.start = r.start.nextSibling
+    else
+      nr.start = r.start
 
     if r.start is r.end and not r.startImg
       if (r.endOffset - r.startOffset) < nr.start.nodeValue.length
         nr.start.splitText(r.endOffset - r.startOffset)
+#        console.log "Had to split element at end (1)"
+        changed = true
       nr.end = nr.start
     else
       if r.endOffset < r.end.nodeValue.length and not r.endImg
         r.end.splitText(r.endOffset)
+#        console.log "Had to split element at end (2)"
+        changed = true
       nr.end = r.end
 
     # Make sure the common ancestor is an element node.
@@ -178,7 +192,8 @@ class Range.BrowserRange
     while nr.commonAncestor.nodeType isnt 1
       nr.commonAncestor = nr.commonAncestor.parentNode
 
-    if window.DomTextMapper?
+    if window.DomTextMapper? and changed
+#      console.log "Ranged normalization changed the DOM, updating d-t-m"
       window.DomTextMapper.changed nr.commonAncestor, "range normalization"
 
     new Range.NormalizedRange(nr)
