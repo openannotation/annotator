@@ -198,7 +198,7 @@ class Range.BrowserRange
     # Make sure the common ancestor is an element node.
     nr.commonAncestor = @commonAncestorContainer
     # elementNode nodeType == 1
-    while nr.commonAncestor.nodeType isnt 1
+    while nr.commonAncestor.nodeType isnt Node.ELEMENT_NODE
       nr.commonAncestor = nr.commonAncestor.parentNode
 
     if window.DomTextMapper? and changed
@@ -295,7 +295,8 @@ class Range.NormalizedRange
       for n in nodes
         offset += n.nodeValue.length
 
-      isImg = node.nodeType is 1 and node.tagName.toLowerCase() is "img"
+      isImg = node.nodeType is Node.ELEMENT_NODE and
+          node.tagName.toLowerCase() is "img"
 
       if isEnd and not isImg then [xpath, offset + node.nodeValue.length] else [xpath, offset]
 
@@ -389,12 +390,19 @@ class Range.SerializedRange
       # the combined length of the textNodes to that point exceeds or
       # matches the value of the offset.
       length = 0
+      targetOffset = this[p + 'Offset'] + if p is "start" then 1 else 0
+#      console.log "*** Looking for " + p + ". targetOffset is " + targetOffset
       for tn in $(node).textNodes()
-        if (length + tn.nodeValue.length >= this[p + 'Offset'])
+#        console.log "Checking next TN. Length is: " + tn.nodeValue.length
+        if length + tn.nodeValue.length >= targetOffset
+#          console.log "**** Found! Position is in '" + tn.nodeValue + "'."
           range[p + 'Container'] = tn
           range[p + 'Offset'] = this[p + 'Offset'] - length
           break
         else
+#          console.log "Going on, because this ends at " +
+#               (length + tn.nodeValue.length) + ", and we are looking for " +
+#               targetOffset
           length += tn.nodeValue.length
 
       # If we fall off the end of the for loop without having set
