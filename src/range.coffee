@@ -129,6 +129,7 @@ class Range.BrowserRange
     for p in ['start', 'end']
       node = this[p + 'Container']
       offset = this[p + 'Offset']
+#      console.log p + " node: " + node + "; offset: " + offset
 
       if node.nodeType is Node.ELEMENT_NODE
         # Get specified node.
@@ -170,20 +171,28 @@ class Range.BrowserRange
         changed = true
       else
         nr.start = r.start.nextSibling
+#        console.log "No split neaded at start, already cut."
     else
       nr.start = r.start
+#      console.log "No split needed at start, offset is 0."
 
     if r.start is r.end and not r.startImg
       if (r.endOffset - r.startOffset) < nr.start.nodeValue.length
         nr.start.splitText(r.endOffset - r.startOffset)
-#        console.log "Had to split element at end (1)"
+#        console.log "But had to split element at end at offset " +
+#            (r.endOffset - r.startOffset)
         changed = true
+      else
+#        console.log "End is clean, too."
       nr.end = nr.start
     else
       if r.endOffset < r.end.nodeValue.length and not r.endImg
-        r.end.splitText(r.endOffset)
-#        console.log "Had to split element at end (2)"
+        r.end.splitText r.endOffset
+#        console.log "Besides start, had to split element at end at offset" +
+#            r.endOffset
         changed = true
+      else
+#        console.log "End is clean."
       nr.end = r.end
 
     # Make sure the common ancestor is an element node.
