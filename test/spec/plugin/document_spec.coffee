@@ -39,14 +39,16 @@ describe 'Annotator.Plugin.Document', ->
     it 'should have a title', ->
       assert.equal(annotation.document.title, 'Mocha')
 
-    it 'should have links', ->
+    it 'should have links with absoulte hrefs and types', ->
       assert.ok(annotation.document.link)
-      assert.equal(annotation.document.link.length, 5)
-      assert.equal(annotation.document.link[0].href, "foo.pdf")
-      assert.equal(annotation.document.link[0].type, "application/pdf")
-      assert.equal(annotation.document.link[1].href, "foo.doc")
-      assert.equal(annotation.document.link[1].type, "application/msword")
-      assert.equal(annotation.document.link[2].href, "doi:10.1175/JCLI-D-11-00015.1")
-      assert.equal(annotation.document.link[3].href, "foo.pdf")
-      assert.equal(annotation.document.link[3].type, "application/pdf")
-      assert.equal(annotation.document.link[4].href, "doi:10.1175/JCLI-D-11-00015.1")
+      assert.equal(annotation.document.link.length, 6)
+
+      assert.match(annotation.document.link[0].href, /^file:.+runner.html$/)
+      assert.match(annotation.document.link[1].href, /^file:.+foo\.pdf$/)
+      assert.equal(annotation.document.link[1].type, "application/pdf")
+      assert.match(annotation.document.link[2].href, /^file:.+foo\.doc$/)
+      assert.equal(annotation.document.link[2].type, "application/msword")
+      assert.equal(annotation.document.link[3].href, "doi:10.1175/JCLI-D-11-00015.1")
+      assert.match(annotation.document.link[4].href, /file:.+foo\.pdf$/)
+      assert.equal(annotation.document.link[4].type, "application/pdf")
+      assert.equal(annotation.document.link[5].href, "doi:10.1175/JCLI-D-11-00015.1")
