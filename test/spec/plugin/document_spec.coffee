@@ -25,7 +25,7 @@ describe 'Annotator.Plugin.Document', ->
     head.append('<meta name="citation_title" content="Foo">')
     head.append('<meta name="citation_pdf_url" content="foo.pdf">')
     head.append('<meta name="dc.identifier" content="doi:10.1175/JCLI-D-11-00015.1">')
-    head.append('<meta property="og:url" content="http://exampmle.com/">')
+    head.append('<meta property="og:url" content="http://example.com">')
 
     annotation = null
 
@@ -66,4 +66,5 @@ describe 'Annotator.Plugin.Document', ->
 
     it 'should have opengraph metadata', ->
       assert.ok(annotation.document.og)
+      assert.deepEqual(annotation.document.og.url, ["http://example.com"])
       

@@ -22,7 +22,7 @@ class Annotator.Plugin.Document extends Annotator.Plugin
     @metadata = {}
 
     # first look for some common metadata types
-    # TODO: look for microdata and/or rdfa?
+    # TODO: look for microdata/rdfa?
     this._getScholar()
     this._getDublinCore()
     this._getOpenGraph()
@@ -60,7 +60,7 @@ class Annotator.Plugin.Document extends Annotator.Plugin
   _getOpenGraph: =>
     @metadata.og = {}
     for meta in $("meta")
-      property = $(meta).prop("property")
+      property = $(meta).attr("property")
       content = $(meta).prop("content")
       if property
         match = property.match(/^og:(.+)$/)
@@ -107,7 +107,7 @@ class Annotator.Plugin.Document extends Annotator.Plugin
     
       if name == "citation_doi"
         for doi in values
-          if doi[0..3] != "doi:" 
+          if doi[0..3] != "doi:"
             doi = "doi:" + doi
           @metadata.link.push(href: doi)
 
