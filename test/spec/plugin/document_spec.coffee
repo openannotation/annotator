@@ -22,6 +22,7 @@ describe 'Annotator.Plugin.Document', ->
     head.append('<link rel="alternate" href="foo.pdf" type="application/pdf"></link>')
     head.append('<link rel="alternate" href="foo.doc" type="application/msword"></link>')
     head.append('<meta name="citation_doi" content="10.1175/JCLI-D-11-00015.1">')
+    head.append('<meta name="citation_title" content="Foo">')
     head.append('<meta name="citation_pdf_url" content="foo.pdf">')
     head.append('<meta name="dc.identifier" content="doi:10.1175/JCLI-D-11-00015.1">')
 
@@ -36,13 +37,12 @@ describe 'Annotator.Plugin.Document', ->
     it 'should have a document', ->
       assert.ok(annotation.document)
 
-    it 'should have a title', ->
-      assert.equal(annotation.document.title, 'Mocha')
+    it 'should have a title, derived from scholar metadata if possible', ->
+      assert.equal(annotation.document.title, 'Foo')
 
     it 'should have links with absoulte hrefs and types', ->
       assert.ok(annotation.document.link)
       assert.equal(annotation.document.link.length, 6)
-
       assert.match(annotation.document.link[0].href, /^file:.+runner.html$/)
       assert.match(annotation.document.link[1].href, /^file:.+foo\.pdf$/)
       assert.equal(annotation.document.link[1].type, "application/pdf")
@@ -52,3 +52,13 @@ describe 'Annotator.Plugin.Document', ->
       assert.match(annotation.document.link[4].href, /file:.+foo\.pdf$/)
       assert.equal(annotation.document.link[4].type, "application/pdf")
       assert.equal(annotation.document.link[5].href, "doi:10.1175/JCLI-D-11-00015.1")
+
+    it 'should have google scholar metadata', ->
+      assert.ok(annotation.document.scholar)
+      assert.deepEqual(annotation.document.scholar.citation_pdf_url, ['foo.pdf'])
+      assert.deepEqual(annotation.document.scholar.citation_doi, ['10.1175/JCLI-D-11-00015.1'])
+      assert.deepEqual(annotation.document.scholar.citation_title, ['Foo'])
+
+    it 'should have dublincore metadata', ->
+      assert.ok(annotation.document.dc)
+      assert.deepEqual(annotation.document.dc.identifier, ["doi:10.1175/JCLI-D-11-00015.1"])

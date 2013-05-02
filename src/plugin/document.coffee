@@ -1,6 +1,6 @@
 class Annotator.Plugin.Document extends Annotator.Plugin
 
-  $ = jQuery
+  $ = Annotator.$
   
   events:
     'beforeAnnotationCreated': 'beforeAnnotationCreated'
@@ -14,55 +14,94 @@ class Annotator.Plugin.Document extends Annotator.Plugin
     annotation.document = @metadata
 
   getDocumentMetadata: =>
-    @metadata =
-      title: $("head title").text()
-      link: this._getLinks()
+    @metadata = {}
+
+    # first look for some common metadata types
+    # TODO: look for microdata and/or rdfa?
+    this._getScholar()
+    this._getDublinCore()
+
+    # extract out/normalize some things
+    this._getTitle()
+    this._getLinks()
+
     return @metadata
 
+  _getScholar: =>
+    @metadata.scholar = {}
+    for meta in $("meta")
+      name = $(meta).prop("name")
+      content = $(meta).prop("content")
+      if name.match(/^citation_/)
+        if @metadata.scholar[name]
+          @metadata.scholar[name].push(content)
+        else
+          @metadata.scholar[name] = [content]
+
+  _getDublinCore: =>
+    @metadata.dc = {}
+    for meta in $("meta")
+      name = $(meta).prop("name")
+      content = $(meta).prop("content")
+      nameParts = name.split(".")
+      if nameParts.length == 2 and nameParts[0] == "dc"
+        n = nameParts[1]
+        if @metadata.dc[n]
+          @metadata.dc[n].push(content)
+        else
+          @metadata.dc[n] = [content]
+
+  _getTitle: =>
+    if @metadata.scholar.citation_title
+      @metadata.title = @metadata.scholar.citation_title[0]
+    else if @metadata.dc.title
+      @metadata.title = @metadata.dc.title
+    else
+      @metadata.title = $("head title").text()
+ 
   _getLinks: =>
     # we know our current location is a link for the document
-    links = [href: document.location.href]
+    @metadata.link = [href: document.location.href]
 
-    # TODO: get main url, as text/html
-
-    # first grab link relations
-    
+    # look for some relevant link relations
     for link in $("link")
       l = $(link)
-      href = _absoluteUrl(l.prop('href')) # get absolute url
+      href = this._absoluteUrl(l.prop('href')) # get absolute url
       rel = l.prop('rel')
       type = l.prop('type')
       if rel in ["alternate", "canonical"]
-        links.push(href: href, rel: rel, type: type)
+        @metadata.link.push(href: href, rel: rel, type: type)
 
-    # look for google scholar links (pdf, doi)
-    # 
-    # I guess it's kind of a hack to express DOI identifiers as links 
-    # but it's convenient, and somewhat sane if they don't have a type :-D
-   
-    for meta in $("meta")
-      name = $(meta).attr("name")
-      content = $(meta).attr("content")
+    # look for links in scholar metadata
+    for name, values of @metadata.scholar
 
-      if name == "citation_pdf_url" and content
-        links.push(href: _absoluteUrl(content), type: "application/pdf")
+      if name == "citation_pdf_url"
+        for url in values
+          @metadata.link.push
+            href: this._absoluteUrl(url)
+            type: "application/pdf"
 
-      if name == "citation_doi" and content
-        doi = content
-        if doi[0..3] != "doi:"
-          doi = "doi:" + doi
-        links.push(href: doi)
+      # kind of a hack to express DOI identifiers as links but it's a 
+      # convenient place to look them up later, and somewhat sane since 
+      # they don't have a type
+    
+      if name == "citation_doi"
+        for doi in values
+          if doi[0..3] != "doi:" 
+            doi = "doi:" + doi
+          @metadata.link.push(href: doi)
 
-      if name == "dc.identifier" and content and content[0..3] == "doi:"
-        links.push(href: content)
+    # look for links in dublincore data
+    for name, values of @metadata.dc
+      if name == "identifier"
+        for id in values
+          if id[0..3] == "doi:"
+            @metadata.link.push(href: id)
         
-    return links
- 
   # hack to get a absolute url from a possibly relative one
   
-  _absoluteUrl = (url) ->
+  _absoluteUrl: (url) ->
     img = $("<img src='#{ url }'>")
     url = img.prop('src')
     img.prop('src', null)
     return url
-
