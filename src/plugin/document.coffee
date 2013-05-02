@@ -8,12 +8,22 @@ class Annotator.Plugin.Document extends Annotator.Plugin
   pluginInit: ->
     this.getDocumentMetadata()
 
+  # returns the primary URI for the document being annotated
+  
   uri: =>
     uri = decodeURIComponent document.location.href
     for link in @metadata
       if link.rel == "canonical"
         uri = link.href
     return uri
+
+  # returns all uris for the document being annotated
+
+  uris: =>
+    uniqueUrls = {}
+    for link in @metadata.link
+      uniqueUrls[link.href] = true if link.href
+    return (href for href of uniqueUrls)
 
   beforeAnnotationCreated: (annotation) =>
     annotation.document = @metadata

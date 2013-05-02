@@ -67,4 +67,8 @@ describe 'Annotator.Plugin.Document', ->
     it 'should have opengraph metadata', ->
       assert.ok(annotation.document.og)
       assert.deepEqual(annotation.document.og.url, ["http://example.com"])
-      
+     
+    it 'should have unique uris', ->
+      uris = annotator.plugins.Document.uris()
+      assert.equal(uris.length, 4)
+
