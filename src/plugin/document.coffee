@@ -6,11 +6,16 @@ class Annotator.Plugin.Document extends Annotator.Plugin
     'beforeAnnotationCreated': 'beforeAnnotationCreated'
 
   pluginInit: ->
-    @metadata = null
+    this.getDocumentMetadata()
+
+  uri: =>
+    uri = decodeURIComponent document.location.href
+    for link in @metadata
+      if link.rel == "canonical"
+        uri = link.href
+    return uri
 
   beforeAnnotationCreated: (annotation) =>
-    if not @metadata
-      @metadata = this.getDocumentMetadata()
     annotation.document = @metadata
 
   getDocumentMetadata: =>
@@ -20,6 +25,7 @@ class Annotator.Plugin.Document extends Annotator.Plugin
     # TODO: look for microdata and/or rdfa?
     this._getScholar()
     this._getDublinCore()
+    this._getOpenGraph()
 
     # extract out/normalize some things
     this._getTitle()
@@ -50,6 +56,20 @@ class Annotator.Plugin.Document extends Annotator.Plugin
           @metadata.dc[n].push(content)
         else
           @metadata.dc[n] = [content]
+
+  _getOpenGraph: =>
+    @metadata.og = {}
+    for meta in $("meta")
+      property = $(meta).prop("property")
+      content = $(meta).prop("content")
+      if property
+        match = property.match(/^og:(.+)$/)
+        if match
+          n = match[1]
+          if @metadata.og[n]
+            @metadata.og[n].push(content)
+          else
+            @metadata.og[n] = [content]
 
   _getTitle: =>
     if @metadata.scholar.citation_title
