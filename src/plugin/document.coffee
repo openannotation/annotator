@@ -99,7 +99,7 @@ class Annotator.Plugin.Document extends Annotator.Plugin
       href = this._absoluteUrl(l.prop('href')) # get absolute url
       rel = l.prop('rel')
       type = l.prop('type')
-      if rel in ["alternate", "canonical"]
+      if rel in ["alternate", "canonical"] and type not in ["application/rss+xml", "application/atom+xml"]
         @metadata.link.push(href: href, rel: rel, type: type)
 
     # look for links in scholar metadata
