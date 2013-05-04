@@ -5,11 +5,24 @@
 # jsontool: `npm install -g jsontool`
 # s3cmd: `brew install s3cmd && s3cmd --configure`
 #
+
+set -e
+
+if ! which json >/dev/null 2>&1; then
+  echo "$(basename "$0"): this tool requires jsontool! (try 'npm install -g jsontool')" >&2
+  exit 1
+fi
+
+if ! which s3cmd >/dev/null 2>&1; then
+  echo "$(basename "$0"): this tool requires s3cmd! (try 'brew install s3cmd && s3cmd --configure')" >&2
+  exit 1
+fi
+
 cd "$(dirname "$0")"
 cd ..
 
 print_usage () {
-  echo "Usage: $(basename "${0}") <bump>"
+  echo "Usage: $(basename "$0") <bump>"
   echo
   echo "  bump - the string 'major', 'minor', or 'patch' denoting the amount by"
   echo "         which to bump the version"
@@ -17,7 +30,9 @@ print_usage () {
 
 confirm_proceed () {
   read -p "${1} [yN]: "
-  [[ ! $REPLY =~ ^[Yy]$ ]] && exit 1
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    exit 1
+  fi
 }
 
 json_key () {
@@ -57,13 +72,21 @@ upload_zip () {
     https://github.s3.amazonaws.com/
 }
 
-BUMP="${1}"
+maybe () {
+  if [ -n "$DRY_RUN" ]; then
+    echo "$@"
+  else
+    "$@"
+  fi
+}
+
+BUMP=$1
 OLD_VERSION="$(json version < package.json)"
 VERSION_MAJOR="$(echo $OLD_VERSION | cut -d. -f1)"
 VERSION_MINOR="$(echo $OLD_VERSION | cut -d. -f2)"
 VERSION_PATCH="$(echo $OLD_VERSION | cut -d. -f3)"
 
-case "${BUMP}" in
+case "$BUMP" in
   major)
     ((VERSION_MAJOR+=1))
     ((VERSION_MINOR=0))
@@ -84,11 +107,9 @@ esac
 
 # Check repo environment
 
-git diff-index --quiet --cached HEAD \
-  && git diff-files --quiet \
-  && git ls-files --others --exclude-standard
-
-if [[ "${?}" != "0" ]]; then
+if ! (git diff-index --quiet --cached HEAD \
+   && git diff-files --quiet \
+   && git ls-files --others --exclude-standard); then
   echo "Not creating release in dirty environment: ensure that there are no"
   echo "files in the git index and no tracked files with uncommitted changes."
   exit 1
@@ -102,18 +123,18 @@ confirm_proceed "Going to release v${VERSION} -- proceed?"
 # Update version in package.json
 
 echo "Bumping version in package.json and committing version bump"
-perl -pi -e 's/"version":\s*"[^"]*"/"version": "'"${VERSION}"'"/' package.json
+sed -i '' -e 's/"version": "[^"]*"/"version": "'"${VERSION}"'"/' package.json
 git commit package.json -m "Bump version -> v${VERSION}"
 
 # Generate package files
 
 echo "Generating package files"
-redo pkg/clean
-redo pkg/annotator/all
+make clean
+make annotator plugins annotator-full
 
 echo "Committing release and creating tag"
 git co master
-git add -f pkg/annotator/*
+git add -f pkg/*
 
 tree=$(git write-tree)
 parent=$(git rev-parse master)
@@ -121,18 +142,18 @@ parent=$(git rev-parse master)
 commit=$(echo "Annotator release v${VERSION}" | git commit-tree "${tree}" -p "${parent}")
 
 git tag "v${VERSION}" "${commit}"
-git reset HEAD pkg/annotator/
+git reset HEAD pkg/
 
 # Upload release to S3
 
 echo "Uploading release to S3"
 [ -n "$S3CFG" ] && S3ARGS="-c $S3CFG"
-s3cmd $S3ARGS --acl-public sync pkg/annotator/*.{js,css} "s3://assets.annotateit.org/annotator/v${VERSION}/"
+maybe s3cmd $S3ARGS --acl-public sync pkg/annotator/*.{js,css} "s3://assets.annotateit.org/annotator/v${VERSION}/"
 
 # Make zips and upload to GitHub
 
 echo "Making zips for GitHub"
-pushd pkg/annotator
+pushd pkg/
 
 mkdir "annotator.${VERSION}"
 ln annotator.*min.{js,css} "annotator.${VERSION}"
@@ -149,11 +170,11 @@ read -p "GitHub password: " passw; echo
 stty echo
 
 echo "Uploading zips to GitHub"
-upload_zip "${uname}" "${passw}" "annotator.${VERSION}.zip" "Annotator ${VERSION} with plugins in individual minified files"
-upload_zip "${uname}" "${passw}" "annotator-full.${VERSION}.zip" "Annotator ${VERSION} with plugins all in one minified file"
+maybe upload_zip "${uname}" "${passw}" "annotator.${VERSION}.zip" "Annotator ${VERSION} with plugins in individual minified files"
+maybe upload_zip "${uname}" "${passw}" "annotator-full.${VERSION}.zip" "Annotator ${VERSION} with plugins all in one minified file"
 
 popd
 
 # Clean up
 echo "Cleaning up"
-redo pkg/clean
+(cd pkg && make clean)
