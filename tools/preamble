@@ -15,6 +15,3 @@ cat ../src/preamble.coffee |
 sed -e "s/{{VERSION}}/$VERSION/g" \
     -e "s/{{AUTHORS}}/$AUTHORS/g" \
     -e "s/{{DATE}}/$DATE/g"
-
-# if any args provided, function like cat(1)
-[ "$#" != "0" ] && cat ${@}

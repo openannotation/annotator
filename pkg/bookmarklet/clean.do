@@ -1,1 +1,0 @@
-find . -name '*.js' -delete -or -name '*.css' -delete

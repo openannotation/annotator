@@ -1,7 +1,0 @@
-cd "$(dirname "$0")"
-
-find ../src/plugin -name '*.coffee' | while read f; do
-  f="${f#../src/plugin/}"
-  f="${f%.coffee}"
-  echo $f
-done

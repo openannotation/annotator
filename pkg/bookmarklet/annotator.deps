@@ -1,8 +1,0 @@
-cd "$(dirname "$0")"
-../annotator/annotator.deps
-echo plugin/auth
-echo plugin/store
-echo plugin/permissions
-echo plugin/annotateitpermissions
-echo plugin/unsupported
-echo plugin/tags
