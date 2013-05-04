@@ -5,7 +5,10 @@ default: all
 .DEFAULT:
 	cd pkg && $(MAKE) $@
 
-test:
-	./tools/test_phantom -R $(REPORTER)
+test: develop
+	./tools/test -R $(REPORTER)
 
-.PHONY: test
+develop:
+	./tools/build
+
+.PHONY: test develop

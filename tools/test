@@ -1,0 +1,4 @@
+cd "$(dirname "$0")"
+cd ..
+
+$(npm bin)/mocha-phantomjs "$@" test/runner.html
