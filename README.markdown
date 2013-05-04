@@ -1,16 +1,27 @@
 Annotator
 =========
 
-Annotator is a web annotation system. Loaded into a webpage, it provides the user with tools to annotate text (and other elements) in the page. For a simple demonstration, visit the [demo page][dp] or [download a tagged release of Annotator][dl] and open `demo.html`.
+Annotator is a web annotation system. Loaded into a webpage, it provides the
+user with tools to annotate text (and other elements) in the page. For a simple
+demonstration, visit the [demo page][dp] or [download a tagged release of
+Annotator][dl] and open `demo.html`.
 
 [dp]: http://okfn.github.com/annotator/demo/
 [dl]: https://github.com/okfn/annotator/downloads
 
-The Annotator project also has a simple but powerful plugin architecture. While the core annotator code does the bare minimum, it is easily extended with plugins that perform such tasks as:
+The Annotator project also has a simple but powerful plugin architecture. While
+the core annotator code does the bare minimum, it is easily extended with
+plugins that perform such tasks as:
 
-- serialization: the `Store` plugin saves all your annotations to a REST API backend (see [Storage wiki page][storage] for more and a link to a reference implementation)
-- authentication and authorization: the `Auth` and `Permissions` plugins allow you to decouple the storage of your annotations from the website on which the annotation happens. In practice, this means that users could edit pages across the web, with all their annotations being saved to one server.
-- prettification: the `Markdown` plugin renders all annotation text as [Markdown][md]
+- serialization: the `Store` plugin saves all your annotations to a REST API
+  backend (see [Storage wiki page][storage] for more and a link to a reference
+  implementation)
+- authentication and authorization: the `Auth` and `Permissions` plugins allow
+  you to decouple the storage of your annotations from the website on which the
+  annotation happens. In practice, this means that users could edit pages across
+  the web, with all their annotations being saved to one server.
+- prettification: the `Markdown` plugin renders all annotation text as
+  [Markdown][md]
 - tagging: the `Tags` plugin allows you to tag individual annotations
 
 [md]: http://daringfireball.net/projects/markdown/
@@ -19,9 +30,15 @@ The Annotator project also has a simple but powerful plugin architecture. While 
 Usage
 -----
 
-To use Annotator, it's easiest to [download a packaged release][dl]. The most important files in these packages are `annotator.min.js` (or `annotator-full.min.js`), which contains the core Annotator code, and `annotator.min.css`, which contains all the CSS and embedded images for the annotator.
+To use Annotator, it's easiest to [download a packaged release][dl]. The most
+important files in these packages are `annotator.min.js` (or
+`annotator-full.min.js`), which contains the core Annotator code, and
+`annotator.min.css`, which contains all the CSS and embedded images for the
+annotator.
 
-Annotator requires [jQuery][$]. The quickest way to get going with Annotator is to include the following in the `<head>` of your document (paths relative to the root of the unzipped download):
+Annotator requires [jQuery][$]. The quickest way to get going with Annotator is
+to include the following in the `<head>` of your document (paths relative to the
+root of the unzipped download):
 
     <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js'></script>
 
@@ -30,7 +47,8 @@ Annotator requires [jQuery][$]. The quickest way to get going with Annotator is 
 
 [$]: http://jquery.com/
 
-You can then initialize Annotator for the whole document by including the following at the end of the `<body>` tag:
+You can then initialize Annotator for the whole document by including the
+following at the end of the `<body>` tag:
 
     <script>
       $(document.body).annotator()
@@ -41,7 +59,10 @@ See `demo.html` for an example how to load and interact with plugins.
 Writing Plugins
 ---------------
 
-As mentioned, Annotator has a simple but powerful plugin architecture. In order to write your own plugin, you need only add your plugin to the Annotator.Plugin object, ensuring that the first argument to the constructor is a DOM Element, and the second is an "options" object. Below is a simple Hello World plugin:
+As mentioned, Annotator has a simple but powerful plugin architecture. In order
+to write your own plugin, you need only add your plugin to the Annotator.Plugin
+object, ensuring that the first argument to the constructor is a DOM Element,
+and the second is an "options" object. Below is a simple Hello World plugin:
 
     Annotator.Plugin.HelloWorld = (function() {
 
@@ -58,14 +79,19 @@ As mentioned, Annotator has a simple but powerful plugin architecture. In order 
       return HelloWorld;
     })();
 
-Other than the constructor, the only "special" method is `pluginInit`, which is called after the Annotator has constructed the plugin, and set `pluginInstance.annotator` to itself. In order to load this plugin into an existing annotator, you would call `addPlugin("HelloWorld")`. For example:
+Other than the constructor, the only "special" method is `pluginInit`, which is
+called after the Annotator has constructed the plugin, and set
+`pluginInstance.annotator` to itself. In order to load this plugin into an
+existing annotator, you would call `addPlugin("HelloWorld")`. For example:
 
     $(document.body).annotator()
                     .annotator('addPlugin', 'HelloWorld')
 
-Look at the existing plugins to get a feel for how they work. The Markdown plugin is a good place to start.
+Look at the existing plugins to get a feel for how they work. The Markdown
+plugin is a good place to start.
 
-Useful events are triggered on the Annotator `element` (passed to the constructor of the plugin):
+Useful events are triggered on the Annotator `element` (passed to the
+constructor of the plugin):
 
 Callback name                                  | Description
 ---------------------------------------------- | -----------
@@ -89,7 +115,9 @@ See [HACKING.markdown](./HACKING.markdown)
 Community
 ---------
 
-The annotator project has a [mailing list][dev] for developer discussion and community members can sometimes be found in the #annotator channel on [freenode IRC][irc].
+The Annotator project has a [mailing list][dev] for developer discussion and
+community members can sometimes be found in the `#annotator` channel on
+[Freenode IRC][irc].
 
 [dev]: http://lists.okfn.org/mailman/listinfo/annotator-dev
 [irc]: http://freenode.net/
