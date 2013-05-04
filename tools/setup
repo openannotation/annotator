@@ -5,6 +5,25 @@ abort () {
   exit 1
 }
 
+install () {
+  local name=$1
+  local cmd=$2
+  shift
+  shift
+
+  if which "$cmd" >/dev/null 2>&1; then
+    echo "Found ${name}..."
+  else
+    printf "Shall I install ${name} for you? "
+    read REPLY
+    if [[ "$REPLY" =~ ^(y|Y) ]]; then
+      "$@"
+    else
+      abort
+    fi
+  fi
+}
+
 cd "$(dirname "$0")"
 cd ..
 
@@ -13,54 +32,21 @@ if [ "$(uname)" != "Darwin" ]; then
   abort
 fi
 
-which brew >/dev/null 2>&1
-if [ $? -eq 0 ]; then
-  echo "Found homebrew..."
-else
-  printf "Shall I install homebrew for you? "
-  read REPLY
-  if [[ "$REPLY" =~ ^(y|Y) ]]; then
-    /usr/bin/ruby -e "$(/usr/bin/curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
-  else
-    abort
-  fi
-fi
+install homebrew brew /usr/bin/ruby -e "$(/usr/bin/curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
+install node node brew install node
+install phantomjs phantomjs brew install phantomjs
 
-brew ls node >/dev/null 2>&1
-if [ $? -eq 0 ]; then
-  echo "Found node..."
-else
-  printf "Shall I install node for you? "
-  read REPLY
-  if [[ "$REPLY" =~ ^(y|Y) ]]; then
-    brew install node
-  else
-    abort
-  fi
-fi
-
-which npm >/dev/null 2>&1
-if [ $? -eq 0 ]; then
-  echo "Found npm..."
-else
-  printf "Shall I install npm for you? "
-  read REPLY
-  if [[ "$REPLY" =~ ^(y|Y) ]]; then
-    curl http://npmjs.org/install.sh | sh
-  else
-    abort
-  fi
-fi
-
-echo "Running 'npm install .'..."
-npm install .
+echo "Running 'npm install'..."
+npm install
 
 echo
-echo "Excellent. You should now be able to run the tests by hosting this directory"
-echo "with a web server and opening test/runner.html"
+echo "Excellent. You should now be able to run the tests by running"
 echo
-echo "You can auto-compile any changes to development sources by running"
+echo "  make test"
+echo
+echo "While developing, you might find it useful to auto-compile any "
+echo "changes to development sources by running"
 echo
 echo "  ./tools/watch"
-echo 
-echo "and you may find dev.html useful when developing Annotator."
+echo
+echo "You may also find dev.html useful when developing Annotator."
