@@ -1,0 +1,48 @@
+#!/usr/bin/env node
+
+var http = require('http');
+var static = require('node-static');
+var jwt = require('jwt-simple');
+var iso8601 = require('iso8601');
+
+var STATIC_PORT = 4000;
+var TOKEN_PORT = 5000;
+
+var CONSUMER_KEY = 'yourconsumerkey';
+var CONSUMER_SECRET = 'yourconsumersecret';
+var CONSUMER_TTL = 1800;
+
+var fileServer = new static.Server();
+
+http.createServer(function (request, response) {
+    request.addListener('end', function () {
+        fileServer.serve(request, response);
+    });
+}).listen(STATIC_PORT);
+
+http.createServer(function (request, response) {
+    request.addListener('end', function () {
+        var payload = {
+            'consumerKey': CONSUMER_KEY,
+            'userId': 'joe.bloggs',
+            'issuedAt': new Date().toISOString(),
+            'ttl': CONSUMER_TTL
+        };
+        var tok = jwt.encode(payload, CONSUMER_SECRET);
+
+        response.setHeader('Access-Control-Allow-Origin', request.headers['origin']);
+        response.setHeader('Access-Control-Allow-Credentials', 'true');
+        response.setHeader('Access-Control-Expose-Headers', 'Location, Content-Type, Content-Length');
+
+        if (request.method == 'OPTIONS') {
+            response.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Content-Length');
+            response.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+            response.setHeader('Access-Control-Max-Age', '86400');
+        }
+
+        response.end(tok);
+    });
+}).listen(TOKEN_PORT);
+
+console.log("Serving the current working directory on port", STATIC_PORT);
+console.log("Serving dummy auth tokens on port", TOKEN_PORT);
