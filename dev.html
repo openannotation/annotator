@@ -100,12 +100,12 @@
 
         devAnnotator = new Annotator(elem)
           .addPlugin('Auth', {
-            tokenUrl: 'http://localhost:5000/api/token'
+            tokenUrl: 'http://localhost:5001/api/token'
           })
           .addPlugin('Unsupported')
           .addPlugin('AnnotateItPermissions')
           .addPlugin('Store', {
-            prefix: 'http://localhost:5000/api',
+            prefix: 'http://localhost:5000',
             loadFromSearch: {
               uri: 'http://localhost/annotator/dev.html'
             },

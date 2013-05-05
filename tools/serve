@@ -7,7 +7,7 @@ var jwt = require('jwt-simple');
 var iso8601 = require('iso8601');
 
 var STATIC_PORT = 4000;
-var TOKEN_PORT = 5000;
+var TOKEN_PORT = 5001;
 
 var CONSUMER_KEY = 'yourconsumerkey';
 var CONSUMER_SECRET = 'yourconsumersecret';
