@@ -78,6 +78,7 @@ $.fn.xpath = (relativeRoot) ->
 
     # elementNode nodeType == 1
     while elem and elem.nodeType == 1 and elem isnt relativeRoot
+      tagName = elem.tagName.replace(":", "\\:").replace("=", "\\=")
       idx = $(elem.parentNode).children(elem.tagName).index(elem) + 1
 
       idx  = "[#{idx}]"
