@@ -57,7 +57,7 @@ class Annotator extends Delegator
 
   viewer: null
 
-  selectedRanges: null
+  selectedTargets: null
 
   mouseIsDown: false
 
@@ -101,6 +101,12 @@ class Annotator extends Delegator
     # Create adder
     this.adder = $(this.html.adder).appendTo(@wrapper).hide()
 
+  _setupMatching: ->
+    this.domMapper = new DomTextMapper()
+    this.domMatcher = new DomTextMatcher @domMapper
+
+    this
+
   # Wraps the children of @element in a @wrapper div. NOTE: This method will also
   # remove any script elements inside @element to prevent them re-executing.
   #
@@ -115,6 +121,9 @@ class Annotator extends Delegator
     @element.find('script').remove()
     @element.wrapInner(@wrapper)
     @wrapper = @element.find('.annotator-wrapper')
+
+    # TODO: do somthing like this:
+    # this.domMapper.setRootNode @wrapper[0].get()
 
     this
 
@@ -202,6 +211,50 @@ class Annotator extends Delegator
 
     this
 
+  getHref: =>
+    uri = decodeURIComponent document.location.href
+    if document.location.hash then uri = uri.slice 0, (-1 * location.hash.length)
+    $('meta[property^="og:url"]').each -> uri = decodeURIComponent this.content
+    $('link[rel^="canonical"]').each -> uri = decodeURIComponent this.href
+    return uri
+
+  getRangeSelector: (range) ->
+    sr = range.serialize @wrapper[0]
+    selector =
+      type: "RangeSelector"
+      startContainer: sr.startContainer
+      startOffset: sr.startOffset
+      endContainer: sr.endContainer
+      endOffset: sr.endOffset
+
+  getTextQuoteSelector: (range) ->
+    startOffset = (@domMapper.getInfoForNode range.start).start
+    endOffset = (@domMapper.getInfoForNode range.end).end
+
+    quote = @domMapper.getContentForCharRange startOffset, endOffset
+    [prefix, suffix] = @domMapper.getContextForCharRange startOffset, endOffset
+    selector =
+      type: "TextQuoteSelector"
+      exact: quote
+      prefix: prefix
+      suffix: suffix
+
+  getTextPositionSelector: (range) ->
+    startOffset = (@domMapper.getInfoForNode range.start).start
+    endOffset = (@domMapper.getInfoForNode range.end).end
+
+    selector =
+      type: "TextPositionSelector"
+      start: startOffset
+      end: endOffset
+
+  getQuoteForTarget: (target) ->
+    selector = this.findSelector target.selector, "TextQuoteSelector"
+    if selector?
+      this.normalizeString selector.exact
+    else
+      null
+
   # Public: Gets the current selection excluding any nodes that fall outside of
   # the @wrapper. Then returns and Array of NormalizedRange instances.
   #
@@ -216,23 +269,29 @@ class Annotator extends Delegator
   #   # => Returns []
   #
   # Returns Array of NormalizedRange instances.
-  getSelectedRanges: ->
+  getSelectedTargets: ->
     selection = util.getGlobal().getSelection()
+    source = this.getHref()
 
-    ranges = []
+    targets = []
     rangesToIgnore = []
     unless selection.isCollapsed
-      ranges = for i in [0...selection.rangeCount]
-        r = selection.getRangeAt(i)
-        browserRange = new Range.BrowserRange(r)
-        normedRange = browserRange.normalize().limit(@wrapper[0])
+      targets = for i in [0...selection.rangeCount]
+        realRange = selection.getRangeAt i
+        browserRange = new Range.BrowserRange realRange
+        normedRange = browserRange.normalize().limit @wrapper[0]
 
         # If the new range falls fully outside the wrapper, we
         # should add it back to the document but not return it from
         # this method
         rangesToIgnore.push(r) if normedRange is null
 
-        normedRange
+        selector: [
+          this.getRangeSelector normedRange
+          this.getTextQuoteSelector normedRange
+          this.getTextPositionSelector normedRange
+        ]
+        source: source
 
       # BrowserRange#normalize() modifies the DOM structure and deselects the
       # underlying text as a result. So here we remove the selected ranges and
@@ -242,11 +301,15 @@ class Annotator extends Delegator
     for r in rangesToIgnore
       selection.addRange(r)
 
-    # Remove any ranges that fell outside of @wrapper.
-    $.grep ranges, (range) ->
+    # Remove any targets that's range fell outside of @wrapper.
+    $.grep targets, (target) =>
       # Add the normed range back to the selection if it exists.
-      selection.addRange(range.toRange()) if range
-      range
+      selector = this.findSelector target.selector, "RangeSelector"
+      if selector?
+        range = (Range.sniff selector).normalize @wrapper[0]
+        if range?
+          selection.addRange range.toRange()
+          true
 
   # Public: Creates and returns a new annotation object. Publishes the
   # 'beforeAnnotationCreated' event to allow the new annotation to be modified.
@@ -265,9 +328,204 @@ class Annotator extends Delegator
     this.publish('beforeAnnotationCreated', [annotation])
     annotation
 
+  # Do some normalization to get a "canonical" form of a string.
+  # Used to even out some browser differences.
+  normalizeString: (string) -> string.replace /\s{2,}/g, " "
+
+  # Find the given type of selector from an array of selectors, if it exists.
+  # If it does not exist, null is returned.
+  findSelector: (selectors, type) ->
+    for selector in selectors
+      if selector.type is type then return selector
+    null
+
+  # Try to determine the anchor position for a target
+  # using the saved Range selector. The quote is verified.
+  findAnchorFromRangeSelector: (target) ->
+    selector = this.findSelector target.selector, "RangeSelector"
+    unless selector? then return null
+    try
+      # Try to apply the saved XPath
+      normalizedRange = Range.sniff(selector).normalize @wrapper[0]
+      # Look up the saved quote
+      savedQuote = this.getQuoteForTarget target
+      if savedQuote?
+        # We have a saved quote, let's compare it to current content
+        startInfo = @domMapper.getInfoForNode normalizedRange.start
+        startOffset = startInfo.start
+        endInfo = @domMapper.getInfoForNode normalizedRange.end
+        endOffset = endInfo.end
+        content = @domMapper.getContentForCharRange startOffset, endOffset
+        currentQuote = this.normalizeString content
+        if currentQuote isnt savedQuote
+          console.log "Could not apply XPath selector to current document \
+            because the quote has changed. (Saved quote is '#{savedQuote}'. \
+            Current quote is '#{currentQuote}'.)"
+          return null
+        else
+          console.log "Saved quote matches."
+      else
+        console.log "No saved quote, nothing to compare. Assume that it's OK."
+      range: normalizedRange
+      quote: savedQuote
+    catch exception
+      if exception instanceof Range.RangeError
+        console.log "Could not apply XPath selector to current document. \
+          The document structure may have changed."
+        null
+      else
+        throw exception
+
+
+  # Try to determine the anchor position for a target
+  # using the saved position selector. The quote is verified.
+  findAnchorFromPositionSelector: (target) ->
+    selector = this.findSelector target.selector, "TextPositionSelector"
+    unless selector? then return null
+    savedQuote = this.getQuoteForTarget target
+    if savedQuote?
+      # We have a saved quote, let's compare it to current content
+      content = @domMapper.getContentForCharRange selector.start, selector.end
+      currentQuote = this.normalizeString content
+      if currentQuote isnt savedQuote
+        console.log "Could not apply position selector to current document \
+          because the quote has changed. (Saved quote is '#{savedQuote}'. \
+          Current quote is '#{currentQuote}'.)"
+        return null
+      else
+        console.log "Saved quote matches."
+    else
+      console.log "No saved quote, nothing to compare. Assume that it's okay."
+
+    # OK, we have everything. Create a range from this.
+    mappings = this.domMapper.getMappingsForCharRange selector.start,
+        selector.end
+    browserRange = new Range.BrowserRange mappings.realRange
+    normalizedRange = browserRange.normalize @wrapper[0]
+    range: normalizedRange
+    quote: savedQuote
+
+  findAnchorWithTwoPhaseFuzzyMatching: (target) ->
+    # Fetch the quote and the context
+    quoteSelector = this.findSelector target.selector, "TextQuoteSelector"
+    prefix = quoteSelector?.prefix
+    suffix = quoteSelector?.suffix
+    quote = quoteSelector?.exact
+
+    # No context, to joy
+    unless (prefix? and suffix?) then return null
+
+    # Fetch the expected start and end positions
+    posSelector = this.findSelector target.selector, "TextPositionSelector"
+    expectedStart = posSelector?.start
+    expectedEnd = posSelector?.end
+
+    options =
+      contextMatchDistance: @domMapper.getDocLength() * 2
+      contextMatchThreshold: 0.5
+      patternMatchThreshold: 0.5
+    result = @domMatcher.searchFuzzyWithContext prefix, suffix, quote,
+      expectedStart, expectedEnd, false, null, options
+
+    # If we did not got a result, give up
+    unless result.matches.length
+      console.log "Fuzzy matching did not return any results. Giving up on two-phase strategy."
+      return null
+
+    # here is our result
+    match = result.matches[0]
+    console.log "Fuzzy found match:"
+    console.log match
+
+    # convert it to a Range
+    browserRange = new Range.BrowserRange match.realRange
+    normalizedRange = browserRange.normalize @wrapper[0]
+
+    # return the anchor
+    anchor =
+      range: normalizedRange
+      quote: unless match.exact then match.found
+      diffHTML: unless match.exact then match.comparison.diffHTML
+
+    anchor
+
+  findAnchorWithFuzzyMatching: (target) ->
+    # Fetch the quote
+    quoteSelector = this.findSelector target.selector, "TextQuoteSelector"
+    quote = quoteSelector?.exact
+
+    # No quote, no joy
+    unless quote? then return null
+
+    # Get a starting position for the search
+    posSelector = this.findSelector target.selector, "TextPositionSelector"
+    expectedStart = posSelector?.start
+
+    # Get full document length
+    len = this.domMapper.getDocLength()
+
+    # If we don't have the position saved, start at the middle of the doc
+    expectedStart ?= len / 2
+
+    # Do the fuzzy search
+    options =
+      matchDistance: len * 2
+      withFuzzyComparison: true
+    result = @domMatcher.searchFuzzy quote, expectedStart, false, null, options
+
+    # If we did not got a result, give up
+    unless result.matches.length
+      console.log "Fuzzy matching did not return any results. Giving up on one-phase strategy."
+      return null
+
+    # here is our result
+    match = result.matches[0]
+    console.log "Fuzzy found match:"
+    console.log match
+
+    # convert it to a Range
+    browserRange = new Range.BrowserRange match.realRange
+    normalizedRange = browserRange.normalize @wrapper[0]
+
+    # return the anchor
+    anchor =
+      range: normalizedRange
+      quote: unless match.exact then match.found
+      diffHTML: unless match.exact then match.comparison.diffHTML
+
+    anchor
+
+  # Try to find the right anchoring point for a given target
+  #
+  # Returns a normalized range if succeeded, null otherwise
+  findAnchor: (target) ->
+    console.log "Trying to find anchor for target: "
+    console.log target
+
+    # Simple strategy based on DOM Range
+    anchor = this.findAnchorFromRangeSelector target
+
+    # Position-based strategy. (The quote is verified.)
+    # This can handle document structure changes,
+    # but not the content changes.
+    anchor ?= this.findAnchorFromPositionSelector target
+
+    # Two-phased fuzzy text matching strategy. (Using context and quote.)
+    # This can handle document structure changes,
+    # and also content changes.
+    anchor ?= this.findAnchorWithTwoPhaseFuzzyMatching target
+
+    # Naive fuzzy text matching strategy. (Using only the quote.)
+    # This can handle document structure changes,
+    # and also content changes.
+    anchor ?= this.findAnchorWithFuzzyMatching target
+
+    anchor
+
   # Public: Initialises an annotation either from an object representation or
   # an annotation created with Annotator#createAnnotation(). It finds the
-  # selected range and higlights the selection in the DOM.
+  # selected range and higlights the selection in the DOM, extracts the
+  # quoted text and serializes the range.
   #
   # annotation - An annotation Object to initialise.
   #
@@ -286,30 +544,44 @@ class Annotator extends Delegator
   # Returns the initialised annotation.
   setupAnnotation: (annotation) ->
     root = @wrapper[0]
-    annotation.ranges or= @selectedRanges
+    annotation.target or= @selectedTargets
+
+    unless annotation.target instanceof Array
+      annotation.target = [annotation.target]
 
     normedRanges = []
-    for r in annotation.ranges
+    for t in annotation.target
       try
-        normedRanges.push(Range.sniff(r).normalize(root))
-      catch e
-        if e instanceof Range.RangeError
-          this.publish('rangeNormalizeFail', [annotation, r, e])
+        anchor = this.findAnchor t
+        if anchor?.quote?
+          # We have found a changed quote.
+          # Save it for this target (currently not used)
+          t.quote = anchor.quote
+          t.diffHTML = anchor.diffHTML
+        if anchor?.range?
+          normedRanges.push anchor.range
         else
-          # Oh Javascript, why you so crap? This will lose the traceback.
-          throw e
+          console.log "Could not find anchor target for annotation '" +
+              annotation.id + "'."
+      catch exception
+        if exception.stack? then console.log exception.stack
+        console.log exception.message
+        console.log exception
 
-    annotation.quote      = []
-    annotation.ranges     = []
+# TODO for resurrecting Annotator
+#    annotation.currentQuote      = []
+#    annotation.currentRanges     = []
     annotation.highlights = []
 
     for normed in normedRanges
-      annotation.quote.push      $.trim(normed.text())
-      annotation.ranges.push     normed.serialize(@wrapper[0], '.annotator-hl')
+# TODO for resurrecting Annotator
+#      annotation.currentQuote.push      $.trim(normed.text())
+#      annotation.currentRanges.push     normed.serialize(@wrapper[0], '.annotator-hl')
       $.merge annotation.highlights, this.highlightRange(normed)
 
     # Join all the quotes into one string.
-    annotation.quote = annotation.quote.join(' / ')
+# TODO for resurrecting Annotator#
+#    annotation.currentQuote = annotation.currentQuote.join(' / ')
 
     # Save the annotation data on each highlighter element.
     $(annotation.highlights).data('annotation', annotation)
@@ -349,6 +621,8 @@ class Annotator extends Delegator
       for h in annotation.highlights when h.parentNode?
         child = h.childNodes[0]
         $(h).replaceWith(h.childNodes)
+        window.DomTextMapper.changed child.parentNode,
+          "removed hilite (annotation deleted)"
 
     this.publish('annotationDeleted', [annotation])
     annotation
@@ -409,8 +683,11 @@ class Annotator extends Delegator
     # subset of nodes such as table rows and lists. This does mean that there
     # may be the odd abandoned whitespace node in a paragraph that is skipped
     # but better than breaking table layouts.
-    for node in normedRange.textNodes() when not white.test(node.nodeValue)
-      $(node).wrapAll(hl).parent().show()[0]
+
+    for node in normedRange.textNodes() when not white.test node.nodeValue
+      r = $(node).wrapAll(hl).parent().show()[0]
+      window.DomTextMapper.changed node, "created hilite"
+      r
 
   # Public: highlight a list of ranges
   #
@@ -560,15 +837,24 @@ class Annotator extends Delegator
       return
 
     # Get the currently selected ranges.
-    @selectedRanges = this.getSelectedRanges()
+    try
+      @selectedTargets = this.getSelectedTargets()
+    catch exception
+      console.log "Error while checking selection:"
+      console.log exception
+      console.log exception.stack
+      alert "There is something very strange about the current selection. Sorry, but I can not annotate this."
+      return
 
-    for range in @selectedRanges
+    for target in @selectedTargets
+      selector = this.findSelector target.selector, "RangeSelector"
+      range = (Range.sniff selector).normalize @wrapper[0]
       container = range.commonAncestor
       if $(container).hasClass('annotator-hl')
         container = $(container).parents('[class^=annotator-hl]')[0]
       return if this.isAnnotator(container)
 
-    if event and @selectedRanges.length
+    if event and @selectedTargets.length
       @adder
         .css(util.mousePosition(event, @wrapper[0]))
         .show()
@@ -637,12 +923,14 @@ class Annotator extends Delegator
     position = @adder.position()
     @adder.hide()
 
-    # Show a temporary highlight so the user can see what they selected
-    # Also extract the quotation and serialize the ranges
-    annotation = this.setupAnnotation(this.createAnnotation())
-    $(annotation.highlights).addClass('annotator-hl-temporary')
+    # Create a new annotation.
+    annotation = this.createAnnotation()
 
-    # Subscribe to the editor events
+    # Extract the quotation and serialize the ranges
+    annotation = this.setupAnnotation(annotation)
+
+    # Show a temporary highlight so the user can see what they selected
+    $(annotation.highlights).addClass('annotator-hl-temporary')
 
     # Make the highlights permanent if the annotation is saved
     save = =>
@@ -661,6 +949,7 @@ class Annotator extends Delegator
       this.unsubscribe('annotationEditorHidden', cancel)
       this.unsubscribe('annotationEditorSubmit', save)
 
+    # Subscribe to the editor events
     this.subscribe('annotationEditorHidden', cancel)
     this.subscribe('annotationEditorSubmit', save)
 
@@ -677,18 +966,17 @@ class Annotator extends Delegator
   onEditAnnotation: (annotation) =>
     offset = @viewer.element.position()
 
-    # Subscribe once to editor events
-
     # Update the annotation when the editor is saved
     update = =>
       do cleanup
       this.updateAnnotation(annotation)
 
-    # Remove handlers when the editor is hidden
+    # Remove handlers when finished
     cleanup = =>
       this.unsubscribe('annotationEditorHidden', cleanup)
       this.unsubscribe('annotationEditorSubmit', update)
 
+    # Subscribe to the editor events
     this.subscribe('annotationEditorHidden', cleanup)
     this.subscribe('annotationEditorSubmit', update)
 

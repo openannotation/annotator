@@ -16,6 +16,13 @@ Range.sniff = (r) ->
   if r.commonAncestorContainer?
     new Range.BrowserRange(r)
   else if typeof r.start is "string"
+    # Annotator <= 1.2.6 upgrade code
+    new Range.SerializedRange
+      startContainer: r.start
+      startOffset: r.startOffset
+      endContainer: r.end
+      endOffset: r.endOffset
+  else if typeof r.startContainer is "string"
     new Range.SerializedRange(r)
   else if r.start and typeof r.start is "object"
     new Range.NormalizedRange(r)
@@ -39,7 +46,14 @@ Range.sniff = (r) ->
 # Returns the Node if found otherwise null.
 Range.nodeFromXPath = (xpath, root=document) ->
   evaluateXPath = (xp, nsResolver=null) ->
-    document.evaluate('.' + xp, root, nsResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
+    try
+      document.evaluate('.' + xp, root, nsResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
+    catch exception
+      if exception?.code is 52
+        console.log "XPath evaluation failed with code 52. Trying manual..."
+        $.dummyXPathEvaluate xp, root
+      else
+        throw exception
 
   if not $.isXMLDoc document.documentElement
     evaluateXPath xpath
@@ -122,47 +136,81 @@ class Range.BrowserRange
     for p in ['start', 'end']
       node = this[p + 'Container']
       offset = this[p + 'Offset']
+#      console.log p + " node: " + node + "; offset: " + offset
 
-      # elementNode nodeType == 1
-      if node.nodeType is 1
+      if node.nodeType is Node.ELEMENT_NODE
         # Get specified node.
         it = node.childNodes[offset]
         # If it doesn't exist, that means we need the end of the
         # previous one.
         node = it or node.childNodes[offset - 1]
 
-        # if node doesn't have any children, it's a <br> or <hr> or
-        # other self-closing tag, and we actually want the textNode
-        # that ends just before it
-        if node.nodeType is 1 and not node.firstChild
-          it = null # null out ref to node so offset is correctly calculated below.
-          node = node.previousSibling
+        # Is this an IMG?
+        isImg = node.nodeType is Node.ELEMENT_NODE and node.tagName.toLowerCase() is "img"
+        if isImg
+          # This is an img. Don't do anything.
+          offset = 0
+        else
+          # if node doesn't have any children, it's a <br> or <hr> or
+          # other self-closing tag, and we actually want the textNode
+          # that ends just before it
+          while node.nodeType is Node.ELEMENT_NODE and not node.firstChild and not isImg
+            it = null # null out ref to node so offset is correctly calculated below.
+            node = node.previousSibling
 
-        # textNode nodeType == 3
-        while node.nodeType isnt 3
-          node = node.firstChild
+          # Try to find a text child
+          while (node.nodeType isnt Node.TEXT_NODE)
+            node = node.firstChild
 
-        offset = if it then 0 else node.nodeValue.length
+          offset = if it then 0 else node.nodeValue.length
 
       r[p] = node
       r[p + 'Offset'] = offset
+      r[p + 'Img'] = isImg
 
-    nr.start = if r.startOffset > 0 then r.start.splitText(r.startOffset) else r.start
 
-    if r.start is r.end
+    changed = false
+
+    if r.startOffset > 0
+      if r.start.data.length > r.startOffset
+        nr.start = r.start.splitText r.startOffset
+#        console.log "Had to split element at start, at offset " + r.startOffset
+        changed = true
+      else
+        nr.start = r.start.nextSibling
+#        console.log "No split neaded at start, already cut."
+    else
+      nr.start = r.start
+#      console.log "No split needed at start, offset is 0."
+
+    if r.start is r.end and not r.startImg
       if (r.endOffset - r.startOffset) < nr.start.nodeValue.length
         nr.start.splitText(r.endOffset - r.startOffset)
+#        console.log "But had to split element at end at offset " +
+#            (r.endOffset - r.startOffset)
+        changed = true
+      else
+#        console.log "End is clean, too."
       nr.end = nr.start
     else
-      if r.endOffset < r.end.nodeValue.length
-        r.end.splitText(r.endOffset)
+      if r.endOffset < r.end.nodeValue.length and not r.endImg
+        r.end.splitText r.endOffset
+#        console.log "Besides start, had to split element at end at offset" +
+#            r.endOffset
+        changed = true
+      else
+#        console.log "End is clean."
       nr.end = r.end
 
     # Make sure the common ancestor is an element node.
     nr.commonAncestor = @commonAncestorContainer
     # elementNode nodeType == 1
-    while nr.commonAncestor.nodeType isnt 1
+    while nr.commonAncestor.nodeType isnt Node.ELEMENT_NODE
       nr.commonAncestor = nr.commonAncestor.parentNode
+
+    if window.DomTextMapper? and changed
+#      console.log "Ranged normalization changed the DOM, updating d-t-m"
+      window.DomTextMapper.changed nr.commonAncestor, "range normalization"
 
     new Range.NormalizedRange(nr)
 
@@ -254,15 +302,18 @@ class Range.NormalizedRange
       for n in nodes
         offset += n.nodeValue.length
 
-      if isEnd then [xpath, offset + node.nodeValue.length] else [xpath, offset]
+      isImg = node.nodeType is Node.ELEMENT_NODE and
+          node.tagName.toLowerCase() is "img"
+
+      if isEnd and not isImg then [xpath, offset + node.nodeValue.length] else [xpath, offset]
 
     start = serialization(@start)
     end   = serialization(@end, true)
 
     new Range.SerializedRange({
       # XPath strings
-      start: start[0]
-      end: end[0]
+      startContainer: start[0]
+      endContainer: end[0]
       # Character offsets (integer)
       startOffset: start[1]
       endOffset: end[1]
@@ -309,18 +360,18 @@ class Range.SerializedRange
   # Public: Creates a SerializedRange
   #
   # obj - The stored object. It should have the following properties.
-  #       start:       An xpath to the Element containing the first TextNode
-  #                    relative to the root Element.
-  #       startOffset: The offset to the start of the selection from obj.start.
-  #       end:         An xpath to the Element containing the last TextNode
-  #                    relative to the root Element.
-  #       startOffset: The offset to the end of the selection from obj.end.
+  #       startContainer: An xpath to the Element containing the first TextNode
+  #                       relative to the root Element.
+  #       startOffset:    The offset to the start of the selection from obj.start.
+  #       endContainer:   An xpath to the Element containing the last TextNode
+  #                       relative to the root Element.
+  #       startOffset:    The offset to the end of the selection from obj.end.
   #
   # Returns an instance of SerializedRange
   constructor: (obj) ->
-    @start       = obj.start
+    @startContainer  = obj.startContainer
     @startOffset = obj.startOffset
-    @end         = obj.end
+    @endContainer    = obj.endContainer
     @endOffset   = obj.endOffset
 
   # Public: Creates a NormalizedRange.
@@ -332,25 +383,33 @@ class Range.SerializedRange
     range = {}
 
     for p in ['start', 'end']
+      xpath = this[p + 'Container']
       try
-        node = Range.nodeFromXPath(this[p], root)
+        node = Range.nodeFromXPath(xpath, root)
       catch e
-        throw new Range.RangeError(p, "Error while finding #{p} node: #{this[p]}: " + e, e)
+        throw new Range.RangeError(p, "Error while finding #{p} node: #{xpath}: " + e, e)
 
       if not node
-        throw new Range.RangeError(p, "Couldn't find #{p} node: #{this[p]}")
+        throw new Range.RangeError(p, "Couldn't find #{p} node: #{xpath}")
 
       # Unfortunately, we *can't* guarantee only one textNode per
       # elementNode, so we have to walk along the element's textNodes until
       # the combined length of the textNodes to that point exceeds or
       # matches the value of the offset.
       length = 0
+      targetOffset = this[p + 'Offset'] + if p is "start" then 1 else 0
+#      console.log "*** Looking for " + p + ". targetOffset is " + targetOffset
       for tn in $(node).textNodes()
-        if (length + tn.nodeValue.length >= this[p + 'Offset'])
+#        console.log "Checking next TN. Length is: " + tn.nodeValue.length
+        if length + tn.nodeValue.length >= targetOffset
+#          console.log "**** Found! Position is in '" + tn.nodeValue + "'."
           range[p + 'Container'] = tn
           range[p + 'Offset'] = this[p + 'Offset'] - length
           break
         else
+#          console.log "Going on, because this ends at " +
+#               (length + tn.nodeValue.length) + ", and we are looking for " +
+#               targetOffset
           length += tn.nodeValue.length
 
       # If we fall off the end of the for loop without having set
@@ -407,8 +466,8 @@ class Range.SerializedRange
   # Public: Returns the range as an Object literal.
   toObject: ->
     {
-      start: @start
+      startContainer: @startContainer
       startOffset: @startOffset
-      end: @end
+      endContainer: @endContainer
       endOffset: @endOffset
     }

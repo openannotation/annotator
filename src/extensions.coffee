@@ -71,15 +71,15 @@ $.fn.textNodes = ->
 
   this.map -> $.flatten(getTextNodes(this))
 
-$.fn.xpath = (relativeRoot) ->
+$.fn.xpath1 = (relativeRoot) ->
   jq = this.map ->
     path = ''
     elem = this
 
     # elementNode nodeType == 1
     while elem and elem.nodeType == 1 and elem isnt relativeRoot
-      idx = $(elem.parentNode).children(elem.tagName).index(elem) + 1
-
+      tagName = elem.tagName.replace(":", "\\:")
+      idx = $(elem.parentNode).children(tagName).index(elem) + 1
       idx  = "[#{idx}]"
       path = "/" + elem.tagName.toLowerCase() + idx + path
       elem = elem.parentNode
@@ -87,6 +87,82 @@ $.fn.xpath = (relativeRoot) ->
     path
 
   jq.get()
+
+$.getProperNodeName = (node) ->
+    nodeName = node.nodeName.toLowerCase()
+    switch nodeName
+      when "#text" then return "text()"
+      when "#comment" then return "comment()"
+      when "#cdata-section" then return "cdata-section()"
+      else return nodeName
+
+$.fn.xpath2 = (relativeRoot) ->
+
+  getNodePosition = (node) ->
+    pos = 0
+    tmp = node
+    while tmp
+      if tmp.nodeName is node.nodeName
+        pos++
+      tmp = tmp.previousSibling
+    pos
+
+  getPathSegment = (node) ->
+    name = $.getProperNodeName node
+    pos = getNodePosition node
+    name + (if pos > 1 then "[#{pos}]" else "")
+
+  rootNode = relativeRoot
+
+  getPathTo = (node) ->
+    xpath = '';
+    while node != rootNode
+      unless node?
+        throw new Error "Called getPathTo on a node which was not a descendant of @rootNode. " + rootNode
+      xpath = (getPathSegment node) + '/' + xpath
+      node = node.parentNode
+    xpath = '/' + xpath
+    xpath = xpath.replace /\/$/, ''
+    xpath        
+
+  jq = this.map ->
+    path = getPathTo this
+
+    path
+
+  jq.get()
+
+$.fn.xpath = (relativeRoot) ->
+  try
+    result = this.xpath1 relativeRoot
+  catch exception
+    console.log "jQuery-based XPath construction failed! Falling back to manual."
+    result = this.xpath2 relativeRoot
+  result
+
+$.findChild = (node, type, index) ->
+  unless node.hasChildNodes()
+    throw new Error "XPath error: node has no children!"
+  children = node.childNodes
+  found = 0
+  for child in children
+    name = $.getProperNodeName child
+    if name is type
+      found += 1
+      if found is index
+        return child
+  throw new Error "XPath error: wanted child not found."
+  
+
+$.dummyXPathEvaluate = (xp, root) ->
+  steps = xp.substring(1).split("/")
+  node = root
+  for step in steps
+    [name, idx] = step.split "["
+    idx = if idx? then parseInt (idx?.split "]")[0] else 1
+    node = $.findChild node, name.toLowerCase(), idx
+
+  node
 
 $.escape = (html) ->
   html.replace(/&(?!\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
