@@ -71,7 +71,7 @@ $.fn.textNodes = ->
 
   this.map -> $.flatten(getTextNodes(this))
 
-$.fn.xpath = (relativeRoot) ->
+$.fn.xpath1 = (relativeRoot) ->
   jq = this.map ->
     path = ''
     elem = this
@@ -88,6 +88,53 @@ $.fn.xpath = (relativeRoot) ->
     path
 
   jq.get()
+
+$.fn.xpath2 = (relativeRoot) ->
+
+  getProperNodeName = (node) ->
+    nodeName = node.nodeName
+    switch nodeName
+      when "#text" then return "text()"
+      when "#comment" then return "comment()"
+      when "#cdata-section" then return "cdata-section()"
+      else return nodeName
+
+  getNodePosition = (node) ->
+    pos = 0
+    tmp = node
+    while tmp
+      if tmp.nodeName is node.nodeName
+        pos++
+      tmp = tmp.previousSibling
+    pos
+
+  getPathSegment = (node) ->
+    name = getProperNodeName node
+    pos = getNodePosition node
+    name + (if pos > 1 then "[#{pos}]" else "")
+
+  rootNode = relativeRoot
+
+  getPathTo = (node) ->
+    xpath = '';
+    while node != rootNode
+      unless node?
+        throw new Error "Called getPathTo on a node which was not a descendant of @rootNode. " + rootNode
+      xpath = (getPathSegment node) + '/' + xpath
+      node = node.parentNode
+    xpath = '/' + xpath
+    xpath = xpath.replace /\/$/, ''
+    xpath        
+
+  jq = this.map ->
+    elem = this
+    path = getPathTo elem
+
+    path
+
+  jq.get()
+
+$.fn.xpath = $.fn.xpath2
 
 $.escape = (html) ->
   html.replace(/&(?!\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
