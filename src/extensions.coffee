@@ -126,14 +126,19 @@ $.fn.xpath2 = (relativeRoot) ->
     xpath        
 
   jq = this.map ->
-    elem = this
-    path = getPathTo elem
+    path = getPathTo this
 
     path
 
   jq.get()
 
-$.fn.xpath = $.fn.xpath2
+$.fn.xpath = (relativeRoot) ->
+  try
+    result = this.xpath1 relativeRoot
+  catch exception
+    console.log "jQuery-based XPath construction failed! Falling back to manual."
+    result = this.xpath2 relativeRoot
+  result
 
 $.escape = (html) ->
   html.replace(/&(?!\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
