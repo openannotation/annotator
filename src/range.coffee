@@ -39,7 +39,14 @@ Range.sniff = (r) ->
 # Returns the Node if found otherwise null.
 Range.nodeFromXPath = (xpath, root=document) ->
   evaluateXPath = (xp, nsResolver=null) ->
-    document.evaluate('.' + xp, root, nsResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
+    try
+      document.evaluate('.' + xp, root, nsResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
+    catch exception
+      if exception?.code is 52
+        console.log "XPath evaluation failed with code 52. Trying manual..."
+        $.dummyXPathEvaluate xp, root
+      else
+        throw exception
 
   if not $.isXMLDoc document.documentElement
     evaluateXPath xpath
