@@ -88,15 +88,15 @@ $.fn.xpath1 = (relativeRoot) ->
 
   jq.get()
 
-$.fn.xpath2 = (relativeRoot) ->
-
-  getProperNodeName = (node) ->
-    nodeName = node.nodeName
+$.getProperNodeName = (node) ->
+    nodeName = node.nodeName.toLowerCase()
     switch nodeName
       when "#text" then return "text()"
       when "#comment" then return "comment()"
       when "#cdata-section" then return "cdata-section()"
       else return nodeName
+
+$.fn.xpath2 = (relativeRoot) ->
 
   getNodePosition = (node) ->
     pos = 0
@@ -108,7 +108,7 @@ $.fn.xpath2 = (relativeRoot) ->
     pos
 
   getPathSegment = (node) ->
-    name = getProperNodeName node
+    name = $.getProperNodeName node
     pos = getNodePosition node
     name + (if pos > 1 then "[#{pos}]" else "")
 
@@ -139,6 +139,30 @@ $.fn.xpath = (relativeRoot) ->
     console.log "jQuery-based XPath construction failed! Falling back to manual."
     result = this.xpath2 relativeRoot
   result
+
+$.findChild = (node, type, index) ->
+  unless node.hasChildNodes()
+    throw new Error "XPath error: node has no children!"
+  children = node.childNodes
+  found = 0
+  for child in children
+    name = $.getProperNodeName child
+    if name is type
+      found += 1
+      if found is index
+        return child
+  throw new Error "XPath error: wanted child not found."
+  
+
+$.dummyXPathEvaluate = (xp, root) ->
+  steps = xp.substring(1).split("/")
+  node = root
+  for step in steps
+    [name, idx] = step.split "["
+    idx = if idx? then parseInt (idx?.split "]")[0] else 1
+    node = $.findChild node, name.toLowerCase(), idx
+
+  node
 
 $.escape = (html) ->
   html.replace(/&(?!\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')

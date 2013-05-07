@@ -840,6 +840,7 @@ class Annotator extends Delegator
       @selectedTargets = this.getSelectedTargets()
     catch exception
       console.log "Error while checking selection:"
+      console.log exception
       console.log exception.stack
       alert "There is something very strange about the current selection. Sorry, but I can not annotate this."
       return
