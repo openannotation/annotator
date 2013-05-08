@@ -3,6 +3,7 @@ vpath %.coffee ../src
 PATH:=$(shell npm bin):$(PATH)
 
 ANNOTATOR=\
+	xpath.coffee \
 	extensions.coffee \
 	console.coffee \
 	class.coffee \
