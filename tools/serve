@@ -27,6 +27,7 @@ http.createServer(function (request, response) {
             }
         });
     });
+    request.resume();
 }).listen(STATIC_PORT);
 
 http.createServer(function (request, response) {
@@ -51,6 +52,7 @@ http.createServer(function (request, response) {
 
         response.end(tok);
     });
+    request.resume();
 }).listen(TOKEN_PORT);
 
 console.log("Serving the current working directory on port", STATIC_PORT);
