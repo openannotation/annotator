@@ -42,8 +42,19 @@ Range.nodeFromXPath = (xpath, root=document) ->
     try
       document.evaluate('.' + xp, root, nsResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
     catch exception
+      # There are cases when the evaluation fails, because the
+      # HTML documents contains nodes with invalid names,
+      # for example tags with equal signs in them, or something like that.
+      # In these cases, the XPath expressions will have these abominations,
+      # too, and then they can not be evaluated.
+      # In these cases, we get an XPathException, with error code 52.
+      # See http://www.w3.org/TR/DOM-Level-3-XPath/xpath.html#XPathException
+      # This does not necessarily make any sense, but this what we see
+      # happening.
       if exception?.code is 52
         console.log "XPath evaluation failed with code 52. Trying manual..."
+        # We have a really simple and narrow-minded, but very robust
+        # 'evaluation engine' prepared for these cases.
         $.dummyXPathEvaluate xp, root
       else
         throw exception
