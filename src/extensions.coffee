@@ -154,7 +154,7 @@ $.findChild = (node, type, index) ->
         return child
   throw new Error "XPath error: wanted child not found."
 
-$.dummyXPathEvaluate = (xp, root) ->
+$.xpath = (xp, root) ->
   steps = xp.substring(1).split("/")
   node = root
   for step in steps

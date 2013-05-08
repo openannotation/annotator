@@ -52,10 +52,10 @@ Range.nodeFromXPath = (xpath, root=document) ->
       # This does not necessarily make any sense, but this what we see
       # happening.
       if exception?.code is 52
-        console.log "XPath evaluation failed with code 52. Trying manual..."
-        # We have a really simple and narrow-minded, but very robust
-        # 'evaluation engine' prepared for these cases.
-        $.dummyXPathEvaluate xp, root
+        console.log "XPath evaluation failed with code 52. Trying fallback..."
+        # We have a an 'evaluator' for the really simple expressions that
+        # should work for the simple expressions we generate.
+        $.xpath xp, root
       else
         throw exception
 
