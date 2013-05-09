@@ -72,21 +72,22 @@ $.fn.textNodes = ->
   this.map -> $.flatten(getTextNodes(this))
 
 $.fn.xpath = (relativeRoot) ->
-  jq = this.map ->
-    path = ''
-    elem = this
+  try
+    result = simpleXPathJQuery.call this, relativeRoot
+  catch exception
+    console.log "jQuery-based XPath construction failed! Falling back to manual."
+    result = simpleXPathPure.call this, relativeRoot
+  result
 
-    # elementNode nodeType == 1
-    while elem and elem.nodeType == 1 and elem isnt relativeRoot
-      tagName = elem.tagName.replace(":", "\\:")
-      idx = $(elem.parentNode).children(tagName).index(elem) + 1
-      idx  = "[#{idx}]"
-      path = "/" + elem.tagName.toLowerCase() + idx + path
-      elem = elem.parentNode
+$.xpath = (xp, root) ->
+  steps = xp.substring(1).split("/")
+  node = root
+  for step in steps
+    [name, idx] = step.split "["
+    idx = if idx? then parseInt (idx?.split "]")[0] else 1
+    node = findChild node, name.toLowerCase(), idx
 
-    path
-
-  jq.get()
+  node
 
 $.escape = (html) ->
   html.replace(/&(?!\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')

@@ -39,7 +39,23 @@ Range.sniff = (r) ->
 # Returns the Node if found otherwise null.
 Range.nodeFromXPath = (xpath, root=document) ->
   evaluateXPath = (xp, nsResolver=null) ->
-    document.evaluate('.' + xp, root, nsResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
+    try
+      document.evaluate('.' + xp, root, nsResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
+    catch exception
+      # There are cases when the evaluation fails, because the
+      # HTML documents contains nodes with invalid names,
+      # for example tags with equal signs in them, or something like that.
+      # In these cases, the XPath expressions will have these abominations,
+      # too, and then they can not be evaluated.
+      # In these cases, we get an XPathException, with error code 52.
+      # See http://www.w3.org/TR/DOM-Level-3-XPath/xpath.html#XPathException
+      # This does not necessarily make any sense, but this what we see
+      # happening.
+      console.log "XPath evaluation failed."
+      console.log "Trying fallback..."
+      # We have a an 'evaluator' for the really simple expressions that
+      # should work for the simple expressions we generate.
+      $.xpath xp, root
 
   if not $.isXMLDoc document.documentElement
     evaluateXPath xpath
