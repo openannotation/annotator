@@ -24,7 +24,7 @@ simpleXPathPure = (relativeRoot) ->
   getPathSegment = (node) ->
     name = getNodeName node
     pos = getNodePosition node
-    name + (if pos > 1 then "[#{pos}]" else "")
+    "#{name}[#{pos}]"
 
   rootNode = relativeRoot
 
