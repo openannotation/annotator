@@ -90,12 +90,12 @@ $.fn.xpath1 = (relativeRoot) ->
   jq.get()
 
 $.getProperNodeName = (node) ->
-    nodeName = node.nodeName.toLowerCase()
-    switch nodeName
-      when "#text" then return "text()"
-      when "#comment" then return "comment()"
-      when "#cdata-section" then return "cdata-section()"
-      else return nodeName
+  nodeName = node.nodeName.toLowerCase()
+  switch nodeName
+    when "#text" then return "text()"
+    when "#comment" then return "comment()"
+    when "#cdata-section" then return "cdata-section()"
+    else return nodeName
 
 $.fn.xpath2 = (relativeRoot) ->
 
@@ -124,7 +124,7 @@ $.fn.xpath2 = (relativeRoot) ->
       node = node.parentNode
     xpath = '/' + xpath
     xpath = xpath.replace /\/$/, ''
-    xpath        
+    xpath
 
   jq = this.map ->
     path = getPathTo this
@@ -153,7 +153,6 @@ $.findChild = (node, type, index) ->
       if found is index
         return child
   throw new Error "XPath error: wanted child not found."
-  
 
 $.dummyXPathEvaluate = (xp, root) ->
   steps = xp.substring(1).split("/")
