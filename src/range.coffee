@@ -51,13 +51,11 @@ Range.nodeFromXPath = (xpath, root=document) ->
       # See http://www.w3.org/TR/DOM-Level-3-XPath/xpath.html#XPathException
       # This does not necessarily make any sense, but this what we see
       # happening.
-      if exception?.code is 52
-        console.log "XPath evaluation failed with code 52. Trying fallback..."
-        # We have a an 'evaluator' for the really simple expressions that
-        # should work for the simple expressions we generate.
-        $.xpath xp, root
-      else
-        throw exception
+      console.log "XPath evaluation failed."
+      console.log "Trying fallback..."
+      # We have a an 'evaluator' for the really simple expressions that
+      # should work for the simple expressions we generate.
+      $.xpath xp, root
 
   if not $.isXMLDoc document.documentElement
     evaluateXPath xpath
