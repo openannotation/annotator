@@ -36,6 +36,7 @@ class Annotator.Plugin.Document extends Annotator.Plugin
     this._getScholar()
     this._getDublinCore()
     this._getOpenGraph()
+    this._getFavicon()
 
     # extract out/normalize some things
     this._getTitle()
@@ -127,6 +128,11 @@ class Annotator.Plugin.Document extends Annotator.Plugin
         for id in values
           if id[0..3] == "doi:"
             @metadata.link.push(href: id)
+
+  _getFavicon: =>
+    for link in $("link")
+      if $(link).prop("rel") in ["shortcut icon", "icon"]
+        @metadata["favicon"] = this._absoluteUrl(link.href)
         
   # hack to get a absolute url from a possibly relative one
   

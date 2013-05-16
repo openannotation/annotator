@@ -26,6 +26,7 @@ describe 'Annotator.Plugin.Document', ->
     head.append('<meta name="citation_pdf_url" content="foo.pdf">')
     head.append('<meta name="dc.identifier" content="doi:10.1175/JCLI-D-11-00015.1">')
     head.append('<meta property="og:url" content="http://example.com">')
+    head.append('<link rel="icon" href="http://example.com/images/icon.ico"></link>')
 
     annotation = null
 
@@ -71,4 +72,10 @@ describe 'Annotator.Plugin.Document', ->
     it 'should have unique uris', ->
       uris = annotator.plugins.Document.uris()
       assert.equal(uris.length, 4)
+
+    it 'should have a favicon', ->
+      assert.equal(
+        annotation.document.favicon
+        'http://example.com/images/icon.ico'
+      )
 
