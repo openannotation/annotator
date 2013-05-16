@@ -221,10 +221,10 @@ describe "Annotator.Plugin.Store", ->
       assert.notStrictEqual(store.annotator.loadAnnotations.lastCall.args[0], data)
       assert.deepEqual(store.annotator.loadAnnotations.lastCall.args[0], data)
 
-    it "should add (and dedupe) new annotations when called a second time", ->
-      data = [{id: 1}, {id: 2} ,{id: 3}]
-      data2 = [{id: 1}, {id: 4}, {id: 5}]
-      dataAll = [{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}]
+    it "should concatenate new annotations when called a second time", ->
+      data = [1,2,3];
+      data2 = [4,5,6];
+      dataAll = data.concat(data2);
       store._onLoadAnnotations(data)
       store._onLoadAnnotations(data2)
       assert.deepEqual(store.annotations, dataAll)

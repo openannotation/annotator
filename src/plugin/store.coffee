@@ -259,10 +259,6 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   #
   # Returns nothing.
   _onLoadAnnotations: (data=[]) =>
-    # dedupe if necessary
-    ids = (a.id for a in @annotations)
-    data = (a for a in data when a.id not in ids)
-
     @annotations = @annotations.concat(data)
     @annotator.loadAnnotations(data.slice()) # Clone array
 
