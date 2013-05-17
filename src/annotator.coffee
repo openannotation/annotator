@@ -565,7 +565,7 @@ class Annotator extends Delegator
     for range in @selectedRanges
       container = range.commonAncestor
       if $(container).hasClass('annotator-hl')
-        container = $(container).parents('[class^=annotator-hl]')[0]
+        container = $(container).parents(':not([class^=annotator-hl])')[0]
       return if this.isAnnotator(container)
 
     if event and @selectedRanges.length
