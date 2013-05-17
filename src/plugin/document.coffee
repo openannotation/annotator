@@ -61,7 +61,7 @@ class Annotator.Plugin.Document extends Annotator.Plugin
       name = $(meta).prop("name")
       content = $(meta).prop("content")
       nameParts = name.split(".")
-      if nameParts.length == 2 and nameParts[0] == "dc"
+      if nameParts.length == 2 and nameParts[0].toLowerCase() == "dc"
         n = nameParts[1]
         if @metadata.dc[n]
           @metadata.dc[n].push(content)

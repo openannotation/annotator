@@ -25,6 +25,7 @@ describe 'Annotator.Plugin.Document', ->
     head.append('<meta name="citation_title" content="Foo">')
     head.append('<meta name="citation_pdf_url" content="foo.pdf">')
     head.append('<meta name="dc.identifier" content="doi:10.1175/JCLI-D-11-00015.1">')
+    head.append('<meta name="DC.type" content="Article">')
     head.append('<meta property="og:url" content="http://example.com">')
     head.append('<link rel="icon" href="http://example.com/images/icon.ico"></link>')
 
@@ -64,6 +65,7 @@ describe 'Annotator.Plugin.Document', ->
     it 'should have dublincore metadata', ->
       assert.ok(annotation.document.dc)
       assert.deepEqual(annotation.document.dc.identifier, ["doi:10.1175/JCLI-D-11-00015.1"])
+      assert.deepEqual(annotation.document.dc.type, ["Article"])
 
     it 'should have opengraph metadata', ->
       assert.ok(annotation.document.og)
