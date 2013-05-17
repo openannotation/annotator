@@ -259,8 +259,21 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   #
   # Returns nothing.
   _onLoadAnnotations: (data=[]) =>
-    @annotations = @annotations.concat(data)
-    @annotator.loadAnnotations(data.slice()) # Clone array
+
+    annotationMap = {}
+    for a in @annotations
+      annotationMap[a.id] = a
+
+    newData = []
+    for a in data
+      if annotationMap[a.id]
+        annotation = annotationMap[a.id]
+        this.updateAnnotation annotation, a
+      else
+        newData.push(a)
+
+    @annotations = @annotations.concat(newData)
+    @annotator.loadAnnotations(newData.slice()) # Clone array
 
   # Public: Performs the same task as Store.#loadAnnotations() but calls the
   # 'search' URI with an optional query string.
