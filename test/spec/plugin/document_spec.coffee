@@ -21,6 +21,7 @@ describe 'Annotator.Plugin.Document', ->
     head = $("head")
     head.append('<link rel="alternate" href="foo.pdf" type="application/pdf"></link>')
     head.append('<link rel="alternate" href="foo.doc" type="application/msword"></link>')
+    head.append('<link rel="bookmark" href="http://example.com/bookmark"></link>')
     head.append('<meta name="citation_doi" content="10.1175/JCLI-D-11-00015.1">')
     head.append('<meta name="citation_title" content="Foo">')
     head.append('<meta name="citation_pdf_url" content="foo.pdf">')
@@ -45,16 +46,20 @@ describe 'Annotator.Plugin.Document', ->
 
     it 'should have links with absoulte hrefs and types', ->
       assert.ok(annotation.document.link)
-      assert.equal(annotation.document.link.length, 6)
+      assert.equal(annotation.document.link.length, 7)
       assert.match(annotation.document.link[0].href, /^file:.+runner.html$/)
+      assert.equal(annotation.document.link[1].rel, "alternate")
       assert.match(annotation.document.link[1].href, /^file:.+foo\.pdf$/)
       assert.equal(annotation.document.link[1].type, "application/pdf")
+      assert.equal(annotation.document.link[2].rel, "alternate")
       assert.match(annotation.document.link[2].href, /^file:.+foo\.doc$/)
       assert.equal(annotation.document.link[2].type, "application/msword")
-      assert.equal(annotation.document.link[3].href, "doi:10.1175/JCLI-D-11-00015.1")
-      assert.match(annotation.document.link[4].href, /file:.+foo\.pdf$/)
-      assert.equal(annotation.document.link[4].type, "application/pdf")
-      assert.equal(annotation.document.link[5].href, "doi:10.1175/JCLI-D-11-00015.1")
+      assert.equal(annotation.document.link[3].rel, "bookmark")
+      assert.equal(annotation.document.link[3].href, "http://example.com/bookmark")
+      assert.equal(annotation.document.link[4].href, "doi:10.1175/JCLI-D-11-00015.1")
+      assert.match(annotation.document.link[5].href, /file:.+foo\.pdf$/)
+      assert.equal(annotation.document.link[5].type, "application/pdf")
+      assert.equal(annotation.document.link[6].href, "doi:10.1175/JCLI-D-11-00015.1")
 
     it 'should have google scholar metadata', ->
       assert.ok(annotation.document.scholar)
@@ -73,7 +78,7 @@ describe 'Annotator.Plugin.Document', ->
      
     it 'should have unique uris', ->
       uris = annotator.plugins.Document.uris()
-      assert.equal(uris.length, 4)
+      assert.equal(uris.length, 5)
 
     it 'should have a favicon', ->
       assert.equal(
