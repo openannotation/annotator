@@ -540,9 +540,8 @@ class Annotator extends Delegator
   #
   # Returns nothing.
   checkForStartSelection: (event) =>
-    unless event and this.isAnnotator(event.target)
-      this.startViewerHideTimer()
-      @mouseIsDown = true
+    this.startViewerHideTimer()
+    @mouseIsDown = true
 
   # Annotator#element callback. Checks to see if a selection has been made
   # on mouseup and if so displays the Annotator#adder. If @ignoreMouseup is
