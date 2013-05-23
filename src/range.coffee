@@ -153,8 +153,7 @@ class Range.BrowserRange
           it = null # null out ref to node so offset is correctly calculated below.
           node = node.previousSibling
 
-        # textNode nodeType == 3
-        while node.nodeType isnt 3
+        while node.nodeType isnt Node.TEXT_NODE
           node = node.firstChild
 
         offset = if it then 0 else node.nodeValue.length

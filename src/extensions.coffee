@@ -49,15 +49,14 @@ $.plugin = (name, object) ->
 # Returns a new jQuery collection of text nodes.
 $.fn.textNodes = ->
   getTextNodes = (node) ->
-    # textNode nodeType == 3
-    if node and node.nodeType != 3
+    if node and node.nodeType != Node.TEXT_NODE
       nodes = []
 
       # If not a comment then traverse children collecting text nodes.
       # We traverse the child nodes manually rather than using the .childNodes
       # property because IE9 does not update the .childNodes property after
       # .splitText() is called on a child text node.
-      if node.nodeType != 8
+      if node.nodeType != Node.COMMENT_NODE
         # Start at the last child and walk backwards through siblings.
         node = node.lastChild
         while node

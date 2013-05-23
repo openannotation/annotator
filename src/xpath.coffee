@@ -4,8 +4,7 @@ simpleXPathJQuery = (relativeRoot) ->
     path = ''
     elem = this
 
-    # elementNode nodeType == 1
-    while elem and elem.nodeType == 1 and elem isnt relativeRoot
+    while elem?.nodeType == Node.ELEMENT_NODE and elem isnt relativeRoot
       tagName = elem.tagName.replace(":", "\\:")
       idx = $(elem.parentNode).children(tagName).index(elem) + 1
 
