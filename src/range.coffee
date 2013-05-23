@@ -139,8 +139,7 @@ class Range.BrowserRange
       node = this[p + 'Container']
       offset = this[p + 'Offset']
 
-      # elementNode nodeType == 1
-      if node.nodeType is 1
+      if node.nodeType is Node.ELEMENT_NODE
         # Get specified node.
         it = node.childNodes[offset]
         # If it doesn't exist, that means we need the end of the
@@ -150,7 +149,7 @@ class Range.BrowserRange
         # if node doesn't have any children, it's a <br> or <hr> or
         # other self-closing tag, and we actually want the textNode
         # that ends just before it
-        if node.nodeType is 1 and not node.firstChild
+        if node.nodeType is Node.ELEMENT_NODE and not node.firstChild
           it = null # null out ref to node so offset is correctly calculated below.
           node = node.previousSibling
 
@@ -176,8 +175,7 @@ class Range.BrowserRange
 
     # Make sure the common ancestor is an element node.
     nr.commonAncestor = @commonAncestorContainer
-    # elementNode nodeType == 1
-    while nr.commonAncestor.nodeType isnt 1
+    while nr.commonAncestor.nodeType isnt Node.ELEMENT_NODE
       nr.commonAncestor = nr.commonAncestor.parentNode
 
     new Range.NormalizedRange(nr)
