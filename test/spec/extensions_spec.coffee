@@ -1,9 +1,9 @@
-describe 'jQuery.fn.flatten()', ->
+describe 'Util.flatten()', ->
   it "flattens the contents of an Array", ->
-    flattened = $.flatten([[1,2], 'lorem ipsum', [{}]])
+    flattened = Util.flatten([[1,2], 'lorem ipsum', [{}]])
     assert.deepEqual(flattened, [1, 2, 'lorem ipsum', {}])
 
-describe 'jQuery.fn.textNodes()', ->
+describe 'Util.getTextNodes()', ->
   $fix = null
 
   beforeEach ->
@@ -13,7 +13,7 @@ describe 'jQuery.fn.textNodes()', ->
   afterEach -> clearFixtures()
 
   it "returns an element's textNode descendants", ->
-    nodes = $fix.textNodes()
+    nodes = Util.getTextNodes($fix)
     text = (node.nodeValue for node in nodes)
 
     expectation = [ '\n  '
@@ -30,7 +30,7 @@ describe 'jQuery.fn.textNodes()', ->
     assert.deepEqual(text, expectation)
 
   it "returns an empty jQuery collection when called in undefined node", ->
-    result = $(undefined).textNodes()
+    result = Util.getTextNodes($(undefined))
     assert.instanceOf(result, jQuery)
     assert.lengthOf(result, 0)
 
@@ -66,9 +66,9 @@ describe 'jQuery.fn.textNodes()', ->
     # assert.lengthOf(para.childNodes, 2)
     # assert.lengthOf($(para).contents(), 2)
 
-    assert.lengthOf($(para).textNodes(), 2)
+    assert.lengthOf(Util.getTextNodes($(para)), 2)
 
-describe 'jQuery.fn.xpath()', ->
+describe 'Util.xpathFromNode', ->
   $fix = null
 
   beforeEach ->
@@ -83,37 +83,15 @@ describe 'jQuery.fn.xpath()', ->
 
     pathToFixHTML = '/html[1]/body[1]/div[1]'
 
-    assert.deepEqual($fix.find('p').xpath(), [pathToFixHTML + '/p[1]', pathToFixHTML + '/p[2]'])
-    assert.deepEqual($fix.find('span').xpath(), [pathToFixHTML + '/ol[1]/li[2]/span[1]'])
-    assert.deepEqual($fix.find('strong').xpath(), [pathToFixHTML + '/p[2]/strong[1]'])
+    assert.deepEqual(Util.xpathFromNode($fix.find('p')), [pathToFixHTML + '/p[1]', pathToFixHTML + '/p[2]'])
+    assert.deepEqual(Util.xpathFromNode($fix.find('span')), [pathToFixHTML + '/ol[1]/li[2]/span[1]'])
+    assert.deepEqual(Util.xpathFromNode($fix.find('strong')), [pathToFixHTML + '/p[2]/strong[1]'])
 
   it "takes an optional parameter determining the element from which XPaths should be calculated", ->
     ol = $fix.find('ol').get(0)
-    assert.deepEqual($fix.find('li').xpath(ol), ['/li[1]', '/li[2]', '/li[3]'])
-    assert.deepEqual($fix.find('span').xpath(ol), ['/li[2]/span[1]'])
+    assert.deepEqual(Util.xpathFromNode($fix.find('li'), ol), ['/li[1]', '/li[2]', '/li[3]'])
+    assert.deepEqual(Util.xpathFromNode($fix.find('span'), ol), ['/li[2]/span[1]'])
 
-describe 'jQuery.escape()', ->
+describe 'Util.escape()', ->
   it "should escape any HTML special characters into entities", ->
-    assert.equal($.escape('<>"&'), '&lt;&gt;&quot;&amp;')
-
-describe 'jQuery.fn.escape()', ->
-  it "should set the innerHTML of the elements but escape any HTML into entities", ->
-    div = $('<div />').escape('<>"&')
-    # Match either &quot; or " as  JSDOM keeps quotes escaped but the browser does not.
-    assert.match(div.html(), /&lt;&gt;(&quot;|")&amp;/)
-
-    div = $('<div />').escape('<script>alert("hello")</script>')
-    assert.match(div.html(), /&lt;script&gt;alert\((&quot;|")hello(&quot;|")\)&lt;\/script&gt;/)
-
-  it "should return the original jQuery collection", ->
-    div = $('<div />')
-    ret = div.escape('<>"&')
-    assert.strictEqual(ret, div)
-
-  it "should return the equivalent of .html() if no arguments are passed", ->
-    div = $('<div><strong>My div</strong></div>').escape('<>"&')
-    assert.equal(div.escape(), div.html())
-
-describe 'jQuery.fn.reverse()', ->
-  it "should, uh, reverse stuff", ->
-    assert.deepEqual($([1,2,3]).reverse().get(), [3,2,1])
+    assert.equal(Util.escape('<>"&'), '&lt;&gt;&quot;&amp;')

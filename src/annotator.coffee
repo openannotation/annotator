@@ -130,7 +130,7 @@ class Annotator extends Delegator
       .addField({
         load: (field, annotation) =>
           if annotation.text
-            $(field).escape(annotation.text)
+            $(field).html(Util.escape(annotation.text))
           else
             $(field).html("<i>#{_t 'No Comment'}</i>")
           this.publish('annotationViewerTextField', [field, annotation])
@@ -749,6 +749,7 @@ Annotator.$ = $
 # Export other modules for use in plugins.
 Annotator.Delegator = Delegator
 Annotator.Range = Range
+Annotator.Util = Util
 
 # Bind gettext helper so plugins can use localisation.
 Annotator._t = _t
@@ -763,7 +764,16 @@ Annotator.noConflict = ->
   this
 
 # Create global access for Annotator
-$.plugin 'annotator', Annotator
+$.fn.annotator = (options) ->
+  args = Array::slice.call(arguments, 1)
+  this.each ->
+    # check the data() cache, if it's there we'll call the method requested
+    instance = $.data(this, 'annotator')
+    if instance
+      options && instance[options].apply(instance, args)
+    else
+      instance = new Annotator(this, options)
+      $.data(this, 'annotator', instance)
 
 # Export Annotator object.
 this.Annotator = Annotator;

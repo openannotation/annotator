@@ -5,7 +5,7 @@ class this.MockSelection
   constructor: (fixElem, data) ->
     @commonAncestor = fixElem
 
-    @commonAncestorXPath = $(fixElem).xpath()[0]
+    @commonAncestorXPath = Util.xpathFromNode($(fixElem))[0]
 
     @startContainer = this.resolvePath(data[0])
     @startOffset    = data[1]
@@ -25,7 +25,7 @@ class this.MockSelection
 
   resolvePath: (path) ->
     if typeof path is "number"
-      $(@commonAncestor).textNodes()[path]
+      Util.getTextNodes($(@commonAncestor))[path]
     else if typeof path is "string"
       this.resolveXPath(@commonAncestorXPath + path)
 
@@ -33,7 +33,7 @@ class this.MockSelection
     document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
 
 this.textInNormedRange = (range) ->
-  textNodes = $(range.commonAncestor).textNodes()
+  textNodes = Util.getTextNodes($(range.commonAncestor))
   textNodes = textNodes[textNodes.index(range.start)..textNodes.index(range.end)].get()
   textNodes.reduce(((acc, next) -> acc += next.nodeValue), "")
 

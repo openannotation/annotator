@@ -32,7 +32,7 @@ class Annotator.Notification extends Delegator
   #   notification = new Annotator.Notification
   #   notification.show("Hello World")
   #
-  # Returns 
+  # Returns
   constructor: (options) ->
     super $(@options.html).appendTo(document.body)[0], options
 
@@ -56,7 +56,7 @@ class Annotator.Notification extends Delegator
     $(@element)
       .addClass(@options.classes.show)
       .addClass(@options.classes[status])
-      .escape(message || "")
+      .html(Util.escape(message || ""))
 
     setTimeout this.hide, 5000
     this

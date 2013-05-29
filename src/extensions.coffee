@@ -15,9 +15,14 @@ unless jQuery?.fn?.jquery
 unless JSON and JSON.parse and JSON.stringify
   console.error(_t("Annotator requires a JSON implementation: have you included lib/vendor/json2.js?"))
 
-$ = jQuery.sub();
+$ = jQuery
 
-$.flatten = (array) ->
+Util = {}
+
+# Public: Flatten a nested array structure
+#
+# Returns an array
+Util.flatten = (array) ->
   flatten = (ary) ->
     flat = []
 
@@ -28,26 +33,10 @@ $.flatten = (array) ->
 
   flatten(array)
 
-# PluginFactory. Make a jQuery plugin out of a Class.
-$.plugin = (name, object) ->
-  # create a new plugin with the given name on the global jQuery object
-  jQuery.fn[name] = (options) ->
-
-    args = Array::slice.call(arguments, 1)
-    this.each ->
-
-      # check the data() cache, if it's there we'll call the method requested
-      instance = $.data(this, name)
-      if instance
-        options && instance[options].apply(instance, args)
-      else
-        instance = new object(this, options)
-        $.data(this, name, instance)
-
 # Public: Finds all text nodes within the elements in the current collection.
 #
 # Returns a new jQuery collection of text nodes.
-$.fn.textNodes = ->
+Util.getTextNodes = (jq) ->
   getTextNodes = (node) ->
     if node and node.nodeType != Node.TEXT_NODE
       nodes = []
@@ -68,17 +57,17 @@ $.fn.textNodes = ->
     else
       return node
 
-  this.map -> $.flatten(getTextNodes(this))
+  jq.map -> Util.flatten(getTextNodes(this))
 
-$.fn.xpath = (relativeRoot) ->
+Util.xpathFromNode = (el, relativeRoot) ->
   try
-    result = simpleXPathJQuery.call this, relativeRoot
+    result = simpleXPathJQuery.call el, relativeRoot
   catch exception
     console.log "jQuery-based XPath construction failed! Falling back to manual."
-    result = simpleXPathPure.call this, relativeRoot
+    result = simpleXPathPure.call el, relativeRoot
   result
 
-$.xpath = (xp, root) ->
+Util.nodeFromXPath = (xp, root) ->
   steps = xp.substring(1).split("/")
   node = root
   for step in steps
@@ -88,14 +77,9 @@ $.xpath = (xp, root) ->
 
   node
 
-$.escape = (html) ->
-  html.replace(/&(?!\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
-
-$.fn.escape = (html) ->
-  if arguments.length
-    return this.html($.escape(html))
-
-  this.html()
-
-# Create a jQuery reverse function, but watch out for prototype.js
-$.fn.reverse = []._reverse or [].reverse
+Util.escape = (html) ->
+  html
+    .replace(/&(?!\w+;)/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
