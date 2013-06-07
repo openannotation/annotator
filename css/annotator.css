@@ -386,19 +386,19 @@
 		to(rgb(210, 210, 210))
 	);
 	background-image: -moz-linear-gradient(
-	    -90deg,
+	    to bottom,
 	    rgb(245, 245, 245),
 	    rgb(220, 220, 220) 60%,
 	    rgb(210, 210, 210)
 	);
 	background-image: -webkit-linear-gradient(
-	    -90deg,
+	    to bottom,
 	    rgb(245, 245, 245),
 	    rgb(220, 220, 220) 60%,
 	    rgb(210, 210, 210)
 	);
 	background-image: linear-gradient(
-	    -90deg,
+	    to bottom,
 	    rgb(245, 245, 245),
 	    rgb(220, 220, 220) 60%,
 	    rgb(210, 210, 210)
@@ -455,21 +455,21 @@
 		to(rgb(210, 210, 210))
 	);
 	background-image: -moz-linear-gradient(
-	    -90deg,
+	    to bottom,
 	    rgb(245, 245, 245),
 	    rgb(210, 210, 210) 50%,
 	    rgb(190, 190, 190) 50%,
 	    rgb(210, 210, 210)
 	);
 	background-image: -webkit-linear-gradient(
-	    -90deg,
+	    to bottom,
 	    rgb(245, 245, 245),
 	    rgb(210, 210, 210) 50%,
 	    rgb(190, 190, 190) 50%,
 	    rgb(210, 210, 210)
 	);
 	background-image: linear-gradient(
-	    -90deg,
+	    to bottom,
 	    rgb(245, 245, 245),
 	    rgb(210, 210, 210) 50%,
 	    rgb(190, 190, 190) 50%,
@@ -521,21 +521,21 @@
 		to(rgb(54, 101, 250))
 	);
 	background-image: -moz-linear-gradient(
-	    -90deg,
+	    to bottom,
 	    rgb(118, 145, 251),
 	    rgb(80, 117, 251) 50%,
 	    rgb(56, 101, 249) 50%,
 	    rgb(54, 101, 250)
 	);
 	background-image: -webkit-linear-gradient(
-	    -90deg,
+	    to bottom,
 	    rgb(118, 145, 251),
 	    rgb(80, 117, 251) 50%,
 	    rgb(56, 101, 249) 50%,
 	    rgb(54, 101, 250)
 	);
 	background-image: linear-gradient(
-	    -90deg,
+	    to bottom,
 	    rgb(118, 145, 251),
 	    rgb(80, 117, 251) 50%,
 	    rgb(56, 101, 249) 50%,
@@ -563,21 +563,21 @@
 		to(rgb(255, 0, 156))
 	);
 	background-image: -moz-linear-gradient(
-	    -90deg,
+	    to bottom,
 	    rgb(252, 124, 202),
 	    rgb(232, 93, 178) 50%,
 	    rgb(209, 46, 142) 50%,
 	    rgb(255, 0, 156)
 	);
 	background-image: -webkit-linear-gradient(
-	    -90deg,
+	    to bottom,
 	    rgb(252, 124, 202),
 	    rgb(232, 93, 178) 50%,
 	    rgb(209, 46, 142) 50%,
 	    rgb(255, 0, 156)
 	);
 	background-image: linear-gradient(
-	    -90deg,
+	    to bottom,
 	    rgb(252, 124, 202),
 	    rgb(232, 93, 178) 50%,
 	    rgb(209, 46, 142) 50%,
