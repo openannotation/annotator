@@ -8,6 +8,18 @@ describe 'Annotator.Plugin.AnnotateItPermissions', ->
 
   afterEach -> $(el).remove()
 
+  it "it should set user for newly created annotations on beforeAnnotationCreated", ->
+    ann = {}
+    permissions.setUser({userId: 'alice', consumerKey: 'fookey'})
+    $(el).trigger('beforeAnnotationCreated', [ann])
+    assert.equal(ann.user, 'alice')
+
+  it "it should set consumer for newly created annotations on beforeAnnotationCreated", ->
+    ann = {}
+    permissions.setUser({userId: 'alice', consumerKey: 'fookey'})
+    $(el).trigger('beforeAnnotationCreated', [ann])
+    assert.equal(ann.consumer, 'fookey')
+
   describe 'authorize', ->
     annotations = null
 
