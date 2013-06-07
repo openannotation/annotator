@@ -95,3 +95,23 @@ describe 'Util.xpathFromNode', ->
 describe 'Util.escape()', ->
   it "should escape any HTML special characters into entities", ->
     assert.equal(Util.escape('<>"&'), '&lt;&gt;&quot;&amp;')
+
+describe 'Util.uuid()', ->
+  it "should return a unique id on each call", ->
+    counter = 100
+    results = []
+
+    while counter--
+      current = Util.uuid()
+      assert.equal(results.indexOf(current), -1)
+      results.push current
+
+describe 'Util.preventEventDefault()', ->
+  it "should call prevent default if the method exists", ->
+    event = {preventDefault: sinon.spy()}
+    Util.preventEventDefault(event)
+    assert(event.preventDefault.calledOnce)
+
+    assert.doesNotThrow((-> Util.preventEventDefault(1)), Error)
+    assert.doesNotThrow((-> Util.preventEventDefault(null)), Error)
+    assert.doesNotThrow((-> Util.preventEventDefault(undefined)), Error)

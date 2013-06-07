@@ -83,3 +83,31 @@ Util.escape = (html) ->
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
+
+Util.uuid = (-> counter = 0; -> counter++)()
+
+Util.getGlobal = -> (-> this)()
+
+# Return the maximum z-index of any element in $elements (a jQuery collection).
+Util.maxZIndex = ($elements) ->
+  all = for el in $elements
+          if $(el).css('position') == 'static'
+            -1
+          else
+            parseInt($(el).css('z-index'), 10) or -1
+  Math.max.apply(Math, all)
+
+Util.mousePosition = (e, offsetEl) ->
+  offset = $(offsetEl).position()
+  {
+    top:  e.pageY - offset.top,
+    left: e.pageX - offset.left
+  }
+
+# Checks to see if an event parameter is provided and contains the prevent
+# default method. If it does it calls it.
+#
+# This is useful for methods that can be optionally used as callbacks
+# where the existance of the parameter must be checked before calling.
+Util.preventEventDefault = (event) ->
+  event?.preventDefault?()
