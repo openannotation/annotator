@@ -4,7 +4,7 @@ PATH:=$(shell npm bin):$(PATH)
 
 ANNOTATOR=\
 	xpath.coffee \
-	extensions.coffee \
+	util.coffee \
 	console.coffee \
 	class.coffee \
 	range.coffee \
