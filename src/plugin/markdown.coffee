@@ -37,7 +37,7 @@ class Annotator.Plugin.Markdown extends Annotator.Plugin
   # Returns nothing
   updateTextField: (field, annotation) =>
     # Escape any HTML in the text to prevent XSS.
-    text = Annotator.$.escape(annotation.text || '')
+    text = Annotator.Util.escape(annotation.text || '')
     $(field).html(this.convert(text))
 
   # Converts provided text into markdown.

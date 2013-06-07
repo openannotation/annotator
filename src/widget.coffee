@@ -26,7 +26,7 @@ class Annotator.Widget extends Delegator
   checkOrientation: ->
     this.resetOrientation()
 
-    window   = $(util.getGlobal())
+    window   = $(Annotator.Util.getGlobal())
     widget   = @element.children(":first")
     offset   = widget.offset()
     viewport = {

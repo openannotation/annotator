@@ -55,7 +55,7 @@ Range.nodeFromXPath = (xpath, root=document) ->
       console.log "Trying fallback..."
       # We have a an 'evaluator' for the really simple expressions that
       # should work for the simple expressions we generate.
-      $.xpath xp, root
+      Util.nodeFromXPath(xp, root)
 
   if not $.isXMLDoc document.documentElement
     evaluateXPath xpath
@@ -256,8 +256,8 @@ class Range.NormalizedRange
       else
         origParent = $(node).parent()
 
-      xpath = origParent.xpath(root)[0]
-      textNodes = origParent.textNodes()
+      xpath = Util.xpathFromNode(origParent, root)[0]
+      textNodes = Util.getTextNodes(origParent)
 
       # Calculate real offset as the combined length of all the
       # preceding textNode siblings. We include the length of the
@@ -294,7 +294,7 @@ class Range.NormalizedRange
   #
   # Returns an Array of TextNode instances.
   textNodes: ->
-    textNodes = $(this.commonAncestor).textNodes()
+    textNodes = Util.getTextNodes($(this.commonAncestor))
     [start, end] = [textNodes.index(this.start), textNodes.index(this.end)]
     # Return the textNodes that fall between the start and end indexes.
     $.makeArray textNodes[start..end]
@@ -358,7 +358,7 @@ class Range.SerializedRange
       # the combined length of the textNodes to that point exceeds or
       # matches the value of the offset.
       length = 0
-      for tn in $(node).textNodes()
+      for tn in Util.getTextNodes($(node))
         if (length + tn.nodeValue.length >= this[p + 'Offset'])
           range[p + 'Container'] = tn
           range[p + 'Offset'] = this[p + 'Offset'] - length

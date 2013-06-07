@@ -17,11 +17,11 @@ msgstr ""
 "Language: ru\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
-#: lib/extensions.js:23
+#: lib/util.js:23
 msgid "Annotator requires jQuery: have you included lib/vendor/jquery.js?"
 msgstr "Annotator требует jQuery: Пожалуйста, добавьте lib/vendor/jquery.js?"
 
-#: lib/extensions.js:27
+#: lib/util.js:27
 msgid ""
 "Annotator requires a JSON implementation: have you included "
 "lib/vendor/json2.js?"
