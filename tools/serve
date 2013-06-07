@@ -9,8 +9,8 @@ var iso8601 = require('iso8601');
 var STATIC_PORT = 4000;
 var TOKEN_PORT = 5001;
 
-var CONSUMER_KEY = 'yourconsumerkey';
-var CONSUMER_SECRET = 'yourconsumersecret';
+var CONSUMER_KEY = 'mockconsumer';
+var CONSUMER_SECRET = 'mockconsumersecret';
 var CONSUMER_TTL = 1800;
 
 var fileServer = new static.Server();
@@ -34,7 +34,7 @@ http.createServer(function (request, response) {
     request.addListener('end', function () {
         var payload = {
             'consumerKey': CONSUMER_KEY,
-            'userId': 'joe.bloggs',
+            'userId': 'alice',
             'issuedAt': new Date().toISOString(),
             'ttl': CONSUMER_TTL
         };
