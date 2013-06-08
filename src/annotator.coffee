@@ -19,7 +19,7 @@ util =
     Math.max.apply(Math, all)
 
   mousePosition: (e, offsetEl) ->
-    offset = $(offsetEl).position()
+    offset = $(offsetEl).offset()
     {
       top:  e.pageY - offset.top,
       left: e.pageX - offset.left
