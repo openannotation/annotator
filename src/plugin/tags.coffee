@@ -135,7 +135,7 @@ class Annotator.Plugin.Tags extends Annotator.Plugin
     if annotation.tags and $.isArray(annotation.tags) and annotation.tags.length
       field.addClass('annotator-tags').html(->
         string = $.map(annotation.tags,(tag) ->
-            '<span class="annotator-tag">' + Annotator.$.escape(tag) + '</span>'
+            '<span class="annotator-tag">' + Annotator.Util.escape(tag) + '</span>'
         ).join(' ')
       )
     else

@@ -18,11 +18,11 @@ msgstr ""
 "Language: zh_CN\n"
 "Plural-Forms: nplurals=1; plural=0\n"
 
-#: lib/extensions.js:23
+#: lib/util.js:23
 msgid "Annotator requires jQuery: have you included lib/vendor/jquery.js?"
 msgstr "Annotator 依赖 JQuery, 请检查页面是否包含 lib/vendor/jquery.js？ "
 
-#: lib/extensions.js:27
+#: lib/util.js:27
 msgid ""
 "Annotator requires a JSON implementation: have you included "
 "lib/vendor/json2.js?"
