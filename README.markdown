@@ -1,6 +1,8 @@
 Annotator
 =========
 
+[![Build Status](https://secure.travis-ci.org/okfn/annotator.png)](http://travis-ci.org/okfn/annotator)
+
 Annotator is a web annotation system. Loaded into a webpage, it provides the
 user with tools to annotate text (and other elements) in the page. For a simple
 demonstration, visit the [demo page][dp] or [download a tagged release of
