@@ -33,9 +33,11 @@ class Annotator.Plugin.Document extends Annotator.Plugin
 
     # first look for some common metadata types
     # TODO: look for microdata/rdfa?
-    this._getScholar()
+    this._getHighwire()
     this._getDublinCore()
     this._getOpenGraph()
+    this._getEprints()
+    this._getPrism()
     this._getFavicon()
 
     # extract out/normalize some things
@@ -44,29 +46,19 @@ class Annotator.Plugin.Document extends Annotator.Plugin
 
     return @metadata
 
-  _getScholar: =>
-    @metadata.scholar = {}
+  _getHighwire: =>
+    m = {}
     for meta in $("meta")
       name = $(meta).prop("name")
       content = $(meta).prop("content")
-      if name.match(/^citation_/)
-        if @metadata.scholar[name]
-          @metadata.scholar[name].push(content)
+      match = name.match(/^citation_(.+)$/)
+      if match
+        name = match[1]
+        if m[name]
+          m[name].push(content)
         else
-          @metadata.scholar[name] = [content]
-
-  _getDublinCore: =>
-    @metadata.dc = {}
-    for meta in $("meta")
-      name = $(meta).prop("name")
-      content = $(meta).prop("content")
-      nameParts = name.split(".")
-      if nameParts.length == 2 and nameParts[0].toLowerCase() == "dc"
-        n = nameParts[1]
-        if @metadata.dc[n]
-          @metadata.dc[n].push(content)
-        else
-          @metadata.dc[n] = [content]
+          m[name] = [content]
+    return @metadata.highwire = m
 
   _getOpenGraph: =>
     @metadata.og = {}
@@ -82,9 +74,38 @@ class Annotator.Plugin.Document extends Annotator.Plugin
           else
             @metadata.og[n] = [content]
 
+  _getDublinCore: =>
+    return @metadata.dc = this._getMetaTags("dc")
+
+  _getPrism: =>
+    return @metadata.prism = this._getMetaTags("prism")
+
+  _getEprints: =>
+    return @metadata.eprints = this._getMetaTags("eprints")
+
+  _getMetaTags: (prefix) =>
+    tags = {}
+    for meta in $("meta")
+      name = $(meta).prop("name")
+      content = $(meta).prop("content")
+      if name
+        match = name.match(RegExp("^#{prefix}\.(.+)$", "i"))
+        if match
+          n = match[1]
+          if tags[n]
+            tags[n].push(content)
+          else
+            tags[n] = [content]
+    return tags
+
+
   _getTitle: =>
-    if @metadata.scholar.citation_title
-      @metadata.title = @metadata.scholar.citation_title[0]
+    if @metadata.highwire.title
+      @metadata.title = @metadata.highwire.title[0]
+    else if @metadata.eprints.title
+      @metadata.title = @metadata.eprints.title
+    else if @metadata.prism.title
+      @metadata.title = @metadata.prism.title
     else if @metadata.dc.title
       @metadata.title = @metadata.dc.title
     else
@@ -104,9 +125,9 @@ class Annotator.Plugin.Document extends Annotator.Plugin
         @metadata.link.push(href: href, rel: rel, type: type)
 
     # look for links in scholar metadata
-    for name, values of @metadata.scholar
+    for name, values of @metadata.highwire
 
-      if name == "citation_pdf_url"
+      if name == "pdf_url"
         for url in values
           @metadata.link.push
             href: this._absoluteUrl(url)
@@ -116,7 +137,7 @@ class Annotator.Plugin.Document extends Annotator.Plugin
       # convenient place to look them up later, and somewhat sane since 
       # they don't have a type
     
-      if name == "citation_doi"
+      if name == "doi"
         for doi in values
           if doi[0..3] != "doi:"
             doi = "doi:" + doi
