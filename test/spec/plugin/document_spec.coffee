@@ -26,9 +26,13 @@ describe 'Annotator.Plugin.Document', ->
     head.append('<meta name="citation_title" content="Foo">')
     head.append('<meta name="citation_pdf_url" content="foo.pdf">')
     head.append('<meta name="dc.identifier" content="doi:10.1175/JCLI-D-11-00015.1">')
+    head.append('<meta name="dc.identifier" content="isbn:123456789">')
     head.append('<meta name="DC.type" content="Article">')
     head.append('<meta property="og:url" content="http://example.com">')
+    head.append('<meta name="twitter:site" content="@okfn">')
     head.append('<link rel="icon" href="http://example.com/images/icon.ico"></link>')
+    head.append('<meta name="eprints.title" content="Computer Lib / Dream Machines">')
+    head.append('<meta name="prism.title" content="Literary Machines">')
 
     annotation = null
 
@@ -41,7 +45,7 @@ describe 'Annotator.Plugin.Document', ->
     it 'should have a document', ->
       assert.ok(annotation.document)
 
-    it 'should have a title, derived from scholar metadata if possible', ->
+    it 'should have a title, derived from highwire metadata if possible', ->
       assert.equal(annotation.document.title, 'Foo')
 
     it 'should have links with absoulte hrefs and types', ->
@@ -61,21 +65,33 @@ describe 'Annotator.Plugin.Document', ->
       assert.equal(annotation.document.link[5].type, "application/pdf")
       assert.equal(annotation.document.link[6].href, "doi:10.1175/JCLI-D-11-00015.1")
 
-    it 'should have google scholar metadata', ->
-      assert.ok(annotation.document.scholar)
-      assert.deepEqual(annotation.document.scholar.citation_pdf_url, ['foo.pdf'])
-      assert.deepEqual(annotation.document.scholar.citation_doi, ['10.1175/JCLI-D-11-00015.1'])
-      assert.deepEqual(annotation.document.scholar.citation_title, ['Foo'])
+    it 'should have highwire metadata', ->
+      assert.ok(annotation.document.highwire)
+      assert.deepEqual(annotation.document.highwire.pdf_url, ['foo.pdf'])
+      assert.deepEqual(annotation.document.highwire.doi, ['10.1175/JCLI-D-11-00015.1'])
+      assert.deepEqual(annotation.document.highwire.title, ['Foo'])
 
     it 'should have dublincore metadata', ->
       assert.ok(annotation.document.dc)
-      assert.deepEqual(annotation.document.dc.identifier, ["doi:10.1175/JCLI-D-11-00015.1"])
+      assert.deepEqual(annotation.document.dc.identifier, ["doi:10.1175/JCLI-D-11-00015.1", "isbn:123456789"])
       assert.deepEqual(annotation.document.dc.type, ["Article"])
 
-    it 'should have opengraph metadata', ->
-      assert.ok(annotation.document.og)
-      assert.deepEqual(annotation.document.og.url, ["http://example.com"])
-     
+    it 'should have facebook metadata', ->
+      assert.ok(annotation.document.facebook)
+      assert.deepEqual(annotation.document.facebook.url, ["http://example.com"])
+
+    it 'should have eprints metadata', ->
+      assert.ok(annotation.document.eprints)
+      assert.deepEqual(annotation.document.eprints.title, ['Computer Lib / Dream Machines'])
+
+    it 'should have prism metadata', ->
+      assert.ok(annotation.document.prism)
+      assert.deepEqual(annotation.document.prism.title, ['Literary Machines'])
+
+     it 'should have twitter card metadata', ->
+      assert.ok(annotation.document.twitter)
+      assert.deepEqual(annotation.document.twitter.site, ['@okfn'])
+    
     it 'should have unique uris', ->
       uris = annotator.plugins.Document.uris()
       assert.equal(uris.length, 5)
