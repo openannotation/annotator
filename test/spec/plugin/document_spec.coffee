@@ -29,6 +29,7 @@ describe 'Annotator.Plugin.Document', ->
     head.append('<meta name="dc.identifier" content="isbn:123456789">')
     head.append('<meta name="DC.type" content="Article">')
     head.append('<meta property="og:url" content="http://example.com">')
+    head.append('<meta name="twitter:site" content="@okfn">')
     head.append('<link rel="icon" href="http://example.com/images/icon.ico"></link>')
     head.append('<meta name="eprints.title" content="Computer Lib / Dream Machines">')
     head.append('<meta name="prism.title" content="Literary Machines">')
@@ -75,9 +76,9 @@ describe 'Annotator.Plugin.Document', ->
       assert.deepEqual(annotation.document.dc.identifier, ["doi:10.1175/JCLI-D-11-00015.1", "isbn:123456789"])
       assert.deepEqual(annotation.document.dc.type, ["Article"])
 
-    it 'should have opengraph metadata', ->
-      assert.ok(annotation.document.og)
-      assert.deepEqual(annotation.document.og.url, ["http://example.com"])
+    it 'should have facebook metadata', ->
+      assert.ok(annotation.document.facebook)
+      assert.deepEqual(annotation.document.facebook.url, ["http://example.com"])
 
     it 'should have eprints metadata', ->
       assert.ok(annotation.document.eprints)
@@ -86,7 +87,11 @@ describe 'Annotator.Plugin.Document', ->
     it 'should have prism metadata', ->
       assert.ok(annotation.document.prism)
       assert.deepEqual(annotation.document.prism.title, ['Literary Machines'])
-     
+
+     it 'should have twitter card metadata', ->
+      assert.ok(annotation.document.twitter)
+      assert.deepEqual(annotation.document.twitter.site, ['@okfn'])
+    
     it 'should have unique uris', ->
       uris = annotator.plugins.Document.uris()
       assert.equal(uris.length, 5)

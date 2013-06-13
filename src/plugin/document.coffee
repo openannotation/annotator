@@ -35,9 +35,10 @@ class Annotator.Plugin.Document extends Annotator.Plugin
     # TODO: look for microdata/rdfa?
     this._getHighwire()
     this._getDublinCore()
-    this._getOpenGraph()
+    this._getFacebook()
     this._getEprints()
     this._getPrism()
+    this._getTwitter()
     this._getFavicon()
 
     # extract out/normalize some things
@@ -47,49 +48,30 @@ class Annotator.Plugin.Document extends Annotator.Plugin
     return @metadata
 
   _getHighwire: =>
-    m = {}
-    for meta in $("meta")
-      name = $(meta).prop("name")
-      content = $(meta).prop("content")
-      match = name.match(/^citation_(.+)$/)
-      if match
-        name = match[1]
-        if m[name]
-          m[name].push(content)
-        else
-          m[name] = [content]
-    return @metadata.highwire = m
+    return @metadata.highwire = this._getMetaTags("citation", "name", "_")
 
-  _getOpenGraph: =>
-    @metadata.og = {}
-    for meta in $("meta")
-      property = $(meta).attr("property")
-      content = $(meta).prop("content")
-      if property
-        match = property.match(/^og:(.+)$/)
-        if match
-          n = match[1]
-          if @metadata.og[n]
-            @metadata.og[n].push(content)
-          else
-            @metadata.og[n] = [content]
+  _getFacebook: =>
+    return @metadata.facebook = this._getMetaTags("og", "property", ":")
+
+  _getTwitter: =>
+    return @metadata.twitter = this._getMetaTags("twitter", "name", ":")
 
   _getDublinCore: =>
-    return @metadata.dc = this._getMetaTags("dc")
+    return @metadata.dc = this._getMetaTags("dc", "name", ".")
 
   _getPrism: =>
-    return @metadata.prism = this._getMetaTags("prism")
+    return @metadata.prism = this._getMetaTags("prism", "name", ".")
 
   _getEprints: =>
-    return @metadata.eprints = this._getMetaTags("eprints")
+    return @metadata.eprints = this._getMetaTags("eprints", "name", ".")
 
-  _getMetaTags: (prefix) =>
+  _getMetaTags: (prefix, attribute, delimiter) =>
     tags = {}
     for meta in $("meta")
-      name = $(meta).prop("name")
+      name = $(meta).attr(attribute)
       content = $(meta).prop("content")
       if name
-        match = name.match(RegExp("^#{prefix}\.(.+)$", "i"))
+        match = name.match(RegExp("^#{prefix}#{delimiter}(.+)$", "i"))
         if match
           n = match[1]
           if tags[n]
@@ -98,7 +80,6 @@ class Annotator.Plugin.Document extends Annotator.Plugin
             tags[n] = [content]
     return tags
 
-
   _getTitle: =>
     if @metadata.highwire.title
       @metadata.title = @metadata.highwire.title[0]
@@ -106,6 +87,10 @@ class Annotator.Plugin.Document extends Annotator.Plugin
       @metadata.title = @metadata.eprints.title
     else if @metadata.prism.title
       @metadata.title = @metadata.prism.title
+    else if @metadata.facebook.title
+      @metadata.title = @metadata.facebook.title
+    else if @metadata.twitter.title
+      @metadata.title = @metadata.twitter.title
     else if @metadata.dc.title
       @metadata.title = @metadata.dc.title
     else
