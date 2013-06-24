@@ -72,6 +72,8 @@ class Annotator extends Delegator
     # Create adder
     this.adder = $(this.html.adder).appendTo(@wrapper).hide()
 
+    Annotator._instances.push(this)
+
   # Wraps the children of @element in a @wrapper div. NOTE: This method will also
   # remove any script elements inside @element to prevent them re-executing.
   #
@@ -201,6 +203,9 @@ class Annotator extends Delegator
       @plugins[name].destroy()
 
     this.removeEvents()
+    idx = Annotator._instances.indexOf(this)
+    if idx != -1
+      Annotator._instances.splice(idx, 1)
 
   # Public: Gets the current selection excluding any nodes that fall outside of
   # the @wrapper. Then returns and Array of NormalizedRange instances.
@@ -753,6 +758,9 @@ Annotator.$ = $
 Annotator.Delegator = Delegator
 Annotator.Range = Range
 Annotator.Util = Util
+
+# Expose a global instance registry
+Annotator._instances = []
 
 # Bind gettext helper so plugins can use localisation.
 Annotator._t = _t
