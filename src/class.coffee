@@ -235,9 +235,9 @@ Delegator.natives = do ->
 #
 # Examples
 #
-#   Delegator.isCustomEvent('click')              # => false
-#   Delegator.isCustomEvent('mousedown')          # => false
-#   Delegator.isCustomEvent('annotation:created') # => true
+#   Delegator._isCustomEvent('click')              # => false
+#   Delegator._isCustomEvent('mousedown')          # => false
+#   Delegator._isCustomEvent('annotation:created') # => true
 #
 # Returns true if event is a custom user event.
 Delegator._isCustomEvent = (event) ->
