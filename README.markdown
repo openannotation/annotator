@@ -38,11 +38,12 @@ important files in these packages are `annotator.min.js` (or
 `annotator.min.css`, which contains all the CSS and embedded images for the
 annotator.
 
-Annotator requires [jQuery][$] as well as the [jQuery Migrate Plugin][$m] . The quickest way to get going with Annotator is
-to include the following in the `<head>` of your document (paths relative to the
-root of the unzipped download):
+Annotator requires [jQuery][$]. If you are using version 1.9 or above you will
+also needthe [jQuery Migrate Plugin][$m] until the next Annotator release. The
+quickest way to get going with Annotator is to include the following in the
+`<head>` of your document (paths relative to the root of the unzipped download):
 
-    <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js'></script>
+    <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.9/jquery.min.js'></script>
     <script src= "http://code.jquery.com/jquery-migrate-1.2.1.js"></script>
 
     <script src='annotator.min.js'></script>
