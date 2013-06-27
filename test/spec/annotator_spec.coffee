@@ -82,6 +82,21 @@ describe 'Annotator', ->
       Annotator.prototype.constructor.call(annotator, annotator.element[0])
       assert(annotator._setupDynamicStyle.called)
 
+  describe "#destroy()", ->
+    it "should unbind Annotator's events from the page", ->
+      stub = sinon.stub(annotator, 'checkForStartSelection')
+
+      annotator._setupDocumentEvents()
+      annotator.destroy()
+      $(document).mousedown()
+
+      assert.isFalse(stub.called)
+      $(document).unbind('mousedown')
+
+    it "should remove Annotator's elements from the page", ->
+      annotator.destroy()
+      assert.equal(annotator.element.find('[class^=annotator-]').length, 0)
+
   describe "_setupDocumentEvents", ->
     beforeEach: ->
       $(document).unbind('mouseup').unbind('mousedown')
