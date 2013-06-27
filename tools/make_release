@@ -148,7 +148,7 @@ git reset HEAD pkg/
 
 echo "Uploading release to S3"
 [ -n "$S3CFG" ] && S3ARGS="-c $S3CFG"
-maybe s3cmd $S3ARGS --acl-public sync pkg/annotator/*.{js,css} "s3://assets.annotateit.org/annotator/v${VERSION}/"
+maybe s3cmd $S3ARGS --acl-public sync pkg/annotator*"${VERSION}"/*.{js,css} "s3://assets.annotateit.org/annotator/v${VERSION}/"
 
 # Make zips and upload to GitHub
 
