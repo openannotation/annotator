@@ -218,7 +218,7 @@ Delegator._parseEvents = (eventsObj) ->
 
 
 # Native jQuery events that should recieve an event object. Plugins can
-# add theirr own methods to this if required.
+# add their own methods to this if required.
 Delegator.natives = do ->
   specials = (key for own key, val of jQuery.event.special)
   """
