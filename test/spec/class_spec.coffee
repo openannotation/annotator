@@ -2,6 +2,7 @@ class DelegatedExample extends Delegator
   events:
     'div click': 'pushA'
     'baz': 'pushB'
+    'li click': 'pushC'
 
   options:
     foo: "bar"
@@ -35,27 +36,6 @@ describe 'Delegator', ->
     it "should be unique to an instance", ->
       assert.equal(delegator.options.bar("hello"), "hello")
 
-  describe "addEvent", ->
-    it "adds an event for a selector", ->
-      delegator.addEvent('p', 'foo', 'pushC')
-
-      $fix.find('p').trigger('foo')
-      assert.deepEqual(delegator.returns, ['C'])
-
-    it "adds an event for an element", ->
-      delegator.addEvent($fix.find('p').get(0), 'bar', 'pushC')
-
-      $fix.find('p').trigger('bar')
-      assert.deepEqual(delegator.returns, ['C'])
-
-    it "uses event delegation to bind the events", ->
-      delegator.addEvent('li', 'click', 'pushB')
-
-      $fix.find('ol').append("<li>Hi there, I'm new round here.</li>")
-      $fix.find('li').click()
-
-      assert.deepEqual(delegator.returns, ['B', 'A', 'B', 'A'])
-
   it "automatically binds events described in its events property", ->
     $fix.find('p').click()
     assert.deepEqual(delegator.returns, ['A'])
@@ -63,6 +43,22 @@ describe 'Delegator', ->
   it "will bind events in its events property to its root element if no selector is specified", ->
     $fix.trigger('baz')
     assert.deepEqual(delegator.returns, ['B'])
+
+  it "uses event delegation to bind the events", ->
+    $fix.find('ol').append("<li>Hi there, I'm new round here.</li>")
+    $fix.find('li').click()
+
+    assert.deepEqual(delegator.returns, ['C', 'A', 'C', 'A'])
+
+  describe "removeEvents", ->
+    it "should remove all events previously bound by addEvents", ->
+      delegator.removeEvents()
+
+      $fix.find('ol').append("<li>Hi there, I'm new round here.</li>")
+      $fix.find('li').click()
+      $fix.trigger('baz')
+
+      assert.deepEqual(delegator.returns, [])
 
   describe "on", ->
     it "should be an alias of Delegator#subscribe()", ->
@@ -119,28 +115,28 @@ describe 'Delegator', ->
 
       assert.isFalse(callback.called)
 
-    describe "publish", ->
-      it "should trigger an event on the Delegator#element", ->
-        callback = sinon.spy()
-        delegator.element.bind('custom', callback)
+  describe "publish", ->
+    it "should trigger an event on the Delegator#element", ->
+      callback = sinon.spy()
+      delegator.element.bind('custom', callback)
 
-        delegator.publish('custom')
-        assert(callback.called)
+      delegator.publish('custom')
+      assert(callback.called)
 
-    describe "isCustomEvent", ->
-      events = [
-        ['click', false]
-        ['mouseover', false]
-        ['mousedown', false]
-        ['submit', false]
-        ['load', false]
-        ['click.namespaced', false]
-        ['save', true]
-        ['cancel', true]
-        ['update', true]
-      ]
+  describe "Delegator._isCustomEvent", ->
+    events = [
+      ['click', false]
+      ['mouseover', false]
+      ['mousedown', false]
+      ['submit', false]
+      ['load', false]
+      ['click.namespaced', false]
+      ['save', true]
+      ['cancel', true]
+      ['update', true]
+    ]
 
-      it "should return true if the string passed is a custom event", ->
-        while events.length
-          [event, result] = events.shift()
-          assert.equal(delegator.isCustomEvent(event), result)
+    it "should return true if the string passed is a custom event", ->
+      while events.length
+        [event, result] = events.shift()
+        assert.equal(Delegator._isCustomEvent(event), result)
