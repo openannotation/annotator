@@ -1,11 +1,9 @@
 class Annotator.Plugin.Document extends Annotator.Plugin
 
   $ = Annotator.$
-  
-  events:
-    'beforeAnnotationCreated': 'beforeAnnotationCreated'
 
   pluginInit: ->
+    @annotator.subscribe('beforeAnnotationCreated', this.beforeAnnotationCreated)
     this.getDocumentMetadata()
 
   # returns the primary URI for the document being annotated

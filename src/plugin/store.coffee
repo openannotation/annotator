@@ -15,15 +15,7 @@
 #   })
 #
 # This header will now be sent with every request.
-class Annotator.Plugin.Store extends Annotator.Plugin
-  # The store listens for the following events published by the Annotator.
-  # - annotationCreated: A new annotation has been created.
-  # - annotationUpdated: An annotation has been updated.
-  # - annotationDeleted: An annotation has been deleted.
-  events:
-    'annotationCreated': 'annotationCreated'
-    'annotationDeleted': 'annotationDeleted'
-    'annotationUpdated': 'annotationUpdated'
+class Annotator.Plugin.Store
 
   # User customisable options available.
   options:
@@ -39,16 +31,9 @@ class Annotator.Plugin.Store extends Annotator.Plugin
     # method.
     emulateHTTP: false
 
-    # If loadFromSearch is set, then we load the first batch of
-    # annotations from the 'search' URL as set in `options.urls`
-    # instead of the registry path 'prefix/read'.
-    #
-    #     loadFromSearch: {
-    #       'limit': 0,
-    #       'all_fields': 1
-    #       'uri': 'http://this/document/only'
-    #     }
-    loadFromSearch: false
+    # Should the plugin emulate JSON POST/PUT payloads by sending its requests
+    # as application/x-www-form-urlencoded with a single key, "json"
+    emulateJSON: false
 
     # This is the API endpoint. If the server supports Cross Origin Resource
     # Sharing (CORS) a full URL can be used here.
@@ -86,36 +71,8 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   #   })
   #
   # Returns a new instance of Store.
-  constructor: (element, options) ->
-    super
-    @annotations = []
-
-  # Public: Initialises the plugin and loads the latest annotations. If the
-  # Auth plugin is also present it will request an auth token before loading
-  # any annotations.
-  #
-  # Examples
-  #
-  #   store.pluginInit()
-  #
-  # Returns nothing.
-  pluginInit: ->
-    return unless Annotator.supported()
-
-    if @annotator.plugins.Auth
-      @annotator.plugins.Auth.withToken(this._getAnnotations)
-    else
-      this._getAnnotations()
-
-  # Checks the loadFromSearch option and if present loads annotations using
-  # the Store#loadAnnotationsFromSearch method rather than Store#loadAnnotations.
-  #
-  # Returns nothing.
-  _getAnnotations: =>
-    if @options.loadFromSearch
-      this.loadAnnotationsFromSearch(@options.loadFromSearch)
-    else
-      this.loadAnnotations()
+  constructor: (options) ->
+    @options = $.extend(true, {}, @options, options)
 
   # Public: Callback method for annotationCreated event. Receives an annotation
   # and sends a POST request to the sever using the URI for the "create" action.
@@ -128,23 +85,9 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   #   # => Results in an HTTP POST request to the server containing the
   #   #    annotation as serialised JSON.
   #
-  # Returns nothing.
-  annotationCreated: (annotation) ->
-    # Pre-register the annotation so as to save the list of highlight
-    # elements.
-    if annotation not in @annotations
-      this.registerAnnotation(annotation)
-
-      this._apiRequest('create', annotation, (data) =>
-        # Update with (e.g.) ID from server.
-        if not data.id?
-          console.warn Annotator._t("Warning: No ID returned from server for annotation "), annotation
-        this.updateAnnotation annotation, data
-      )
-    else
-      # This is called to update annotations created at load time with
-      # the highlight elements created by Annotator.
-      this.updateAnnotation annotation, {}
+  # Returns a jqXHR object.
+  create: (annotation) ->
+    this._apiRequest('create', annotation)
 
   # Public: Callback method for annotationUpdated event. Receives an annotation
   # and sends a PUT request to the sever using the URI for the "update" action.
@@ -157,10 +100,9 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   #   # => Results in an HTTP PUT request to the server containing the
   #   #    annotation as serialised JSON.
   #
-  # Returns nothing.
-  annotationUpdated: (annotation) ->
-    if annotation in this.annotations
-      this._apiRequest 'update', annotation, ((data) => this.updateAnnotation(annotation, data))
+  # Returns a jqXHR object.
+  update: (annotation) ->
+    this._apiRequest('update', annotation)
 
   # Public: Callback method for annotationDeleted event. Receives an annotation
   # and sends a DELETE request to the server using the URI for the destroy
@@ -173,145 +115,23 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   #   store.annotationDeleted({text: "my new annotation comment"})
   #   # => Results in an HTTP DELETE request to the server.
   #
-  # Returns nothing.
-  annotationDeleted: (annotation) ->
-    if annotation in this.annotations
-      this._apiRequest 'destroy', annotation, (() => this.unregisterAnnotation(annotation))
+  # Returns a jqXHR object.
+  delete: (annotation) ->
+    this._apiRequest('destroy', annotation)
 
-  # Public: Registers an annotation with the Store. Used to check whether an
-  # annotation has already been created when using Store#annotationCreated().
+  # Public: Searches for annotations matching the specified query.
   #
-  # NB: registerAnnotation and unregisterAnnotation do no error-checking/
-  # duplication avoidance of their own. Use with care.
-  #
-  # annotation - An annotation Object to resister.
-  #
-  # Examples
-  #
-  #   store.registerAnnotation({id: "annotation"})
-  #
-  # Returns registed annotations.
-  registerAnnotation: (annotation) ->
-    @annotations.push(annotation)
-
-  # Public: Unregisters an annotation with the Store.
-  #
-  # NB: registerAnnotation and unregisterAnnotation do no error-checking/
-  # duplication avoidance of their own. Use with care.
-  #
-  # annotation - An annotation Object to unresister.
-  #
-  # Examples
-  #
-  #   store.unregisterAnnotation({id: "annotation"})
-  #
-  # Returns remaining registed annotations.
-  unregisterAnnotation: (annotation) ->
-    @annotations.splice(@annotations.indexOf(annotation), 1)
-
-  # Public: Extends the provided annotation with the contents of the data
-  # Object. Will only extend annotations that have been registered with the
-  # store. Also updates the annotation object stored in the 'annotation' data
-  # store.
-  #
-  # annotation - An annotation Object to extend.
-  # data       - An Object containing properties to add to the annotation.
-  #
-  # Examples
-  #
-  #   annotation = $('.annotation-hl:first').data('annotation')
-  #   store.updateAnnotation(annotation, {extraProperty: "bacon sarnie"})
-  #   console.log($('.annotation-hl:first').data('annotation').extraProperty)
-  #   # => Outputs "bacon sarnie"
-  #
-  # Returns nothing.
-  updateAnnotation: (annotation, data) ->
-    if annotation not in this.annotations
-      console.error Annotator._t("Trying to update unregistered annotation!")
-    else
-      $.extend(annotation, data)
-
-    # Update the elements with our copies of the annotation objects (e.g.
-    # with ids from the server).
-    $(annotation.highlights).data('annotation', annotation)
-
-  # Public: Makes a request to the server for all annotations.
-  #
-  # Examples
-  #
-  #   store.loadAnnotations()
-  #
-  # Returns nothing.
-  loadAnnotations: () ->
-    this._apiRequest 'read', null, this._onLoadAnnotations
-
-  # Callback method for Store#loadAnnotations(). Processes the data
-  # returned from the server (a JSON array of annotation Objects) and updates
-  # the registry as well as loading them into the Annotator.
-  #
-  # data - An Array of annotation Objects
-  #
-  # Examples
-  #
-  #   console.log @annotation # => []
-  #   store._onLoadAnnotations([{}, {}, {}])
-  #   console.log @annotation # => [{}, {}, {}]
-  #
-  # Returns nothing.
-  _onLoadAnnotations: (data=[]) =>
-
-    annotationMap = {}
-    for a in @annotations
-      annotationMap[a.id] = a
-
-    newData = []
-    for a in data
-      if annotationMap[a.id]
-        annotation = annotationMap[a.id]
-        this.updateAnnotation annotation, a
-      else
-        newData.push(a)
-
-    @annotations = @annotations.concat(newData)
-    @annotator.loadAnnotations(newData.slice()) # Clone array
-
-  # Public: Performs the same task as Store.#loadAnnotations() but calls the
-  # 'search' URI with an optional query string.
-  #
-  # searchOptions - Object literal of query string parameters.
-  #
-  # Examples
-  #
-  #   store.loadAnnotationsFromSearch({
-  #     limit: 100,
-  #     uri: window.location.href
-  #   })
-  #
-  # Returns nothing.
-  loadAnnotationsFromSearch: (searchOptions) ->
-    this._apiRequest 'search', searchOptions, this._onLoadAnnotationsFromSearch
-
-  # Callback method for Store#loadAnnotationsFromSearch(). Processes the data
-  # returned from the server (a JSON array of annotation Objects) and updates
-  # the registry as well as loading them into the Annotator.
-  #
-  # data - An Array of annotation Objects
-  #
-  # Returns nothing.
-  _onLoadAnnotationsFromSearch: (data={}) =>
-    this._onLoadAnnotations(data.rows || [])
-
-  # Public: Dump an array of serialized annotations
-  #
-  # param - comment
-  #
-  # Examples
-  #
-  #   example
-  #
-  # Returns
-  dumpAnnotations: ->
-    (JSON.parse(this._dataFor(ann)) for ann in @annotations)
+  # Returns a Promise resolving to the query results and query metadata.
+  query: (queryObj) ->
+    dfd = $.Deferred()
+    this._apiRequest('search', queryObj)
+      .done (obj) ->
+        rows = obj.rows
+        delete obj.rows
+        dfd.resolve(rows, obj)
+      .fail () ->
+        dfd.reject.apply(dfd, arguments)
+    return dfd.promise()
 
   # Callback method for Store#loadAnnotationsFromSearch(). Processes the data
   # returned from the server (a JSON array of annotation Objects) and updates
@@ -329,11 +149,11 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   #   store._apiRequest('read', {id: 4}, (data) -> console.log(data))
   #   # => Outputs the annotation returned from the server.
   #
-  # Returns jXMLHttpRequest object.
-  _apiRequest: (action, obj, onSuccess) ->
-    id  = obj && obj.id
+  # Returns XMLHttpRequest object.
+  _apiRequest: (action, obj) ->
+    id = obj && obj.id
     url = this._urlFor(action, id)
-    options = this._apiRequestOptions(action, obj, onSuccess)
+    options = this._apiRequestOptions(action, obj)
 
     request = $.ajax(url, options)
 
@@ -346,31 +166,17 @@ class Annotator.Plugin.Store extends Annotator.Plugin
   # Builds an options object suitable for use in a jQuery.ajax() call.
   #
   # action    - The action String eg. "read", "search", "create", "update"
-  #             or "destory".
+  #             or "destroy".
   # obj       - The data to be sent, either annotation object or query string.
-  # onSuccess - A callback Function to call on successful request.
-  #
-  # Also extracts any custom headers from data stored on the Annotator#element
-  # under the 'annotator:headers' key. These headers should be stored as key/
-  # value pairs and will be sent with every request.
-  #
-  # Examples
-  #
-  #   annotator.element.data('annotator:headers', {
-  #     'X-My-Custom-Header': 'CustomValue',
-  #     'X-Auth-User-Id': 'bill'
-  #   })
   #
   # Returns Object literal of $.ajax() options.
-  _apiRequestOptions: (action, obj, onSuccess) ->
+  _apiRequestOptions: (action, obj) ->
     method = this._methodFor(action)
 
     opts = {
-      type:       method,
-      headers:    @element.data('annotator:headers'),
-      dataType:   "json",
-      success:    (onSuccess or ->),
-      error:      this._onError
+      type:     method,
+      dataType: "json",
+      error:    this._onError
     }
 
     # If emulateHTTP is enabled, we send a POST and put the real method in an
@@ -384,7 +190,7 @@ class Annotator.Plugin.Store extends Annotator.Plugin
       opts = $.extend(opts, data: obj)
       return opts
 
-    data = obj && this._dataFor(obj)
+    data = obj && JSON.stringify(obj)
 
     # If emulateJSON is enabled, we send a form request (the correct
     # contentType will be set automatically by jQuery), and put the
@@ -447,32 +253,6 @@ class Annotator.Plugin.Store extends Annotator.Plugin
     }
 
     table[action]
-
-  # Creates a JSON serialisation of an annotation.
-  #
-  # annotation - An annotation Object to serialise.
-  #
-  # Examples
-  #
-  #   store._dataFor({id: 32, text: 'my annotation comment'})
-  #   # => Returns '{"id": 32, "text":"my annotation comment"}'
-  #
-  # Returns
-  _dataFor: (annotation) ->
-    # Store a reference to the highlights array. We can't serialize
-    # a list of HTMLElement objects.
-    highlights = annotation.highlights
-
-    delete annotation.highlights
-
-    # Preload with extra data.
-    $.extend(annotation, @options.annotationData)
-    data = JSON.stringify(annotation)
-
-    # Restore the highlights array.
-    annotation.highlights = highlights if highlights
-
-    data
 
   # jQuery.ajax() callback. Displays an error notification to the user if
   # the request failed.
