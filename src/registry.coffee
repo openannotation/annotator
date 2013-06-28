@@ -24,15 +24,10 @@ class Annotator.Registry extends Evented
   #
   # Returns a Promise of an annotation Object.
   create: (obj) ->
-    obj = this._preflight(obj)
+    this._cycle(obj, 'create', 'annotationCreated')
+    # if not data.id?
+    #   console.warn Annotator._t("Warning: No ID returned from server for annotation "), annotation
 
-    this.publish('beforeAnnotationCreated', [obj])
-    @store.create(obj)
-      # if not data.id?
-      #   console.warn Annotator._t("Warning: No ID returned from server for annotation "), annotation
-      .then (ret) =>
-        this.publish('annotationCreated', [ret])
-        return ret
 
   # Public: Updates an already registered annotation.
   #
@@ -57,13 +52,7 @@ class Annotator.Registry extends Evented
     if not obj.id?
       return error(obj, "annotation must have an id for update()")
 
-    obj = this._preflight(obj)
-
-    this.publish('beforeAnnotationUpdated', [obj])
-    @store.update(obj)
-      .then (ret) =>
-        this.publish('annotationUpdated', [ret])
-        return ret
+    this._cycle(obj, 'update', 'annotationUpdated')
 
   # Public: Deletes the annotation.
   #
@@ -78,13 +67,7 @@ class Annotator.Registry extends Evented
     if not obj.id?
       return error(obj, "annotation must have an id for delete()")
 
-    obj = this._preflight(obj)
-
-    this.publish('beforeAnnotationDeleted', [obj])
-    @store.delete(obj)
-      .then (ret) =>
-        this.publish('annotationDeleted', [ret])
-        return ret
+    this._cycle(obj, 'delete', 'annotationDeleted')
 
   # Public: Queries the store
   #
@@ -104,6 +87,23 @@ class Annotator.Registry extends Evented
   load: (query) ->
     return this.query(query)
 
-  _preflight: (obj) ->
-    delete obj._localData
-    return obj
+  # Private: cycle a store event, keeping track of the annotation object and
+  # updating it as necessary.
+  _cycle: (obj, storeFunc, event) ->
+    this.publish('before' + event[0].toUpperCase() + event.slice(1), [obj])
+
+    safeCopy = $.extend(true, {}, obj)
+    delete safeCopy._local
+
+    @store[storeFunc](safeCopy)
+      .then (ret) =>
+        # Empty object without changing identity
+        for own k, v of obj
+          if k != '_local'
+            delete obj[k]
+
+        # Update with store return value
+        $.extend(obj, ret)
+
+        this.publish(event, [obj])
+        return obj

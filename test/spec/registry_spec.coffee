@@ -14,11 +14,10 @@ class MockStore
     return dfd.promise()
 
   delete: (data) ->
-    dfd = new $.Deferred()
     if data.i?
-      dfd.resolve(data.i * 10)
-    else
-      dfd.resolve()
+      data.i *= 10
+    dfd = new $.Deferred()
+    dfd.resolve({})
     return dfd.promise()
 
   query: (data) ->
@@ -52,46 +51,75 @@ describe 'Annotator.Registry', ->
       m.create.reset()
 
     it "should return a promise resolving to the created annotation", (done) ->
-      r.create({some: 'data'})
-        .done (a) ->
-          assert.deepEqual(a, {id: 123, some: 'data'})
+      ann = {some: 'data'}
+      r.create(ann)
+        .done (ret) ->
+          assert.equal(ret, ann)
+          assert.deepEqual(ret, {id: 123, some: 'data'})
           done()
         .fail (obj, msg) ->
           done(new Error("promise rejected: #{msg}"))
 
 
     it "should publish beforeAnnotationCreated before passing to the store", (done) ->
-      r.subscribe('beforeAnnotationCreated', (ann) -> ann.i += 1)
-      r.create({i: 1})
-        .done (a) ->
-          assert.deepEqual(a, {id: 123, i: 20})
+      ann = {i: 1}
+      r.subscribe('beforeAnnotationCreated', (a) -> a.i += 1)
+      r.create(ann)
+        .done (ret) ->
+          assert.equal(ret, ann)
+          assert.deepEqual(ret, {id: 123, i: 20})
           done()
 
     it "should publish annotationCreated once the store promise resolves", (done) ->
-      r.subscribe('annotationCreated', (ann) ->
-        assert.deepEqual(ann, {id: 123, i: 10})
+      ann = {i: 1}
+      r.subscribe('annotationCreated', (ret) ->
+        assert.equal(ret, ann)
+        assert.deepEqual(ret, {id: 123, i: 10})
         done()
       )
-      r.create({i: 1})
+      r.create(ann)
         .done((a) -> a.i += 1)
 
-    it "should strip an annotation of any _localData before passing to the store", ->
+    it "should strip an annotation of any _local before passing to the store", ->
       sinon.spy(m, 'create')
-      ld = {foo: 'bar', numbers: [1,2,3]}
-      r.create({some: 'data', _localData: ld})
+      local = {foo: 'bar', numbers: [1,2,3]}
+      ann = {some: 'data', _local: local}
+      r.create(ann)
       assert(
         m.create.calledWith({some: 'data'})
-        'annotation _localData stripped before store .create() call'
+        'annotation _local stripped before store .create() call'
       )
+
+    it "should leave _local in place when firing beforeAnnotationCreated", (done) ->
+      local = {foo: 'bar', numbers: [1,2,3]}
+      ann = {some: 'data', _local: local}
+      obj = null
+      r.subscribe('beforeAnnotationCreated', (a) -> obj = JSON.stringify(a))
+      r.create(ann)
+        .done ->
+          assert.deepEqual(JSON.parse(obj), {some: 'data', _local: local})
+          done()
+
+    it "should reattach _local before firing annotationCreated", (done) ->
+      local = {foo: 'bar', numbers: [1,2,3]}
+      ann = {some: 'data', _local: local}
+      obj = null
+      r.subscribe('annotationCreated', (ann) -> obj = JSON.stringify(ann))
+      r.create(ann)
+        .done ->
+          assert.deepEqual(JSON.parse(obj), {id: 123, some: 'data', _local: local})
+          done()
 
   describe '#update()', ->
 
     it "should return a rejected promise if the data lacks an id", (done) ->
-      r.update({some: 'data'})
+      ann = {some: 'data'}
+      r.update(ann)
         .done ->
           done(new Error("promise unexpectedly resolved"))
-        .fail (ann, msg) ->
-          assert.deepEqual(ann, {some: 'data'})
+        .fail (ret, msg) ->
+          assert.equal(ret, ann)
+          assert.deepEqual(ret, {some: 'data'})
           assert.include(msg, ' id ')
           done()
 
@@ -105,48 +133,77 @@ describe 'Annotator.Registry', ->
         'store .update() called with correct args'
       )
 
-      m.update.reset()
-
     it "should return a promise resolving to the updated annotation", (done) ->
-      r.update({id:123, some: 'data'})
-        .done (r) ->
-          assert.deepEqual(r, {id: 123, some: 'data'})
+      ann = {id: 123, some: 'data'}
+      r.update(ann)
+        .done (ret) ->
+          assert.equal(ret, ann)
+          assert.deepEqual(ret, {id: 123, some: 'data'})
           done()
         .fail (obj, msg) ->
           done(new Error("promise rejected: #{msg}"))
 
     it "should publish beforeAnnotationUpdated before passing to the store", (done) ->
-      r.subscribe('beforeAnnotationUpdated', (ann) -> ann.i += 1)
-      r.update({id:123, i: 1})
-        .done (a) ->
-          assert.deepEqual(a, {id: 123, i: 20})
+      ann = {id: 123, i: 1}
+      r.subscribe('beforeAnnotationUpdated', (a) -> a.i += 1)
+      r.update(ann)
+        .done (ret) ->
+          assert.equal(ret, ann)
+          assert.deepEqual(ret, {id: 123, i: 20})
           done()
 
     it "should publish annotationUpdated once the store promise resolves", (done) ->
-      r.subscribe('annotationUpdated', (ann) ->
-        assert.deepEqual(ann, {id: 123, i: 10})
+      ann = {id: 123, i: 1}
+      r.subscribe('annotationUpdated', (ret) ->
+        assert.equal(ret, ann)
+        assert.deepEqual(ret, {id: 123, i: 10})
         done()
       )
-      r.update({id: 123, i: 1})
+      r.update(ann)
         .done((a) -> a.i += 1)
 
-    it "should strip an annotation of any _localData before passing to the store", ->
+    it "should strip an annotation of any _local before passing to the store", ->
       sinon.spy(m, 'update')
-      ld = {foo: 'bar', numbers: [1,2,3]}
-      r.update({id: 123, some: 'data', _localData: ld})
+      local = {foo: 'bar', numbers: [1,2,3]}
+      ann = {id: 123, some: 'data', _local: local}
+
+      r.update(ann)
+
       assert(
         m.update.calledWith({id: 123, some: 'data'})
-        'annotation _localData stripped before store .update() call'
+        'annotation _local stripped before store .update() call'
       )
+
+    it "should leave _local in place when firing beforeAnnotationUpdated", (done) ->
+      local = {foo: 'bar', numbers: [1,2,3]}
+      ann = {id: 123, some: 'data', _local: local}
+      cache = null
+      r.subscribe('beforeAnnotationUpdated', (a) -> cache = JSON.stringify(a))
+      r.update(ann)
+        .done ->
+          assert.deepEqual(JSON.parse(cache), {id: 123, some: 'data', _local: local})
+          done()
+
+    it "should reattach _local before firing annotationUpdated", (done) ->
+      local = {foo: 'bar', numbers: [1,2,3]}
+      ann = {id: 123, some: 'data', _local: local}
+      cache = null
+      r.subscribe('annotationUpdated', (a) -> cache = JSON.stringify(a))
+      r.update(ann)
+        .done ->
+          assert.deepEqual(JSON.parse(cache), {id: 123, some: 'data', _local: local})
+          done()
 
   describe '#delete()', ->
 
     it "should return a rejected promise if the data lacks an id", (done) ->
-      r.delete({some: 'data'})
+      ann = {some: 'data'}
+      r.delete(ann)
         .done ->
           done(new Error("promise unexpectedly resolved"))
-        .fail (ann, msg) ->
-          assert.deepEqual(ann, {some: 'data'})
+        .fail (ret, msg) ->
+          assert.equal(ret, ann)
+          assert.deepEqual(ret, {some: 'data'})
           assert.include(msg, ' id ')
           done()
 
@@ -160,38 +217,62 @@ describe 'Annotator.Registry', ->
         'store .delete() called with correct args'
       )
 
-      m.delete.reset()
-
-    it "should return a promise resolving to the resolve value of the store call", (done) ->
-      r.delete({id:123, i: 456, some: 'data'})
+    it "should return a promise resolving to the deleted annotation object", (done) ->
+      ann = {id: 123, some: 'data'}
+      r.delete(ann)
         .done (ret) ->
-          assert.equal(ret, 4560)
+          assert.equal(ret, ann)
+          assert.deepEqual(ret, {})
           done()
         .fail (obj, msg) ->
           done(new Error("promise rejected: #{msg}"))
 
     it "should publish beforeAnnotationDeleted before passing to the store", (done) ->
-      r.subscribe('beforeAnnotationDeleted', (ann) -> ann.i += 1)
-      r.delete({id:123, i: 1})
-        .done (a) ->
-          assert.equal(a, 20)
+      ann = {id: 123, some: 'data'}
+      cache = null
+      r.subscribe('beforeAnnotationDeleted', (a) -> cache = JSON.stringify(a))
+      r.delete(ann)
+        .done ->
+          assert.deepEqual(JSON.parse(cache), {id: 123, some: 'data'})
           done()
 
     it "should publish annotationDeleted once the store promise resolves", (done) ->
-      r.subscribe('annotationDeleted', (ann) ->
-        assert.equal(ann, 10)
+      ann = {id: 123, some: 'data'}
+      r.subscribe('annotationDeleted', (ret) ->
+        assert.equal(ret, ann)
+        assert.deepEqual(ret, {})
         done()
       )
-      r.delete({id: 123, i: 1})
+      r.delete(ann)
 
-    it "should strip an annotation of any _localData before passing to the store", ->
+    it "should strip an annotation of any _local before passing to the store", ->
       sinon.spy(m, 'delete')
-      ld = {foo: 'bar', numbers: [1,2,3]}
-      r.delete({id: 123, some: 'data', _localData: ld})
+      local = {foo: 'bar', numbers: [1,2,3]}
+      r.delete({id: 123, some: 'data', _local: local})
       assert(
         m.delete.calledWith({id: 123, some: 'data'})
-        'annotation _localData stripped before store .delete() call'
+        'annotation _local stripped before store .delete() call'
       )
+
+    it "should leave _local in place when firing beforeAnnotationDeleted", (done) ->
+      local = {foo: 'bar', numbers: [1,2,3]}
+      ann = {id: 123, some: 'data', _local: local}
+      cache = null
+      r.subscribe('beforeAnnotationDeleted', (a) -> cache = JSON.stringify(a))
+      r.delete(ann)
+        .done ->
+          assert.deepEqual(JSON.parse(cache), {id: 123, some: 'data', _local: local})
+          done()
+
+    it "should reattach _local before firing annotationDeleted", (done) ->
+      local = {foo: 'bar', numbers: [1,2,3]}
+      ann = {id: 123, some: 'data', _local: local}
+      cache = null
+      r.subscribe('annotationDeleted', (a) -> cache = JSON.stringify(a))
+      r.delete(ann)
+        .done ->
+          assert.deepEqual(JSON.parse(cache), {_local: local})
+          done()
 
   describe '#query()', ->
 
