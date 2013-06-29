@@ -3,7 +3,7 @@ cd ..
 
 echo "Generating package files" >&2
 make clean
-make annotator plugins annotator-full
+make
 
 # Upload release to S3
 echo "Uploading 'next' to S3" >&2
