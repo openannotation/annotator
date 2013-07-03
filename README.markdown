@@ -38,7 +38,7 @@ important files in these packages are `annotator.min.js` (or
 `annotator.min.css`, which contains all the CSS and embedded images for the
 annotator.
 
-Annotator requires [jQuery][$]. As of Annotator v1.2.7, jQuery 1.9 is assumed.
+Annotator requires [jQuery][$]. As of Annotator v1.2.7, jQuery v1.9 is assumed.
 If you require an older version of jQuery, or are using an older version of
 Annotator and require the new jQuery, you can use the [jQuery Migrate Plugin][$m].
 The quickest way to get going with Annotator is to include the following in the
