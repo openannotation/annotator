@@ -102,6 +102,14 @@ annotator.%.js: plugin/%.coffee
 	@echo $@
 	@uglifycss $< >$@
 
+locales:
+	@cd ..; \
+	for f in $(basename $(ANNOTATOR_FULL)); \
+          do echo "lib/$$f.js"; \
+        done | \
+	xargs xgettext -Lpython -o- -k_t -kgettext --from-code=utf-8 \
+	> locale/annotator.pot
+
 clean:
 	rm -f *.js *.css
 

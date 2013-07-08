@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-16 12:27+0000\n"
+"POT-Creation-Date: 2013-07-08 19:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,61 +17,53 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: lib/util.js:23
+#: lib/util.js:24
 msgid "Annotator requires jQuery: have you included lib/vendor/jquery.js?"
 msgstr ""
 
-#: lib/util.js:27
+#: lib/util.js:28
 msgid ""
 "Annotator requires a JSON implementation: have you included lib/vendor/json2."
 "js?"
 msgstr ""
 
-#: lib/console.js:17
+#: lib/console.js:20
 msgid "Not implemented:"
 msgstr ""
 
-#: lib/range.js:13
+#: lib/range.js:16
 msgid "Could not sniff range type"
 msgstr ""
 
-#: lib/range.js:31
+#: lib/range.js:100
 msgid "You may only call normalize() once on a BrowserRange!"
 msgstr ""
 
-#: lib/range.js:247
-msgid "Error deserializing range: can't find XPath '"
-msgstr ""
-
-#: lib/range.js:247
-msgid "'. Is this the right document?"
-msgstr ""
-
-#: lib/annotator.js:47
+#: lib/annotator.js:20
 msgid "Annotate"
 msgstr ""
 
-#: lib/annotator.js:114
+#: lib/annotator.js:88
 msgid "No Comment"
 msgstr ""
 
-#: lib/annotator.js:129
+#: lib/annotator.js:103
 msgid "Comments"
 msgstr ""
 
-#: lib/annotator.js:265
+#: lib/annotator.js:306
 msgid "Can't dump annotations without Store plugin."
 msgstr ""
 
-#: lib/annotator.js:286
+#: lib/annotator.js:345
 msgid "You cannot have more than one instance of any plugin."
 msgstr ""
 
-#: lib/annotator.js:296
+#: lib/annotator.js:355
 msgid "Could not load "
 msgstr ""
 
-#: lib/annotator.js:296
+#: lib/annotator.js:355
 msgid " plugin. Have you included the appropriate <script> tag?"
 msgstr ""
 
@@ -83,64 +75,72 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: lib/plugin/tags.js:35
-msgid "Add some tags here"
+#: lib/plugin/unsupported.js:15
+msgid "Sorry your current browser does not support the Annotator"
 msgstr ""
 
-#: lib/plugin/tags.js:44
-msgid "Tag"
-msgstr ""
-
-#: lib/plugin/auth.js:62
+#: lib/plugin/auth.js:128
 msgid "Couldn't get auth token:"
 msgstr ""
 
-#: lib/plugin/auth.js:87
+#: lib/plugin/auth.js:154
 msgid "Didn't get a valid token."
 msgstr ""
 
-#: lib/plugin/auth.js:89
+#: lib/plugin/auth.js:156
 msgid "Getting a new token in 10s."
 msgstr ""
 
-#: lib/plugin/store.js:61
+#: lib/plugin/store.js:64
 msgid "Warning: No ID returned from server for annotation "
 msgstr ""
 
-#: lib/plugin/store.js:98
+#: lib/plugin/store.js:101
 msgid "Trying to update unregistered annotation!"
 msgstr ""
 
-#: lib/plugin/store.js:202 lib/plugin/store.js:206
+#: lib/plugin/store.js:245 lib/plugin/store.js:249
 msgid "Sorry we could not "
 msgstr ""
 
-#: lib/plugin/store.js:202 lib/plugin/store.js:210
+#: lib/plugin/store.js:245 lib/plugin/store.js:253
 msgid " this annotation"
 msgstr ""
 
-#: lib/plugin/store.js:204
+#: lib/plugin/store.js:247
 msgid "Sorry we could not search the store for annotations"
 msgstr ""
 
-#: lib/plugin/store.js:206
+#: lib/plugin/store.js:249
 msgid " the annotations from the store"
 msgstr ""
 
-#: lib/plugin/store.js:210
+#: lib/plugin/store.js:253
 msgid "Sorry you are not allowed to "
 msgstr ""
 
-#: lib/plugin/store.js:213
+#: lib/plugin/store.js:256
 msgid "Sorry we could not connect to the annotations store"
 msgstr ""
 
-#: lib/plugin/store.js:216
+#: lib/plugin/store.js:259
 msgid "Sorry something went wrong with the annotation store"
 msgstr ""
 
-#: lib/plugin/store.js:219
+#: lib/plugin/store.js:262
 msgid "API request failed:"
+msgstr ""
+
+#: lib/plugin/permissions.js:85
+msgid "Allow anyone to <strong>view</strong> this annotation"
+msgstr ""
+
+#: lib/plugin/permissions.js:93
+msgid "Allow anyone to <strong>edit</strong> this annotation"
+msgstr ""
+
+#: lib/plugin/permissions.js:103 lib/plugin/kitchensink.js:24
+msgid "User"
 msgstr ""
 
 #: lib/plugin/filter.js:27
@@ -163,31 +163,27 @@ msgstr ""
 msgid "Clear"
 msgstr ""
 
-#: lib/plugin/filter.js:71
+#: lib/plugin/filter.js:78
 msgid "Annotation"
 msgstr ""
 
-#: lib/plugin/filter.js:118
+#: lib/plugin/filter.js:136
 msgid "Filter by "
 msgstr ""
 
-#: lib/plugin/markdown.js:18
+#: lib/plugin/markdown.js:19
 msgid ""
 "To use the Markdown plugin, you must include Showdown into the page first."
 msgstr ""
 
-#: lib/plugin/unsupported.js:13
-msgid "Sorry your current browser does not support the Annotator"
+#: lib/plugin/tags.js:41
+msgid "Add some tags here"
 msgstr ""
 
-#: lib/plugin/permissions.js:74
-msgid "Allow anyone to <strong>view</strong> this annotation"
+#: lib/plugin/tags.js:50
+msgid "Tag"
 msgstr ""
 
-#: lib/plugin/permissions.js:82
-msgid "Allow anyone to <strong>edit</strong> this annotation"
-msgstr ""
-
-#: lib/plugin/permissions.js:92
-msgid "User"
+#: lib/plugin/kitchensink.js:27
+msgid "Tags"
 msgstr ""
