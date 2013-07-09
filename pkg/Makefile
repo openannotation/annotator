@@ -58,25 +58,34 @@ plugins: $(addprefix annotator.,$(PLUGIN_NAMES:.coffee=.min.js))
 
 annotator-full: annotator-full.min.js
 
+ANNOTATOR_MAPS=$(addprefix ../lib/, $(addsuffix .map, $(basename $(ANNOTATOR))))
+
 annotator.js: $(ANNOTATOR)
-	@(../tools/preamble && \
-	  for f in $(ANNOTATOR); do cat ../src/"$$f"; done) | \
-		coffee -ps > annotator.js
+	@../tools/preamble > _preamble.coffee
+	@coffee -mc _preamble.coffee
+	@mapcat _preamble.map $(ANNOTATOR_MAPS) -m annotator.map -j annotator.js
+	@rm _preamble.*
+
+ANNOTATOR_FULL_MAPS=$(addprefix ../lib/, $(addsuffix .map, $(basename $(ANNOTATOR_FULL))))
 
 annotator-full.js: $(ANNOTATOR_FULL)
-	@(../tools/preamble && \
-	  for f in $(ANNOTATOR_FULL); do cat ../src/"$$f"; done) | \
-		coffee -ps > annotator-full.js
+	@../tools/preamble > _preamble.coffee
+	@coffee -mc _preamble.coffee
+	@mapcat _preamble.map $(ANNOTATOR_FULL_MAPS) -m annotator-full.map -j annotator-full.js
+	@rm _preamble.*
 
 annotator.css: ../css/annotator.css
 	@../tools/data_uri_ify <../css/annotator.css >annotator.css
 
 bookmarklet: annotator-bookmarklet.min.js annotator.min.css bookmarklet.min.js
 
+BOOKMARKLET_MAPS=$(addprefix ../lib/, $(addsuffix .map, $(basename $(BOOKMARKLET))))
+
 annotator-bookmarklet.js: $(BOOKMARKLET)
-	@(../tools/preamble && \
-	  for f in $(BOOKMARKLET); do cat ../src/"$$f"; done) | \
-	  coffee -ps > annotator-bookmarklet.js
+	@../tools/preamble > _preamble.coffee
+	@coffee -mc _preamble.coffee
+	@mapcat _preamble.map $(BOOKMARKLET_MAPS) -m annotator-bookmarklet.map -j annotator-bookmarklet.js
+	@rm _preamble.*
 
 BOOKMARKLET_CFG_DEP=$(shell [ -f $(BOOKMARKLET_CFG) ] && echo $(BOOKMARKLET_CFG))
 bookmarklet.js: $(BOOKMARKLET_SRC) $(BOOKMARKLET_CFG_DEP)
@@ -92,11 +101,22 @@ bookmarklet.js: $(BOOKMARKLET_SRC) $(BOOKMARKLET_CFG_DEP)
 	fi
 
 annotator.%.js: plugin/%.coffee
-	@(../tools/preamble && cat $<) | coffee -ps >$@
+	@../tools/preamble > _preamble.coffee
+	@coffee -mc _preamble.coffee
+	@rm -rf _tmp
+	@mkdir _tmp
+	@coffee -o _tmp -mc $<
+	@mapcat _preamble.map _tmp/$(notdir $(basename $<).map) -m $(basename $@).map -j $@
+	@rm -rf _preamble.* _tmp
 
 %.min.js: %.js
 	@echo $@
-	@uglifyjs <$< >$@
+	@if [ -e $(basename $<).map ]; then \
+	  uglifyjs $< --source-map $(basename $<).min.map --in-source-map $(basename $<).map > $@ ; \
+	  echo "\n //@ sourceMappingURL=$(basename $<).min.map" >> $@; \
+	else \
+	  uglifyjs $< > $@ ; \
+	fi
 
 %.min.css: %.css
 	@echo $@
@@ -111,7 +131,7 @@ locales:
 	> locale/annotator.pot
 
 clean:
-	rm -f *.js *.css
+	rm -f *.js *.css *.map
 
 # don't remove intermediate .js files when building plugins
 .SECONDARY:
