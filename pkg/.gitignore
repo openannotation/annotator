@@ -1,3 +1,5 @@
 *.js
 *.css
 *.map
+_preamble*
+_tmp

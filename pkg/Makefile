@@ -62,7 +62,7 @@ ANNOTATOR_MAPS=$(addprefix ../lib/, $(addsuffix .map, $(basename $(ANNOTATOR))))
 
 annotator.js: $(ANNOTATOR)
 	@../tools/preamble > _preamble.coffee
-	@coffee -mc _preamble.coffee
+	@coffee -mcb _preamble.coffee
 	@mapcat _preamble.map $(ANNOTATOR_MAPS) -m annotator.map -j annotator.js
 	@rm _preamble.*
 
@@ -70,7 +70,7 @@ ANNOTATOR_FULL_MAPS=$(addprefix ../lib/, $(addsuffix .map, $(basename $(ANNOTATO
 
 annotator-full.js: $(ANNOTATOR_FULL)
 	@../tools/preamble > _preamble.coffee
-	@coffee -mc _preamble.coffee
+	@coffee -mcb _preamble.coffee
 	@mapcat _preamble.map $(ANNOTATOR_FULL_MAPS) -m annotator-full.map -j annotator-full.js
 	@rm _preamble.*
 
@@ -83,7 +83,7 @@ BOOKMARKLET_MAPS=$(addprefix ../lib/, $(addsuffix .map, $(basename $(BOOKMARKLET
 
 annotator-bookmarklet.js: $(BOOKMARKLET)
 	@../tools/preamble > _preamble.coffee
-	@coffee -mc _preamble.coffee
+	@coffee -mcb _preamble.coffee
 	@mapcat _preamble.map $(BOOKMARKLET_MAPS) -m annotator-bookmarklet.map -j annotator-bookmarklet.js
 	@rm _preamble.*
 
@@ -102,7 +102,7 @@ bookmarklet.js: $(BOOKMARKLET_SRC) $(BOOKMARKLET_CFG_DEP)
 
 annotator.%.js: plugin/%.coffee
 	@../tools/preamble > _preamble.coffee
-	@coffee -mc _preamble.coffee
+	@coffee -mcb _preamble.coffee
 	@rm -rf _tmp
 	@mkdir _tmp
 	@coffee -o _tmp -mc $<
