@@ -13,7 +13,7 @@ var CONSUMER_KEY = 'mockconsumer';
 var CONSUMER_SECRET = 'mockconsumersecret';
 var CONSUMER_TTL = 1800;
 
-var fileServer = new static.Server();
+var fileServer = new static.Server(".", {cache: false});
 
 http.createServer(function (request, response) {
     request.addListener('end', function () {
