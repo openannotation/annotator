@@ -3,9 +3,9 @@ class this.MockSelection
   isCollapsed: false
 
   constructor: (fixElem, data) ->
-    @commonAncestor = fixElem
 
-    @commonAncestorXPath = Util.xpathFromNode($(fixElem))[0]
+    @root = fixElem
+    @rootXPath = Util.xpathFromNode($(fixElem))[0]
 
     @startContainer = this.resolvePath(data[0])
     @startOffset    = data[1]
@@ -13,6 +13,11 @@ class this.MockSelection
     @endOffset      = data[3]
     @expectation    = data[4]
     @description    = data[5]
+
+    @commonAncestor = @startContainer
+    while not @commonAncestor.contains @endContainer
+      @commonAncestor = @commonAncestor.parentNode
+    @commonAncestorXPath = Util.xpathFromNode($(@commonAncestor))[0]
 
   getRangeAt: ->
     {
@@ -25,9 +30,9 @@ class this.MockSelection
 
   resolvePath: (path) ->
     if typeof path is "number"
-      Util.getTextNodes($(@commonAncestor))[path]
+      Util.getTextNodes($(@root))[path]
     else if typeof path is "string"
-      this.resolveXPath(@commonAncestorXPath + path)
+      this.resolveXPath(@rootXPath + path)
 
   resolveXPath: (xpath) ->
     document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
