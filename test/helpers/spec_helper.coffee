@@ -15,7 +15,7 @@ class this.MockSelection
     @description    = data[5]
 
     @commonAncestor = @startContainer
-    while not @commonAncestor.contains @endContainer
+    while not Util.contains(@commonAncestor, @endContainer)
       @commonAncestor = @commonAncestor.parentNode
     @commonAncestorXPath = Util.xpathFromNode($(@commonAncestor))[0]
 

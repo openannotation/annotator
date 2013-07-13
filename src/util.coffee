@@ -33,6 +33,16 @@ Util.flatten = (array) ->
 
   flatten(array)
 
+# Public: decides whether node A is an ancestor of node B.
+#
+# This function purposefully ignores the native browser function for this, because it acts weird in PhantomJS.
+Util.contains = (parent, child) ->
+  node = child
+  while node?
+    if node is parent then return true
+    node = node.parentNode
+  return false
+
 # Public: Finds all text nodes within the elements in the current collection.
 #
 # Returns a new jQuery collection of text nodes.
