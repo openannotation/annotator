@@ -35,7 +35,9 @@ Util.flatten = (array) ->
 
 # Public: decides whether node A is an ancestor of node B.
 #
-# This function purposefully ignores the native browser function for this, because it acts weird in PhantomJS.
+# This function purposefully ignores the native browser function for this,
+# because it acts weird in PhantomJS.
+# Issue: https://github.com/ariya/phantomjs/issues/11479
 Util.contains = (parent, child) ->
   node = child
   while node?
