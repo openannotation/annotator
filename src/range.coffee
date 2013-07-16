@@ -133,42 +133,53 @@ class Range.BrowserRange
       @tainted = true
 
     r = {}
+
+    # Look at the start
+    if @startContainer.nodeType is Node.ELEMENT_NODE
+      # We are dealing with element nodes  
+      r.start = Util.getFirstTextNodeNotBefore @startContainer.childNodes[@startOffset]
+      r.startOffset = 0
+    else
+      # We are dealing with simple text nodes
+      r.start = @startContainer
+      r.startOffset = @startOffset
+
+    # Look at the end
+    if @endContainer.nodeType is Node.ELEMENT_NODE
+      # Get specified node.
+      node = @endContainer.childNodes[@endOffset]
+
+      if node? # Does that node exist?
+        # Look for a text node either at the immediate beginning of node
+        n = node
+        while n? and (n.nodeType isnt Node.TEXT_NODE)
+          n = n.firstChild
+        if n? # Did we find a text node at the start of this element?
+          r.end = n
+          r.endOffset = 0
+
+      unless r.end?  
+        # We need to find a text node in the previous node.
+        node = @endContainer.childNodes[@endOffset - 1]
+        r.end = Util.getLastTextNodeUpTo node
+        r.endOffset = r.end.nodeValue.length
+
+    else # We are dealing with simple text nodes
+      r.end = @endContainer
+      r.endOffset = @endOffset
+
+    # We have collected the initial data.
+
+    # Now let's start to slice & dice the text elements!
     nr = {}
-
-    for p in ['start', 'end']
-      node = this[p + 'Container']
-      offset = this[p + 'Offset']
-
-      if node.nodeType is Node.ELEMENT_NODE
-        # Get specified node.
-        it = node.childNodes[offset]
-        # If it doesn't exist, that means we need the end of the
-        # previous one.
-        node = it or node.childNodes[offset - 1]
-
-        # if node doesn't have any children, it's a <br> or <hr> or
-        # other self-closing tag, and we actually want the textNode
-        # that ends just before it
-        if node.nodeType is Node.ELEMENT_NODE and not node.firstChild
-          it = null # null out ref to node so offset is correctly calculated below.
-          node = node.previousSibling
-
-        while node.nodeType isnt Node.TEXT_NODE
-          node = node.firstChild
-
-        offset = if it then 0 else node.nodeValue.length
-
-      r[p] = node
-      r[p + 'Offset'] = offset
-
     nr.start = if r.startOffset > 0 then r.start.splitText(r.startOffset) else r.start
 
-    if r.start is r.end
-      if (r.endOffset - r.startOffset) < nr.start.nodeValue.length
+    if r.start is r.end # is the whole selection inside one text element ?
+      if nr.start.nodeValue.length > (r.endOffset - r.startOffset)
         nr.start.splitText(r.endOffset - r.startOffset)
       nr.end = nr.start
-    else
-      if r.endOffset < r.end.nodeValue.length
+    else # no, the end of the selection is in a separate text element
+      if r.end.nodeValue.length > r.endOffset# does the end need to be cut?
         r.end.splitText(r.endOffset)
       nr.end = r.end
 
