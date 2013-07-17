@@ -381,9 +381,14 @@ class Range.SerializedRange
       # the combined length of the textNodes to that point exceeds or
       # matches the value of the offset.
       length = 0
-      targetOffset = this[p + 'Offset'] + (if p is "start" then 1 else 0)
+      targetOffset = this[p + 'Offset']
+
+      # Range excludes its endpoint because it describes the boundary position.
+      # Target the string index of the last character inside the range.
+      if p is 'end' then targetOffset--
+
       for tn in Util.getTextNodes($(node))
-        if (length + tn.nodeValue.length >= targetOffset)
+        if (length + tn.nodeValue.length > targetOffset)
           range[p + 'Container'] = tn
           range[p + 'Offset'] = this[p + 'Offset'] - length
           break
