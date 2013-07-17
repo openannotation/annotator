@@ -968,6 +968,13 @@ describe "Annotator.noConflict()", ->
     assert.equal(result, _Annotator)
 
 describe "Annotator.supported()", ->
+
+  beforeEach ->
+    window._Selection = window.getSelection
+
+  afterEach ->
+    window.getSelection = window._Selection
+                
   it "should return true if the browser has window.getSelection method", ->
     window.getSelection = ->
     assert.isTrue(Annotator.supported())
