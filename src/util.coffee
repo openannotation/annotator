@@ -107,6 +107,17 @@ Util.getFirstTextNodeNotBefore = (n) ->
   else
     null
 
+# Public: read out the text value of a range using the selection API
+#
+# This method selects the specified range, and asks for the string
+# value of the selection. What this returns is very close to what the user
+# actually sees.
+Util.readRangeViaSelection = (range) ->
+  sel = Util.getGlobal().getSelection() # Get the browser selection object
+  sel.removeAllRanges()                 # clear the selection
+  sel.addRange range.toRange()          # Select the range
+  sel.toString()                        # Read out the selection
+
 Util.xpathFromNode = (el, relativeRoot) ->
   try
     result = simpleXPathJQuery.call el, relativeRoot
