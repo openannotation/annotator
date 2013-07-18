@@ -44,6 +44,7 @@ Building the packaged version of Annotator involves running the appropriate
 `make` task. For example:
 
     $ make                     # build everything
+    $ make develop             # converts CoffeeScript to JavaScript by calling ./tools/build
     $ make bookmarklet         # build the bookmarklet
     $ make annotator plugins   # build annotator and individual plugin files.
 
