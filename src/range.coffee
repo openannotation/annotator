@@ -175,7 +175,7 @@ class Range.BrowserRange
 
     if r.startOffset > 0
       # Do we really have to cut?
-      if r.start.data.length > r.startOffset
+      if r.start.nodeValuelength > r.startOffset
         # Yes. Cut.
         nr.start = r.start.splitText(r.startOffset)
       else
