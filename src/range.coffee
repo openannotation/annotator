@@ -172,14 +172,26 @@ class Range.BrowserRange
 
     # Now let's start to slice & dice the text elements!
     nr = {}
-    nr.start = if r.startOffset > 0 then r.start.splitText(r.startOffset) else r.start
 
-    if r.start is r.end # is the whole selection inside one text element ?
+    if r.startOffset > 0
+      # Do we really have to cut?
+      if r.start.nodeValue.length > r.startOffset
+        # Yes. Cut.
+        nr.start = r.start.splitText(r.startOffset)
+      else
+        # Avoid splitting off zero-length pieces.
+        nr.start = r.start.nextSibling
+    else
+      nr.start = r.start
+
+    # is the whole selection inside one text element ?
+    if r.start is r.end
       if nr.start.nodeValue.length > (r.endOffset - r.startOffset)
         nr.start.splitText(r.endOffset - r.startOffset)
       nr.end = nr.start
     else # no, the end of the selection is in a separate text element
-      if r.end.nodeValue.length > r.endOffset# does the end need to be cut?
+      # does the end need to be cut?
+      if r.end.nodeValue.length > r.endOffset
         r.end.splitText(r.endOffset)
       nr.end = r.end
 
@@ -369,8 +381,14 @@ class Range.SerializedRange
       # the combined length of the textNodes to that point exceeds or
       # matches the value of the offset.
       length = 0
+      targetOffset = this[p + 'Offset']
+
+      # Range excludes its endpoint because it describes the boundary position.
+      # Target the string index of the last character inside the range.
+      if p is 'end' then targetOffset--
+
       for tn in Util.getTextNodes($(node))
-        if (length + tn.nodeValue.length >= this[p + 'Offset'])
+        if (length + tn.nodeValue.length > targetOffset)
           range[p + 'Container'] = tn
           range[p + 'Offset'] = this[p + 'Offset'] - length
           break
