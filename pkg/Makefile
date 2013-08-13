@@ -1,6 +1,7 @@
 vpath %.coffee ../src
 
-PATH:=$(shell npm bin):$(PATH)
+SHELL := /bin/bash
+PATH := $(shell npm bin):$(PATH)
 
 ANNOTATOR=\
 	xpath.coffee \
@@ -17,6 +18,7 @@ ANNOTATOR=\
 PLUGINS=\
 	plugin/annotateitpermissions.coffee \
 	plugin/auth.coffee \
+	plugin/document.coffee \
 	plugin/filter.coffee \
 	plugin/kitchensink.coffee \
 	plugin/markdown.coffee \
