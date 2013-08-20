@@ -66,7 +66,7 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
     isFiltered: (input, property) ->
       return false unless input and property
 
-      for keyword in (input.split /\s*/)
+      for keyword in (input.split /\s+/)
         return false if property.indexOf(keyword) == -1
 
       return true
