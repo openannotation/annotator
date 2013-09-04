@@ -76,9 +76,9 @@ annotator-full.js: $(ANNOTATOR_FULL)
 	@../tools/preamble > _preamble.coffee
 	@coffee -mcb _preamble.coffee
 	@cd ..; \
-	coffeebarx $(addprefix src/, $(ANNOTATOR_FULL)) -xso pkg/_annotator-full.js
-	@mapcat _preamble.map _annotator-full.map -m annotator-full.map -j annotator-full.js
-	@rm -f _preamble.* _annotator-full.*
+	coffeebarx $(addprefix src/, $(ANNOTATOR_FULL)) -xso pkg/_annotator.js
+	@mapcat _preamble.map _annotator.map -m annotator-full.map -j annotator-full.js
+	@rm -f _preamble.* _annotator.*
 
 annotator.css: ../css/annotator.css
 	@../tools/data_uri_ify <../css/annotator.css >annotator.css
@@ -91,9 +91,9 @@ annotator-bookmarklet.js: $(BOOKMARKLET)
 	@../tools/preamble > _preamble.coffee
 	@coffee -mcb _preamble.coffee
 	@cd ..; \
-	coffeebarx $(addprefix src/, $(BOOKMARKLET)) -xso pkg/_annotator-bookmarklet.js
-	@mapcat _preamble.map _annotator-bookmarklet.map -m annotator-bookmarklet.map -j annotator-bookmarklet.js
-	@rm -f _preamble.* _annotator-bookmarklet.*
+	coffeebarx $(addprefix src/, $(BOOKMARKLET)) -xso pkg/_annotator.js
+	@mapcat _preamble.map _annotator.map -m annotator-bookmarklet.map -j annotator-bookmarklet.js
+	@rm -f _preamble.* _annotator.*
 
 BOOKMARKLET_CFG_DEP=$(shell [ -f $(BOOKMARKLET_CFG) ] && echo $(BOOKMARKLET_CFG))
 bookmarklet.js: $(BOOKMARKLET_SRC) $(BOOKMARKLET_CFG_DEP)
@@ -111,11 +111,9 @@ bookmarklet.js: $(BOOKMARKLET_SRC) $(BOOKMARKLET_CFG_DEP)
 annotator.%.js: plugin/%.coffee
 	@../tools/preamble > _preamble.coffee
 	@coffee -mcb _preamble.coffee
-	@rm -rf _tmp
-	@mkdir _tmp
-	@coffee -o _tmp -mc $<
-	@mapcat _preamble.map _tmp/$(notdir $(basename $<).map) -m $(basename $@).map -j $@
-	@rm -rf _preamble.* _tmp
+	@cd ..; coffeebarx -xso pkg/_annotator.js pkg/$<
+	@mapcat _preamble.map _annotator.map -m $(basename $@).map -j $@
+	@rm -rf _preamble.* _annotator.js _annotator.map
 
 %.min.js: %.js
 	@echo $@
@@ -139,7 +137,7 @@ locales:
 	> locale/annotator.pot
 
 clean:
-	rm -rf *.js *.css *.map *_mapsrc
+	rm -rf *.js *.css *.map *_mapsrc _preamble* _tmp
 
 # don't remove intermediate .js files when building plugins
 .SECONDARY:
