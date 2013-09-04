@@ -65,16 +65,20 @@ ANNOTATOR_MAPS=$(addprefix ../lib/, $(addsuffix .map, $(basename $(ANNOTATOR))))
 annotator.js: $(ANNOTATOR)
 	@../tools/preamble > _preamble.coffee
 	@coffee -mcb _preamble.coffee
-	@mapcat _preamble.map $(ANNOTATOR_MAPS) -m annotator.map -j annotator.js
-	@rm _preamble.*
+	@cd ..; \
+	coffeebarx $(addprefix src/, $(ANNOTATOR)) -xso pkg/_annotator.js;
+	@mapcat _preamble.map _annotator.map -m annotator.map -j annotator.js
+	@rm -f _preamble.* _annotator.*
 
 ANNOTATOR_FULL_MAPS=$(addprefix ../lib/, $(addsuffix .map, $(basename $(ANNOTATOR_FULL))))
 
 annotator-full.js: $(ANNOTATOR_FULL)
 	@../tools/preamble > _preamble.coffee
 	@coffee -mcb _preamble.coffee
-	@mapcat _preamble.map $(ANNOTATOR_FULL_MAPS) -m annotator-full.map -j annotator-full.js
-	@rm _preamble.*
+	@cd ..; \
+	coffeebarx $(addprefix src/, $(ANNOTATOR_FULL)) -xso pkg/_annotator-full.js
+	@mapcat _preamble.map _annotator-full.map -m annotator-full.map -j annotator-full.js
+	@rm -f _preamble.* _annotator-full.*
 
 annotator.css: ../css/annotator.css
 	@../tools/data_uri_ify <../css/annotator.css >annotator.css
@@ -86,8 +90,10 @@ BOOKMARKLET_MAPS=$(addprefix ../lib/, $(addsuffix .map, $(basename $(BOOKMARKLET
 annotator-bookmarklet.js: $(BOOKMARKLET)
 	@../tools/preamble > _preamble.coffee
 	@coffee -mcb _preamble.coffee
-	@mapcat _preamble.map $(BOOKMARKLET_MAPS) -m annotator-bookmarklet.map -j annotator-bookmarklet.js
-	@rm _preamble.*
+	@cd ..; \
+	coffeebarx $(addprefix src/, $(BOOKMARKLET)) -xso pkg/_annotator-bookmarklet.js
+	@mapcat _preamble.map _annotator-bookmarklet.map -m annotator-bookmarklet.map -j annotator-bookmarklet.js
+	@rm -f _preamble.* _annotator-bookmarklet.*
 
 BOOKMARKLET_CFG_DEP=$(shell [ -f $(BOOKMARKLET_CFG) ] && echo $(BOOKMARKLET_CFG))
 bookmarklet.js: $(BOOKMARKLET_SRC) $(BOOKMARKLET_CFG_DEP)
@@ -133,7 +139,7 @@ locales:
 	> locale/annotator.pot
 
 clean:
-	rm -f *.js *.css *.map
+	rm -rf *.js *.css *.map *_mapsrc
 
 # don't remove intermediate .js files when building plugins
 .SECONDARY:
