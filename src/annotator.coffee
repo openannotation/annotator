@@ -595,7 +595,7 @@ class Annotator extends Delegator
   #
   # Returns true if the element is a child of an annotator element.
   isAnnotator: (element) ->
-    !!$(element).parents().andSelf().filter('[class^=annotator-]').not(@wrapper).length
+    !!$(element).parents().addBack().filter('[class^=annotator-]').not(@wrapper).length
 
   # Annotator#element callback. Displays viewer with all annotations
   # associated with highlight Elements under the cursor.
@@ -613,7 +613,7 @@ class Annotator extends Delegator
 
     annotations = $(event.target)
       .parents('.annotator-hl')
-      .andSelf()
+      .addBack()
       .map -> return $(this).data("annotation")
 
     this.showViewer($.makeArray(annotations), Util.mousePosition(event, @wrapper[0]))
