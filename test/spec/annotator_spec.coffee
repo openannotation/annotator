@@ -2,7 +2,9 @@ describe 'Annotator', ->
   annotator = null
   mock = null
 
-  beforeEach -> annotator = new Annotator($('<div></div>')[0], {})
+  beforeEach -> annotator = new Annotator($('<div></div>')[0], {
+    store: new Annotator.Plugin.Store()
+  })
   afterEach  -> $(document).unbind()
 
   describe "events", ->
