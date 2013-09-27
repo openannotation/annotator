@@ -114,10 +114,10 @@ annotator.%.js: plugin/%.coffee
 %.min.js: %.js
 	@echo $@
 	@if [ -e $(basename $<).map ]; then \
-	  uglifyjs $< --source-map $(basename $<).min.map --in-source-map $(basename $<).map > $@ ; \
+	  uglifyjs $< --source-map $(basename $<).min.map --in-source-map $(basename $<).map > $@ 2>/dev/null ; \
 	  echo "\n//@ sourceMappingURL=$(basename $<).min.map" >> $@; \
 	else \
-	  uglifyjs $< > $@ ; \
+	  uglifyjs $< > $@ 2>/dev/null ; \
 	fi
 
 %.min.css: %.css
