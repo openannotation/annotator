@@ -20,7 +20,7 @@
     }
   }
 
-  $('a[href^="#"]').live('click', function (event) {
+  $(document).on('click', 'a[href^="#"]', function (event) {
     var section = $(this.hash);
     if (section.length) {
       scrollTo(section.offset());
