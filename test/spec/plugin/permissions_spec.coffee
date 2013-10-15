@@ -263,6 +263,13 @@ describe 'Annotator.Plugin.Permissions', ->
       checkbox.removeAttr('checked')
       permissions.updateAnnotationPermissions('update', field, annotation)
       assert.isFalse(permissions.authorize('update', annotation, null))
+      
+    it 'should consult the userId option when updating permissions', ->
+      annotation = {permissions: {}}
+      permissions.options.userId = (user) -> user.id
+      permissions.setUser({id: 3, name: 'Alice'})
+      permissions.updateAnnotationPermissions('update', field, annotation);
+      assert.deepEqual(annotation.permissions, {'update': [3]})
 
   describe 'updatePermissionsField', ->
     field = null

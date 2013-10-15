@@ -285,7 +285,7 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
       # but our UI presents a checkbox, so we can only interpret "prevent others
       # from viewing" as meaning "allow only me to view". This may want changing
       # in the future.
-      annotation.permissions[type] = [@user]
+      annotation.permissions[type] = [@options.userId(@user)]
 
   # Field callback: updates the annotation viewer to inlude the display name
   # for the user obtained through Permissions#options.userString().
