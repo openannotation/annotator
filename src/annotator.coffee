@@ -101,12 +101,6 @@ class Annotator extends Delegator
         @annotations.subscribe ev, =>
           this.publish(ev, arguments)
 
-    # DEBUGGING ONLY
-    for ev in events
-      do (ev) =>
-        this.subscribe ev, =>
-          console.log(ev, arguments)
-
     # Do initial load
     this.load(@options.loadQuery)
 
@@ -697,7 +691,6 @@ class Annotator extends Delegator
     # Update the annotation when the editor is saved
     update = =>
       do cleanup
-      console.log('onEditAnnotation', annotation)
       this.annotations.update(annotation)
         .fail(handleError)
 

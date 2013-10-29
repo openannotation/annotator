@@ -3,7 +3,7 @@ describe 'Annotator', ->
   mock = null
 
   beforeEach -> annotator = new Annotator($('<div></div>')[0], {
-    store: new Annotator.Plugin.Store()
+    store: new Annotator.Plugin.NullStore()
   })
   afterEach  -> $(document).unbind()
 
@@ -352,15 +352,6 @@ describe 'Annotator', ->
       assert(mockSelection.addRange.calledOnce)
       assert.isTrue(mockSelection.addRange.calledWith('range'))
 
-  describe "createAnnotation", ->
-    it "should return an empty annotation", ->
-      assert.deepEqual(annotator.createAnnotation(), {})
-
-    it "should fire the 'beforeAnnotationCreated' event providing the annotation", ->
-      sinon.spy(annotator, 'publish')
-      annotator.createAnnotation()
-      assert.isTrue(annotator.publish.calledWith('beforeAnnotationCreated', [{}]))
-
   describe "setupAnnotation", ->
     annotation = null
     quote = null
@@ -436,16 +427,7 @@ describe 'Annotator', ->
     it "should store the annotation in the highlighted element's data store", ->
       assert.equal(element.data('annotation'), annotation)
 
-  describe "updateAnnotation", ->
-    it "should publish the 'beforeAnnotationUpdated' and 'annotationUpdated' events", ->
-      annotation = {text: "my annotation comment"}
-      sinon.spy(annotator, 'publish')
-      annotator.updateAnnotation(annotation)
-
-      assert.isTrue(annotator.publish.calledWith('beforeAnnotationUpdated', [annotation]))
-      assert.isTrue(annotator.publish.calledWith('annotationUpdated', [annotation]))
-
-  describe "deleteAnnotation", ->
+  describe "when an annotation is deleted", ->
     annotation = null
     div = null
 
@@ -460,21 +442,18 @@ describe 'Annotator', ->
       annotation.highlights.each ->
         assert.lengthOf($(this).parent(), 1)
 
-      annotator.deleteAnnotation(annotation)
-      annotation.highlights.each ->
-        assert.lengthOf($(this).parent(), 0)
+      annotator.annotations.delete(annotation)
+        .then ->
+          annotation.highlights.each ->
+            assert.lengthOf($(this).parent(), 0)
 
     it "should leave the content of the highlights in place", ->
-      annotator.deleteAnnotation(annotation)
-      assert.equal(div.html(), '<em>Hats</em><em>Gloves</em>')
+      annotator.annotations.delete(annotation)
+        .then ->
+          assert.equal(div.html(), '<em>Hats</em><em>Gloves</em>')
 
     it "should not choke when there are no highlights", ->
-      assert.doesNotThrow((-> annotator.deleteAnnotation({})), Error)
-
-    it "should publish the 'annotationDeleted' event", ->
-      sinon.spy(annotator, 'publish')
-      annotator.deleteAnnotation(annotation)
-      assert.isTrue(annotator.publish.calledWith('annotationDeleted', [annotation]))
+      assert.doesNotThrow((-> annotator.annotations.delete({})), Error)
 
   describe "loadAnnotations", ->
     beforeEach ->
@@ -606,7 +585,6 @@ describe 'Annotator', ->
   describe "showEditor", ->
     beforeEach ->
       sinon.spy(annotator, 'publish')
-      sinon.spy(annotator, 'deleteAnnotation')
       sinon.spy(annotator.editor, 'load')
       sinon.spy(annotator.editor.element, 'css')
 
@@ -643,7 +621,6 @@ describe 'Annotator', ->
       annotation = {"text": "bah"}
       sinon.spy(annotator, 'publish')
       sinon.spy(annotator, 'setupAnnotation')
-      sinon.spy(annotator, 'updateAnnotation')
 
     it "should publish the 'annotationEditorSubmit' event and pass the Editor and annotation", ->
       annotator.onEditorSubmit(annotation)
@@ -856,9 +833,6 @@ describe 'Annotator', ->
 
       mockOffset = {top: 0, left:0}
 
-      mockSubscriber = sinon.spy()
-      annotator.subscribe('annotationCreated', mockSubscriber)
-
       normalizedRange = {
         text: sinon.stub().returns(quote)
         serialize: sinon.stub().returns({})
@@ -869,9 +843,8 @@ describe 'Annotator', ->
 
       sinon.stub(annotator.adder, 'hide')
       sinon.stub(annotator.adder, 'position').returns(mockOffset)
-      sinon.stub(annotator, 'createAnnotation').returns(annotation)
       sinon.spy(annotator, 'setupAnnotation')
-      sinon.stub(annotator, 'deleteAnnotation')
+      sinon.spy(annotator.annotations, 'create')
       sinon.stub(annotator, 'showEditor')
       sinon.stub(Range, 'sniff').returns(sniffedRange)
       sinon.stub(annotator, 'highlightRange').returns(element)
@@ -882,36 +855,31 @@ describe 'Annotator', ->
     afterEach ->
       Range.sniff.restore()
 
-    it "should hide the Annotation#adder", ->
+    it "should hide the adder", ->
       assert(annotator.adder.hide.calledOnce)
 
-    it "should create a new annotation", ->
-      assert(annotator.createAnnotation.calledOnce)
-
     it "should set up the annotation", ->
-      assert.isTrue(annotator.setupAnnotation.calledWith(annotation))
+      assert(annotator.setupAnnotation.calledOnce)
 
-    it "should display the Annotation#editor in the same place as the Annotation#adder", ->
-      assert(annotator.adder.position.calledOnce)
-      assert.isTrue(annotator.showEditor.calledWith(annotation, mockOffset))
+    it "should display the editor", ->
+      assert(annotator.showEditor.calledOnce)
 
     it "should add temporary highlights to the document to show the user what they selected", ->
-      assert.isTrue(annotator.highlightRange.calledWith(normalizedRange))
+      assert(annotator.highlightRange.calledWith(normalizedRange))
       assert.equal(element[0].className, 'annotator-hl annotator-hl-temporary')
 
     it "should persist the temporary highlights if the annotation is saved", ->
       annotator.publish('annotationEditorSubmit')
       assert.equal(element[0].className, 'annotator-hl')
 
-    it "should trigger the 'annotationCreated' event if the edit is saved", ->
+    it "should create the annotation if the edit is saved", ->
       annotator.onEditorSubmit(annotation)
-      assert.isTrue(mockSubscriber.calledWith(annotation))
+      assert(annotator.annotations.create.calledOnce)
 
-    it "should call Annotator#deleteAnnotation if editing is cancelled", ->
+    it "should not create the annotation if editing is cancelled", ->
       do annotator.onEditorHide
       do annotator.onEditorSubmit
-      assert.isFalse(mockSubscriber.calledWith('annotationCreated'))
-      assert.isTrue(annotator.deleteAnnotation.calledWith(annotation))
+      assert.isFalse(annotator.annotations.create.called)
 
   describe "onEditAnnotation", ->
     annotation = null
@@ -919,38 +887,39 @@ describe 'Annotator', ->
     mockSubscriber = null
 
     beforeEach ->
-      annotation = {text: "my mock annotation"}
+      annotation = {id: 123, text: "my mock annotation"}
       mockOffset = {top: 0, left: 0}
       mockSubscriber = sinon.spy()
       sinon.spy(annotator, "showEditor")
+      sinon.spy(annotator.annotations, "update")
       sinon.spy(annotator.viewer, "hide")
       sinon.stub(annotator.viewer.element, "position").returns(mockOffset)
-      sinon.spy(annotator, "updateAnnotation")
       annotator.onEditAnnotation(annotation)
 
-    it "should display the Annotator#editor in the same positions as Annotatorviewer", ->
+    it "should hide the viewer", ->
       assert(annotator.viewer.hide.calledOnce)
-      assert.isTrue(annotator.showEditor.calledWith(annotation, mockOffset))
 
-    it "should call 'updateAnnotation' event if the edit is saved", ->
+    it "should show the editor", ->
+      assert(annotator.showEditor.calledOnce)
+
+    it "should update the annotation if the edit is saved", ->
       annotator.onEditorSubmit(annotation)
-      assert.isTrue(annotator.updateAnnotation.calledWith(annotation))
+      assert(annotator.annotations.update.calledWith(annotation))
 
-    it "should not call 'updateAnnotation' if editing is cancelled", ->
+    it "should not update the annotation if editing is cancelled", ->
       do annotator.onEditorHide
       annotator.onEditorSubmit(annotation)
-      assert.isFalse(annotator.updateAnnotation.calledWith(annotation))
+      assert.isFalse(annotator.annotations.update.calledWith(annotation))
 
   describe "onDeleteAnnotation", ->
-    it "should pass the annotation on to Annotator#deleteAnnotation()", ->
+    it "should delete the annotation", ->
       annotation = {text: "my mock annotation"}
-      sinon.spy(annotator, "deleteAnnotation")
       sinon.spy(annotator.viewer, "hide")
 
       annotator.onDeleteAnnotation(annotation)
 
       assert(annotator.viewer.hide.calledOnce)
-      assert.isTrue(annotator.deleteAnnotation.calledWith(annotation))
+      assert.isTrue(annotator.annotations.delete.calledWith(annotation))
 
 describe "Annotator.noConflict()", ->
   _Annotator = null
