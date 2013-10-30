@@ -1,59 +1,41 @@
 #!/usr/bin/env node
-
-var http = require('http');
-var sys = require('sys');
-var static = require('node-static');
+var connect = require('connect');
 var jwt = require('jwt-simple');
 var iso8601 = require('iso8601');
 
-var STATIC_PORT = 4000;
-var TOKEN_PORT = 5001;
 
 var CONSUMER_KEY = 'mockconsumer';
 var CONSUMER_SECRET = 'mockconsumersecret';
 var CONSUMER_TTL = 1800;
 
-var fileServer = new static.Server(".", {cache: false});
+var app = connect()
 
-http.createServer(function (request, response) {
-    request.addListener('end', function () {
-        fileServer.serve(request, response, function (err, result) {
-            if (err) { // There was an error serving the file
-                sys.error("Error serving " + request.url + " - " + err.message);
+app.use('/api/token', function(request, response) {
+  var payload = {
+    'consumerKey': CONSUMER_KEY,
+    'userId': 'alice',
+    'issuedAt': new Date().toISOString(),
+    'ttl': CONSUMER_TTL
+  };
+  var tok = jwt.encode(payload, CONSUMER_SECRET);
 
-                // Respond to the client
-                response.writeHead(err.status, err.headers);
-                response.end();
-            }
-        });
-    });
-    request.resume();
-}).listen(STATIC_PORT);
+  response.setHeader('Access-Control-Allow-Origin', request.headers['origin']);
+  response.setHeader('Access-Control-Allow-Credentials', 'true');
+  response.setHeader('Access-Control-Expose-Headers', 'Location, Content-Type, Content-Length');
 
-http.createServer(function (request, response) {
-    request.addListener('end', function () {
-        var payload = {
-            'consumerKey': CONSUMER_KEY,
-            'userId': 'alice',
-            'issuedAt': new Date().toISOString(),
-            'ttl': CONSUMER_TTL
-        };
-        var tok = jwt.encode(payload, CONSUMER_SECRET);
+  if (request.method == 'OPTIONS') {
+    response.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Content-Length');
+    response.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    response.setHeader('Access-Control-Max-Age', '86400');
+  }
 
-        response.setHeader('Access-Control-Allow-Origin', request.headers['origin']);
-        response.setHeader('Access-Control-Allow-Credentials', 'true');
-        response.setHeader('Access-Control-Expose-Headers', 'Location, Content-Type, Content-Length');
+  response.end(tok);
+});
 
-        if (request.method == 'OPTIONS') {
-            response.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Content-Length');
-            response.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-            response.setHeader('Access-Control-Max-Age', '86400');
-        }
+app.use(connect.static(process.cwd()));
 
-        response.end(tok);
-    });
-    request.resume();
-}).listen(TOKEN_PORT);
+app.listen(4000);
 
-console.log("Serving the current working directory on port", STATIC_PORT);
-console.log("Serving dummy auth tokens on port", TOKEN_PORT);
+console.log("The development server is now running.");
+console.log("Live at: http://localhost:4000/dev.html");
+console.log("Test suite at: http://localhost:4000/test/runner.html");
