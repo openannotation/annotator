@@ -2,12 +2,10 @@
   "name": "annotator",
   "version": "1.2.8",
   "description": "Inline annotation for the web. Select text, images, or (nearly) anything else, and add your notes.",
-  "repositories": [
-    {
-      "type": "git",
-      "url": "https://github.com/okfn/annotator.git"
-    }
-  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/okfn/annotator.git"
+  },
   "devDependencies": {
     "coffee-script": "1.6.x",
     "uglify-js": "2.3.6",
