@@ -16,12 +16,13 @@
     "mocha-phantomjs": "2.0.1",
     "chai": "1.5.0",
     "sinon": "1.6.0",
-    "node-static": "",
     "jwt-simple": "",
-    "iso8601": ""
+    "iso8601": "",
+    "connect": "~2.10.1"
   },
   "engines": { "node" : "~0.8.0" },
   "scripts": {
+    "start": "node ./tools/serve",
     "test": "make REPORTER=spec test"
   }
 }
