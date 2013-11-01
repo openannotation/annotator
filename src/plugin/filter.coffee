@@ -357,7 +357,7 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
 
     $('html, body').animate({
       scrollTop: highlight.offset().top - (@element.height() + 20)
-    }, 150);
+    }, 150)
 
   # Clears the relevant input when the clear button is clicked.
   #

@@ -422,12 +422,13 @@ class Range.SerializedRange
     # Node.compareDocumentPosition() to decide when to set the
     # commonAncestorContainer and bail out.
 
-    contains = if not document.compareDocumentPosition?
-                 # IE
-                 (a, b) -> a.contains(b)
-               else
-                 # Everyone else
-                 (a, b) -> a.compareDocumentPosition(b) & 16
+    contains =
+      if not document.compareDocumentPosition?
+        # IE
+        (a, b) -> a.contains(b)
+      else
+        # Everyone else
+        (a, b) -> a.compareDocumentPosition(b) & 16
 
     $(range.startContainer).parents().each ->
       if contains(this, range.endContainer)
