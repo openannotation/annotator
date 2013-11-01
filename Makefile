@@ -9,6 +9,6 @@ test: develop
 	./tools/test -R $(REPORTER)
 
 develop:
-	./tools/build
+	npm start
 
 .PHONY: test develop

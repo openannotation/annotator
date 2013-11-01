@@ -1,5 +1,12 @@
+Util = require './util'
+Widget = require './widget'
+
+
+_t = Util.TranslationString
+
+
 # Public: Creates an element for viewing annotations.
-class Annotator.Viewer extends Annotator.Widget
+class Viewer extends Widget
 
   # Events to be bound to the @element.
   events:
@@ -70,7 +77,7 @@ class Annotator.Viewer extends Annotator.Widget
   #
   # Returns itself.
   show: (event) =>
-    Annotator.Util.preventEventDefault event
+    Util.preventEventDefault event
 
     controls = @element
       .find('.annotator-controls')
@@ -110,7 +117,7 @@ class Annotator.Viewer extends Annotator.Widget
   #
   # Returns itself.
   hide: (event) =>
-    Annotator.Util.preventEventDefault event
+    Util.preventEventDefault event
 
     @element.addClass(@classes.hide)
     this.publish('hide')
@@ -248,3 +255,7 @@ class LinkParser
         d
       else
         continue
+
+
+# Export the Viewer object
+module.exports = Viewer

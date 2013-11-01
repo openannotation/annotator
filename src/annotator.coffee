@@ -1,3 +1,16 @@
+Delegator = require './class'
+Range = require './range'
+Util = require './util'
+Widget = require './widget'
+Viewer = require './viewer'
+Editor = require './editor'
+Notification = require './notification'
+
+
+_t = Util.TranslationString
+
+
+
 # Selection and range creation reference for the following code:
 # http://www.quirksmode.org/dom/range_intro.html
 #
@@ -758,6 +771,10 @@ Annotator.$ = $
 Annotator.Delegator = Delegator
 Annotator.Range = Range
 Annotator.Util = Util
+Annotator.Widget = Widget
+Annotator.Viewer = Viewer
+Annotator.Editor = Editor
+Annotator.Notification = Notification
 
 # Expose a global instance registry
 Annotator._instances = []
@@ -786,5 +803,6 @@ $.fn.annotator = (options) ->
       instance = new Annotator(this, options)
       $.data(this, 'annotator', instance)
 
+
 # Export Annotator object.
-this.Annotator = Annotator;
+module.exports = Annotator

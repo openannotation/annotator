@@ -3,6 +3,7 @@ var connect = require('connect');
 var jwt = require('jwt-simple');
 var iso8601 = require('iso8601');
 
+var bundle = require('./bundle');
 
 var CONSUMER_KEY = 'mockconsumer';
 var CONSUMER_SECRET = 'mockconsumersecret';
@@ -31,6 +32,16 @@ app.use('/api/token', function(request, response) {
 
   response.end(tok);
 });
+
+app.use('/lib/annotator.js', bundle.core.serve({
+  debug: true,
+  standalone: 'Annotator'
+}));
+
+for (var plugin in bundle.plugin) {
+  var pluginPath = '/lib/plugin/' + plugin + '.js'
+  app.use(pluginPath, bundle.plugin[plugin].serve({debug: true}));
+}
 
 app.use(connect.static(process.cwd()));
 

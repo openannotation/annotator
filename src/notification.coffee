@@ -1,10 +1,12 @@
-Annotator = Annotator || {}
+Delegator = require './class'
+Util = require './util'
+
 
 # Public: A simple notification system that can be used to display information,
 # warnings and errors to the user. Display of notifications are controlled
 # cmpletely by CSS by adding/removing the @options.classes.show class. This
 # allows styling/animation using CSS rather than hardcoding styles.
-class Annotator.Notification extends Delegator
+class Notification extends Delegator
 
   # Sets events to be bound to the @element.
   events:
@@ -52,7 +54,7 @@ class Annotator.Notification extends Delegator
   #   notification.show("An error has occurred", Annotator.Notification.ERROR)
   #
   # Returns itself.
-  show: (message, status=Annotator.Notification.INFO) =>
+  show: (message, status=Notification.INFO) =>
     $(@element)
       .addClass(@options.classes.show)
       .addClass(@options.classes[status])
@@ -75,14 +77,18 @@ class Annotator.Notification extends Delegator
 
 # Constants for controlling the display of the notification. Each constant
 # adds a different class to the Notification#element.
-Annotator.Notification.INFO    = 'show'
-Annotator.Notification.SUCCESS = 'success'
-Annotator.Notification.ERROR   = 'error'
+Notification.INFO    = 'show'
+Notification.SUCCESS = 'success'
+Notification.ERROR   = 'error'
 
 # Attach notification methods to the Annotation object on document ready.
 $(->
-  notification = new Annotator.Notification
+  notification = new Notification
 
   Annotator.showNotification = notification.show
   Annotator.hideNotification = notification.hide
 )
+
+
+# Export Notification object
+module.exports = Notification

@@ -1,5 +1,12 @@
+Util = require './util'
+Widget = require './widget'
+
+
+_t = Util.TranslationString
+
+
 # Public: Creates an element for editing annotations.
-class Annotator.Editor extends Annotator.Widget
+class Editor extends Widget
 
   # Events to be bound to @element.
   events:
@@ -72,7 +79,7 @@ class Annotator.Editor extends Annotator.Widget
   #
   # Returns itself.
   show: (event) =>
-    Annotator.Util.preventEventDefault event
+    Util.preventEventDefault event
 
     @element.removeClass(@classes.hide)
     @element.find('.annotator-save').addClass(@classes.focus)
@@ -104,7 +111,7 @@ class Annotator.Editor extends Annotator.Widget
   #
   # Returns itself.
   hide: (event) =>
-    Annotator.Util.preventEventDefault event
+    Util.preventEventDefault event
 
     @element.addClass(@classes.hide)
     this.publish('hide')
@@ -161,7 +168,7 @@ class Annotator.Editor extends Annotator.Widget
   #
   # Returns itself.
   submit: (event) =>
-    Annotator.Util.preventEventDefault event
+    Util.preventEventDefault event
 
     for field in @fields
       field.submit(field.element, @annotation)
@@ -227,7 +234,7 @@ class Annotator.Editor extends Annotator.Widget
   # Returns the created <li> Element.
   addField: (options) ->
     field = $.extend({
-      id:     'annotator-field-' + Annotator.Util.uuid()
+      id:     'annotator-field-' + Util.uuid()
       type:   'input'
       label:  ''
       load:   ->
@@ -380,3 +387,7 @@ class Annotator.Editor extends Annotator.Widget
 
     resize.bind   'mousedown', onMousedown
     controls.bind 'mousedown', onMousedown
+
+
+# Export the Editor object
+module.exports = Editor
