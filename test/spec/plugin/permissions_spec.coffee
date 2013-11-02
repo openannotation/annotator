@@ -1,64 +1,67 @@
 describe 'Annotator.Plugin.Permissions', ->
   el = null
+  annotator = null
   permissions = null
 
   beforeEach ->
     el = $("<div class='annotator-viewer'></div>").appendTo('body')[0]
+    annotator = new Annotator($('<div/>')[0], {
+      store: new Annotator.Plugin.NullStore()
+    })
     permissions = new Annotator.Plugin.Permissions(el)
+    permissions.annotator = annotator
+    permissions.pluginInit()
 
   afterEach -> $(el).remove()
 
   it "it should add the current user object to newly created annotations on beforeAnnotationCreated", ->
     ann = {}
-    $(el).trigger('beforeAnnotationCreated', [ann])
+    annotator.publish('beforeAnnotationCreated', [ann])
     assert.isUndefined(ann.user)
 
     ann = {}
     permissions.setUser('alice')
-    $(el).trigger('beforeAnnotationCreated', [ann])
+    annotator.publish('beforeAnnotationCreated', [ann])
     assert.equal(ann.user, 'alice')
 
     ann = {}
     permissions.setUser({id: 'alice'})
     permissions.options.userId = (user) -> user.id
-    $(el).trigger('beforeAnnotationCreated', [ann])
+    annotator.publish('beforeAnnotationCreated', [ann])
     assert.deepEqual(ann.user, {id: 'alice'})
 
   it "it should add permissions to newly created annotations on beforeAnnotationCreated", ->
     ann = {}
-    $(el).trigger('beforeAnnotationCreated', [ann])
+    annotator.publish('beforeAnnotationCreated', [ann])
     assert.ok(ann.permissions)
 
     ann = {}
     permissions.options.permissions = {}
-    $(el).trigger('beforeAnnotationCreated', [ann])
+    annotator.publish('beforeAnnotationCreated', [ann])
     assert.deepEqual(ann.permissions, {})
 
   describe 'pluginInit', ->
     beforeEach ->
-      permissions.annotator = {
-        viewer: {
-          addField: sinon.spy()
-        },
-        editor: {
-          addField: sinon.spy()
-        },
-        plugins: {}
-      }
+      sinon.stub(annotator.viewer, 'addField')
+      sinon.stub(annotator.editor, 'addField')
+
+    afterEach ->
+      annotator.viewer.addField.reset()
+      annotator.editor.addField.reset()
 
     it "should register a field with the Viewer", ->
       permissions.pluginInit()
-      assert(permissions.annotator.viewer.addField.calledOnce)
+      assert(annotator.viewer.addField.calledOnce)
 
     it "should register an two checkbox fields with the Editor", ->
       permissions.pluginInit()
-      assert.equal(permissions.annotator.editor.addField.callCount, 2)
+      assert.equal(annotator.editor.addField.callCount, 2)
 
     it "should register an 'anyone can view' field with the Editor if showEditPermissionsCheckbox is true", ->
       permissions.options.showViewPermissionsCheckbox = true
       permissions.options.showEditPermissionsCheckbox = false
       permissions.pluginInit()
-      assert.equal(permissions.annotator.editor.addField.callCount, 1)
+      assert.equal(annotator.editor.addField.callCount, 1)
 
     it "should register an 'anyone can edit' field with the Editor if showViewPermissionsCheckbox is true", ->
       permissions.options.showViewPermissionsCheckbox = false

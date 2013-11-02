@@ -3,18 +3,18 @@ describe 'Annotator.Plugin.Document', ->
   annotator = null
 
   beforeEach ->
-    annotator = new Annotator($('<div></div>')[0], {})
+    annotator = new Annotator($('<div/>')[0], {
+      store: new Annotator.Plugin.NullStore()
+    })
     annotator.addPlugin('Document')
 
   afterEach  -> $(document).unbind()
 
-  describe 'has an annotator', ->
-    it 'should have an annotator', ->
-      assert.ok(annotator)
+  it 'should have an annotator', ->
+    assert.ok(annotator)
 
-  describe 'has the plugin', ->
-    it 'should have Document plugin', ->
-      assert.ok('Document' of annotator.plugins)
+  it 'should have Document plugin', ->
+    assert.ok('Document' of annotator.plugins)
 
   describe 'annotation should have some metadata', ->
     # add some metadata to the page
@@ -36,8 +36,11 @@ describe 'Annotator.Plugin.Document', ->
 
     annotation = null
 
-    beforeEach ->
-      annotation = annotator.createAnnotation()
+    beforeEach (done) ->
+      annotator.annotations.create({})
+        .then (result) ->
+          annotation = result
+          done()
 
     it 'can create annotation', ->
       assert.ok(annotation)
@@ -91,7 +94,7 @@ describe 'Annotator.Plugin.Document', ->
      it 'should have twitter card metadata', ->
       assert.ok(annotation.document.twitter)
       assert.deepEqual(annotation.document.twitter.site, ['@okfn'])
-    
+
     it 'should have unique uris', ->
       uris = annotator.plugins.Document.uris()
       assert.equal(uris.length, 5)

@@ -4,7 +4,9 @@ describe 'Annotator.Plugin.Tags', ->
 
   beforeEach ->
     el = $("<div><div class='annotator-editor-controls'></div></div>")[0]
-    annotator = new Annotator($('<div/>')[0])
+    annotator = new Annotator($('<div/>')[0], {
+      store: new Annotator.Plugin.NullStore()
+    })
     plugin = new Annotator.Plugin.Tags(el)
     plugin.annotator = annotator
     plugin.pluginInit()

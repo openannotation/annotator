@@ -706,14 +706,6 @@ class Annotator extends Delegator
     @viewer.hide()
     this.showEditor(annotation, offset)
 
-  # Annotator#viewer callback function. Deletes the annotation provided to the
-  # callback.
-  #
-  # annotation - An annotation Object for deletion.
-  #
-  # Returns nothing.
-  onDeleteAnnotation: (annotation) =>
-
 # Create namespace for Annotator plugins
 class Annotator.Plugin extends Delegator
   constructor: (element, options) ->

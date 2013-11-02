@@ -194,8 +194,8 @@ describe 'Annotator', ->
       assert(callback.calledWith(field, annotation))
 
     it "should subscribe to custom events", ->
-      assert(mockViewer.on.calledWith('edit', annotator.onEditAnnotation))
-      assert(mockViewer.on.calledWith('delete', annotator.onDeleteAnnotation))
+      assert.equal('edit', mockViewer.on.args[0][0])
+      assert.equal('delete', mockViewer.on.args[1][0])
 
     it "should bind to browser mouseover and mouseout events", ->
       assert(mockViewer.element.bind.calledWith({
@@ -910,16 +910,6 @@ describe 'Annotator', ->
       do annotator.onEditorHide
       annotator.onEditorSubmit(annotation)
       assert.isFalse(annotator.annotations.update.calledWith(annotation))
-
-  describe "onDeleteAnnotation", ->
-    it "should delete the annotation", ->
-      annotation = {text: "my mock annotation"}
-      sinon.spy(annotator.viewer, "hide")
-
-      annotator.onDeleteAnnotation(annotation)
-
-      assert(annotator.viewer.hide.calledOnce)
-      assert.isTrue(annotator.annotations.delete.calledWith(annotation))
 
 describe "Annotator.noConflict()", ->
   _Annotator = null

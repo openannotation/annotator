@@ -1,23 +1,29 @@
 describe 'Annotator.Plugin.AnnotateItPermissions', ->
   el = null
   permissions = null
+  annotator = null
 
   beforeEach ->
     el = $("<div class='annotator-viewer'></div>").appendTo('body')[0]
+    annotator = new Annotator($('<div/>')[0], {
+      store: new Annotator.Plugin.NullStore()
+    })
     permissions = new Annotator.Plugin.AnnotateItPermissions(el)
+    permissions.annotator = annotator
+    permissions.pluginInit()
 
   afterEach -> $(el).remove()
 
   it "it should set user for newly created annotations on beforeAnnotationCreated", ->
     ann = {}
     permissions.setUser({userId: 'alice', consumerKey: 'fookey'})
-    $(el).trigger('beforeAnnotationCreated', [ann])
+    annotator.publish('beforeAnnotationCreated', [ann])
     assert.equal(ann.user, 'alice')
 
   it "it should set consumer for newly created annotations on beforeAnnotationCreated", ->
     ann = {}
     permissions.setUser({userId: 'alice', consumerKey: 'fookey'})
-    $(el).trigger('beforeAnnotationCreated', [ann])
+    annotator.publish('beforeAnnotationCreated', [ann])
     assert.equal(ann.consumer, 'fookey')
 
   describe 'authorize', ->
