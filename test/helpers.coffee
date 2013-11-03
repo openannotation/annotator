@@ -1,4 +1,6 @@
-class this.MockSelection
+Util = require('../src/util')
+
+class MockSelection
   rangeCount: 1
   isCollapsed: false
 
@@ -37,12 +39,12 @@ class this.MockSelection
   resolveXPath: (xpath) ->
     document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
 
-this.textInNormedRange = (range) ->
+textInNormedRange = (range) ->
   textNodes = Util.getTextNodes($(range.commonAncestor))
   textNodes = textNodes[textNodes.index(range.start)..textNodes.index(range.end)].get()
   textNodes.reduce(((acc, next) -> acc += next.nodeValue), "")
 
-this.DateToISO8601String = (format=6, offset) ->
+DateToISO8601String = (format=6, offset) ->
   ###
   accepted values for the format [1-6]:
    1 Year:
@@ -95,13 +97,13 @@ this.DateToISO8601String = (format=6, offset) ->
 fixtureElem = document.getElementById('fixtures')
 fixtureMemo = {}
 
-this.setFixtureElem = (elem) ->
+setFixtureElem = (elem) ->
   fixtureElem = elem
 
-this.fix = ->
+fix = ->
   fixtureElem
 
-this.getFixture = (fname) ->
+getFixture = (fname) ->
   if not fixtureMemo[fname]?
     fixtureMemo[fname] = $.ajax({
       url: "fixtures/#{fname}.html"
@@ -110,8 +112,17 @@ this.getFixture = (fname) ->
 
   fixtureMemo[fname]
 
-this.addFixture = (fname) ->
-  $(this.getFixture(fname)).appendTo(fixtureElem)
+addFixture = (fname) ->
+  $(getFixture(fname)).appendTo(fixtureElem)
 
-this.clearFixtures = ->
+clearFixtures = ->
   $(fixtureElem).empty()
+
+exports.MockSelection = MockSelection
+exports.textInNormedRange = textInNormedRange
+exports.DateToISO8601String = DateToISO8601String
+exports.setFixtureElem = setFixtureElem
+exports.fix = fix
+exports.getFixture = getFixture
+exports.addFixture = addFixture
+exports.clearFixtures = clearFixtures
