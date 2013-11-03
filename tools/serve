@@ -1,17 +1,20 @@
 #!/usr/bin/env node
+var coffeeify = require('caching-coffeeify');
 var connect = require('connect');
 var jwt = require('jwt-simple');
 var iso8601 = require('iso8601');
+var glob = require('glob');
 
-var bundle = require('./bundle');
+var build = require('./build');
 
 var CONSUMER_KEY = 'mockconsumer';
 var CONSUMER_SECRET = 'mockconsumersecret';
 var CONSUMER_TTL = 1800;
 
-var app = connect()
+var routes = {}
 
-app.use('/api/token', function(request, response) {
+// Token
+routes['/api/token'] = function(request, response) {
   var payload = {
     'consumerKey': CONSUMER_KEY,
     'userId': 'alice',
@@ -31,22 +34,38 @@ app.use('/api/token', function(request, response) {
   }
 
   response.end(tok);
-});
+};
 
-app.use('/lib/annotator.js', bundle.core.serve({
+
+// Core
+routes['/lib/annotator.js'] = build.core.serve({
   debug: true,
   standalone: 'Annotator'
-}));
+});
 
-for (var plugin in bundle.plugin) {
-  var pluginPath = '/lib/plugin/' + plugin + '.js'
-  app.use(pluginPath, bundle.plugin[plugin].serve({debug: true}));
+
+// Plugins
+for (var plugin in build.plugin) {
+  routes[plugin] = build.plugin[plugin].serve({debug: true});
 }
 
+
+// Tests
+routes['/lib/helpers/spec_helper.js'] = build.helper.serve({debug: true});
+for (var spec in build.specs) {
+  routes[spec] = build.specs[spec].serve({debug: true});
+}
+
+
+// Bootstrap
+var app = module.exports = connect();
+for (var route in routes) app.use(route, routes[route]);
 app.use(connect.static(process.cwd()));
 
-app.listen(4000);
 
-console.log("The development server is now running.");
-console.log("Live at: http://localhost:4000/dev.html");
-console.log("Test suite at: http://localhost:4000/test/runner.html");
+// Go
+if (require.main === module) {
+  app.listen(4000);
+  console.log("Development: http://localhost:4000/dev.html");
+  console.log("Testing: http://localhost:4000/test/runner.html");
+}

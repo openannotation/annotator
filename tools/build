@@ -1,0 +1,336 @@
+#!/usr/bin/env node
+var child_process = require('child_process');
+var fs = require('fs');
+var path = require('path');
+
+var coffee = require('coffee-script');
+var coffeeify = require('caching-coffeeify');
+var convert = require('convert-source-map');
+var glob = require('glob');
+var q = require('kew');
+var sourceMap = require('source-map');
+var UglifyJS = require('uglify-js');
+var UglifyCSS = require('uglifycss');
+var umd = require('umd');
+var watchify = require('watchify');
+var umd = require('umd');
+
+
+var SourceMapConsumer = sourceMap.SourceMapConsumer;
+var SourceMapGenerator = sourceMap.SourceMapGenerator;
+var SourceNode = sourceMap.SourceNode;
+
+
+// Uglify emits ugly warnings for source maps it can't resolve.
+// It cannot map our license preamble or the browserify wrappers.
+// It feels ugly, but let's just disable these.
+UglifyJS.AST_Node.warn_function = null;
+
+
+// Prepend a chunk to a source file, applying the supplied source map consumer.
+// Returns {code::String, map::SourceMapGenerator}
+function prepend(chunk, src, srcMap) {
+  var srcNode = SourceNode.fromStringWithSourceMap(src, srcMap);
+  srcNode.prepend(chunk);
+  return srcNode.toStringWithSourceMap(srcMap);
+}
+
+
+// Uglify a source with the supplied source map generator.
+// Returns {code::String, map::SourceMapGenerator}
+function uglify(src, srcMap) {
+  var comment = '//@ sourceMappingURL=';
+  var inSrcMap = convert.fromJSON(srcMap.toString());
+  var filename = inSrcMap.getProperty('file').replace('.js', '.min.js');
+
+  // Parse the result with UglifyJS
+  var ast = UglifyJS.parse(src, {filename: inSrcMap.getProperty('file')});
+
+  // Set up the UglifyJS compression pipeline
+  srcMap = UglifyJS.SourceMap({
+    file: filename,
+    orig: srcMap.toString(),
+    root: inSrcMap.getProperty('sourceRoot')
+  });
+  src = UglifyJS.OutputStream({
+    comments: /Copyright/g,
+    source_map: srcMap
+  });
+
+  // Perform the minification
+  ast.figure_out_scope();
+  ast = ast.transform(UglifyJS.Compressor());
+  ast.figure_out_scope();
+  ast.compute_char_frequency();
+  ast.mangle_names();
+  ast.print(src);
+
+  // Read the source and source map from the uglify pipeline
+  src = src.get() + '\n' + comment + filename + '.map';
+  srcMap = convert.fromJSON(srcMap.toString());
+
+  // Add all the sources and inline them into the source map
+  // UglifyJS drops all but the first source file
+  srcMap.setProperty('sources', inSrcMap.getProperty('sources'));
+  srcMap.setProperty('sourcesContent', inSrcMap.getProperty('sourcesContent'));
+
+  srcMap = SourceMapGenerator.fromSourceMap(
+    new SourceMapConsumer(srcMap.toObject())
+  );
+
+  return {code: src, map: srcMap};
+}
+
+
+// A browserify factory that provides connect middleware as a serve() method
+function browserify (options) {
+  var browserify = require('browserify');
+  var b = browserify(options);
+  var bundle = b.bundle.bind(b);
+  var promise = null;
+
+  // Browserify currently b0rks source maps when using the standalone option.
+  // Here we strip it and provide the functionality ourselves.
+  // Fix submitted: https://github.com/substack/node-browserify/pull/508
+  var umdWrap = function (result, name) {
+    var src = convert.removeComments(result).slice(1, -3);
+    var srcMap = new SourceMapConsumer(convert.fromSource(result).toObject());
+    var mainModule = b._expose[b._entries[0]] || 1;
+    var output = prepend(umd.prelude(name) + 'return ', src, srcMap);
+    return [
+      output.code,
+      '("' + mainModule + '")' + umd.postlude(name),
+      convert.fromJSON(output.map.toString()).toComment(),
+      ';'
+    ].join('\n');
+  }
+
+  b.bundle = function (options, cb) {
+    if (typeof(options) == 'function') {
+      options = {};
+      cb = options;
+    }
+
+    // Strip the standalone option because we handle it ourselves. See above.
+    var standalone = false;
+    if (options.standalone && options.debug) {
+      var standalone = options.standalone;
+      options = Object.create(options, {
+        standalone: {
+          enumerable: false,
+          value: undefined
+        }
+      });
+    }
+
+    return bundle(options, function (err, result) {
+      if (!cb) return;
+      if (err) {
+        cb(err);
+      } else {
+        if (standalone) {
+          cb(null, umdWrap(result, standalone));
+        } else {
+          cb(null, result);
+        }
+      }
+    });
+  };
+
+  b.serve = function (options) {
+    var self = this;
+    var promise = null;
+
+    // A function which fulfills the promise of building a bundle.
+    // Based on connect-browserify.
+    var build = function () {
+      promise = q.defer();
+      self.bundle(options, function (err, result) {
+        if (err)
+          promise.reject(err);
+        else
+          promise.resolve(result);
+      });
+    }
+
+    // Build and watch
+    build();
+    watchify(b).on('update', build);
+
+    // External bundles cause watchify to watch the empty module repeatedly.
+    // This leads to warnings about event handler leaks.
+    var emit = b.emit.bind(b);
+    var empty = require.resolve('browserify/_empty.js');
+    b.emit = function (event, arg) {
+      if (event == 'dep' && arg.id == empty) return;
+      emit.apply(this, arguments);
+    }
+
+    // Return middleware to serve the bundle
+    return function (req, res, next) {
+      res.setHeader('Content-Type', 'application/javascript');
+      promise.then(function (result) {
+        var src = convert.removeComments(result);
+        var srcMap = convert.fromSource(result);
+        var sources = srcMap.getProperty('sources');
+        var sourcesContent = srcMap.getProperty('sourcesContent');
+
+        // Make the source files resolve relative to the package root.
+        // Strip absolute path information from the source map sources
+        sources = sources.map(function (source) {
+          return '/' + path.relative(process.cwd(), source);
+        });
+
+        // Add all the sources and set the root relative to the workspace
+        srcMap.setProperty('sources', sources);
+
+        res.write(src.slice(0,-2));
+        res.write(srcMap.toComment());
+        res.end('\n;');
+      }).fail(next);
+    }
+  };
+
+  return b;
+};
+
+
+// The core Annotator library
+exports.core = browserify({
+  entries: ['./src/annotator'],
+  extensions: ['.coffee']
+})
+.transform(coffeeify)
+;
+
+
+// The plugin bundles
+exports.plugin = glob.sync('./src/plugin/*.coffee').reduce(
+  function (plugin, source) {
+    var name = source.replace('.coffee', '.js').replace('./src', '/lib');
+    plugin[name] = browserify({
+      entries: [source],
+      extensions: ['.coffee']
+    })
+    .transform(coffeeify)
+    ;
+    return plugin;
+  },
+  {});
+
+
+// Spec helper
+exports.helper = browserify({
+  extensions: ['.coffee']
+})
+.require('source-map-support', {expose: 'source-map-support'})
+.require('./test/helpers/spec_helper', {expose: 'helpers'})
+.require('./src/annotator', {expose: 'annotator'})
+.transform(coffeeify)
+;
+
+
+// Specs
+exports.specs = {}
+glob.sync('./test/spec/**/*.coffee').forEach(function (spec) {
+  var name = spec.replace('.coffee', '.js').replace('./test', '/lib');
+  exports.specs[name] = browserify({
+    entries: [spec],
+    extensions: ['.coffee']
+  })
+  .external('helpers')
+  .require(spec.replace('./test/spec', './src').replace('_spec', ''))
+  .transform(coffeeify)
+  ;
+});
+
+
+// Package the bundles when called as the main script
+if (require.main === module) {
+  child_process.exec('./tools/preamble', function (err, preambleSrc) {
+    if (err) throw new Error(err);
+
+    var preamble = coffee.compile(preambleSrc, {bare: true}).trim() + '\n';
+
+    var write = function(filename, src, srcMap) {
+      // Make the source files paths relative
+      srcMap.sources = srcMap.sources.map(function (src) {
+        return path.relative(process.cwd(), src);
+      });
+      srcMap.file = path.basename(filename);
+
+      var consumer = new SourceMapConsumer(srcMap);
+
+      // Output the source with the preamble appended
+      var output = prepend(preamble, src, consumer);
+      console.log('Writing ', filename);
+      fs.writeFileSync(filename, [
+        output.code,
+        convert.fromJSON(output.map.toString()).toComment(),
+        ';'
+      ].join('\n'));
+
+      // Compress the source
+      var compressed = uglify(output.code, output.map);
+
+      // Write the minified source
+      filename = filename.replace('.js', '.min.js');
+      console.log('Writing ', filename);
+      fs.writeFileSync(filename, compressed.code);
+
+      // Write the minified source map
+      filename += '.map';
+      console.log('Writing ', filename);
+      fs.writeFileSync(filename, compressed.map.toString());
+    }
+
+    var pack = function(b, filename, options) {
+      var promise = q.defer();
+
+      b.bundle(options, function (err, result) {
+        if (err) throw new Error(err);
+        var src = convert.removeComments(result).slice(0, -3);
+        var srcMap = convert.fromSource(result).toObject();
+        var consumer = new SourceMapConsumer(srcMap);
+        promise.resolve(SourceNode.fromStringWithSourceMap(src, consumer));
+        write(filename, src, srcMap);
+      });
+
+      return promise;
+    }
+
+    var core = pack(exports.core, 'pkg/annotator.js', {
+      debug: true,
+      standalone: 'Annotator'
+    });
+
+    var full = Object.keys(exports.plugin).reduce(function (full, name) {
+      var filename = 'pkg/annotator.' + path.basename(name);
+      var plugin = pack(exports.plugin[name], filename, {debug: true});
+      return full.concat([plugin]);
+    }, [core]);
+
+    q.all(full).then(function (nodes) {
+      var filename = 'pkg/annotator-full.js';
+      var full = nodes.reduce(function (full, node) {
+        full.add(node);
+        return full;
+      }).toStringWithSourceMap({file: path.basename(filename)});
+      var srcMap = convert.fromJSON(full.map.toString()).toObject();
+      var output = write(filename, full.code, srcMap);
+    })
+
+    var css = fs.createWriteStream('pkg/annotator.min.css');
+    var dataURI = child_process.spawn('./tools/data_uri_ify');
+
+    fs.createReadStream('./css/annotator.css').pipe(dataURI.stdin)
+
+    var cssInput = '';
+    dataURI.stdout.on('data', function (data) {cssInput += data});
+    dataURI.stdout.on('end', function() {
+      var cssOutput = UglifyCSS.processString(cssInput);
+      console.log('Writing ', 'pkg/annotator.min.css');
+      fs.writeFileSync('pkg/annotator.min.css', preamble + cssOutput);
+    });
+  });
+}
