@@ -51,9 +51,8 @@ for (var plugin in build.plugin) {
 
 
 // Tests
-routes['/lib/helpers/spec_helper.js'] = build.helper.serve({debug: true});
-for (var spec in build.specs) {
-  routes[spec] = build.specs[spec].serve({debug: true});
+for (var t in build.test) {
+  routes[t] = build.test[t].serve({debug: true});
 }
 
 
