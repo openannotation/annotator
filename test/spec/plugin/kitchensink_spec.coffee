@@ -1,3 +1,9 @@
+h = require('../../helpers')
+
+Annotator = require('../../../src/annotator')
+_ = require('../../../src/plugin/kitchensink')
+Filter = require('../../../src/plugin/filter')
+
 class MockPlugin
   constructor: ->
   pluginInit: ->
@@ -10,10 +16,10 @@ describe 'Annotator::setupPlugins', ->
     for p in ['AnnotateItPermissions', 'Auth', 'Markdown', 'Store', 'Tags', 'Unsupported']
       Annotator.Plugin[p] = MockPlugin
 
-    addFixture('kitchensink')
-    $fix = $(fix())
+    h.addFixture('kitchensink')
+    $fix = $(h.fix())
 
-  afterEach -> clearFixtures()
+  afterEach -> h.clearFixtures()
 
   it 'should added to the Annotator prototype', ->
     assert.equal(typeof Annotator::setupPlugins, 'function')
@@ -21,7 +27,7 @@ describe 'Annotator::setupPlugins', ->
   it 'should be callable via jQuery.fn.Annotator', ->
     sinon.spy(Annotator.prototype, 'setupPlugins')
 
-    $fix.annotator().annotator('setupPlugins', {}, {Filter: {appendTo: fix()}})
+    $fix.annotator().annotator('setupPlugins', {}, {Filter: {appendTo: h.fix()}})
     assert(Annotator::setupPlugins.calledOnce)
 
   describe 'called with no parameters', ->
@@ -29,8 +35,8 @@ describe 'Annotator::setupPlugins', ->
 
     beforeEach ->
       _Showdown = window.Showdown
-      annotator = new Annotator(fix())
-      annotator.setupPlugins({}, {Filter: {appendTo: fix()}})
+      annotator = new Annotator(h.fix())
+      annotator.setupPlugins({}, {Filter: {appendTo: h.fix()}})
 
     afterEach -> window.Showdown = _Showdown
 
@@ -64,7 +70,7 @@ describe 'Annotator::setupPlugins', ->
       # Prevent store making initial AJAX requests.
       sinon.stub(Annotator.Plugin.Store.prototype, 'pluginInit')
 
-      annotator = new Annotator(fix())
+      annotator = new Annotator(h.fix())
       annotator.setupPlugins()
 
     afterEach ->
@@ -80,7 +86,7 @@ describe 'Annotator::setupPlugins', ->
       assert.isDefined(annotator.plugins.Auth)
 
   describe 'called with plugin options', ->
-    beforeEach -> annotator = new Annotator(fix())
+    beforeEach -> annotator = new Annotator(h.fix())
 
     it 'should override default plugin options', ->
       annotator.setupPlugins null,
@@ -88,7 +94,7 @@ describe 'Annotator::setupPlugins', ->
         Filter:
           filters: null
           addAnnotationFilter: false
-          appendTo: fix()
+          appendTo: h.fix()
 
       assert.lengthOf(annotator.plugins.Filter.filters, 0)
 

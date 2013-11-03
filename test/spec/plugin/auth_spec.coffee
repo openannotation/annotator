@@ -1,4 +1,8 @@
-Date::toISO8601String = DateToISO8601String
+h = require('../../helpers')
+
+Auth = require('../../../src/plugin/auth')
+
+Date::toISO8601String = h.DateToISO8601String
 
 B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
 
@@ -67,7 +71,7 @@ describe 'Annotator.Plugin.Auth', ->
 
   mockAuth = (options) ->
     el = $('<div></div>')[0]
-    a = new Annotator.Plugin.Auth(el, options)
+    a = new Auth(el, options)
 
     {
       elem: el,

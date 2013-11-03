@@ -1,3 +1,6 @@
+h = require('../helpers')
+Delegator = require('../../src/class')
+
 class DelegatedExample extends Delegator
   events:
     'div click': 'pushA'
@@ -21,12 +24,12 @@ describe 'Delegator', ->
   $fix = null
 
   beforeEach ->
-    addFixture('delegator')
+    h.addFixture('delegator')
 
-    delegator = new DelegatedExample(fix())
-    $fix = $(fix())
+    delegator = new DelegatedExample(h.fix())
+    $fix = $(h.fix())
 
-  afterEach -> clearFixtures()
+  afterEach -> h.clearFixtures()
 
   describe "options", ->
     it "should provide access to an options object", ->

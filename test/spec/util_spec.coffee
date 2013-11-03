@@ -1,10 +1,13 @@
+h = require('../helpers')
+Util = require('../../src/util')
+
 describe 'Util.contains()', ->
   it 'should return true when called on itself', ->
     text = document.createTextNode "This is a test text"
 
     # This would be the trivial solution, but this fails with PhantomJS,
     # because PhantomJS returns false for x.contains(x)
-    # 
+    #
     # But this is wrong, see the specs here:
     #  https://developer.mozilla.org/en-US/docs/Web/API/Node.contains
     #  http://www.w3.org/TR/domcore/#dom-node-contains
@@ -34,7 +37,7 @@ describe 'Util.contains()', ->
     div2.appendChild div3
     assert.isTrue Util.contains div1, div3
     assert.isFalse Util.contains div3, div1
-    
+
 describe 'Util.flatten()', ->
   it "flattens the contents of an Array", ->
     flattened = Util.flatten([[1,2], 'lorem ipsum', [{}]])
@@ -44,10 +47,10 @@ describe 'Util.getTextNodes()', ->
   $fix = null
 
   beforeEach ->
-    addFixture 'textnodes'
-    $fix = $(fix())
+    h.addFixture 'textnodes'
+    $fix = $(h.fix())
 
-  afterEach -> clearFixtures()
+  afterEach -> h.clearFixtures()
 
   it "returns an element's textNode descendants", ->
     nodes = Util.getTextNodes($fix)
@@ -109,10 +112,10 @@ describe 'Util.xpathFromNode', ->
   $fix = null
 
   beforeEach ->
-    addFixture 'xpath'
-    $fix = $(fix())
+    h.addFixture 'xpath'
+    $fix = $(h.fix())
 
-  afterEach -> clearFixtures()
+  afterEach -> h.clearFixtures()
 
   it "generates an XPath string for an element's position in the document", ->
     # FIXME: this is quite fragile. A change to dom.html may well break these tests and the

@@ -1,3 +1,5 @@
+Annotator = require('../../src/annotator')
+
 describe 'Annotator.Notification', ->
   notification = null
 

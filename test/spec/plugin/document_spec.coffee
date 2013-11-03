@@ -1,3 +1,6 @@
+Document = require('../../../src/plugin/document')
+Annotator = require('../../../src/annotator')
+
 describe 'Annotator.Plugin.Document', ->
   $fix = null
   annotator = null
@@ -91,7 +94,7 @@ describe 'Annotator.Plugin.Document', ->
      it 'should have twitter card metadata', ->
       assert.ok(annotation.document.twitter)
       assert.deepEqual(annotation.document.twitter.site, ['@okfn'])
-    
+
     it 'should have unique uris', ->
       uris = annotator.plugins.Document.uris()
       assert.equal(uris.length, 5)

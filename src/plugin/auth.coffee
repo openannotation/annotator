@@ -1,3 +1,5 @@
+Annotator = require('../annotator')
+
 {$} = Annotator
 
 

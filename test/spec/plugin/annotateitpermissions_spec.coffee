@@ -1,10 +1,12 @@
+AnnotateItPermissions = require('../../../src/plugin/annotateitpermissions')
+
 describe 'Annotator.Plugin.AnnotateItPermissions', ->
   el = null
   permissions = null
 
   beforeEach ->
     el = $("<div class='annotator-viewer'></div>").appendTo('body')[0]
-    permissions = new Annotator.Plugin.AnnotateItPermissions(el)
+    permissions = new AnnotateItPermissions(el)
 
   afterEach -> $(el).remove()
 
