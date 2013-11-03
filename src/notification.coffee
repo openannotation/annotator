@@ -36,7 +36,7 @@ class Notification extends Delegator
   #
   # Returns
   constructor: (options) ->
-    super $(@options.html).appendTo(document.body)[0], options
+    super $(@options.html)[0], options
 
   # Public: Displays the annotation with message and optional status. The
   # message will hide itself after 5 seconds or if the user clicks on it.
@@ -55,6 +55,8 @@ class Notification extends Delegator
   #
   # Returns itself.
   show: (message, status=Notification.INFO) =>
+    this._appendElement()
+
     $(@element)
       .addClass(@options.classes.show)
       .addClass(@options.classes[status])
@@ -75,20 +77,17 @@ class Notification extends Delegator
     $(@element).removeClass(@options.classes.show)
     this
 
+  # Private: Ensures the notification element has been added to the document
+  # when it is needed.
+  _appendElement: ->
+    if not @element.parentNode?
+      $(@element).appendTo(document.body)
+
 # Constants for controlling the display of the notification. Each constant
 # adds a different class to the Notification#element.
 Notification.INFO    = 'show'
 Notification.SUCCESS = 'success'
 Notification.ERROR   = 'error'
-
-# Attach notification methods to the Annotation object on document ready.
-$(->
-  notification = new Notification
-
-  Annotator.showNotification = notification.show
-  Annotator.hideNotification = notification.hide
-)
-
 
 # Export Notification object
 module.exports = Notification

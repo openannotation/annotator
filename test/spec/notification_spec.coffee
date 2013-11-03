@@ -1,3 +1,5 @@
+Annotator = require('../../src/annotator')
+
 describe 'Annotator.Notification', ->
   notification = null
 
@@ -7,7 +9,8 @@ describe 'Annotator.Notification', ->
   afterEach ->
     notification.element.remove()
 
-  it 'should be appended to the document.body', ->
+  it 'should be appended to the document body when needed', ->
+    notification.show('test')
     assert.equal(notification.element[0].parentNode, document.body)
 
   describe '.show()', ->

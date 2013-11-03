@@ -1,10 +1,13 @@
+Annotator = require('../../../src/annotator')
+Permissions = require('../../../src/plugin/permissions')
+
 describe 'Annotator.Plugin.Permissions', ->
   el = null
   permissions = null
 
   beforeEach ->
     el = $("<div class='annotator-viewer'></div>").appendTo('body')[0]
-    permissions = new Annotator.Plugin.Permissions(el)
+    permissions = new Permissions(el)
 
   afterEach -> $(el).remove()
 
@@ -263,7 +266,7 @@ describe 'Annotator.Plugin.Permissions', ->
       checkbox.removeAttr('checked')
       permissions.updateAnnotationPermissions('update', field, annotation)
       assert.isFalse(permissions.authorize('update', annotation, null))
-      
+
     it 'should consult the userId option when updating permissions', ->
       annotation = {permissions: {}}
       permissions.options.userId = (user) -> user.id

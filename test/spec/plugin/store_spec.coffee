@@ -1,9 +1,12 @@
+Annotator = require('../../../src/annotator')
+Store = require('../../../src/plugin/store')
+
 describe "Annotator.Plugin.Store", ->
   store = null
 
   beforeEach ->
     element = $('<div></div>')[0]
-    store = new Annotator.Plugin.Store(element, {autoFetch: false})
+    store = new Store(element, {autoFetch: false})
     store.annotator = {
       plugins: {}
       loadAnnotations: sinon.spy()

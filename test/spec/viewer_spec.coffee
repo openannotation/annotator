@@ -1,3 +1,5 @@
+Annotator = require('../../src/annotator')
+
 describe 'Annotator.Viewer', ->
   viewer = null
 

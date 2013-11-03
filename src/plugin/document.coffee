@@ -1,3 +1,5 @@
+Annotator = require('../annotator')
+
 {$} = Annotator
 
 
@@ -10,7 +12,7 @@ class Annotator.Plugin.Document extends Annotator.Plugin
     this.getDocumentMetadata()
 
   # returns the primary URI for the document being annotated
-  
+
   uri: =>
     uri = decodeURIComponent document.location.href
     for link in @metadata
@@ -96,7 +98,7 @@ class Annotator.Plugin.Document extends Annotator.Plugin
       @metadata.title = @metadata.dc.title
     else
       @metadata.title = $("head title").text()
- 
+
   _getLinks: =>
     # we know our current location is a link for the document
     @metadata.link = [href: document.location.href]
@@ -119,10 +121,10 @@ class Annotator.Plugin.Document extends Annotator.Plugin
             href: this._absoluteUrl(url)
             type: "application/pdf"
 
-      # kind of a hack to express DOI identifiers as links but it's a 
-      # convenient place to look them up later, and somewhat sane since 
+      # kind of a hack to express DOI identifiers as links but it's a
+      # convenient place to look them up later, and somewhat sane since
       # they don't have a type
-    
+
       if name == "doi"
         for doi in values
           if doi[0..3] != "doi:"
@@ -140,9 +142,9 @@ class Annotator.Plugin.Document extends Annotator.Plugin
     for link in $("link")
       if $(link).prop("rel") in ["shortcut icon", "icon"]
         @metadata["favicon"] = this._absoluteUrl(link.href)
-        
+
   # hack to get a absolute url from a possibly relative one
-  
+
   _absoluteUrl: (url) ->
     img = $("<img src='#{ url }'></img>")
     url = img.prop('src')

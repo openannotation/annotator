@@ -219,29 +219,15 @@ exports.plugin = glob.sync('./src/plugin/*.coffee').reduce(
   {});
 
 
-// Spec helper
-exports.helper = browserify({
-  extensions: ['.coffee']
-})
-.require('source-map-support', {expose: 'source-map-support'})
-.require('./test/helpers/spec_helper', {expose: 'helpers'})
-.require('./src/annotator', {expose: 'annotator'})
-.transform(coffeeify)
-;
-
-
-// Specs
-exports.specs = {}
-glob.sync('./test/spec/**/*.coffee').forEach(function (spec) {
-  var name = spec.replace('.coffee', '.js').replace('./test', '/lib');
-  exports.specs[name] = browserify({
-    entries: [spec],
+// Test files
+exports.test = {};
+glob.sync('./test/**/*.coffee').forEach(function (f) {
+  var name = f.replace('./test', '/test');
+  exports.test[name] = browserify({
+    entries: [f],
     extensions: ['.coffee']
   })
-  .external('helpers')
-  .require(spec.replace('./test/spec', './src').replace('_spec', ''))
-  .transform(coffeeify)
-  ;
+  .transform(coffeeify);
 });
 
 
