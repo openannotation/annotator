@@ -8,7 +8,6 @@ var coffee = require('coffee-script');
 var coffeeify = require('caching-coffeeify');
 var convert = require('convert-source-map');
 var glob = require('glob');
-var through = require('through');
 var q = require('kew');
 var sourceMap = require('source-map');
 var UglifyJS = require('uglify-js');
