@@ -383,8 +383,11 @@ class Annotator extends Delegator
       else
         this.publish 'annotationsLoaded', [clone]
 
-    clone = annotations.slice()
-    loader(annotations) if annotations.length
+    if annotations.length
+      loader annotations
+    else
+      clone = annotations.slice()
+      this.publish "annotationsLoaded", [clone]
     this
 
   # Public: Calls the Store#dumpAnnotations() method.
