@@ -31,3 +31,6 @@ else
 
   this.console['warn'] = (args...) ->
     alert("WARNING: #{args.join(', ')}")
+
+
+module.exports = this.console
