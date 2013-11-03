@@ -776,6 +776,11 @@ Annotator.Viewer = Viewer
 Annotator.Editor = Editor
 Annotator.Notification = Notification
 
+# Attach notification methods to the Annotation object
+notification = new Notification
+Annotator.showNotification = notification.show
+Annotator.hideNotification = notification.hide
+
 # Expose a global instance registry
 Annotator._instances = []
 
