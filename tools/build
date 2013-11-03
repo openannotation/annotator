@@ -3,6 +3,7 @@ var child_process = require('child_process');
 var fs = require('fs');
 var path = require('path');
 
+var chokidar = require('chokidar');
 var coffee = require('coffee-script');
 var coffeeify = require('caching-coffeeify');
 var convert = require('convert-source-map');
@@ -12,13 +13,19 @@ var sourceMap = require('source-map');
 var UglifyJS = require('uglify-js');
 var UglifyCSS = require('uglifycss');
 var umd = require('umd');
-var watchify = require('watchify');
 var umd = require('umd');
 
 
 var SourceMapConsumer = sourceMap.SourceMapConsumer;
 var SourceMapGenerator = sourceMap.SourceMapGenerator;
 var SourceNode = sourceMap.SourceNode;
+
+
+// A global watcher since using watchify directly leads to console warnings
+// about memory leaks. This way, we use a global watcher shared among all
+// bundles and increase the limit on how many can watch it in turn.
+var watcher = chokidar.watch([], {ignored: /^\./});
+watcher.setMaxListeners(50);
 
 
 // Uglify emits ugly warnings for source maps it can't resolve.
@@ -153,18 +160,33 @@ function browserify (options) {
       });
     }
 
-    // Build and watch
-    build();
-    watchify(b).on('update', build);
-
-    // External bundles cause watchify to watch the empty module repeatedly.
-    // This leads to warnings about event handler leaks.
+    // Monitor the dependencies
+    var deps = {};
+    var dirty = false;
     var emit = b.emit.bind(b);
     var empty = require.resolve('browserify/_empty.js');
     b.emit = function (event, arg) {
-      if (event == 'dep' && arg.id == empty) return;
+      if (event == 'dep' && arg.id != empty && !deps[arg.id]) {
+        deps[arg.id] = true;
+        watcher.add(arg.id);
+      }
       emit.apply(this, arguments);
     }
+
+    // Build and rebuild on changes
+    build()
+    watcher.on('change', function (id) {
+      if (!dirty) {
+        dirty = true;
+        promise.fin(function () {
+          setTimeout(function () {
+            deps = {};
+            dirty = false;
+            build();
+          }, 300);
+        });
+      }
+    });
 
     // Return middleware to serve the bundle
     return function (req, res, next) {
