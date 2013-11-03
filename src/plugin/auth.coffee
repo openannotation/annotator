@@ -1,3 +1,6 @@
+{$} = Annotator
+
+
 # Public: Creates a Date object from an ISO8601 formatted date String.
 #
 # string - ISO8601 formatted date String.
@@ -251,3 +254,6 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
       this.waitingForToken.push(callback)
       if not @requestInProgress
         this.requestToken()
+
+
+module.exports = Annotator.Plugin.Auth

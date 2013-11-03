@@ -1,7 +1,8 @@
+{$} = Annotator
+
+
 class Annotator.Plugin.Document extends Annotator.Plugin
 
-  $ = Annotator.$
-  
   events:
     'beforeAnnotationCreated': 'beforeAnnotationCreated'
 
@@ -147,3 +148,6 @@ class Annotator.Plugin.Document extends Annotator.Plugin
     url = img.prop('src')
     img.prop('src', null)
     return url
+
+
+module.exports = Annotator.Plugin.Document
