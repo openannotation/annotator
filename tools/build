@@ -222,6 +222,8 @@ exports.core = browserify({
   entries: ['./src/annotator'],
   extensions: ['.coffee']
 })
+.ignore('jquery')
+.require('./src/annotator', {expose: 'annotator'})
 .transform(coffeeify)
 ;
 
@@ -231,10 +233,14 @@ exports.plugin = glob.sync('./src/plugin/*.coffee').reduce(
   function (plugin, source) {
     var name = source.replace('.coffee', '.js').replace('./src', '/lib');
     plugin[name] = browserify({
-      entries: [source],
+      entries: ['./pkg/plugin.js'],
       extensions: ['.coffee']
     })
-    .external('annotator')
+    .ignore('jquery')
+    .ignore('./lib/annotator')
+    .require('./pkg/index', {expose: 'annotator'})
+    .require('./pkg/plugin', {expose: 'annotator-plugin'})
+    .require(source, {expose: '__plugin'})
     .transform(coffeeify)
     ;
     return plugin;
@@ -251,10 +257,12 @@ glob.sync('./test/**/*.coffee').forEach(function (f) {
   ;
 
   if (f == './test/helpers.coffee') {
+    exports.test[name].ignore('jquery')
     exports.test[name].require('./src/annotator', {expose: 'annotator'});
     exports.test[name].require('./test/helpers', {expose: 'helpers'});
   } else {
     exports.test[name].add(f);
+    exports.test[name].ignore('jquery')
     exports.test[name].external('annotator');
     exports.test[name].external('helpers');
   }
@@ -322,7 +330,10 @@ if (require.main === module) {
 
     var full = Object.keys(exports.plugin).reduce(function (full, name) {
       var filename = 'pkg/annotator.' + path.basename(name);
-      var plugin = pack(exports.plugin[name], filename, {debug: true});
+      var plugin = pack(exports.plugin[name], filename, {
+        debug: true,
+        standalone: 'Annotator'
+      });
       return full.concat([plugin]);
     }, [core]);
 

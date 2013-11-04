@@ -46,7 +46,10 @@ routes['/lib/annotator.js'] = build.core.serve({
 
 // Plugins
 for (var plugin in build.plugin) {
-  routes[plugin] = build.plugin[plugin].serve({debug: true});
+  routes[plugin] = build.plugin[plugin].serve({
+    debug: true,
+    standalone: 'Annotator'
+  });
 }
 
 
