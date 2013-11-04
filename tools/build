@@ -306,6 +306,8 @@ if (require.main === module) {
       filename += '.map';
       console.log('Writing ', filename);
       fs.writeFileSync(filename, compressed.map.toString());
+
+      return SourceNode.fromStringWithSourceMap(src, consumer);
     }
 
     var pack = function(b, filename, options) {
@@ -315,9 +317,7 @@ if (require.main === module) {
         if (err) throw new Error(err);
         var src = convert.removeComments(result).slice(0, -3);
         var srcMap = convert.fromSource(result).toObject();
-        var consumer = new SourceMapConsumer(srcMap);
-        promise.resolve(SourceNode.fromStringWithSourceMap(src, consumer));
-        write(filename, src, srcMap);
+        promise.resolve(write(filename, src, srcMap));
       });
 
       return promise;
