@@ -244,7 +244,7 @@ exports.plugin = glob.sync('./src/plugin/*.coffee').reduce(
 // Test files
 exports.test = {};
 glob.sync('./test/**/*.coffee').forEach(function (f) {
-  var name = f.replace('./test', '/test');
+  var name = f.replace('.coffee', '.js').replace('./test', '/test');
   exports.test[name] = browserify({
     entries: [f],
     extensions: ['.coffee']
