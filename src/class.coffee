@@ -1,3 +1,5 @@
+$ = jQuery or require 'jquery'
+
 Util = require './util'
 
 # Public: Delegator is the base class that all of Annotators objects inherit
@@ -222,7 +224,7 @@ Delegator._parseEvents = (eventsObj) ->
 # Native jQuery events that should recieve an event object. Plugins can
 # add their own methods to this if required.
 Delegator.natives = do ->
-  specials = (key for own key, val of jQuery.event.special)
+  specials = (key for own key, val of $.event.special)
   """
   blur focus focusin focusout load resize scroll unload click dblclick
   mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave

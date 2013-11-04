@@ -1,3 +1,5 @@
+$ = jQuery or require 'jquery'
+
 xpath = require './xpath'
 
 
@@ -17,8 +19,6 @@ unless jQuery?.fn?.jquery
 
 unless JSON and JSON.parse and JSON.stringify
   console.error(_t("Annotator requires a JSON implementation: have you included lib/vendor/json2.js?"))
-
-$ = jQuery
 
 Util = {}
 

@@ -765,7 +765,7 @@ if not g.Node?
     NOTATION_NODE               : 12
 
 # Bind our local copy of jQuery so plugins can use the extensions.
-Annotator.$ = $
+Annotator.$ = jQuery or require 'jquery'
 
 # Export other modules for use in plugins.
 Annotator.Delegator = Delegator
