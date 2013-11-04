@@ -277,7 +277,7 @@ if (require.main === module) {
     var preamble = coffee.compile(preambleSrc, {bare: true}).trim() + '\n';
 
     var write = function(filename, src, srcMap) {
-      // Make the source files paths relative
+      // Make the source file paths relative
       srcMap.sources = srcMap.sources.map(function (src) {
         return path.relative(process.cwd(), src);
       });
