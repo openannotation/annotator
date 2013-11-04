@@ -1,4 +1,4 @@
-Annotator = require('../../../src/annotator')
+Annotator = require('annotator')
 Permissions = require('../../../src/plugin/permissions')
 
 describe 'Annotator.Plugin.Permissions', ->

@@ -1,5 +1,6 @@
+Annotator = require('annotator')
 Markdown = require('../../../src/plugin/markdown')
-Annotator = require('../../../src/annotator')
+
 
 describe 'Annotator.Plugin.Markdown', ->
   input  = 'Is **this** [Markdown](http://daringfireball.com)?'

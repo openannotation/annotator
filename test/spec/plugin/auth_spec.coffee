@@ -1,5 +1,4 @@
-h = require('../../helpers')
-
+h = require('helpers')
 Auth = require('../../../src/plugin/auth')
 
 Date::toISO8601String = h.DateToISO8601String
@@ -65,6 +64,7 @@ makeToken = () ->
   }
 
 describe 'Annotator.Plugin.Auth', ->
+
   mock = null
   rawToken = null
   encodedToken = null

@@ -234,6 +234,7 @@ exports.plugin = glob.sync('./src/plugin/*.coffee').reduce(
       entries: [source],
       extensions: ['.coffee']
     })
+    .external('annotator')
     .transform(coffeeify)
     ;
     return plugin;
@@ -245,11 +246,18 @@ exports.plugin = glob.sync('./src/plugin/*.coffee').reduce(
 exports.test = {};
 glob.sync('./test/**/*.coffee').forEach(function (f) {
   var name = f.replace('.coffee', '.js').replace('./test', '/test');
-  exports.test[name] = browserify({
-    entries: [f],
-    extensions: ['.coffee']
-  })
-  .transform(coffeeify);
+  exports.test[name] = browserify({extensions: ['.coffee']})
+  .transform(coffeeify)
+  ;
+
+  if (f == './test/helpers.coffee') {
+    exports.test[name].require('./src/annotator', {expose: 'annotator'});
+    exports.test[name].require('./test/helpers', {expose: 'helpers'});
+  } else {
+    exports.test[name].add(f);
+    exports.test[name].external('annotator');
+    exports.test[name].external('helpers');
+  }
 });
 
 

@@ -1,4 +1,4 @@
-Annotator = require('../../../src/annotator')
+Annotator = require('annotator')
 Store = require('../../../src/plugin/store')
 
 describe "Annotator.Plugin.Store", ->

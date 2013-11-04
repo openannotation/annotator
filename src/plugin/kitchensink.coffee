@@ -1,7 +1,6 @@
-Annotator = require('../annotator')
+Annotator = require('annotator')
 
 {$} = Annotator
-
 
 # Public: A initialization function that sets up the Annotator and some of the
 # default plugins. Intended for use with the annotator-full package.

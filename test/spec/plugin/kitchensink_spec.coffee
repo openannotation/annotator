@@ -1,6 +1,6 @@
-h = require('../../helpers')
+h = require('helpers')
+Annotator = require('annotator')
 
-Annotator = require('../../../src/annotator')
 _ = require('../../../src/plugin/kitchensink')
 Filter = require('../../../src/plugin/filter')
 

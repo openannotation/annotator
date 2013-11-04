@@ -1,4 +1,4 @@
-h = require('../helpers')
+h = require('helpers')
 Delegator = require('../../src/class')
 
 class DelegatedExample extends Delegator

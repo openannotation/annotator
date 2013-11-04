@@ -1,5 +1,5 @@
+Annotator = require('annotator')
 Tags = require('../../../src/plugin/tags')
-Annotator = require('../../../src/annotator')
 
 describe 'Annotator.Plugin.Tags', ->
   annotator = null

@@ -1,4 +1,4 @@
-h = require('../helpers')
+h = require('helpers')
 Util = require('../../src/util')
 
 describe 'Util.contains()', ->

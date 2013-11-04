@@ -1,4 +1,4 @@
-h = require('../helpers')
+h = require('helpers')
 
 Annotator = require('../../src/annotator')
 Util = require('../../src/util')

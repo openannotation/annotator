@@ -1,5 +1,6 @@
+Annotator = require('annotator')
 Document = require('../../../src/plugin/document')
-Annotator = require('../../../src/annotator')
+
 
 describe 'Annotator.Plugin.Document', ->
   $fix = null

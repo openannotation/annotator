@@ -1,4 +1,4 @@
-Annotator = require('../annotator')
+Annotator = require('annotator')
 Permissions = require('./permissions')
 
 {$} = Annotator
