@@ -1,4 +1,4 @@
-Util = require('./util.coffee')
+Util = require('./util')
 
 
 Range = {}
