@@ -45,7 +45,7 @@ describe 'Range', ->
     h.clearFixtures()
 
   describe ".nodeFromXPath()", ->
-    xpath = if window.require then "/html/body/p/strong" else "/html/body/div/p/strong"
+    xpath = "/html/body/div/p/strong"
     it "should parse a standard xpath string", ->
       node = Range.nodeFromXPath xpath
       assert.equal(node, $('strong')[0])
