@@ -100,7 +100,7 @@ function browserify (options) {
   // Here we strip it and provide the functionality ourselves.
   // Fix submitted: https://github.com/substack/node-browserify/pull/508
   var umdWrap = function (result, name) {
-    var src = convert.removeComments(result).slice(1, -3);
+    var src = convert.removeComments(result).slice(0, -3);
     var srcMap = new SourceMapConsumer(convert.fromSource(result).toObject());
     var mainModule = b._expose[b._entries[0]] || 1;
     var output = prepend(umd.prelude(name) + 'return ', src, srcMap);
@@ -136,6 +136,7 @@ function browserify (options) {
         cb(err);
       } else {
         if (standalone) {
+          if (Object.keys(b.exports).length) result = result.slice(8);
           cb(null, umdWrap(result, standalone));
         } else {
           cb(null, result);
