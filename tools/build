@@ -3,7 +3,6 @@ var child_process = require('child_process');
 var fs = require('fs');
 var path = require('path');
 
-var chokidar = require('chokidar');
 var coffee = require('coffee-script');
 var coffeeify = require('caching-coffeeify');
 var convert = require('convert-source-map');
@@ -15,32 +14,27 @@ var UglifyCSS = require('uglifycss');
 var umd = require('umd');
 var umd = require('umd');
 
+var annotator = require('../');
+var browserify = annotator.browserify;
+var include = annotator.include;
+var prepend = annotator.prepend;
 
 var SourceMapConsumer = sourceMap.SourceMapConsumer;
 var SourceMapGenerator = sourceMap.SourceMapGenerator;
 var SourceNode = sourceMap.SourceNode;
 
 
-// A global watcher since using watchify directly leads to console warnings
-// about memory leaks. This way, we use a global watcher shared among all
-// bundles and increase the limit on how many can watch it in turn.
-var watcher = chokidar.watch([], {ignored: /^\./});
-watcher.setMaxListeners(50);
+// A global map of libraries to their hashed contents.
+// As browserify processes files, we write them to the output directory.
+// Since many bundles share files, we use this to write them only once as
+// they change.
+var libs = {};
 
 
 // Uglify emits ugly warnings for source maps it can't resolve.
 // It cannot map our license preamble or the browserify wrappers.
 // It feels ugly, but let's just disable these.
 UglifyJS.AST_Node.warn_function = null;
-
-
-// Prepend a chunk to a source file, applying the supplied source map consumer.
-// Returns {code::String, map::SourceMapGenerator}
-function prepend(chunk, src, srcMap) {
-  var srcNode = SourceNode.fromStringWithSourceMap(src, srcMap);
-  srcNode.prepend(chunk);
-  return srcNode.toStringWithSourceMap(srcMap);
-}
 
 
 // Uglify a source with the supplied source map generator.
@@ -89,142 +83,10 @@ function uglify(src, srcMap) {
 }
 
 
-// A browserify factory that provides connect middleware as a serve() method
-function browserify (options) {
-  var browserify = require('browserify');
-  var b = browserify(options);
-  var bundle = b.bundle.bind(b);
-  var promise = null;
-
-  // Browserify currently b0rks source maps when using the standalone option.
-  // Here we strip it and provide the functionality ourselves.
-  // Fix submitted: https://github.com/substack/node-browserify/pull/508
-  var umdWrap = function (result, name) {
-    var src = convert.removeComments(result).slice(0, -3);
-    var srcMap = new SourceMapConsumer(convert.fromSource(result).toObject());
-    var mainModule = b._expose[b._entries[0]] || 1;
-    var output = prepend(umd.prelude(name) + 'return ', src, srcMap);
-    return [
-      output.code,
-      '("' + mainModule + '")' + umd.postlude(name),
-      convert.fromJSON(output.map.toString()).toComment(),
-      ';'
-    ].join('\n');
-  }
-
-  b.bundle = function (options, cb) {
-    if (typeof(options) == 'function') {
-      options = {};
-      cb = options;
-    }
-
-    // Strip the standalone option because we handle it ourselves. See above.
-    var standalone = false;
-    if (options.standalone && options.debug) {
-      var standalone = options.standalone;
-      options = Object.create(options, {
-        standalone: {
-          enumerable: false,
-          value: undefined
-        }
-      });
-    }
-
-    return bundle(options, function (err, result) {
-      if (!cb) return;
-      if (err) {
-        cb(err);
-      } else {
-        if (standalone) {
-          if (Object.keys(b.exports).length) result = result.slice(8);
-          cb(null, umdWrap(result, standalone));
-        } else {
-          cb(null, result);
-        }
-      }
-    });
-  };
-
-  b.serve = function (options) {
-    var self = this;
-    var promise = null;
-
-    // A function which fulfills the promise of building a bundle.
-    // Based on connect-browserify.
-    var build = function () {
-      promise = q.defer();
-      self.bundle(options, function (err, result) {
-        if (err)
-          promise.reject(err);
-        else
-          promise.resolve(result);
-      });
-    }
-
-    // Monitor the dependencies
-    var deps = {};
-    var dirty = false;
-    var emit = b.emit.bind(b);
-    var empty = require.resolve('browserify/_empty.js');
-    b.emit = function (event, arg) {
-      if (event == 'dep' && arg.id != empty && !deps[arg.id]) {
-        deps[arg.id] = true;
-        watcher.add(arg.id);
-      }
-      emit.apply(this, arguments);
-    }
-
-    // Build and rebuild on changes
-    build()
-    watcher.on('change', function (id) {
-      if (!dirty) {
-        dirty = true;
-        promise.fin(function () {
-          setTimeout(function () {
-            deps = {};
-            dirty = false;
-            build();
-          }, 300);
-        });
-      }
-    });
-
-    // Return middleware to serve the bundle
-    return function (req, res, next) {
-      res.setHeader('Content-Type', 'application/javascript');
-      promise.then(function (result) {
-        var src = convert.removeComments(result);
-        var srcMap = convert.fromSource(result);
-        var sources = srcMap.getProperty('sources');
-        var sourcesContent = srcMap.getProperty('sourcesContent');
-
-        // Make the source files resolve relative to the package root.
-        // Strip absolute path information from the source map sources
-        sources = sources.map(function (source) {
-          return '/' + path.relative(process.cwd(), source);
-        });
-
-        // Add all the sources and set the root relative to the workspace
-        srcMap.setProperty('sources', sources);
-
-        res.write(src.slice(0,-2));
-        res.write(srcMap.toComment());
-        res.end('\n;');
-      }).fail(next);
-    }
-  };
-
-  return b;
-};
-
-
 // The core Annotator library
-exports.core = browserify({
-  entries: ['./src/annotator'],
-  extensions: ['.coffee']
-})
+exports.core = browserify({extensions: ['.coffee']})
 .external('jquery')
-.require('./src/annotator', {expose: 'annotator'})
+.require('./src/annotator', {expose: 'annotator', entry: true})
 .transform(coffeeify)
 ;
 
@@ -233,20 +95,15 @@ exports.core = browserify({
 exports.plugin = glob.sync('./src/plugin/*.coffee').reduce(
   function (plugin, source) {
     var name = source.replace('.coffee', '.js').replace('./src', '/lib');
-    plugin[name] = browserify({
-      entries: ['./pkg/plugin.js'],
-      extensions: ['.coffee']
-    })
-    .external('jquery')
-    .external('annotator/annotator')
-    .require('./pkg/main', {expose: 'annotator'})
-    .require('./pkg/plugin', {expose: 'annotator-plugin'})
-    .require(source, {expose: '__plugin'})
+    var expose = name.replace('.js', '').replace('/lib', 'annotator');
+    plugin[name] = include({extensions: ['.coffee']})
+    .require(source, {expose: expose})
     .transform(coffeeify)
     ;
     return plugin;
   },
-  {});
+  {
+});
 
 
 // Test files
@@ -315,7 +172,7 @@ if (require.main === module) {
       var promise = q.defer();
 
       b.bundle(options, function (err, result) {
-        if (err) throw new Error(err);
+        if (err) return promise.reject(err);
         var src = convert.removeComments(result).slice(0, -3);
         var srcMap = convert.fromSource(result).toObject();
         promise.resolve(write(filename, src, srcMap));

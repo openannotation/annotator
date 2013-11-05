@@ -1,16 +1,105 @@
 #!/usr/bin/env node
+var path = require('path');
+
+var chokidar = require('chokidar');
 var coffeeify = require('caching-coffeeify');
 var connect = require('connect');
+var convert = require('convert-source-map');
 var jwt = require('jwt-simple');
 var iso8601 = require('iso8601');
 var glob = require('glob');
+var q = require('kew')
 
+var annotator = require('../');
 var build = require('./build');
 
 var CONSUMER_KEY = 'mockconsumer';
 var CONSUMER_SECRET = 'mockconsumersecret';
 var CONSUMER_TTL = 1800;
 
+
+// A global watcher. Using watchify leads to console warnings about
+// memory leaks. We use a global watcher shared among all bundles and
+// increase the limit on how many can watch it.
+var watcher = chokidar.watch([], {ignored: /^\./});
+watcher.setMaxListeners(50);
+
+
+// Serve a browserify bundle with connect middleware
+function serve (b, options) {
+  var promise = null;
+  var bundle = b.bundle.bind(b);
+  var self = b;
+
+  // A function which fulfills the promise of building a bundle.
+  // Based on connect-browserify.
+  var build = function () {
+    promise = q.defer();
+    self.bundle(options, function (err, result) {
+      if (err)
+        promise.reject(err);
+      else
+        promise.resolve(result);
+    });
+  }
+
+  // Monitor the dependencies
+  var deps = {};
+  var dirty = false;
+  var emit = b.emit.bind(b);
+  var empty = require.resolve('browserify/_empty.js');
+  b.emit = function (event, arg) {
+    if (event == 'dep' && arg.id != empty) {
+      if (!deps[arg.id]) {
+        deps[arg.id] = true;
+        watcher.add(arg.id);
+      }
+    }
+    emit.apply(this, arguments);
+  }
+
+  // Build and rebuild on changes
+  build()
+  watcher.on('change', function (id) {
+    if (!dirty) {
+      dirty = true;
+      promise.fin(function () {
+        setTimeout(function () {
+          deps = {};
+          dirty = false;
+          build();
+        }, 300);
+      });
+    }
+  });
+
+  // Return middleware to serve the bundle
+  return function (req, res, next) {
+    res.setHeader('Content-Type', 'application/javascript');
+    promise.then(function (result) {
+      var src = convert.removeComments(result);
+      var srcMap = convert.fromSource(result);
+      var sources = srcMap.getProperty('sources');
+      var sourcesContent = srcMap.getProperty('sourcesContent');
+
+      // Make the source files resolve relative to the package root.
+      // Strip absolute path information from the source map sources
+      sources = sources.map(function (source) {
+        return '/' + path.relative(process.cwd(), source);
+      });
+
+      // Add all the sources and set the root relative to the workspace
+      srcMap.setProperty('sources', sources);
+
+      res.write(src.slice(0,-2));
+      res.write(srcMap.toComment());
+      res.end('\n;');
+    }).fail(next);
+  }
+}
+
+
+// Collect and serve the routes
 var routes = {}
 
 // Token
@@ -38,15 +127,15 @@ routes['/api/token'] = function(request, response) {
 
 
 // Core
-routes['/lib/annotator.js'] = build.core.serve({
+routes['/lib/annotator.js'] = serve(build.core, {
   debug: true,
   standalone: 'Annotator'
 });
 
 
 // Plugins
-for (var plugin in build.plugin) {
-  routes[plugin] = build.plugin[plugin].serve({
+for (var p in build.plugin) {
+  routes[p] = serve(build.plugin[p], {
     debug: true,
     standalone: 'Annotator'
   });
@@ -55,7 +144,7 @@ for (var plugin in build.plugin) {
 
 // Tests
 for (var t in build.test) {
-  routes[t] = build.test[t].serve({debug: true});
+  routes[t] = serve(build.test[t], {debug: true});
 }
 
 
