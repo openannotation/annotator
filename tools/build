@@ -222,7 +222,7 @@ exports.core = browserify({
   entries: ['./src/annotator'],
   extensions: ['.coffee']
 })
-.ignore('jquery')
+.external('jquery')
 .require('./src/annotator', {expose: 'annotator'})
 .transform(coffeeify)
 ;
@@ -236,9 +236,9 @@ exports.plugin = glob.sync('./src/plugin/*.coffee').reduce(
       entries: ['./pkg/plugin.js'],
       extensions: ['.coffee']
     })
-    .ignore('jquery')
-    .ignore('./lib/annotator')
-    .require('./pkg/index', {expose: 'annotator'})
+    .external('jquery')
+    .external('annotator/annotator')
+    .require('./pkg/main', {expose: 'annotator'})
     .require('./pkg/plugin', {expose: 'annotator-plugin'})
     .require(source, {expose: '__plugin'})
     .transform(coffeeify)

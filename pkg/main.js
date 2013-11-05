@@ -1,23 +1,28 @@
 ;(function (f) {
-  // CommonJS
-  if (typeof exports === "object") {
-    module.exports = f();
-
-  // RequireJS
-  } else if (typeof define === "function" && define.amd) {
-    define(['annotator/annotator'], f);
-
   // <script>
-  } else {
-    if (typeof window !== "undefined") {
-      window.Annotator = f();
-    } else if (typeof global !== "undefined") {
-      global.Annotator = f();
-    } else if (typeof self !== "undefined") {
-      self.Annotator = f();
-    }
+  var Annotator = null;
+  if (typeof window !== 'undefined' && window.Annotator !== 'undefined') {
+    Annotator = window.Annotator;
+  }
+  if (typeof global !== 'undefined' && global.Annotator !== 'undefined') {
+    Annotator = global.Annotator;
+  }
+  if (typeof self !== 'undefined' && self.Annotator !== 'undefined') {
+    Annotator = self.Annotator;
   }
 
-})(function () {
-  return require('annotator/annotator');
+
+  // RequireJS
+  if (typeof define === "function" && define.amd) {
+    define(['annotator/annotator'], f);
+  }
+
+  // CommonJS
+  else if (typeof exports === "object") {
+    module.exports = f(Annotator);
+  }
+
+  return Annotator;
+})(function (Annotator) {
+  return Annotator || require('annotator/annotator');
 });
