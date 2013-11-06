@@ -28,7 +28,8 @@
     "caching-coffeeify": "~0.3.0",
     "chokidar": "~0.7.0",
     "glob": "~3.2.6",
-    "kew": "~0.2.2"
+    "kew": "~0.2.2",
+    "mkdirp": "~0.3.5"
   },
   "engines": {
     "node": ">=0.8 <0.12"

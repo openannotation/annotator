@@ -8,6 +8,7 @@ var coffeeify = require('caching-coffeeify');
 var convert = require('convert-source-map');
 var glob = require('glob');
 var q = require('kew');
+var mkdirp = require('mkdirp');
 var sourceMap = require('source-map');
 var UglifyJS = require('uglify-js');
 var UglifyCSS = require('uglifycss');
@@ -132,9 +133,12 @@ if (require.main === module) {
   child_process.exec('./tools/preamble', function (err, preambleSrc) {
     if (err) throw new Error(err);
 
+    var packed = {};
     var preamble = coffee.compile(preambleSrc, {bare: true}).trim() + '\n';
 
-    var write = function(filename, src, srcMap) {
+    mkdirp.sync(path.resolve('./pkg/lib/plugin'));
+
+    function write(filename, src, srcMap) {
       // Make the source file paths relative
       srcMap.sources = srcMap.sources.map(function (src) {
         return path.relative(process.cwd(), src);
@@ -168,7 +172,7 @@ if (require.main === module) {
       return SourceNode.fromStringWithSourceMap(src, consumer);
     }
 
-    var pack = function(b, filename, options) {
+    function pack(b, filename, options) {
       var promise = q.defer();
 
       b.bundle(options, function (err, result) {
@@ -177,6 +181,25 @@ if (require.main === module) {
         var srcMap = convert.fromSource(result).toObject();
         promise.resolve(write(filename, src, srcMap));
       });
+
+      b.on('row', function (row) {
+        if (packed[row.sourceFile]) return;
+        if (row.sourceFile.match(/(fake_\w+)|(_empty)\.js$/)) return;
+        packed[row.sourceFile] = true;
+
+        var prefix = process.cwd() + '/';
+        if (row.sourceFile.indexOf(prefix == 0)) {
+          var name = path.basename(row.sourceFile);
+          var filename = row.sourceFile
+          .replace(prefix + 'src/', prefix + 'lib/')
+          .replace(prefix, prefix + 'pkg/')
+          .replace('.coffee', '.js')
+          ;
+
+          console.log('Writing ', filename.replace(prefix, ''));
+          fs.writeFileSync(filename, row.source);
+        }
+      })
 
       return promise;
     }
