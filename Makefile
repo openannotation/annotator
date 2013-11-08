@@ -20,10 +20,13 @@ annotator: $(ANNOTATOR_PKG)
 plugins: $(PLUGIN_PKG)
 annotator-full: pkg/annotator-full.js
 
-pkg/main.js pkg/package.json:
+pkg/index.js pkg/main.js pkg/package.json:
 	cp $(@F) pkg/
 
-pkg: annotator-full pkg/main.js pkg/package.json
+pkg: annotator-full pkg/index.js pkg/main.js pkg/package.json
+	cp LICENSE* pkg/
+	cp README* pkg/
+	cp -R lib/ pkg/
 
 clean:
 	rm -rf .deps/* pkg/*
