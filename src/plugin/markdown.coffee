@@ -1,7 +1,5 @@
 Annotator = require('annotator')
 
-{$} = Annotator
-
 
 # Plugin that renders annotation comments displayed in the Viewer in Markdown.
 # Requires Showdown library to be present in the page when initialised.

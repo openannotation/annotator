@@ -151,7 +151,6 @@ glob.sync('./src/plugin/*.coffee').forEach(function (p) {
 glob.sync('./test/**/*.coffee').forEach(function (t) {
   if (t == './test/helpers.coffee') {
     var b = browserify({extensions: '.coffee'})
-      .external('jquery')
       .require('./src/annotator', {expose: 'annotator'})
       .require('./test/helpers', {expose: 'helpers'})
       .transform(coffeeify)

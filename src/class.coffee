@@ -1,5 +1,3 @@
-$ = jQuery or require 'jquery'
-
 Util = require './util'
 
 # Public: Delegator is the base class that all of Annotators objects inherit

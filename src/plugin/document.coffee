@@ -1,7 +1,5 @@
 Annotator = require('annotator')
 
-{$} = Annotator
-
 
 class Annotator.Plugin.Document extends Annotator.Plugin
 

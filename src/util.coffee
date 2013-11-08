@@ -1,5 +1,3 @@
-$ = jQuery or require 'jquery'
-
 xpath = require './xpath'
 
 

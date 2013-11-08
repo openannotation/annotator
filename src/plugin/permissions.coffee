@@ -1,7 +1,5 @@
 Annotator = require('annotator')
 
-{$} = Annotator
-
 
 # Public: Plugin for setting permissions on newly created annotations as well as
 # managing user permissions such as viewing/editing/deleting annotions.

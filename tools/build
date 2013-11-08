@@ -87,7 +87,6 @@ function uglify(src, srcMap) {
 // The core Annotator library
 exports.annotator = function (browserify) {
   return browserify({extensions: ['.coffee']})
-    .external('jquery')
     .require('./src/annotator', {expose: 'annotator', entry: true})
     .transform(coffeeify)
   ;
@@ -113,7 +112,6 @@ exports.test = function (browserify, t) {
   return browserify({entries: [t], extensions: ['.coffee']})
     .external('annotator')
     .external('helpers')
-    .external('jquery')
     .transform(coffeeify)
   ;
 };

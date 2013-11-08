@@ -1,7 +1,5 @@
 Annotator = require('annotator')
 
-{$} = Annotator
-
 
 # Public: Tags plugin allows users to tag thier annotations with metadata
 # stored in an Array on the annotation as tags.

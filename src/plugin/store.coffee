@@ -1,6 +1,5 @@
 Annotator = require('annotator')
 
-{$} = Annotator
 
 # Public: The Store plugin can be used to persist annotations to a database
 # running on your server. It has a simple customisable interface that can be
