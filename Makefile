@@ -1,7 +1,7 @@
 vpath %.coffee src:src/plugin
 
 ANNOTATOR_SRC := annotator.coffee
-ANNOTATOR_PKG := pkg/annotator.js
+ANNOTATOR_PKG := pkg/annotator.js pkg/annotator.css
 
 PLUGIN_SRC := $(wildcard src/plugin/*.coffee)
 PLUGIN_SRC := $(patsubst src/plugin/%,%,$(PLUGIN_SRC))
@@ -13,18 +13,17 @@ DEPS := ./tools/build -d
 DEPDIR := .deps
 df = $(DEPDIR)/$(*F)
 
-all: annotator plugins pkg
+all: annotator plugins
 default: all
 
 annotator: $(ANNOTATOR_PKG)
 plugins: $(PLUGIN_PKG)
-annotator-full:
-	$(BUILD) -a
+annotator-full: pkg/annotator-full.js
 
 pkg/main.js pkg/package.json:
 	cp $(@F) pkg/
 
-pkg: pkg/main.js pkg/package.json
+pkg: annotator-full pkg/main.js pkg/package.json
 
 clean:
 	rm -rf .deps/* pkg/*
@@ -35,15 +34,21 @@ test: annotator plugins
 develop:
 	npm start
 
-.PHONY: all annotator plugins clean test develop pkg
+pkg/annotator.css: css/annotator.css
+	@$(BUILD) -c
 
 pkg/%.js pkg/annotator.%.js: %.coffee
 	$(eval $@_CMD := $(patsubst annotator.%.js,-p %.js,$(@F)))
 	$(eval $@_CMD := $(subst .js,,$($@_CMD)))
 	@$(BUILD) $($@_CMD)
 	@$(DEPS) $($@_CMD) \
-		| sed -n 's/^\(.*\)/pkg\/$(*F).js: \1/p' \
+		| sed -n 's/^\(.*\)/pkg\/$(@F): \1/p' \
 		| sort | uniq > $(df).d
+
+pkg/annotator-full.js: | $(ANNOTATOR_PKG) $(PLUGIN_PKG)
+	@$(BUILD) -a
 
 -include $(ANNOTATOR_SRC:%.coffee=$(DEPDIR)/%.d)
 -include $(PLUGIN_SRC:%.coffee=$(DEPDIR)/%.d)
+
+.PHONY: all annotator plugins annotator-full clean test develop pkg

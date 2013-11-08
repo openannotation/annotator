@@ -130,7 +130,7 @@ git commit package.json -m "Bump version -> v${VERSION}"
 
 echo "Generating package files"
 make clean
-make annotator plugins annotator-full
+make pkg
 
 echo "Committing release and creating tag"
 git co master

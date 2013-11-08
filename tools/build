@@ -97,7 +97,8 @@ exports.annotator = function (browserify) {
 
 // The plugin bundles
 exports.plugin = function (browserify, p) {
-  var expose = ['annotator', 'plugin', path.basename(p)].join('-')
+  var name = path.basename(p).replace('.coffee', '');
+  var expose = ['annotator', 'plugin', name].join('-')
     .replace('.js', '')
   ;
 
@@ -122,78 +123,93 @@ exports.test = function (browserify, t) {
 // Package the bundles when called as the main script
 if (require.main === module) {
   var depsOnly = false;
-  var doCss = false;
-  var doFull = false;
   var preamble = null;
-  var promises = [];
+  var promises = {annotator: null, plugin: {}, fin: q.defer()};
   var targets = Array.prototype.slice.call(process.argv, 2);
 
   child_process.exec('./tools/preamble', function (err, preambleSrc) {
     if (err) throw (err);
     preamble = coffee.compile(preambleSrc, {bare: true}).trim() + '\n';
-    next();
+    next()
   });
+
+  promises.fin.fail(function (err) {
+    process.exit(64);
+  });
+
+  function mapcat(nodes) {
+    return nodes.reduce(function (full, node) {
+      full.add(node);
+      return full;
+    });
+  }
 
   function next() {
     target = targets.shift();
 
     switch (target) {
-    case 'annotator':
-      doCss = true;
-      promises.push(core());
+    case '-c':
+      css();
       break;
     case '-d':
+      if (promises.annotator || Object.keys(promises.plugin).length) {
+        console.error('Flag `-d` must come before any targets.');
+        process.exit(64);
+      }
       depsOnly = true;
+      break;
+    case 'annotator':
+      if (!promises.annotator) {
+        promises.annotator = core()
+        promises.annotator
+          .then(write.bind(null, 'pkg/annotator.js'))
+          .fail(promises.fin.reject.bind(promises.fin))
+        ;
+      }
       break;
     case '-p':
       target = targets.shift();
-      promises.push(plugin(target));
+      var name = 'pkg/annotator.' + target + '.js';
+      if (!promises.plugin[target]) {
+        promises.plugin[target] = plugin(target)
+          .then(write.bind(null, name))
+          .fail(promises.fin.reject.bind(promises.fin))
+        ;
+      }
       break;
     case '-a':
-      doCss = true;
-      doFull = true;
-      glob('./src/plugin/*.coffee', function (err, plugins) {
-        if (err) throw err;
-        targets = Array.prototype.concat.apply(['annotator'],
-          plugins.map(function (p) {
-            return ['-p', p.match(/(\w+).coffee$/)[1]];
-          })
-        );
-        q.all(promises).then(next);
+      if (!promises.annotator) targets.push('annotator');
+      glob.sync('./src/plugin/*.coffee').forEach(function (p) {
+        var name = p.match(/(\w+).coffee$/)[1];
+        targets.push('-p');
+        targets.push(name);
       });
-      return;
+      promises.fin.then(function () {
+        var pkg = [promises.annotator];
+        for (var p in promises.plugin) pkg.push(promises.plugin[p]);
+        q.all(pkg).then(mapcat).then(write.bind(null, 'pkg/annotator-full.js'));
+      });
+      break;
     case undefined:
-      if (doCss) {
-        if (depsOnly) {
-          process.stdout.write(path.resolve('./css/annotator.css'));
-          process.stdout.write('\n');
-        } else {
-          css();
-        }
-      }
-      if (doFull) q.all(promises).then(full);
-      return;
+      return promises.fin.resolve();
+    default:
+      console.error('Unrecognized target:', target);
+      process.exit(64);
     }
 
-    q.all(promises).then(next);
+    q.fcall(next);
   }
 
-  function write(filename, src, srcMap) {
-    // Make the source file paths relative
-    srcMap.sources = srcMap.sources.map(function (src) {
-      return path.relative(process.cwd(), src);
-    });
-    srcMap.file = path.basename(filename);
-
-    var consumer = new SourceMapConsumer(srcMap);
+  function write(filename, node) {
+    if (depsOnly) return process.stdout.write(node);
+    node.prepend(preamble);
 
     // Output the source with the preamble appended
-    var output = prepend(preamble, src, consumer);
+    var output = node.toStringWithSourceMap({file: filename});
     console.log('Writing ', filename);
     fs.writeFileSync(filename, [
       output.code,
-      convert.fromJSON(output.map.toString()).toComment(),
-      ';'
+      convert.fromJSON(output.map.toString()).toComment()
     ].join('\n'));
 
     // Compress the source
@@ -209,7 +225,7 @@ if (require.main === module) {
     console.log('Writing ', filename);
     fs.writeFileSync(filename, compressed.map.toString());
 
-    return SourceNode.fromStringWithSourceMap(src, consumer);
+    return node;
   }
 
   function css() {
@@ -248,42 +264,40 @@ if (require.main === module) {
     });
   }
 
-  function full (nodes) {
-    var filename = 'pkg/annotator-full.js';
-    var result = nodes.reduce(function (full, node) {
-      full.add(node);
-      return full;
-    }).toStringWithSourceMap({file: path.basename(filename)});
-    var srcMap = convert.fromJSON(result.map.toString()).toObject();
-    write(filename, result.code, srcMap);
-  }
-
   function pack(b, filename, options) {
-    var promise;
+    var deps = '';
+    var promise = q.defer();
 
     if (depsOnly) {
-      promise = q.defer();
       options.noParse = b._noParse;
       options.resolve = b._resolve.bind(b);
       options.transform = b._transforms;
-      b.deps(options).pipe(through(id, end)).pipe(process.stdout);
-      function id(dep) {
+
+      b.deps(options).pipe(through(filter, flush));
+
+      function filter(dep) {
         if (dep.id.match(/(_empty)|(fake_[a-z0-9]+).js$/)) return;
-        this.queue(dep.id);
-        this.queue('\n');
+        deps += dep.id + '\n';
       }
-      function end() {
-        promise.resolve();
-        this.queue(null);
+
+      function flush() {
+        promise.resolve(deps);
       }
     } else {
-      promise = q.defer();
-
       b.bundle(options, function (err, result) {
-        if (err) return promise.reject(err);
+        if (err) return  promise.reject(err);
         var src = convert.removeComments(result).slice(0, -3);
         var srcMap = convert.fromSource(result).toObject();
-        promise.resolve(write(filename, src, srcMap));
+
+        // Make the source file paths relative
+        srcMap.sources = srcMap.sources.map(function (src) {
+          return path.relative(process.cwd(), src);
+        });
+        srcMap.file = path.basename(filename);
+
+        var consumer = new SourceMapConsumer(srcMap);
+        var node = SourceNode.fromStringWithSourceMap(src, consumer);
+        promise.resolve(node);
       });
     }
 
