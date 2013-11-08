@@ -10,6 +10,7 @@ var glob = require('glob');
 var q = require('kew');
 var mkdirp = require('mkdirp');
 var sourceMap = require('source-map');
+var through = require('through');
 var UglifyJS = require('uglify-js');
 var UglifyCSS = require('uglifycss');
 var umd = require('umd');
@@ -85,95 +86,198 @@ function uglify(src, srcMap) {
 
 
 // The core Annotator library
-exports.core = browserify({extensions: ['.coffee']})
-.external('jquery')
-.require('./src/annotator', {expose: 'annotator', entry: true})
-.transform(coffeeify)
-;
+exports.annotator = function (browserify) {
+  return browserify({extensions: ['.coffee']})
+    .external('jquery')
+    .require('./src/annotator', {expose: 'annotator', entry: true})
+    .transform(coffeeify)
+  ;
+};
 
 
 // The plugin bundles
-exports.plugin = glob.sync('./src/plugin/*.coffee').reduce(
-  function (plugin, source) {
-    var name = source.replace('.coffee', '.js').replace('./src', '/lib');
-    var expose = name.replace('.js', '').replace('/lib', 'annotator');
-    plugin[name] = include({extensions: ['.coffee']})
-    .require(source, {expose: expose})
+exports.plugin = function (browserify, p) {
+  var expose = ['annotator', 'plugin', path.basename(p)].join('-')
+    .replace('.js', '')
+  ;
+
+  return include(browserify, {extensions: ['.coffee']})
+    .require(p, {expose: expose})
     .transform(coffeeify)
-    ;
-    return plugin;
-  },
-  {
-});
+  ;
+};
 
 
 // Test files
-exports.test = {};
-glob.sync('./test/**/*.coffee').forEach(function (f) {
-  var name = f.replace('.coffee', '.js').replace('./test', '/test');
-  exports.test[name] = browserify({extensions: ['.coffee']})
-  .transform(coffeeify)
+exports.test = function (browserify, t) {
+  return browserify({entries: [t], extensions: ['.coffee']})
+    .external('annotator')
+    .external('helpers')
+    .external('jquery')
+    .transform(coffeeify)
   ;
-
-  if (f == './test/helpers.coffee') {
-    exports.test[name].ignore('jquery')
-    exports.test[name].require('./src/annotator', {expose: 'annotator'});
-    exports.test[name].require('./test/helpers', {expose: 'helpers'});
-  } else {
-    exports.test[name].add(f);
-    exports.test[name].ignore('jquery')
-    exports.test[name].external('annotator');
-    exports.test[name].external('helpers');
-  }
-});
+};
 
 
 // Package the bundles when called as the main script
 if (require.main === module) {
+  var depsOnly = false;
+  var doCss = false;
+  var doFull = false;
+  var preamble = null;
+  var promises = [];
+  var targets = Array.prototype.slice.call(process.argv, 2);
+
   child_process.exec('./tools/preamble', function (err, preambleSrc) {
-    if (err) throw new Error(err);
+    if (err) throw (err);
+    preamble = coffee.compile(preambleSrc, {bare: true}).trim() + '\n';
+    next();
+  });
 
-    var packed = {};
-    var preamble = coffee.compile(preambleSrc, {bare: true}).trim() + '\n';
+  function next() {
+    target = targets.shift();
 
-    mkdirp.sync(path.resolve('./pkg/lib/plugin'));
-
-    function write(filename, src, srcMap) {
-      // Make the source file paths relative
-      srcMap.sources = srcMap.sources.map(function (src) {
-        return path.relative(process.cwd(), src);
+    switch (target) {
+    case 'annotator':
+      doCss = true;
+      promises.push(core());
+      break;
+    case '-d':
+      depsOnly = true;
+      break;
+    case '-p':
+      target = targets.shift();
+      promises.push(plugin(target));
+      break;
+    case '-a':
+      doCss = true;
+      doFull = true;
+      glob('./src/plugin/*.coffee', function (err, plugins) {
+        if (err) throw err;
+        targets = Array.prototype.concat.apply(['annotator'],
+          plugins.map(function (p) {
+            return ['-p', p.match(/(\w+).coffee$/)[1]];
+          })
+        );
+        q.all(promises).then(next);
       });
-      srcMap.file = path.basename(filename);
-
-      var consumer = new SourceMapConsumer(srcMap);
-
-      // Output the source with the preamble appended
-      var output = prepend(preamble, src, consumer);
-      console.log('Writing ', filename);
-      fs.writeFileSync(filename, [
-        output.code,
-        convert.fromJSON(output.map.toString()).toComment(),
-        ';'
-      ].join('\n'));
-
-      // Compress the source
-      var compressed = uglify(output.code, output.map);
-
-      // Write the minified source
-      filename = filename.replace('.js', '.min.js');
-      console.log('Writing ', filename);
-      fs.writeFileSync(filename, compressed.code);
-
-      // Write the minified source map
-      filename += '.map';
-      console.log('Writing ', filename);
-      fs.writeFileSync(filename, compressed.map.toString());
-
-      return SourceNode.fromStringWithSourceMap(src, consumer);
+      return;
+    case undefined:
+      if (doCss) {
+        if (depsOnly) {
+          process.stdout.write(path.resolve('./css/annotator.css'));
+          process.stdout.write('\n');
+        } else {
+          css();
+        }
+      }
+      if (doFull) q.all(promises).then(full);
+      return;
     }
 
-    function pack(b, filename, options) {
-      var promise = q.defer();
+    q.all(promises).then(next);
+  }
+
+  function write(filename, src, srcMap) {
+    // Make the source file paths relative
+    srcMap.sources = srcMap.sources.map(function (src) {
+      return path.relative(process.cwd(), src);
+    });
+    srcMap.file = path.basename(filename);
+
+    var consumer = new SourceMapConsumer(srcMap);
+
+    // Output the source with the preamble appended
+    var output = prepend(preamble, src, consumer);
+    console.log('Writing ', filename);
+    fs.writeFileSync(filename, [
+      output.code,
+      convert.fromJSON(output.map.toString()).toComment(),
+      ';'
+    ].join('\n'));
+
+    // Compress the source
+    var compressed = uglify(output.code, output.map);
+
+    // Write the minified source
+    filename = filename.replace('.js', '.min.js');
+    console.log('Writing ', filename);
+    fs.writeFileSync(filename, compressed.code);
+
+    // Write the minified source map
+    filename += '.map';
+    console.log('Writing ', filename);
+    fs.writeFileSync(filename, compressed.map.toString());
+
+    return SourceNode.fromStringWithSourceMap(src, consumer);
+  }
+
+  function css() {
+    var src = '';
+    var dataURI = child_process.spawn('./tools/data_uri_ify');
+
+    fs.createReadStream('./css/annotator.css').pipe(dataURI.stdin);
+    dataURI.stdout.pipe(through(write, end));
+
+    function write (data) { src += data };
+    function end() {
+      this.queue(null);
+
+      console.log('Writing ', 'pkg/annotator.css');
+      fs.writeFileSync('pkg/annotator.css', preamble + src);
+
+      src = UglifyCSS.processString(src);
+      console.log('Writing ', 'pkg/annotator.min.css');
+      fs.writeFileSync('pkg/annotator.min.css', preamble + src);
+    }
+  }
+
+  function core () {
+    return pack(exports.annotator(browserify), 'pkg/annotator.js', {
+      debug: true,
+      standalone: 'Annotator'
+    });
+  }
+
+  function plugin(name) {
+    var source = './src/plugin/' + name + '.coffee';
+    var target = 'pkg/annotator.' + path.basename(name) + '.js';
+    return pack(exports.plugin(browserify, source), target, {
+      debug: true,
+      standalone: 'Annotator'
+    });
+  }
+
+  function full (nodes) {
+    var filename = 'pkg/annotator-full.js';
+    var result = nodes.reduce(function (full, node) {
+      full.add(node);
+      return full;
+    }).toStringWithSourceMap({file: path.basename(filename)});
+    var srcMap = convert.fromJSON(result.map.toString()).toObject();
+    write(filename, result.code, srcMap);
+  }
+
+  function pack(b, filename, options) {
+    var promise;
+
+    if (depsOnly) {
+      promise = q.defer();
+      options.noParse = b._noParse;
+      options.resolve = b._resolve.bind(b);
+      options.transform = b._transforms;
+      b.deps(options).pipe(through(id, end)).pipe(process.stdout);
+      function id(dep) {
+        if (dep.id.match(/(_empty)|(fake_[a-z0-9]+).js$/)) return;
+        this.queue(dep.id);
+        this.queue('\n');
+      }
+      function end() {
+        promise.resolve();
+        this.queue(null);
+      }
+    } else {
+      promise = q.defer();
 
       b.bundle(options, function (err, result) {
         if (err) return promise.reject(err);
@@ -181,64 +285,8 @@ if (require.main === module) {
         var srcMap = convert.fromSource(result).toObject();
         promise.resolve(write(filename, src, srcMap));
       });
-
-      b.on('row', function (row) {
-        if (packed[row.sourceFile]) return;
-        if (row.sourceFile.match(/(fake_\w+)|(_empty)\.js$/)) return;
-        packed[row.sourceFile] = true;
-
-        var prefix = process.cwd() + '/';
-        if (row.sourceFile.indexOf(prefix == 0)) {
-          var name = path.basename(row.sourceFile);
-          var filename = row.sourceFile
-          .replace(prefix + 'src/', prefix + 'lib/')
-          .replace(prefix, prefix + 'pkg/')
-          .replace('.coffee', '.js')
-          ;
-
-          console.log('Writing ', filename.replace(prefix, ''));
-          fs.writeFileSync(filename, row.source);
-        }
-      })
-
-      return promise;
     }
 
-    var core = pack(exports.core, 'pkg/annotator.js', {
-      debug: true,
-      standalone: 'Annotator'
-    });
-
-    var full = Object.keys(exports.plugin).reduce(function (full, name) {
-      var filename = 'pkg/annotator.' + path.basename(name);
-      var plugin = pack(exports.plugin[name], filename, {
-        debug: true,
-        standalone: 'Annotator'
-      });
-      return full.concat([plugin]);
-    }, [core]);
-
-    q.all(full).then(function (nodes) {
-      var filename = 'pkg/annotator-full.js';
-      var full = nodes.reduce(function (full, node) {
-        full.add(node);
-        return full;
-      }).toStringWithSourceMap({file: path.basename(filename)});
-      var srcMap = convert.fromJSON(full.map.toString()).toObject();
-      var output = write(filename, full.code, srcMap);
-    })
-
-    var css = fs.createWriteStream('pkg/annotator.min.css');
-    var dataURI = child_process.spawn('./tools/data_uri_ify');
-
-    fs.createReadStream('./css/annotator.css').pipe(dataURI.stdin)
-
-    var cssInput = '';
-    dataURI.stdout.on('data', function (data) {cssInput += data});
-    dataURI.stdout.on('end', function() {
-      var cssOutput = UglifyCSS.processString(cssInput);
-      console.log('Writing ', 'pkg/annotator.min.css');
-      fs.writeFileSync('pkg/annotator.min.css', preamble + cssOutput);
-    });
-  });
+    return promise;
+  }
 }

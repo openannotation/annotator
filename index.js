@@ -59,19 +59,19 @@ function browserify (opts, xopts) {
 }
 
 
-// A browserify factory that exposes the annotator namespace and then requires
+// Create browserify that exports the annotator namespace and then requires
 // any other exposed modules. Use it to create standalone bundles for annotator
 // extensions and plugins.
-function include(opts, xopts) {
+function include(browserify, opts, xopts) {
   var b = browserify(opts, xopts);
-  var exposed = ['annotator'];
+  var exposed = [];
   var loader = through(expose);
 
   loader.pause();
   loader.write("module.exports = require('annotator');\n");
 
-  b.external(path.resolve(__dirname, './lib/annotator'));
-  b.require(loader, {basedir: __dirname, entry: true});
+  b.add(loader);
+  b.external('./lib/annotator', {basedir: __dirname});
   b.require('./', {basedir: __dirname, expose: 'annotator'});
   b.transform(function (file) {
     return through(expose);

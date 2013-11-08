@@ -25,11 +25,18 @@ var watcher = chokidar.watch([], {ignored: /^\./});
 watcher.setMaxListeners(50);
 
 
+function browserify(opts, xopts) {
+  var b = annotator.browserify(opts, xopts);
+  b.serve = serve.bind(b);
+  return b;
+}
+
+
 // Serve a browserify bundle with connect middleware
-function serve (b, options) {
+function serve(options) {
   var promise = null;
-  var bundle = b.bundle.bind(b);
-  var self = b;
+  var bundle = this.bundle.bind(this);
+  var self = this;
 
   // A function which fulfills the promise of building a bundle.
   // Based on connect-browserify.
@@ -46,9 +53,9 @@ function serve (b, options) {
   // Monitor the dependencies
   var deps = {};
   var dirty = false;
-  var emit = b.emit.bind(b);
+  var emit = self.emit.bind(self);
   var empty = require.resolve('browserify/_empty.js');
-  b.emit = function (event, arg) {
+  self.emit = function (event, arg) {
     if (event == 'dep' && arg.id != empty) {
       if (!deps[arg.id]) {
         deps[arg.id] = true;
@@ -99,11 +106,10 @@ function serve (b, options) {
 }
 
 
-// Collect and serve the routes
-var routes = {}
+var app = module.exports = connect();
 
 // Token
-routes['/api/token'] = function(request, response) {
+app.use('/api/token', function(request, response) {
   var payload = {
     'consumerKey': CONSUMER_KEY,
     'userId': 'alice',
@@ -123,34 +129,43 @@ routes['/api/token'] = function(request, response) {
   }
 
   response.end(tok);
-};
-
-
-// Core
-routes['/lib/annotator.js'] = serve(build.core, {
-  debug: true,
-  standalone: 'Annotator'
 });
 
 
+// Core
+app.use('/lib/annotator.js', build.annotator(browserify).serve({
+  debug: true,
+  standalone: 'Annotator'
+}));
+
+
 // Plugins
-for (var p in build.plugin) {
-  routes[p] = serve(build.plugin[p], {
-    debug: true,
-    standalone: 'Annotator'
-  });
-}
+glob.sync('./src/plugin/*.coffee').forEach(function (p) {
+  var b = build.plugin(browserify, p);
+  var path = p.replace('./src', '/lib').replace('.coffee', '.js');
+  app.use(path, b.serve({debug: true, standalone: 'Annotator'}));
+});
 
 
 // Tests
-for (var t in build.test) {
-  routes[t] = serve(build.test[t], {debug: true});
-}
+glob.sync('./test/**/*.coffee').forEach(function (t) {
+  if (t == './test/helpers.coffee') {
+    var b = browserify({extensions: '.coffee'})
+      .external('jquery')
+      .require('./src/annotator', {expose: 'annotator'})
+      .require('./test/helpers', {expose: 'helpers'})
+      .transform(coffeeify)
+    ;
+    app.use('/test/helpers.js', b.serve({debug: true}));
+  } else {
+    var b = build.test(browserify, t);
+    var path = t.replace('./', '/').replace('.coffee', '.js');
+    app.use(path, b.serve({debug: true}));
+  }
+});
 
 
-// Bootstrap
-var app = module.exports = connect();
-for (var route in routes) app.use(route, routes[route]);
+// Static files
 app.use(connect.static(process.cwd()));
 
 
