@@ -31,7 +31,7 @@ pkg: annotator-full pkg/index.js pkg/main.js pkg/package.json
 clean:
 	rm -rf .deps/* pkg/*
 
-test: annotator plugins
+test:
 	npm test
 
 develop:
