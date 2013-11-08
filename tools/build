@@ -50,7 +50,7 @@ function uglify(src, srcMap) {
 
   // Set up the UglifyJS compression pipeline
   srcMap = UglifyJS.SourceMap({
-    file: filename,
+    file: path.basename(filename),
     orig: srcMap.toString(),
     root: inSrcMap.getProperty('sourceRoot')
   });
@@ -291,7 +291,7 @@ if (require.main === module) {
 
         // Make the source file paths relative
         srcMap.sources = srcMap.sources.map(function (src) {
-          return path.relative(process.cwd(), src);
+          return path.relative('./src', src);
         });
         srcMap.file = path.basename(filename);
 
