@@ -38,5 +38,5 @@
     "start": "./tools/serve",
     "test": "./tools/test -R spec"
   },
-  "browser": "main.js"
+  "browser": "./lib/annotator.js"
 }

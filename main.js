@@ -1,1 +1,5 @@
-module.exports = typeof(Annotator) === 'function' ? Annotator : require('./lib/annotator');
+define('annotator', ['./lib/annotator'],
+  function (Annotator) {
+    return Annotator;
+  }
+);
