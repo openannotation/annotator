@@ -177,4 +177,4 @@ popd
 
 # Clean up
 echo "Cleaning up"
-(cd pkg && make clean)
+(make clean)
