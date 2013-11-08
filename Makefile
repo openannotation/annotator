@@ -38,18 +38,18 @@ develop:
 	npm start
 
 pkg/annotator.css: css/annotator.css
-	@$(BUILD) -c
+	$(BUILD) -c
 
 pkg/%.js pkg/annotator.%.js: %.coffee
 	$(eval $@_CMD := $(patsubst annotator.%.js,-p %.js,$(@F)))
 	$(eval $@_CMD := $(subst .js,,$($@_CMD)))
-	@$(BUILD) $($@_CMD)
+	$(BUILD) $($@_CMD)
 	@$(DEPS) $($@_CMD) \
 		| sed -n 's/^\(.*\)/pkg\/$(@F): \1/p' \
 		| sort | uniq > $(df).d
 
 pkg/annotator-full.js: | $(ANNOTATOR_PKG) $(PLUGIN_PKG)
-	@$(BUILD) -a
+	$(BUILD) -a
 
 -include $(ANNOTATOR_SRC:%.coffee=$(DEPDIR)/%.d)
 -include $(PLUGIN_SRC:%.coffee=$(DEPDIR)/%.d)
