@@ -19,7 +19,6 @@ var umd = require('umd');
 var annotator = require('../');
 var browserify = annotator.browserify;
 var include = annotator.include;
-var prepend = annotator.prepend;
 
 var SourceMapConsumer = sourceMap.SourceMapConsumer;
 var SourceMapGenerator = sourceMap.SourceMapGenerator;
