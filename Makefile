@@ -7,6 +7,9 @@ PLUGIN_SRC := $(wildcard src/plugin/*.coffee)
 PLUGIN_SRC := $(patsubst src/plugin/%,%,$(PLUGIN_SRC))
 PLUGIN_PKG := $(patsubst %.coffee,pkg/annotator.%.js,$(PLUGIN_SRC))
 
+PKG := $(ANNOTATOR_PKG) $(PLUGIN_PKG) pkg/annotator-full.js
+PKG := $(PKG) pkg/index.js pkg/main.js pkg/package.json
+
 BUILD := ./tools/build
 DEPS := ./tools/build -d
 
@@ -23,7 +26,7 @@ annotator-full: pkg/annotator-full.js
 pkg/index.js pkg/main.js pkg/package.json:
 	cp $(@F) pkg/
 
-pkg: annotator-full pkg/index.js pkg/main.js pkg/package.json
+pkg: $(PKG)
 	cp LICENSE* pkg/
 	cp README* pkg/
 	cp -R lib/ pkg/
@@ -48,7 +51,7 @@ pkg/%.js pkg/annotator.%.js: %.coffee
 		| sed -n 's/^\(.*\)/pkg\/$(@F): \1/p' \
 		| sort | uniq > $(df).d
 
-pkg/annotator-full.js: | $(ANNOTATOR_PKG) $(PLUGIN_PKG)
+pkg/annotator-full.js: $(ANNOTATOR_PKG) $(PLUGIN_PKG)
 	$(BUILD) -a
 
 -include $(ANNOTATOR_SRC:%.coffee=$(DEPDIR)/%.d)
