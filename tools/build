@@ -206,7 +206,7 @@ if (require.main === module) {
 
     // Output the source with the preamble appended
     var output = node.toStringWithSourceMap({file: filename});
-    console.log('Writing ', filename);
+    console.log('Writing', filename);
     fs.writeFileSync(filename, [
       output.code,
       convert.fromJSON(output.map.toString()).toComment()
@@ -217,12 +217,12 @@ if (require.main === module) {
 
     // Write the minified source
     filename = filename.replace('.js', '.min.js');
-    console.log('Writing ', filename);
+    console.log('Writing', filename);
     fs.writeFileSync(filename, compressed.code);
 
     // Write the minified source map
     filename += '.map';
-    console.log('Writing ', filename);
+    console.log('Writing', filename);
     fs.writeFileSync(filename, compressed.map.toString());
 
     return node;
@@ -239,11 +239,11 @@ if (require.main === module) {
     function end() {
       this.queue(null);
 
-      console.log('Writing ', 'pkg/annotator.css');
+      console.log('Writing', 'pkg/annotator.css');
       fs.writeFileSync('pkg/annotator.css', preamble + src);
 
       src = UglifyCSS.processString(src);
-      console.log('Writing ', 'pkg/annotator.min.css');
+      console.log('Writing', 'pkg/annotator.min.css');
       fs.writeFileSync('pkg/annotator.min.css', preamble + src);
     }
   }
@@ -266,6 +266,7 @@ if (require.main === module) {
 
   function pack(b, filename, options) {
     var deps = '';
+    var ignore = /(_empty)|(fake_[a-z0-9]+).js$/
     var promise = q.defer();
 
     if (depsOnly) {
@@ -276,7 +277,7 @@ if (require.main === module) {
       b.deps(options).pipe(through(filter, flush));
 
       function filter(dep) {
-        if (dep.id.match(/(_empty)|(fake_[a-z0-9]+).js$/)) return;
+        if (dep.id.match(ignore)) return;
         deps += dep.id + '\n';
       }
 
@@ -298,6 +299,19 @@ if (require.main === module) {
         var consumer = new SourceMapConsumer(srcMap);
         var node = SourceNode.fromStringWithSourceMap(src, consumer);
         promise.resolve(node);
+      });
+
+      b.on('dep', function (row) {
+        if (row.id.match(ignore)) return;
+        var filename = path.relative(process.cwd(), row.id)
+          .replace('src', 'lib')
+          .replace('.coffee', '.js')
+        ;
+        if (filename == 'main.js') return;
+        if (!libs[filename]) {
+          libs[filename] = true;
+          fs.writeFileSync(filename, row.source);
+        }
       });
     }
 
