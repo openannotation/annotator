@@ -38,10 +38,13 @@ test:
 develop:
 	npm start
 
+pkg/lib/plugin:
+	mkdir -p $@
+
 pkg/annotator.css: css/annotator.css
 	$(BUILD) -c
 
-pkg/%.js pkg/annotator.%.js: %.coffee
+pkg/%.js pkg/annotator.%.js: %.coffee | pkg/lib/plugin
 	$(eval $@_CMD := $(patsubst annotator.%.js,-p %.js,$(@F)))
 	$(eval $@_CMD := $(subst .js,,$($@_CMD)))
 	$(BUILD) $($@_CMD)
