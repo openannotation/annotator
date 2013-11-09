@@ -8,7 +8,6 @@ PLUGIN_SRC := $(patsubst src/plugin/%,%,$(PLUGIN_SRC))
 PLUGIN_PKG := $(patsubst %.coffee,pkg/annotator.%.js,$(PLUGIN_SRC))
 
 PKG := $(ANNOTATOR_PKG) $(PLUGIN_PKG) pkg/annotator-full.js
-PKG := $(PKG) pkg/index.js pkg/main.js pkg/package.json
 
 BUILD := ./tools/build
 DEPS := ./tools/build -d
@@ -23,10 +22,9 @@ annotator: $(ANNOTATOR_PKG)
 plugins: $(PLUGIN_PKG)
 annotator-full: pkg/annotator-full.js
 
-pkg/index.js pkg/main.js pkg/package.json:
-	cp $(@F) pkg/
-
 pkg: $(PKG)
+	cp package.json main.js index.js pkg/
+	cp AUTHORS pkg/
 	cp LICENSE* pkg/
 	cp README* pkg/
 	cp -R lib/ pkg/
