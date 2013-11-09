@@ -1,11 +1,9 @@
 var fs = require('fs');
 var path = require('path');
 
-var rfile = require('rfile');
-var through = require('through');
-
 var convert = require('convert-source-map');
 var sourceMap = require('source-map');
+var through = require('through');
 
 var SourceMapConsumer = sourceMap.SourceMapConsumer;
 var SourceMapGenerator = sourceMap.SourceMapGenerator;
