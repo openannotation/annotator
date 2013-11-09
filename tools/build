@@ -301,7 +301,7 @@ if (require.main === module) {
       b.on('dep', function (row) {
         if (row.id.match(ignore)) return;
         var filename = path.relative(process.cwd(), row.id)
-          .replace('src', 'lib')
+          .replace('src', 'pkg/lib')
           .replace('.coffee', '.js')
         ;
         if (filename == 'main.js') return;

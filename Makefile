@@ -27,7 +27,6 @@ pkg: $(PKG)
 	cp AUTHORS pkg/
 	cp LICENSE* pkg/
 	cp README* pkg/
-	cp -R lib/ pkg/
 
 clean:
 	rm -rf .deps/* pkg/*
