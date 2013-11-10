@@ -10,7 +10,6 @@ var iso8601 = require('iso8601');
 var glob = require('glob');
 var q = require('kew')
 
-var annotator = require('../');
 var build = require('./build');
 
 var CONSUMER_KEY = 'mockconsumer';
@@ -26,7 +25,7 @@ watcher.setMaxListeners(50);
 
 
 function browserify(opts, xopts) {
-  var b = annotator.browserify(opts, xopts);
+  var b = build.browserify(opts, xopts);
   b.serve = serve.bind(b);
   return b;
 }

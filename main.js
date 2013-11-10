@@ -1,5 +1,3 @@
-define('annotator', ['./lib/annotator'],
-  function (Annotator) {
-    return Annotator;
-  }
-);
+define(function (require, exports, module) {
+  return require('./lib/annotator');
+});

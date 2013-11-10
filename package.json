@@ -7,10 +7,7 @@
     "url": "https://github.com/okfn/annotator.git"
   },
   "dependencies": {
-    "convert-source-map": "~0.2.6",
-    "source-map": "~0.1.31",
-    "through": "~2.3.4",
-    "umd": "~1.3.1"
+    "through": "~2.3.4"
   },
   "devDependencies": {
     "coffee-script": "~1.6.0",
@@ -37,5 +34,5 @@
     "start": "./tools/serve",
     "test": "./tools/test -R spec"
   },
-  "browser": "./lib/annotator.js"
+  "browser": "./lib/annotator"
 }

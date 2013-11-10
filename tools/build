@@ -13,23 +13,12 @@ var sourceMap = require('source-map');
 var through = require('through');
 var UglifyJS = require('uglify-js');
 var UglifyCSS = require('uglifycss');
-var umd = require('umd');
-var umd = require('umd');
 
-var annotator = require('../');
-var browserify = annotator.browserify;
-var include = annotator.include;
+var include = require('../').include;
 
 var SourceMapConsumer = sourceMap.SourceMapConsumer;
 var SourceMapGenerator = sourceMap.SourceMapGenerator;
 var SourceNode = sourceMap.SourceNode;
-
-
-// A global map of libraries to their hashed contents.
-// As browserify processes files, we write them to the output directory.
-// Since many bundles share files, we use this to write them only once as
-// they change.
-var libs = {};
 
 
 // Uglify emits ugly warnings for source maps it can't resolve.
@@ -84,6 +73,75 @@ function uglify(src, srcMap) {
 }
 
 
+// Browserify currently b0rks the source maps with --standalone and --debug.
+function umd(name, src, mainModule) {
+  var input = convert.removeComments(src).slice(0, -3);
+  var mainModule = mainModule || 1;
+  var srcMap = new SourceMapConsumer(convert.fromSource(src).toObject());
+  var srcNode = SourceNode.fromStringWithSourceMap(input, srcMap);
+  var output = null;
+  var umd = require('umd');
+
+  srcNode.prepend(umd.prelude(name) + 'return ');
+  output = srcNode.toStringWithSourceMap(srcMap);
+
+  return [
+    output.code,
+    '("' + mainModule + '")' + umd.postlude(name),
+    convert.fromJSON(output.map.toString()).toComment(),
+    ';'
+  ].join('\n');
+}
+
+
+// A browserify factory which uses our patched umd for --standalone --debug
+function browserify (opts, xopts) {
+  var browserify = require('browserify');
+  var b = browserify(opts, xopts);
+  var bundle = b.bundle.bind(b);
+  var promise = null;
+
+  b.bundle = function (options, cb) {
+    if (typeof(options) == 'function') {
+      cb = options;
+      options = null;
+    }
+    options = options || {};
+
+    // Strip the standalone option because we handle it ourselves. See above.
+    var standalone = false;
+    if (options.standalone && options.debug) {
+      standalone = options.standalone;
+      options = Object.create(options, {
+        standalone: {
+          enumerable: false,
+          value: undefined
+        }
+      });
+    }
+
+    return bundle(options, function (err, result) {
+      if (!cb) return;
+      if (err) {
+        cb(err);
+      } else {
+        if (standalone) {
+          // Remove require= because browserify doesn't know to skip exports
+          // when we wrap without passing along standalone.
+          if (Object.keys(b.exports).length) result = result.slice(8);
+          cb(null, umd(standalone, result, b._expose[b._entries[0]]));
+        } else {
+          cb(null, result);
+        }
+      }
+    });
+  };
+
+  return b;
+}
+exports.browserify = browserify
+
+
 // The core Annotator library
 exports.annotator = function (browserify) {
   return browserify({extensions: ['.coffee']})
@@ -101,6 +159,7 @@ exports.plugin = function (browserify, p) {
   ;
 
   return include(browserify, {extensions: ['.coffee']})
+    .require('./src/namespace', {expose: 'annotator'})
     .require(p, {expose: expose})
     .transform(coffeeify)
   ;
@@ -120,6 +179,7 @@ exports.test = function (browserify, t) {
 // Package the bundles when called as the main script
 if (require.main === module) {
   var depsOnly = false;
+  var libs = {};
   var preamble = null;
   var promises = {annotator: null, plugin: {}, fin: q.defer()};
   var targets = Array.prototype.slice.call(process.argv, 2);
