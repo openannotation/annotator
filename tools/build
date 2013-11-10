@@ -343,7 +343,7 @@ if (require.main === module) {
       }
     } else {
       b.bundle(options, function (err, result) {
-        if (err) return  promise.reject(err);
+        if (err) throw err;
         var src = convert.removeComments(result).slice(0, -3);
         var srcMap = convert.fromSource(result).toObject();
 
@@ -369,6 +369,10 @@ if (require.main === module) {
           libs[filename] = true;
           fs.writeFileSync(filename, row.source);
         }
+      });
+
+      b.on('error', function (err) {
+        promise.reject(err);
       });
     }
 
