@@ -51,7 +51,7 @@ describe 'Range', ->
       assert.equal(node, $('strong')[0])
 
     it "should parse an standard xpath string for an xml document", ->
-      Annotator.$.isXMLDoc = -> true
+      $.isXMLDoc = -> true
       node = Range.nodeFromXPath xpath
       assert.equal(node, $('strong')[0])
 
