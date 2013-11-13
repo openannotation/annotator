@@ -304,20 +304,21 @@ class Annotator extends Delegator
           # Oh Javascript, why you so crap? This will lose the traceback.
           throw e
 
-    annotation.quote      = []
-    annotation.ranges     = []
-    annotation.highlights = []
+    if normedRanges.length isnt 0
+      annotation.quote      = []
+      annotation.ranges     = []
+      annotation.highlights = []
 
-    for normed in normedRanges
-      annotation.quote.push      $.trim(normed.text())
-      annotation.ranges.push     normed.serialize(@wrapper[0], '.annotator-hl')
-      $.merge annotation.highlights, this.highlightRange(normed)
+      for normed in normedRanges
+        annotation.quote.push      $.trim(normed.text())
+        annotation.ranges.push     normed.serialize(@wrapper[0], '.annotator-hl')
+        $.merge annotation.highlights, this.highlightRange(normed)
 
-    # Join all the quotes into one string.
-    annotation.quote = annotation.quote.join(' / ')
+      # Join all the quotes into one string.
+      annotation.quote = annotation.quote.join(' / ')
 
-    # Save the annotation data on each highlighter element.
-    $(annotation.highlights).data('annotation', annotation)
+      # Save the annotation data on each highlighter element.
+      $(annotation.highlights).data('annotation', annotation)
 
     annotation
 
