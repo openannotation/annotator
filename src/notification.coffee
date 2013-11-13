@@ -75,7 +75,7 @@ class Annotator.Notification extends Delegator
 
 # Constants for controlling the display of the notification. Each constant
 # adds a different class to the Notification#element.
-Annotator.Notification.INFO    = 'show'
+Annotator.Notification.INFO    = 'info'
 Annotator.Notification.SUCCESS = 'success'
 Annotator.Notification.ERROR   = 'error'
 
