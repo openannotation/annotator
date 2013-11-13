@@ -19,12 +19,19 @@ describe 'Annotator.Notification', ->
     it 'should have a class named "annotator-notice-show"', ->
       assert.isTrue(notification.element.hasClass('annotator-notice-show'))
 
+    it 'should have a class named "annotator-notice-info"', ->
+      assert.isTrue(notification.element.hasClass('annotator-notice-info'))
+
     it 'should update the notification message', ->
       assert.equal(notification.element.html(), message)
 
   describe '.hide()', ->
     beforeEach ->
+      notification.show()
       notification.hide()
 
-    it 'should not have a class named "show"', ->
-      assert.isFalse(notification.element.hasClass('show'))
+    it 'should not have a class named "annotator-notice-show"', ->
+      assert.isFalse(notification.element.hasClass('annotator-notice-show'))
+
+    it 'should not have a class named "annotator-notice-info"', ->
+      assert.isFalse(notification.element.hasClass('annotator-notice-info'))
