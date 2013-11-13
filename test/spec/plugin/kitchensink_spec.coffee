@@ -21,7 +21,9 @@ describe 'Annotator::setupPlugins', ->
   it 'should be callable via jQuery.fn.Annotator', ->
     sinon.spy(Annotator.prototype, 'setupPlugins')
 
-    $fix.annotator().annotator('setupPlugins', {}, {Filter: {appendTo: fix()}})
+    $fix.annotator({
+      store: new Annotator.Plugin.NullStore()
+    }).annotator('setupPlugins', {}, {Filter: {appendTo: fix()}})
     assert(Annotator::setupPlugins.calledOnce)
 
   describe 'called with no parameters', ->
@@ -29,7 +31,9 @@ describe 'Annotator::setupPlugins', ->
 
     beforeEach ->
       _Showdown = window.Showdown
-      annotator = new Annotator(fix())
+      annotator = new Annotator(fix(), {
+        store: new Annotator.Plugin.NullStore()
+      })
       annotator.setupPlugins({}, {Filter: {appendTo: fix()}})
 
     afterEach -> window.Showdown = _Showdown
@@ -61,14 +65,12 @@ describe 'Annotator::setupPlugins', ->
 
   describe 'called with AnnotateIt config', ->
     beforeEach ->
-      # Prevent store making initial AJAX requests.
-      sinon.stub(Annotator.Plugin.Store.prototype, 'pluginInit')
-
-      annotator = new Annotator(fix())
-      annotator.setupPlugins()
-
-    afterEach ->
-      Annotator.Plugin.Store.prototype.pluginInit.restore()
+      annotator = new Annotator(fix(), {
+        store: new Annotator.Plugin.NullStore()
+      })
+      annotator.setupPlugins {},
+        Filter:
+          appendTo: fix()
 
     it 'should add the Store plugin', ->
       assert.isDefined(annotator.plugins.Store)
@@ -80,7 +82,9 @@ describe 'Annotator::setupPlugins', ->
       assert.isDefined(annotator.plugins.Auth)
 
   describe 'called with plugin options', ->
-    beforeEach -> annotator = new Annotator(fix())
+    beforeEach -> annotator = new Annotator(fix(), {
+      store: new Annotator.Plugin.NullStore()
+    })
 
     it 'should override default plugin options', ->
       annotator.setupPlugins null,

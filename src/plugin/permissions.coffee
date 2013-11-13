@@ -14,11 +14,6 @@
 # Returns a new instance of the Permissions Object.
 class Annotator.Plugin.Permissions extends Annotator.Plugin
 
-  # A Object literal consisting of event/method pairs to be bound to
-  # @element. See Delegator#addEvents() for details.
-  events:
-    'beforeAnnotationCreated': 'addFieldsToAnnotation'
-
   # A Object literal of default options for the class.
   options:
 
@@ -150,6 +145,8 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   # Returns nothing.
   pluginInit: ->
     return unless Annotator.supported()
+
+    @annotator.subscribe('beforeAnnotationCreated', this.addFieldsToAnnotation)
 
     self = this
     createCallback = (method, type) ->

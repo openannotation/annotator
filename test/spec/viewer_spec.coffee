@@ -136,19 +136,17 @@ describe 'Annotator.Viewer', ->
 
     beforeEach ->
       listener = sinon.spy()
-      viewer.element.bind('edit', listener)
+      viewer.on('edit', listener)
 
     it "should trigger an 'edit' event", ->
       viewer.onButtonClick({}, 'edit')
       assert(listener.calledOnce)
 
     it "should pass in the annotation object associated with the item", ->
-      annotation = {}
+      annotation = {id: 123}
       item   = $('<div class="annotator-annotation" />').data('annotation', annotation)
       button = $('<button />').appendTo(item)[0]
 
       viewer.onButtonClick({target: button}, 'edit')
 
-      # First argument will be an event so we must use a more convoluted method
-      # of checking the annotation was passed.
-      assert.equal(listener.lastCall.args[1], annotation)
+      assert.isTrue(listener.calledWith(annotation))
