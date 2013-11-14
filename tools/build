@@ -126,15 +126,13 @@ if (require.main === module) {
         depsOnly = true;
         break;
       case 'annotator':
-        core().then(write.bind(null, 'pkg/annotator.js'));
+        core();
         break;
       case '-p':
-        target = targets.shift();
-        var name = 'pkg/annotator.' + target + '.js';
-        plugin(target).then(write.bind(null, name));
+        plugin(targets.shift());
         break;
       case 'annotator-full':
-        full().then(write.bind(null, 'pkg/annotator-full.js'));
+        full();
         break;
       case undefined:
         return;
@@ -194,7 +192,7 @@ if (require.main === module) {
   }
 
   function core () {
-    return pack(exports.annotator(browserify), 'pkg/annotator.js', {
+    pack(exports.annotator(browserify), 'pkg/annotator.js', {
       debug: true,
       standalone: 'Annotator'
     });
@@ -203,7 +201,7 @@ if (require.main === module) {
   function plugin(name) {
     var source = './src/plugin/' + name + '.coffee';
     var target = 'pkg/annotator.' + path.basename(name) + '.js';
-    return pack(exports.plugin(browserify, source), target, {
+    pack(exports.plugin(browserify, source), target, {
       debug: true,
       standalone: 'Annotator'
     });
@@ -218,7 +216,7 @@ if (require.main === module) {
       var expose = ['annotator', 'plugin', name].join('-').replace('.js', '');
       b.require(p, {expose: expose});
     });
-    return pack(b, 'pkg/annotator-full.js', {
+    pack(b, 'pkg/annotator-full.js', {
       debug: true,
       standalone: 'Annotator'
     });
@@ -234,15 +232,11 @@ if (require.main === module) {
       options.resolve = b._resolve.bind(b);
       options.transform = b._transforms;
 
-      b.deps(options).pipe(through(filter, flush));
+      b.deps(options).pipe(through(logdeps));
 
-      function filter(dep) {
+      function logdeps(dep) {
         if (dep.id.match(ignore)) return;
-        deps += dep.id + '\n';
-      }
-
-      function flush() {
-        promise.resolve(deps);
+        console.log(dep.id);
       }
     } else {
       b.bundle(options, function (err, result) {
@@ -258,7 +252,7 @@ if (require.main === module) {
 
         var consumer = new SourceMapConsumer(srcMap);
         var node = SourceNode.fromStringWithSourceMap(src, consumer);
-        promise.resolve(node);
+        write(filename, node);
       });
 
       b.on('dep', function (row) {
@@ -273,12 +267,6 @@ if (require.main === module) {
           fs.writeFileSync(filename, row.source);
         }
       });
-
-      b.on('error', function (err) {
-        promise.reject(err);
-      });
     }
-
-    return promise;
   }
 }
