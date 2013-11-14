@@ -304,7 +304,7 @@ class Annotator extends Delegator
           # Oh Javascript, why you so crap? This will lose the traceback.
           throw e
 
-    if normedRanges.length isnt 0
+    if normedRanges.length != 0
       annotation.quote      = []
       annotation.ranges     = []
       annotation.highlights = []
