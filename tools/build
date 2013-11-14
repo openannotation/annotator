@@ -9,7 +9,6 @@ var coffeeify = require('caching-coffeeify');
 var convert = require('convert-source-map');
 var glob = require('glob');
 var q = require('kew');
-var mkdirp = require('mkdirp');
 var sourceMap = require('source-map');
 var through = require('through');
 var UglifyJS = require('uglify-js');

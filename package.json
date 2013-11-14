@@ -26,9 +26,7 @@
     "convert-source-map": "~0.3.1",
     "glob": "~3.2.6",
     "kew": "~0.2.2",
-    "mkdirp": "~0.3.5",
-    "source-map": "~0.1.31",
-    "umd": "~1.3.1"
+    "source-map": "~0.1.31"
   },
   "engines": {
     "node": ">=0.8 <0.12"
