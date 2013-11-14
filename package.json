@@ -20,7 +20,7 @@
     "jwt-simple": "~0.1.0",
     "iso8601": "~1.1.1",
     "connect": "~2.10.1",
-    "browserify": "~2.35.0",
+    "browserify": "~2.35.2",
     "caching-coffeeify": "~0.3.0",
     "chokidar": "~0.7.0",
     "convert-source-map": "~0.3.1",

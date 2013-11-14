@@ -18,6 +18,9 @@ function include(browserify, opts, xopts) {
     return through(expose);
   });
 
+  // Browserify doesn't honor streams as entry points so we need to force it.
+  b._entries.push(loader);
+
   return b;
 
   function expose(data) {

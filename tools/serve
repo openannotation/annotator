@@ -25,7 +25,7 @@ watcher.setMaxListeners(50);
 
 
 function browserify(opts, xopts) {
-  var b = build.browserify(opts, xopts);
+  var b = require('browserify')(opts, xopts);
   b.serve = serve.bind(b);
   return b;
 }
