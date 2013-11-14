@@ -1,9 +1,11 @@
 var through = require('through');
 
 
-// Add a loader script which exports the annotator namespace and then requires
-// any other exposed modules. Use it on a browserify instance to create
-// standalone bundles for annotator extensions and plugins.
+// Addd a loader script to a browserify instance which exports the annotator
+// namespace and then requires any other exposed modules. Use it on a browserify
+// instance to create standalone bundles for annotator extensions and plugins
+// by exposing the annotator/lib/namespace module as annotator instead of
+// declaring annotator as external.
 function loader(b) {
   var exposed = ['annotator'];
   var loader = through(expose);
