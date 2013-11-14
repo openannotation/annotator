@@ -15,7 +15,7 @@ var through = require('through');
 var UglifyJS = require('uglify-js');
 var UglifyCSS = require('uglifycss');
 
-var include = require('../').include;
+var annotator = require('../');
 
 var SourceMapConsumer = sourceMap.SourceMapConsumer;
 var SourceMapGenerator = sourceMap.SourceMapGenerator;
@@ -61,9 +61,7 @@ function uglify(src, srcMap) {
   src = src.get() + '\n' + comment + filename + '.map';
   srcMap = convert.fromJSON(srcMap.toString());
 
-  // Add all the sources and inline them into the source map
-  // UglifyJS drops all but the first source file
-  srcMap.setProperty('sources', inSrcMap.getProperty('sources'));
+  // Add all the sources into the source map
   srcMap.setProperty('sourcesContent', inSrcMap.getProperty('sourcesContent'));
 
   srcMap = SourceMapGenerator.fromSourceMap(
@@ -86,15 +84,14 @@ exports.annotator = function (browserify) {
 // The plugin bundles
 exports.plugin = function (browserify, p) {
   var name = path.basename(p).replace('.coffee', '');
-  var expose = ['annotator', 'plugin', name].join('-')
-    .replace('.js', '')
-  ;
+  var expose = ['annotator', 'plugin', name].join('-').replace('.js', '');
 
-  return include(browserify, {extensions: ['.coffee']})
+  var b = browserify({extensions: ['.coffee']})
     .require('./src/namespace', {expose: 'annotator'})
     .require(p, {expose: expose})
     .transform(coffeeify)
-  ;
+
+  return annotator.loader(b);
 };
 
 
@@ -113,81 +110,41 @@ if (require.main === module) {
   var depsOnly = false;
   var libs = {};
   var preamble = null;
-  var promises = {annotator: null, plugin: {}, fin: q.defer()};
   var targets = Array.prototype.slice.call(process.argv, 2);
 
   child_process.exec('./tools/preamble', function (err, preambleSrc) {
     if (err) throw (err);
     preamble = coffee.compile(preambleSrc, {bare: true}).trim() + '\n';
-    next()
-  });
 
-  promises.fin.fail(function (err) {
-    process.exit(64);
-  });
+    while(targets.length) {
+      var target = targets.shift();
 
-  function mapcat(nodes) {
-    return nodes.reduce(function (full, node) {
-      full.add(node);
-      return full;
-    });
-  }
-
-  function next() {
-    target = targets.shift();
-
-    switch (target) {
-    case '-c':
-      css();
-      break;
-    case '-d':
-      if (promises.annotator || Object.keys(promises.plugin).length) {
-        console.error('Flag `-d` must come before any targets.');
+      switch (target) {
+      case '-c':
+        css();
+        break;
+      case '-d':
+        depsOnly = true;
+        break;
+      case 'annotator':
+        core().then(write.bind(null, 'pkg/annotator.js'));
+        break;
+      case '-p':
+        target = targets.shift();
+        var name = 'pkg/annotator.' + target + '.js';
+        plugin(target).then(write.bind(null, name));
+        break;
+      case 'annotator-full':
+        full().then(write.bind(null, 'pkg/annotator-full.js'));
+        break;
+      case undefined:
+        return;
+      default:
+        console.error('Unrecognized target:', target);
         process.exit(64);
       }
-      depsOnly = true;
-      break;
-    case 'annotator':
-      if (!promises.annotator) {
-        promises.annotator = core()
-        promises.annotator
-          .then(write.bind(null, 'pkg/annotator.js'))
-          .fail(promises.fin.reject.bind(promises.fin))
-        ;
-      }
-      break;
-    case '-p':
-      target = targets.shift();
-      var name = 'pkg/annotator.' + target + '.js';
-      if (!promises.plugin[target]) {
-        promises.plugin[target] = plugin(target)
-          .then(write.bind(null, name))
-          .fail(promises.fin.reject.bind(promises.fin))
-        ;
-      }
-      break;
-    case '-a':
-      if (!promises.annotator) targets.push('annotator');
-      glob.sync('./src/plugin/*.coffee').forEach(function (p) {
-        var name = p.match(/(\w+).coffee$/)[1];
-        targets.push('-p');
-        targets.push(name);
-      });
-      promises.fin.then(function () {
-        var pkg = [promises.annotator];
-        for (var p in promises.plugin) pkg.push(promises.plugin[p]);
-        q.all(pkg).then(mapcat).then(write.bind(null, 'pkg/annotator-full.js'));
-      });
-      break;
-    case undefined:
-      return promises.fin.resolve();
-    default:
-      console.error('Unrecognized target:', target);
-      process.exit(64);
     }
-
-    q.fcall(next);
-  }
+  });
 
   function write(filename, node) {
     if (depsOnly) return process.stdout.write(node);
@@ -248,6 +205,21 @@ if (require.main === module) {
     var source = './src/plugin/' + name + '.coffee';
     var target = 'pkg/annotator.' + path.basename(name) + '.js';
     return pack(exports.plugin(browserify, source), target, {
+      debug: true,
+      standalone: 'Annotator'
+    });
+  }
+
+  function full() {
+    var b = annotator.loader(browserify({extensions: '.coffee'}));
+    b.require('./src/annotator', {expose: 'annotator'});
+    b.transform(coffeeify);
+    glob.sync('./src/plugin/*.coffee').forEach(function (p) {
+      var name = path.basename(p).replace('.coffee', '');
+      var expose = ['annotator', 'plugin', name].join('-').replace('.js', '');
+      b.require(p, {expose: expose});
+    });
+    return pack(b, 'pkg/annotator-full.js', {
       debug: true,
       standalone: 'Annotator'
     });

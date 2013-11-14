@@ -1,11 +1,10 @@
 var through = require('through');
 
 
-// Create browserify that exports the annotator namespace and then requires
-// any other exposed modules. Use it to create standalone bundles for annotator
-// extensions and plugins.
-function include(browserify, opts, xopts) {
-  var b = browserify(opts, xopts);
+// Add a loader script which exports the annotator namespace and then requires
+// any other exposed modules. Use it on a browserify instance to create
+// standalone bundles for annotator extensions and plugins.
+function loader(b) {
   var exposed = ['annotator'];
   var loader = through(expose);
 
@@ -13,7 +12,6 @@ function include(browserify, opts, xopts) {
   loader.write("module.exports = require('annotator');\n");
 
   b.add(loader);
-  b.external('annotator');
   b.transform(function (file) {
     return through(expose);
   });
@@ -45,12 +43,4 @@ function include(browserify, opts, xopts) {
   }
 }
 
-
-function load() {
-  if (typeof Annotator !== 'function') {
-    var Annotator = require('annotator');
-  }
-}
-
-
-exports.include = include;
+exports.loader = loader;
