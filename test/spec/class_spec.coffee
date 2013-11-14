@@ -18,6 +18,19 @@ describe 'Evented', ->
     e.publish('foo', [1, 2, 3])
     assert.deepEqual(res, [3, 2, 1])
 
+  it "invokes the callback in the context of the object by default", ->
+    res = null
+    e.subscribe('foo', (-> res = this))
+    e.publish('foo')
+    assert.equal(res, e)
+
+  it "invokes the callback with a context if provided", ->
+    res = null
+    sentinel = {}
+    e.subscribe('foo', (-> res = this), sentinel)
+    e.publish('foo')
+    assert.equal(res, sentinel)
+
   it ".unsubscribe() unsubscribes listeners", ->
     res = []
     cbk = -> res.push('bar')
@@ -34,6 +47,14 @@ describe 'Evented', ->
     e.unsubscribe('foo', cbk)
     e.publish('foo')
     assert.deepEqual(res, ['baz'])
+
+  it ".once() only fires its callback once", ->
+    res = []
+    cbk =-> res.push('bar')
+    e.once('foo', cbk)
+    e.publish('foo')
+    e.publish('foo')
+    assert.equal(res.length, 1)
 
 
 class DelegatedExample extends Delegator

@@ -35,8 +35,8 @@ class Evented
   #   # => Outputs "Hello World"
   #
   # Returns itself.
-  subscribe: (event, callback) ->
-    closure = -> callback.apply(this, [].slice.call(arguments, 1))
+  subscribe: (event, callback, context=this) ->
+    closure = -> callback.apply(context, [].slice.call(arguments, 1))
 
     # Ensure both functions have the same unique id so that jQuery will accept
     # callback when unbinding closure.
@@ -66,6 +66,22 @@ class Evented
   unsubscribe: ->
     $(this).unbind.apply($(this), arguments)
     this
+
+  # Public: Alias for subscribe
+  on: -> this.subscribe(arguments...)
+
+  # Public: Alias for unsubscribe
+  off: -> this.unsubscribe(arguments...)
+
+  # Public: Alias for trigger
+  trigger: -> this.publish(arguments...)
+
+  # Public: Like subscribe, but unsubscribes automatically at first callback.
+  once: (event, callback, context) ->
+    closure = =>
+      this.unsubscribe event, closure
+      callback.apply(context, arguments)
+    this.subscribe event, closure, context
 
 
 # Public: Delegator is the base class that all of Annotators objects inherit
