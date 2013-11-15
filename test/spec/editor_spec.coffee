@@ -1,8 +1,11 @@
-describe 'Annotator.Editor', ->
+Editor = require('../../src/editor')
+
+
+describe 'Editor', ->
   editor = null
 
   beforeEach ->
-    editor = new Annotator.Editor()
+    editor = new Editor()
 
   afterEach ->
     editor.element.remove()

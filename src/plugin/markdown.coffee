@@ -1,3 +1,6 @@
+Annotator = require('annotator')
+
+
 # Plugin that renders annotation comments displayed in the Viewer in Markdown.
 # Requires Showdown library to be present in the page when initialised.
 class Annotator.Plugin.Markdown extends Annotator.Plugin
@@ -52,3 +55,6 @@ class Annotator.Plugin.Markdown extends Annotator.Plugin
   # Returns HTML string.
   convert: (text) ->
     @converter.makeHtml text
+
+
+module.exports = Annotator.Plugin.Markdown

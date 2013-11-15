@@ -1,3 +1,6 @@
+Registry = require('../../src/registry')
+
+
 class MockStore
   create: (data) ->
     if data.i?
@@ -25,13 +28,13 @@ class MockStore
     dfd.resolve([{id: 1}, {id: 2}], {total:2})
     return dfd.promise()
 
-describe 'Annotator.Registry', ->
+describe 'Registry', ->
   m = null
   r = null
 
   beforeEach ->
     m = new MockStore()
-    r = new Annotator.Registry(m)
+    r = new Registry(m)
 
   it 'should take a Store plugin as its first constructor argument', ->
     assert.equal(r.store, m)

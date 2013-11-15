@@ -1,3 +1,6 @@
+Annotator = require('annotator')
+
+
 # Plugin that will display a notification to the user if thier browser does
 # not support the Annotator.
 class Annotator.Plugin.Unsupported extends Annotator.Plugin
@@ -20,3 +23,6 @@ class Annotator.Plugin.Unsupported extends Annotator.Plugin
         if (window.XMLHttpRequest == undefined) and (ActiveXObject != undefined)
           $('html').addClass('ie6')
       )
+
+
+module.exports = Annotator.Plugin.Unsupported

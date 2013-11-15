@@ -1,3 +1,0 @@
-cd "$(dirname "$0")"
-cd ..
-$(npm bin)/coffee -wbcmo lib src test

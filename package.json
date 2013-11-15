@@ -6,22 +6,34 @@
     "type": "git",
     "url": "https://github.com/okfn/annotator.git"
   },
-  "devDependencies": {
-    "coffee-script": "1.6.x",
-    "uglify-js": "2.3.6",
-    "mapcat": "0.1.0",
-    "uglifycss": "0.0.5",
-    "mocha": "1.9.0",
-    "mocha-phantomjs": "2.0.1",
-    "chai": "1.5.0",
-    "sinon": "1.6.0",
-    "jwt-simple": "",
-    "iso8601": "",
-    "connect": "~2.10.1"
+  "dependencies": {
+    "through": "~2.3.4"
   },
-  "engines": { "node" : "~0.8.0" },
+  "devDependencies": {
+    "coffee-script": "~1.6.0",
+    "uglify-js": "~2.3.6",
+    "uglifycss": "~0.0.5",
+    "mocha": "~1.9.0",
+    "mocha-phantomjs": "~2.0.1",
+    "chai": "~1.5.0",
+    "sinon": "~1.6.0",
+    "jwt-simple": "~0.1.0",
+    "iso8601": "~1.1.1",
+    "connect": "~2.10.1",
+    "browserify": "~2.35.2",
+    "caching-coffeeify": "~0.3.0",
+    "chokidar": "~0.7.0",
+    "convert-source-map": "~0.3.1",
+    "glob": "~3.2.6",
+    "kew": "~0.2.2",
+    "source-map": "~0.1.31"
+  },
+  "engines": {
+    "node": ">=0.8 <0.12"
+  },
   "scripts": {
-    "start": "node ./tools/serve",
-    "test": "make REPORTER=spec test"
-  }
+    "start": "./tools/serve",
+    "test": "./tools/test -R spec"
+  },
+  "browser": "./lib/annotator"
 }

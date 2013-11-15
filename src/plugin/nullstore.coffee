@@ -1,3 +1,6 @@
+Annotator = require('annotator')
+
+
 # Public: The NullStore plugin is a dummy store plugin which can be used when
 # debugging to provide a store that doesn't actually attempt to persist any
 # changes made to annotations. All operations will succeed and all queries will
@@ -45,3 +48,6 @@ class Annotator.Plugin.NullStore
     dfd = $.Deferred()
     dfd.resolve([], {})
     return dfd.promise()
+
+
+module.exports = Annotator.Plugin.NullStore

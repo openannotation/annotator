@@ -1,3 +1,7 @@
+Annotator = require('annotator')
+Markdown = require('../../../src/plugin/markdown')
+
+
 describe 'Annotator.Plugin.Markdown', ->
   input  = 'Is **this** [Markdown](http://daringfireball.com)?'
   output = '<p>Is <strong>this</strong> <a href="http://daringfireball.com">Markdown</a>?</p>'
@@ -5,7 +9,7 @@ describe 'Annotator.Plugin.Markdown', ->
 
 
   beforeEach ->
-    plugin = new Annotator.Plugin.Markdown($('<div />')[0])
+    plugin = new Markdown($('<div />')[0])
 
   describe "events", ->
     it "should call Markdown#updateTextField() when annotationViewerTextField event is fired", ->
@@ -26,7 +30,7 @@ describe 'Annotator.Plugin.Markdown', ->
       converter = Showdown.converter
       Showdown.converter = null
 
-      plugin = new Annotator.Plugin.Markdown($('<div />')[0])
+      plugin = new Markdown($('<div />')[0])
       assert(console.error.calledOnce)
 
       Showdown.converter = converter

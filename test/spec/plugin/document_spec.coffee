@@ -1,3 +1,7 @@
+Annotator = require('annotator')
+Document = require('../../../src/plugin/document')
+
+
 describe 'Annotator.Plugin.Document', ->
   $fix = null
   annotator = null
@@ -54,7 +58,7 @@ describe 'Annotator.Plugin.Document', ->
     it 'should have links with absoulte hrefs and types', ->
       assert.ok(annotation.document.link)
       assert.equal(annotation.document.link.length, 7)
-      assert.match(annotation.document.link[0].href, /^.+runner.html(\?.*)?$/)
+      assert.match(annotation.document.link[0].href, /^.+runner.html#?(\?.*)?$/)
       assert.equal(annotation.document.link[1].rel, "alternate")
       assert.match(annotation.document.link[1].href, /^.+foo\.pdf$/)
       assert.equal(annotation.document.link[1].type, "application/pdf")

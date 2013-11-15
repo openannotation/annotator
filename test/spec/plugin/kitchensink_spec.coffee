@@ -1,3 +1,9 @@
+h = require('helpers')
+Annotator = require('annotator')
+
+_ = require('../../../src/plugin/kitchensink')
+Filter = require('../../../src/plugin/filter')
+
 class MockPlugin
   constructor: ->
   pluginInit: ->
@@ -10,10 +16,10 @@ describe 'Annotator::setupPlugins', ->
     for p in ['AnnotateItPermissions', 'Auth', 'Markdown', 'Store', 'Tags', 'Unsupported']
       Annotator.Plugin[p] = MockPlugin
 
-    addFixture('kitchensink')
-    $fix = $(fix())
+    h.addFixture('kitchensink')
+    $fix = $(h.fix())
 
-  afterEach -> clearFixtures()
+  afterEach -> h.clearFixtures()
 
   it 'should added to the Annotator prototype', ->
     assert.equal(typeof Annotator::setupPlugins, 'function')
@@ -23,7 +29,7 @@ describe 'Annotator::setupPlugins', ->
 
     $fix.annotator({
       store: new Annotator.Plugin.NullStore()
-    }).annotator('setupPlugins', {}, {Filter: {appendTo: fix()}})
+    }).annotator('setupPlugins', {}, {Filter: {appendTo: h.fix()}})
     assert(Annotator::setupPlugins.calledOnce)
 
   describe 'called with no parameters', ->
@@ -31,10 +37,10 @@ describe 'Annotator::setupPlugins', ->
 
     beforeEach ->
       _Showdown = window.Showdown
-      annotator = new Annotator(fix(), {
+      annotator = new Annotator(h.fix(), {
         store: new Annotator.Plugin.NullStore()
       })
-      annotator.setupPlugins({}, {Filter: {appendTo: fix()}})
+      annotator.setupPlugins()
 
     afterEach -> window.Showdown = _Showdown
 
@@ -65,12 +71,12 @@ describe 'Annotator::setupPlugins', ->
 
   describe 'called with AnnotateIt config', ->
     beforeEach ->
-      annotator = new Annotator(fix(), {
+      annotator = new Annotator(h.fix(), {
         store: new Annotator.Plugin.NullStore()
       })
       annotator.setupPlugins {},
         Filter:
-          appendTo: fix()
+          appendTo: h.fix()
 
     it 'should add the Store plugin', ->
       assert.isDefined(annotator.plugins.Store)
@@ -82,7 +88,7 @@ describe 'Annotator::setupPlugins', ->
       assert.isDefined(annotator.plugins.Auth)
 
   describe 'called with plugin options', ->
-    beforeEach -> annotator = new Annotator(fix(), {
+    beforeEach -> annotator = new Annotator(h.fix(), {
       store: new Annotator.Plugin.NullStore()
     })
 
@@ -92,7 +98,7 @@ describe 'Annotator::setupPlugins', ->
         Filter:
           filters: null
           addAnnotationFilter: false
-          appendTo: fix()
+          appendTo: h.fix()
 
       assert.lengthOf(annotator.plugins.Filter.filters, 0)
 

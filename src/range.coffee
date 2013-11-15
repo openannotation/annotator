@@ -1,3 +1,6 @@
+Util = require('./util')
+
+
 Range = {}
 
 # Public: Determines the type of Range of the provided object and returns
@@ -455,3 +458,7 @@ class Range.SerializedRange
       end: @end
       endOffset: @endOffset
     }
+
+
+# Export Range object.
+module.exports = Range

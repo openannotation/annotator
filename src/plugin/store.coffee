@@ -1,3 +1,6 @@
+Annotator = require('annotator')
+
+
 # Public: The Store plugin can be used to persist annotations to a database
 # running on your server. It has a simple customisable interface that can be
 # implemented with any web framework. It works by listening to events published
@@ -277,3 +280,6 @@ class Annotator.Plugin.Store
     Annotator.showNotification message, Annotator.Notification.ERROR
 
     console.error Annotator._t("API request failed:") + " '#{xhr.status}'"
+
+
+module.exports = Annotator.Plugin.Store

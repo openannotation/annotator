@@ -1,3 +1,6 @@
+Annotator = require('annotator')
+Store = require('../../../src/plugin/store')
+
 describe "Annotator.Plugin.Store", ->
   store = null
   server = null

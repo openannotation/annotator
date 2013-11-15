@@ -1,9 +1,12 @@
+Evented = require('./events')
+
+
 error = (obj, message) ->
   dfd = new $.Deferred()
   dfd.reject(obj, message)
   return dfd.promise()
 
-class Annotator.Registry extends Evented
+class Registry extends Evented
   constructor: (@store) ->
 
   # Public: Creates and returns a new annotation object.
@@ -107,3 +110,6 @@ class Annotator.Registry extends Evented
 
         this.publish(event, [obj])
         return obj
+
+
+module.exports = Registry

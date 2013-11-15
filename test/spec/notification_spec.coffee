@@ -1,13 +1,17 @@
-describe 'Annotator.Notification', ->
+Notification = require('../../src/notification')
+
+
+describe 'Notification', ->
   notification = null
 
   beforeEach ->
-    notification = new Annotator.Notification()
+    notification = new Notification()
 
   afterEach ->
     notification.element.remove()
 
-  it 'should be appended to the document.body', ->
+  it 'should be appended to the document body when needed', ->
+    notification.show('test')
     assert.equal(notification.element[0].parentNode, document.body)
 
   describe '.show()', ->

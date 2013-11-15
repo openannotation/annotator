@@ -1,3 +1,10 @@
+h = require('helpers')
+
+Annotator = require('annotator')
+Util = Annotator.Util
+Range = Annotator.Range
+
+
 describe 'Annotator', ->
   annotator = null
   mock = null
@@ -256,10 +263,10 @@ describe 'Annotator', ->
     $fix = null
 
     beforeEach ->
-      addFixture 'annotator'
-      $fix = $(fix())
+      h.addFixture 'annotator'
+      $fix = $(h.fix())
 
-    afterEach -> clearFixtures()
+    afterEach -> h.clearFixtures()
 
     it 'should ensure Annotator z-indices are larger than others in the page', ->
       $fix.show()
@@ -935,7 +942,7 @@ describe "Annotator.supported()", ->
 
   afterEach ->
     window.getSelection = window._Selection
-                
+
   it "should return true if the browser has window.getSelection method", ->
     window.getSelection = ->
     assert.isTrue(Annotator.supported())

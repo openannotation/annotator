@@ -42,11 +42,8 @@ npm install
 echo
 echo "Excellent. You should now be able to run the tests by running"
 echo
-echo "  make test"
+echo "  npm test"
 echo
-echo "While developing, you might find it useful to auto-compile any "
-echo "changes to development sources by running"
+echo "You can start the development server by running"
 echo
-echo "  ./tools/watch"
-echo
-echo "You may also find dev.html useful when developing Annotator."
+echo "  npm start"

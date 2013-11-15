@@ -1,15 +1,113 @@
 #!/usr/bin/env node
+var path = require('path');
+
+var chokidar = require('chokidar');
+var coffeeify = require('caching-coffeeify');
 var connect = require('connect');
+var convert = require('convert-source-map');
 var jwt = require('jwt-simple');
 var iso8601 = require('iso8601');
+var glob = require('glob');
+var q = require('kew')
 
+var build = require('./build');
 
 var CONSUMER_KEY = 'mockconsumer';
 var CONSUMER_SECRET = 'mockconsumersecret';
 var CONSUMER_TTL = 1800;
 
-var app = connect()
 
+// A global watcher. Using watchify leads to console warnings about
+// memory leaks. We use a global watcher shared among all bundles and
+// increase the limit on how many can watch it.
+var watcher = chokidar.watch([], {ignored: /^\./});
+watcher.setMaxListeners(50);
+
+
+function browserify(opts, xopts) {
+  var b = require('browserify')(opts, xopts);
+  b.serve = serve.bind(b);
+  return b;
+}
+
+
+// Serve a browserify bundle with connect middleware
+function serve(options) {
+  var promise = null;
+  var bundle = this.bundle.bind(this);
+  var self = this;
+
+  // A function which fulfills the promise of building a bundle.
+  // Based on connect-browserify.
+  var build = function () {
+    promise = q.defer();
+    self.bundle(options, function (err, result) {
+      if (err)
+        promise.reject(err);
+      else
+        promise.resolve(result);
+    });
+  }
+
+  // Monitor the dependencies
+  var deps = {};
+  var dirty = false;
+  var emit = self.emit.bind(self);
+  var empty = require.resolve('browserify/_empty.js');
+  self.emit = function (event, arg) {
+    if (event == 'dep' && arg.id != empty) {
+      if (!deps[arg.id]) {
+        deps[arg.id] = true;
+        watcher.add(arg.id);
+      }
+    }
+    emit.apply(this, arguments);
+  }
+
+  // Build and rebuild on changes
+  build()
+  watcher.on('change', function (id) {
+    if (!dirty) {
+      dirty = true;
+      promise.fin(function () {
+        setTimeout(function () {
+          deps = {};
+          dirty = false;
+          build();
+        }, 300);
+      });
+    }
+  });
+
+  // Return middleware to serve the bundle
+  return function (req, res, next) {
+    res.setHeader('Content-Type', 'application/javascript');
+    promise.then(function (result) {
+      var src = convert.removeComments(result);
+      var srcMap = convert.fromSource(result);
+      var sources = srcMap.getProperty('sources');
+      var sourcesContent = srcMap.getProperty('sourcesContent');
+
+      // Make the source files resolve relative to the package root.
+      // Strip absolute path information from the source map sources
+      sources = sources.map(function (source) {
+        return '/' + path.relative(process.cwd(), source);
+      });
+
+      // Add all the sources and set the root relative to the workspace
+      srcMap.setProperty('sources', sources);
+
+      res.write(src.slice(0,-2));
+      res.write(srcMap.toComment());
+      res.end('\n;');
+    }).fail(next);
+  }
+}
+
+
+var app = module.exports = connect();
+
+// Token
 app.use('/api/token', function(request, response) {
   var payload = {
     'consumerKey': CONSUMER_KEY,
@@ -32,10 +130,47 @@ app.use('/api/token', function(request, response) {
   response.end(tok);
 });
 
+
+// Core
+app.use('/lib/annotator.js', build.annotator(browserify).serve({
+  debug: true,
+  standalone: 'Annotator'
+}));
+
+
+// Plugins
+glob.sync('./src/plugin/*.coffee').forEach(function (p) {
+  var b = build.plugin(browserify, p);
+  var path = p.replace('./src', '/lib').replace('.coffee', '.js');
+  app.use(path, b.serve({debug: true, standalone: 'Annotator'}));
+});
+
+
+// Tests
+glob.sync('./test/**/*.coffee').forEach(function (t) {
+  if (t == './test/helpers.coffee') {
+    var b = browserify({extensions: '.coffee'})
+      .require('./test/helpers', {expose: 'helpers'})
+      .require('./src/annotator', {expose: 'annotator'})
+      .require('./src/plugin/nullstore', {entry: true})
+      .transform(coffeeify)
+    ;
+    app.use('/test/helpers.js', b.serve({debug: true}));
+  } else {
+    var b = build.test(browserify, t).external('annotator');
+    var path = t.replace('./', '/').replace('.coffee', '.js');
+    app.use(path, b.serve({debug: true}));
+  }
+});
+
+
+// Static files
 app.use(connect.static(process.cwd()));
 
-app.listen(4000);
 
-console.log("The development server is now running.");
-console.log("Live at: http://localhost:4000/dev.html");
-console.log("Test suite at: http://localhost:4000/test/runner.html");
+// Go
+if (require.main === module) {
+  app.listen(4000);
+  console.log("Development: http://localhost:4000/dev.html");
+  console.log("Testing: http://localhost:4000/test/runner.html");
+}

@@ -1,3 +1,6 @@
+Annotator = require('annotator')
+
+
 class Annotator.Plugin.Filter extends Annotator.Plugin
   # Events and callbacks to bind to the Filter#element.
   events:
@@ -366,3 +369,6 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
   # Returns nothing.
   _onClearClick: (event) ->
     $(event.target).prev('input').val('').keyup().blur()
+
+
+module.exports = Annotator.Plugin.Filter

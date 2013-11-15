@@ -1,3 +1,6 @@
+xpath = require './xpath'
+
+
 # I18N
 gettext = null
 
@@ -15,9 +18,13 @@ unless jQuery?.fn?.jquery
 unless JSON and JSON.parse and JSON.stringify
   console.error(_t("Annotator requires a JSON implementation: have you included lib/vendor/json2.js?"))
 
-$ = jQuery
-
 Util = {}
+
+# Public: Create a Gettext translated string from a message id
+#
+# Returns a String
+Util.TranslationString = _t
+
 
 # Public: Flatten a nested array structure
 #
@@ -122,10 +129,10 @@ Util.readRangeViaSelection = (range) ->
 
 Util.xpathFromNode = (el, relativeRoot) ->
   try
-    result = simpleXPathJQuery.call el, relativeRoot
+    result = xpath.simpleXPathJQuery.call el, relativeRoot
   catch exception
     console.log "jQuery-based XPath construction failed! Falling back to manual."
-    result = simpleXPathPure.call el, relativeRoot
+    result = xpath.simpleXPathPure.call el, relativeRoot
   result
 
 Util.nodeFromXPath = (xp, root) ->
@@ -134,7 +141,7 @@ Util.nodeFromXPath = (xp, root) ->
   for step in steps
     [name, idx] = step.split "["
     idx = if idx? then parseInt (idx?.split "]")[0] else 1
-    node = findChild node, name.toLowerCase(), idx
+    node = xpath.findChild node, name.toLowerCase(), idx
 
   node
 
@@ -175,3 +182,7 @@ Util.mousePosition = (e, offsetEl) ->
 # where the existance of the parameter must be checked before calling.
 Util.preventEventDefault = (event) ->
   event?.preventDefault?()
+
+
+# Export Util object
+module.exports = Util

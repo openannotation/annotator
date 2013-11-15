@@ -1,8 +1,11 @@
-describe 'Annotator.Viewer', ->
+Viewer = require('../../src/viewer')
+
+
+describe 'Viewer', ->
   viewer = null
 
   beforeEach ->
-    viewer = new Annotator.Viewer()
+    viewer = new Viewer()
 
   afterEach ->
     viewer.element.remove()
@@ -17,7 +20,7 @@ describe 'Annotator.Viewer', ->
       assert.operator(viewer.element.find('.annotator-controls:first button').length, '>', 0)
 
     it "should NOT contain any controls if options.readOnly is true", ->
-      viewer = new Annotator.Viewer(readOnly: true)
+      viewer = new Viewer(readOnly: true)
       viewer.load([{text: "Hello there"}])
       assert.lengthOf(viewer.element.find('.annotator-controls:first button'), 0)
 

@@ -1,13 +1,16 @@
-describe "Annotator.Widget", ->
+Widget = require('../../src/widget')
+
+
+describe "Widget", ->
   widget = null
 
   beforeEach ->
     element = $('<div />')[0]
-    widget  = new Annotator.Widget(element)
+    widget  = new Widget(element)
 
   describe "constructor", ->
     it "should extend the Widget#classes object with child classes", ->
-      class ChildWidget extends Annotator.Widget
+      class ChildWidget extends Widget
         classes:
           customClass: 'my-custom-class'
           anotherClass: 'another-class'

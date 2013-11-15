@@ -1,61 +1,5 @@
-describe 'Evented', ->
-  e = null
-
-  beforeEach -> e = new Evented()
-  afterEach -> e = null
-
-  it ".subscribe() subscribes listeners", ->
-    res = []
-    e.subscribe('foo', -> res.push('bar'))
-    assert.deepEqual(res, [])
-    e.publish('foo')
-    assert.deepEqual(res, ['bar'])
-
-  it "passes args from .publish() to listeners", ->
-    res = []
-    e.subscribe('foo', (x, y, z) -> res.push(z, y, x))
-    assert.deepEqual(res, [])
-    e.publish('foo', [1, 2, 3])
-    assert.deepEqual(res, [3, 2, 1])
-
-  it "invokes the callback in the context of the object by default", ->
-    res = null
-    e.subscribe('foo', (-> res = this))
-    e.publish('foo')
-    assert.equal(res, e)
-
-  it "invokes the callback with a context if provided", ->
-    res = null
-    sentinel = {}
-    e.subscribe('foo', (-> res = this), sentinel)
-    e.publish('foo')
-    assert.equal(res, sentinel)
-
-  it ".unsubscribe() unsubscribes listeners", ->
-    res = []
-    cbk = -> res.push('bar')
-    e.subscribe('foo', cbk)
-    e.unsubscribe('foo', cbk)
-    e.publish('foo')
-    assert.deepEqual(res, [])
-
-  it ".unsubscribe() only unsubscribes listeners passed", ->
-    res = []
-    cbk = -> res.push('bar')
-    e.subscribe('foo', -> res.push('baz'))
-    e.subscribe('foo', cbk)
-    e.unsubscribe('foo', cbk)
-    e.publish('foo')
-    assert.deepEqual(res, ['baz'])
-
-  it ".once() only fires its callback once", ->
-    res = []
-    cbk =-> res.push('bar')
-    e.once('foo', cbk)
-    e.publish('foo')
-    e.publish('foo')
-    assert.equal(res.length, 1)
-
+h = require('helpers')
+Delegator = require('../../src/class')
 
 class DelegatedExample extends Delegator
   events:
@@ -83,12 +27,12 @@ describe 'Delegator', ->
   $fix = null
 
   beforeEach ->
-    addFixture('delegator')
+    h.addFixture('delegator')
 
-    delegator = new DelegatedExample(fix())
-    $fix = $(fix())
+    delegator = new DelegatedExample(h.fix())
+    $fix = $(h.fix())
 
-  afterEach -> clearFixtures()
+  afterEach -> h.clearFixtures()
 
   it "should provide access to an options object", ->
     assert.equal(delegator.options.foo, "bar")
