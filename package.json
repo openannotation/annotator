@@ -22,11 +22,11 @@
     "connect": "~2.10.1",
     "browserify": "~2.35.2",
     "caching-coffeeify": "~0.3.0",
-    "chokidar": "~0.7.0",
     "convert-source-map": "~0.3.1",
     "glob": "~3.2.6",
     "kew": "~0.2.2",
-    "source-map": "~0.1.31"
+    "source-map": "~0.1.31",
+    "watchify": "~0.3.0"
   },
   "engines": {
     "node": ">=0.8 <0.12"

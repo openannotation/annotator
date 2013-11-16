@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 var path = require('path');
 
-var chokidar = require('chokidar');
 var coffeeify = require('caching-coffeeify');
 var connect = require('connect');
 var convert = require('convert-source-map');
@@ -9,19 +8,13 @@ var jwt = require('jwt-simple');
 var iso8601 = require('iso8601');
 var glob = require('glob');
 var q = require('kew')
+var watchify = require('watchify')
 
 var build = require('./build');
 
 var CONSUMER_KEY = 'mockconsumer';
 var CONSUMER_SECRET = 'mockconsumersecret';
 var CONSUMER_TTL = 1800;
-
-
-// A global watcher. Using watchify leads to console warnings about
-// memory leaks. We use a global watcher shared among all bundles and
-// increase the limit on how many can watch it.
-var watcher = chokidar.watch([], {ignored: /^\./});
-watcher.setMaxListeners(50);
 
 
 function browserify(opts, xopts) {
@@ -42,42 +35,18 @@ function serve(options) {
   var build = function () {
     promise = q.defer();
     self.bundle(options, function (err, result) {
-      if (err)
+      if (err) {
+        console.error(err);
         promise.reject(err);
-      else
+      } else {
         promise.resolve(result);
-    });
-  }
-
-  // Monitor the dependencies
-  var deps = {};
-  var dirty = false;
-  var emit = self.emit.bind(self);
-  var empty = require.resolve('browserify/_empty.js');
-  self.emit = function (event, arg) {
-    if (event == 'dep' && arg.id != empty) {
-      if (!deps[arg.id]) {
-        deps[arg.id] = true;
-        watcher.add(arg.id);
       }
-    }
-    emit.apply(this, arguments);
+    });
   }
 
   // Build and rebuild on changes
   build()
-  watcher.on('change', function (id) {
-    if (!dirty) {
-      dirty = true;
-      promise.fin(function () {
-        setTimeout(function () {
-          deps = {};
-          dirty = false;
-          build();
-        }, 300);
-      });
-    }
-  });
+  watchify(this).on('update', build);
 
   // Return middleware to serve the bundle
   return function (req, res, next) {
