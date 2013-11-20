@@ -23,7 +23,8 @@ testData = [
   [ "/div[2]/text()[2]",0,"/div[2]",7,"Lorem sed do eiusmod tempor.",                        "Text between br tags, with <br/><p><br/></p><br/> at end"]
   [ "/div[2]",   3,"/div[2]/text()[2]",28,"Lorem sed do eiusmod tempor.",                    "Text between br tags, elementNode ref at start"]
   [ "/div[2]",   2,"/div[2]/text()[2]",28,"Lorem sed do eiusmod tempor.",                    "Text between br tags, with <p><br/></p> at the start"]
-  [ "/div[2]",   1,"/div[2]/text()[2]",28,"Lorem sed do eiusmod tempor.",                    "Text between br tags, with <br/><p><br/></p> at the start"]
+  [ "/div[2]",   1,"/div[2]/text()[2]",28,"Lorem sed do eiusmod tempor.",                    "Text between br tags, with <br/><p><br/></p> at the start"],
+  [ "/h2[2]",    0,"/p[4]", 0, "Header Level 2\n\n\n  Mauris lacinia ipsum nulla, id iaculis quam egestas quis.\n\n\n", "No text node at the end and offset 0"]
 ]
 
 describe 'Range', ->
@@ -145,6 +146,7 @@ describe 'Range', ->
         range = new Range.BrowserRange(sel.getRangeAt(0))
         norm  = range.normalize(fix())
 
+        console.log(textInNormedRange(norm), sel.expectation)
         assert.equal(textInNormedRange(norm), sel.expectation)
 
     for i in [0...testData.length]
