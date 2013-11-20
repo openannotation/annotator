@@ -146,7 +146,6 @@ describe 'Range', ->
         range = new Range.BrowserRange(sel.getRangeAt(0))
         norm  = range.normalize(fix())
 
-        console.log(textInNormedRange(norm), sel.expectation)
         assert.equal(textInNormedRange(norm), sel.expectation)
 
     for i in [0...testData.length]
