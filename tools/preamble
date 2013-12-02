@@ -1,7 +1,7 @@
 cd "$(dirname "$0")"
 
-AUTHORS=$(./authors)
 DATE=$(date -u "+%Y-%m-%d %H:%M:%SZ")
+YEAR=$(date -u "+%Y")
 
 # ./tools/make_release exports VERSION, so use that if available
 if [ -n "$VERSION" ]; then
@@ -11,7 +11,7 @@ else
 fi
 
 # print preamble, substituting variables
-cat ../src/preamble.coffee | 
+cat ../src/preamble.coffee |
 sed -e "s/{{VERSION}}/$VERSION/g" \
-    -e "s/{{AUTHORS}}/$AUTHORS/g" \
+    -e "s/{{YEAR}}/$YEAR/g" \
     -e "s/{{DATE}}/$DATE/g"
