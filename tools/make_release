@@ -97,11 +97,10 @@ make clean
 make annotator plugins annotator-full
 
 echo "Committing release and creating tag"
-git co master
 git add -f pkg/*
 
 tree=$(git write-tree)
-parent=$(git rev-parse master)
+parent=$(git rev-parse HEAD)
 
 commit=$(echo "Annotator release v${VERSION}" | git commit-tree "${tree}" -p "${parent}")
 
