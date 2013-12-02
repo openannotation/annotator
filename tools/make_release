@@ -8,8 +8,8 @@ if ! which json >/dev/null 2>&1; then
   exit 1
 fi
 
-if ! which s3cmd >/dev/null 2>&1; then
-  echo "$(basename "$0"): this tool requires s3cmd! (try 'brew install s3cmd && s3cmd --configure')" >&2
+if ! which aws >/dev/null 2>&1; then
+  echo "$(basename "$0"): this tool requires awscli! (try 'pip install awscli')" >&2
   exit 1
 fi
 
@@ -109,15 +109,22 @@ git tag "v${VERSION}" "${commit}"
 git reset HEAD pkg/
 
 # Upload release to S3
+pushd pkg/
 
 echo "Uploading release to S3"
-[ -n "$S3CFG" ] && S3ARGS="-c $S3CFG"
-maybe s3cmd $S3ARGS --acl-public sync pkg/*.{js,css} "s3://assets.annotateit.org/annotator/v${VERSION}/"
+maybe aws s3 sync --acl public-read \
+                  --exclude "*" \
+                  --include "annotator*.js" \
+                  --include "annotator*.css" \
+                  --include "annotator*.map" \
+                  --include "_preamble.coffee" \
+                  --include "*_mapsrc*" \
+                  . \
+                  "s3://assets.annotateit.org/annotator/v${VERSION}/"
 
 # Make zips
 
 echo "Making zips for GitHub"
-pushd pkg/
 
 mkdir "annotator.${VERSION}"
 ln annotator.*min.{js,css} "annotator.${VERSION}"
