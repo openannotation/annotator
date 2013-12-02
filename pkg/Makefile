@@ -60,40 +60,26 @@ plugins: $(addprefix annotator.,$(PLUGIN_NAMES:.coffee=.min.js))
 
 annotator-full: annotator-full.min.js
 
-ANNOTATOR_MAPS=$(addprefix ../lib/, $(addsuffix .map, $(basename $(ANNOTATOR))))
-
-annotator.js: $(ANNOTATOR)
+_preamble.map:
 	@../tools/preamble > _preamble.coffee
-	@coffee -mcb _preamble.coffee
-	@cd ..; \
-	coffeebarx $(addprefix src/, $(ANNOTATOR)) -xso pkg/_annotator.js;
+	@coffee -mcb --no-header _preamble.coffee
+
+annotator.js: $(ANNOTATOR) _preamble.map
+	@cd ..; coffeebarx $(addprefix src/, $(ANNOTATOR)) -xso pkg/_annotator.js
 	@mapcat _preamble.map _annotator.map -m annotator.map -j annotator.js
-	@rm -f _preamble.* _annotator.*
 
-ANNOTATOR_FULL_MAPS=$(addprefix ../lib/, $(addsuffix .map, $(basename $(ANNOTATOR_FULL))))
-
-annotator-full.js: $(ANNOTATOR_FULL)
-	@../tools/preamble > _preamble.coffee
-	@coffee -mcb _preamble.coffee
-	@cd ..; \
-	coffeebarx $(addprefix src/, $(ANNOTATOR_FULL)) -xso pkg/_annotator.js
-	@mapcat _preamble.map _annotator.map -m annotator-full.map -j annotator-full.js
-	@rm -f _preamble.* _annotator.*
+annotator-full.js: $(ANNOTATOR_FULL) _preamble.map
+	@cd ..; coffeebarx $(addprefix src/, $(ANNOTATOR_FULL)) -xso pkg/_annotator-full.js
+	@mapcat _preamble.map _annotator-full.map -m annotator-full.map -j annotator-full.js
 
 annotator.css: ../css/annotator.css
 	@../tools/data_uri_ify <../css/annotator.css >annotator.css
 
 bookmarklet: annotator-bookmarklet.min.js annotator.min.css bookmarklet.min.js
 
-BOOKMARKLET_MAPS=$(addprefix ../lib/, $(addsuffix .map, $(basename $(BOOKMARKLET))))
-
-annotator-bookmarklet.js: $(BOOKMARKLET)
-	@../tools/preamble > _preamble.coffee
-	@coffee -mcb _preamble.coffee
-	@cd ..; \
-	coffeebarx $(addprefix src/, $(BOOKMARKLET)) -xso pkg/_annotator.js
-	@mapcat _preamble.map _annotator.map -m annotator-bookmarklet.map -j annotator-bookmarklet.js
-	@rm -f _preamble.* _annotator.*
+annotator-bookmarklet.js: $(BOOKMARKLET) _preamble.map
+	@cd ..; coffeebarx $(addprefix src/, $(BOOKMARKLET)) -xso pkg/_annotator-bookmarklet.js
+	@mapcat _preamble.map _annotator-bookmarklet.map -m annotator-bookmarklet.map -j annotator-bookmarklet.js
 
 BOOKMARKLET_CFG_DEP=$(shell [ -f $(BOOKMARKLET_CFG) ] && echo $(BOOKMARKLET_CFG))
 bookmarklet.js: $(BOOKMARKLET_SRC) $(BOOKMARKLET_CFG_DEP)
@@ -108,19 +94,18 @@ bookmarklet.js: $(BOOKMARKLET_SRC) $(BOOKMARKLET_CFG_DEP)
 	      >bookmarklet.js; \
 	fi
 
-annotator.%.js: plugin/%.coffee
-	@../tools/preamble > _preamble.coffee
-	@coffee -mcb _preamble.coffee
-	@cd ..; coffeebarx -xso pkg/_annotator.js pkg/$<
-	@mapcat _preamble.map _annotator.map -m $(basename $@).map -j $@
-	@rm -rf _preamble.* _annotator.js _annotator.map
+annotator.%.js: plugin/%.coffee _preamble.map
+	@cd ..; coffeebarx -xso pkg/_$(basename $@).js pkg/$<
+	@mapcat _preamble.map _$(basename $@).map -m $(basename $@).map -j $@
 
-%.min.js: %.js
+%.min.js: %.js _preamble.map
+	@# Oh my god this is so horrible I want to die. Uglify doesn't add the
+	@# "file" key to the output map, so we manually inject it... with sed.
 	@echo $@
 	@if [ -e $(basename $<).map ]; then \
-	  uglifyjs $< --source-map $(basename $<).min.map --in-source-map $(basename $<).map > $@ 2>/dev/null ; \
-	  echo >> $@; \
-	  echo "//@ sourceMappingURL=$(basename $<).min.map" >> $@; \
+	  uglifyjs $< --source-map _$(basename $<).min.map --in-source-map $(basename $<).map > _$@ 2>/dev/null ; \
+	  sed -e 's/\("version":3,\)/\1"file":"'_$@'",/' -i '' _$(basename $<).min.map ; \
+	  mapcat _preamble.map _$(basename $<).min.map -m $(basename $<).min.map -j $@ ; \
 	else \
 	  uglifyjs $< > $@ 2>/dev/null ; \
 	fi

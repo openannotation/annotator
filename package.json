@@ -9,7 +9,7 @@
   "devDependencies": {
     "coffee-script": "1.6.x",
     "uglify-js": "2.3.6",
-    "mapcat": "0.1.0",
+    "mapcat": "0.2.0",
     "coffeebarx": "0.0.3",
     "uglifycss": "0.0.5",
     "mocha": "1.9.0",

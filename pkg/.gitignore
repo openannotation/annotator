@@ -1,6 +1,6 @@
+*.coffee
 *.js
 *.css
 *.map
-_preamble*
 _tmp
-_*mapsrc
+*_mapsrc
