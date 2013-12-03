@@ -1,4 +1,6 @@
-describe "Filter", ->
+Filter = require('../../../src/plugin/filter')
+
+describe "Annotator.Plugins.Filter", ->
   plugin  = null
   element = null
 
@@ -10,7 +12,7 @@ describe "Filter", ->
         find: sinon.stub().returns($())
       }
     }
-    plugin = new Annotator.Plugin.Filter(element[0])
+    plugin = new Filter(element[0])
     plugin.annotator = annotator
 
   afterEach ->

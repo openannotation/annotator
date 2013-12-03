@@ -1,11 +1,17 @@
+Annotator = require('annotator')
+Tags = require('../../../src/plugin/tags')
+
+
 describe 'Annotator.Plugin.Tags', ->
   annotator = null
   plugin = null
 
   beforeEach ->
     el = $("<div><div class='annotator-editor-controls'></div></div>")[0]
-    annotator = new Annotator($('<div/>')[0])
-    plugin = new Annotator.Plugin.Tags(el)
+    annotator = new Annotator($('<div/>')[0], {
+      store: new Annotator.Plugin.NullStore()
+    })
+    plugin = new Tags(el)
     plugin.annotator = annotator
     plugin.pluginInit()
 
@@ -78,7 +84,7 @@ describe 'Annotator.Plugin.Tags', ->
 
 describe 'Annotator.Plugin.Tags.filterCallback', ->
   filter = null
-  beforeEach -> filter = Annotator.Plugin.Tags.filterCallback
+  beforeEach -> filter = Tags.filterCallback
 
   it 'should return true if all tags are matched by keywords', ->
     assert.isTrue(filter('cat dog mouse', ['cat', 'dog', 'mouse']))

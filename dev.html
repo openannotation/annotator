@@ -7,16 +7,7 @@
     <script src="lib/vendor/jquery.js"></script>
     <script src="lib/vendor/json2.js"></script>
 
-    <script src="lib/util.js"></script>
-    <script src="lib/console.js"></script>
-    <script src="lib/class.js"></script>
-    <script src="lib/range.js"></script>
     <script src="lib/annotator.js"></script>
-    <script src="lib/widget.js"></script>
-    <script src="lib/editor.js"></script>
-    <script src="lib/viewer.js"></script>
-    <script src="lib/notification.js"></script>
-    <script src="lib/xpath.js"></script>
     <script src="lib/plugin/store.js"></script>
     <script src="lib/plugin/permissions.js"></script>
     <script src="lib/plugin/annotateitpermissions.js"></script>
@@ -94,25 +85,26 @@
     </div>
 
     <script>
-      var devAnnotator
+      var devAnnotator, devStore;
       (function ($) {
         var elem = document.getElementById('airlock');
 
-        devAnnotator = new Annotator(elem)
+        devStore = new Annotator.Plugin.Store({
+          prefix: 'http://localhost:5000',
+          loadFromSearch: {
+            uri: 'http://localhost/annotator/dev.html'
+          },
+          annotationData: {
+            uri: 'http://localhost/annotator/dev.html'
+          }
+        });
+
+        devAnnotator = new Annotator(elem, {store: devStore})
           .addPlugin('Auth', {
             tokenUrl: 'http://localhost:4000/api/token'
           })
           .addPlugin('Unsupported')
-          .addPlugin('AnnotateItPermissions')
-          .addPlugin('Store', {
-            prefix: 'http://localhost:5000',
-            loadFromSearch: {
-              uri: 'http://localhost/annotator/dev.html'
-            },
-            annotationData: {
-              uri: 'http://localhost/annotator/dev.html'
-            }
-          });
+          .addPlugin('AnnotateItPermissions');
 
         devAnnotator.plugins.Auth.withToken(function (tok) {
           console.log(tok);
@@ -124,4 +116,3 @@
 
 
 </html>
-

@@ -1,3 +1,6 @@
+Annotator = require('annotator')
+
+
 # Public: Plugin for managing user permissions under the rather more specialised
 # permissions model used by [AnnotateIt](http://annotateit.org).
 #
@@ -137,3 +140,6 @@ class Annotator.Plugin.AnnotateItPermissions extends Annotator.Plugin.Permission
   # Returns nothing.
   _setAuthFromToken: (token) =>
     this.setUser(token)
+
+
+module.exports = Annotator.Plugin.AnnotateItPermissions

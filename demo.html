@@ -77,8 +77,8 @@
       jQuery(function ($) {
         if (typeof $.fn.annotator !== 'function') {
           alert("Ooops! it looks like you haven't built the Annotator concatenation file. " +
-                "Either download a tagged release from GitHub, or modify the Cakefile to point " +
-                "at your copy of the YUI compressor and run `cake package`.");
+                "Either download a tagged release from GitHub, or build the package " +
+                "by running `make pkg` (or `./build/tools -a`).");
         } else {
           // This is the important bit: how to create the annotator and add
           // plugins

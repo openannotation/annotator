@@ -1,10 +1,12 @@
-Annotator = Annotator || {}
+Delegator = require './class'
+Util = require './util'
+
 
 # Public: A simple notification system that can be used to display information,
 # warnings and errors to the user. Display of notifications are controlled
 # cmpletely by CSS by adding/removing the @options.classes.show class. This
 # allows styling/animation using CSS rather than hardcoding styles.
-class Annotator.Notification extends Delegator
+class Notification extends Delegator
 
   # Sets events to be bound to the @element.
   events:
@@ -34,7 +36,7 @@ class Annotator.Notification extends Delegator
   #
   # Returns
   constructor: (options) ->
-    super $(@options.html).appendTo(document.body)[0], options
+    super $(@options.html)[0], options
 
   # Public: Displays the annotation with message and optional status. The
   # message will hide itself after 5 seconds or if the user clicks on it.
@@ -52,8 +54,10 @@ class Annotator.Notification extends Delegator
   #   notification.show("An error has occurred", Annotator.Notification.ERROR)
   #
   # Returns itself.
-  show: (message, status=Annotator.Notification.INFO) =>
+  show: (message, status=Notification.INFO) =>
     @currentStatus = status
+    this._appendElement()
+
     $(@element)
       .addClass(@options.classes.show)
       .addClass(@options.classes[@currentStatus])
@@ -77,16 +81,17 @@ class Annotator.Notification extends Delegator
       .removeClass(@options.classes[@currentStatus])
     this
 
+  # Private: Ensures the notification element has been added to the document
+  # when it is needed.
+  _appendElement: ->
+    if not @element.parentNode?
+      $(@element).appendTo(document.body)
+
 # Constants for controlling the display of the notification. Each constant
 # adds a different class to the Notification#element.
-Annotator.Notification.INFO    = 'info'
-Annotator.Notification.SUCCESS = 'success'
-Annotator.Notification.ERROR   = 'error'
+Notification.INFO    = 'info'
+Notification.SUCCESS = 'success'
+Notification.ERROR   = 'error'
 
-# Attach notification methods to the Annotation object on document ready.
-$(->
-  notification = new Annotator.Notification
-
-  Annotator.showNotification = notification.show
-  Annotator.hideNotification = notification.hide
-)
+# Export Notification object
+module.exports = Notification

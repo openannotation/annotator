@@ -1,3 +1,6 @@
+Annotator = require('annotator')
+
+
 # Public: Plugin for setting permissions on newly created annotations as well as
 # managing user permissions such as viewing/editing/deleting annotions.
 #
@@ -13,11 +16,6 @@
 #
 # Returns a new instance of the Permissions Object.
 class Annotator.Plugin.Permissions extends Annotator.Plugin
-
-  # A Object literal consisting of event/method pairs to be bound to
-  # @element. See Delegator#addEvents() for details.
-  events:
-    'beforeAnnotationCreated': 'addFieldsToAnnotation'
 
   # A Object literal of default options for the class.
   options:
@@ -150,6 +148,8 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   # Returns nothing.
   pluginInit: ->
     return unless Annotator.supported()
+
+    @annotator.subscribe('beforeAnnotationCreated', this.addFieldsToAnnotation)
 
     self = this
     createCallback = (method, type) ->
@@ -317,3 +317,5 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
   _setAuthFromToken: (token) =>
     this.setUser(token.userId)
 
+
+module.exports = Annotator.Plugin.Permissions

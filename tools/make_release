@@ -94,7 +94,7 @@ git commit package.json -m "Bump version -> v${VERSION}"
 
 echo "Generating package files"
 make clean
-make annotator plugins annotator-full
+make pkg
 
 echo "Committing release and creating tag"
 git add -f pkg/*
@@ -116,8 +116,6 @@ maybe aws s3 sync --acl public-read \
                   --include "annotator*.js" \
                   --include "annotator*.css" \
                   --include "annotator*.map" \
-                  --include "_preamble.coffee" \
-                  --include "*_mapsrc*" \
                   . \
                   "s3://assets.annotateit.org/annotator/v${VERSION}/"
 
