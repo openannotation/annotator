@@ -57,7 +57,7 @@ function uglify(src, srcMap) {
   ast.print(src);
 
   // Read the source and source map from the uglify pipeline
-  src = src.get() + '\n' + comment + filename + '.map';
+  src = src.get() + '\n' + comment + filename.replace('pkg/', '') + '.map';
   srcMap = convert.fromJSON(srcMap.toString());
 
   // Add all the sources into the source map
