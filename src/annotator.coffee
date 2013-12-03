@@ -7,6 +7,8 @@ Editor = require './editor'
 Notification = require './notification'
 Registry = require './registry'
 
+annotations = require './annotations'
+storage = require './storage'
 
 _t = Util.TranslationString
 
@@ -90,33 +92,8 @@ class Annotator extends Delegator
     # Return early if the annotator is not supported.
     return this unless Annotator.supported()
 
-    this._setupDocumentEvents() unless @options.readOnly
-    this._setupWrapper()._setupViewer()._setupEditor()
-    this._setupDynamicStyle()
-
-    # Create adder
-    this.adder = $(this.html.adder).appendTo(@wrapper).hide()
-
-    # Create annotation registry
-    this.annotations = new Registry(@options.store)
-
-    # Proxy all registry events on the Annotator object
-    # --- FIXME: a more elegant solution than this
-    events = [
-      'beforeAnnotationCreated',
-      'annotationCreated',
-      'beforeAnnotationUpdated',
-      'annotationUpdated',
-      'beforeAnnotationDeleted',
-      'annotationDeleted'
-    ]
-    for ev in events
-      do (ev) =>
-        @annotations.subscribe ev, =>
-          this.publish(ev, arguments)
-
-    # Do initial load
-    this.load(@options.loadQuery)
+    # Create the registry and start the application
+    Registry.createApp(this)
 
   # Wraps the children of @element in a @wrapper div. NOTE: This method will also
   # remove any script elements inside @element to prevent them re-executing.
@@ -148,7 +125,9 @@ class Annotator extends Delegator
         # Delete highlight elements.
         this.cleanupAnnotation(annotation)
         # Delete annotation
+        this.publish('beforeAnnotationDeleted', [annotation])
         this.annotations.delete(annotation)
+          .done => this.publish('annotationDeleted', [annotation])
       )
       .addField({
         load: (field, annotation) =>
@@ -331,7 +310,7 @@ class Annotator extends Delegator
   #   annotation = annotator.setupAnnotation(annotation)
   #
   # Returns the initialised annotation.
-  setupAnnotation: (annotation) ->
+  setupAnnotation: (annotation) =>
     root = @wrapper[0]
 
     normedRanges = []
@@ -482,6 +461,21 @@ class Annotator extends Delegator
         console.error _t("Could not load ") + name + _t(" plugin. Have you included the appropriate <script> tag?")
     this # allow chaining
 
+  # Public: Waits for the @editor to submit or hide, returning a promise that
+  # is resolved or rejected depending on whether the annotation was saved or
+  # cancelled.
+  editAnnotation: (annotation) =>
+    dfd = $.Deferred()
+    resolve = dfd.resolve.bind(dfd, annotation)
+    reject = dfd.reject.bind(dfd, annotation)
+
+    this.subscribe('annotationEditorSubmit', resolve)
+    this.once 'annotationEditorHidden', =>
+      this.unsubscribe('annotationEditorSubmit', resolve)
+      reject() if dfd.state() is 'pending'
+
+    dfd.promise()
+
   # Public: Loads the @editor with the provided annotation and updates its
   # position in the window.
   #
@@ -614,6 +608,26 @@ class Annotator extends Delegator
   isAnnotator: (element) ->
     !!$(element).parents().addBack().filter('[class^=annotator-]').not(@wrapper).length
 
+  configure: (registry) ->
+    registry.include(annotations)
+
+    if @options.store
+      registry.store = @options.store
+    else
+      registry.include(storage)
+
+  run: ->
+    # Set up the core interface components
+    this._setupDocumentEvents() unless @options.readOnly
+    this._setupWrapper()._setupViewer()._setupEditor()
+    this._setupDynamicStyle()
+
+    # Create adder
+    this.adder = $(this.html.adder).appendTo(@wrapper).hide()
+
+    # Do initial load
+    if @options.loadQuery then this.load(@options.loadQuery)
+
   # Annotator#element callback. Displays viewer with all annotations
   # associated with highlight Elements under the cursor.
   #
@@ -658,37 +672,35 @@ class Annotator extends Delegator
     # Hide the adder
     position = @adder.position()
     @adder.hide()
-
-    # Show a temporary highlight so the user can see what they selected
-    # Also extract the quotation and serialize the ranges
     annotation = {ranges: @selectedRanges}
-    annotation = this.setupAnnotation(annotation)
-    $(annotation._local.highlights).addClass('annotator-hl-temporary')
 
-    # Subscribe to the editor events
+    $.when(annotation)
 
-    # Make the highlights permanent if the annotation is saved
-    save = =>
-      do cleanup
-      $(annotation._local.highlights).removeClass('annotator-hl-temporary')
-      this.annotations.create(annotation)
-        .fail(handleError)
+      # Set up the annotation
+      .then (annotation) =>
+        this.setupAnnotation(annotation)
 
-    # Remove the highlights if the edit is cancelled
-    cancel = =>
-      do cleanup
-      this.cleanupAnnotation(annotation)
+      # Show a temporary highlight so the user can see what they selected
+      .done (annotation) =>
+        $(annotation._local.highlights).addClass('annotator-hl-temporary')
+        this.showEditor(annotation, position)
 
-    # Don't leak handlers at the end
-    cleanup = =>
-      this.unsubscribe('annotationEditorHidden', cancel)
-      this.unsubscribe('annotationEditorSubmit', save)
+      # Edit the annotation
+      .then (annotation) =>
+        this.publish('beforeAnnotationCreated', [annotation])
+        this.editAnnotation(annotation)
+      .then (annotation) =>
+        this.annotations.create(annotation)
+      .then (annotation) =>
+        this.publish('annotationCreated', [annotation])
+        annotation
 
-    this.subscribe('annotationEditorHidden', cancel)
-    this.subscribe('annotationEditorSubmit', save)
+      # Clean up the highlights
+      .done (annotation) =>
+        $(annotation._local.highlights).removeClass('annotator-hl-temporary')
 
-    # Display the editor.
-    this.showEditor(annotation, position)
+      # Handle errors
+      .fail(this.cleanupAnnotation, handleError)
 
   # Annotator#viewer callback function. Displays the Annotator#editor in the
   # positions of the Annotator#viewer and loads the passed annotation for
@@ -698,27 +710,28 @@ class Annotator extends Delegator
   #
   # Returns nothing.
   onEditAnnotation: (annotation) =>
-    offset = @viewer.element.position()
+    position = @viewer.element.position()
 
-    # Subscribe once to editor events
+    $.when(annotation)
 
-    # Update the annotation when the editor is saved
-    update = =>
-      do cleanup
-      this.annotations.update(annotation)
-        .fail(handleError)
+      # Replace the viewer with the editor
+      .then (annotation) =>
+        @viewer.hide()
+        this.showEditor(annotation, position)
+        annotation
 
-    # Remove handlers when the editor is hidden
-    cleanup = =>
-      this.unsubscribe('annotationEditorHidden', cleanup)
-      this.unsubscribe('annotationEditorSubmit', update)
+      # Edit the annotation
+      .then (annotation) =>
+        this.publish('beforeAnnotationUpdated', [annotation])
+        this.editAnnotation(annotation)
+      .then (annotation) =>
+        this.annotations.update(annotation)
+      .then (annotation) =>
+        this.publish('annotationUpdated', [annotation])
+        annotation
 
-    this.subscribe('annotationEditorHidden', cleanup)
-    this.subscribe('annotationEditorSubmit', update)
-
-    # Replace the viewer with the editor
-    @viewer.hide()
-    this.showEditor(annotation, offset)
+      # Handle errors
+      .fail(handleError)
 
 # Create namespace for Annotator plugins
 class Annotator.Plugin extends Delegator

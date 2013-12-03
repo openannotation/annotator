@@ -121,7 +121,6 @@ glob.sync('./test/**/*.coffee').forEach(function (t) {
     var b = browserify({extensions: '.coffee'})
       .require('./test/helpers', {expose: 'helpers'})
       .require('./src/annotator', {expose: 'annotator'})
-      .require('./src/plugin/nullstore', {entry: true})
       .transform(coffeeify)
     ;
     app.use('/test/helpers.js', b.serve({debug: true}));
