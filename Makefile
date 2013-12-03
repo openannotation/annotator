@@ -16,6 +16,8 @@ DEPS := ./tools/build -d
 DEPDIR := .deps
 df = $(DEPDIR)/$(*F)
 
+PKGDIRS := pkg/lib pkg/lib/plugin
+
 all: annotator plugins annotator-full
 default: all
 
@@ -30,7 +32,7 @@ pkg: $(ANNOTATOR_PKG) $(PLUGIN_PKG) $(FULL_PKG)
 	cp README* pkg/
 
 clean:
-	rm -rf .deps/* pkg/*
+	rm -rf .deps pkg
 
 test:
 	npm test
@@ -38,21 +40,21 @@ test:
 develop:
 	npm start
 
-pkg/lib/plugin:
-	mkdir -p $@
-
 pkg/annotator.css: css/annotator.css
 	$(BUILD) -c
 
 pkg/%.js pkg/annotator.%.js: %.coffee
 
-pkg/%.js pkg/annotator.%.js pkg/annotator-%.js:
+pkg/%.js pkg/annotator.%.js pkg/annotator-%.js: | $(DEPDIR) $(PKGDIRS)
 	$(eval $@_CMD := $(patsubst annotator.%.js,-p %.js,$(@F)))
 	$(eval $@_CMD := $(subst .js,,$($@_CMD)))
 	$(BUILD) $($@_CMD)
 	@$(DEPS) $($@_CMD) \
 		| sed -n 's/^\(.*\)/pkg\/$(@F): \1/p' \
 		| sort | uniq > $(df).d
+
+$(DEPDIR) $(PKGDIRS):
+	@mkdir -p $@
 
 -include $(ANNOTATOR_SRC:%.coffee=$(DEPDIR)/%.d)
 -include $(PLUGIN_SRC:%.coffee=$(DEPDIR)/annotator.%.d)
