@@ -88,7 +88,7 @@ exports.plugin = function (browserify, p) {
   var b = browserify({extensions: ['.coffee']})
     .require('./src/namespace', {expose: 'annotator'})
     .require(p, {expose: expose})
-    .transform(coffeeify)
+    .transform(coffeeify);
 
   return annotator.loader(b);
 };
@@ -139,6 +139,7 @@ if (require.main === module) {
       default:
         console.error('Unrecognized target:', target);
         process.exit(64);
+        break;
       }
     }
   });
@@ -178,7 +179,7 @@ if (require.main === module) {
     fs.createReadStream('./css/annotator.css').pipe(dataURI.stdin);
     dataURI.stdout.pipe(through(write, end));
 
-    function write (data) { src += data };
+    function write (data) { src += data; }
     function end() {
       this.queue(null);
 
@@ -224,7 +225,7 @@ if (require.main === module) {
 
   function pack(b, filename, options) {
     var deps = '';
-    var ignore = /(_empty)|(fake_[a-z0-9]+).js$/
+    var ignore = /(_empty)|(fake_[a-z0-9]+).js$/;
     var promise = q.defer();
 
     if (depsOnly) {
