@@ -30,7 +30,7 @@ UglifyJS.AST_Node.warn_function = null;
 // Uglify a source with the supplied source map generator.
 // Returns {code::String, map::SourceMapGenerator}
 function uglify(src, srcMap) {
-  var comment = '//@ sourceMappingURL=';
+  var comment = '//# sourceMappingURL=';
   var inSrcMap = convert.fromJSON(srcMap.toString());
   var filename = inSrcMap.getProperty('file').replace('.js', '.min.js');
 
