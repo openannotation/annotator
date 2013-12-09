@@ -83,7 +83,7 @@ class AnnotationProvider
     safeCopy = $.extend(true, {}, obj)
     delete safeCopy._local
 
-    @registry.store[storeFunc](safeCopy)
+    @registry['store'][storeFunc](safeCopy)
       .then (ret) =>
         # Empty object without changing identity
         for own k, v of obj
