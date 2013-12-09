@@ -122,10 +122,10 @@ class Annotator extends Delegator
       .on("edit", this.onEditAnnotation)
       .on("delete", (annotation) =>
         @viewer.hide()
+        this.publish('beforeAnnotationDeleted', [annotation])
         # Delete highlight elements.
         this.cleanupAnnotation(annotation)
         # Delete annotation
-        this.publish('beforeAnnotationDeleted', [annotation])
         this.annotations.delete(annotation)
           .done => this.publish('annotationDeleted', [annotation])
       )
@@ -677,6 +677,9 @@ class Annotator extends Delegator
 
     $.when(annotation)
 
+      .done (annotation) =>
+        this.publish('beforeAnnotationCreated', [annotation])
+
       # Set up the annotation
       .then (annotation) =>
         this.setupAnnotation(annotation)
@@ -688,17 +691,16 @@ class Annotator extends Delegator
 
       # Edit the annotation
       .then (annotation) =>
-        this.publish('beforeAnnotationCreated', [annotation])
         this.editAnnotation(annotation)
       .then (annotation) =>
         this.annotations.create(annotation)
-      .then (annotation) =>
-        this.publish('annotationCreated', [annotation])
-        annotation
 
       # Clean up the highlights
       .done (annotation) =>
         $(annotation._local.highlights).removeClass('annotator-hl-temporary')
+
+      .done (annotation) =>
+        this.publish('annotationCreated', [annotation])
 
       # Handle errors
       .fail(this.cleanupAnnotation, handleError)
@@ -715,6 +717,9 @@ class Annotator extends Delegator
 
     $.when(annotation)
 
+      .done (annotation) =>
+        this.publish('beforeAnnotationUpdated', [annotation])
+
       # Replace the viewer with the editor
       .then (annotation) =>
         @viewer.hide()
@@ -723,13 +728,12 @@ class Annotator extends Delegator
 
       # Edit the annotation
       .then (annotation) =>
-        this.publish('beforeAnnotationUpdated', [annotation])
         this.editAnnotation(annotation)
       .then (annotation) =>
         this.annotations.update(annotation)
-      .then (annotation) =>
+
+      .done (annotation) =>
         this.publish('annotationUpdated', [annotation])
-        annotation
 
       # Handle errors
       .fail(handleError)
