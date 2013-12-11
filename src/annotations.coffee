@@ -66,7 +66,7 @@ class AnnotationProvider
   #
   # Returns a Promise resolving to the store return value.
   query: (query) ->
-    return @registry.store.query(query)
+    return @registry['store'].query(query)
 
   # Public: Queries the store
   #
