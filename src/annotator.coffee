@@ -465,11 +465,12 @@ class Annotator extends Delegator
   # Public: Waits for the @editor to submit or hide, returning a promise that
   # is resolved or rejected depending on whether the annotation was saved or
   # cancelled.
-  editAnnotation: (annotation) =>
+  editAnnotation: (annotation, position) =>
     dfd = $.Deferred()
     resolve = dfd.resolve.bind(dfd, annotation)
     reject = dfd.reject.bind(dfd, annotation)
 
+    this.showEditor(annotation, position)
     this.subscribe('annotationEditorSubmit', resolve)
     this.once 'annotationEditorHidden', =>
       this.unsubscribe('annotationEditorSubmit', resolve)
@@ -687,11 +688,10 @@ class Annotator extends Delegator
       # Show a temporary highlight so the user can see what they selected
       .done (annotation) =>
         $(annotation._local.highlights).addClass('annotator-hl-temporary')
-        this.showEditor(annotation, position)
 
       # Edit the annotation
       .then (annotation) =>
-        this.editAnnotation(annotation)
+        this.editAnnotation(annotation, position)
       .then (annotation) =>
         this.annotations.create(annotation)
 
@@ -714,21 +714,15 @@ class Annotator extends Delegator
   # Returns nothing.
   onEditAnnotation: (annotation) =>
     position = @viewer.element.position()
+    @viewer.hide()
 
     $.when(annotation)
 
       .done (annotation) =>
         this.publish('beforeAnnotationUpdated', [annotation])
 
-      # Replace the viewer with the editor
       .then (annotation) =>
-        @viewer.hide()
-        this.showEditor(annotation, position)
-        annotation
-
-      # Edit the annotation
-      .then (annotation) =>
-        this.editAnnotation(annotation)
+        this.editAnnotation(annotation, position)
       .then (annotation) =>
         this.annotations.update(annotation)
 
