@@ -21,7 +21,7 @@ class Registry extends Evented
   # named 'configure`. This function is immediately invoked with the registry
   # instance as the only argument.
   include: (module) ->
-    module?.configure(this)
+    module.configure(this)
     this
 
   # Public: Run an application. An application is a module with a function
@@ -37,6 +37,6 @@ class Registry extends Evented
       app[k] = v
 
     this.app = app
-    app.run?()
+    app.run(this)
 
 module.exports = Registry
