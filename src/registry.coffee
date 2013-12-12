@@ -29,7 +29,7 @@ class Registry extends Evented
   # callback invoked with the registry instance as the only argument.
   run: (app) ->
     if this.app
-      throw new Error("This registry already has an application.")
+      throw new Error("Registry is already bound to a running application")
 
     this.include(app)
 
