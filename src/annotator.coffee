@@ -7,8 +7,8 @@ Editor = require './editor'
 Notification = require './notification'
 Registry = require './registry'
 
-annotations = require './annotations'
-storage = require './storage'
+AnnotationProvider = require './annotations'
+StorageProvider = require './storage'
 
 _t = Util.TranslationString
 
@@ -611,8 +611,8 @@ class Annotator extends Delegator
     !!$(element).parents().addBack().filter('[class^=annotator-]').not(@wrapper).length
 
   configure: (@registry) ->
-    registry.include(annotations)
-    registry.include(storage)
+    registry.include(AnnotationProvider)
+    registry.include(StorageProvider)
 
   run: (@registry) ->
     # Set up the core interface components
