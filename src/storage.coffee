@@ -2,7 +2,14 @@
 class StorageProvider
 
   @configure: (registry) ->
-    registry['store'] ?= new this(registry)
+    klass = registry.settings.store?.type
+
+    if typeof(klass) is 'function'
+      store = new klass(registry.settings.store)
+    else
+      store = new this(registry)
+
+    registry['store'] ?= store
 
   constructor: (@registry) ->
 

@@ -89,15 +89,12 @@
       (function ($) {
         var elem = document.getElementById('airlock');
 
-        devStore = new Annotator.Plugin.Store({
+        devStore = {
+          type: Annotator.Plugin.Store,
           prefix: 'http://localhost:5000',
-          loadFromSearch: {
-            uri: 'http://localhost/annotator/dev.html'
-          },
-          annotationData: {
-            uri: 'http://localhost/annotator/dev.html'
-          }
-        });
+          loadFromSearch: {uri: window.location},
+          annotationData: {uri: window.location}
+        };
 
         devAnnotator = new Annotator(elem, {store: devStore})
           .addPlugin('Auth', {

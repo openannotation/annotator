@@ -610,15 +610,11 @@ class Annotator extends Delegator
   isAnnotator: (element) ->
     !!$(element).parents().addBack().filter('[class^=annotator-]').not(@wrapper).length
 
-  configure: (registry) ->
+  configure: (@registry) ->
     registry.include(annotations)
+    registry.include(storage)
 
-    if @options.store
-      registry.store = @options.store
-    else
-      registry.include(storage)
-
-  run: ->
+  run: (@registry) ->
     # Set up the core interface components
     this._setupDocumentEvents() unless @options.readOnly
     this._setupWrapper()._setupViewer()._setupEditor()
