@@ -93,7 +93,7 @@ class Annotator extends Delegator
     return this unless Annotator.supported()
 
     # Create the registry and start the application
-    Registry.createApp(this)
+    Registry.createApp(this, options)
 
   # Wraps the children of @element in a @wrapper div. NOTE: This method will also
   # remove any script elements inside @element to prevent them re-executing.
