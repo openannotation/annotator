@@ -7,11 +7,8 @@ Range = Annotator.Range
 
 describe 'Annotator', ->
   annotator = null
-  mock = null
 
-  beforeEach -> annotator = new Annotator($('<div></div>')[0], {
-    store: new Annotator.Plugin.NullStore()
-  })
+  beforeEach -> annotator = new Annotator($('<div></div>')[0])
   afterEach  -> $(document).unbind()
 
   describe "events", ->
@@ -52,6 +49,10 @@ describe 'Annotator', ->
       sinon.stub(annotator, '_setupEditor').returns(annotator)
       sinon.stub(annotator, '_setupDocumentEvents').returns(annotator)
       sinon.stub(annotator, '_setupDynamicStyle').returns(annotator)
+
+    it 'should include the default modules', ->
+      assert.isObject(annotator['annotations'], 'annotations service exists')
+      assert.isObject(annotator['annotations'], 'storage service exists')
 
     it "should have a jQuery wrapper as @element", ->
       Annotator.prototype.constructor.call(annotator, annotator.element[0])
@@ -434,33 +435,32 @@ describe 'Annotator', ->
     it "should store the annotation in the highlighted element's data store", ->
       assert.equal(element.data('annotation'), annotation)
 
-  describe "when an annotation is deleted", ->
+  describe "cleanupAnnotation", ->
     annotation = null
     div = null
 
     beforeEach ->
       annotation = {
         text: "my annotation comment"
-        highlights: $('<span><em>Hats</em></span><span><em>Gloves</em></span>')
+        _local:
+          highlights: $('<span><em>Hats</em></span><span><em>Gloves</em></span>')
       }
-      div = $('<div />').append(annotation.highlights)
+      div = $('<div />').append(annotation._local.highlights)
 
     it "should remove the highlights from the DOM", ->
-      annotation.highlights.each ->
+      annotation._local.highlights.each ->
         assert.lengthOf($(this).parent(), 1)
 
-      annotator.annotations.delete(annotation)
-        .then ->
-          annotation.highlights.each ->
-            assert.lengthOf($(this).parent(), 0)
+      annotator.cleanupAnnotation(annotation)
+      annotation._local.highlights.each ->
+        assert.lengthOf($(this).parent(), 0)
 
     it "should leave the content of the highlights in place", ->
-      annotator.annotations.delete(annotation)
-        .then ->
-          assert.equal(div.html(), '<em>Hats</em><em>Gloves</em>')
+      annotator.cleanupAnnotation(annotation)
+      assert.equal(div.html(), '<em>Hats</em><em>Gloves</em>')
 
     it "should not choke when there are no highlights", ->
-      assert.doesNotThrow((-> annotator.annotations.delete({})), Error)
+      assert.doesNotThrow((-> annotator.cleanupAnnotation({})), Error)
 
   describe "loadAnnotations", ->
     beforeEach ->
