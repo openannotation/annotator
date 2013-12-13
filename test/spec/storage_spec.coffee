@@ -22,7 +22,7 @@ describe 'StorageProvider', ->
     it "should register the base storage implementation by default", ->
       assert.instanceOf(m, StorageProvider)
 
-    it "should instantiate a provided implementation store settings", ->
+    it "should instantiate a provided implementation with store settings", ->
 
       MockStore = sinon.spy()
 
@@ -38,16 +38,6 @@ describe 'StorageProvider', ->
 
   describe '#update()', ->
 
-    it "should pass annotation data to the store's #update()", ->
-      sinon.spy(m, 'update')
-
-      a.update(ann)
-      assert(m.update.calledOnce, 'store .update() called once')
-      assert(
-        m.update.calledWith(ann),
-        'store .update() called with correct args'
-      )
-
     it "should return a promise resolving to the updated annotation", (done) ->
       a.update(ann)
         .done (ret) ->
@@ -57,16 +47,6 @@ describe 'StorageProvider', ->
           done(new Error("promise rejected: #{msg}"))
 
   describe '#delete()', ->
-
-    it "should pass annotation data to the store's #delete()", ->
-      sinon.spy(m, 'delete')
-
-      a.delete(ann)
-      assert(m.delete.calledOnce, 'store .delete() called once')
-      assert(
-        m.delete.calledWith(ann),
-        'store .delete() called with correct args'
-      )
 
     it "should return a promise resolving to the deleted annotation object", (done) ->
       ann = {id: 123, some: 'data'}
@@ -79,42 +59,11 @@ describe 'StorageProvider', ->
 
   describe '#query()', ->
 
-    it "should pass query data to the store's #query()", ->
-      sinon.spy(m, 'query')
-
+    it "should return a promise resolving to the results and metadata", (done) ->
       a.query({foo: 'bar', type: 'giraffe'})
-      assert(m.query.calledOnce, 'store .query() called once')
-      assert(
-        m.query.calledWith({foo: 'bar', type: 'giraffe'}),
-        'store .query() called with correct args'
-      )
-
-      m.query.reset()
-
-    it "should return a promise", (done) ->
-      a.query({foo: 'bar', type: 'giraffe'})
-        .done () ->
-          done()
-        .fail (obj, msg) ->
-          done(new Error("promise rejected: #{msg}"))
-
-  describe '#load()', ->
-
-    it "should pass query data to the store's #query()", ->
-      sinon.spy(m, 'query')
-
-      a.load({foo: 'bar', type: 'giraffe'})
-      assert(m.query.calledOnce, 'store .query() called once')
-      assert(
-        m.query.calledWith({foo: 'bar', type: 'giraffe'}),
-        'store .query() called with correct args'
-      )
-
-      m.query.reset()
-
-    it "should return a promise", (done) ->
-      a.load({foo: 'bar', type: 'giraffe'})
-        .done () ->
+        .done (res, meta) ->
+          assert.isArray(res)
+          assert.isObject(meta)
           done()
         .fail (obj, msg) ->
           done(new Error("promise rejected: #{msg}"))
