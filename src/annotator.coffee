@@ -310,7 +310,7 @@ class Annotator extends Delegator
   #   annotation = annotator.setupAnnotation(annotation)
   #
   # Returns the initialised annotation.
-  setupAnnotation: (annotation) =>
+  setupAnnotation: (annotation) ->
     root = @wrapper[0]
 
     normedRanges = []
@@ -465,7 +465,7 @@ class Annotator extends Delegator
   # Public: Waits for the @editor to submit or hide, returning a promise that
   # is resolved or rejected depending on whether the annotation was saved or
   # cancelled.
-  editAnnotation: (annotation, position) =>
+  editAnnotation: (annotation, position) ->
     dfd = $.Deferred()
     resolve = dfd.resolve.bind(dfd, annotation)
     reject = dfd.reject.bind(dfd, annotation)
