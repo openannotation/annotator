@@ -1,8 +1,12 @@
+StorageProvider = require('./storage')
+
+
 # Public: Provides CRUD methods for annotations which call corresponding registry hooks.
 class AnnotationProvider
 
   @configure: (registry) ->
     registry['annotations'] ?= new this(registry)
+    registry.include(StorageProvider)
 
   constructor: (@registry) ->
 

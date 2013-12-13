@@ -8,7 +8,6 @@ Notification = require './notification'
 Registry = require './registry'
 
 AnnotationProvider = require './annotations'
-StorageProvider = require './storage'
 
 _t = Util.TranslationString
 
@@ -612,7 +611,6 @@ class Annotator extends Delegator
 
   configure: (@registry) ->
     registry.include(AnnotationProvider)
-    registry.include(StorageProvider)
 
   run: (@registry) ->
     # Set up the core interface components
