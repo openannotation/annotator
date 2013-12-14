@@ -10,9 +10,7 @@ describe 'Annotator.Plugin.AnnotateItPermissions', ->
   beforeEach ->
     el = $("<div class='annotator-viewer'></div>").appendTo('body')[0]
     permissions = new AnnotateItPermissions(el)
-    annotator = new Annotator($('<div/>')[0], {
-      store: new Annotator.Plugin.NullStore()
-    })
+    annotator = new Annotator($('<div/>')[0])
     permissions.annotator = annotator
     permissions.pluginInit()
 
