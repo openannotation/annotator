@@ -1,26 +1,23 @@
-Annotator = require('annotator')
 Document = require('../../../src/plugin/document')
 
 
 describe 'Annotator.Plugin.Document', ->
   $fix = null
-  annotator = null
+  plugin = null
+  metadata = null
 
   beforeEach ->
-    annotator = new Annotator($('<div/>')[0], {
-      store: new Annotator.Plugin.NullStore()
-    })
-    annotator.addPlugin('Document')
+    plugin = new Document($('<div/>')[0])
+    plugin.pluginInit()
 
-  afterEach  -> $(document).unbind()
+  describe '#beforeAnnotationCreated', ->
 
-  it 'should have an annotator', ->
-    assert.ok(annotator)
+    it 'should add a document field to the annotation', ->
+      annotation = {}
+      plugin.beforeAnnotationCreated(annotation)
+      assert.property(annotation, 'document')
 
-  it 'should have Document plugin', ->
-    assert.ok('Document' of annotator.plugins)
-
-  describe 'annotation should have some metadata', ->
+  describe '#getDocumentMetadata()', ->
     # add some metadata to the page
     head = $("head")
     head.append('<link rel="alternate" href="foo.pdf" type="application/pdf"></link>')
@@ -38,74 +35,63 @@ describe 'Annotator.Plugin.Document', ->
     head.append('<meta name="eprints.title" content="Computer Lib / Dream Machines">')
     head.append('<meta name="prism.title" content="Literary Machines">')
 
-    annotation = null
-
-    beforeEach (done) ->
-      annotator.annotations.create({})
-        .then (result) ->
-          annotation = result
-          done()
-
-    it 'can create annotation', ->
-      assert.ok(annotation)
-
-    it 'should have a document', ->
-      assert.ok(annotation.document)
+    beforeEach ->
+      metadata = plugin.getDocumentMetadata()
 
     it 'should have a title, derived from highwire metadata if possible', ->
-      assert.equal(annotation.document.title, 'Foo')
+      assert.equal(metadata.title, 'Foo')
 
     it 'should have links with absoulte hrefs and types', ->
-      assert.ok(annotation.document.link)
-      assert.equal(annotation.document.link.length, 7)
-      assert.match(annotation.document.link[0].href, /^.+runner.html#?(\?.*)?$/)
-      assert.equal(annotation.document.link[1].rel, "alternate")
-      assert.match(annotation.document.link[1].href, /^.+foo\.pdf$/)
-      assert.equal(annotation.document.link[1].type, "application/pdf")
-      assert.equal(annotation.document.link[2].rel, "alternate")
-      assert.match(annotation.document.link[2].href, /^.+foo\.doc$/)
-      assert.equal(annotation.document.link[2].type, "application/msword")
-      assert.equal(annotation.document.link[3].rel, "bookmark")
-      assert.equal(annotation.document.link[3].href, "http://example.com/bookmark")
-      assert.equal(annotation.document.link[4].href, "doi:10.1175/JCLI-D-11-00015.1")
-      assert.match(annotation.document.link[5].href, /.+foo\.pdf$/)
-      assert.equal(annotation.document.link[5].type, "application/pdf")
-      assert.equal(annotation.document.link[6].href, "doi:10.1175/JCLI-D-11-00015.1")
+      assert.ok(metadata.link)
+      assert.equal(metadata.link.length, 7)
+      assert.match(metadata.link[0].href, /^.+runner.html#?(\?.*)?$/)
+      assert.equal(metadata.link[1].rel, "alternate")
+      assert.match(metadata.link[1].href, /^.+foo\.pdf$/)
+      assert.equal(metadata.link[1].type, "application/pdf")
+      assert.equal(metadata.link[2].rel, "alternate")
+      assert.match(metadata.link[2].href, /^.+foo\.doc$/)
+      assert.equal(metadata.link[2].type, "application/msword")
+      assert.equal(metadata.link[3].rel, "bookmark")
+      assert.equal(metadata.link[3].href, "http://example.com/bookmark")
+      assert.equal(metadata.link[4].href, "doi:10.1175/JCLI-D-11-00015.1")
+      assert.match(metadata.link[5].href, /.+foo\.pdf$/)
+      assert.equal(metadata.link[5].type, "application/pdf")
+      assert.equal(metadata.link[6].href, "doi:10.1175/JCLI-D-11-00015.1")
 
     it 'should have highwire metadata', ->
-      assert.ok(annotation.document.highwire)
-      assert.deepEqual(annotation.document.highwire.pdf_url, ['foo.pdf'])
-      assert.deepEqual(annotation.document.highwire.doi, ['10.1175/JCLI-D-11-00015.1'])
-      assert.deepEqual(annotation.document.highwire.title, ['Foo'])
+      assert.ok(metadata.highwire)
+      assert.deepEqual(metadata.highwire.pdf_url, ['foo.pdf'])
+      assert.deepEqual(metadata.highwire.doi, ['10.1175/JCLI-D-11-00015.1'])
+      assert.deepEqual(metadata.highwire.title, ['Foo'])
 
     it 'should have dublincore metadata', ->
-      assert.ok(annotation.document.dc)
-      assert.deepEqual(annotation.document.dc.identifier, ["doi:10.1175/JCLI-D-11-00015.1", "isbn:123456789"])
-      assert.deepEqual(annotation.document.dc.type, ["Article"])
+      assert.ok(metadata.dc)
+      assert.deepEqual(metadata.dc.identifier, ["doi:10.1175/JCLI-D-11-00015.1", "isbn:123456789"])
+      assert.deepEqual(metadata.dc.type, ["Article"])
 
     it 'should have facebook metadata', ->
-      assert.ok(annotation.document.facebook)
-      assert.deepEqual(annotation.document.facebook.url, ["http://example.com"])
+      assert.ok(metadata.facebook)
+      assert.deepEqual(metadata.facebook.url, ["http://example.com"])
 
     it 'should have eprints metadata', ->
-      assert.ok(annotation.document.eprints)
-      assert.deepEqual(annotation.document.eprints.title, ['Computer Lib / Dream Machines'])
+      assert.ok(metadata.eprints)
+      assert.deepEqual(metadata.eprints.title, ['Computer Lib / Dream Machines'])
 
     it 'should have prism metadata', ->
-      assert.ok(annotation.document.prism)
-      assert.deepEqual(annotation.document.prism.title, ['Literary Machines'])
+      assert.ok(metadata.prism)
+      assert.deepEqual(metadata.prism.title, ['Literary Machines'])
 
      it 'should have twitter card metadata', ->
-      assert.ok(annotation.document.twitter)
-      assert.deepEqual(annotation.document.twitter.site, ['@okfn'])
-
-    it 'should have unique uris', ->
-      uris = annotator.plugins.Document.uris()
-      assert.equal(uris.length, 5)
+      assert.ok(metadata.twitter)
+      assert.deepEqual(metadata.twitter.site, ['@okfn'])
 
     it 'should have a favicon', ->
       assert.equal(
-        annotation.document.favicon
+        metadata.favicon
         'http://example.com/images/icon.ico'
       )
 
+  describe '#uris()', ->
+    it 'should de-duplicate uris', ->
+      uris = plugin.uris()
+      assert.equal(uris.length, 5)
