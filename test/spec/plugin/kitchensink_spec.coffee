@@ -24,22 +24,12 @@ describe 'Annotator::setupPlugins', ->
   it 'should added to the Annotator prototype', ->
     assert.equal(typeof Annotator::setupPlugins, 'function')
 
-  it 'should be callable via jQuery.fn.Annotator', ->
-    sinon.spy(Annotator.prototype, 'setupPlugins')
-
-    $fix.annotator({
-      store: new Annotator.Plugin.NullStore()
-    }).annotator('setupPlugins', {}, {Filter: {appendTo: h.fix()}})
-    assert(Annotator::setupPlugins.calledOnce)
-
   describe 'called with no parameters', ->
     _Showdown = null
 
     beforeEach ->
       _Showdown = window.Showdown
-      annotator = new Annotator(h.fix(), {
-        store: new Annotator.Plugin.NullStore()
-      })
+      annotator = new Annotator(h.fix())
       annotator.setupPlugins()
 
     afterEach -> window.Showdown = _Showdown
@@ -71,9 +61,7 @@ describe 'Annotator::setupPlugins', ->
 
   describe 'called with AnnotateIt config', ->
     beforeEach ->
-      annotator = new Annotator(h.fix(), {
-        store: new Annotator.Plugin.NullStore()
-      })
+      annotator = new Annotator(h.fix())
       annotator.setupPlugins {},
         Filter:
           appendTo: h.fix()
@@ -88,9 +76,7 @@ describe 'Annotator::setupPlugins', ->
       assert.isDefined(annotator.plugins.Auth)
 
   describe 'called with plugin options', ->
-    beforeEach -> annotator = new Annotator(h.fix(), {
-      store: new Annotator.Plugin.NullStore()
-    })
+    beforeEach -> annotator = new Annotator(h.fix())
 
     it 'should override default plugin options', ->
       annotator.setupPlugins null,
