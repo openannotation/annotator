@@ -1,6 +1,6 @@
 {
   "name": "annotator",
-  "version": "2.0.0",
+  "version": "2.0.0dev",
   "description": "Inline annotation for the web. Select text, images, or (nearly) anything else, and add your notes.",
   "repository": {
     "type": "git",
