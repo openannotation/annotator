@@ -40,6 +40,9 @@ test:
 develop:
 	npm start
 
+doc:
+	cd doc && $(MAKE) html
+
 pkg/annotator.css: css/annotator.css
 	$(BUILD) -c
 
@@ -60,4 +63,4 @@ $(DEPDIR) $(PKGDIRS):
 -include $(PLUGIN_SRC:%.coffee=$(DEPDIR)/annotator.%.d)
 -include $(DEPDIR)/annotator-full.d
 
-.PHONY: all annotator plugins annotator-full clean test develop pkg
+.PHONY: all annotator plugins annotator-full clean test develop pkg doc
