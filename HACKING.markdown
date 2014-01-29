@@ -25,7 +25,7 @@ developing.
 
 The tests can be found in `test/spec/`. You can run the tests in your browser
 (using `test/runner.html`), but while you're working it's probably easiest to
-run the tests using `make test` from the root of the repository. This will
+run the tests using `npm test` from the root of the repository. This will
 require [PhantomJS][phantom].
 
 For inline documentation we use [TomDoc][tom]. It's a Ruby specification but it
@@ -44,7 +44,6 @@ Building the packaged version of Annotator involves running the appropriate
 `make` task. For example:
 
     $ make                     # build everything
-    $ make develop             # converts CoffeeScript to JavaScript by calling ./tools/build
     $ make bookmarklet         # build the bookmarklet
     $ make annotator plugins   # build annotator and individual plugin files.
 
