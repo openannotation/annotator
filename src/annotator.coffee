@@ -34,7 +34,7 @@ class Annotator extends Delegator
     ".annotator-hl mouseout":            "startViewerHideTimer"
 
   html:
-    adder:   '<div class="annotator-adder"><button>' + _t('Annotate') + '</button></div>'
+    adder:   '<div class="annotator-adder"><button type="button">' + _t('Annotate') + '</button></div>'
     wrapper: '<div class="annotator-wrapper"></div>'
 
   options: # Configuration options

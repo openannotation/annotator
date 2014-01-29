@@ -29,8 +29,8 @@ class Viewer extends Widget
             <li class="annotator-annotation annotator-item">
               <span class="annotator-controls">
                 <a href="#" title="View as webpage" class="annotator-link">View as webpage</a>
-                <button title="Edit" class="annotator-edit">Edit</button>
-                <button title="Delete" class="annotator-delete">Delete</button>
+                <button type="button" title="Edit" class="annotator-edit">Edit</button>
+                <button type="button" title="Delete" class="annotator-delete">Delete</button>
               </span>
             </li>
             """

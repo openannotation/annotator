@@ -24,8 +24,8 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
              <div class="annotator-filter">
                <strong>""" + Annotator._t('Navigate:') + """</strong>
                <span class="annotator-filter-navigation">
-                 <button class="annotator-filter-previous">""" + Annotator._t('Previous') + """</button>
-                 <button class="annotator-filter-next">""" + Annotator._t('Next') + """</button>
+                 <button type="button" class="annotator-filter-previous">""" + Annotator._t('Previous') + """</button>
+                 <button type="button" class="annotator-filter-next">""" + Annotator._t('Next') + """</button>
                </span>
                <strong>""" + Annotator._t('Filter by:') + """</strong>
              </div>
@@ -34,7 +34,7 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
              <span class="annotator-filter-property">
                <label></label>
                <input/>
-               <button class="annotator-filter-clear">""" + Annotator._t('Clear') + """</button>
+               <button type="button" class="annotator-filter-clear">""" + Annotator._t('Clear') + """</button>
              </span>
              """
 
