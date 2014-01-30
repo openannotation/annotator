@@ -8,9 +8,11 @@ To get the Annotator up and running on your website you'll need to
 either link to a hosted version or deploy the Annotator source files
 yourself. Details of both are provided below.
 
-NB: if you are using Wordpress there is also a `Annotator Wordpress
-plugin <http://wordpress.org/extend/plugins/annotator-for-wordpress/>`__
-which will take care of installing and integrating Annotator for you.
+.. admonition:: NB
+
+    If you are using Wordpress there is also a `Annotator Wordpress
+    plugin <http://wordpress.org/extend/plugins/annotator-for-wordpress/>`__
+    which will take care of installing and integrating Annotator for you.
 
 Hosted Annotator Library
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -48,10 +50,9 @@ developed as part of the Annotator project.
 Including Annotator on your webpage
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You need to link the Annotator Javascript and CSS into the page. You
-will also need to include jQuery >= 1.6.
+You need to link the Annotator Javascript and CSS into the page.
 
-NOTE: Annotator requires jQuery 1.6 or greater.
+.. note:: Annotator requires jQuery 1.6 or greater.
 
 .. code:: html
 
