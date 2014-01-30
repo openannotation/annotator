@@ -8,7 +8,8 @@ Building a plugin is very simple. Simply attach a function that creates
 your plugin to the ``Annotator.Plugin`` namespace. The function will
 receive the following arguments.
 
--  ``element``: The DOM element that is currently being annotated.
+``element``
+    The DOM element that is currently being annotated.
 
 Additional arguments (such as options) can be passed in by the user when
 the plugin is added to the Annotator. These will be passed in after the
@@ -195,29 +196,30 @@ called on either the ``.annotator`` object or if you're extending
 ``Annotator.Plugin`` the plugin instance itself. The events are as
 follows:
 
--  ``beforeAnnotationCreated(annotation)``: called immediately before an
-   annotation is created. If you need to modify the annotation before it
-   is saved use this event.
--  ``annotationCreated(annotation)``: called when the annotation is
-   created use this to store the annotations.
--  ``beforeAnnotationUpdated(annotation)``: as above, but just before an
-   existing annotation is saved.
--  ``annotationUpdated(annotation)``: as above, but for an existing
-   annotation which has just been edited.
--  ``annotationDeleted(annotation)``: called when the user deletes an
-   annotation.
--  ``annotationEditorShown(editor, annotation)``: called when the
-   annotation editor is presented to the user.
--  ``annotationEditorHidden(editor)``: called when the annotation editor
-   is hidden, both when submitted and when editing is cancelled.
--  ``annotationEditorSubmit(editor, annotation)``: called when the
-   annotation editor is submitted.
--  ``annotationViewerShown(viewer, annotations)``: called when the
-   annotation viewer is shown and provides the annotations being
-   displayed.
--  ``annotationViewerTextField(field, annotation)``: called when the
-   text field displaying the annotation comment in the viewer is
-   created.
+``beforeAnnotationCreated(annotation)``
+    called immediately before an annotation is created. If you need to modify
+    the annotation before it is saved use this event.
+``annotationCreated(annotation)``
+    called when the annotation is created use this to store the annotations.
+``beforeAnnotationUpdated(annotation)``
+    as above, but just before an existing annotation is saved.
+``annotationUpdated(annotation)``
+    as above, but for an existing annotation which has just been edited.
+``annotationDeleted(annotation)``
+    called when the user deletes an annotation.
+``annotationEditorShown(editor, annotation)``
+    called when the annotation editor is presented to the user.
+``annotationEditorHidden(editor)``
+    called when the annotation editor is hidden, both when submitted and when
+    editing is cancelled.
+``annotationEditorSubmit(editor, annotation)``
+    called when the annotation editor is submitted.
+``annotationViewerShown(viewer, annotations)``
+    called when the annotation viewer is shown and provides the annotations
+    being displayed.
+``annotationViewerTextField(field, annotation)``
+    called when the text field displaying the annotation comment in the viewer
+    is created.
 
 Example
 ~~~~~~~

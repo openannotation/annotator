@@ -82,8 +82,9 @@ Options
 
 You can optionally specify options:
 
--  readOnly - True to allow viewing annotations, but not creating or
-   editing them. Defaults to false.
+``readOnly``
+    True to allow viewing annotations, but not creating or editing them.
+    Defaults to ``false``.
 
 .. code:: javascript
 
