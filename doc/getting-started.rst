@@ -29,7 +29,7 @@ For each Annotator release, we make available the following assets:
 Use ``annotator-full.min.js`` if you want to include both the core and
 all plugins in a single file. Use ``annotator.min.js`` if you need only
 the core. You can add individual plugins by including the relevant
-``annotator.{pluginname}.min.js`` files.
+:samp:`annotator.{pluginname}.min.js` files.
 
 For example, a full version of the Annotator can be loaded with the
 following code:
