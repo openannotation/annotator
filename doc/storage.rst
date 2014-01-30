@@ -4,7 +4,7 @@ Storage
 Some kind of storage is needed to save your annotations after you leave
 a web page.
 
-To do this you can use the [[Store plugin]] and a remote JSON API. This
+To do this you can use the :doc:`plugins/store` and a remote JSON API. This
 page describes the API expected by the Store plugin, and implemented by
 the `reference backend <https://github.com/okfn/annotator-store>`__. It
 is this backend that runs the `AnnotateIt <http://annotateit.org>`__ web
@@ -76,7 +76,7 @@ index
 -  path: ``/annotations``
 -  returns: a list of all annotation objects
 
-Example (see [[Annotation Format]] for details of the format of
+Example (see :doc:`annotation-format` for details of the format of
 individual annotations):
 
 .. code:: json

@@ -1,14 +1,14 @@
 ``Auth`` plugin
 ===============
 
-The Auth plugin complements the [[Store Plugin]] by providing
+The Auth plugin complements the :doc:`store` by providing
 authentication for requests. This may be necessary if you are running
 the Store on a separate domain or using a third party service like
 annotateit.org.
 
 The plugin works by requesting an authentication token from the local
 server and then provides this in all requests to the store. For more
-details see the [[specification\|Authentication]].
+details see the :doc:`specification <../authentication>`.
 
 Usage
 -----
@@ -40,5 +40,5 @@ The following options are available to the Auth plugin.
 Token format
 ^^^^^^^^^^^^
 
-For details of the token format, see the page on [[Annotator's
-Authentication system\|Authentication]].
+For details of the token format, see the page on :doc:`Annotator's
+Authentication system <../authentication>`.

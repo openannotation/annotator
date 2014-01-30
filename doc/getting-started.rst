@@ -8,9 +8,11 @@ To get the Annotator up and running on your website you'll need to
 either link to a hosted version or deploy the Annotator source files
 yourself. Details of both are provided below.
 
-NB: if you are using Wordpress there is also a `Annotator Wordpress
-plugin <http://wordpress.org/extend/plugins/annotator-for-wordpress/>`__
-which will take care of installing and integrating Annotator for you.
+.. admonition:: NB
+
+    If you are using Wordpress there is also a `Annotator Wordpress
+    plugin <http://wordpress.org/extend/plugins/annotator-for-wordpress/>`__
+    which will take care of installing and integrating Annotator for you.
 
 Hosted Annotator Library
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -27,7 +29,7 @@ For each Annotator release, we make available the following assets:
 Use ``annotator-full.min.js`` if you want to include both the core and
 all plugins in a single file. Use ``annotator.min.js`` if you need only
 the core. You can add individual plugins by including the relevant
-``annotator.{pluginname}.min.js`` files.
+:samp:`annotator.{pluginname}.min.js` files.
 
 For example, a full version of the Annotator can be loaded with the
 following code:
@@ -48,10 +50,9 @@ developed as part of the Annotator project.
 Including Annotator on your webpage
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You need to link the Annotator Javascript and CSS into the page. You
-will also need to include jQuery >= 1.6.
+You need to link the Annotator Javascript and CSS into the page.
 
-NOTE: Annotator requires jQuery 1.6 or greater.
+.. note:: Annotator requires jQuery 1.6 or greater.
 
 .. code:: html
 
@@ -81,8 +82,9 @@ Options
 
 You can optionally specify options:
 
--  readOnly - True to allow viewing annotations, but not creating or
-   editing them. Defaults to false.
+``readOnly``
+    True to allow viewing annotations, but not creating or editing them.
+    Defaults to ``false``.
 
 .. code:: javascript
 
@@ -108,10 +110,10 @@ it just add a call to ``.annotator("setupPlugins")``.
 
 This will set up the following:
 
-1. The [[Tags\|Tags Plugin]], [[Filter\|Filter Plugin]] &
-   [[Unsupported\|Unsupported Plugin]] plugins.
-2. The [[Auth\|Auth Plugin]], [[Permissions\|Permissions Plugin]] and
-   [[Store\|Store Plugin]] plugins, for interaction with the `AnnotateIt
+1. The :doc:`Tags <plugins/tags>`, :doc:`Filter <plugins/filter>` &
+   :doc:`Unsupported <plugins/unsupported>` plugins.
+2. The :doc:`Auth <plugins/auth>`, :doc:`Permissions <plugins/permissions>` and
+   :doc:`Store <plugins/store>` plugins, for interaction with the `AnnotateIt
    store <http://annotateit.org>`__.
 3. If the `Showdown <https://github.com/coreyti/showdown>`__ library has
    been included on the page the [[Markdown\|Markdown Plugin]] will also
@@ -154,9 +156,9 @@ Here we add the tags plugin to the page:
                      .annotator('addPlugin', 'Tags');
     });
 
-For more information on available plugins check the navigation to the
-right of this article. Or to create your own check the [[creating a
-plugin section\|Plugin Development]].
+For more information on available plugins check the navigation to the right of
+this article. Or to create your own check the :doc:`creating a plugin section
+<hacking/plugin-development>`.
 
 Saving annotations
 ------------------
@@ -164,4 +166,4 @@ Saving annotations
 In order to keep your annotations around longer than a single page view
 you'll need to set up a store on your server or use an external service
 like `AnnotateIt <http://annotateit.org>`__. For more information on
-storing annotations check out the [[Store Plugin]] on the wiki.
+storing annotations check out the :doc:`Store Plugin <plugins/store>` on the wiki.

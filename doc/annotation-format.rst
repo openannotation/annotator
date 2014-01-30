@@ -35,10 +35,10 @@ document:
         }
 
 Note that this annotation includes some info stored by plugins (notably
-the [[Permissions Plugin]] and [[Tags Plugin]]).
+the :doc:`plugins/permissions` and :doc:`plugins/tags`).
 
 This basic schema is **completely extensible**. It can be added to by
 plugins, and any fields added by the frontend should be preserved by
-backend implementations. For example, the [[Store Plugin]] (which adds
+backend implementations. For example, the :doc:`plugins/store` (which adds
 persistence of annotations) allow you to specify arbitrary additional
 fields using the ``annotationData`` attribute.
