@@ -170,4 +170,3 @@ Example:
           search:  '/search'
         }
       }):
-

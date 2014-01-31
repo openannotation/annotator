@@ -244,4 +244,3 @@ A plugin that logs annotation activity to the console.
           }
         }
       };
-

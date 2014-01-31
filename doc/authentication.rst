@@ -150,4 +150,3 @@ Original planning documents at:
 Rehashed in Feb 2012:
 
 -  http://lists.okfn.org/pipermail/annotator-dev/2012-January/000188.html
-
