@@ -26,7 +26,9 @@ developing.
 The tests can be found in `test/spec/`. You can run the tests in your browser
 (using `test/runner.html`), but while you're working it's probably easiest to
 run the tests using `npm test` from the root of the repository. This will
-require [PhantomJS][phantom].
+require [PhantomJS][phantom] and the mocha runner:
+
+    $ npm install -g phantomjs mocha-phantomjs
 
 For inline documentation we use [TomDoc][tom]. It's a Ruby specification but it
 also works nicely with CoffeeScript.
