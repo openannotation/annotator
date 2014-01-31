@@ -8,7 +8,7 @@ To get the Annotator up and running on your website you'll need to
 either link to a hosted version or deploy the Annotator source files
 yourself. Details of both are provided below.
 
-.. admonition:: NB
+.. note::
 
     If you are using Wordpress there is also a `Annotator Wordpress
     plugin <http://wordpress.org/extend/plugins/annotator-for-wordpress/>`__
