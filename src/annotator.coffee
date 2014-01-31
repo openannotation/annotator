@@ -350,6 +350,7 @@ class Annotator extends Delegator
     if annotation._local?.highlights?
       for h in annotation._local.highlights when h.parentNode?
         $(h).replaceWith(h.childNodes)
+      delete annotation._local.highlights
 
     annotation
 

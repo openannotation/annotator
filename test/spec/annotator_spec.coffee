@@ -456,6 +456,8 @@ describe 'Annotator', ->
       highlights.each ->
         assert.lengthOf($(this).parent(), 0)
 
+      assert.isUndefined(annotation._local.highlights, "highlights property removed")
+
     it "should leave the content of the highlights in place", ->
       annotator.cleanupAnnotation(annotation)
       assert.equal(div.html(), '<em>Hats</em><em>Gloves</em>')
