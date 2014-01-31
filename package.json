@@ -13,9 +13,9 @@
     "coffee-script": "~1.6.0",
     "uglify-js": "~2.3.6",
     "uglifycss": "~0.0.5",
-    "mocha": "~1.9.0",
-    "mocha-phantomjs": "~2.0.1",
-    "chai": "~1.5.0",
+    "mocha": "~1.12.0",
+    "mocha-phantomjs": "~3.3.1",
+    "chai": "~1.7.0",
     "sinon": "~1.6.0",
     "jwt-simple": "~0.1.0",
     "iso8601": "~1.1.1",
@@ -33,7 +33,7 @@
   },
   "scripts": {
     "start": "./tools/serve",
-    "test": "./tools/test -R spec"
+    "test": "./tools/test"
   },
   "browser": "./lib/annotator"
 }
