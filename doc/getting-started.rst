@@ -116,7 +116,7 @@ This will set up the following:
    :doc:`Store <plugins/store>` plugins, for interaction with the `AnnotateIt
    store <http://annotateit.org>`__.
 3. If the `Showdown <https://github.com/coreyti/showdown>`__ library has
-   been included on the page the [[Markdown\|Markdown Plugin]] will also
+   been included on the page the :doc:`plugins/markdown` will also
    be loaded.
 
 You can further customise the plugins by providing an object containing

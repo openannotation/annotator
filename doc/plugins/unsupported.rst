@@ -40,4 +40,3 @@ The message that you wish to display to users.
       annotator.addPlugin('Unsupported', {
         message: "We're sorry the Annotator is not supported by this browser"
       });
-
