@@ -448,11 +448,12 @@ describe 'Annotator', ->
       div = $('<div />').append(annotation._local.highlights)
 
     it "should remove the highlights from the DOM", ->
-      annotation._local.highlights.each ->
+      highlights = annotation._local.highlights
+      highlights.each ->
         assert.lengthOf($(this).parent(), 1)
 
       annotator.cleanupAnnotation(annotation)
-      annotation._local.highlights.each ->
+      highlights.each ->
         assert.lengthOf($(this).parent(), 0)
 
     it "should leave the content of the highlights in place", ->
