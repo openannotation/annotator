@@ -688,6 +688,8 @@ class Annotator extends Delegator
         this.editAnnotation(annotation, position)
       .then (annotation) =>
         this.annotations.create(annotation)
+          # Handle storage errors
+          .fail(handleError)
 
       # Clean up the highlights
       .done (annotation) =>
@@ -696,8 +698,8 @@ class Annotator extends Delegator
       .done (annotation) =>
         this.publish('annotationCreated', [annotation])
 
-      # Handle errors
-      .fail(this.cleanupAnnotation, handleError)
+      # Clean up (if, for example, editing was cancelled, or storage failed)
+      .fail(this.cleanupAnnotation)
 
   # Annotator#viewer callback function. Displays the Annotator#editor in the
   # positions of the Annotator#viewer and loads the passed annotation for
@@ -719,12 +721,11 @@ class Annotator extends Delegator
         this.editAnnotation(annotation, position)
       .then (annotation) =>
         this.annotations.update(annotation)
+          # Handle storage errors
+          .fail(handleError)
 
       .done (annotation) =>
         this.publish('annotationUpdated', [annotation])
-
-      # Handle errors
-      .fail(handleError)
 
 # Create namespace for Annotator plugins
 class Annotator.Plugin extends Delegator
