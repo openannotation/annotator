@@ -137,60 +137,17 @@ class Delegator
     this
 
   # Public: Fires an event and calls all subscribed callbacks with parameters
-  # provided. This is essentially an alias of $(this).triggerHandler() but
-  # should be used to fire custom events.
-  #
-  # NOTE: Events fired using .publish() will not bubble up the DOM.
-  #
-  # event  - A String event name.
-  # params - An Array of parameters to provide to callbacks.
-  #
-  # Examples
-  #
-  #   instance.subscribe('annotation:save', (msg) -> console.log(msg))
-  #   instance.publish('annotation:save', ['Hello World'])
-  #   # => Outputs "Hello World"
-  #
-  # Returns itself.
+  # provided. This is essentially an alias to Backbone.Events .trigger()
+  # except that the arguments are passed in an Array as the second parameter
+  # rather than using a variable number of arguments.
   publish: (name, args=[]) ->
     this.trigger.apply(this, [name, args...])
 
-  # Public: Listens for custom event which when published will call the provided
-  # callback. This is essentially a wrapper around $(this).bind() but removes
-  # the event parameter that jQuery event callbacks always recieve. These
-  # parameters are unnessecary for custom events.
-  #
-  # event    - A String event name.
-  # callback - A callback function called when the event is published.
-  #
-  # Examples
-  #
-  #   instance.subscribe('annotation:save', (msg) -> console.log(msg))
-  #   instance.publish('annotation:save', ['Hello World'])
-  #   # => Outputs "Hello World"
-  #
-  # Returns itself.
+  # Public: An alias for .on() from Backbone.Events
   subscribe: (event, callback, context=this) ->
     this.on(event, callback, context)
 
-  # Public: Unsubscribes a callback from an event. The callback will no longer
-  # be called when the event is published.
-  #
-  # event    - A String event name.
-  # callback - A callback function to be removed.
-  #
-  # Examples
-  #
-  #   callback = (msg) -> console.log(msg)
-  #   instance.subscribe('annotation:save', callback)
-  #   instance.publish('annotation:save', ['Hello World'])
-  #   # => Outputs "Hello World"
-  #
-  #   instance.unsubscribe('annotation:save', callback)
-  #   instance.publish('annotation:save', ['Hello Again'])
-  #   # => No output.
-  #
-  # Returns itself.
+  # Public: An alias for .off() from Backbone.Events
   unsubscribe: (event, callback, context=this) ->
     this.off(event, callback, context)
 
