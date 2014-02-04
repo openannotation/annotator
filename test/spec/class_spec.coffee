@@ -79,5 +79,46 @@ describe 'Delegator', ->
 
     assert.deepEqual(delegator.returns, [])
 
-  it ".on() should be an alias of .subscribe()", ->
-    assert.strictEqual(delegator.on, delegator.subscribe)
+  it ".subscribe() subscribes listeners", ->
+    res = []
+    delegator.subscribe('foo', -> res.push('bar'))
+    assert.deepEqual(res, [])
+    delegator.publish('foo')
+    assert.deepEqual(res, ['bar'])
+
+  it "passes args from .publish() to listeners", ->
+    res = []
+    delegator.subscribe('foo', (x, y, z) -> res.push(z, y, x))
+    assert.deepEqual(res, [])
+    delegator.publish('foo', [1, 2, 3])
+    assert.deepEqual(res, [3, 2, 1])
+
+  it "invokes the callback in the context of the object by default", ->
+    res = null
+    delegator.subscribe('foo', (-> res = this))
+    delegator.publish('foo')
+    assert.equal(res, delegator)
+
+  it "invokes the callback with a context if provided", ->
+    res = null
+    sentinel = {}
+    delegator.subscribe('foo', (-> res = this), sentinel)
+    delegator.publish('foo')
+    assert.equal(res, sentinel)
+
+  it ".unsubscribe() unsubscribes listeners", ->
+    res = []
+    cbk = -> res.push('bar')
+    delegator.subscribe('foo', cbk)
+    delegator.unsubscribe('foo', cbk)
+    delegator.publish('foo')
+    assert.deepEqual(res, [])
+
+  it ".unsubscribe() only unsubscribes listeners passed", ->
+    res = []
+    cbk = -> res.push('bar')
+    delegator.subscribe('foo', -> res.push('baz'))
+    delegator.subscribe('foo', cbk)
+    delegator.unsubscribe('foo', cbk)
+    delegator.publish('foo')
+    assert.deepEqual(res, ['baz'])

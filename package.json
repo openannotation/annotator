@@ -10,6 +10,7 @@
     "through": "~2.3.4"
   },
   "devDependencies": {
+    "backbone-events-standalone": "~0.2.1",
     "coffee-script": "~1.6.0",
     "uglify-js": "~2.3.6",
     "uglifycss": "~0.0.5",

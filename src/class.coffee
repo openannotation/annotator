@@ -1,12 +1,10 @@
 Util = require './util'
 
-Evented = require('./events')
-
 
 # Public: Delegator is the base class that all of Annotators objects inherit
 # from. It provides basic functionality such as instance options, event
 # delegation and pub/sub methods.
-class Delegator extends Evented
+class Delegator
   # Public: Events object. This contains a key/pair hash of events/methods that
   # should be bound. See Delegator#addEvents() for usage.
   events: {}
@@ -39,7 +37,6 @@ class Delegator extends Evented
     # registry of created closures, used to enable event unbinding.
     @_closures = {}
 
-    this.on = this.subscribe
     this.addEvents()
 
   # Public: binds the function names in the @events Object to their events.
@@ -139,6 +136,64 @@ class Delegator extends Evented
 
     this
 
+  # Public: Fires an event and calls all subscribed callbacks with parameters
+  # provided. This is essentially an alias of $(this).triggerHandler() but
+  # should be used to fire custom events.
+  #
+  # NOTE: Events fired using .publish() will not bubble up the DOM.
+  #
+  # event  - A String event name.
+  # params - An Array of parameters to provide to callbacks.
+  #
+  # Examples
+  #
+  #   instance.subscribe('annotation:save', (msg) -> console.log(msg))
+  #   instance.publish('annotation:save', ['Hello World'])
+  #   # => Outputs "Hello World"
+  #
+  # Returns itself.
+  publish: (name, args=[]) ->
+    this.trigger.apply(this, [name, args...])
+
+  # Public: Listens for custom event which when published will call the provided
+  # callback. This is essentially a wrapper around $(this).bind() but removes
+  # the event parameter that jQuery event callbacks always recieve. These
+  # parameters are unnessecary for custom events.
+  #
+  # event    - A String event name.
+  # callback - A callback function called when the event is published.
+  #
+  # Examples
+  #
+  #   instance.subscribe('annotation:save', (msg) -> console.log(msg))
+  #   instance.publish('annotation:save', ['Hello World'])
+  #   # => Outputs "Hello World"
+  #
+  # Returns itself.
+  subscribe: (event, callback, context=this) ->
+    this.on(event, callback, context)
+
+  # Public: Unsubscribes a callback from an event. The callback will no longer
+  # be called when the event is published.
+  #
+  # event    - A String event name.
+  # callback - A callback function to be removed.
+  #
+  # Examples
+  #
+  #   callback = (msg) -> console.log(msg)
+  #   instance.subscribe('annotation:save', callback)
+  #   instance.publish('annotation:save', ['Hello World'])
+  #   # => Outputs "Hello World"
+  #
+  #   instance.unsubscribe('annotation:save', callback)
+  #   instance.publish('annotation:save', ['Hello Again'])
+  #   # => No output.
+  #
+  # Returns itself.
+  unsubscribe: (event, callback, context=this) ->
+    this.off(event, callback, context)
+
 
 # Parse the @events object of a Delegator into an array of objects containing
 # string-valued "selector", "event", and "func" keys.
@@ -181,6 +236,10 @@ Delegator._isCustomEvent = (event) ->
   [event] = event.split('.')
   $.inArray(event, Delegator.natives) == -1
 
+
+# Mix in backbone events
+BackboneEvents = require 'backbone-events-standalone'
+BackboneEvents.mixin(Delegator::)
 
 # Export Delegator object
 module.exports = Delegator

@@ -1,11 +1,8 @@
-Evented = require('./events')
-
-
 # Registry is a factory for annotator applications providing a simple runtime
 # extension interface and application loader. It is used to pass settings to
 # extension modules and provide a means by which extensions can export
 # functionality to applications.
-class Registry extends Evented
+class Registry
 
   # Public: Create an instance of the application defined by the provided
   # module. The application will receive a new registry instance whose settings
@@ -15,7 +12,6 @@ class Registry extends Evented
     (new this(settings)).run(appModule)
 
   constructor: (@settings={}) ->
-    super
 
   # Public: Include a module. A module is any Object with a fuction property
   # named 'configure`. This function is immediately invoked with the registry
