@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "backbone-events-standalone": "~0.2.1",
+    "backbone-extend-standalone": "~0.1.2",
     "coffee-script": "~1.6.0",
     "uglify-js": "~2.3.6",
     "uglifycss": "~0.0.5",

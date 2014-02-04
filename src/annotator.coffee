@@ -775,6 +775,7 @@ Annotator.Widget = Widget
 Annotator.Viewer = Viewer
 Annotator.Editor = Editor
 Annotator.Notification = Notification
+Annotator.Extend = require 'backbone-extend-standalone'
 
 # Attach notification methods to the Annotation object
 notification = new Notification
