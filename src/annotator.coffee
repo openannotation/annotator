@@ -1,3 +1,5 @@
+extend = require 'backbone-extend-standalone'
+
 Delegator = require './class'
 Range = require './range'
 Util = require './util'
@@ -93,6 +95,31 @@ class Annotator extends Delegator
 
     # Create the registry and start the application
     Registry.createApp(this, options)
+
+  # Public: Creates a subclass of Annotator.
+  #
+  # See the documentation from Backbone: http://backbonejs.org/#Model-extend
+  #
+  # Examples
+  #
+  #   var ExtendedAnnotator = Annotator.extend({
+  #     setupAnnotation: function (annotation) {
+  #       // Invoke the built-in implementation
+  #       try {
+  #         Annotator.prototype.setupAnnotation.call(this, annotation);
+  #       } catch (e) {
+  #         if (e instanceof Annotator.Range.RangeError) {
+  #           // Try to locate the Annotation using the quote
+  #         } else {
+  #           throw e;
+  #         }
+  #       }
+  #
+  #       return annotation;
+  #   });
+  #
+  #   var annotator = new ExtendedAnnotator(document.body, /* {options} */);
+  @extend: extend
 
   # Wraps the children of @element in a @wrapper div. NOTE: This method will also
   # remove any script elements inside @element to prevent them re-executing.
@@ -775,7 +802,6 @@ Annotator.Widget = Widget
 Annotator.Viewer = Viewer
 Annotator.Editor = Editor
 Annotator.Notification = Notification
-Annotator.Extend = require 'backbone-extend-standalone'
 
 # Attach notification methods to the Annotation object
 notification = new Notification
