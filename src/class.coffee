@@ -15,6 +15,9 @@ class Delegator
   # A jQuery object wrapping the DOM Element provided on initialisation.
   element: null
 
+  # Adds jQuery namespaces to all annotator events for easy unbinding.
+  _namespace: null
+
   # Public: Constructor function that sets up the instance. Binds the @events
   # hash and extends the @options object.
   #
@@ -32,6 +35,8 @@ class Delegator
   constructor: (element, options) ->
     @options = $.extend(true, {}, @options, options)
     @element = $(element)
+    @_namespace = Util.uuid()
+
 
     # Delegator creates closures for each event it binds. This is a private
     # registry of created closures, used to enable event unbinding.
@@ -104,11 +109,12 @@ class Delegator
     closure = => this[functionName].apply(this, arguments)
 
     if selector == '' and Delegator._isCustomEvent(event)
-      this.subscribe(event, closure)
+      key = "#{selector}/#{event}/#{functionName}"
+      if key not in @_closures
+        @_closures[key] = closure
+        this.subscribe(event, closure)
     else
-      @element.delegate(selector, event, closure)
-
-    @_closures["#{selector}/#{event}/#{functionName}"] = closure
+      @element.delegate(selector, "#{event}.#{@_namespace}", closure)
 
     this
 
@@ -125,15 +131,16 @@ class Delegator
   #
   # Returns itself.
   _removeEvent: (selector, event, functionName) ->
-    closure = @_closures["#{selector}/#{event}/#{functionName}"]
+    key = "#{selector}/#{event}/#{functionName}"
+    closure = @_closures[key]
 
     if selector == '' and Delegator._isCustomEvent(event)
-      this.unsubscribe(event, closure)
+      if closure
+        this.unsubscribe(event, closure)
     else
-      @element.undelegate(selector, event, closure)
+      @element.undelegate(".#{@_namespace}")
 
-    delete @_closures["#{selector}/#{event}/#{functionName}"]
-
+    delete @_closures[key]
     this
 
   # Public: Fires an event and calls all subscribed callbacks with parameters

@@ -206,10 +206,18 @@ describe 'Annotator', ->
       assert.equal('delete', mockViewer.on.args[1][0])
 
     it "should bind to browser mouseover and mouseout events", ->
-      assert(mockViewer.element.bind.calledWith({
-        'mouseover': annotator.clearViewerHideTimer
-        'mouseout':  annotator.startViewerHideTimer
-      }))
+      assert(
+        mockViewer.element.bind.calledWith(
+          "mouseover.#{annotator._namespace}",
+          annotator.clearViewerHideTimer
+        )
+      )
+      assert(
+        mockViewer.element.bind.calledWith(
+          "mouseout.#{annotator._namespace}",
+          annotator.startViewerHideTimer
+        )
+      )
 
     it "should append the Viewer#element to the Annotator#wrapper", ->
       assert(mockViewer.element.appendTo.calledWith(annotator.wrapper))
