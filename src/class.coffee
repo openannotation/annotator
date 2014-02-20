@@ -35,7 +35,7 @@ class Delegator
   constructor: (element, options) ->
     @options = $.extend(true, {}, @options, options)
     @element = $(element)
-    @_namespace = Util.uuid()
+    @_namespace = "annotator-#{Util.uuid()}"
 
 
     # Delegator creates closures for each event it binds. This is a private
