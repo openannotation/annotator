@@ -76,6 +76,17 @@ exports.browserify = function (opts) {
   if (typeof(opts) === 'string') opts = {entries: [opts]}
   if (!opts.extensions) opts.extensions = [];
   opts.extensions.push('.coffee');
+  opts.resolve = (function (__resolve) {
+    return function (pkg, opts, cb) {
+      var m = pkg.match(/^annotator-plugin-(.+)/);
+      if (m) {
+        try {
+          return __resolve('./' + m[1], opts, cb);
+        } catch (e) {}
+      }
+      return __resolve(pkg, opts, cb);
+    }
+  })(opts.resolve || require('browser-resolve'));
   return require('browserify')(opts).transform(coffeeify);
 };
 

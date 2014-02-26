@@ -1,4 +1,8 @@
 Annotator = require('annotator')
+Permissions = (
+  Annotator.Plugin.Permissions or
+  require('annotator-plugin-permissions')
+)
 
 
 # Public: Plugin for managing user permissions under the rather more specialised
@@ -13,7 +17,7 @@ Annotator = require('annotator')
 #   new Annotator.plugin.AnnotateItPermissions(annotator.element)
 #
 # Returns a new instance of the AnnotateItPermissions Object.
-class Annotator.Plugin.AnnotateItPermissions extends Annotator.Plugin.Permissions
+class Annotator.Plugin.AnnotateItPermissions extends Permissions
 
   # A Object literal of default options for the class.
   options:
