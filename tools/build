@@ -224,8 +224,8 @@ if (require.main === module) {
       }
     } else {
       b.bundle(options, function (err, result) {
-        if (err) throw err;
-        var src = convert.removeComments(result).slice(0, -3);
+        if (err) throw 'Error building ' + filename + ': ' + err;
+        var src = convert.removeComments(result);
         var srcMap = convert.fromSource(result).toObject();
 
         // Make the source file paths relative
