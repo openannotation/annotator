@@ -3,18 +3,16 @@ var child_process = require('child_process');
 var fs = require('fs');
 var path = require('path');
 
-var browserify = require('browserify');
 var coffee = require('coffee-script');
-var coffeeify = require('caching-coffeeify');
+var coffeeify = require('coffeeify');
 var convert = require('convert-source-map');
 var glob = require('glob');
-var q = require('kew');
 var sourceMap = require('source-map');
 var through = require('through');
 var UglifyJS = require('uglify-js');
 var UglifyCSS = require('uglifycss');
 
-var annotator = require('../');
+var loader = require('../');
 
 var SourceMapConsumer = sourceMap.SourceMapConsumer;
 var SourceMapGenerator = sourceMap.SourceMapGenerator;
@@ -71,36 +69,21 @@ function uglify(src, srcMap) {
 }
 
 
-// The core Annotator library
-exports.annotator = function (browserify) {
-  return browserify({extensions: ['.coffee']})
-    .require('./src/annotator', {entry: true})
-    .transform(coffeeify)
-  ;
+// Convenience browserify factory for coffee
+exports.browserify = function (opts) {
+  if (!opts) opts = {};
+  if (Array.isArray(opts)) opts = {entries: opts}
+  if (typeof(opts) === 'string') opts = {entries: [opts]}
+  if (!opts.extensions) opts.extensions = [];
+  opts.extensions.push('.coffee');
+  return require('browserify')(opts).transform(coffeeify);
 };
 
 
 // The plugin bundles
-exports.plugin = function (browserify, p) {
-  var name = path.basename(p).replace('.coffee', '');
-  var expose = ['annotator', 'plugin', name].join('-').replace('.js', '');
-
-  var b = browserify({extensions: ['.coffee']})
-    .require('./src/namespace', {expose: 'annotator'})
-    .require(p, {expose: expose})
-    .transform(coffeeify);
-
-  return annotator.loader(b);
-};
-
-
-// Test files
-exports.test = function (browserify, t) {
-  return browserify({entries: [t], extensions: ['.coffee']})
-    .external('annotator')
-    .external('helpers')
-    .transform(coffeeify)
-  ;
+exports.plugin = function (b, p) {
+  var name = path.basename(p).replace('.coffee', '')
+  return b.require(p, {expose: ['annotator', 'plugin', name].join('-')});
 };
 
 
@@ -193,40 +176,40 @@ if (require.main === module) {
   }
 
   function core () {
-    pack(exports.annotator(browserify), 'pkg/annotator.js', {
-      debug: true,
-      standalone: 'Annotator'
+    pack(exports.browserify('./src/annotator'), 'pkg/annotator.js', {
+      debug: true
+    , standalone: 'Annotator'
     });
   }
 
   function plugin(name) {
     var source = './src/plugin/' + name + '.coffee';
     var target = 'pkg/annotator.' + path.basename(name) + '.js';
-    pack(exports.plugin(browserify, source), target, {
-      debug: true,
-      standalone: 'Annotator'
+    var b = exports.browserify().plugin(loader).require('./src/namespace', {
+      entry: true
+    , expose: 'annotator'
+    });
+    pack(exports.plugin(b, source), target, {
+      debug: true
+    , standalone: 'Annotator'
     });
   }
 
   function full() {
-    var b = annotator.loader(browserify({extensions: '.coffee'}));
-    b.require('./src/annotator', {expose: 'annotator'});
-    b.transform(coffeeify);
-    glob.sync('./src/plugin/*.coffee').forEach(function (p) {
-      var name = path.basename(p).replace('.coffee', '');
-      var expose = ['annotator', 'plugin', name].join('-').replace('.js', '');
-      b.require(p, {expose: expose});
+    var b = exports.browserify().plugin(loader).require('./src/annotator', {
+      entry: true
+    , expose: 'annotator'
     });
+    glob.sync('./src/plugin/*.coffee').reduce(exports.plugin, b);
     pack(b, 'pkg/annotator-full.js', {
-      debug: true,
-      standalone: 'Annotator'
+      debug: true
+    , standalone: 'Annotator'
     });
   }
 
   function pack(b, filename, options) {
     var deps = '';
     var ignore = /(_empty)|(fake_[a-z0-9]+).js$/;
-    var promise = q.defer();
 
     if (depsOnly) {
       options.noParse = b._noParse;

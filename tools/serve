@@ -1,55 +1,49 @@
 #!/usr/bin/env node
 var path = require('path');
 
-var coffeeify = require('caching-coffeeify');
 var connect = require('connect');
 var convert = require('convert-source-map');
 var jwt = require('jwt-simple');
-var iso8601 = require('iso8601');
 var glob = require('glob');
 var q = require('kew')
+var through = require('through');
 var watchify = require('watchify')
 
 var build = require('./build');
+var loader = require('../');
 
 var CONSUMER_KEY = 'mockconsumer';
 var CONSUMER_SECRET = 'mockconsumersecret';
 var CONSUMER_TTL = 1800;
 
 
-function browserify(opts, xopts) {
-  var b = require('browserify')(opts, xopts);
-  b.serve = serve.bind(b);
+function browserify(opts) {
+  var b = build.browserify(opts);
+  b.serve = serve;
+  b.watch = watch;
   return b;
 }
 
 
 // Serve a browserify bundle with connect middleware
-function serve(options) {
-  var promise = null;
+function serve(app, location) {
   var bundle = this.bundle.bind(this);
-  var self = this;
+  var promise = q.defer();
 
-  // A function which fulfills the promise of building a bundle.
-  // Based on connect-browserify.
-  var build = function () {
-    promise = q.defer();
-    self.bundle(options, function (err, result) {
-      if (err) {
-        console.error(err);
-        promise.reject(err);
-      } else {
-        promise.resolve(result);
-      }
+  this.bundle = function (opts, cb) {
+    var p = promise;
+    return bundle(opts, function (err, result) {
+      if (p == null) return;
+      if (err) return p.reject(err);
+      p.resolve(result);
     });
-  }
+  };
 
-  // Build and rebuild on changes
-  build()
-  watchify(this).on('update', build);
+  this.on('update', function () {
+    promise = q.defer();
+  });
 
-  // Return middleware to serve the bundle
-  return function (req, res, next) {
+  app.use(location, function (req, res, next) {
     res.setHeader('Content-Type', 'application/javascript');
     promise.then(function (result) {
       var src = convert.removeComments(result);
@@ -66,11 +60,21 @@ function serve(options) {
       // Add all the sources and set the root relative to the workspace
       srcMap.setProperty('sources', sources);
 
-      res.write(src.slice(0,-2));
+      res.write(src);
       res.write(srcMap.toComment());
       res.end('\n;');
     }).fail(next);
-  }
+  });
+
+  return this;
+}
+
+
+// Watch a bundle and rebuild changes
+function watch(options) {
+  watchify(this).on('update', this.bundle.bind(this, options));
+  this.bundle(options);
+  return this;
 }
 
 
@@ -101,33 +105,49 @@ app.use('/api/token', function(request, response) {
 
 
 // Core
-app.use('/lib/annotator.js', build.annotator(browserify).serve({
-  debug: true,
-  standalone: 'Annotator'
-}));
+browserify('./src/annotator')
+  .serve(app, '/lib/annotator.js')
+  .watch({
+    debug: true,
+    standalone: 'Annotator'
+  })
+;
 
 
 // Plugins
 glob.sync('./src/plugin/*.coffee').forEach(function (p) {
-  var b = build.plugin(browserify, p);
-  var path = p.replace('./src', '/lib').replace('.coffee', '.js');
-  app.use(path, b.serve({debug: true, standalone: 'Annotator'}));
+  var location = '/lib/plugin/' + path.basename(p).replace('.coffee', '.js');
+  var b = browserify().plugin(loader).require('./src/namespace', {
+    entry: true
+  , expose: 'annotator'
+  });
+  build.plugin(b, p)
+    .serve(app, location)
+    .watch({
+      debug: true
+    , standalone: 'Annotator'
+    })
+  ;
 });
 
 
 // Tests
 glob.sync('./test/**/*.coffee').forEach(function (t) {
   if (t == './test/helpers.coffee') {
-    var b = browserify({extensions: '.coffee'})
-      .require('./test/helpers', {expose: 'helpers'})
+    browserify(t)
+      .require(t, {expose: 'helpers'})
       .require('./src/annotator', {expose: 'annotator'})
-      .transform(coffeeify)
+      .serve(app, '/test/helpers.js')
+      .watch({debug: true})
     ;
-    app.use('/test/helpers.js', b.serve({debug: true}));
   } else {
-    var b = build.test(browserify, t).external('annotator');
     var path = t.replace('./', '/').replace('.coffee', '.js');
-    app.use(path, b.serve({debug: true}));
+    browserify(t)
+      .external('annotator')
+      .external('helpers')
+      .serve(app, path)
+      .watch({debug: true})
+    ;
   }
 });
 
