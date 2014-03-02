@@ -229,8 +229,6 @@ if (require.main === module) {
       entry: true
     , expose: 'annotator'
     });
-    // I'd really like not to have to encode the plugin dependencies of this
-    // build both here and in the Makefile...
     glob.sync(
       './src/plugin/{unsupported,auth,store,annotateitpermissions}.coffee'
     ).reduce(exports.plugin, b);

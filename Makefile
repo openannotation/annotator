@@ -10,9 +10,6 @@ PLUGIN_PKG := $(patsubst %.coffee,pkg/annotator.%.js,$(PLUGIN_SRC))
 FULL_SRC := $(ANNOTATOR_SRC) $(PLUGIN_SRC)
 FULL_PKG := pkg/annotator-full.js pkg/annotator.css
 
-BOOKMARKLET_SRC := $(ANNOTATOR_SRC) plugin/unsupported.coffee \
-	plugin/auth.coffee plugin/store.coffee \
-	plugin/annotateitpermissions.coffee
 BOOKMARKLET_PKG := pkg/annotator-bookmarklet.js pkg/annotator.css \
 	pkg/bootstrap.js
 
@@ -72,7 +69,6 @@ $(DEPDIR) $(PKGDIRS):
 -include $(PLUGIN_SRC:%.coffee=$(DEPDIR)/annotator.%.d)
 -include $(DEPDIR)/annotator-full.d
 -include $(DEPDIR)/annotator-bookmarklet.d
--include $(DEPDIR)/bookmarklet.d
 
 .PHONY: all annotator plugins annotator-full bookmarklet clean test develop \
 	pkg doc
