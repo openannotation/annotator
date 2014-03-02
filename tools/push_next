@@ -1,3 +1,10 @@
+#!/bin/sh
+#
+# Upload 'next' release to S3
+#
+
+set -eu
+
 cd "$(dirname "$0")"
 cd ..
 
@@ -5,7 +12,11 @@ echo "Generating package files" >&2
 make clean
 make
 
-# Upload release to S3
+# This passes through passed arguments so you can call, for example:
+#
+#     tools/push_next --dryrun
+#
 echo "Uploading 'next' to S3" >&2
-[ -n "$S3CFG" ] && S3ARGS="-c $S3CFG"
-s3cmd $S3ARGS --acl-public sync pkg/*.{js,css} "s3://assets.annotateit.org/annotator/next/"
+aws s3 sync --delete --acl public-read \
+  pkg/ s3://assets.annotateit.org/annotator/next/ \
+  "$@"
