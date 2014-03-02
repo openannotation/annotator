@@ -10,6 +10,12 @@ PLUGIN_PKG := $(patsubst %.coffee,pkg/annotator.%.js,$(PLUGIN_SRC))
 FULL_SRC := $(ANNOTATOR_SRC) $(PLUGIN_SRC)
 FULL_PKG := pkg/annotator-full.js pkg/annotator.css
 
+BOOKMARKLET_SRC := $(ANNOTATOR_SRC) plugin/unsupported.coffee \
+	plugin/auth.coffee plugin/store.coffee \
+	plugin/annotateitpermissions.coffee
+BOOKMARKLET_PKG := pkg/annotator-bookmarklet.js pkg/annotator.css \
+	pkg/bootstrap.js
+
 BUILD := ./tools/build
 DEPS := ./tools/build -d
 
@@ -18,14 +24,15 @@ df = $(DEPDIR)/$(*F)
 
 PKGDIRS := pkg/lib pkg/lib/plugin
 
-all: annotator plugins annotator-full
+all: annotator plugins annotator-full bookmarklet
 default: all
 
 annotator: $(ANNOTATOR_PKG)
 plugins: $(PLUGIN_PKG)
 annotator-full: $(FULL_PKG)
+bookmarklet: $(BOOKMARKLET_PKG)
 
-pkg: $(ANNOTATOR_PKG) $(PLUGIN_PKG) $(FULL_PKG)
+pkg: $(ANNOTATOR_PKG) $(PLUGIN_PKG) $(FULL_PKG) $(BOOKMARKLET_PKG)
 	cp package.json main.js index.js pkg/
 	cp AUTHORS pkg/
 	cp LICENSE* pkg/
@@ -46,6 +53,8 @@ doc:
 pkg/annotator.css: css/annotator.css
 	$(BUILD) -c
 
+pkg/bootstrap.js: src/bootstrap.js
+
 pkg/%.js pkg/annotator.%.js: %.coffee
 
 pkg/%.js pkg/annotator.%.js pkg/annotator-%.js: | $(DEPDIR) $(PKGDIRS)
@@ -62,5 +71,8 @@ $(DEPDIR) $(PKGDIRS):
 -include $(ANNOTATOR_SRC:%.coffee=$(DEPDIR)/%.d)
 -include $(PLUGIN_SRC:%.coffee=$(DEPDIR)/annotator.%.d)
 -include $(DEPDIR)/annotator-full.d
+-include $(DEPDIR)/annotator-bookmarklet.d
+-include $(DEPDIR)/bookmarklet.d
 
-.PHONY: all annotator plugins annotator-full clean test develop pkg doc
+.PHONY: all annotator plugins annotator-full bookmarklet clean test develop \
+	pkg doc
