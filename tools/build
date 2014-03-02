@@ -220,7 +220,6 @@ if (require.main === module) {
 
   function pack(b, filename, options) {
     var deps = '';
-    var ignore = /(_empty)|(fake_[a-z0-9]+).js$/;
 
     if (depsOnly) {
       options.noParse = b._noParse;
@@ -230,7 +229,6 @@ if (require.main === module) {
       b.deps(options).pipe(through(logdeps));
 
       function logdeps(dep) {
-        if (dep.id.match(ignore)) return;
         console.log(dep.id);
       }
     } else {
@@ -248,19 +246,6 @@ if (require.main === module) {
         var consumer = new SourceMapConsumer(srcMap);
         var node = SourceNode.fromStringWithSourceMap(src, consumer);
         write(filename, node);
-      });
-
-      b.on('dep', function (row) {
-        if (row.id.match(ignore)) return;
-        var filename = path.relative(process.cwd(), row.id)
-          .replace('src', 'pkg/lib')
-          .replace('.coffee', '.js')
-        ;
-        if (filename == 'main.js') return;
-        if (!libs[filename]) {
-          libs[filename] = true;
-          fs.writeFileSync(filename, row.source);
-        }
       });
     }
   }
