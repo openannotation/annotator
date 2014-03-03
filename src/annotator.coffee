@@ -61,6 +61,7 @@ class Annotator extends Delegator
 
   viewerHideTimer: null
 
+
   # Public: Creates an instance of the Annotator. Requires a DOM Element in
   # which to watch for annotations as well as any options.
   #
@@ -163,10 +164,9 @@ class Annotator extends Delegator
             $(field).html("<i>#{_t 'No Comment'}</i>")
           this.publish('annotationViewerTextField', [field, annotation])
       })
-      .element.appendTo(@wrapper).bind({
-        "mouseover": this.clearViewerHideTimer
-        "mouseout":  this.startViewerHideTimer
-      })
+      .element.appendTo(@wrapper)
+      .bind("mouseover.#{@_namespace}", this.clearViewerHideTimer)
+      .bind("mouseout.#{@_namespace}",  this.startViewerHideTimer)
     this
 
   # Creates an instance of the Annotator.Editor and assigns it to @editor.
@@ -194,10 +194,9 @@ class Annotator extends Delegator
   #
   # Returns itself for chaining.
   _setupDocumentEvents: ->
-    $(document).bind({
-      "mouseup":   this.checkForEndSelection
-      "mousedown": this.checkForStartSelection
-    })
+    $(document)
+    .bind("mouseup.#{@_namespace}", this.checkForEndSelection)
+    .bind("mousedown.#{@_namespace}", this.checkForStartSelection)
     this
 
   # Sets up any dynamically calculated CSS for the Annotator.
@@ -245,10 +244,7 @@ class Annotator extends Delegator
   #
   # Returns nothing.
   destroy: ->
-    $(document).unbind({
-      "mouseup":   this.checkForEndSelection
-      "mousedown": this.checkForStartSelection
-    })
+    $(document).unbind(".#{@_namespace}")
 
     $('#annotator-dynamic-style').remove()
 
