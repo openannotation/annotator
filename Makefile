@@ -50,8 +50,6 @@ doc:
 pkg/annotator.css: css/annotator.css
 	$(BUILD) -c
 
-pkg/bootstrap.js: src/bootstrap.js
-
 pkg/%.js pkg/annotator.%.js: %.coffee
 
 pkg/%.js pkg/annotator.%.js pkg/annotator-%.js: | $(DEPDIR) $(PKGDIRS)
@@ -65,10 +63,7 @@ pkg/%.js pkg/annotator.%.js pkg/annotator-%.js: | $(DEPDIR) $(PKGDIRS)
 $(DEPDIR) $(PKGDIRS):
 	@mkdir -p $@
 
--include $(ANNOTATOR_SRC:%.coffee=$(DEPDIR)/%.d)
--include $(PLUGIN_SRC:%.coffee=$(DEPDIR)/annotator.%.d)
--include $(DEPDIR)/annotator-full.d
--include $(DEPDIR)/annotator-bookmarklet.d
+-include $(DEPDIR)/*.d
 
 .PHONY: all annotator plugins annotator-full bookmarklet clean test develop \
 	pkg doc
