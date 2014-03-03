@@ -128,6 +128,12 @@ if (require.main === module) {
       case 'annotator-full':
         full();
         break;
+      case 'annotator-bookmarklet':
+        bookmarklet();
+        break;
+      case 'bootstrap':
+        bootstrap();
+        break;
       case undefined:
         return;
       default:
@@ -215,6 +221,26 @@ if (require.main === module) {
     pack(b, 'pkg/annotator-full.js', {
       debug: true
     , standalone: 'Annotator'
+    });
+  }
+
+  function bookmarklet() {
+    var b = exports.browserify().plugin(loader).require('./src/annotator', {
+      entry: true
+    , expose: 'annotator'
+    });
+    glob.sync(
+      './src/plugin/{unsupported,auth,store,annotateitpermissions}.coffee'
+    ).reduce(exports.plugin, b);
+    pack(b, 'pkg/annotator-bookmarklet.js', {
+      debug: true
+    , standalone: 'Annotator'
+    });
+  }
+
+  function bootstrap() {
+    pack(exports.browserify('./src/bootstrap'), 'pkg/bootstrap.js', {
+      debug: true
     });
   }
 

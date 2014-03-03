@@ -1,3 +1,55 @@
+/*
+Annotator Bookmarklet
+=====================
+
+A Javascript bookmarklet wrapper around the Annotator plugin. This allows the
+user to load the annotator into any web page and post the annotations to a
+server (by default this is [AnnotateIt][#annotateit]).
+
+The bookmarklet version of the annotator has the following plugins loaded:
+
+ - [Auth][#wiki-auth]: authenticates with [AnnotateIt][#annotateit]
+ - [Store][#wiki-store]: saves to [AnnotateIt][#annotateit]
+ - [Permissions][#wiki-permissions]
+ - [Unsupported][#wiki-unsupported]: displays a notification if the bookmarklet is run on an
+   unsupported browser
+
+and optionally, the [Tags plugin][#wiki-tags].
+
+Configuration
+-------------
+
+In order to configure the bookmarklet for your needs it accepts `config` hash of
+options. These are set in the _config.json_ file. There's an example in the
+repository (see _config.example.json_). The options are as follows:
+
+### externals
+
+ - `jQuery`: A URL to a hosted version of jQuery. This will default to the latest
+    minor version of 1.7 hosted on Google's CDN.
+ - `source`: The generated Annotator Javascript source code (see Development)
+ - `styles`: The generated Annotator CSS source code (see Development)
+
+### auth
+
+Settings for the [Auth plugin][#wiki-auth]
+
+- `tokenUrl`: The URL of the auth token generator to use (default: http://annotateit.org/api/token)
+
+### store
+
+Settings for the [Store plugin][#wiki-store].
+
+ - `prefix`: The prefix URL for the store (default: http://annotateit.org/api)
+
+### permissions
+
+Settings for the [Permissions plugin][#wiki-permissions].
+
+#### tags
+
+If this is set to `true` the [Tags plugin][#wiki-tags] will be loaded.
+*/
 (function (options, window, document) {
   "use strict";
 
@@ -139,7 +191,7 @@
 
     loadjQuery: function () {
       var script   = document.createElement('script'),
-          fallback = 'https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js',
+          fallback = 'https://ajax.googleapis.com/ajax/libs/jquery/1.9/jquery.js',
           timer;
 
       timer = setTimeout(function () {
@@ -164,7 +216,7 @@
     },
 
     load: function (callback) {
-      var annotatorSource = this.config('externals.source', 'http://assets.annotateit.org/bookmarklet/annotator.min.js'),
+      var annotatorSource = this.config('externals.source', 'http://assets.annotateit.org/bookmarklet/annotator-bookmarklet.min.js'),
           annotatorStyles = this.config('externals.styles', 'http://assets.annotateit.org/bookmarklet/annotator.min.css');
 
       head.appendChild(jQuery('<link />', {
@@ -242,13 +294,7 @@
         );
       } else {
         notification.show('Loading Annotator into page');
-
-        if (!window.jQuery || !window.jQuery.sub) {
-          this.loadjQuery();
-        } else {
-          jQuery = window.jQuery.sub();
-          this.load(jQuery.proxy(this.setup, this));
-        }
+        this.loadjQuery();
       }
     }
   };
@@ -269,9 +315,4 @@
     // always check window.jQuery.
     jQuery = window.jQuery;
   }
-}(
-
-// Leave __config__ on a line of its own
-__config__
-
-, this, this.document));
+}(window._annotatorConfig, window, window.document));
