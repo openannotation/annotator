@@ -30,15 +30,16 @@ window._annotatorConfig =
       admin: ["Aron"]
 
 
+Annotator = require('annotator')
 require('../../src/bootstrap')
-require('../../src/plugin/unsupported')
 
 
 describe "bookmarklet", ->
   bookmarklet = null
+  head = document.getElementsByTagName('head')[0]
 
   beforeEach ->
-    window.Annotator = require('annotator')
+    window.Annotator = Annotator
     bookmarklet = window._annotator.bookmarklet
 
     # Prevent Notifications from being fired.
@@ -48,6 +49,12 @@ describe "bookmarklet", ->
     sinon.stub bookmarklet.notification, "remove"
 
     sinon.spy bookmarklet, "config"
+    sinon.stub bookmarklet, "loadjQuery"
+
+    sinon.stub jQuery, "getScript", (_src, callback) ->
+      callback()
+      error: ->
+    sinon.stub head, "appendChild"
 
   afterEach ->
     delete window.Annotator
@@ -58,17 +65,19 @@ describe "bookmarklet", ->
     bookmarklet.notification.remove.restore()
 
     bookmarklet.config.restore()
+    bookmarklet.loadjQuery.restore()
+
+    jQuery.getScript.restore()
+    head.appendChild.restore()
 
     jQuery(".annotator-bm-status, .annotator-notice").remove()
 
   describe "init()", ->
     beforeEach ->
-      sinon.spy bookmarklet, "loadjQuery"
       sinon.spy bookmarklet, "load"
       sinon.spy window.jQuery, "proxy"
 
     afterEach ->
-      bookmarklet.loadjQuery.restore()
       bookmarklet.load.restore()
       window.jQuery.proxy.restore()
 
@@ -87,29 +96,15 @@ describe "bookmarklet", ->
       assert(window._annotator.Annotator.showNotification.called)
 
   describe "load()", ->
-    beforeEach ->
-      sinon.spy bookmarklet, "setup"
-      bookmarklet.init()
-
-    afterEach ->
-      bookmarklet.setup.restore()
-      head = document.getElementsByTagName("head")[0]
-      stylesheets = document.getElementsByTagName("link")
-
-    it "should append the stylesheet to the head", ->
-      stylesheets = document.getElementsByTagName("link")
-      count = stylesheets.length
+    it "should append the stylesheet to the head", (done) ->
       bookmarklet.load ->
-
-      assert.equal(stylesheets.length, count + 1)
+        assert(head.appendChild.called)
+        done()
 
     it "should load the annotator script and call the callback", (done) ->
-      bookmarklet.load -> done()
-
-  describe "loadjQuery()", ->
-    it "should load jQuery into the page and call bookmarklet.load()", (done) ->
-      sinon.stub bookmarklet, "load", (callback) -> done()
-      bookmarklet.loadjQuery()
+      bookmarklet.load ->
+        assert(jQuery.getScript.called)
+        done()
 
   describe "setup()", ->
     beforeEach ->
