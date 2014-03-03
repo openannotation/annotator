@@ -294,13 +294,7 @@ If this is set to `true` the [Tags plugin][#wiki-tags] will be loaded.
         );
       } else {
         notification.show('Loading Annotator into page');
-
-        if (!window.jQuery || !window.jQuery.sub) {
-          this.loadjQuery();
-        } else {
-          jQuery = window.jQuery.sub();
-          this.load(jQuery.proxy(this.setup, this));
-        }
+        this.loadjQuery();
       }
     }
   };
