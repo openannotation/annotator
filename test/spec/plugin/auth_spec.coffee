@@ -81,16 +81,18 @@ describe 'Annotator.Plugin.Auth', ->
   beforeEach ->
     {rawToken, encodedToken} = makeToken()
     mock = mockAuth({token: encodedToken, autoFetch: false})
+    mock.auth.annotator =
+      store:
+        setHeader: sinon.spy()
+    mock.auth.pluginInit()
 
   it "uses token supplied in options by default", ->
     assert.equal(mock.auth.token, encodedToken)
 
   xit "makes an ajax request to tokenUrl to retrieve token otherwise"
 
-  it "sets annotator:headers data on its element with token data", ->
-    data = $(mock.elem).data('annotator:headers')
-    assert.isNotNull(data)
-    assert.equal(data['x-annotator-auth-token'], encodedToken)
+  it "sets a custom store header with token data", ->
+    assert.isTrue(mock.auth.annotator.store.setHeader.calledWith('x-annotator-auth-token', encodedToken))
 
   it "should call callbacks given to #withToken immediately if it has a valid token", ->
     callback = sinon.spy()
