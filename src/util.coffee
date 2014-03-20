@@ -40,21 +40,6 @@ Util.flatten = (array) ->
 
   flatten(array)
 
-# Public: check if two arrays are equal. (Order does not count.)
-Util.setsAreEqual = (set1, set2) ->
-  throw new Error "set1 is missing!" unless set1?
-  throw new Error "set2 is missing!" unless set2?
-  return true if set1 is set2
-  return false unless set1.length is set2.length
-
-  # OK, so we know that each sets has the same size.
-  # Now we just need to confirm that each elements of set1 exists in set2,
-  # too
-  for element in set1
-    return false unless element in set2
-
-  # If there were a missing element, we wouln't be executing this.
-  true
 
 # Public: decides whether node A is an ancestor of node B.
 #
