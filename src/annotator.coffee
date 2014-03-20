@@ -539,6 +539,11 @@ class Annotator extends Delegator
   onEditorSubmit: (annotation) =>
     this.publish('annotationEditorSubmit', [@editor, annotation])
 
+  # Public: Moves the @viewer to a new location
+  moveViewer: (location) =>
+    console.log "Moving viewer to", location
+    @viewer.element.css(location)
+
   # Public: Loads the @viewer with an Array of annotations and positions it
   # at the location provided. Calls the 'annotationViewerShown' event.
   #
@@ -554,7 +559,7 @@ class Annotator extends Delegator
   #
   # Returns itself to allow chaining.
   showViewer: (annotations, location) =>
-    @viewer.element.css(location)
+    this.moveViewer(location)
     @viewer.load(annotations)
 
     this.publish('annotationViewerShown', [@viewer, annotations])
@@ -668,9 +673,10 @@ class Annotator extends Delegator
     annotations = $(event.target)
       .parents('.annotator-hl')
       .addBack()
-      .map -> return $(this).data("annotation")
+      .map( -> return $(this).data("annotation"))
+      .toArray()
 
-    annotations = $.makeArray(annotations)
+    location = Util.mousePosition(event, @wrapper[0])
 
     # If the viewer is already shown, we have to react differently
     if @viewer.isShown()
@@ -678,7 +684,8 @@ class Annotator extends Delegator
       # the same ones we are currently hovering over
       if Util.setsAreEqual(annotations, @viewer.annotations)
         # Viewer already contains the currently wanted annotations.
-        # nothing to do.
+        # So we just move it to the new place, and return
+        this.moveViewer(location)
         return false
       else
         # Viewer contains a different set of annotations.
@@ -686,7 +693,7 @@ class Annotator extends Delegator
         @viewer.hide()
 
     # Now show the viewer with the wanted annotations
-    this.showViewer(annotations, Util.mousePosition(event, @wrapper[0]))
+    this.showViewer(annotations, location)
 
   # Annotator#element callback. Sets @ignoreMouseup to true to prevent
   # the annotation selection events firing when the adder is clicked.
