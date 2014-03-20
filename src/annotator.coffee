@@ -674,8 +674,8 @@ class Annotator extends Delegator
 
     # If the viewer is already shown, we have to react differently
     if @viewer.isShown()
-      # Check if what is shown is the viewer is the same as we are
-      # hovering over
+      # Check whether the annotations already shown in the viewer are
+      # the same ones we are currently hovering over
       if Util.setsAreEqual(annotations, @viewer.annotations)
         # Viewer already contains the currently wanted annotations.
         # nothing to do.
