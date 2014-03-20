@@ -541,7 +541,6 @@ class Annotator extends Delegator
 
   # Public: Moves the @viewer to a new location
   moveViewer: (location) =>
-    console.log "Moving viewer to", location
     @viewer.element.css(location)
 
   # Public: Loads the @viewer with an Array of annotations and positions it
