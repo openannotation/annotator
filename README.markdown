@@ -1,8 +1,8 @@
-[![Stories in Ready](https://badge.waffle.io/okfn/annotator.png?label=ready&title=Ready)](https://waffle.io/okfn/annotator)
 Annotator
 =========
 
 [![Build Status](https://secure.travis-ci.org/okfn/annotator.png)](http://travis-ci.org/okfn/annotator)
+[![Stories in Ready](https://badge.waffle.io/okfn/annotator.png?label=ready&title=Ready)](https://waffle.io/okfn/annotator)
 
 Annotator is a web annotation system. Loaded into a webpage, it provides the
 user with tools to annotate text (and other elements) in the page. For a simple
