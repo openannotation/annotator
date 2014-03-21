@@ -665,7 +665,7 @@ class Annotator extends Delegator
     # Don't do anything if we're making a selection
     return false if @mouseIsDown
 
-    # If the viewer is already shown, hide it frst
+    # If the viewer is already shown, hide it first
     @viewer.hide() if @viewer.isShown()
 
     annotations = $(event.target)
