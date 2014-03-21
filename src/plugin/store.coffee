@@ -8,16 +8,8 @@ Annotator = require('annotator')
 # the event.
 #
 # The store handles five distinct actions "read", "search", "create", "update"
-# and "destory". The requests made can be customised with options when the
-# plugin is added to the Annotator. Custom headers can also be sent with every
-# request by setting a $.data key on the Annotation#element containing headers
-# to send. e.g:
-#
-#   annotator.element.data('annotation:headers', {
-#     'X-My-Custom-Header': 'MyCustomValue'
-#   })
-#
-# This header will now be sent with every request.
+# and "destroy". The requests made can be customised with options when the
+# plugin is added to the Annotator.
 class Annotator.Plugin.Store
 
   # User customisable options available.
@@ -37,6 +29,10 @@ class Annotator.Plugin.Store
     # Should the plugin emulate JSON POST/PUT payloads by sending its requests
     # as application/x-www-form-urlencoded with a single key, "json"
     emulateJSON: false
+
+    # A set of custom headers that will be sent with every request. See also the
+    # setHeader method.
+    headers: {}
 
     # This is the API endpoint. If the server supports Cross Origin Resource
     # Sharing (CORS) a full URL can be used here.
@@ -136,6 +132,19 @@ class Annotator.Plugin.Store
         dfd.reject.apply(dfd, arguments)
     return dfd.promise()
 
+  # Public: Set a custom HTTP header to be sent with every request.
+  #
+  # key   - The header name.
+  # value - The header value.
+  #
+  # Examples:
+  #
+  #   store.setHeader('X-My-Custom-Header', 'MyCustomValue')
+  #
+  # Returns nothing.
+  setHeader: (key, value) ->
+    this.options.headers[key] = value
+
   # Callback method for Store#loadAnnotationsFromSearch(). Processes the data
   # returned from the server (a JSON array of annotation Objects) and updates
   # the registry as well as loading them into the Annotator.
@@ -179,7 +188,8 @@ class Annotator.Plugin.Store
     opts = {
       type:     method,
       dataType: "json",
-      error:    this._onError
+      error:    this._onError,
+      headers:  this.options.headers
     }
 
     # If emulateHTTP is enabled, we send a POST and put the real method in an

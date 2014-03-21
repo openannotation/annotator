@@ -12,15 +12,6 @@ describe "Annotator.Plugin.Store", ->
   afterEach ->
     $.ajax.restore()
 
-  xit "should somehow ensure that it sends auth tokens if necessary"
-    # authMock = {
-    #   withToken: sinon.spy()
-    # }
-    # store.annotator.plugins.Auth = authMock
-
-    # store.pluginInit()
-    # assert.isTrue(authMock.withToken.calledWith(store._getAnnotations))
-
   it "create should trigger a POST request", ->
     store.create({text: "Donkeys on giraffes"})
     [_, opts] = $.ajax.args[0]
@@ -103,25 +94,13 @@ describe "Annotator.Plugin.Store", ->
     [url, _] = $.ajax.args[1]
     assert.equal('/some/prefix/delete?id=123&foo', url)
 
-  xit "should allow plugins to set custom headers (...from the data property 'annotator:headers'?)"
-    # sinon.stub(store, '_methodFor').returns('GET')
-    # sinon.stub(store.element, 'data').returns({
-    #   'x-custom-header-one':   'mycustomheader'
-    #   'x-custom-header-two':   'mycustomheadertwo'
-    #   'x-custom-header-three': 'mycustomheaderthree'
-    # })
-
-    # action   = 'read'
-    # data     = {}
-
-    # options = store._apiRequestOptions(action, data)
-
-    # assert.deepEqual(options.headers, {
-    #   'x-custom-header-one':   'mycustomheader'
-    #   'x-custom-header-two':   'mycustomheadertwo'
-    #   'x-custom-header-three': 'mycustomheaderthree'
-    # })
-
+  it "should send custom headers added with setHeader", ->
+    store.setHeader('Fruit', 'Apple')
+    store.setHeader('Colour', 'Green')
+    store.create({text: "Donkeys on giraffes"})
+    [_, opts] = $.ajax.args[0]
+    assert.equal('Apple', opts.headers['Fruit'])
+    assert.equal('Green', opts.headers['Colour'])
 
   it "should emulate new-fangled HTTP if emulateHTTP is true", ->
     store.options.emulateHTTP = true
