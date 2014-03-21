@@ -611,25 +611,14 @@ class Annotator extends Delegator
     # Don't do anything if we're making a selection
     return false if @mouseIsDown
 
+    # If the viewer is already shown, hide it first
+    @viewer.hide() if @viewer.isShown()
+
     annotations = $(event.target)
       .parents('.annotator-hl')
       .addBack()
-      .map -> return $(this).data("annotation")
-
-    annotations = $.makeArray(annotations)
-
-    # If the viewer is already shown, we have to react differently
-    if @viewer.isShown()
-      # Check whether the annotations already shown in the viewer are
-      # the same ones we are currently hovering over
-      if Util.setsAreEqual(annotations, @viewer.annotations)
-        # Viewer already contains the currently wanted annotations.
-        # nothing to do.
-        return false
-      else
-        # Viewer contains a different set of annotations.
-        # We should hide it first.
-        @viewer.hide()
+      .map( -> return $(this).data("annotation"))
+      .toArray()
 
     # Now show the viewer with the wanted annotations
     this.showViewer(annotations, Util.mousePosition(event, @wrapper[0]))
