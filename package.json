@@ -29,7 +29,7 @@
     "glob": "~3.2.6",
     "kew": "~0.2.2",
     "source-map": "~0.1.32",
-    "watchify": "~0.6.1"
+    "watchify": "0.6.2"
   },
   "engines": {
     "node": ">=0.8 <0.12"
