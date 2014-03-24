@@ -95,3 +95,31 @@ describe 'Annotator.Plugin.Document', ->
     it 'should de-duplicate uris', ->
       uris = plugin.uris()
       assert.equal(uris.length, 5)
+
+  describe '#_absoluteUrl', ->
+    it 'should add the protocol when the url starts with two slashes', ->
+      result = plugin._absoluteUrl('//example.com/')
+      assert.equal(result, 'http://example.com/')
+
+    it 'should add a trailing slash when given an empty path', ->
+      result = plugin._absoluteUrl('http://example.com')
+      assert.equal(result, 'http://example.com/')
+
+    it 'should make a relative path into an absolute url', ->
+      result = plugin._absoluteUrl('path')
+      expected = (
+        document.location.protocol + '//' +
+        document.location.host +
+        document.location.pathname.replace(/[^\/]+$/, '') +
+        'path'
+      )
+      assert.equal(result, expected)
+
+    it 'should make an absolute path into an absolute url', ->
+      result = plugin._absoluteUrl('/path')
+      expected = (
+        document.location.protocol + '//' +
+        document.location.host +
+        '/path'
+      )
+      assert.equal(result, expected)
