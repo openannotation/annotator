@@ -102,3 +102,36 @@ describe 'Annotator.Plugin.Document', ->
         'http://example.com/images/icon.ico'
       )
 
+  describe '#_absoluteUrl', ->
+    plugin = null
+
+    beforeEach ->
+      plugin = annotator.plugins.Document
+
+    it 'should add the protocol when the url starts with two slashes', ->
+      result = plugin._absoluteUrl('//example.com/')
+      expected = "#{document.location.protocol}//example.com/"
+      assert.equal(result, expected)
+
+    it 'should add a trailing slash when given an empty path', ->
+      result = plugin._absoluteUrl('http://example.com')
+      assert.equal(result, 'http://example.com/')
+
+    it 'should make a relative path into an absolute url', ->
+      result = plugin._absoluteUrl('path')
+      expected = (
+        document.location.protocol + '//' +
+        document.location.host +
+        document.location.pathname.replace(/[^\/]+$/, '') +
+        'path'
+      )
+      assert.equal(result, expected)
+
+    it 'should make an absolute path into an absolute url', ->
+      result = plugin._absoluteUrl('/path')
+      expected = (
+        document.location.protocol + '//' +
+        document.location.host +
+        '/path'
+      )
+      assert.equal(result, expected)
