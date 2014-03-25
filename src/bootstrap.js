@@ -191,7 +191,7 @@ If this is set to `true` the [Tags plugin][#wiki-tags] will be loaded.
 
     loadjQuery: function () {
       var script   = document.createElement('script'),
-          fallback = 'https://ajax.googleapis.com/ajax/libs/jquery/1.9/jquery.js',
+          fallback = 'https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js',
           timer;
 
       timer = setTimeout(function () {
