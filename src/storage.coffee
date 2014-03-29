@@ -1,3 +1,5 @@
+{$} = require './util'
+
 # Public: Adds persistence hooks for annotations.
 class StorageProvider
 

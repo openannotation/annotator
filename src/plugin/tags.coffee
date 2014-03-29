@@ -1,4 +1,5 @@
 Annotator = require('annotator')
+$ = Annotator.Util.$
 
 
 # Public: Tags plugin allows users to tag thier annotations with metadata

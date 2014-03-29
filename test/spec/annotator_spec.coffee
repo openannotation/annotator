@@ -2,6 +2,7 @@ h = require('helpers')
 
 Annotator = require('annotator')
 Util = Annotator.Util
+$ = Annotator.Util.$
 Range = Annotator.Range
 
 
@@ -183,14 +184,14 @@ describe 'Annotator', ->
       annotation = {text: "test"}
 
       annotator.viewer.fields[0].load(field, annotation)
-      assert.equal(jQuery(field).html(), "test")
+      assert.equal($(field).html(), "test")
 
     it "should set the contents of the field to placeholder text when empty", ->
       field = document.createElement('div')
       annotation = {text: ""}
 
       annotator.viewer.fields[0].load(field, annotation)
-      assert.equal(jQuery(field).html(), "<i>No Comment</i>")
+      assert.equal($(field).html(), "<i>No Comment</i>")
 
     it "should setup the default text field to publish an event on load", ->
       field = document.createElement('div')

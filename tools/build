@@ -230,7 +230,7 @@ if (require.main === module) {
     , expose: 'annotator'
     });
     glob.sync(
-      './src/plugin/{unsupported,auth,store,annotateitpermissions}.coffee'
+      './src/plugin/{unsupported,auth,store,tags,annotateitpermissions}.coffee'
     ).reduce(exports.plugin, b);
     pack(b, 'pkg/annotator-bookmarklet.js', {
       debug: true

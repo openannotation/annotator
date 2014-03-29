@@ -1,6 +1,7 @@
 Util = require './util'
 Widget = require './widget'
 
+$ = Util.$
 
 _t = Util.TranslationString
 

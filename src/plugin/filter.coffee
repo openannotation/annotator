@@ -1,5 +1,5 @@
 Annotator = require('annotator')
-
+$ = Annotator.Util.$
 
 class Annotator.Plugin.Filter extends Annotator.Plugin
   # Events and callbacks to bind to the Filter#element.
@@ -370,5 +370,10 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
   _onClearClick: (event) ->
     $(event.target).prev('input').val('').keyup().blur()
 
+
+# Export the copy of jQuery we use to make testing a touch easier. This is ugly
+# and we should stop testing the internals of these plugins in this way, but for
+# now it will have to do.
+Annotator.Plugin.Filter.$ = $
 
 module.exports = Annotator.Plugin.Filter

@@ -1,3 +1,5 @@
+$ = require 'jquery'
+
 # A simple XPath evaluator using jQuery which can evaluate queries of
 simpleXPathJQuery = (relativeRoot) ->
   jq = this.map ->
@@ -82,3 +84,4 @@ module.exports =
   simpleXPathJQuery: simpleXPathJQuery
   simpleXPathPure: simpleXPathPure
   findChild: findChild
+  $: $

@@ -1,6 +1,7 @@
 Delegator = require './class'
 Util = require './util'
 
+$ = Util.$
 
 # Public: A simple notification system that can be used to display information,
 # warnings and errors to the user. Display of notifications are controlled

@@ -1,4 +1,5 @@
 Annotator = require('annotator')
+$ = Annotator.Util.$
 
 
 # Public: A initialization function that sets up the Annotator and some of the

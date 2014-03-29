@@ -1,3 +1,4 @@
+{$} = require('../../../src/util')
 h = require('helpers')
 Auth = require('../../../src/plugin/auth')
 

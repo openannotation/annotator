@@ -1,4 +1,5 @@
 Annotator = require('annotator')
+$ = Annotator.Util.$
 
 
 # Public: The Store plugin can be used to persist annotations to a database

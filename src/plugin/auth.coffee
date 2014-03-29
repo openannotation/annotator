@@ -1,5 +1,5 @@
 Annotator = require('annotator')
-
+$ = Annotator.Util.$
 
 # Public: Creates a Date object from an ISO8601 formatted date String.
 #
