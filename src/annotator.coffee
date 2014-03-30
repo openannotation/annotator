@@ -88,7 +88,7 @@ class Annotator extends Delegator
   #
   # Returns a new instance of the Annotator.
   constructor: (element, options) ->
-    super
+    @options = $.extend(true, {}, @options, options)
     @plugins = {}
 
     Annotator._instances.push(this)
@@ -122,6 +122,7 @@ class Annotator extends Delegator
   # specified element.
   attach: (element) ->
     @element = $(element)
+    this.addEvents()
 
     # Set up the core interface components
     this._setupDocumentEvents() unless @options.readOnly

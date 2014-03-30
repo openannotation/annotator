@@ -95,7 +95,7 @@
           loadFromSearch: {uri: window.location},
           annotationData: {uri: window.location}
         });
-        factory.addPlugin(Annotator.Plugin.Auth, {
+        factory.addPlugin(Annotator.Plugin.Auth, null, {
           tokenUrl: 'http://localhost:4000/api/token'
         });
         factory.addPlugin(Annotator.Plugin.Unsupported);

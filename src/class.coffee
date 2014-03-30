@@ -32,10 +32,6 @@ class Delegator
     @options = $.extend(true, {}, @options, options)
     @element = $(element)
 
-    # Delegator creates closures for each event it binds. This is a private
-    # registry of created closures, used to enable event unbinding.
-    @_closures = {}
-
     this.addEvents()
 
   # Public: binds the function names in the @events Object to their events.
@@ -107,6 +103,9 @@ class Delegator
     else
       @element.delegate(selector, event, closure)
 
+    # Delegator creates closures for each event it binds. This is a private
+    # registry of created closures, used to enable event unbinding.
+    @_closures ?= {}
     @_closures["#{selector}/#{event}/#{functionName}"] = closure
 
     this
