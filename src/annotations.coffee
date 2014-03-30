@@ -1,4 +1,5 @@
-StorageProvider = require('./storage')
+StorageProvider = require './storage'
+{$} = require './util'
 
 
 # Public: Provides CRUD methods for annotations which call corresponding registry hooks.

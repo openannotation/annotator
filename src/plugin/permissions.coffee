@@ -1,4 +1,5 @@
 Annotator = require('annotator')
+$ = Annotator.Util.$
 
 
 # Public: Plugin for setting permissions on newly created annotations as well as

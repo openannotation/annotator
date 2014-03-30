@@ -12,8 +12,7 @@ Registry = require './registry'
 AnnotationProvider = require './annotations'
 
 _t = Util.TranslationString
-
-
+$ = Util.$
 
 # Selection and range creation reference for the following code:
 # http://www.quirksmode.org/dom/range_intro.html
@@ -826,19 +825,6 @@ Annotator.supported = -> (-> !!this.getSelection)()
 Annotator.noConflict = ->
   Util.getGlobal().Annotator = _Annotator
   this
-
-# Create global access for Annotator
-$.fn.annotator = (options) ->
-  args = Array::slice.call(arguments, 1)
-  this.each ->
-    # check the data() cache, if it's there we'll call the method requested
-    instance = $.data(this, 'annotator')
-    if instance
-      options && instance[options].apply(instance, args)
-    else
-      instance = new Annotator(this, options)
-      $.data(this, 'annotator', instance)
-
 
 # Export Annotator object.
 module.exports = Annotator

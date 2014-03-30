@@ -1,3 +1,4 @@
+{$} = require('../../../src/util')
 Annotator = require('annotator')
 Tags = require('../../../src/plugin/tags')
 

@@ -1,3 +1,4 @@
+{$} = require('../../src/util')
 Viewer = require('../../src/viewer')
 
 

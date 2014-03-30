@@ -1,9 +1,8 @@
 Util = require './util'
 Widget = require './widget'
 
-
 _t = Util.TranslationString
-
+$ = Util.$
 
 # Public: Creates an element for viewing annotations.
 class Viewer extends Widget

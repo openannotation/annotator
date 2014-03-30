@@ -1,4 +1,5 @@
 Annotator = require('annotator')
+$ = Annotator.Util.$
 
 
 # Plugin that will display a notification to the user if thier browser does

@@ -1,5 +1,7 @@
 Filter = require('../../../src/plugin/filter')
 
+$ = Filter.$
+
 describe "Annotator.Plugins.Filter", ->
   plugin  = null
   element = null
@@ -16,7 +18,7 @@ describe "Annotator.Plugins.Filter", ->
     plugin.annotator = annotator
 
   afterEach ->
-    plugin.element.remove()
+    plugin.destroy()
 
   describe "events", ->
     filterElement = null
@@ -47,14 +49,7 @@ describe "Annotator.Plugins.Filter", ->
     it "should have an empty filters array", ->
       assert.deepEqual(plugin.filters, [])
 
-    it "should have an filter element wrapped in jQuery", ->
-      assert.isTrue(plugin.filter instanceof jQuery)
-      assert.lengthOf(plugin.filter, 1)
-
     it "should append the toolbar to the @options.appendTo selector", ->
-      assert.isTrue(plugin.element instanceof jQuery)
-      assert.lengthOf(plugin.element, 1)
-
       parent = $(plugin.options.appendTo)
       assert.equal(plugin.element.parent()[0], parent[0])
 
@@ -235,33 +230,27 @@ describe "Annotator.Plugins.Filter", ->
       assert.lengthOf(plugin.highlights.filter('.' + plugin.classes.hl.hide), 0)
 
   describe "group: filter input actions", ->
-    filterElement = null
-
-    beforeEach ->
-      filterElement = $(plugin.html.filter)
-      plugin.element.append(filterElement)
-
     describe "_onFilterFocus", ->
       it "should add an active class to the element", ->
         plugin._onFilterFocus({
-          target: filterElement.find('input')[0]
+          target: plugin.filter.find('input')[0]
         })
-        assert.isTrue(filterElement.hasClass(plugin.classes.active))
+        assert.isTrue(plugin.filter.hasClass(plugin.classes.active))
 
     describe "_onFilterBlur", ->
       it "should remove the active class from the element", ->
-        filterElement.addClass(plugin.classes.active)
+        plugin.filter.addClass(plugin.classes.active)
         plugin._onFilterBlur({
-          target: filterElement.find('input')[0]
+          target: plugin.filter.find('input')[0]
         })
-        assert.isFalse(filterElement.hasClass(plugin.classes.active))
+        assert.isFalse(plugin.filter.hasClass(plugin.classes.active))
 
       it "should NOT remove the active class from the element if it has a value", ->
-        filterElement.addClass(plugin.classes.active)
+        plugin.filter.addClass(plugin.classes.active)
         plugin._onFilterBlur({
-          target: filterElement.find('input').val('filtered')[0]
+          target: plugin.filter.find('input').val('filtered')[0]
         })
-        assert.isTrue(filterElement.hasClass(plugin.classes.active))
+        assert.isTrue(plugin.filter.hasClass(plugin.classes.active))
 
     describe "_onFilterKeyup", ->
       beforeEach ->
@@ -269,15 +258,15 @@ describe "Annotator.Plugins.Filter", ->
         sinon.stub(plugin, 'updateFilter')
 
       it "should call Filter#updateFilter() with the relevant filter", ->
-        filterElement.data('filter', plugin.filters[0])
+        plugin.filter.data('filter', plugin.filters[0])
         plugin._onFilterKeyup({
-          target: filterElement.find('input')[0]
-        })
+          target: plugin.filter.find('input')[0]
+        }, $)
         assert.isTrue(plugin.updateFilter.calledWith(plugin.filters[0]))
 
       it "should NOT call Filter#updateFilter() if no filter is found", ->
         plugin._onFilterKeyup({
-          target: filterElement.find('input')[0]
+          target: plugin.filter.find('input')[0]
         })
         assert.isFalse(plugin.updateFilter.called)
 
@@ -361,17 +350,17 @@ describe "Annotator.Plugins.Filter", ->
       mockjQuery = null
 
       beforeEach ->
-        plugin.highlights = $()
+        plugin.highlights = Filter.$()
         mockjQuery = {
           addClass: sinon.spy()
           animate: sinon.spy()
           offset: sinon.stub().returns({top: 0})
         }
         sinon.spy(plugin.highlights, 'removeClass')
-        sinon.stub(jQuery.prototype, 'init').returns(mockjQuery)
+        sinon.stub(Filter.$.prototype, 'init').returns(mockjQuery)
 
       afterEach ->
-        jQuery.prototype.init.restore()
+        Filter.$.prototype.init.restore()
 
       it "should remove active class from currently active element", ->
         plugin._scrollToHighlight({})
@@ -396,11 +385,11 @@ describe "Annotator.Plugins.Filter", ->
         mockjQuery.keyup = sinon.stub().returns(mockjQuery)
         mockjQuery.blur = sinon.stub().returns(mockjQuery)
 
-        sinon.stub(jQuery.prototype, 'init').returns(mockjQuery)
+        sinon.stub(Filter.$.prototype, 'init').returns(mockjQuery)
         plugin._onClearClick({target: {}})
 
       afterEach ->
-        jQuery.prototype.init.restore()
+        Filter.$.prototype.init.restore()
 
       it "should clear the input", ->
         assert.isTrue(mockjQuery.val.calledWith(''))

@@ -9,7 +9,8 @@
   "dependencies": {
     "backbone-events-standalone": "~0.2.1",
     "backbone-extend-standalone": "~0.1.2",
-    "through": "~2.3.4"
+    "through": "~2.3.4",
+    "jquery": "~1.11.0"
   },
   "devDependencies": {
     "browser-resolve": "~1.2.1",

@@ -1,3 +1,4 @@
+{$} = require('../../src/util')
 Widget = require('../../src/widget')
 
 
@@ -96,7 +97,7 @@ describe "Widget", ->
     beforeEach ->
       {window, element} = mocks.shift()
 
-      sinon.stub(jQuery.fn, 'init').returns({
+      sinon.stub($.fn, 'init').returns({
         width: sinon.stub().returns(window.width)
         scrollTop: sinon.stub().returns(window.scrollTop)
         scrollLeft: sinon.stub().returns(window.scrollLeft)
@@ -114,7 +115,7 @@ describe "Widget", ->
       widget.checkOrientation()
 
     afterEach ->
-      jQuery.fn.init.restore()
+      $.fn.init.restore()
 
     it "should reset the widget each time", ->
       assert(widget.resetOrientation.calledOnce)

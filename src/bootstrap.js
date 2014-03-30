@@ -25,8 +25,6 @@ repository (see _config.example.json_). The options are as follows:
 
 ### externals
 
- - `jQuery`: A URL to a hosted version of jQuery. This will default to the latest
-    minor version of 1.7 hosted on Google's CDN.
  - `source`: The generated Annotator Javascript source code (see Development)
  - `styles`: The generated Annotator CSS source code (see Development)
 
@@ -55,10 +53,10 @@ If this is set to `true` the [Tags plugin][#wiki-tags] will be loaded.
 
   var body = document.body,
       head = document.getElementsByTagName('head')[0],
-      globals = ['Annotator', '$', 'jQuery'],
+      globals = ['Annotator'],
       isLoaded = {},
       bookmarklet = {},
-      notification, namespace, jQuery;
+      notification, namespace;
 
   while (globals.length) {
     namespace = globals.shift();
@@ -189,51 +187,52 @@ If this is set to `true` the [Tags plugin][#wiki-tags] will be loaded.
       return value;
     },
 
-    loadjQuery: function () {
-      var script   = document.createElement('script'),
-          fallback = 'https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js',
-          timer;
-
-      timer = setTimeout(function () {
-        notification.error('Sorry, we were unable to load jQuery which is required by the annotator');
-      }, this.config('timeout', 30000));
-
-      script.src = this.config('externals.jQuery', fallback);
-      script.onload = function () {
-        // Reassign our local copy of jQuery.
-        jQuery = window.jQuery;
-
-        clearTimeout(timer);
-        body.removeChild(script);
-        bookmarklet.load(function () {
-          // Once the Annotator has been loaded we can finally remove jQuery.
-          window.jQuery.noConflict(true);
-          bookmarklet.setup();
-        });
-      };
-
-      body.appendChild(script);
+    _injectElement: function (where, el) {
+      if (where == 'head') {
+        head.appendChild(el);
+      } else {
+        body.appendChild(el);
+      }
     },
 
     load: function (callback) {
       var annotatorSource = this.config('externals.source', 'http://assets.annotateit.org/bookmarklet/annotator-bookmarklet.min.js'),
           annotatorStyles = this.config('externals.styles', 'http://assets.annotateit.org/bookmarklet/annotator.min.css');
 
-      head.appendChild(jQuery('<link />', {
-        rel: 'stylesheet',
-        href: annotatorStyles
-      })[0]);
+      var link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = annotatorStyles;
 
-      jQuery.ajaxSetup({timeout: this.config('timeout', 30000)});
-      jQuery.getScript(annotatorSource, callback)
-            .error(function () {
-              notification.error('Sorry, we\'re unable to load Annotator at the moment...');
-            });
+      var script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = annotatorSource;
+      script._loaded = false;
+
+      var scriptLoaded = function () {
+        script._loaded = true;
+        callback();
+      };
+
+      script.onload = scriptLoaded;
+      script.onreadystatechange = function() {
+        if ( this.readyState !== "loaded" && !script._loaded ) return;
+        scriptLoaded();
+      };
+
+      setTimeout(function () {
+        if (!script._loaded) {
+          notification.error('Sorry, we\'re unable to load Annotator at the moment...');
+        }
+      }, 30000);
+
+      this._injectElement('head', link);
+      this._injectElement('body', script);
     },
 
     authOptions: function () {
       return {
-        tokenUrl: this.config('auth.tokenUrl', 'http://annotateit.org/api/token')
+        tokenUrl: this.config('auth.tokenUrl', 'http://annotateit.org/api/token'),
+        autoFetch: this.config('auth.autoFetch', true)
       };
     },
 
@@ -251,7 +250,9 @@ If this is set to `true` the [Tags plugin][#wiki-tags] will be loaded.
     },
 
     setup: function () {
-      var annotator = new window.Annotator(options.target || body), namespace;
+      var annotator = new window.Annotator(options.target || body),
+        jQuery = window.Annotator.Util.$,
+        namespace;
 
       annotator
         .addPlugin('Unsupported')
@@ -294,7 +295,9 @@ If this is set to `true` the [Tags plugin][#wiki-tags] will be loaded.
         );
       } else {
         notification.show('Loading Annotator into page');
-        this.loadjQuery();
+        bookmarklet.load(function () {
+          bookmarklet.setup();
+        });
       }
     }
   };
@@ -309,10 +312,5 @@ If this is set to `true` the [Tags plugin][#wiki-tags] will be loaded.
   // Load the bookmarklet.
   if (!options.test) {
     bookmarklet.init();
-  } else {
-    // jQuery is included here for testing individual methods. It is overridden
-    // with a local copy later in the script. When checking for an external copy
-    // always check window.jQuery.
-    jQuery = window.jQuery;
   }
 }(window._annotatorConfig, window, window.document));

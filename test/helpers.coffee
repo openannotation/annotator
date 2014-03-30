@@ -1,3 +1,4 @@
+{$} = require('../src/util')
 Util = require('../src/util')
 
 class MockSelection

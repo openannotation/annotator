@@ -1,3 +1,4 @@
+{$} = require('../../src/util')
 Registry = require('../../src/registry')
 AnnotationProvider = require('../../src/annotations')
 

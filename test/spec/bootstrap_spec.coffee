@@ -2,15 +2,11 @@ window._annotatorConfig =
   test: true
   target: "#fixtures"
   externals:
-    jQuery: "../../../lib/vendor/jquery.js"
-    source: "../pkg/annotator.min.js"
-    styles: "../pkg/annotator.min.css"
+    source: "../notexist/annotator.js"
+    styles: "../notexist/annotator.css"
 
   auth:
-    headers:
-      "X-Annotator-Account-Id": "39fc339cf058bd22176771b3e30155a8"
-      "X-Annotator-User-Id": "aron"
-      "X-Annotator-Auth-Token": "65b4e7d823c91d9b18e649e4067f11c3eb29c3cb504ff965760d737ae6dbcdd3"
+    autoFetch: false
 
   tags: true
   store:
@@ -31,12 +27,14 @@ window._annotatorConfig =
 
 
 Annotator = require('annotator')
+$ = Annotator.Util.$
 require('../../src/bootstrap')
 
 
 describe "bookmarklet", ->
   bookmarklet = null
   head = document.getElementsByTagName('head')[0]
+  body = document.body
 
   beforeEach ->
     window.Annotator = Annotator
@@ -49,12 +47,9 @@ describe "bookmarklet", ->
     sinon.stub bookmarklet.notification, "remove"
 
     sinon.spy bookmarklet, "config"
-    sinon.stub bookmarklet, "loadjQuery"
-
-    sinon.stub jQuery, "getScript", (_src, callback) ->
-      callback()
-      error: ->
-    sinon.stub head, "appendChild"
+    sinon.stub bookmarklet, "_injectElement", (where, el) ->
+      if el.onload?
+        el.onload.call()
 
   afterEach ->
     delete window.Annotator
@@ -65,29 +60,20 @@ describe "bookmarklet", ->
     bookmarklet.notification.remove.restore()
 
     bookmarklet.config.restore()
-    bookmarklet.loadjQuery.restore()
+    bookmarklet._injectElement.restore()
 
-    jQuery.getScript.restore()
-    head.appendChild.restore()
-
-    jQuery(".annotator-bm-status, .annotator-notice").remove()
+    $(".annotator-bm-status, .annotator-notice").remove()
 
   describe "init()", ->
     beforeEach ->
       sinon.spy bookmarklet, "load"
-      sinon.spy window.jQuery, "proxy"
 
     afterEach ->
       bookmarklet.load.restore()
-      window.jQuery.proxy.restore()
 
     it "should display a notification telling the user the page is loading", ->
       bookmarklet.init()
       assert(bookmarklet.notification.show.called)
-
-    it "should call jQueryLoad()", ->
-      bookmarklet.init()
-      assert(bookmarklet.loadjQuery.called)
 
     it "should display a notification if the bookmarklet has loaded", ->
       window._annotator.instance = {}
@@ -96,22 +82,20 @@ describe "bookmarklet", ->
       assert(window._annotator.Annotator.showNotification.called)
 
   describe "load()", ->
+
     it "should append the stylesheet to the head", (done) ->
       bookmarklet.load ->
-        assert(head.appendChild.called)
+        assert(bookmarklet._injectElement.calledWith('head'))
         done()
 
-    it "should load the annotator script and call the callback", (done) ->
+    it "should append the script to the body", (done) ->
       bookmarklet.load ->
-        assert(jQuery.getScript.called)
+        assert(bookmarklet._injectElement.calledWith('body'))
         done()
 
   describe "setup()", ->
     beforeEach ->
       bookmarklet.setup()
-
-    afterEach ->
-      window._annotator.jQuery("#fixtures").empty().removeData("annotator").removeData "annotator:headers"
 
     it "should export useful values to window._annotator", ->
       assert.isFunction(window._annotator.Annotator)
@@ -161,9 +145,7 @@ describe "bookmarklet.notification", ->
 
   beforeEach ->
     bookmarklet = window._annotator.bookmarklet
-    bookmarklet.init()
     notification = bookmarklet.notification
-
     sinon.spy bookmarklet.notification, "show"
     sinon.spy bookmarklet.notification, "message"
     sinon.spy bookmarklet.notification, "hide"

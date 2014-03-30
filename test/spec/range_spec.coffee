@@ -1,3 +1,4 @@
+{$} = require('../../src/util')
 h = require('helpers')
 
 Range = require('../../src/range')

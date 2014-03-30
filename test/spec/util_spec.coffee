@@ -1,3 +1,4 @@
+{$} = require('../../src/util')
 h = require('helpers')
 Util = require('../../src/util')
 
@@ -71,7 +72,7 @@ describe 'Util.getTextNodes()', ->
 
   it "returns an empty jQuery collection when called in undefined node", ->
     result = Util.getTextNodes($(undefined))
-    assert.instanceOf(result, jQuery)
+    assert.instanceOf(result, $)
     assert.lengthOf(result, 0)
 
   it "returns an element's TextNodes after Text.splitText() text has been called", ->

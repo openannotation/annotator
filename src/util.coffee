@@ -1,4 +1,5 @@
 xpath = require './xpath'
+$ = xpath.$
 
 
 # I18N
@@ -12,13 +13,15 @@ else
 
 _t = (msgid) -> gettext(msgid)
 
-unless jQuery?.fn?.jquery
-  console.error(_t("Annotator requires jQuery: have you included lib/vendor/jquery.js?"))
-
 unless JSON and JSON.parse and JSON.stringify
   console.error(_t("Annotator requires a JSON implementation: have you included lib/vendor/json2.js?"))
 
 Util = {}
+
+
+# Provide access to our copy of jQuery on the Annotator object
+Util.$ = $
+
 
 # Public: Create a Gettext translated string from a message id
 #
