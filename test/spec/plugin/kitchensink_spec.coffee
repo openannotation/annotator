@@ -31,25 +31,27 @@ describe 'Annotator::setupPlugins', ->
     beforeEach ->
       _Showdown = window.Showdown
       annotator = new Annotator(h.fix())
+      sinon.spy(annotator, 'addPlugin')
       annotator.setupPlugins()
 
     afterEach -> window.Showdown = _Showdown
 
     describe 'it includes the Unsupported plugin', ->
       it 'should add the Unsupported plugin by default', ->
-        assert.isDefined(annotator.plugins.Unsupported)
+        assert(annotator.addPlugin.calledWith('Unsupported'))
 
     describe 'it includes the Tags plugin', ->
       it 'should add the Tags plugin by default', ->
-        assert.isDefined(annotator.plugins.Tags)
+        assert(annotator.addPlugin.calledWith('Tags'))
 
     describe 'it includes the Filter plugin', ->
       filterPlugin = null
 
-      beforeEach -> filterPlugin = annotator.plugins.Filter
+      beforeEach ->
+        filterPlugin = annotator.plugins.filter((p) -> p instanceof Annotator.Plugin.Filter)[0]
 
       it 'should add the Filter plugin by default', ->
-        assert.isDefined(filterPlugin)
+        assert(annotator.addPlugin.calledWith('Filter'))
 
       it 'should have filters for annotations, tags and users', ->
         expectedFilters = ['text', 'user', 'tags']
@@ -58,23 +60,24 @@ describe 'Annotator::setupPlugins', ->
 
     describe 'and with Showdown loaded in the page', ->
       it 'should add the Markdown plugin', ->
-        assert.isDefined(annotator.plugins.Markdown)
+        assert(annotator.addPlugin.calledWith('Markdown'))
 
   describe 'called with AnnotateIt config', ->
     beforeEach ->
       annotator = new Annotator(h.fix())
+      sinon.spy(annotator, 'addPlugin')
       annotator.setupPlugins {},
         Filter:
           appendTo: h.fix()
 
     it 'should add the Store plugin', ->
-      assert.isDefined(annotator.plugins.Store)
+      assert(annotator.addPlugin.calledWith('Store'))
 
     it 'should add the AnnotateItPermissions plugin', ->
-      assert.isDefined(annotator.plugins.AnnotateItPermissions)
+      assert(annotator.addPlugin.calledWith('AnnotateItPermissions'))
 
     it 'should add the Auth plugin', ->
-      assert.isDefined(annotator.plugins.Auth)
+      assert(annotator.addPlugin.calledWith('Auth'))
 
   describe 'called with plugin options', ->
     beforeEach -> annotator = new Annotator(h.fix())
@@ -87,9 +90,11 @@ describe 'Annotator::setupPlugins', ->
           addAnnotationFilter: false
           appendTo: h.fix()
 
-      assert.lengthOf(annotator.plugins.Filter.filters, 0)
+      filterPlugin = annotator.plugins.filter((p) -> p instanceof Annotator.Plugin.Filter)[0]
+      assert.lengthOf(filterPlugin.filters, 0)
 
     it 'should NOT load a plugin if its key is set to null OR false', ->
+      sinon.spy(annotator, 'addPlugin')
       annotator.setupPlugins null, {Filter: false, Tags: null}
-      assert.isUndefined(annotator.plugins.Tags)
-      assert.isUndefined(annotator.plugins.Filter)
+      assert(annotator.addPlugin.neverCalledWith('Tags'))
+      assert(annotator.addPlugin.neverCalledWith('Filter'))

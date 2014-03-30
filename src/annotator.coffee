@@ -8,9 +8,10 @@ Widget = require './widget'
 Viewer = require './viewer'
 Editor = require './editor'
 Notification = require './notification'
-Registry = require './registry'
+Factory = require './factory'
 
-AnnotationProvider = require './annotations'
+AnnotationRegistry = require './annotations'
+NullStore = require './nullstore'
 
 _t = Util.TranslationString
 
@@ -60,8 +61,11 @@ class Annotator extends Delegator
 
   viewerHideTimer: null
 
-  # Public: Creates an instance of the Annotator. Requires a DOM Element in
-  # which to watch for annotations as well as any options.
+  # Public: Creates an instance of the Annotator.
+  #
+  # Legacy signature: In Annotator v1.2.x this element required a DOM Element on
+  # which to watch for annotations as well as any options. This is no longer
+  # required and may eventually be deprecated.
   #
   # NOTE: If the Annotator is not supported by the current browser it will not
   # perform any setup and simply return a basic object. This allows plugins
@@ -70,7 +74,7 @@ class Annotator extends Delegator
   # Unsupported plugin which will notify users that the Annotator will not work.
   #
   # element - A DOM Element in which to annotate.
-  # options - An options Object. NOTE: There are currently no user options.
+  # options - An options Object.
   #
   # Examples
   #
@@ -92,8 +96,49 @@ class Annotator extends Delegator
     # Return early if the annotator is not supported.
     return this unless Annotator.supported()
 
-    # Create the registry and start the application
-    Registry.createApp(this, options)
+    if element
+      # If element is supplied, then we are operating in legacy mode, rather than
+      # being created by a Factory instance. Create the Factory ourselves and use
+      # it to bootstrap.
+      factory = new Factory()
+      if @options.store
+        factory.setStore(@options.store.type, @options.store)
+      else
+        factory.setStore(NullStore)
+      factory.configureInstance(this)
+
+      this.attach(element)
+
+  # Configure the Annotator. Typically called by an Annotator.Factory, or the
+  # constructor when operating in legacy (v1) mode.
+  configure: (config) ->
+    {@store, @plugins} = config
+
+    @annotations = new AnnotationRegistry()
+    @annotations.configure(core: this)
+
+
+  # Public: attach the Annotator and its associated event handling to the
+  # specified element.
+  attach: (element) ->
+    @element = $(element)
+
+    # Set up the core interface components
+    this._setupDocumentEvents() unless @options.readOnly
+    this._setupWrapper()._setupViewer()._setupEditor()
+    this._setupDynamicStyle()
+
+    # Create adder
+    this.adder = $(this.html.adder).appendTo(@wrapper).hide()
+
+    # Do initial load
+    if @options.loadQuery then this.load(@options.loadQuery)
+
+    for p in @plugins
+      # TODO: Issue deprecation warning for plugins that use pluginInit
+      p.annotator = this  # this must remain for backwards compatibility for as
+                          # long as we support calling pluginInit
+      p.pluginInit?()
 
   # Public: Creates a subclass of Annotator.
   #
@@ -235,7 +280,7 @@ class Annotator extends Delegator
   #
   # Returns a Promise that resolves when loading is complete.
   load: (query) ->
-    @annotations.load(query)
+    @annotations.query(query)
       .then (annotations, meta) =>
         this.loadAnnotations(annotations)
 
@@ -263,8 +308,8 @@ class Annotator extends Delegator
     @wrapper.remove()
     @element.data('annotator', null)
 
-    for name, plugin of @plugins
-      @plugins[name].destroy()
+    for plugin in @plugins
+      plugin.destroy()
 
     this.removeEvents()
     idx = Annotator._instances.indexOf(this)
@@ -414,10 +459,10 @@ class Annotator extends Delegator
   #
   # Returns dumped annotations Array or false if Store is not loaded.
   dumpAnnotations: () ->
-    if @plugins['Store']
-      @plugins['Store'].dumpAnnotations()
+    if @store?.dumpAnnotations?
+      @store.dumpAnnotations()
     else
-      console.warn(_t("Can't dump annotations without Store plugin."))
+      console.warn(_t("Can't dump annotations without store plugin."))
       return false
 
   # Public: Wraps the DOM Nodes within the provided range with a highlight
@@ -476,16 +521,17 @@ class Annotator extends Delegator
   #
   # Returns itself to allow chaining.
   addPlugin: (name, options) ->
-    if @plugins[name]
-      console.error _t("You cannot have more than one instance of any plugin.")
+    # TODO: Add a deprecation warning
+
+    klass = Annotator.Plugin[name]
+    if typeof klass is 'function'
+      plug = new klass(@element[0], options)
+      plug.annotator = this
+      plug.pluginInit?()
+      @plugins.push(plug)
     else
-      klass = Annotator.Plugin[name]
-      if typeof klass is 'function'
-        @plugins[name] = new klass(@element[0], options)
-        @plugins[name].annotator = this
-        @plugins[name].pluginInit?()
-      else
-        console.error _t("Could not load ") + name + _t(" plugin. Have you included the appropriate <script> tag?")
+      console.error _t("Could not load ") + name + _t(" plugin. Have you included the appropriate <script> tag?")
+
     this # allow chaining
 
   # Public: Waits for the @editor to submit or hide, returning a promise that
@@ -636,20 +682,6 @@ class Annotator extends Delegator
   isAnnotator: (element) ->
     !!$(element).parents().addBack().filter('[class^=annotator-]').not(@wrapper).length
 
-  configure: (@registry) ->
-    registry.include(AnnotationProvider)
-
-  run: (@registry) ->
-    # Set up the core interface components
-    this._setupDocumentEvents() unless @options.readOnly
-    this._setupWrapper()._setupViewer()._setupEditor()
-    this._setupDynamicStyle()
-
-    # Create adder
-    this.adder = $(this.html.adder).appendTo(@wrapper).hide()
-
-    # Do initial load
-    if @options.loadQuery then this.load(@options.loadQuery)
 
   # Annotator#element callback. Displays viewer with all annotations
   # associated with highlight Elements under the cursor.
@@ -767,6 +799,11 @@ class Annotator.Plugin extends Delegator
 
   destroy: ->
     this.removeEvents()
+
+# An Annotator Factory with the core constructor defaulted to Annotator
+class Annotator.Factory extends Factory
+  constructor: (core=Annotator) ->
+    super core
 
 # Sniff the browser environment and attempt to add missing functionality.
 g = Util.getGlobal()

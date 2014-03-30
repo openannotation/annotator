@@ -501,7 +501,7 @@ describe 'Annotator', ->
       assert(console.warn.calledOnce)
 
     it "returns the results of the Store plugins dumpAnnotations method", ->
-      annotator.plugins.Store = { dumpAnnotations: -> [1,2,3] }
+      annotator.store = { dumpAnnotations: -> [1,2,3] }
       assert.deepEqual(annotator.dumpAnnotations(), [1,2,3])
 
   describe "highlightRange", ->
@@ -577,14 +577,6 @@ describe 'Annotator', ->
     it "should call Plugin#pluginInit()", ->
       annotator.addPlugin('Foo')
       assert(plugin.pluginInit.calledOnce)
-
-    it "should complain if you try and instantiate a plugin twice", ->
-      sinon.stub(console, 'error')
-      annotator.addPlugin('Foo')
-      annotator.addPlugin('Foo')
-      assert.equal(Annotator.Plugin.Foo.callCount, 1)
-      assert(console.error.calledOnce)
-      console.error.restore()
 
     it "should complain if you try and instantiate a plugin that doesn't exist", ->
       sinon.stub(console, 'error')
@@ -921,6 +913,14 @@ describe 'Annotator', ->
       do annotator.onEditorHide
       annotator.onEditorSubmit(annotation)
       assert.isFalse(annotator.annotations.update.calledWith(annotation))
+
+
+describe 'Annotator.Factory', ->
+  it "should use Annotator as the default core constructor", ->
+    factory = new Annotator.Factory()
+    a = factory.getInstance()
+    assert.instanceOf(a, Annotator)
+
 
 describe "Annotator.noConflict()", ->
   _Annotator = null
