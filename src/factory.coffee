@@ -9,8 +9,10 @@ class Factory
   constructor: (core) ->
     @ctors = {}
     @ctors.core = core
+    @args = {}
 
     @pluginCtors = []
+    @pluginArgs = []
 
   # Public: given the current configuration of the factory, get an instance of
   # core constructor (usually an instance of Annotator). This instance will be
@@ -18,14 +20,19 @@ class Factory
   # be bound to any element.
   getInstance: ->
     obj = new @ctors.core
+    this.configureInstance(obj)
+    return obj
+
+  configureInstance: (obj) ->
     plugins = []
 
     # If we have a `store` ctor, use it
     if @ctors.store?
-      store = new @ctors.store
+      store = new @ctors.store(@args.store...)
 
-    for pCtor in @pluginCtors
-      plugins.push(new pCtor)
+    for i in [0...@pluginCtors.length]
+      plug = new (@pluginCtors[i])(@pluginArgs[i]...)
+      plugins.push(plug)
 
     # Configure core
     if obj.configure?
@@ -38,11 +45,10 @@ class Factory
     if store?.configure?
       store.configure(core: obj)
 
+    # Configure plugins
     for p in plugins
       if p.configure?
         p.configure(core: obj)
-
-    #...
 
     return obj
 
@@ -50,15 +56,18 @@ class Factory
   # return an object which conforms to the store API.
   #
   # store - The constructor for the store object.
-  setStore: (store) ->
+  # args... - Arguments to be passed to the constructor.
+  setStore: (store, args...) ->
     @ctors.store = store
+    @args.store = args
 
   # Public: append the selected plugin to the list of plugins to be instantiate
   # for each create instance.
   #
   # plugin - The constructor for the plugin object.
-  addPlugin: (plugin) ->
+  # args... - Arguments to be passed to the constructor.
+  addPlugin: (plugin, args...) ->
     @pluginCtors.push(plugin)
-
+    @pluginArgs.push(args)
 
 module.exports = Factory

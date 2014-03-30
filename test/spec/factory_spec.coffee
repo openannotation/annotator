@@ -7,10 +7,12 @@ class MockAnnotator
 
 class MockStoreSimple
 class MockStore
+  constructor: (@foo, @bar) ->
   configure: (options) ->
     {@core} = options
 
 class MockPluginA
+  constructor: (@one, @two) ->
   configure: (options) ->
     {@core} = options
 class MockPluginB
@@ -63,6 +65,13 @@ describe 'Factory', ->
     a = f.getInstance()
     # This would raise if the condition were not satisfied
 
+  it "should pass arguments to store instances", ->
+    f = new Factory(MockAnnotator)
+    f.setStore(MockStore, 'woop', {animal: "giraffe"})
+    a = f.getInstance()
+    assert.equal('woop', a.store.foo)
+    assert.deepEqual({animal: "giraffe"}, a.store.bar)
+
   it "should create instances of added plugins and pass them to the core's `configure` method as `plugins`", ->
     f = new Factory(MockAnnotator)
     f.addPlugin(MockPluginA)
@@ -89,3 +98,13 @@ describe 'Factory', ->
     f.addPlugin(MockPluginB)
     a = f.getInstance()
     # This would raise if the condition were not satisfied
+
+  it "should pass arguments to plugin instances", ->
+    f = new Factory(MockAnnotator)
+    f.addPlugin(MockPluginA, 'one', 2)
+    f.addPlugin(MockPluginA, 1, 'two')
+    a = f.getInstance()
+    assert.equal('one', a.plugins[0].one)
+    assert.equal(2, a.plugins[0].two)
+    assert.equal(1, a.plugins[1].one)
+    assert.equal('two', a.plugins[1].two)
