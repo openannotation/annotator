@@ -866,3 +866,6 @@ Annotator.noConflict = ->
 
 # Export Annotator object.
 module.exports = Annotator
+
+# If there is a global window object, bind annotator to it
+window?.Annotator = module.exports
