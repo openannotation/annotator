@@ -60,7 +60,7 @@ class Delegator
   #
   # Returns nothing.
   addEvents: ->
-    for event in Delegator._parseEvents(@events)
+    for event in _parseEvents(@events)
       this._addEvent(event.selector, event.event, event.functionName)
 
   # Public: unbinds functions previously bound to events by addEvents().
@@ -71,7 +71,7 @@ class Delegator
   #
   # Returns nothing.
   removeEvents: ->
-    for event in Delegator._parseEvents(@events)
+    for event in _parseEvents(@events)
       this._removeEvent(event.selector, event.event, event.functionName)
 
   # Binds an event to a callback function represented by a String. A selector
@@ -98,7 +98,7 @@ class Delegator
   _addEvent: (selector, event, functionName) ->
     closure = => this[functionName].apply(this, arguments)
 
-    if selector == '' and Delegator._isCustomEvent(event)
+    if selector == '' and _isCustomEvent(event)
       this.subscribe(event, closure)
     else
       @element.delegate(selector, event, closure)
@@ -125,7 +125,7 @@ class Delegator
   _removeEvent: (selector, event, functionName) ->
     closure = @_closures["#{selector}/#{event}/#{functionName}"]
 
-    if selector == '' and Delegator._isCustomEvent(event)
+    if selector == '' and _isCustomEvent(event)
       this.unsubscribe(event, closure)
     else
       @element.undelegate(selector, event, closure)
@@ -152,7 +152,7 @@ class Delegator
 
 # Parse the @events object of a Delegator into an array of objects containing
 # string-valued "selector", "event", and "func" keys.
-Delegator._parseEvents = (eventsObj) ->
+_parseEvents = (eventsObj) ->
     events = []
     for sel, functionName of eventsObj
       [selector..., event] = sel.split ' '
@@ -166,7 +166,7 @@ Delegator._parseEvents = (eventsObj) ->
 
 # Native jQuery events that should recieve an event object. Plugins can
 # add their own methods to this if required.
-Delegator.natives = do ->
+natives = do ->
   specials = (key for own key, val of $.event.special)
   """
   blur focus focusin focusout load resize scroll unload click dblclick
@@ -182,14 +182,14 @@ Delegator.natives = do ->
 #
 # Examples
 #
-#   Delegator._isCustomEvent('click')              # => false
-#   Delegator._isCustomEvent('mousedown')          # => false
-#   Delegator._isCustomEvent('annotation:created') # => true
+#   _isCustomEvent('click')              # => false
+#   _isCustomEvent('mousedown')          # => false
+#   _isCustomEvent('annotation:created') # => true
 #
 # Returns true if event is a custom user event.
-Delegator._isCustomEvent = (event) ->
+_isCustomEvent = (event) ->
   [event] = event.split('.')
-  $.inArray(event, Delegator.natives) == -1
+  $.inArray(event, natives) == -1
 
 
 # Mix in backbone events

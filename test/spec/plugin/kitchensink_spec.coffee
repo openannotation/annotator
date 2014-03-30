@@ -15,7 +15,7 @@ describe 'Annotator::setupPlugins', ->
 
   beforeEach ->
     for p in ['AnnotateItPermissions', 'Auth', 'Markdown', 'Store', 'Tags', 'Unsupported']
-      Annotator.Plugin[p] = MockPlugin
+      Annotator.Plugin.register(p, MockPlugin)
 
     h.addFixture('kitchensink')
     $fix = $(h.fix())
@@ -48,7 +48,7 @@ describe 'Annotator::setupPlugins', ->
       filterPlugin = null
 
       beforeEach ->
-        filterPlugin = annotator.plugins.filter((p) -> p instanceof Annotator.Plugin.Filter)[0]
+        filterPlugin = annotator.plugins.filter((p) -> p instanceof Filter)[0]
 
       it 'should add the Filter plugin by default', ->
         assert(annotator.addPlugin.calledWith('Filter'))
@@ -90,7 +90,7 @@ describe 'Annotator::setupPlugins', ->
           addAnnotationFilter: false
           appendTo: h.fix()
 
-      filterPlugin = annotator.plugins.filter((p) -> p instanceof Annotator.Plugin.Filter)[0]
+      filterPlugin = annotator.plugins.filter((p) -> p instanceof Filter)[0]
       assert.lengthOf(filterPlugin.filters, 0)
 
     it 'should NOT load a plugin if its key is set to null OR false', ->

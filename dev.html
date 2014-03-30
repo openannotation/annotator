@@ -90,16 +90,21 @@
         var elem = document.getElementById('airlock');
         var factory = new Annotator.Factory();
 
-        factory.setStore(Annotator.Plugin.Store, {
+        var Store = Annotator.Plugin.fetch('Store');
+        var Auth = Annotator.Plugin.fetch('Auth');
+        var Unsupported = Annotator.Plugin.fetch('Unsupported');
+        var AnnotateItPermissions = Annotator.Plugin.fetch('AnnotateItPermissions');
+
+        factory.setStore(Store, {
           prefix: 'http://localhost:5000',
           loadFromSearch: {uri: window.location},
           annotationData: {uri: window.location}
         });
-        factory.addPlugin(Annotator.Plugin.Auth, null, {
+        factory.addPlugin(Auth, null, {
           tokenUrl: 'http://localhost:4000/api/token'
         });
-        factory.addPlugin(Annotator.Plugin.Unsupported);
-        factory.addPlugin(Annotator.Plugin.AnnotateItPermissions);
+        factory.addPlugin(Unsupported);
+        factory.addPlugin(AnnotateItPermissions);
 
         devAnnotator = factory.getInstance();
         devAnnotator.attach(elem);

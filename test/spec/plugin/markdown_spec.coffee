@@ -3,7 +3,7 @@ Annotator = require('annotator')
 Markdown = require('../../../src/plugin/markdown')
 
 
-describe 'Annotator.Plugin.Markdown', ->
+describe 'Markdown plugin', ->
   input  = 'Is **this** [Markdown](http://daringfireball.com)?'
   output = '<p>Is <strong>this</strong> <a href="http://daringfireball.com">Markdown</a>?</p>'
   plugin = null

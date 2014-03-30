@@ -15,7 +15,7 @@ Permissions = require('./permissions')
 #   new Annotator.plugin.AnnotateItPermissions(annotator.element)
 #
 # Returns a new instance of the AnnotateItPermissions Object.
-class Annotator.Plugin.AnnotateItPermissions extends Permissions
+class AnnotateItPermissions extends Permissions
 
   # A Object literal of default options for the class.
   options:
@@ -144,4 +144,6 @@ class Annotator.Plugin.AnnotateItPermissions extends Permissions
     this.setUser(token)
 
 
-module.exports = Annotator.Plugin.AnnotateItPermissions
+Annotator.Plugin.register('AnnotateItPermissions', AnnotateItPermissions)
+
+module.exports = AnnotateItPermissions

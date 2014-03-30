@@ -9,6 +9,7 @@ Viewer = require './viewer'
 Editor = require './editor'
 Notification = require './notification'
 Factory = require './factory'
+Plugin = require('./plugin')
 
 AnnotationRegistry = require './annotations'
 NullStore = require './nullstore'
@@ -92,6 +93,9 @@ class Annotator extends Delegator
     @plugins = {}
 
     Annotator._instances.push(this)
+
+    # Check for old-style plugin bindings and issue deprecation warnings
+    Annotator.Plugin._rebindOldPlugins()
 
     # Return early if the annotator is not supported.
     return this unless Annotator.supported()
@@ -524,7 +528,7 @@ class Annotator extends Delegator
   addPlugin: (name, options) ->
     # TODO: Add a deprecation warning
 
-    klass = Annotator.Plugin[name]
+    klass = Annotator.Plugin.fetch(name)
     if typeof klass is 'function'
       plug = new klass(@element[0], options)
       plug.annotator = this
@@ -791,15 +795,6 @@ class Annotator extends Delegator
       .done (annotation) =>
         this.publish('annotationUpdated', [annotation])
 
-# Create namespace for Annotator plugins
-class Annotator.Plugin extends Delegator
-  constructor: (element, options) ->
-    super
-
-  pluginInit: ->
-
-  destroy: ->
-    this.removeEvents()
 
 # An Annotator Factory with the core constructor defaulted to Annotator
 class Annotator.Factory extends Factory
@@ -843,11 +838,15 @@ Annotator.Widget = Widget
 Annotator.Viewer = Viewer
 Annotator.Editor = Editor
 Annotator.Notification = Notification
+Annotator.Plugin = Plugin
 
 # Attach notification methods to the Annotation object
 notification = new Notification
 Annotator.showNotification = notification.show
 Annotator.hideNotification = notification.hide
+
+# Register the default store
+Annotator.Plugin.register('NullStore', NullStore)
 
 # Expose a global instance registry
 Annotator._instances = []

@@ -28,6 +28,9 @@ Util.$ = $
 # Returns a String
 Util.TranslationString = _t
 
+# Send a deprecation warning to the console
+Util.deprecationWarning = (args...) ->
+  console.warn("Annotator DeprecationWarning:", args...)
 
 # Public: Flatten a nested array structure
 #
@@ -91,7 +94,7 @@ Util.getLastTextNodeUpTo = (n) ->
       # This is an element, we need to dig in
       if n.lastChild? # Does it have children at all?
         result = Util.getLastTextNodeUpTo n.lastChild
-        if result? then return result        
+        if result? then return result
     else
       # Not a text node, and not an element node.
   # Could not find a text node in current node, go backwards

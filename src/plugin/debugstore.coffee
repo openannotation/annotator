@@ -36,6 +36,6 @@ class DebugStore
     log("would set header '#{key}'='#{value}'")
 
 
-Annotator.Plugin.DebugStore =  DebugStore
+Annotator.Plugin.register('DebugStore', DebugStore)
 
 module.exports = DebugStore

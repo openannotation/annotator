@@ -96,7 +96,7 @@ describe "bookmarklet", ->
   describe "setup()", ->
     hasPlugin = (instance, name) ->
       val = instance.plugins
-        .map((p) -> if p instanceof Annotator.Plugin[name] then 1 else 0)
+        .map((p) -> if p instanceof Annotator.Plugin.fetch(name) then 1 else 0)
         .reduce(((sum, item) -> sum + item), 0)
       return val >= 1
 

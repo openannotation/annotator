@@ -554,21 +554,23 @@ describe 'Annotator', ->
 
   describe "addPlugin", ->
     plugin = null
+    Foo = null
 
     beforeEach ->
       plugin = {
         pluginInit: sinon.spy()
       }
-      Annotator.Plugin.Foo = sinon.stub().returns(plugin)
+      Foo = sinon.stub().returns(plugin)
+      Annotator.Plugin.register('Foo', Foo)
 
     it "should add and instantiate a plugin of the specified name", ->
       annotator.addPlugin('Foo')
-      assert.isTrue(Annotator.Plugin.Foo.calledWith(annotator.element[0], undefined))
+      assert.isTrue(Foo.calledWith(annotator.element[0], undefined))
 
     it "should pass on the provided options", ->
       options = {foo: 'bar'}
       annotator.addPlugin('Foo', options)
-      assert.isTrue(Annotator.Plugin.Foo.calledWith(annotator.element[0], options))
+      assert.isTrue(Foo.calledWith(annotator.element[0], options))
 
     it "should attach the Annotator instance", ->
       annotator.addPlugin('Foo')

@@ -2,7 +2,7 @@ $ = require 'jquery'
 Annotator = require 'annotator'
 
 
-class Annotator.Plugin.Document extends Annotator.Plugin
+class Document extends Annotator.Plugin
   events:
     'beforeAnnotationCreated': 'beforeAnnotationCreated'
 
@@ -148,5 +148,6 @@ class Annotator.Plugin.Document extends Annotator.Plugin
     d.href = url
     d.href
 
+Annotator.Plugin.register('Document', Document)
 
-module.exports = Annotator.Plugin.Document
+module.exports = Document

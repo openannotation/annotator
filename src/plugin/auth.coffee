@@ -89,7 +89,7 @@ parseToken = (token) ->
   JSON.parse(base64UrlDecode(payload))
 
 # Public: Supports the Store plugin by providing Authentication headers.
-class Annotator.Plugin.Auth extends Annotator.Plugin
+class Auth extends Annotator.Plugin
   # User options that can be provided.
   options:
 
@@ -255,5 +255,6 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
       if not @requestInProgress
         this.requestToken()
 
+Annotator.Plugin.register('Auth', Auth)
 
-module.exports = Annotator.Plugin.Auth
+module.exports = Auth

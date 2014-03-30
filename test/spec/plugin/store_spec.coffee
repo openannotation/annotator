@@ -2,12 +2,12 @@ $ = require('jquery')
 Annotator = require('annotator')
 Store = require('../../../src/plugin/store')
 
-describe "Annotator.Plugin.Store", ->
+describe "Store plugin", ->
   store = null
   server = null
 
   beforeEach ->
-    store = new Annotator.Plugin.Store()
+    store = new Store()
     sinon.stub($, 'ajax').returns({})
 
   afterEach ->

@@ -64,7 +64,7 @@ makeToken = () ->
     encodedToken: 'header.' + base64UrlEncode(JSON.stringify(rawToken)) + '.signature'
   }
 
-describe 'Annotator.Plugin.Auth', ->
+describe 'Auth plugin', ->
 
   mock = null
   rawToken = null
