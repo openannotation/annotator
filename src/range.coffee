@@ -1,6 +1,6 @@
+$ = require('jquery')
 Util = require('./util')
 
-$ = Util.$
 
 Range = {}
 

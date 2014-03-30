@@ -1,5 +1,5 @@
+$ = require 'jquery'
 Annotator = require 'annotator'
-$ = Annotator.Util.$
 
 
 class Annotator.Plugin.Document extends Annotator.Plugin

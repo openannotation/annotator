@@ -1,3 +1,4 @@
+$ = require 'jquery'
 extend = require 'backbone-extend-standalone'
 
 Delegator = require './class'
@@ -12,7 +13,6 @@ Registry = require './registry'
 AnnotationProvider = require './annotations'
 
 _t = Util.TranslationString
-$ = Util.$
 
 # Selection and range creation reference for the following code:
 # http://www.quirksmode.org/dom/range_intro.html

@@ -1,5 +1,5 @@
 StorageProvider = require './storage'
-{$} = require './util'
+$ = require('jquery')
 
 
 # Public: Provides CRUD methods for annotations which call corresponding registry hooks.
@@ -98,6 +98,6 @@ class AnnotationProvider
         # Update with store return value
         $.extend(obj, ret)
 
-        return obj 
+        return obj
 
 module.exports = AnnotationProvider

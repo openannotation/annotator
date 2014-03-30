@@ -103,9 +103,15 @@ app.use('/api/token', function(request, response) {
   response.end(tok);
 });
 
+// jQuery
+browserify()
+  .require('jquery', {expose: 'jquery'})
+  .serve(app, '/lib/vendor/jquery.js')
+  .watch({debug: true});
 
 // Core
 browserify('./src/annotator')
+  .external('jquery')
   .serve(app, '/lib/annotator.js')
   .watch({
     debug: true,
@@ -122,6 +128,7 @@ glob.sync('./src/plugin/*.coffee').forEach(function (p) {
   , expose: 'annotator'
   });
   build.plugin(b, p)
+    .external('jquery')
     .serve(app, location)
     .watch({
       debug: true
@@ -135,6 +142,7 @@ glob.sync('./src/plugin/*.coffee').forEach(function (p) {
 glob.sync('./test/**/*.coffee').forEach(function (t) {
   if (t == './test/helpers.coffee') {
     browserify(t)
+      .external('jquery')
       .require(t, {expose: 'helpers'})
       .require('./src/annotator', {expose: 'annotator'})
       .serve(app, '/test/helpers.js')
@@ -143,6 +151,7 @@ glob.sync('./test/**/*.coffee').forEach(function (t) {
   } else {
     var path = t.replace('./', '/').replace('.coffee', '.js');
     browserify(t)
+      .external('jquery')
       .external('annotator')
       .external('helpers')
       .serve(app, path)

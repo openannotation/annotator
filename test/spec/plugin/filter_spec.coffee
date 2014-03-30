@@ -1,6 +1,6 @@
+$ = require('jquery')
 Filter = require('../../../src/plugin/filter')
 
-$ = Filter.$
 
 describe "Annotator.Plugins.Filter", ->
   plugin  = null
@@ -350,17 +350,17 @@ describe "Annotator.Plugins.Filter", ->
       mockjQuery = null
 
       beforeEach ->
-        plugin.highlights = Filter.$()
+        plugin.highlights = $()
         mockjQuery = {
           addClass: sinon.spy()
           animate: sinon.spy()
           offset: sinon.stub().returns({top: 0})
         }
         sinon.spy(plugin.highlights, 'removeClass')
-        sinon.stub(Filter.$.prototype, 'init').returns(mockjQuery)
+        sinon.stub($.prototype, 'init').returns(mockjQuery)
 
       afterEach ->
-        Filter.$.prototype.init.restore()
+        $.prototype.init.restore()
 
       it "should remove active class from currently active element", ->
         plugin._scrollToHighlight({})
@@ -385,11 +385,11 @@ describe "Annotator.Plugins.Filter", ->
         mockjQuery.keyup = sinon.stub().returns(mockjQuery)
         mockjQuery.blur = sinon.stub().returns(mockjQuery)
 
-        sinon.stub(Filter.$.prototype, 'init').returns(mockjQuery)
+        sinon.stub($.prototype, 'init').returns(mockjQuery)
         plugin._onClearClick({target: {}})
 
       afterEach ->
-        Filter.$.prototype.init.restore()
+        $.prototype.init.restore()
 
       it "should clear the input", ->
         assert.isTrue(mockjQuery.val.calledWith(''))

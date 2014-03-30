@@ -1,5 +1,5 @@
+$ = require('jquery')
 Annotator = require('annotator')
-$ = Annotator.Util.$
 Store = require('../../../src/plugin/store')
 
 describe "Annotator.Plugin.Store", ->

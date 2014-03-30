@@ -1,4 +1,4 @@
-{$} = require('../../../src/util')
+$ = require('jquery')
 Annotator = require('annotator')
 Tags = require('../../../src/plugin/tags')
 

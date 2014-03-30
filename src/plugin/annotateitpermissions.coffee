@@ -1,5 +1,5 @@
+$ = require('jquery')
 Annotator = require('annotator')
-$ = Annotator.Util.$
 Permissions = (
   Annotator.Plugin.Permissions or
   require('annotator-plugin-permissions')

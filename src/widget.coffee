@@ -1,7 +1,7 @@
+$ = require 'jquery'
 Delegator = require './class'
 Util = require './util'
 
-$ = Util.$
 
 # Public: Base class for the Editor and Viewer elements. Contains methods that
 # are shared between the two.

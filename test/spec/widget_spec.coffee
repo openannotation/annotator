@@ -1,4 +1,4 @@
-{$} = require('../../src/util')
+$ = require('jquery')
 Widget = require('../../src/widget')
 
 

@@ -1,4 +1,4 @@
-{$} = require './util'
+$ = require('jquery')
 
 # Public: Adds persistence hooks for annotations.
 class StorageProvider

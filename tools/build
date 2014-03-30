@@ -202,10 +202,13 @@ if (require.main === module) {
   function plugin(name) {
     var source = './src/plugin/' + name + '.coffee';
     var target = 'pkg/annotator.' + path.basename(name) + '.js';
-    var b = exports.browserify().plugin(loader).require('./src/namespace', {
-      entry: true
-    , expose: 'annotator'
-    });
+    var b = exports.browserify()
+      .plugin(loader)
+      .external('jquery')
+      .require('./src/namespace', {
+        entry: true
+      , expose: 'annotator'
+      });
     pack(exports.plugin(b, source), target, {
       debug: true
     , standalone: 'Annotator'

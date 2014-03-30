@@ -1,4 +1,4 @@
-{$} = require('../../../src/util')
+$ = require('jquery')
 Document = require('../../../src/plugin/document')
 
 

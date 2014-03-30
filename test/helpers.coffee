@@ -1,4 +1,4 @@
-{$} = require('../src/util')
+$ = require('jquery')
 Util = require('../src/util')
 
 class MockSelection

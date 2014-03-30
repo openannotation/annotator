@@ -26,8 +26,8 @@ window._annotatorConfig =
       admin: ["Aron"]
 
 
+$ = require('jquery')
 Annotator = require('annotator')
-$ = Annotator.Util.$
 require('../../src/bootstrap')
 
 

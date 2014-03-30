@@ -1,5 +1,5 @@
+$ = require 'jquery'
 xpath = require './xpath'
-$ = xpath.$
 
 
 # I18N

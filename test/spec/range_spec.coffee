@@ -1,4 +1,4 @@
-{$} = require('../../src/util')
+$ = require('jquery')
 h = require('helpers')
 
 Range = require('../../src/range')

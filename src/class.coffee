@@ -1,6 +1,4 @@
-Util = require './util'
-
-$ = Util.$
+$ = require('jquery')
 
 # Public: Delegator is the base class that all of Annotators objects inherit
 # from. It provides basic functionality such as instance options, event

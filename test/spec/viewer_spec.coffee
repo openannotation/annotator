@@ -1,4 +1,4 @@
-{$} = require('../../src/util')
+$ = require('jquery')
 Viewer = require('../../src/viewer')
 
 
