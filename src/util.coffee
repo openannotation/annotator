@@ -1,5 +1,5 @@
-$ = require 'jquery'
-xpath = require './xpath'
+$ = require('jquery')
+xpath = require('./xpath')
 
 
 # I18N

@@ -1,18 +1,18 @@
-$ = require 'jquery'
-extend = require 'backbone-extend-standalone'
+$ = require('jquery')
+extend = require('backbone-extend-standalone')
 
-Delegator = require './class'
-Range = require './range'
-Util = require './util'
-Widget = require './widget'
-Viewer = require './viewer'
-Editor = require './editor'
-Notification = require './notification'
-Factory = require './factory'
+Delegator = require('./class')
+Range = require('./range')
+Util = require('./util')
+Widget = require('./widget')
+Viewer = require('./viewer')
+Editor = require('./editor')
+Notification = require('./notification')
+Factory = require('./factory')
 Plugin = require('./plugin')
 
-AnnotationRegistry = require './annotations'
-NullStore = require './nullstore'
+AnnotationRegistry = require('./annotations')
+NullStore = require('./nullstore')
 
 _t = Util.TranslationString
 

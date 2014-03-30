@@ -193,7 +193,7 @@ _isCustomEvent = (event) ->
 
 
 # Mix in backbone events
-BackboneEvents = require 'backbone-events-standalone'
+BackboneEvents = require('backbone-events-standalone')
 BackboneEvents.mixin(Delegator::)
 
 # Export Delegator object

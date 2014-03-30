@@ -1,6 +1,6 @@
-$ = require 'jquery'
-Util = require './util'
-Widget = require './widget'
+$ = require('jquery')
+Util = require('./util')
+Widget = require('./widget')
 
 _t = Util.TranslationString
 
