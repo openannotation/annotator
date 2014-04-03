@@ -273,6 +273,18 @@ if (require.main === module) {
         var node = SourceNode.fromStringWithSourceMap(src, consumer);
         write(filename, node);
       });
+
+      b.on('dep', function (row) {
+        var filename = path.relative(process.cwd(), row.id)
+          .replace('src', 'pkg/lib')
+          .replace('.coffee', '.js')
+        ;
+        if (filename == 'main.js') return;
+        if (!libs[filename]) {
+          libs[filename] = true;
+          fs.writeFileSync(filename, row.source);
+        }
+      });
     }
   }
 }
