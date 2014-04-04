@@ -48,7 +48,7 @@ describe 'Annotator::setupPlugins', ->
       filterPlugin = null
 
       beforeEach ->
-        filterPlugin = annotator.plugins.filter((p) -> p instanceof Filter)[0]
+        filterPlugin = annotator.plugins['Filter']
 
       it 'should add the Filter plugin by default', ->
         assert(annotator.addPlugin.calledWith('Filter'))
@@ -90,7 +90,7 @@ describe 'Annotator::setupPlugins', ->
           addAnnotationFilter: false
           appendTo: h.fix()
 
-      filterPlugin = annotator.plugins.filter((p) -> p instanceof Filter)[0]
+      filterPlugin = annotator.plugins['Filter']
       assert.lengthOf(filterPlugin.filters, 0)
 
     it 'should NOT load a plugin if its key is set to null OR false', ->
