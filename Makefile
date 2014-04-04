@@ -30,7 +30,7 @@ annotator-full: $(FULL_PKG)
 bookmarklet: $(BOOKMARKLET_PKG)
 
 pkg: $(ANNOTATOR_PKG) $(PLUGIN_PKG) $(FULL_PKG) $(BOOKMARKLET_PKG)
-	coffee -c -o pkg/lib src
+	$(shell npm bin)/coffee -c -o pkg/lib src
 	cp package.json main.js index.js pkg/
 	cp AUTHORS pkg/
 	cp LICENSE* pkg/
