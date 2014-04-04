@@ -30,14 +30,15 @@
     "kew": "~0.2.2",
     "source-map": "~0.1.32",
     "watchify": "0.6.2",
-    "through": "~2.3.4"
+    "through": "~2.3.4",
+    "coffeelint": "^1.1.0"
   },
   "engines": {
     "node": ">=0.8 <0.12"
   },
   "scripts": {
     "start": "./tools/serve",
-    "test": "./tools/test"
+    "test": "./tools/lint && ./tools/test"
   },
   "browser": "./annotator.js"
 }
