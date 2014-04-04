@@ -47,6 +47,7 @@ develop:
 
 doc:
 	cd doc && $(MAKE) html
+	docco src/*.coffee -o doc/_build/html/docco/
 
 pkg/annotator.css: css/annotator.css
 	$(BUILD) -c
