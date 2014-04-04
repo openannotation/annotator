@@ -41,10 +41,16 @@ Range.sniff = (r) ->
 #     # Do something with the node.
 #
 # Returns the Node if found otherwise null.
-Range.nodeFromXPath = (xpath, root=document) ->
-  evaluateXPath = (xp, nsResolver=null) ->
+Range.nodeFromXPath = (xpath, root = document) ->
+  evaluateXPath = (xp, nsResolver = null) ->
     try
-      document.evaluate('.' + xp, root, nsResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
+      document.evaluate(
+        '.' + xp,
+        root,
+        nsResolver,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null
+      ).singleNodeValue
     catch exception
       # There are cases when the evaluation fails, because the
       # HTML documents contains nodes with invalid names,
@@ -99,7 +105,7 @@ Range.nodeFromXPath = (xpath, root=document) ->
     node
 
 class Range.RangeError extends Error
-  constructor: (@type, @message, @parent=null) ->
+  constructor: (@type, @message, @parent = null) ->
     super(@message)
 
 # Public: Creates a wrapper around a range object obtained from a DOMSelection.
@@ -140,8 +146,10 @@ class Range.BrowserRange
 
     # Look at the start
     if @startContainer.nodeType is Node.ELEMENT_NODE
-      # We are dealing with element nodes  
-      r.start = Util.getFirstTextNodeNotBefore @startContainer.childNodes[@startOffset]
+      # We are dealing with element nodes
+      r.start = Util.getFirstTextNodeNotBefore(
+        @startContainer.childNodes[@startOffset]
+      )
       r.startOffset = 0
     else
       # We are dealing with simple text nodes
@@ -162,9 +170,10 @@ class Range.BrowserRange
           r.end = n
           r.endOffset = 0
 
-      unless r.end?  
+      unless r.end?
         # We need to find a text node in the previous sibling of the node at the
-        # given offset, if one exists, or in the previous sibling of its container.
+        # given offset, if one exists, or in the previous sibling of its
+        # container.
         if @endOffset
           node = @endContainer.childNodes[@endOffset - 1]
         else
@@ -231,7 +240,8 @@ class Range.NormalizedRange
   # other Range classes rather than manually.
   #
   # obj - An Object literal. Should have the following properties.
-  #       commonAncestor: A Element that encompasses both the start and end nodes
+  #       commonAncestor: A Element that encompasses both the start and end
+  #                       nodes
   #       start:          The first TextNode in the range.
   #       end             The last TextNode in the range.
   #
@@ -274,7 +284,7 @@ class Range.NormalizedRange
   # Convert this range into an object consisting of two pairs of (xpath,
   # character offset), which can be easily stored in a database.
   #
-  # root -           The root Element relative to which XPaths should be calculated
+  # root - The root Element relative to which XPaths should be calculated
   # ignoreSelector - A selector String of elements to ignore. For example
   #                  elements injected by the annotator.
   #
@@ -379,7 +389,11 @@ class Range.SerializedRange
       try
         node = Range.nodeFromXPath(this[p], root)
       catch e
-        throw new Range.RangeError(p, "Error while finding #{p} node: #{this[p]}: " + e, e)
+        throw new Range.RangeError(
+          p,
+          "Error while finding #{p} node: #{this[p]}: " + e,
+          e
+        )
 
       if not node
         throw new Range.RangeError(p, "Couldn't find #{p} node: #{this[p]}")
@@ -393,7 +407,7 @@ class Range.SerializedRange
 
       # Range excludes its endpoint because it describes the boundary position.
       # Target the string index of the last character inside the range.
-      if p is 'end' then targetOffset--
+      if p is 'end' then targetOffset -= 1
 
       for tn in Util.getTextNodes($(node))
         if (length + tn.nodeValue.length > targetOffset)
@@ -407,11 +421,16 @@ class Range.SerializedRange
       # 'startOffset'/'endOffset', the element has shorter content than when
       # we annotated, so throw an error:
       if not range[p + 'Offset']?
-        throw new Range.RangeError("#{p}offset", "Couldn't find offset #{this[p + 'Offset']} in element #{this[p]}")
+        throw new Range.RangeError(
+          "#{p}offset",
+          "Couldn't find offset #{this[p + 'Offset']} in element #{this[p]}"
+        )
 
     # Here's an elegant next step...
     #
-    #   range.commonAncestorContainer = $(range.startContainer).parents().has(range.endContainer)[0]
+    #   range.commonAncestorContainer = $(range.startContainer)
+    #     .parents()
+    #     .has(range.endContainer)[0]
     #
     # ...but unfortunately Node.contains() is broken in Safari 5.1.5 (7534.55.3)
     # and presumably other earlier versions of WebKit. In particular, in a

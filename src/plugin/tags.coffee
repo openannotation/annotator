@@ -39,8 +39,8 @@ class Tags extends Annotator.Plugin
     return unless Annotator.supported()
 
     @field = @annotator.editor.addField({
-      label:  Annotator._t('Add some tags here') + '\u2026'
-      load:   this.updateField
+      label: Annotator._t('Add some tags here') + '\u2026'
+      load: this.updateField
       submit: this.setAnnotationTags
     })
 
@@ -139,7 +139,9 @@ class Tags extends Annotator.Plugin
     if annotation.tags and $.isArray(annotation.tags) and annotation.tags.length
       field.addClass('annotator-tags').html(->
         string = $.map(annotation.tags,(tag) ->
-            '<span class="annotator-tag">' + Annotator.Util.escape(tag) + '</span>'
+          '<span class="annotator-tag">' +
+          Annotator.Util.escape(tag) +
+          '</span>'
         ).join(' ')
       )
     else

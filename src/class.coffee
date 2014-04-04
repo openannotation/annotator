@@ -45,7 +45,7 @@ class Delegator
   #
   # Examples
   #
-  #   # This will bind the clickedElement() method to the click event on @element.
+  #   # This binds the clickedElement() method to the click event on @element.
   #   @options = {"click": "clickedElement"}
   #
   #   # This will delegate the submitForm() method to the submit event on the
@@ -138,30 +138,30 @@ class Delegator
   # provided. This is essentially an alias to Backbone.Events .trigger()
   # except that the arguments are passed in an Array as the second parameter
   # rather than using a variable number of arguments.
-  publish: (name, args=[]) ->
+  publish: (name, args = []) ->
     this.trigger.apply(this, [name, args...])
 
   # Public: An alias for .on() from Backbone.Events
-  subscribe: (event, callback, context=this) ->
+  subscribe: (event, callback, context = this) ->
     this.on(event, callback, context)
 
   # Public: An alias for .off() from Backbone.Events
-  unsubscribe: (event, callback, context=this) ->
+  unsubscribe: (event, callback, context = this) ->
     this.off(event, callback, context)
 
 
 # Parse the @events object of a Delegator into an array of objects containing
 # string-valued "selector", "event", and "func" keys.
 _parseEvents = (eventsObj) ->
-    events = []
-    for sel, functionName of eventsObj
-      [selector..., event] = sel.split ' '
-      events.push({
-        selector: selector.join(' '),
-        event: event,
-        functionName: functionName
-      })
-    return events
+  events = []
+  for sel, functionName of eventsObj
+    [selector..., event] = sel.split ' '
+    events.push({
+      selector: selector.join(' '),
+      event: event,
+      functionName: functionName
+    })
+  return events
 
 
 # Native jQuery events that should recieve an event object. Plugins can

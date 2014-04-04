@@ -1,5 +1,6 @@
 Annotator = require('annotator')
 $ = Annotator.Util.$
+_t = Annotator.Util.TranslationString
 
 
 # Public: Plugin for setting permissions on newly created annotations as well as
@@ -27,9 +28,9 @@ class Permissions extends Annotator.Plugin
     # Displays an "Anyone can edit this annotation" checkbox in the Editor.
     showEditPermissionsCheckbox: true
 
-    # Public: Used by the plugin to determine a unique id for the @user property.
-    # By default this accepts and returns the user String but can be over-
-    # ridden in the @options object passed into the constructor.
+    # Public: Used by the plugin to determine a unique id for the @user
+    # property. By default this accepts and returns the user String but can be
+    # overridden in the @options object passed into the constructor.
     #
     # user - A String username or null if no user is set.
     #
@@ -52,18 +53,19 @@ class Permissions extends Annotator.Plugin
     # By default this authorizes the action if any of three scenarios are true:
     #
     #     1) the annotation has a 'permissions' object, and either the field for
-    #        the specified action is missing, empty, or contains the userId of the
-    #        current user, i.e. @options.userId(@user)
+    #        the specified action is missing, empty, or contains the userId of
+    #        the current user, i.e. @options.userId(@user)
     #
-    #     2) the annotation has a 'user' property, and @options.userId(@user) matches
-    #        'annotation.user'
+    #     2) the annotation has a 'user' property, and @options.userId(@user)
+    #        matches 'annotation.user'
     #
     #     3) the annotation has no 'permissions' or 'user' properties
     #
     # annotation - The annotation on which the action is being requested.
     # action - The action being requested: e.g. 'update', 'delete'.
     # user - The user object (or string) requesting the action. This is usually
-    #        automatically passed by Permissions#authorize as the current user (@user)
+    #        automatically passed by Permissions#authorize as the current user
+    #        (@user)
     #
     #   permissions.setUser(null)
     #   permissions.authorize('update', {})
@@ -122,12 +124,11 @@ class Permissions extends Annotator.Plugin
 
     # Default permissions for all annotations. Anyone can do anything
     # (assuming default userAuthorize function).
-    permissions: {
-      'read':   []
-      'update': []
-      'delete': []
-      'admin':  []
-    }
+    permissions:
+      read: []
+      update: []
+      delete: []
+      admin: []
 
   # The constructor called when a new instance of the Permissions
   # plugin is created. See class documentation for usage.
@@ -156,23 +157,24 @@ class Permissions extends Annotator.Plugin
     createCallback = (method, type) ->
       (field, annotation) -> self[method].call(self, type, field, annotation)
 
-    # Set up user and default permissions from auth token if none currently given
+    # Set up user and default permissions from auth token if none currently
+    # given
     if !@user and @annotator.plugins.Auth
       @annotator.plugins.Auth.withToken(this._setAuthFromToken)
 
     if @options.showViewPermissionsCheckbox == true
       @annotator.editor.addField({
-        type:   'checkbox'
-        label:  Annotator._t('Allow anyone to <strong>view</strong> this annotation')
-        load:   createCallback('updatePermissionsField', 'read')
+        type: 'checkbox'
+        label: _t('Allow anyone to <strong>view</strong> this annotation')
+        load: createCallback('updatePermissionsField', 'read')
         submit: createCallback('updateAnnotationPermissions', 'read')
       })
 
     if @options.showEditPermissionsCheckbox == true
       @annotator.editor.addField({
-        type:   'checkbox'
-        label:  Annotator._t('Allow anyone to <strong>edit</strong> this annotation')
-        load:   createCallback('updatePermissionsField', 'update')
+        type: 'checkbox'
+        label: _t('Allow anyone to <strong>edit</strong> this annotation')
+        load: createCallback('updatePermissionsField', 'update')
         submit: createCallback('updateAnnotationPermissions', 'update')
       })
 
@@ -184,7 +186,7 @@ class Permissions extends Annotator.Plugin
     # Add a filter to the Filter plugin if loaded.
     if @annotator.plugins.Filter
       @annotator.plugins.Filter.addFilter({
-        label: Annotator._t('User')
+        label: _t('User')
         property: 'user'
         isFiltered: (input, user) =>
           user = @options.userString(user)
@@ -282,10 +284,10 @@ class Permissions extends Annotator.Plugin
     if $(field).find('input').is(':checked')
       annotation.permissions[type] = []
     else
-      # Clearly, the permissions model allows for more complex entries than this,
-      # but our UI presents a checkbox, so we can only interpret "prevent others
-      # from viewing" as meaning "allow only me to view". This may want changing
-      # in the future.
+      # Clearly, the permissions model allows for more complex entries than
+      # this, but our UI presents a checkbox, so we can only interpret "prevent
+      # others from viewing" as meaning "allow only me to view". This may want
+      # changing in the future.
       annotation.permissions[type] = [@options.userId(@user)]
 
   # Field callback: updates the annotation viewer to inlude the display name

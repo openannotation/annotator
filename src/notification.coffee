@@ -17,10 +17,10 @@ class Notification extends Delegator
   options:
     html: "<div class='annotator-notice'></div>"
     classes:
-      show:    "annotator-notice-show"
-      info:    "annotator-notice-info"
+      show: "annotator-notice-show"
+      info: "annotator-notice-info"
       success: "annotator-notice-success"
-      error:   "annotator-notice-error"
+      error: "annotator-notice-error"
 
   # Public: Creates an instance of  Notification and appends it to the
   # document body.
@@ -55,7 +55,7 @@ class Notification extends Delegator
   #   notification.show("An error has occurred", Annotator.Notification.ERROR)
   #
   # Returns itself.
-  show: (message, status=Notification.INFO) =>
+  show: (message, status = Notification.INFO) =>
     @currentStatus = status
     this._appendElement()
 

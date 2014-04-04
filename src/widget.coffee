@@ -42,11 +42,11 @@ class Widget extends Delegator
     widget   = @element.children(":first")
     offset   = widget.offset()
     viewport = {
-      top:   window.scrollTop(),
+      top: window.scrollTop(),
       right: window.width() + window.scrollLeft()
     }
     current = {
-      top:   offset.top
+      top: offset.top
       right: offset.left + widget.width()
     }
 

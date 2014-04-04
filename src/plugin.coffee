@@ -39,7 +39,7 @@ Plugin.register = (name, ctor) ->
   # @slatedForDeprecation 2.1.0
   Object.defineProperty(Plugin, name, {
     configurable: true
-    get: =>
+    get: ->
       Util.deprecationWarning("Direct access to plugin constructors through
                                the Annotator.Plugin namespace is deprecated.
                                Please use Annotator.Plugin.fetch('#{name}')!")

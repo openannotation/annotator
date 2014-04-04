@@ -24,7 +24,8 @@ class Markdown extends Annotator.Plugin
       super
       @converter = new Showdown.converter()
     else
-      console.error Annotator._t("To use the Markdown plugin, you must include Showdown into the page first.")
+      console.error Annotator._t("To use the Markdown plugin, you must include
+                                  Showdown into the page first.")
 
   # Annotator event callback. Displays the annotation.text as a Markdown
   # rendered version.

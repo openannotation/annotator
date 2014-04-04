@@ -9,7 +9,7 @@ class Viewer extends Widget
 
   # Events to be bound to the @element.
   events:
-    ".annotator-edit click":   "onEditClick"
+    ".annotator-edit click": "onEditClick"
     ".annotator-delete click": "onDeleteClick"
 
   # Classes for toggling annotator state.
@@ -19,24 +19,31 @@ class Viewer extends Widget
 
   # HTML templates for @element and @item properties.
   html:
-    element:"""
-            <div class="annotator-outer annotator-viewer">
-              <ul class="annotator-widget annotator-listing"></ul>
-            </div>
-            """
-    item:   """
-            <li class="annotator-annotation annotator-item">
-              <span class="annotator-controls">
-                <a href="#" title="View as webpage" class="annotator-link">View as webpage</a>
-                <button type="button" title="Edit" class="annotator-edit">Edit</button>
-                <button type="button" title="Delete" class="annotator-delete">Delete</button>
-              </span>
-            </li>
-            """
+    element: """
+      <div class="annotator-outer annotator-viewer">
+        <ul class="annotator-widget annotator-listing"></ul>
+      </div>
+      """
+    item: """
+      <li class="annotator-annotation annotator-item">
+        <span class="annotator-controls">
+          <a href="#"
+             title="View as webpage"
+             class="annotator-link">View as webpage</a>
+          <button type="button"
+                  title="Edit"
+                  class="annotator-edit">Edit</button>
+          <button type="button"
+                  title="Delete"
+                  class="annotator-delete">Delete</button>
+        </span>
+      </li>
+      """
 
   # Configuration options
   options:
-    readOnly: false # Start the viewer in read-only mode. No controls will be shown.
+    readOnly: false # Start the viewer in read-only mode. No controls will be
+                    # shown.
 
   # Public: Creates an instance of the Viewer object. This will create the
   # @element from the @html.element string and set up all events.
@@ -143,7 +150,8 @@ class Viewer extends Widget
       edit = controls.find('.annotator-edit')
       del  = controls.find('.annotator-delete')
 
-      links = new LinkParser(annotation.links or []).get('alternate', {'type': 'text/html'})
+      links = new LinkParser(annotation.links or [])
+        .get('alternate', {'type': 'text/html'})
       if links.length is 0 or not links[0].href?
         link.remove()
       else
@@ -234,18 +242,25 @@ class Viewer extends Widget
 # Examples:
 #
 #   links = [
-#     { rel: 'alternate', href: 'http://example.com/pages/14.json', type: 'application/json' },
-#     { rel: 'prev': href: 'http://example.com/pages/13' }
+#     {
+#       rel: 'alternate',
+#       href: 'http://example.com/pages/14.json',
+#       type: 'application/json'
+#     },
+#     {
+#       rel: 'prev':
+#       href: 'http://example.com/pages/13'
+#     }
 #   ]
 #
 #   lp = LinkParser(links)
-#   lp.get('alternate')                      # => [ { rel: 'alternate', href: 'http://...', ... } ]
+#   lp.get('alternate') # => [ { rel: 'alternate', href: 'http://...', ... } ]
 #   lp.get('alternate', {type: 'text/html'}) # => []
 #
 class LinkParser
   constructor: (@data) ->
 
-  get: (rel, cond={}) ->
+  get: (rel, cond = {}) ->
     cond = $.extend({}, cond, {rel: rel})
     keys = (k for own k, v of cond)
     for d in @data

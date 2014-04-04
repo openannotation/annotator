@@ -9,11 +9,14 @@ $ = Annotator.Util.$
 # although it is available directly on the Annotator instance.
 #
 # config  - An object containing config options for the AnnotateIt store.
-#             storeUrl: API endpoint for the store (default: "http://annotateit.org/api")
-#             tokenUrl: API endpoint for auth token provider (default: "http://annotateit.org/api/token")
+#             storeUrl: API endpoint for the store (default:
+#                       "http://annotateit.org/api")
+#             tokenUrl: API endpoint for auth token provider (default:
+#                       "http://annotateit.org/api/token")
 #
 # options - An object containing plugin settings to override the defaults.
-#           If a plugin is entered with a 'falsy' value, the plugin will not be loaded.
+#           If a plugin is entered with a 'falsy' value, the plugin will not be
+#           loaded.
 #
 # Examples
 #
@@ -29,11 +32,18 @@ $ = Annotator.Util.$
 #   });
 #
 # Returns itself for chaining.
-Annotator::setupPlugins = (config={}, options={}) ->
+Annotator::setupPlugins = (config = {}, options = {}) ->
   win = Annotator.Util.getGlobal()
 
   # Set up the default plugins.
-  plugins = ['Unsupported', 'Auth', 'Tags', 'Filter', 'Store', 'AnnotateItPermissions']
+  plugins = [
+    'Unsupported',
+    'Auth',
+    'Tags',
+    'Filter',
+    'Store',
+    'AnnotateItPermissions'
+  ]
 
   # If Showdown is included add the Markdown plugin.
   if win.Showdown

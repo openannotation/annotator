@@ -10,15 +10,15 @@ class Editor extends Widget
 
   # Events to be bound to @element.
   events:
-    "form submit":                 "submit"
-    ".annotator-save click":       "submit"
-    ".annotator-cancel click":     "hide"
+    "form submit": "submit"
+    ".annotator-save click": "submit"
+    ".annotator-cancel click": "hide"
     ".annotator-cancel mouseover": "onCancelButtonMouseover"
-    "textarea keydown":            "processKeypress"
+    "textarea keydown": "processKeypress"
 
   # Classes to toggle state.
   classes:
-    hide:  'annotator-hide'
+    hide: 'annotator-hide'
     focus: 'annotator-focus'
 
   # HTML template for @element.
@@ -27,8 +27,9 @@ class Editor extends Widget
           <form class="annotator-widget">
             <ul class="annotator-listing"></ul>
             <div class="annotator-controls">
-              <a href="#cancel" class="annotator-cancel">""" + _t('Cancel') + """</a>
-              <a href="#save" class="annotator-save annotator-focus">""" + _t('Save') + """</a>
+              <a href="#cancel" class="annotator-cancel">#{_t('Cancel')}</a>
+              <a href="#save"
+                 class="annotator-save annotator-focus">#{_t('Save')}</a>
             </div>
           </form>
         </div>
@@ -234,10 +235,10 @@ class Editor extends Widget
   # Returns the created <li> Element.
   addField: (options) ->
     field = $.extend({
-      id:     'annotator-field-' + Util.uuid()
-      type:   'input'
-      label:  ''
-      load:   ->
+      id: 'annotator-field-' + Util.uuid()
+      type: 'input'
+      label: ''
+      load: ->
       submit: ->
     }, options)
 
@@ -307,7 +308,7 @@ class Editor extends Widget
   # the positions at most 60 times a second.
   #
   # Returns nothing.
-  setupDraggables: () ->
+  setupDraggables: ->
     @element.find('.annotator-resize').remove()
 
     # Find the first/last item element depending on orientation
@@ -331,15 +332,15 @@ class Editor extends Widget
       if event.target == this
         mousedown = {
           element: this
-          top:     event.pageY
-          left:    event.pageX
+          top: event.pageY
+          left: event.pageX
         }
 
         # Find the first text area if there is one.
         textarea = editor.find('textarea:first')
 
         $(window).bind({
-          'mouseup.annotator-editor-resize':   onMouseup
+          'mouseup.annotator-editor-resize': onMouseup
           'mousemove.annotator-editor-resize': onMousemove
         })
         event.preventDefault()
@@ -348,10 +349,10 @@ class Editor extends Widget
       mousedown = null
       $(window).unbind '.annotator-editor-resize'
 
-    onMousemove = (event) =>
+    onMousemove = (event) ->
       if mousedown and throttle == false
         diff = {
-          top:  event.pageY - mousedown.top
+          top: event.pageY - mousedown.top
           left: event.pageX - mousedown.left
         }
 
@@ -373,17 +374,15 @@ class Editor extends Widget
 
         else if mousedown.element == controls[0]
           editor.css({
-            top:  parseInt(editor.css('top'), 10)  + diff.top
+            top: parseInt(editor.css('top'), 10) + diff.top
             left: parseInt(editor.css('left'), 10) + diff.left
           })
 
           mousedown.top  = event.pageY
           mousedown.left = event.pageX
 
-        throttle = true;
-        setTimeout(->
-          throttle = false
-        , 1000/60)
+        throttle = true
+        setTimeout((-> throttle = false), 1000 / 60)
 
     resize.bind   'mousedown', onMousedown
     controls.bind 'mousedown', onMousedown

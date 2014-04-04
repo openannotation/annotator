@@ -1,7 +1,7 @@
 $ = require('jquery')
 
 # Get an unique identifier
-id = (-> counter = 0; -> counter++)()
+id = (-> counter = -1; -> counter += 1)()
 
 # Public: Adds persistence hooks for annotations.
 class NullStore

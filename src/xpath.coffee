@@ -30,10 +30,11 @@ simpleXPathPure = (relativeRoot) ->
   rootNode = relativeRoot
 
   getPathTo = (node) ->
-    xpath = '';
+    xpath = ''
     while node != rootNode
       unless node?
-        throw new Error "Called getPathTo on a node which was not a descendant of @rootNode. " + rootNode
+        throw new Error("Called getPathTo on a node which was not a descendant
+                         of @rootNode. " + rootNode)
       xpath = (getPathSegment node) + '/' + xpath
       node = node.parentNode
     xpath = '/' + xpath
@@ -49,7 +50,7 @@ simpleXPathPure = (relativeRoot) ->
 
 findChild = (node, type, index) ->
   unless node.hasChildNodes()
-    throw new Error "XPath error: node has no children!"
+    throw new Error("XPath error: node has no children!")
   children = node.childNodes
   found = 0
   for child in children
@@ -58,16 +59,16 @@ findChild = (node, type, index) ->
       found += 1
       if found is index
         return child
-  throw new Error "XPath error: wanted child not found."
+  throw new Error("XPath error: wanted child not found.")
 
 # Get the node name for use in generating an xpath expression.
 getNodeName = (node) ->
-    nodeName = node.nodeName.toLowerCase()
-    switch nodeName
-      when "#text" then return "text()"
-      when "#comment" then return "comment()"
-      when "#cdata-section" then return "cdata-section()"
-      else return nodeName
+  nodeName = node.nodeName.toLowerCase()
+  switch nodeName
+    when "#text" then return "text()"
+    when "#comment" then return "comment()"
+    when "#cdata-section" then return "cdata-section()"
+    else return nodeName
 
 # Get the index of the node as it appears in its parent's child list
 getNodePosition = (node) ->
@@ -75,7 +76,7 @@ getNodePosition = (node) ->
   tmp = node
   while tmp
     if tmp.nodeName is node.nodeName
-      pos++
+      pos += 1
     tmp = tmp.previousSibling
   pos
 

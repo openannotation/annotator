@@ -1,6 +1,7 @@
 $ = require('jquery')
 
-# Public: Provides CRUD methods for annotations which call corresponding plugin hooks.
+# Public: Provides CRUD methods for annotations which call corresponding plugin
+# hooks.
 class AnnotationRegistry
 
   configure: (config) ->
@@ -22,7 +23,7 @@ class AnnotationRegistry
   #   registry.create({}) # Resolves to {myProperty: "This is a…"}
   #
   # Returns a Promise of an annotation Object.
-  create: (obj={}) ->
+  create: (obj = {}) ->
     this._cycle(obj, 'create')
 
   # Updates an annotation.
@@ -75,7 +76,7 @@ class AnnotationRegistry
     delete safeCopy._local
 
     @core.store[storeFunc](safeCopy)
-      .then (ret) =>
+      .then (ret) ->
         # Empty object without changing identity
         for own k, v of obj
           if k != '_local'

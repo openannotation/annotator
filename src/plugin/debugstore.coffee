@@ -2,7 +2,7 @@ Annotator = require('annotator')
 $ = Annotator.Util.$
 
 
-uuid = (-> counter = 0; -> counter++)()
+uuid = (-> counter = -1; -> counter += 1)()
 
 log = (args...) ->
   console.debug("DebugStore", args...)

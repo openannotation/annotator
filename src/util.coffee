@@ -14,7 +14,8 @@ else
 _t = (msgid) -> gettext(msgid)
 
 unless JSON and JSON.parse and JSON.stringify
-  console.error(_t("Annotator requires a JSON implementation: have you included lib/vendor/json2.js?"))
+  console.error(_t("Annotator requires a JSON implementation: have you included
+                    lib/vendor/json2.js?"))
 
 Util = {}
 
@@ -138,7 +139,8 @@ Util.xpathFromNode = (el, relativeRoot) ->
   try
     result = xpath.simpleXPathJQuery.call el, relativeRoot
   catch exception
-    console.log "jQuery-based XPath construction failed! Falling back to manual."
+    console.log("jQuery-based XPath construction failed! Falling back to
+                 manual.")
     result = xpath.simpleXPathPure.call el, relativeRoot
   result
 
@@ -159,17 +161,17 @@ Util.escape = (html) ->
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
 
-Util.uuid = (-> counter = 0; -> counter++)()
+Util.uuid = (-> counter = -1; -> counter += 1)()
 
 Util.getGlobal = -> (-> this)()
 
 # Return the maximum z-index of any element in $elements (a jQuery collection).
 Util.maxZIndex = ($elements) ->
   all = for el in $elements
-          if $(el).css('position') == 'static'
-            -1
-          else
-            parseInt($(el).css('z-index'), 10) or -1
+    if $(el).css('position') == 'static'
+      -1
+    else
+      parseInt($(el).css('z-index'), 10) or -1
   Math.max.apply(Math, all)
 
 Util.mousePosition = (e, offsetEl) ->
@@ -178,7 +180,7 @@ Util.mousePosition = (e, offsetEl) ->
     offsetEl = $(offsetEl).offsetParent()[0]
   offset = $(offsetEl).offset()
   {
-    top:  e.pageY - offset.top,
+    top: e.pageY - offset.top,
     left: e.pageX - offset.left
   }
 

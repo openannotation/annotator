@@ -28,7 +28,11 @@ createDateFromISO8601 = (string) ->
 
   if d[14]
     offset = (Number(d[16]) * 60) + Number(d[17])
-    offset *= ((d[15] == '-') ? 1 : -1)
+    if d[15] == '-'
+      factor = 1
+    else
+      factor = -1
+    offset *= factor
 
   offset -= date.getTimezoneOffset()
   time = (Number(date) + (offset * 60 * 1000))
@@ -41,8 +45,8 @@ base64Decode = (data) ->
     # Gecko and Webkit provide native code for this
     atob(data)
   else
-    # Adapted from MIT/BSD licensed code at http://phpjs.org/functions/base64_decode
-    # version 1109.2015
+    # Adapted from MIT/BSD licensed code at
+    # http://phpjs.org/functions/base64_decode version 1109.2015
     b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
     i = 0
     ac = 0
@@ -56,10 +60,14 @@ base64Decode = (data) ->
 
     while i < data.length
       # unpack four hexets into three octets using index points in b64
-      h1 = b64.indexOf(data.charAt(i++))
-      h2 = b64.indexOf(data.charAt(i++))
-      h3 = b64.indexOf(data.charAt(i++))
-      h4 = b64.indexOf(data.charAt(i++))
+      h1 = b64.indexOf(data.charAt(i))
+      i += 1
+      h2 = b64.indexOf(data.charAt(i))
+      i += 1
+      h3 = b64.indexOf(data.charAt(i))
+      i += 1
+      h4 = b64.indexOf(data.charAt(i))
+      i += 1
 
       bits = h1 << 18 | h2 << 12 | h3 << 6 | h4
 
@@ -68,11 +76,14 @@ base64Decode = (data) ->
       o3 = bits & 0xff
 
       if h3 == 64
-        tmp_arr[ac++] = String.fromCharCode(o1)
+        tmp_arr[ac] = String.fromCharCode(o1)
+        ac += 1
       else if h4 == 64
-        tmp_arr[ac++] = String.fromCharCode(o1, o2)
+        tmp_arr[ac] = String.fromCharCode(o1, o2)
+        ac += 1
       else
-        tmp_arr[ac++] = String.fromCharCode(o1, o2, o3)
+        tmp_arr[ac] = String.fromCharCode(o1, o2, o3)
+        ac += 1
 
     tmp_arr.join('')
 
@@ -151,11 +162,15 @@ class Auth extends Annotator.Plugin
     .done (data, status, xhr) =>
       this.setToken(data)
 
-    # on failure, relay any message given by the server to the user with a notification
-    .fail (xhr, status, err) =>
+    # on failure, relay any message given by the server to the user with a
+    # notification
+    .fail (xhr, status, err) ->
       msg = Annotator._t("Couldn't get auth token:")
       console.error "#{msg} #{err}", xhr
-      Annotator.showNotification("#{msg} #{xhr.responseText}", Annotator.Notification.ERROR)
+      Annotator.showNotification(
+        "#{msg} #{xhr.responseText}",
+        Annotator.Notification.ERROR
+      )
 
     # always reset the requestInProgress indicator
     .always =>
@@ -179,7 +194,10 @@ class Auth extends Annotator.Plugin
     if this.haveValidToken()
       if @options.autoFetch
         # Set timeout to fetch new token 2 seconds before current token expiry
-        @refreshTimeout = setTimeout (() => this.requestToken()), (this.timeToExpiry() - 2) * 1000
+        @refreshTimeout = setTimeout(
+          (=> this.requestToken()),
+          (this.timeToExpiry() - 2) * 1000
+        )
 
       # Set headers field on this.element
       this.updateHeaders()
@@ -192,7 +210,7 @@ class Auth extends Annotator.Plugin
       console.warn Annotator._t("Didn't get a valid token.")
       if @options.autoFetch
         console.warn Annotator._t("Getting a new token in 10s.")
-        setTimeout (() => this.requestToken()), 10 * 1000
+        setTimeout((=> this.requestToken()), 10 * 1000)
 
   # Public: Checks the validity of the current token. Note that this *does
   # not* check the authenticity of the token.
@@ -202,7 +220,7 @@ class Auth extends Annotator.Plugin
   #   auth.haveValidToken() # => Returns true if valid.
   #
   # Returns true if the token is valid.
-  haveValidToken: () ->
+  haveValidToken: ->
     allFields = (
       @_unsafeToken and
       @_unsafeToken.issuedAt and

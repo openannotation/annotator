@@ -35,11 +35,11 @@ class AnnotateItPermissions extends Permissions
     userId: (user) -> user.userId
     userString: (user) -> user.userId
 
-    # Public: Used by AnnotateItPermissions#authorize to determine whether a user can
-    # perform an action on an annotation.
+    # Public: Used by AnnotateItPermissions#authorize to determine whether a
+    # user can perform an action on an annotation.
     #
-    # This should do more-or-less the same thing as the server-side authorization
-    # code, which is to be found at
+    # This should do more-or-less the same thing as the server-side
+    # authorization code, which is to be found at
     #   https://github.com/okfn/annotator-store/blob/master/annotator/authz.py
     #
     # Returns a Boolean, true if the user is authorised for the action provided.
@@ -51,13 +51,16 @@ class AnnotateItPermissions extends Permissions
         return true
 
       else if user? and user.userId? and user.consumerKey?
-        if user.userId == annotation.user and user.consumerKey == annotation.consumer
+        if (user.userId == annotation.user and
+            user.consumerKey == annotation.consumer)
           return true
         else if @groups.authenticated in action_field
           return true
-        else if user.consumerKey == annotation.consumer and @groups.consumer in action_field
+        else if (user.consumerKey == annotation.consumer and
+                 @groups.consumer in action_field)
           return true
-        else if user.consumerKey == annotation.consumer and user.userId in action_field
+        else if (user.consumerKey == annotation.consumer and
+                 user.userId in action_field)
           return true
         else if user.consumerKey == annotation.consumer and user.admin
           return true
@@ -69,10 +72,10 @@ class AnnotateItPermissions extends Permissions
     # Default permissions for all annotations. Anyone can
     # read, but only annotation owners can update/delete/admin.
     permissions: {
-      'read':   ['group:__world__']
+      'read': ['group:__world__']
       'update': []
       'delete': []
-      'admin':  []
+      'admin': []
     }
 
   # Event callback: Appends the @options.permissions, @options.user and
@@ -85,7 +88,12 @@ class AnnotateItPermissions extends Permissions
   #   annotation = {text: 'My comment'}
   #   permissions.addFieldsToAnnotation(annotation)
   #   console.log(annotation)
-  #   # => {text: 'My comment', user: 'alice', consumer: 'annotateit', permissions: {...}}
+  #   # => {
+  #   #  text: 'My comment',
+  #   #  user: 'alice',
+  #   #  consumer: 'annotateit',
+  #   #  permissions: {...}
+  #   #  }
   #
   # Returns nothing.
   addFieldsToAnnotation: (annotation) =>
@@ -110,7 +118,12 @@ class AnnotateItPermissions extends Permissions
     field.hide() unless this.authorize('admin', annotation)
 
     # See if we can authorise with any old user from this consumer
-    if @user and this.authorize(action, annotation || {}, {userId: '__nonexistentuser__', consumerKey: @user.consumerKey})
+    authzAnyone = this.authorize(
+      action,
+      annotation || {},
+      {userId: '__nonexistentuser__', consumerKey: @user.consumerKey}
+    )
+    if @user and authzAnyone
       input.attr('checked', 'checked')
     else
       input.removeAttr('checked')
@@ -130,12 +143,16 @@ class AnnotateItPermissions extends Permissions
     dataKey = type + '-permissions'
 
     if $(field).find('input').is(':checked')
-      annotation.permissions[type] = [if type == 'read' then @options.groups.world else @options.groups.consumer]
+      if type == 'read'
+        group = @options.groups.world
+      else
+        group = @options.groups.consumer
+      annotation.permissions[type] = [group]
     else
       annotation.permissions[type] = []
 
-  # Sets the Permissions#user property on the basis of a received authToken. This plugin
-  # simply uses the entire token to represent the user.
+  # Sets the Permissions#user property on the basis of a received authToken.
+  # This plugin simply uses the entire token to represent the user.
   #
   # token - the authToken received by the Auth plugin
   #
