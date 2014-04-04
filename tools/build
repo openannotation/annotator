@@ -201,9 +201,31 @@ if (require.main === module) {
       entry: true
     , expose: 'annotator'
     });
+
+    // Add the plugins
     glob.sync('./src/plugin/*.coffee').forEach(function (p) {
-      b.require(p);
+      pluginName = path.basename(p).replace('.coffee', '');
+      moduleName = 'annotator-plugin-' + pluginName;
+      b.require(p, {expose: moduleName});
     });
+
+    // Expose all the plugins by inlining require calls into annotator to work
+    // around browserify restricting standalone bundles to one entry script.
+    b.transform(function (file) {
+      if (b._mapped['annotator'] == file) {
+        return through(null, function () {
+          this.queue('\n');
+          for (var m in b._mapped) {
+            if (m == 'annotator') continue;
+            this.queue("require('" + m + "');\n");
+          }
+          this.queue(null);
+        });
+      } else {
+        return through();
+      }
+    });
+
     pack(b, 'pkg/annotator-full.js', {
       debug: true,
       standalone: 'Annotator'
