@@ -45,8 +45,17 @@ test:
 develop:
 	npm start
 
-doc:
+doc: docco
 	cd doc && $(MAKE) html
+	docco src/*.coffee -o doc/_build/html/docco/
+
+# Make the docco build timestamped off the docco.css file which is regenerated
+# on every docco build. This, in concert with the next task, can ensure that we
+# don't regenerate docco docs unless the source files have actually changed.
+docco: doc/_build/html/src/docco.css
+
+doc/_build/html/src/docco.css: $(wildcard src/**/*.coffee)
+	$(shell npm bin)/docco src/**/*.coffee -o doc/_build/html/src
 
 pkg/annotator.css: css/annotator.css
 	$(BUILD) -c
@@ -67,4 +76,4 @@ $(DEPDIR) $(PKGDIRS):
 -include $(DEPDIR)/*.d
 
 .PHONY: all annotator plugins annotator-full bookmarklet clean test develop \
-	pkg doc
+	pkg doc docco
