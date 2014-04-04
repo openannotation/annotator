@@ -174,19 +174,25 @@ if (require.main === module) {
 
   function core () {
     pack(exports.browserify('./src/annotator'), 'pkg/annotator.js', {
-      debug: true
+      debug: true,
+      standalone: 'Annotator'
     });
   }
 
   function plugin(name) {
+    var exportName = name.replace(/^\w/, function (c) {
+      return c.toUpperCase();
+    });
     var source = './src/plugin/' + name + '.coffee';
-    var target = 'pkg/annotator.' + path.basename(name) + '.js';
+    var target = 'pkg/annotator.' + path.basename(name).toLowerCase() + '.js';
     var b = exports.browserify()
       .external('jquery')
       .external('annotator')
+      .require('./src/namespace', {expose: 'annotator'})
       .add(source)
     pack(b, target, {
-      debug: true
+      debug: true,
+      standalone: 'Annotator.Plugin.' + exportName
     });
   }
 
@@ -196,10 +202,11 @@ if (require.main === module) {
     , expose: 'annotator'
     });
     glob.sync('./src/plugin/*.coffee').forEach(function (p) {
-      b.add(p);
+      b.require(p);
     });
     pack(b, 'pkg/annotator-full.js', {
-      debug: true
+      debug: true,
+      standalone: 'Annotator'
     });
   }
 

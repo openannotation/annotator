@@ -1,6 +1,6 @@
-$ = require('jquery')
 Annotator = require('annotator')
 Permissions = require('./permissions')
+$ = Annotator.Util.$
 
 
 # Public: Plugin for managing user permissions under the rather more specialised

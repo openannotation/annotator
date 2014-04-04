@@ -1,5 +1,5 @@
-$ = require('jquery')
 Annotator = require('annotator')
+$ = Annotator.Util.$
 
 
 # Plugin that renders annotation comments displayed in the Viewer in Markdown.

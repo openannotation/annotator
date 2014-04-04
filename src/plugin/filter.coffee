@@ -1,5 +1,6 @@
-$ = require('jquery')
 Annotator = require('annotator')
+$ = Annotator.Util.$
+
 
 class Filter extends Annotator.Plugin
   # Events and callbacks to bind to the Filter#element.

@@ -86,30 +86,30 @@
 
     <script>
       var devAnnotator;
-      (function ($) {
-        var elem = document.getElementById('airlock');
-        var factory = new Annotator.Factory();
+      var $ = require('jquery');
+      var Annotator = require('annotator');
 
-        var Store = Annotator.Plugin.fetch('Store');
-        var Auth = Annotator.Plugin.fetch('Auth');
-        var Unsupported = Annotator.Plugin.fetch('Unsupported');
-        var AnnotateItPermissions = Annotator.Plugin.fetch('AnnotateItPermissions');
+      var elem = document.getElementById('airlock');
+      var factory = new Annotator.Factory();
 
-        factory.setStore(Store, {
-          prefix: 'http://localhost:5000',
-          loadFromSearch: {uri: window.location},
-          annotationData: {uri: window.location}
-        });
-        factory.addPlugin(Auth, null, {
-          tokenUrl: 'http://localhost:4000/api/token'
-        });
-        factory.addPlugin(Unsupported);
-        factory.addPlugin(AnnotateItPermissions);
+      var Store = Annotator.Plugin.fetch('Store');
+      var Auth = Annotator.Plugin.fetch('Auth');
+      var Unsupported = Annotator.Plugin.fetch('Unsupported');
+      var AnnotateItPermissions = Annotator.Plugin.fetch('AnnotateItPermissions');
 
-        devAnnotator = factory.getInstance();
-        devAnnotator.attach(elem);
+      factory.setStore(Store, {
+        prefix: 'http://localhost:5000',
+        loadFromSearch: {uri: window.location},
+        annotationData: {uri: window.location}
+      });
+      factory.addPlugin(Auth, null, {
+        tokenUrl: 'http://localhost:4000/api/token'
+      });
+      factory.addPlugin(Unsupported);
+      factory.addPlugin(AnnotateItPermissions);
 
-      }(Annotator.Util.$));
+      devAnnotator = factory.getInstance();
+      devAnnotator.attach(elem);
     </script>
   </body>
 

@@ -1,5 +1,6 @@
-$ = require('jquery')
 Annotator = require('annotator')
+$ = Annotator.Util.$
+
 
 uuid = (-> counter = 0; -> counter++)()
 
