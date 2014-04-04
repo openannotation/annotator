@@ -116,7 +116,14 @@ class Annotator extends Delegator
   # Configure the Annotator. Typically called by an Annotator.Factory, or the
   # constructor when operating in legacy (v1) mode.
   configure: (config) ->
-    {@store, @plugins} = config
+    {@store, plugins} = config
+    @plugins = {}
+
+    # TODO: Stop using this hash to find plugins
+    # This block is super hacky and dumb.
+    for p in plugins
+      for name, klass of Annotator.Plugin._ctors when p instanceof klass
+        @plugins[name] = p
 
     @annotations = new AnnotationRegistry()
     @annotations.configure(core: this)
@@ -533,7 +540,7 @@ class Annotator extends Delegator
       plug = new klass(@element[0], options)
       plug.annotator = this
       plug.pluginInit?()
-      @plugins.push(plug)
+      @plugins[name] = plug
     else
       console.error _t("Could not load ") + name + _t(" plugin. Have you included the appropriate <script> tag?")
 
