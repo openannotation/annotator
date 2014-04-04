@@ -1,22 +1,10 @@
 $ = require('jquery')
 
+# Get an unique identifier
+id = (-> counter = 0; -> counter++)()
+
 # Public: Adds persistence hooks for annotations.
-class StorageProvider
-
-  @configure: (registry) ->
-    klass = registry.settings.store?.type
-
-    if typeof(klass) is 'function'
-      store = new klass(registry.settings.store)
-    else
-      store = new this(registry)
-
-    registry['store'] ?= store
-
-  constructor: (@registry) ->
-
-  # Public: get an unique identifier
-  id: (-> counter = 0; -> counter++)()
+class NullStore
 
   # Public: create an annotation
   #
@@ -26,7 +14,7 @@ class StorageProvider
   create: (annotation) ->
     dfd = $.Deferred()
     if not annotation.id?
-      annotation.id = this.id()
+      annotation.id = id()
     dfd.resolve(annotation)
     return dfd.promise()
 
@@ -58,4 +46,4 @@ class StorageProvider
     dfd.resolve([], {})
     return dfd.promise()
 
-module.exports = StorageProvider
+module.exports = NullStore

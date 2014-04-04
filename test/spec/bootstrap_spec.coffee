@@ -94,6 +94,12 @@ describe "bookmarklet", ->
         done()
 
   describe "setup()", ->
+    hasPlugin = (instance, name) ->
+      val = instance.plugins
+        .map((p) -> if p instanceof Annotator.Plugin.fetch(name) then 1 else 0)
+        .reduce(((sum, item) -> sum + item), 0)
+      return val >= 1
+
     beforeEach ->
       bookmarklet.setup()
 
@@ -105,16 +111,14 @@ describe "bookmarklet", ->
 
     it "should add the plugins to the annotator instance", ->
       instance = window._annotator.instance
-      plugins = instance.plugins
-      assert.isObject(plugins.Auth)
-      assert.isObject(plugins.Store)
-      assert.isObject(plugins.AnnotateItPermissions)
-      assert.isObject(plugins.Unsupported)
+      assert(hasPlugin(instance, 'Auth'))
+      assert(hasPlugin(instance, 'Store'))
+      assert(hasPlugin(instance, 'AnnotateItPermissions'))
+      assert(hasPlugin(instance, 'Unsupported'))
 
     it "should add the tags plugin if options.tags is true", ->
       instance = window._annotator.instance
-      plugins = instance.plugins
-      assert.isObject(plugins.Tags)
+      assert(hasPlugin(instance, 'Tags'))
 
     it "should display a loaded notification", ->
       assert(bookmarklet.notification.message.called)

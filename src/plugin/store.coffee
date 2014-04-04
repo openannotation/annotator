@@ -11,7 +11,7 @@ $ = Annotator.Util.$
 # The store handles five distinct actions "read", "search", "create", "update"
 # and "destroy". The requests made can be customised with options when the
 # plugin is added to the Annotator.
-class Annotator.Plugin.Store
+class Store
 
   # User customisable options available.
   options:
@@ -292,5 +292,6 @@ class Annotator.Plugin.Store
 
     console.error Annotator._t("API request failed:") + " '#{xhr.status}'"
 
+Annotator.Plugin.register('Store', Store)
 
-module.exports = Annotator.Plugin.Store
+module.exports = Store

@@ -16,7 +16,7 @@ $ = Annotator.Util.$
 #   })
 #
 # Returns a new instance of the Permissions Object.
-class Annotator.Plugin.Permissions extends Annotator.Plugin
+class Permissions extends Annotator.Plugin
 
   # A Object literal of default options for the class.
   options:
@@ -319,4 +319,6 @@ class Annotator.Plugin.Permissions extends Annotator.Plugin
     this.setUser(token.userId)
 
 
-module.exports = Annotator.Plugin.Permissions
+Annotator.Plugin.register('Permissions', Permissions)
+
+module.exports = Permissions

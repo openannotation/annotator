@@ -4,7 +4,7 @@ $ = Annotator.Util.$
 
 # Public: Tags plugin allows users to tag thier annotations with metadata
 # stored in an Array on the annotation as tags.
-class Annotator.Plugin.Tags extends Annotator.Plugin
+class Tags extends Annotator.Plugin
 
   options:
     # Configurable function which accepts a string (the contents)
@@ -53,7 +53,7 @@ class Annotator.Plugin.Tags extends Annotator.Plugin
       @annotator.plugins.Filter.addFilter
         label: Annotator._t('Tag')
         property: 'tags'
-        isFiltered: Annotator.Plugin.Tags.filterCallback
+        isFiltered: Tags.filterCallback
 
     @input = $(@field).find(':input')
 
@@ -158,7 +158,7 @@ class Annotator.Plugin.Tags extends Annotator.Plugin
 #   Tags.filterCallback('cat dog', ['cat']) //=> false
 #
 # Returns true if the input keywords match all tags.
-Annotator.Plugin.Tags.filterCallback = (input, tags = []) ->
+Tags.filterCallback = (input, tags = []) ->
   matches  = 0
   keywords = []
   if input
@@ -168,5 +168,6 @@ Annotator.Plugin.Tags.filterCallback = (input, tags = []) ->
 
   matches == keywords.length
 
+Annotator.Plugin.register('Tags', Tags)
 
-module.exports = Annotator.Plugin.Tags
+module.exports = Tags

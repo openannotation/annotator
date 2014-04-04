@@ -1,10 +1,10 @@
-$ = require('jquery')
 Annotator = require('annotator')
+$ = Annotator.Util.$
 
 
 # Plugin that renders annotation comments displayed in the Viewer in Markdown.
 # Requires Showdown library to be present in the page when initialised.
-class Annotator.Plugin.Markdown extends Annotator.Plugin
+class Markdown extends Annotator.Plugin
   # Events to be bound to the @element.
   events:
     'annotationViewerTextField': 'updateTextField'
@@ -57,5 +57,6 @@ class Annotator.Plugin.Markdown extends Annotator.Plugin
   convert: (text) ->
     @converter.makeHtml text
 
+Annotator.Plugin.register('Markdown', Markdown)
 
-module.exports = Annotator.Plugin.Markdown
+module.exports = Markdown

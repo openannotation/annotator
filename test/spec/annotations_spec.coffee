@@ -1,33 +1,31 @@
 $ = require('jquery')
-Registry = require('../../src/registry')
-AnnotationProvider = require('../../src/annotations')
+AnnotationRegistry = require('../../src/annotations')
+NullStore = require('../../src/nullstore')
 
 
-describe 'AnnotationProvider', ->
+describe 'AnnotationRegistry', ->
   a = null
-  r = null
-  m = null
+  s = null
 
   beforeEach ->
-    r = new Registry()
-      .include(AnnotationProvider)
+    s = new NullStore()
 
-    a = r['annotations']
-    m = r['store']
+    a = new AnnotationRegistry()
+    a.configure(core: {store: s})
 
-    sinon.spy(m, 'create')
-    sinon.spy(m, 'update')
-    sinon.spy(m, 'delete')
-    sinon.spy(m, 'query')
+    sinon.spy(s, 'create')
+    sinon.spy(s, 'update')
+    sinon.spy(s, 'delete')
+    sinon.spy(s, 'query')
 
   describe '#create()', ->
 
     it "should pass annotation data to the store's #create()", ->
 
       a.create({some: 'data'})
-      assert(m.create.calledOnce, 'store .create() called once')
+      assert(s.create.calledOnce, 'store .create() called once')
       assert(
-        m.create.calledWith(sinon.match({some: 'data'})),
+        s.create.calledWith(sinon.match({some: 'data'})),
         'store .create() called with correct args'
       )
 
@@ -46,9 +44,9 @@ describe 'AnnotationProvider', ->
     it "should pass annotation data to the store's #update()", ->
 
       a.update({id: '123', some: 'data'})
-      assert(m.update.calledOnce, 'store .update() called once')
+      assert(s.update.calledOnce, 'store .update() called once')
       assert(
-        m.update.calledWith(sinon.match({id: '123', some: 'data'})),
+        s.update.calledWith(sinon.match({id: '123', some: 'data'})),
         'store .update() called with correct args'
       )
 
@@ -61,9 +59,9 @@ describe 'AnnotationProvider', ->
     it "should pass annotation data to the store's #delete()", ->
 
       a.delete({id: '123', some: 'data'})
-      assert(m.delete.calledOnce, 'store .delete() called once')
+      assert(s.delete.calledOnce, 'store .delete() called once')
       assert(
-        m.delete.calledWith(sinon.match({id: '123', some: 'data'})),
+        s.delete.calledWith(sinon.match({id: '123', some: 'data'})),
         'store .delete() called with correct args'
       )
 
@@ -76,14 +74,7 @@ describe 'AnnotationProvider', ->
     it "should invoke the query method on the registered store service", ->
       query = {url: 'foo'}
       a.query(query)
-      assert(m.query.calledWith(query))
-
-  describe '#load()', ->
-
-    it "should call the query method", ->
-      sinon.spy(a, 'query')
-      a.load({foo: 'bar', type: 'giraffe'})
-      assert(a.query.calledWith, sinon.match({foo: 'bar', type: 'giraffe'}))
+      assert(s.query.calledWith(query))
 
   describe '#_cycle()', ->
     store_noop = (a) -> $.Deferred().resolve(a).promise()
@@ -93,19 +84,19 @@ describe 'AnnotationProvider', ->
     beforeEach ->
       local = {foo: 'bar', numbers: [1,2,3]}
       ann = {some: 'data', _local: local}
-      m['bogus'] = sinon.spy(store_noop)
+      s['bogus'] = sinon.spy(store_noop)
 
     it "should strip an annotation of any _local before passing to the store", ->
       a._cycle(ann, 'bogus')
       assert(
-        m.bogus.calledWith(sinon.match({some: 'data'}))
+        s.bogus.calledWith(sinon.match({some: 'data'}))
         'annotation _local stripped before store call'
       )
     it "should pass annotation data to the store method", ->
       a._cycle(ann, 'bogus')
-      assert(m.bogus.calledOnce, 'store method called once')
+      assert(s.bogus.calledOnce, 'store method called once')
       assert(
-        m.bogus.calledWith(sinon.match({some: 'data'})),
+        s.bogus.calledWith(sinon.match({some: 'data'})),
         'store method called with correct args'
       )
 

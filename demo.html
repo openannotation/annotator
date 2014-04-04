@@ -4,9 +4,6 @@
     <meta charset="utf-8">
     <title>JS annotation test</title>
 
-    <!-- jQuery must be included before Annotator -->
-    <script src="lib/vendor/jquery.js"></script>
-
     <!-- If you're sure your users will only be using browsers modern
          enough to have their own JSON.parse and JSON.stringify
          implementations you can skip this -->
@@ -74,22 +71,17 @@
     </div>
 
     <script>
-      jQuery(function ($) {
-        if (typeof $.fn.annotator !== 'function') {
-          alert("Ooops! it looks like you haven't built the Annotator concatenation file. " +
-                "Either download a tagged release from GitHub, or build the package " +
-                "by running `make pkg` (or `./build/tools -a`).");
-        } else {
-          // This is the important bit: how to create the annotator and add
-          // plugins
-          $('#airlock').annotator()
-                       .annotator('addPlugin', 'Permissions')
-                       .annotator('addPlugin', 'Markdown')
-                       .annotator('addPlugin', 'Tags');
-
-          $('#airlock').data('annotator').plugins['Permissions'].setUser("Joe Bloggs");
-        }
-      });
+      if (typeof Annotator !== 'function') {
+        alert("Ooops! it looks like you haven't built the Annotator concatenation file. " +
+              "Either download a tagged release from GitHub, or build the package " +
+              "by running `make pkg` (or `./build/tools -a`).");
+      } else {
+        var elem = document.getElementById('airlock');
+        var annotator = new Annotator(elem);
+        annotator.addPlugin('Permissions', {user: "Joe Bloggs"});
+        annotator.addPlugin('Markdown');
+        annotator.addPlugin('Tags');
+      }
     </script>
   </body>
 

@@ -6,11 +6,9 @@ var convert = require('convert-source-map');
 var jwt = require('jwt-simple');
 var glob = require('glob');
 var q = require('kew')
-var through = require('through');
 var watchify = require('watchify')
 
 var build = require('./build');
-var loader = require('../');
 
 var CONSUMER_KEY = 'mockconsumer';
 var CONSUMER_SECRET = 'mockconsumersecret';
@@ -110,56 +108,41 @@ browserify()
   .watch({debug: true});
 
 // Core
-browserify('./src/annotator')
+browserify()
   .external('jquery')
+  .require('./src/annotator.coffee', {expose: 'annotator'})
   .serve(app, '/lib/annotator.js')
-  .watch({
-    debug: true,
-    standalone: 'Annotator'
-  })
-;
+  .watch({debug: true});
 
 
-// Plugins
-glob.sync('./src/plugin/*.coffee').forEach(function (p) {
-  var location = '/lib/plugin/' + path.basename(p).replace('.coffee', '.js');
-  var b = browserify().plugin(loader).require('./src/namespace', {
-    entry: true
-  , expose: 'annotator'
-  });
-  build.plugin(b, p)
+// Other files
+glob.sync('./src/**/*.coffee').forEach(function (p) {
+  var loc = '/lib/' + path.relative('./src/', p).replace('.coffee', '.js');
+  browserify()
     .external('jquery')
-    .serve(app, location)
-    .watch({
-      debug: true
-    , standalone: 'Annotator'
-    })
-  ;
+    .external('annotator')
+    .add(p)
+    .serve(app, loc)
+    .watch({debug: true});
 });
 
+// Test helpers
+browserify()
+  .external('jquery')
+  .require('./test/helpers.coffee', {expose: 'helpers'})
+  .serve(app, '/test/helpers.js')
+  .watch({debug: true});
 
-// Tests
+// Other test files
 glob.sync('./test/**/*.coffee').forEach(function (t) {
-  if (t == './test/helpers.coffee') {
-    browserify(t)
-      .external('jquery')
-      .require(t, {expose: 'helpers'})
-      .require('./src/annotator', {expose: 'annotator'})
-      .serve(app, '/test/helpers.js')
-      .watch({debug: true})
-    ;
-  } else {
-    var path = t.replace('./', '/').replace('.coffee', '.js');
-    browserify(t)
-      .external('jquery')
-      .external('annotator')
-      .external('helpers')
-      .serve(app, path)
-      .watch({debug: true})
-    ;
-  }
+  var loc = t.replace('./', '/').replace('.coffee', '.js');
+  browserify(t)
+    .external('jquery')
+    .external('annotator')
+    .external('helpers')
+    .serve(app, loc)
+    .watch({debug: true});
 });
-
 
 // Static files
 app.use(connect.static(process.cwd()));

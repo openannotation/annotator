@@ -1,7 +1,8 @@
-$ = require('jquery')
 Annotator = require('annotator')
+$ = Annotator.Util.$
 
-class Annotator.Plugin.Filter extends Annotator.Plugin
+
+class Filter extends Annotator.Plugin
   # Events and callbacks to bind to the Filter#element.
   events:
     ".annotator-filter-property input focus": "_onFilterFocus"
@@ -81,7 +82,7 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
   #
   # Examples
   #
-  #   filter = new Annotator.Plugin.Filter(annotator.element)
+  #   filter = new Filter(annotator.element)
   #
   # Returns a new instance of the Filter plugin.
   constructor: (element, options) ->
@@ -370,5 +371,6 @@ class Annotator.Plugin.Filter extends Annotator.Plugin
   _onClearClick: (event) ->
     $(event.target).prev('input').val('').keyup().blur()
 
+Annotator.Plugin.register('Filter', Filter)
 
-module.exports = Annotator.Plugin.Filter
+module.exports = Filter

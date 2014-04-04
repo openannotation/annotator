@@ -3,7 +3,7 @@ Annotator = require('annotator')
 Tags = require('../../../src/plugin/tags')
 
 
-describe 'Annotator.Plugin.Tags', ->
+describe 'Tags plugin', ->
   annotator = null
   plugin = null
 

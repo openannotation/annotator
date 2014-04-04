@@ -9,7 +9,6 @@
   "dependencies": {
     "backbone-events-standalone": "~0.2.1",
     "backbone-extend-standalone": "~0.1.2",
-    "through": "~2.3.4",
     "jquery": "~1.11.0"
   },
   "devDependencies": {
@@ -30,7 +29,8 @@
     "glob": "~3.2.6",
     "kew": "~0.2.2",
     "source-map": "~0.1.32",
-    "watchify": "0.6.2"
+    "watchify": "0.6.2",
+    "through": "~2.3.4"
   },
   "engines": {
     "node": ">=0.8 <0.12"
@@ -39,5 +39,5 @@
     "start": "./tools/serve",
     "test": "./tools/test"
   },
-  "browser": "./lib/annotator"
+  "browser": "./annotator.js"
 }

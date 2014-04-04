@@ -12,8 +12,6 @@ var through = require('through');
 var UglifyJS = require('uglify-js');
 var UglifyCSS = require('uglifycss');
 
-var loader = require('../');
-
 var SourceMapConsumer = sourceMap.SourceMapConsumer;
 var SourceMapGenerator = sourceMap.SourceMapGenerator;
 var SourceNode = sourceMap.SourceNode;
@@ -76,25 +74,7 @@ exports.browserify = function (opts) {
   if (typeof(opts) === 'string') opts = {entries: [opts]}
   if (!opts.extensions) opts.extensions = [];
   opts.extensions.push('.coffee');
-  opts.resolve = (function (__resolve) {
-    return function (pkg, opts, cb) {
-      var m = pkg.match(/^annotator-plugin-(.+)/);
-      if (m) {
-        try {
-          return __resolve('./' + m[1], opts, cb);
-        } catch (e) {}
-      }
-      return __resolve(pkg, opts, cb);
-    }
-  })(opts.resolve || require('browser-resolve'));
   return require('browserify')(opts).transform(coffeeify);
-};
-
-
-// The plugin bundles
-exports.plugin = function (b, p) {
-  var name = path.basename(p).replace('.coffee', '')
-  return b.require(p, {expose: ['annotator', 'plugin', name].join('-')});
 };
 
 
@@ -194,50 +174,54 @@ if (require.main === module) {
 
   function core () {
     pack(exports.browserify('./src/annotator'), 'pkg/annotator.js', {
-      debug: true
-    , standalone: 'Annotator'
+      debug: true,
+      standalone: 'Annotator'
     });
   }
 
   function plugin(name) {
+    var exportName = name.replace(/^\w/, function (c) {
+      return c.toUpperCase();
+    });
     var source = './src/plugin/' + name + '.coffee';
-    var target = 'pkg/annotator.' + path.basename(name) + '.js';
+    var target = 'pkg/annotator.' + path.basename(name).toLowerCase() + '.js';
     var b = exports.browserify()
-      .plugin(loader)
       .external('jquery')
-      .require('./src/namespace', {
-        entry: true
-      , expose: 'annotator'
-      });
-    pack(exports.plugin(b, source), target, {
-      debug: true
-    , standalone: 'Annotator'
+      .external('annotator')
+      .require('./src/namespace', {expose: 'annotator'})
+      .add(source)
+    pack(b, target, {
+      debug: true,
+      standalone: 'Annotator.Plugin.' + exportName
     });
   }
 
   function full() {
-    var b = exports.browserify().plugin(loader).require('./src/annotator', {
+    var b = exports.browserify().require('./src/annotator', {
       entry: true
     , expose: 'annotator'
     });
-    glob.sync('./src/plugin/*.coffee').reduce(exports.plugin, b);
+    glob.sync('./src/plugin/*.coffee').forEach(function (p) {
+      b.require(p);
+    });
     pack(b, 'pkg/annotator-full.js', {
-      debug: true
-    , standalone: 'Annotator'
+      debug: true,
+      standalone: 'Annotator'
     });
   }
 
   function bookmarklet() {
-    var b = exports.browserify().plugin(loader).require('./src/annotator', {
+    var b = exports.browserify().require('./src/annotator', {
       entry: true
     , expose: 'annotator'
     });
     glob.sync(
       './src/plugin/{unsupported,auth,store,tags,annotateitpermissions}.coffee'
-    ).reduce(exports.plugin, b);
+    ).forEach(function (p) {
+      b.add(p);
+    });
     pack(b, 'pkg/annotator-bookmarklet.js', {
       debug: true
-    , standalone: 'Annotator'
     });
   }
 

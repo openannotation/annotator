@@ -1,5 +1,6 @@
-$ = require('jquery')
 Annotator = require('annotator')
+$ = Annotator.Util.$
+
 
 # Public: Creates a Date object from an ISO8601 formatted date String.
 #
@@ -89,7 +90,7 @@ parseToken = (token) ->
   JSON.parse(base64UrlDecode(payload))
 
 # Public: Supports the Store plugin by providing Authentication headers.
-class Annotator.Plugin.Auth extends Annotator.Plugin
+class Auth extends Annotator.Plugin
   # User options that can be provided.
   options:
 
@@ -144,7 +145,7 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
       url: @options.tokenUrl
       dataType: 'text'
       xhrFields:
-        withCredentials: true # Send any auth cookies to the backend
+        withCredentials: true # Send any auth cookies to the backend
 
     # on success, set the auth token
     .done (data, status, xhr) =>
@@ -161,7 +162,7 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
       @requestInProgress = false
 
   # Public: Sets the @token and checks it's validity. If the token is invalid
-  # requests a new one from the server.
+  # requests a new one from the server.
   #
   # token - A token string.
   #
@@ -255,5 +256,6 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
       if not @requestInProgress
         this.requestToken()
 
+Annotator.Plugin.register('Auth', Auth)
 
-module.exports = Annotator.Plugin.Auth
+module.exports = Auth

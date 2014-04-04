@@ -1,4 +1,4 @@
-$ = require 'jquery'
+$ = require('jquery')
 
 # A simple XPath evaluator using jQuery which can evaluate queries of
 simpleXPathJQuery = (relativeRoot) ->

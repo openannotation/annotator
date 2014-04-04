@@ -1,5 +1,6 @@
-$ = require('jquery')
 Annotator = require('annotator')
+$ = Annotator.Util.$
+
 
 uuid = (-> counter = 0; -> counter++)()
 
@@ -36,6 +37,6 @@ class DebugStore
     log("would set header '#{key}'='#{value}'")
 
 
-Annotator.Plugin.DebugStore =  DebugStore
+Annotator.Plugin.register('DebugStore', DebugStore)
 
 module.exports = DebugStore

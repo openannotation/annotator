@@ -501,7 +501,7 @@ describe 'Annotator', ->
       assert(console.warn.calledOnce)
 
     it "returns the results of the Store plugins dumpAnnotations method", ->
-      annotator.plugins.Store = { dumpAnnotations: -> [1,2,3] }
+      annotator.store = { dumpAnnotations: -> [1,2,3] }
       assert.deepEqual(annotator.dumpAnnotations(), [1,2,3])
 
   describe "highlightRange", ->
@@ -554,21 +554,23 @@ describe 'Annotator', ->
 
   describe "addPlugin", ->
     plugin = null
+    Foo = null
 
     beforeEach ->
       plugin = {
         pluginInit: sinon.spy()
       }
-      Annotator.Plugin.Foo = sinon.stub().returns(plugin)
+      Foo = sinon.stub().returns(plugin)
+      Annotator.Plugin.register('Foo', Foo)
 
     it "should add and instantiate a plugin of the specified name", ->
       annotator.addPlugin('Foo')
-      assert.isTrue(Annotator.Plugin.Foo.calledWith(annotator.element[0], undefined))
+      assert.isTrue(Foo.calledWith(annotator.element[0], undefined))
 
     it "should pass on the provided options", ->
       options = {foo: 'bar'}
       annotator.addPlugin('Foo', options)
-      assert.isTrue(Annotator.Plugin.Foo.calledWith(annotator.element[0], options))
+      assert.isTrue(Foo.calledWith(annotator.element[0], options))
 
     it "should attach the Annotator instance", ->
       annotator.addPlugin('Foo')
@@ -577,14 +579,6 @@ describe 'Annotator', ->
     it "should call Plugin#pluginInit()", ->
       annotator.addPlugin('Foo')
       assert(plugin.pluginInit.calledOnce)
-
-    it "should complain if you try and instantiate a plugin twice", ->
-      sinon.stub(console, 'error')
-      annotator.addPlugin('Foo')
-      annotator.addPlugin('Foo')
-      assert.equal(Annotator.Plugin.Foo.callCount, 1)
-      assert(console.error.calledOnce)
-      console.error.restore()
 
     it "should complain if you try and instantiate a plugin that doesn't exist", ->
       sinon.stub(console, 'error')
@@ -921,6 +915,14 @@ describe 'Annotator', ->
       do annotator.onEditorHide
       annotator.onEditorSubmit(annotation)
       assert.isFalse(annotator.annotations.update.calledWith(annotation))
+
+
+describe 'Annotator.Factory', ->
+  it "should use Annotator as the default core constructor", ->
+    factory = new Annotator.Factory()
+    a = factory.getInstance()
+    assert.instanceOf(a, Annotator)
+
 
 describe "Annotator.noConflict()", ->
   _Annotator = null
