@@ -1,7 +1,7 @@
 $ = require('jquery')
 extend = require('backbone-extend-standalone')
 
-Delegator = require('./class')
+Delegator = require('./delegator')
 Range = require('./range')
 Util = require('./util')
 Widget = require('./widget')

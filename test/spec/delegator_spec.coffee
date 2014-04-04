@@ -1,6 +1,6 @@
 $ = require('jquery')
 h = require('helpers')
-Delegator = require('../../src/class')
+Delegator = require('../../src/delegator')
 
 class DelegatedExample extends Delegator
   events:

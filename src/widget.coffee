@@ -1,5 +1,5 @@
 $ = require('jquery')
-Delegator = require('./class')
+Delegator = require('./delegator')
 Util = require('./util')
 
 

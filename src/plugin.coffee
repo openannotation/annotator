@@ -1,4 +1,4 @@
-Delegator = require("./class")
+Delegator = require("./delegator")
 Util = require("./util")
 
 
