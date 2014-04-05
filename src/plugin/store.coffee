@@ -1,6 +1,7 @@
 Annotator = require('annotator')
-$ = Annotator.Util.$
-_t = Annotator.Util.TranslationString
+Util = Annotator.Util
+$ = Util.$
+_t = Util.TranslationString
 
 
 # Public: The Store plugin can be used to persist annotations to a database
@@ -19,7 +20,9 @@ class Store
 
     # Custom meta data that will be attached to every annotation that is sent
     # to the server. This _will_ override previous values.
-    annotationData: {}
+    #
+    # @slatedForDeprecation 2.1.0
+    annotationData: null
 
     # Should the plugin emulate HTTP methods like PUT and DELETE for
     # interaction with legacy web servers? Setting this to `true` will fake
@@ -203,6 +206,18 @@ class Store
     if action is "search"
       opts = $.extend(opts, data: obj)
       return opts
+
+    # Add annotationData to object, if specified
+    #
+    # @slatedForDeprecation 2.1.0
+    if @options.annotationData?
+      Util.deprecationWarning("Use of the annotationData option to the Store
+                               plugin is deprecated and will be removed in a
+                               future version. Please use hooks to
+                               beforeAnnotationCreated and
+                               beforeAnnotationUpdated to replicate this
+                               behaviour.")
+      $.extend(obj, @options.annotationData)
 
     data = obj && JSON.stringify(obj)
 
