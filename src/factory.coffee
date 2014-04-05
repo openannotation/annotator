@@ -1,3 +1,6 @@
+extend = require('backbone-extend-standalone')
+
+
 # Factory is a factory for Annotator-based applications. It allows you to
 # configure and coordinate a set of components from Annotator and third-party
 # libraries in a clear, configurable way.
@@ -13,6 +16,13 @@ class Factory
 
     @pluginCtors = []
     @pluginArgs = []
+
+  # Public: extend the application that this factory will construct.
+  #
+  # properties - Properties to be added to the instance
+  # classProperties - Properties to be added to the instance constructor
+  extend: (properties, classProperties) ->
+    @ctors.core = extend.call(@ctors.core, properties, classProperties)
 
   # Public: given the current configuration of the factory, get an instance of
   # core constructor (usually an instance of Annotator). This instance will be
