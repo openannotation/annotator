@@ -1,16 +1,16 @@
 Annotator
 =========
 
-[![Build Status](https://secure.travis-ci.org/okfn/annotator.png)](http://travis-ci.org/okfn/annotator)
-[![Stories in Ready](https://badge.waffle.io/okfn/annotator.png?label=ready&title=Ready)](https://waffle.io/okfn/annotator)
+[![Build Status](https://secure.travis-ci.org/openannotation/annotator.png)](http://travis-ci.org/openannotation/annotator)
+[![Stories in Ready](https://badge.waffle.io/openannotation/annotator.png?label=ready&title=Ready)](https://waffle.io/openannotation/annotator)
 
 Annotator is a web annotation system. Loaded into a webpage, it provides the
 user with tools to annotate text (and other elements) in the page. For a simple
 demonstration, visit the [demo page][dp] or [download a tagged release of
 Annotator][dl] and open `demo.html`.
 
-[dp]: http://okfn.github.com/annotator/demo/
-[dl]: https://github.com/okfn/annotator/downloads
+[dp]: http://annotatorjs.org/demo/
+[dl]: https://github.com/openannotation/annotator/downloads
 
 The Annotator project also has a simple but powerful plugin architecture. While
 the core annotator code does the bare minimum, it is easily extended with
@@ -28,7 +28,7 @@ plugins that perform such tasks as:
 - tagging: the `Tags` plugin allows you to tag individual annotations
 
 [md]: http://daringfireball.net/projects/markdown/
-[storage]: https://github.com/okfn/annotator/wiki/Storage
+[storage]: https://github.com/openannotation/annotator/wiki/Storage
 
 Usage
 -----
