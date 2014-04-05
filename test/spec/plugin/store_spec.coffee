@@ -130,6 +130,13 @@ describe "Store plugin", ->
       json: '{"id":123}',
     })
 
+  it "should extend the annotation with the content of annotationData", ->
+    store.options.annotationData = {custom: 'value', customArray: []}
+    store.create({id: 123})
+    [_, opts] = $.ajax.args[0]
+
+    assert.equal('{"id":123,"custom":"value","customArray":[]}', opts.data)
+
   describe "_onError", ->
     message = null
     requests = [
