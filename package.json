@@ -34,6 +34,19 @@
     "coffeelint": "~1.1.0",
     "docco": "~0.6.3"
   },
+  "testling": {
+    "files": "test/*.js",
+    "browsers": [
+      "ie/6..latest",
+      "chrome/22..latest",
+      "firefox/16..latest",
+      "safari/5..latest",
+      "opera/11.0..latest",
+      "iphone/6",
+      "ipad/6",
+      "android-browser/latest"
+    ]
+  },
   "engines": {
     "node": ">=0.8 <0.12"
   },
