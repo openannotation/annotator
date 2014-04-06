@@ -3,14 +3,12 @@ $ = Annotator.Util.$
 
 
 class Document extends Annotator.Plugin
-  events:
-    'beforeAnnotationCreated': 'beforeAnnotationCreated'
-
   pluginInit: ->
     this.getDocumentMetadata()
+    this.listenTo(@annotator, 'beforeAnnotationCreated',
+      this.beforeAnnotationCreated)
 
   # returns the primary URI for the document being annotated
-
   uri: =>
     uri = decodeURIComponent document.location.href
     for link in @metadata
@@ -26,7 +24,7 @@ class Document extends Annotator.Plugin
       uniqueUrls[link.href] = true if link.href
     return (href for href of uniqueUrls)
 
-  beforeAnnotationCreated: (annotation) =>
+  beforeAnnotationCreated: (annotation) ->
     annotation.document = @metadata
 
   getDocumentMetadata: =>

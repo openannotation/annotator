@@ -7,12 +7,27 @@ describe 'Annotator.Plugin.Document', ->
   $fix = null
   plugin = null
   metadata = null
+  annotator = null
 
   beforeEach ->
     plugin = new Document($('<div/>')[0])
+    plugin.annotator = annotator = {}
+
+    BackboneEvents = require('backbone-events-standalone')
+    BackboneEvents.mixin(annotator)
+
+    sinon.spy(Document::, 'beforeAnnotationCreated')
     plugin.pluginInit()
 
-  describe '#beforeAnnotationCreated', ->
+  afterEach ->
+    Document::beforeAnnotationCreated.restore()
+    plugin.destroy()
+
+  describe '#beforeAnnotationCreated()', ->
+    it 'should be called when beforeAnnotationEvent is fired', ->
+      annotation = {}
+      annotator.trigger('beforeAnnotationCreated', annotation)
+      assert(plugin.beforeAnnotationCreated.calledWith(annotation))
 
     it 'should add a document field to the annotation', ->
       annotation = {}
