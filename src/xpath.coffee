@@ -1,6 +1,10 @@
 $ = require('./util').$
 
-# A simple XPath evaluator using jQuery which can evaluate queries of
+# Get an xpath string to the node relative to the provided root
+#
+# relativeRoot - The root node for the xpath
+#
+# Returns a string
 simpleXPathJQuery = (relativeRoot) ->
   jq = this.map ->
     path = ''
@@ -18,8 +22,11 @@ simpleXPathJQuery = (relativeRoot) ->
 
   jq.get()
 
-# A simple XPath evaluator using only standard DOM methods which can
-# evaluate queries of the form /tag[index]/tag[index].
+# Get an xpath string to the node relative to the provided root
+#
+# relativeRoot - The root node for the xpath
+#
+# Returns a string
 simpleXPathPure = (relativeRoot) ->
 
   getPathSegment = (node) ->
