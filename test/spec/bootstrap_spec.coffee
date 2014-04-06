@@ -164,7 +164,7 @@ describe "bookmarklet.notification", ->
   describe "show", ->
     it "should set the top style of the element", ->
       notification.show()
-      assert.equal(notification.element.style.top, "0px")
+      assert.equal(parseInt(notification.element.style.top), "0")
 
     it "should call notification.message", ->
       notification.show "hello", "red"
