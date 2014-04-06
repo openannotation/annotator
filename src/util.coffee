@@ -1,5 +1,4 @@
 $ = require('jquery')
-xpath = require('./xpath')
 
 
 # I18N
@@ -134,25 +133,6 @@ Util.readRangeViaSelection = (range) ->
   sel.removeAllRanges()                 # clear the selection
   sel.addRange range.toRange()          # Select the range
   sel.toString()                        # Read out the selection
-
-Util.xpathFromNode = (el, relativeRoot) ->
-  try
-    result = xpath.simpleXPathJQuery.call el, relativeRoot
-  catch exception
-    console.log("jQuery-based XPath construction failed! Falling back to
-                 manual.")
-    result = xpath.simpleXPathPure.call el, relativeRoot
-  result
-
-Util.nodeFromXPath = (xp, root) ->
-  steps = xp.substring(1).split("/")
-  node = root
-  for step in steps
-    [name, idx] = step.split "["
-    idx = if idx? then parseInt (idx?.split "]")[0] else 1
-    node = xpath.findChild node, name.toLowerCase(), idx
-
-  node
 
 Util.escape = (html) ->
   html

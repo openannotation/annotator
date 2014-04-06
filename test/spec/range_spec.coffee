@@ -45,20 +45,8 @@ describe 'Range', ->
     delete a
     h.clearFixtures()
 
-  describe ".nodeFromXPath()", ->
-    xpath = "/html/body/div/p/strong"
-    it "should parse a standard xpath string", ->
-      node = Range.nodeFromXPath xpath
-      assert.equal(node, $('strong')[0])
-
-    it "should parse an standard xpath string for an xml document", ->
-      $.isXMLDoc = -> true
-      node = Range.nodeFromXPath xpath
-      assert.equal(node, $('strong')[0])
-
   describe "SerializedRange", ->
     beforeEach ->
-
       # This is needed so that we can read ranges via selection API
       $(h.fix()).show()
 
