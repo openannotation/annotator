@@ -124,8 +124,10 @@ class Annotator extends Delegator
     # TODO: Stop using this hash to find plugins
     # This block is super hacky and dumb.
     for p in plugins
-      for name, klass of Annotator.Plugin._ctors when p instanceof klass
-        @plugins[name] = p
+      for name, klass of Annotator.Plugin._ctors
+        if p.constructor is klass
+          @plugins[name] = p
+          break
 
     @annotations = new AnnotationRegistry()
     @annotations.configure(core: this)
