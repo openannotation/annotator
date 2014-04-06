@@ -150,7 +150,8 @@ app.use(connect.static(process.cwd()));
 
 // Go
 if (require.main === module) {
-  app.listen(4000);
-  console.log("Development: http://localhost:4000/dev.html");
-  console.log("Testing: http://localhost:4000/test/runner.html");
+  var port = process.env.PORT || 4000;
+  app.listen(port);
+  console.log("Development: http://localhost:" + port + "/dev.html");
+  console.log("Testing: http://localhost:" + port + "/test/runner.html");
 }

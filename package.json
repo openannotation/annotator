@@ -41,5 +41,16 @@
     "start": "./tools/serve",
     "test": "./tools/lint && ./tools/test"
   },
-  "browser": "./annotator.js"
+  "browser": "./annotator.js",
+  "testling": {
+    "server": "tools/serve",
+    "html": "test/runner.html",
+    "browsers": [
+      "ie/6..latest",
+      "chrome/22..latest",
+      "firefox/16..latest",
+      "safari/5.0.5..latest",
+      "opera/11.0..latest"
+    ]
+  }
 }
