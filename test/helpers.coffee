@@ -107,7 +107,7 @@ fix = ->
 getFixture = (fname) ->
   if not fixtureMemo[fname]?
     fixtureMemo[fname] = $.ajax({
-      url: "fixtures/#{fname}.html"
+      url: "/test/fixtures/#{fname}.html"
       async: false
     }).responseText
 

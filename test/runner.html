@@ -4,19 +4,19 @@
     <title>Mocha</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../node_modules/mocha/mocha.css">
+    <link rel="stylesheet" href="/node_modules/mocha/mocha.css">
   </head>
   <body>
     <div id="fixtures" style="display: none"></div>
     <div id="mocha"></div>
 
-    <!--[if IE]><script src="../lib/vendor/xpath.js"></script><![endif]-->
-    <script src="../lib/vendor/jquery.js"></script><!-- provided dynamically -->
-    <script src="../lib/vendor/json2.js"></script>
-    <script src="../lib/vendor/showdown.js"></script>
-    <script src="../node_modules/mocha/mocha.js"></script>
-    <script src="../node_modules/chai/chai.js"></script>
-    <script src="../node_modules/sinon/pkg/sinon.js"></script>
+    <!--[if IE]><script src="/lib/vendor/xpath.js"></script><![endif]-->
+    <script src="/lib/vendor/jquery.js"></script><!-- provided dynamically -->
+    <script src="/lib/vendor/json2.js"></script>
+    <script src="/lib/vendor/showdown.js"></script>
+    <script src="/node_modules/mocha/mocha.js"></script>
+    <script src="/node_modules/chai/chai.js"></script>
+    <script src="/node_modules/sinon/pkg/sinon.js"></script>
     <script>
       // Use mocha's BDD interface
       mocha.setup('bdd');
@@ -25,38 +25,41 @@
       var assert = chai.assert;
     </script>
 
-    <script src="../lib/annotator.js"></script>
-    <script src="helpers.js"></script>
+    <script src="/lib/annotator.js"></script>
+    <script src="/test/helpers.js"></script>
 
-    <script src="spec/util_spec.js"></script>
-    <script src="spec/factory_spec.js"></script>
-    <script src="spec/delegator_spec.js"></script>
-    <script src="spec/annotator_spec.js"></script>
-    <script src="spec/range_spec.js"></script>
-    <script src="spec/widget_spec.js"></script>
-    <script src="spec/editor_spec.js"></script>
-    <script src="spec/viewer_spec.js"></script>
-    <script src="spec/notification_spec.js"></script>
+    <script src="/test/spec/util_spec.js"></script>
+    <script src="/test/spec/factory_spec.js"></script>
+    <script src="/test/spec/delegator_spec.js"></script>
+    <script src="/test/spec/annotator_spec.js"></script>
+    <script src="/test/spec/range_spec.js"></script>
+    <script src="/test/spec/widget_spec.js"></script>
+    <script src="/test/spec/editor_spec.js"></script>
+    <script src="/test/spec/viewer_spec.js"></script>
+    <script src="/test/spec/notification_spec.js"></script>
 
-    <script src="spec/annotations_spec.js"></script>
-    <script src="spec/nullstore_spec.js"></script>
+    <script src="/test/spec/annotations_spec.js"></script>
+    <script src="/test/spec/nullstore_spec.js"></script>
 
-    <script src="spec/plugin/unsupported_spec.js"></script>
-    <script src="spec/plugin/store_spec.js"></script>
-    <script src="spec/plugin/permissions_spec.js"></script>
-    <script src="spec/plugin/annotateitpermissions_spec.js"></script>
-    <script src="spec/plugin/auth_spec.js"></script>
-    <script src="spec/plugin/markdown_spec.js"></script>
-    <script src="spec/plugin/tags_spec.js"></script>
-    <script src="spec/plugin/filter_spec.js"></script>
-    <script src="spec/plugin/kitchensink_spec.js"></script>
-    <script src="spec/plugin/document_spec.js"></script>
+    <script src="/test/spec/plugin/unsupported_spec.js"></script>
+    <script src="/test/spec/plugin/store_spec.js"></script>
+    <script src="/test/spec/plugin/permissions_spec.js"></script>
+    <script src="/test/spec/plugin/annotateitpermissions_spec.js"></script>
+    <script src="/test/spec/plugin/auth_spec.js"></script>
+    <script src="/test/spec/plugin/markdown_spec.js"></script>
+    <script src="/test/spec/plugin/tags_spec.js"></script>
+    <script src="/test/spec/plugin/filter_spec.js"></script>
+    <script src="/test/spec/plugin/kitchensink_spec.js"></script>
+    <script src="/test/spec/plugin/document_spec.js"></script>
 
-    <script src="spec/bootstrap_spec.js"></script>
+    <script src="/test/spec/bootstrap_spec.js"></script>
 
     <script>
       if (window.mochaPhantomJS) {
         mochaPhantomJS.run();
+      } else if (window.__testlingConsole) {
+        mocha.reporter('tap');
+        mocha.run();
       } else {
         mocha.run();
       }
