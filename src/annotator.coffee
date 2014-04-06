@@ -823,6 +823,7 @@ class Annotator extends Delegator
 class Annotator.Factory extends Factory
   constructor: (core = Annotator) ->
     super core
+    this.setStore(NullStore)
 
 # Sniff the browser environment and attempt to add missing functionality.
 g = Util.getGlobal()
