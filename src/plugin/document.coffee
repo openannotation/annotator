@@ -107,9 +107,12 @@ class Document extends Annotator.Plugin
       href = this._absoluteUrl(l.prop('href')) # get absolute url
       rel = l.prop('rel')
       type = l.prop('type')
-      if (rel in ["alternate", "canonical", "bookmark"] and
-          type not in ["application/rss+xml", "application/atom+xml"])
-        @metadata.link.push(href: href, rel: rel, type: type)
+      lang = l.prop('hreflang')
+      # alternate languages are not the same document!
+      if not lang
+        if (rel in ["alternate", "canonical", "bookmark"] and
+            type not in ["application/rss+xml", "application/atom+xml"])
+          @metadata.link.push(href: href, rel: rel, type: type)
 
     # look for links in scholar metadata
     for name, values of @metadata.highwire
