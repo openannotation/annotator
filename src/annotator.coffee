@@ -1,4 +1,3 @@
-$ = require('jquery')
 extend = require('backbone-extend-standalone')
 
 Delegator = require('./delegator')
@@ -14,6 +13,7 @@ Plugin = require('./plugin')
 AnnotationRegistry = require('./annotations')
 NullStore = require('./nullstore')
 
+$ = Util.$
 _t = Util.TranslationString
 
 # Selection and range creation reference for the following code:

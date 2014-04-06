@@ -1,6 +1,5 @@
-$ = require('jquery')
+$ = require('../../src/util').$
 Viewer = require('../../src/viewer')
-
 
 describe 'Viewer', ->
   viewer = null

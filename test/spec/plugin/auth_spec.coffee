@@ -1,6 +1,8 @@
-$ = require('jquery')
 h = require('helpers')
+Util = require('../../../src/util')
 Auth = require('../../../src/plugin/auth')
+$ = Util.$
+
 
 Date::toISO8601String = h.DateToISO8601String
 

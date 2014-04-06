@@ -1,6 +1,6 @@
-$ = require('jquery')
 Annotator = require('annotator')
 Markdown = require('../../../src/plugin/markdown')
+$ = Annotator.Util.$
 
 
 describe 'Markdown plugin', ->

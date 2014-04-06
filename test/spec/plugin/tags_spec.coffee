@@ -1,6 +1,6 @@
-$ = require('jquery')
 Annotator = require('annotator')
 Tags = require('../../../src/plugin/tags')
+$ = Annotator.Util.$
 
 
 describe 'Tags plugin', ->

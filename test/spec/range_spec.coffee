@@ -1,8 +1,8 @@
-$ = require('jquery')
 h = require('helpers')
 
 Range = require('../../src/range')
 Util = require('../../src/util')
+$ = Util.$
 
 testData = [
   [ 0,           13,  0,           27,  "habitant morbi",                                    "Partial node contents." ]
@@ -45,20 +45,8 @@ describe 'Range', ->
     delete a
     h.clearFixtures()
 
-  describe ".nodeFromXPath()", ->
-    xpath = "/html/body/div/p/strong"
-    it "should parse a standard xpath string", ->
-      node = Range.nodeFromXPath xpath
-      assert.equal(node, $('strong')[0])
-
-    it "should parse an standard xpath string for an xml document", ->
-      $.isXMLDoc = -> true
-      node = Range.nodeFromXPath xpath
-      assert.equal(node, $('strong')[0])
-
   describe "SerializedRange", ->
     beforeEach ->
-
       # This is needed so that we can read ranges via selection API
       $(h.fix()).show()
 

@@ -1,6 +1,6 @@
-$ = require('jquery')
 AnnotationRegistry = require('../../src/annotations')
 NullStore = require('../../src/nullstore')
+$ = require('../../src/util').$
 
 
 describe 'AnnotationRegistry', ->

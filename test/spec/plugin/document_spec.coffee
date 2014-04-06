@@ -1,5 +1,6 @@
-$ = require('jquery')
+Util = require('../../../src/util')
 Document = require('../../../src/plugin/document')
+$ = Util.$
 
 
 describe 'Annotator.Plugin.Document', ->
