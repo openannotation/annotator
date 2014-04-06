@@ -135,6 +135,10 @@ class Annotator extends Delegator
 
   # Public: attach the Annotator and its associated event handling to the
   # specified element.
+  #
+  # element - The element on which bind delegated events
+  #
+  # Returns the instance for chaining.
   attach: (element) ->
     @element = $(element)
     this.addEvents()
@@ -156,6 +160,9 @@ class Annotator extends Delegator
       p.annotator = this  # this must remain for backwards compatibility for as
                           # long as we support calling pluginInit
       p.pluginInit?()
+
+    # Return this for chaining
+    this
 
   # Public: Creates a subclass of Annotator.
   #
