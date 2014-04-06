@@ -173,9 +173,5 @@ toNode = (path, root = document) ->
     node
 
 module.exports =
-  simpleXPathJQuery: simpleXPathJQuery
-  simpleXPathPure: simpleXPathPure
-  findChild: findChild
   fromNode: fromNode
   toNode: toNode
-  $: $
