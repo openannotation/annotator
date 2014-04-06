@@ -20,6 +20,7 @@ class Markdown extends Annotator.Plugin
   #
   # Returns a new instance of Annotator.Plugin.Markdown.
   constructor: (element, options) ->
+    super
     if Showdown?.converter?
       super
       @converter = new Showdown.converter()
