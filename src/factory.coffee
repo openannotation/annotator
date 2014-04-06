@@ -21,8 +21,11 @@ class Factory
   #
   # properties - Properties to be added to the instance
   # classProperties - Properties to be added to the instance constructor
+  #
+  # Returns the Factory instance to allow chaining.
   extend: (properties, classProperties) ->
     @ctors.core = extend.call(@ctors.core, properties, classProperties)
+    this
 
   # Public: given the current configuration of the factory, get an instance of
   # core constructor (usually an instance of Annotator). This instance will be
@@ -67,17 +70,23 @@ class Factory
   #
   # store - The constructor for the store object.
   # args... - Arguments to be passed to the constructor.
+  #
+  # Returns the Factory instance to allow chaining.
   setStore: (store, args...) ->
     @ctors.store = store
     @args.store = args
+    this
 
   # Public: append the selected plugin to the list of plugins to be instantiate
   # for each create instance.
   #
   # plugin - The constructor for the plugin object.
   # args... - Arguments to be passed to the constructor.
+  #
+  # Returns the Factory instance to allow chaining.
   addPlugin: (plugin, args...) ->
     @pluginCtors.push(plugin)
     @pluginArgs.push(args)
+    this
 
 module.exports = Factory
