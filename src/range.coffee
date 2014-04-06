@@ -1,6 +1,6 @@
-$ = require('jquery')
-Util = require('./util')
 xpath = require('./xpath')
+Util = require('./util')
+$ = Util.$
 
 
 Range = {}

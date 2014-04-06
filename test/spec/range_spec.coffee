@@ -1,8 +1,8 @@
-$ = require('jquery')
 h = require('helpers')
 
 Range = require('../../src/range')
 Util = require('../../src/util')
+$ = Util.$
 
 testData = [
   [ 0,           13,  0,           27,  "habitant morbi",                                    "Partial node contents." ]

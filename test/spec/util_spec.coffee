@@ -1,6 +1,6 @@
-$ = require('jquery')
 h = require('helpers')
 Util = require('../../src/util')
+$ = Util.$
 
 describe 'Util.contains()', ->
   it 'should return true when called on itself', ->

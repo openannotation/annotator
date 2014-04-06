@@ -1,4 +1,4 @@
-$ = require('jquery')
+$ = require('./util').$
 
 # Public: Provides CRUD methods for annotations which call corresponding plugin
 # hooks.

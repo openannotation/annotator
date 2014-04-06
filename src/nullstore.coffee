@@ -1,4 +1,4 @@
-$ = require('jquery')
+$ = require('./util').$
 
 # Get an unique identifier
 id = (-> counter = -1; -> counter += 1)()

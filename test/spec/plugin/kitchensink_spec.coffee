@@ -1,6 +1,6 @@
-$ = require('jquery')
 h = require('helpers')
 Annotator = require('annotator')
+$ = Annotator.Util.$
 
 _ = require('../../../src/plugin/kitchensink')
 Filter = require('../../../src/plugin/filter')

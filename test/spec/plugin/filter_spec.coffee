@@ -1,5 +1,5 @@
-$ = require('jquery')
 Filter = require('../../../src/plugin/filter')
+$ = require('../../../src/util').$
 
 
 describe "Annotator.Plugins.Filter", ->

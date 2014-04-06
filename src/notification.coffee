@@ -1,6 +1,6 @@
-$ = require('jquery')
 Delegator = require('./delegator')
 Util = require('./util')
+$ = Util.$
 
 
 # Public: A simple notification system that can be used to display information,

@@ -1,6 +1,6 @@
-$ = require('jquery')
-Util = require('../src/util')
 xpath = require('../src/xpath')
+Util = require('../src/util')
+$ = Util.$
 
 class MockSelection
   rangeCount: 1

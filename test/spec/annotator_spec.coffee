@@ -1,9 +1,9 @@
-$ = require('jquery')
 h = require('helpers')
 
 Annotator = require('annotator')
 Util = Annotator.Util
 Range = Annotator.Range
+$ = Util.$
 
 
 describe 'Annotator', ->

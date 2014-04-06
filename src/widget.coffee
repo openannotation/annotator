@@ -1,6 +1,6 @@
-$ = require('jquery')
 Delegator = require('./delegator')
 Util = require('./util')
+$ = Util.$
 
 
 # Public: Base class for the Editor and Viewer elements. Contains methods that
