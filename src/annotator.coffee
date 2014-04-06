@@ -148,7 +148,8 @@ class Annotator extends Delegator
     # Do initial load
     if @options.loadQuery then this.load(@options.loadQuery)
 
-    for p in @plugins
+    for name of @plugins
+      p = @plugins[name]
       # TODO: Issue deprecation warning for plugins that use pluginInit
       p.annotator = this  # this must remain for backwards compatibility for as
                           # long as we support calling pluginInit
