@@ -99,8 +99,7 @@
 
       factory.setStore(Store, {
         prefix: 'http://localhost:5000',
-        loadFromSearch: {uri: window.location},
-        annotationData: {uri: window.location}
+        annotationData: {uri: window.location.href}
       });
       factory.addPlugin(Auth, null, {
         tokenUrl: 'http://localhost:4000/api/token'
@@ -110,6 +109,7 @@
 
       devAnnotator = factory.getInstance();
       devAnnotator.attach(elem);
+      devAnnotator.load({uri:window.location.href})
     </script>
   </body>
 
