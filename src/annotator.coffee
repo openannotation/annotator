@@ -513,18 +513,6 @@ class Annotator extends Delegator
     for node in normedRange.textNodes() when not white.test(node.nodeValue)
       $(node).wrapAll(hl).parent().show()[0]
 
-  # Public: highlight a list of ranges
-  #
-  # normedRanges - An array of NormalizedRanges to be highlighted.
-  # cssClass - A CSS class to use for the highlight (default: 'annotator-hl')
-  #
-  # Returns an array of highlight Elements.
-  highlightRanges: (normedRanges, cssClass = 'annotator-hl') ->
-    highlights = []
-    for r in normedRanges
-      $.merge highlights, this.highlightRange(r, cssClass)
-    highlights
-
   # Public: Registers a plugin with the Annotator. A plugin can only be
   # registered once. The plugin will be instantiated in the following order.
   #

@@ -534,24 +534,6 @@ describe 'Annotator', ->
       elements = annotator.highlightRange(mockRange, 'monkeys')
       assert.equal(elements[0].className, 'monkeys')
 
-  describe "highlightRanges", ->
-    it "should return a list of highlight elements all highlighted ranges", ->
-      textNodes = (document.createTextNode(text) for text in ['hello', 'world'])
-      mockRange =
-        textNodes: -> textNodes
-      ranges = [mockRange, mockRange, mockRange]
-      elements = annotator.highlightRanges(ranges)
-      assert.lengthOf(elements, 6)
-      assert.equal(elements[0].className, 'annotator-hl')
-
-    it "should set highlight element class names to its second argument", ->
-      textNodes = (document.createTextNode(text) for text in ['hello', 'world'])
-      mockRange =
-        textNodes: -> textNodes
-      ranges = [mockRange, mockRange, mockRange]
-      elements = annotator.highlightRanges(ranges, 'monkeys')
-      assert.equal(elements[0].className, 'monkeys')
-
   describe "addPlugin", ->
     plugin = null
     Foo = null
