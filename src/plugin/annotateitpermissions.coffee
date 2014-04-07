@@ -17,6 +17,8 @@ $ = Annotator.Util.$
 # Returns a new instance of the AnnotateItPermissions Object.
 class AnnotateItPermissions extends Permissions
 
+  # coffeelint: disable=missing_fat_arrows
+
   # A Object literal of default options for the class.
   options:
 
@@ -77,6 +79,8 @@ class AnnotateItPermissions extends Permissions
       'delete': []
       'admin': []
     }
+
+  # coffeelint: enable=missing_fat_arrows
 
   # Event callback: Appends the @options.permissions, @options.user and
   # @options.consumer objects to the provided annotation object.

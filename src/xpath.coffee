@@ -6,6 +6,7 @@ $ = require('./util').$
 #
 # Returns Array[String]
 simpleXPathJQuery = ($el, relativeRoot) ->
+  # coffeelint: disable=missing_fat_arrows
   jq = $el.map ->
     path = ''
     elem = this
@@ -19,6 +20,7 @@ simpleXPathJQuery = ($el, relativeRoot) ->
       elem = elem.parentNode
 
     path
+  # coffeelint: enable=missing_fat_arrows
 
   jq.get()
 
@@ -48,8 +50,10 @@ simpleXPathPure = ($el, relativeRoot) ->
     xpath = xpath.replace /\/$/, ''
     xpath
 
+  # coffeelint: disable=missing_fat_arrows
   jq = $el.map ->
     path = getPathTo this
+  # coffeelint: enable=missing_fat_arrows
 
     path
 

@@ -381,10 +381,12 @@ class Range.SerializedRange
         # Everyone else
         (a, b) -> a.compareDocumentPosition(b) & 16
 
+    # coffeelint: disable=missing_fat_arrows
     $(range.startContainer).parents().each ->
       if contains(this, range.endContainer)
         range.commonAncestorContainer = this
         return false
+    # coffeelint: enable=missing_fat_arrows
 
     new Range.BrowserRange(range).normalize(root)
 

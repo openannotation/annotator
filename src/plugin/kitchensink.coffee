@@ -32,6 +32,7 @@ $ = Annotator.Util.$
 #   });
 #
 # Returns itself for chaining.
+# coffeelint: disable=missing_fat_arrows
 Annotator::setupPlugins = (config = {}, options = {}) ->
   win = Annotator.Util.getGlobal()
 
@@ -77,3 +78,4 @@ Annotator::setupPlugins = (config = {}, options = {}) ->
   for name in plugins
     if name not of pluginConfig or pluginConfig[name]
       this.addPlugin(name, pluginConfig[name])
+  # coffeelint: enable=missing_fat_arrows

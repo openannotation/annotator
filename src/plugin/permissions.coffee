@@ -19,6 +19,8 @@ _t = Annotator.Util.TranslationString
 # Returns a new instance of the Permissions Object.
 class Permissions extends Annotator.Plugin
 
+  # coffeelint: disable=missing_fat_arrows
+
   # A Object literal of default options for the class.
   options:
 
@@ -129,6 +131,8 @@ class Permissions extends Annotator.Plugin
       update: []
       delete: []
       admin: []
+
+  # coffeelint: enable=missing_fat_arrows
 
   # The constructor called when a new instance of the Permissions
   # plugin is created. See class documentation for usage.

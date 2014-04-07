@@ -219,7 +219,9 @@ class Filter extends Annotator.Plugin
     input = $.trim filter.element.find('input').val()
 
     if input
+      # coffeelint: disable=missing_fat_arrows
       annotations = @highlights.map -> $(this).data('annotation')
+      # coffeelint: enable=missing_fat_arrows
 
       for annotation in $.makeArray(annotations)
         property = annotation[filter.property]
@@ -249,6 +251,9 @@ class Filter extends Annotator.Plugin
       # If there are more than one filter then only annotations matched in every
       # filter should remain.
       annotations = []
+
+      # coffeelint: disable=missing_fat_arrows
+
       $.each activeFilters, ->
         $.merge(annotations, this.annotations)
 
@@ -259,6 +264,8 @@ class Filter extends Annotator.Plugin
           uniques.push this
         else
           filtered.push this
+
+      # coffeelint: enable=missing_fat_arrows
 
     highlights = @highlights
     for annotation, index in filtered

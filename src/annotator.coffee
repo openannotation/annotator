@@ -328,9 +328,11 @@ class Annotator extends Delegator
     @viewer.destroy()
     @editor.destroy()
 
+    # coffeelint: disable=missing_fat_arrows
     @wrapper.find('.annotator-hl').each ->
       $(this).contents().insertBefore(this)
       $(this).remove()
+    # coffeelint: enable=missing_fat_arrows
 
     @wrapper.contents().insertBefore(@wrapper)
     @wrapper.remove()
@@ -725,11 +727,13 @@ class Annotator extends Delegator
     # If the viewer is already shown, hide it first
     @viewer.hide() if @viewer.isShown()
 
+    # coffeelint: disable=missing_fat_arrows
     annotations = $(event.target)
       .parents('.annotator-hl')
       .addBack()
       .map(-> return $(this).data("annotation"))
       .toArray()
+    # coffeelint: enable=missing_fat_arrows
 
     # Now show the viewer with the wanted annotations
     this.showViewer(annotations, Util.mousePosition(event, @wrapper[0]))

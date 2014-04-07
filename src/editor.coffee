@@ -328,6 +328,7 @@ class Editor extends Widget
     controls  = editor.find('.annotator-controls')
     throttle  = false
 
+    # coffeelint: disable=missing_fat_arrows
     onMousedown = (event) ->
       if event.target == this
         mousedown = {
@@ -344,6 +345,7 @@ class Editor extends Widget
           'mousemove.annotator-editor-resize': onMousemove
         })
         event.preventDefault()
+    # coffeelint: enable=missing_fat_arrows
 
     onMouseup = ->
       mousedown = null
