@@ -106,11 +106,16 @@ class Document extends Annotator.Plugin
       rel = l.prop('rel')
       type = l.prop('type')
       lang = l.prop('hreflang')
-      # alternate languages are not the same document!
-      if not lang
-        if (rel in ["alternate", "canonical", "bookmark"] and
-            type not in ["application/rss+xml", "application/atom+xml"])
-          @metadata.link.push(href: href, rel: rel, type: type)
+
+      if rel not in ["alternate", "canonical", "bookmark"] then continue
+
+      if rel is 'alternate'
+        # Ignore feeds resources
+        if type and type.match /^application\/(rss|atom)\+xml/ then continue
+        # Ignore alternate languages
+        if lang then continue
+
+      @metadata.link.push(href: href, rel: rel, type: type)
 
     # look for links in scholar metadata
     for name, values of @metadata.highwire
