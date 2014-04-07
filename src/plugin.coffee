@@ -17,8 +17,13 @@ class Plugin extends Delegator
                              directly.")
 
   pluginInit: ->
-    for event, functionName of (@_oldStyleEvents or {})
-      this.listenTo(@annotator, event, this[functionName])
+    if @_oldStyleEvents? and Object.keys(@_oldStyleEvents)
+      Util.deprecationWarning("Binding custom events using the events hash
+                               is deprecated. If you need to listen to custom
+                               events bind explicitly using something like
+                               `this.listenTo(this.annotator, ...)`.")
+      for event, functionName of @_oldStyleEvents
+        this.listenTo(@annotator, event, this[functionName])
 
   destroy: ->
     this.removeEvents()
