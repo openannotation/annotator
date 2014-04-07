@@ -76,7 +76,25 @@ class Store
   #
   # Returns a new instance of Store.
   constructor: (options) ->
+    # If instantiated in legacy mode with annotator.addPlugin('Store', {...}),
+    # then the first argument will be the Annotator's element. We don't need the
+    # element: discard it.
+    if arguments.length > 1
+      options = arguments[1]
+
     @options = $.extend(true, {}, @options, options)
+
+    if @options.loadFromSearch
+      Util.deprecationWarning("Use of the loadFromSearch option to the Store
+                               plugin is deprecated. Please call
+                               .load(queryObj) on the Annotator instance
+                               instead.")
+
+  # Support for legacy instantiation of Store plugin with .addPlugin('Store')
+  pluginInit: ->
+    @annotator.store = this
+    if @options.loadFromSearch
+      @annotator.load(@options.loadFromSearch)
 
   # Public: Callback method for annotationCreated event. Receives an annotation
   # and sends a POST request to the sever using the URI for the "create" action.

@@ -43,12 +43,8 @@ class Annotator extends Delegator
     wrapper: '<div class="annotator-wrapper"></div>'
 
   options: # Configuration options
-    # Store plugin to use. If null, Annotator will use a default store.
-    store: null
     # Start Annotator in read-only mode. No controls will be shown.
     readOnly: false
-    # Initial query to load Annotations
-    loadQuery: {}
 
   plugins: {}
 
@@ -107,10 +103,7 @@ class Annotator extends Delegator
       # than being created by a Factory instance. Create the Factory ourselves
       # and use it to bootstrap.
       factory = new Factory()
-      if @options.store
-        factory.setStore(@options.store.type, @options.store)
-      else
-        factory.setStore(NullStore)
+      factory.setStore(NullStore)
       factory.configureInstance(this)
 
       this.attach(element)
@@ -150,9 +143,6 @@ class Annotator extends Delegator
 
     # Create adder
     this.adder = $(this.html.adder).appendTo(@wrapper).hide()
-
-    # Do initial load
-    if @options.loadQuery then this.load(@options.loadQuery)
 
     for name of @plugins
       p = @plugins[name]
