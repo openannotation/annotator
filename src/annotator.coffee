@@ -437,6 +437,7 @@ class Annotator extends Delegator
 
     # Save the annotation data on each highlighter element.
     $(annotation._local.highlights).data('annotation', annotation)
+    $(annotation._local.highlights).attr('data-annotation-id', annotation.id)
 
     annotation
 
@@ -782,6 +783,7 @@ class Annotator extends Delegator
     # Clean up the highlights
     .done (annotation) ->
       $(annotation._local.highlights).removeClass('annotator-hl-temporary')
+      $(annotation._local.highlights).attr('data-annotation-id', annotation.id)
 
     .done (annotation) =>
       this.publish('annotationCreated', [annotation])

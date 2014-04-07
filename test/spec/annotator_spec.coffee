@@ -436,6 +436,9 @@ describe 'Annotator', ->
     it "should store the annotation in the highlighted element's data store", ->
       assert.equal(element.data('annotation'), annotation)
 
+    it "should set the data-annotation-id of the highlight element to the annotation's id", ->
+      assert.equal(element.attr('data-annotation-id'), annotation.id)
+
   describe "cleanupAnnotation", ->
     annotation = null
     div = null
@@ -858,6 +861,11 @@ describe 'Annotator', ->
     it "should persist the temporary highlights if the annotation is saved", ->
       annotator.publish('annotationEditorSubmit')
       assert.equal(element[0].className, 'annotator-hl')
+
+    it "should set the data-annotation-id of the highlight element to the
+        annotation's id", ->
+      annotator.publish('annotationEditorSubmit')
+      assert.equal(element.attr('data-annotation-id'), '1')
 
     it "should create the annotation if the edit is saved", ->
       annotator.onEditorSubmit(annotation)
