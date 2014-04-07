@@ -318,6 +318,7 @@ class Annotator extends Delegator
 
     # Save the annotation data on each highlighter element.
     $(annotation.highlights).data('annotation', annotation)
+    $(annotation.highlights).attr('data-annotation-id', annotation.id)
 
     annotation
 
@@ -340,6 +341,7 @@ class Annotator extends Delegator
   # Returns annotation Object.
   updateAnnotation: (annotation) ->
     this.publish('beforeAnnotationUpdated', [annotation])
+    $(annotation.highlights).attr('data-annotation-id', annotation.id)
     this.publish('annotationUpdated', [annotation])
     annotation
 
