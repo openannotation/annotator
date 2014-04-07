@@ -51,26 +51,11 @@ describe 'Delegator', ->
     $fix.trigger('mousedown')
     assert.deepEqual(delegator.returns, ['B'])
 
-  it "will bind custom events to itself if no selector is specified", ->
-    $fix.trigger('wibble')
-    assert.deepEqual(delegator.returns, [])
-    delegator.publish('wibble')
-    assert.deepEqual(delegator.returns, ['D'])
-
   it "uses event delegation to bind the events", ->
     $fix.find('ol').append("<li>Hi there, I'm new round here.</li>")
     $fix.find('li').click()
 
     assert.deepEqual(delegator.returns, ['C', 'A', 'C', 'A'])
-
-  it "should not bubble custom events", ->
-    callback = sinon.spy()
-    $('body').bind('custom', callback)
-
-    delegator.element = $('<div />').appendTo('body')
-    delegator.publish('custom')
-
-    assert.isFalse(callback.called)
 
   it ".removeEvents() should remove all events previously bound by addEvents", ->
     delegator.removeEvents()

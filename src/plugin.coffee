@@ -1,10 +1,12 @@
 Delegator = require("./delegator")
 Util = require("./util")
+$ = Util.$
 
 
 # Public: A base plugin class
 class Plugin extends Delegator
   constructor: ->
+    super
     if @constructor.name? # Function#name is ES6 and not widely supported yet
       name = @constructor.name
     else
@@ -13,12 +15,28 @@ class Plugin extends Delegator
                              doing so is deprecated. If you need Delegator
                              functionality, please extend Annotator.Delegator
                              directly.")
-    super
 
   pluginInit: ->
+    for event, functionName of (@_oldStyleEvents or {})
+      this.listenTo(@annotator, event, this[functionName])
 
   destroy: ->
     this.removeEvents()
+
+  _addEvent: (selector, event, functionName) ->
+    if selector == '' and _isCustomEvent(event)
+      @_oldStyleEvents ?= {}
+      @_oldStyleEvents[event] = functionName
+    else
+      super
+    this
+
+  _removeEvent: (selector, event, functionName) ->
+    if selector == '' and _isCustomEvent(event)
+      this.stopListening(@annotator, event, this[functionName])
+    else
+      super
+    this
 
 
 # Map of plugin names to constructors
@@ -66,6 +84,33 @@ Plugin._rebindOldPlugins = ->
                              instead! Automatically re-registering plugin...")
     delete Plugin._ctors[k]
     Plugin.register(k, v)
+
+
+# Native jQuery events that should recieve an event object.
+natives = do ->
+  specials = (key for own key, val of $.event.special)
+  """
+  blur focus focusin focusout load resize scroll unload click dblclick
+  mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave
+  change select submit keydown keypress keyup error
+  """.split(/[^a-z]+/).concat(specials)
+
+
+# Checks to see if the provided event is a DOM event supported by jQuery or
+# a custom user event.
+#
+# event - String event name.
+#
+# Examples
+#
+#   _isCustomEvent('click')              # => false
+#   _isCustomEvent('mousedown')          # => false
+#   _isCustomEvent('annotation:created') # => true
+#
+# Returns true if event is a custom user event.
+_isCustomEvent = (event) ->
+  [event] = event.split('.')
+  $.inArray(event, natives) == -1
 
 
 module.exports = Plugin

@@ -97,18 +97,12 @@ class Delegator
   #
   # Returns itself.
   _addEvent: (selector, event, functionName) ->
-    closure = => this[functionName].apply(this, arguments)
-
-    if selector == '' and _isCustomEvent(event)
-      this.subscribe(event, closure)
-    else
-      @element.delegate(selector, event, closure)
-
     # Delegator creates closures for each event it binds. This is a private
     # registry of created closures, used to enable event unbinding.
+    closure = => this[functionName].apply(this, arguments)
     @_closures ?= {}
     @_closures["#{selector}/#{event}/#{functionName}"] = closure
-
+    @element.delegate(selector, event, closure)
     this
 
   # Unbinds a function previously bound to an event by the _addEvent method.
@@ -125,14 +119,8 @@ class Delegator
   # Returns itself.
   _removeEvent: (selector, event, functionName) ->
     closure = @_closures["#{selector}/#{event}/#{functionName}"]
-
-    if selector == '' and _isCustomEvent(event)
-      this.unsubscribe(event, closure)
-    else
-      @element.undelegate(selector, event, closure)
-
+    @element.undelegate(selector, event, closure)
     delete @_closures["#{selector}/#{event}/#{functionName}"]
-
     this
 
   # Public: Fires an event and calls all subscribed callbacks with parameters
@@ -163,34 +151,6 @@ _parseEvents = (eventsObj) ->
       functionName: functionName
     })
   return events
-
-
-# Native jQuery events that should recieve an event object. Plugins can
-# add their own methods to this if required.
-natives = do ->
-  specials = (key for own key, val of $.event.special)
-  """
-  blur focus focusin focusout load resize scroll unload click dblclick
-  mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave
-  change select submit keydown keypress keyup error
-  """.split(/[^a-z]+/).concat(specials)
-
-
-# Checks to see if the provided event is a DOM event supported by jQuery or
-# a custom user event.
-#
-# event - String event name.
-#
-# Examples
-#
-#   _isCustomEvent('click')              # => false
-#   _isCustomEvent('mousedown')          # => false
-#   _isCustomEvent('annotation:created') # => true
-#
-# Returns true if event is a custom user event.
-_isCustomEvent = (event) ->
-  [event] = event.split('.')
-  $.inArray(event, natives) == -1
 
 
 # Mix in backbone events
