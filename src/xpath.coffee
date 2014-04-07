@@ -1,10 +1,10 @@
 $ = require('./util').$
 
-# Get an xpath string to the node relative to the provided root
+# Get xpath strings to the provided nodes relative to the provided root
 #
-# relativeRoot - The root node for the xpath
+# relativeRoot - A jQuery object of the nodes whose xpaths are requested.
 #
-# Returns a string
+# Returns Array[String]
 simpleXPathJQuery = ($el, relativeRoot) ->
   jq = $el.map ->
     path = ''
@@ -22,11 +22,11 @@ simpleXPathJQuery = ($el, relativeRoot) ->
 
   jq.get()
 
-# Get an xpath string to the node relative to the provided root
+# Get xpath strings to the provided nodes relative to the provided root
 #
-# relativeRoot - The root node for the xpath
+# relativeRoot - A jQuery object of the nodes whose xpaths are requested.
 #
-# Returns a string
+# Returns Array[String]
 simpleXPathPure = ($el, relativeRoot) ->
 
   getPathSegment = (node) ->
