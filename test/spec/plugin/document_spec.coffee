@@ -22,6 +22,7 @@ describe 'Annotator.Plugin.Document', ->
     head.append('<link rel="alternate" href="foo.pdf" type="application/pdf"></link>')
     head.append('<link rel="alternate" href="foo.doc" type="application/msword"></link>')
     head.append('<link rel="bookmark" href="http://example.com/bookmark"></link>')
+    head.append('<link rel="alternate" href="es/foo.html" hreflang="es" type="text/html"></link>')
     head.append('<meta name="citation_doi" content="10.1175/JCLI-D-11-00015.1">')
     head.append('<meta name="citation_title" content="Foo">')
     head.append('<meta name="citation_pdf_url" content="foo.pdf">')
@@ -33,6 +34,7 @@ describe 'Annotator.Plugin.Document', ->
     head.append('<link rel="icon" href="http://example.com/images/icon.ico"></link>')
     head.append('<meta name="eprints.title" content="Computer Lib / Dream Machines">')
     head.append('<meta name="prism.title" content="Literary Machines">')
+    head.append('<link rel="alternate" href="feed" type="application/rss+xml"></link>')
 
     annotation = null
 
@@ -64,6 +66,9 @@ describe 'Annotator.Plugin.Document', ->
       assert.match(annotation.document.link[5].href, /.+foo\.pdf$/)
       assert.equal(annotation.document.link[5].type, "application/pdf")
       assert.equal(annotation.document.link[6].href, "doi:10.1175/JCLI-D-11-00015.1")
+
+    it 'should ignore atom and RSS feeds and alternate languages', ->
+      assert.equal(annotation.document.link.length, 7)
 
     it 'should have highwire metadata', ->
       assert.ok(annotation.document.highwire)
