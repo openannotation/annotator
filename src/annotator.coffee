@@ -48,7 +48,7 @@ class Annotator extends Delegator
     # Start Annotator in read-only mode. No controls will be shown.
     readOnly: false
     # Initial query to load Annotations
-    loadQuery: {}
+    loadQuery: null
 
   plugins: {}
 
