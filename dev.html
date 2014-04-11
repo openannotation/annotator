@@ -10,7 +10,6 @@
     <script src="lib/annotator.js"></script>
     <script src="lib/plugin/store.js"></script>
     <script src="lib/plugin/permissions.js"></script>
-    <script src="lib/plugin/annotateitpermissions.js"></script>
     <script src="lib/plugin/auth.js"></script>
     <script src="lib/plugin/tags.js"></script>
     <script src="lib/plugin/unsupported.js"></script>
@@ -95,7 +94,7 @@
       var Store = Annotator.Plugin.fetch('Store');
       var Auth = Annotator.Plugin.fetch('Auth');
       var Unsupported = Annotator.Plugin.fetch('Unsupported');
-      var AnnotateItPermissions = Annotator.Plugin.fetch('AnnotateItPermissions');
+      var Permissions = Annotator.Plugin.fetch('Permissions');
 
       factory.setStore(Store, {
         prefix: 'http://localhost:5000',
@@ -104,8 +103,8 @@
       factory.addPlugin(Auth, null, {
         tokenUrl: 'http://localhost:4000/api/token'
       });
+      factory.addPlugin(Permissions);
       factory.addPlugin(Unsupported);
-      factory.addPlugin(AnnotateItPermissions);
 
       devAnnotator = factory.getInstance();
       devAnnotator.attach(elem);
