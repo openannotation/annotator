@@ -89,26 +89,30 @@
       var Annotator = require('annotator');
 
       var elem = document.getElementById('airlock');
-      var factory = new Annotator.Factory();
 
       var Store = Annotator.Plugin.fetch('Store');
       var Auth = Annotator.Plugin.fetch('Auth');
       var Unsupported = Annotator.Plugin.fetch('Unsupported');
       var Permissions = Annotator.Plugin.fetch('Permissions');
 
-      factory.setStore(Store, {
-        prefix: 'http://localhost:5000',
-        annotationData: {uri: window.location.href}
-      });
-      factory.addPlugin(Auth, null, {
-        tokenUrl: 'http://localhost:4000/api/token'
-      });
-      factory.addPlugin(Permissions);
-      factory.addPlugin(Unsupported);
+      var factory = new Annotator.Factory();
 
-      devAnnotator = factory.getInstance();
+      var devAnnotator = factory
+        .setStore(Store, {
+          prefix: 'http://localhost:5000'
+        })
+        .addPlugin(Auth, null, {
+          tokenUrl: 'http://localhost:4000/api/token'
+        })
+        .addPlugin(Permissions)
+        .addPlugin(Unsupported)
+        .getInstance();
+
+      devAnnotator.subscribe('beforeAnnotationCreated', function (annotation) {
+        annotation.uri = window.location.href;
+      })
       devAnnotator.attach(elem);
-      devAnnotator.load({uri:window.location.href})
+      devAnnotator.load({uri: window.location.href});
     </script>
   </body>
 
