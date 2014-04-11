@@ -33,6 +33,9 @@ annotator-full: $(FULL_PKG)
 bookmarklet: $(BOOKMARKLET_PKG)
 
 dist: $(ANNOTATOR_PKG) $(PLUGIN_PKG) $(FULL_PKG) $(BOOKMARKLET_PKG) $(MISC_PKG)
+	@$(eval VERSION := $(shell json version < pkg/package.json))
+	tar --transform 's,^pkg,annotator-$(VERSION),' \
+		-zcf annotator-$(VERSION).tar.gz pkg
 
 clean:
 	rm -rf .deps pkg
