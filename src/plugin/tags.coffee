@@ -4,7 +4,7 @@ $ = Annotator.Util.$
 
 # Public: Tags plugin allows users to tag thier annotations with metadata
 # stored in an Array on the annotation as tags.
-class Tags extends Annotator.Plugin
+class Tags
 
   options:
     # Configurable function which accepts a string (the contents)
