@@ -101,7 +101,7 @@ parseToken = (token) ->
   JSON.parse(base64UrlDecode(payload))
 
 # Public: Supports the Store plugin by providing Authentication headers.
-class Auth extends Annotator.Plugin
+class Auth
   # User options that can be provided.
   options:
 
@@ -127,9 +127,8 @@ class Auth extends Annotator.Plugin
   #   })
   #
   # Returns instance of Auth.
-  constructor: (element, options) ->
-    super
-
+  constructor: (options) ->
+    @options = $.extend(true, {}, @options, options)
     # List of functions to be executed when we have a valid token.
     @waitingForToken = []
 
