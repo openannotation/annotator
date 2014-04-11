@@ -2,12 +2,18 @@ Annotator = require('annotator')
 $ = Annotator.Util.$
 
 
-class Document extends Annotator.Plugin
+class Document
   pluginInit: ->
     @metadata = {}
     this.getDocumentMetadata()
-    this.listenTo(@annotator, 'beforeAnnotationCreated',
-      this.beforeAnnotationCreated)
+    @annotator.on('beforeAnnotationCreated',
+      this.beforeAnnotationCreated,
+      this)
+
+  destroy: ->
+    @annotator.off('beforeAnnotationCreated',
+      this.beforeAnnotationCreated,
+      this)
 
   # returns the primary URI for the document being annotated
   uri: =>
