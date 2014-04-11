@@ -4,6 +4,7 @@ $ = Annotator.Util.$
 
 class Document extends Annotator.Plugin
   pluginInit: ->
+    @metadata = {}
     this.getDocumentMetadata()
     this.listenTo(@annotator, 'beforeAnnotationCreated',
       this.beforeAnnotationCreated)
@@ -28,8 +29,6 @@ class Document extends Annotator.Plugin
     annotation.document = @metadata
 
   getDocumentMetadata: =>
-    @metadata = {}
-
     # first look for some common metadata types
     # TODO: look for microdata/rdfa?
     this._getHighwire()
