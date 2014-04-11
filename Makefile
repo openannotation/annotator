@@ -13,13 +13,16 @@ FULL_PKG := pkg/annotator-full.js pkg/annotator.css
 BOOKMARKLET_PKG := pkg/annotator-bookmarklet.js pkg/annotator.css \
 	pkg/bootstrap.js
 
+MISC_PKG := pkg/package.json pkg/main.js pkg/index.js \
+	pkg/AUTHORS pkg/LICENSE-GPL pkg/LICENSE-MIT pkg/README.markdown
+
 BUILD := ./tools/build
 DEPS := ./tools/build -d
 
 DEPDIR := .deps
 df = $(DEPDIR)/$(*F)
 
-PKGDIRS := pkg/lib pkg/lib/plugin
+PKGDIR := pkg
 
 all: annotator plugins annotator-full bookmarklet
 default: all
@@ -29,12 +32,7 @@ plugins: $(PLUGIN_PKG)
 annotator-full: $(FULL_PKG)
 bookmarklet: $(BOOKMARKLET_PKG)
 
-pkg: $(ANNOTATOR_PKG) $(PLUGIN_PKG) $(FULL_PKG) $(BOOKMARKLET_PKG)
-	$(shell npm bin)/coffee -c -o pkg/lib src
-	cp package.json main.js index.js pkg/
-	cp AUTHORS pkg/
-	cp LICENSE* pkg/
-	cp README* pkg/
+dist: $(ANNOTATOR_PKG) $(PLUGIN_PKG) $(FULL_PKG) $(BOOKMARKLET_PKG) $(MISC_PKG)
 
 clean:
 	rm -rf .deps pkg
@@ -62,7 +60,7 @@ pkg/annotator.css: css/annotator.css
 
 pkg/%.js pkg/annotator.%.js: %.coffee
 
-pkg/%.js pkg/annotator.%.js pkg/annotator-%.js: | $(DEPDIR) $(PKGDIRS)
+pkg/%.js pkg/annotator.%.js pkg/annotator-%.js: | $(DEPDIR) $(PKGDIR)
 	$(eval $@_CMD := $(patsubst annotator.%.js,-p %.js,$(@F)))
 	$(eval $@_CMD := $(subst .js,,$($@_CMD)))
 	$(BUILD) $($@_CMD)
@@ -70,10 +68,16 @@ pkg/%.js pkg/annotator.%.js pkg/annotator-%.js: | $(DEPDIR) $(PKGDIRS)
 		| sed -n 's/^\(.*\)/pkg\/$(@F): \1/p' \
 		| sort | uniq > $(df).d
 
-$(DEPDIR) $(PKGDIRS):
+$(MISC_PKG):
+	cp $(@F) pkg/
+
+$(DEPDIR) $(PKGDIR):
 	@mkdir -p $@
 
 -include $(DEPDIR)/*.d
 
 .PHONY: all annotator plugins annotator-full bookmarklet clean test develop \
-	pkg doc docco
+	dist doc docco
+
+.SECONDEXPANSION:
+$(MISC_PKG): $$(@F)

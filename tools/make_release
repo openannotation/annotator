@@ -94,7 +94,7 @@ git commit package.json -m "Bump version -> v${VERSION}"
 
 echo "Generating package files"
 make clean
-make pkg
+make dist
 
 echo "Committing release and creating tag"
 git add -f pkg/*
