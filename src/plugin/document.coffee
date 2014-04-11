@@ -16,7 +16,7 @@ class Document
       this)
 
   # returns the primary URI for the document being annotated
-  uri: =>
+  uri: ->
     uri = decodeURIComponent document.location.href
     for link in @metadata
       if link.rel == "canonical"
@@ -25,7 +25,7 @@ class Document
 
   # returns all uris for the document being annotated
 
-  uris: =>
+  uris: ->
     uniqueUrls = {}
     for link in @metadata.link
       uniqueUrls[link.href] = true if link.href
@@ -34,7 +34,7 @@ class Document
   beforeAnnotationCreated: (annotation) ->
     annotation.document = @metadata
 
-  getDocumentMetadata: =>
+  getDocumentMetadata: ->
     # first look for some common metadata types
     # TODO: look for microdata/rdfa?
     this._getHighwire()
@@ -51,22 +51,22 @@ class Document
 
     return @metadata
 
-  _getHighwire: =>
+  _getHighwire: ->
     return @metadata.highwire = this._getMetaTags("citation", "name", "_")
 
-  _getFacebook: =>
+  _getFacebook: ->
     return @metadata.facebook = this._getMetaTags("og", "property", ":")
 
-  _getTwitter: =>
+  _getTwitter: ->
     return @metadata.twitter = this._getMetaTags("twitter", "name", ":")
 
-  _getDublinCore: =>
+  _getDublinCore: ->
     return @metadata.dc = this._getMetaTags("dc", "name", ".")
 
-  _getPrism: =>
+  _getPrism: ->
     return @metadata.prism = this._getMetaTags("prism", "name", ".")
 
-  _getEprints: =>
+  _getEprints: ->
     return @metadata.eprints = this._getMetaTags("eprints", "name", ".")
 
   _getMetaTags: (prefix, attribute, delimiter) ->
@@ -84,7 +84,7 @@ class Document
             tags[n] = [content]
     return tags
 
-  _getTitle: =>
+  _getTitle: ->
     if @metadata.highwire.title
       @metadata.title = @metadata.highwire.title[0]
     else if @metadata.eprints.title
@@ -100,7 +100,7 @@ class Document
     else
       @metadata.title = $("head title").text()
 
-  _getLinks: =>
+  _getLinks: ->
     # we know our current location is a link for the document
     @metadata.link = [href: document.location.href]
 
@@ -148,7 +148,7 @@ class Document
           if id[0..3] == "doi:"
             @metadata.link.push(href: id)
 
-  _getFavicon: =>
+  _getFavicon: ->
     for link in $("link")
       if $(link).prop("rel") in ["shortcut icon", "icon"]
         @metadata["favicon"] = this._absoluteUrl(link.href)
