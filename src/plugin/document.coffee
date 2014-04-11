@@ -122,9 +122,12 @@ class Document
 
       @metadata.link.push(href: href, rel: rel, type: type)
 
+    this._getHighwireLinks()
+    this._getDublinCoreLinks()
+
+  _getHighwireLinks: ->
     # look for links in scholar metadata
     for name, values of @metadata.highwire
-
       if name == "pdf_url"
         for url in values
           @metadata.link.push
@@ -141,6 +144,7 @@ class Document
             doi = "doi:" + doi
           @metadata.link.push(href: doi)
 
+  _getDublinCoreLinks: ->
     # look for links in dublincore data
     for name, values of @metadata.dc
       if name == "identifier"

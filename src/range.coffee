@@ -67,49 +67,8 @@ class Range.BrowserRange
       @tainted = true
 
     r = {}
-
-    # Look at the start
-    if @startContainer.nodeType is Node.ELEMENT_NODE
-      # We are dealing with element nodes
-      r.start = Util.getFirstTextNodeNotBefore(
-        @startContainer.childNodes[@startOffset]
-      )
-      r.startOffset = 0
-    else
-      # We are dealing with simple text nodes
-      r.start = @startContainer
-      r.startOffset = @startOffset
-
-    # Look at the end
-    if @endContainer.nodeType is Node.ELEMENT_NODE
-      # Get specified node.
-      node = @endContainer.childNodes[@endOffset]
-
-      if node? # Does that node exist?
-        # Look for a text node either at the immediate beginning of node
-        n = node
-        while n? and (n.nodeType isnt Node.TEXT_NODE)
-          n = n.firstChild
-        if n? # Did we find a text node at the start of this element?
-          r.end = n
-          r.endOffset = 0
-
-      unless r.end?
-        # We need to find a text node in the previous sibling of the node at the
-        # given offset, if one exists, or in the previous sibling of its
-        # container.
-        if @endOffset
-          node = @endContainer.childNodes[@endOffset - 1]
-        else
-          node = @endContainer.previousSibling
-        r.end = Util.getLastTextNodeUpTo node
-        r.endOffset = r.end.nodeValue.length
-
-    else # We are dealing with simple text nodes
-      r.end = @endContainer
-      r.endOffset = @endOffset
-
-    # We have collected the initial data.
+    this._normalizeStart(r)
+    this._normalizeEnd(r)
 
     # Now let's start to slice & dice the text elements!
     nr = {}
@@ -142,6 +101,49 @@ class Range.BrowserRange
       nr.commonAncestor = nr.commonAncestor.parentNode
 
     new Range.NormalizedRange(nr)
+
+  _normalizeStart: (r) ->
+    # Look at the start
+    if @startContainer.nodeType is Node.ELEMENT_NODE
+      # We are dealing with element nodes
+      r.start = Util.getFirstTextNodeNotBefore(
+        @startContainer.childNodes[@startOffset]
+      )
+      r.startOffset = 0
+    else
+      # We are dealing with simple text nodes
+      r.start = @startContainer
+      r.startOffset = @startOffset
+
+  _normalizeEnd: (r) ->
+    # Look at the end
+    if @endContainer.nodeType is Node.ELEMENT_NODE
+      # Get specified node.
+      node = @endContainer.childNodes[@endOffset]
+
+      if node? # Does that node exist?
+        # Look for a text node either at the immediate beginning of node
+        n = node
+        while n? and (n.nodeType isnt Node.TEXT_NODE)
+          n = n.firstChild
+        if n? # Did we find a text node at the start of this element?
+          r.end = n
+          r.endOffset = 0
+
+      unless r.end?
+        # We need to find a text node in the previous sibling of the node at the
+        # given offset, if one exists, or in the previous sibling of its
+        # container.
+        if @endOffset
+          node = @endContainer.childNodes[@endOffset - 1]
+        else
+          node = @endContainer.previousSibling
+        r.end = Util.getLastTextNodeUpTo node
+        r.endOffset = r.end.nodeValue.length
+
+    else # We are dealing with simple text nodes
+      r.end = @endContainer
+      r.endOffset = @endOffset
 
   # Public: Creates a range suitable for storage.
   #

@@ -1,5 +1,36 @@
 $ = require('./util').$
 
+evaluateXPath = (xp, root = document, nsResolver = null) ->
+  try
+    document.evaluate(
+      '.' + xp,
+      root,
+      nsResolver,
+      XPathResult.FIRST_ORDERED_NODE_TYPE,
+      null
+    ).singleNodeValue
+  catch exception
+    # There are cases when the evaluation fails, because the
+    # HTML documents contains nodes with invalid names,
+    # for example tags with equal signs in them, or something like that.
+    # In these cases, the XPath expressions will have these abominations,
+    # too, and then they can not be evaluated.
+    # In these cases, we get an XPathException, with error code 52.
+    # See http://www.w3.org/TR/DOM-Level-3-XPath/xpath.html#XPathException
+    # This does not necessarily make any sense, but this what we see
+    # happening.
+    console.log "XPath evaluation failed."
+    console.log "Trying fallback..."
+    # An 'evaluator' for the really simple expressions that
+    # should work for the simple expressions we generate.
+    steps = xp.substring(1).split("/")
+    node = root
+    for step in steps
+      [name, idx] = step.split "["
+      idx = if idx? then parseInt (idx?.split "]")[0] else 1
+      node = findChild node, name.toLowerCase(), idx
+    node
+
 # Get xpath strings to the provided nodes relative to the provided root
 #
 # relativeRoot - A jQuery object of the nodes whose xpaths are requested.
@@ -115,39 +146,8 @@ fromNode = ($el, relativeRoot) ->
 #
 # Returns the Node if found otherwise null.
 toNode = (path, root = document) ->
-  evaluateXPath = (xp, nsResolver = null) ->
-    try
-      document.evaluate(
-        '.' + xp,
-        root,
-        nsResolver,
-        XPathResult.FIRST_ORDERED_NODE_TYPE,
-        null
-      ).singleNodeValue
-    catch exception
-      # There are cases when the evaluation fails, because the
-      # HTML documents contains nodes with invalid names,
-      # for example tags with equal signs in them, or something like that.
-      # In these cases, the XPath expressions will have these abominations,
-      # too, and then they can not be evaluated.
-      # In these cases, we get an XPathException, with error code 52.
-      # See http://www.w3.org/TR/DOM-Level-3-XPath/xpath.html#XPathException
-      # This does not necessarily make any sense, but this what we see
-      # happening.
-      console.log "XPath evaluation failed."
-      console.log "Trying fallback..."
-      # An 'evaluator' for the really simple expressions that
-      # should work for the simple expressions we generate.
-      steps = xp.substring(1).split("/")
-      node = root
-      for step in steps
-        [name, idx] = step.split "["
-        idx = if idx? then parseInt (idx?.split "]")[0] else 1
-        node = findChild node, name.toLowerCase(), idx
-      node
-
   if not $.isXMLDoc document.documentElement
-    evaluateXPath path
+    evaluateXPath path, root
   else
     # We're in an XML document, create a namespace resolver function to try
     # and resolve any namespaces in the current document.
@@ -158,7 +158,7 @@ toNode = (path, root = document) ->
       else
         document.ownerDocument.documentElement
     )
-    node = evaluateXPath path, customResolver
+    node = evaluateXPath path, root, customResolver
 
     unless node
       # If the previous search failed to find a node then we must try to
@@ -180,7 +180,7 @@ toNode = (path, root = document) ->
         if ns == 'xhtml' then namespace
         else document.documentElement.getAttribute('xmlns:' + ns)
 
-      node = evaluateXPath path, customResolver
+      node = evaluateXPath path, root, customResolver
     node
 
 module.exports =
