@@ -107,18 +107,19 @@ class Document
     # look for some relevant link relations
     for link in $("link")
       l = $(link)
-      href = this._absoluteUrl(l.prop('href')) # get absolute url
       rel = l.prop('rel')
+      if rel not in ["alternate", "canonical", "bookmark"] then continue
+
       type = l.prop('type')
       lang = l.prop('hreflang')
-
-      if rel not in ["alternate", "canonical", "bookmark"] then continue
 
       if rel is 'alternate'
         # Ignore feeds resources
         if type and type.match /^application\/(rss|atom)\+xml/ then continue
         # Ignore alternate languages
         if lang then continue
+
+      href = this._absoluteUrl(l.prop('href')) # get absolute url
 
       @metadata.link.push(href: href, rel: rel, type: type)
 
