@@ -9,9 +9,6 @@ Actions
 
 The following actions are performed by the annotator.
 
--  ``read``: GETs all annotations. Called when plugin loads or
-   ``.loadAnnotations()`` is called. Server should return an array of
-   annotations serialised as JSON.
 -  ``create``: POSTs an annotation (serialised as JSON) to the server.
    Called when the annotator publishes the "annotationCreated" event.
    The annotation is updated with any data (such as a newly created id)
@@ -61,8 +58,8 @@ retrieve the annotator object using ``.data('annotator')``. Then add the
             'uri': 'http://this/document/only'
           },
 
-          // This will perform a "search" action rather than "read" when the plugin
-          // loads. Will request the last 20 annotations for the current url.
+          // This will perform a "search" action when the plugin loads. Will
+          // request the last 20 annotations for the current url.
           // eg. /store/endpoint/search?limit=20&uri=http://this/document/only
           loadFromSearch: {
             'limit': 20,
@@ -150,7 +147,6 @@ Methods for actions are as follows:
 
 ::
 
-    read:    GET
     create:  POST
     update:  PUT
     destroy: DELETE
@@ -164,7 +160,6 @@ Example:
         urls: {
           // These are the default URLs.
           create:  '/annotations',
-          read:    '/annotations/:id',
           update:  '/annotations/:id',
           destroy: '/annotations/:id',
           search:  '/search'

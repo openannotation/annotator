@@ -10,8 +10,8 @@ _t = Util.TranslationString
 # by the Annotator and making appropriate requests to the server depending on
 # the event.
 #
-# The store handles five distinct actions "read", "search", "create", "update"
-# and "destroy". The requests made can be customised with options when the
+# The store handles four distinct actions: "search", "create", "update" and
+# "destroy". The requests made can be customised with options when the
 # plugin is added to the Annotator.
 class Store
 
@@ -47,14 +47,12 @@ class Store
     # must respond to the appropraite HTTP method. The token ":id" can be used
     # anywhere in the URL and will be replaced with the annotation id.
     #
-    # read:    GET
     # create:  POST
     # update:  PUT
     # destroy: DELETE
     # search:  GET
     urls:
       create: '/annotations'
-      read: '/annotations/:id'
       update: '/annotations/:id'
       destroy: '/annotations/:id'
       search: '/search'
@@ -174,15 +172,18 @@ class Store
   # Returns the jQuery XMLHttpRequest wrapper enabling additional callbacks to
   # be applied as well as custom error handling.
   #
-  # action    - The action String eg. "read", "search", "create", "update"
-  #             or "destory".
+  # action    - The action String: "search", "create", "update" or "destroy".
   # obj       - The data to be sent, either annotation object or query string.
   # onSuccess - A callback Function to call on successful request.
   #
   # Examples:
   #
-  #   store._apiRequest('read', {id: 4}, (data) -> console.log(data))
-  #   # => Outputs the annotation returned from the server.
+  #   store._apiRequest(
+  #     'create',
+  #     {text: "Donkeys!!"},
+  #     function (data) { console.log(data); } # Prints the annotation returned
+  #                                            # from the server.
+  #   );
   #
   # Returns XMLHttpRequest object.
   _apiRequest: (action, obj) ->
@@ -200,8 +201,7 @@ class Store
 
   # Builds an options object suitable for use in a jQuery.ajax() call.
   #
-  # action    - The action String eg. "read", "search", "create", "update"
-  #             or "destroy".
+  # action    - The action String: "search", "create", "update" or "destroy".
   # obj       - The data to be sent, either annotation object or query string.
   #
   # Returns Object literal of $.ajax() options.
@@ -285,7 +285,6 @@ class Store
   #
   # Examples
   #
-  #   store._methodFor('read')    # => "GET"
   #   store._methodFor('update')  # => "PUT"
   #   store._methodFor('destroy') # => "DELETE"
   #
@@ -293,7 +292,6 @@ class Store
   _methodFor: (action) ->
     table =
       create: 'POST'
-      read: 'GET'
       update: 'PUT'
       destroy: 'DELETE'
       search: 'GET'
@@ -312,10 +310,6 @@ class Store
 
     if xhr._action == 'search'
       message = _t("Sorry we could not search the store for annotations")
-    else if xhr._action == 'read' && !xhr._id
-      message = _t("Sorry we could not ") +
-                action +
-                _t(" the annotations from the store")
 
     switch xhr.status
       when 401

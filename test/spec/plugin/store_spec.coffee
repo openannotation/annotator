@@ -142,9 +142,7 @@ describe "Store plugin", ->
     requests = [
       {}
       {}
-      {_action: 'read', _id: 'jim'}
       {_action: 'search'}
-      {_action: 'read'}
       {status: 401, _action: 'delete', '_id': 'cake'}
       {status: 404, _action: 'delete', '_id': 'cake'}
       {status: 500, _action: 'delete', '_id': 'cake'}
@@ -168,14 +166,8 @@ describe "Store plugin", ->
     it "should call console.error with a message", ->
       assert(console.error.calledOnce)
 
-    it "should give a default message if xhr.status id not provided", ->
-      assert.equal(message, "Sorry we could not read this annotation")
-
     it "should give a default specific message if xhr._action is 'search'", ->
       assert.equal(message, "Sorry we could not search the store for annotations")
-
-    it "should give a default specific message if xhr._action is 'read' and there is no xhr._id", ->
-      assert.equal(message, "Sorry we could not read the annotations from the store")
 
     it "should give a specific message if xhr.status == 401", ->
       assert.equal(message, "Sorry you are not allowed to delete this annotation")
