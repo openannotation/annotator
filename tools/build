@@ -238,7 +238,7 @@ if (require.main === module) {
     , expose: 'annotator'
     });
     glob.sync(
-      './src/plugin/{unsupported,auth,store,tags,annotateitpermissions}.coffee'
+      './src/plugin/{unsupported,auth,store,tags}.coffee'
     ).forEach(function (p) {
       b.add(p);
     });
