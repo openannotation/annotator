@@ -1,3 +1,4 @@
+BackboneEvents = require('backbone-events-standalone')
 $ = require('./util').$
 
 # Public: Provides CRUD methods for annotations which call corresponding plugin
@@ -9,16 +10,17 @@ class AnnotationRegistry
 
   # Creates and returns a new annotation object.
   #
-  # Runs the 'beforeCreateAnnotation' hook to allow the new annotation to
-  # be initialized or prevented.
+  # Runs the 'beforeCreate' hook to allow the new annotation to be initialized
+  # or its creation prevented.
   #
-  # Runs the 'createAnnotation' hook when the new annotation is initialized.
+  # Runs the 'create' hook when the new annotation has been created by the
+  # store.
   #
   # Examples
   #
   #   .create({})
   #
-  #   registry.on 'beforeAnnotationCreated', (annotation) ->
+  #   registry.on 'beforeCreate', (annotation) ->
   #     annotation.myProperty = 'This is a custom property'
   #   registry.create({}) # Resolves to {myProperty: "This is a…"}
   #
@@ -28,17 +30,17 @@ class AnnotationRegistry
 
   # Updates an annotation.
   #
-  # Publishes the 'beforeAnnotationUpdated' and 'annotationUpdated' events.
-  # Listeners wishing to modify an updated annotation should subscribe to
-  # 'beforeAnnotationUpdated' while listeners storing annotations should
-  # subscribe to 'annotationUpdated'.
+  # Runs the 'beforeUpdate' hook to allow an annotation to be modified before
+  # being passed to the store, or for an update to be prevented.
+  #
+  # Runs the 'update' hook when the annotation has been updated by the store.
   #
   # annotation - An annotation Object to update.
   #
   # Examples
   #
   #   annotation = {tags: 'apples oranges pears'}
-  #   registry.on 'beforeAnnotationUpdated', (annotation) ->
+  #   registry.on 'beforeUpdate', (annotation) ->
   #     # validate or modify a property.
   #     annotation.tags = annotation.tags.split(' ')
   #   registry.update(annotation)
@@ -51,6 +53,11 @@ class AnnotationRegistry
     this._cycle(obj, 'update')
 
   # Public: Deletes the annotation.
+  #
+  # Runs the 'beforeDelete' hook to allow an annotation to be modified before
+  # being passed to the store, or for the a deletion to be prevented.
+  #
+  # Runs the 'delete' hook when the annotation has been deleted by the store.
   #
   # annotation - An annotation Object to delete.
   #
@@ -69,14 +76,31 @@ class AnnotationRegistry
   query: (query) ->
     return @core.store.query(query)
 
+  # Public: Load and draw annotations from a given query.
+  #
+  # Runs the 'load' hook to allow plugins to respond to annotations being
+  # loaded.
+  #
+  # query - the query to pass to the backend
+  #
+  # Returns a Promise that resolves when loading is complete.
+  load: (query) ->
+    this.query(query)
+      .then (annotations, meta) =>
+        this.trigger('load', annotations, meta)
+
   # Private: cycle a store event, keeping track of the annotation object and
   # updating it as necessary.
   _cycle: (obj, storeFunc) ->
+    this.trigger(
+      'before' + storeFunc[0].toUpperCase() + storeFunc.slice(1),
+      obj
+    )
     safeCopy = $.extend(true, {}, obj)
     delete safeCopy._local
 
     @core.store[storeFunc](safeCopy)
-      .then (ret) ->
+      .then (ret) =>
         # Empty object without changing identity
         for own k, v of obj
           if k != '_local'
@@ -85,6 +109,17 @@ class AnnotationRegistry
         # Update with store return value
         $.extend(obj, ret)
 
+        this.trigger(storeFunc, obj)
+
         return obj
+
+  # Deprecated support for loading annotations directly. This is here to support
+  # Annotator#loadAnnotations until it is removed.
+  #
+  # @slatedForDeprecation 2.1.0
+  _deprecatedDirectLoad: (annotations) ->
+    this.trigger('load', annotations, null) # null meta object
+
+BackboneEvents.mixin(AnnotationRegistry.prototype)
 
 module.exports = AnnotationRegistry
