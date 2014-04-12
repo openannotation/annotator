@@ -1,4 +1,4 @@
-$ = require('./util').$
+$ = require('../util').$
 
 # Get an unique identifier
 id = (-> counter = -1; -> counter += 1)()
@@ -45,5 +45,10 @@ class NullStore
     dfd = $.Deferred()
     dfd.resolve([], {})
     return dfd.promise()
+
+# This is a core plugin (registered by default with Annotator), so we don't
+# register here. If you're writing a plugin of your own, please refer to a
+# non-core plugin (such as Document or Store) to see how to register your plugin
+# with Annotator.
 
 module.exports = NullStore

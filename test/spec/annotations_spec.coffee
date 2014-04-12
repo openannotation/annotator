@@ -1,5 +1,5 @@
 AnnotationRegistry = require('../../src/annotations')
-NullStore = require('../../src/nullstore')
+NullStore = require('../../src/plugin/nullstore')
 $ = require('../../src/util').$
 
 

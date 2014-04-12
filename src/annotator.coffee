@@ -11,7 +11,9 @@ Factory = require('./factory')
 Plugin = require('./plugin')
 
 AnnotationRegistry = require('./annotations')
-NullStore = require('./nullstore')
+
+# Core plugins
+NullStore = require('./plugin/nullstore')
 
 $ = Util.$
 _t = Util.TranslationString

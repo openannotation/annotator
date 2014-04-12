@@ -1,4 +1,4 @@
-NullStore = require('../../src/nullstore')
+NullStore = require('../../../src/plugin/nullstore')
 
 describe 'NullStore', ->
   s = null
