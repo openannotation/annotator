@@ -53,12 +53,9 @@ proxyEventFor = (annotator, from) ->
 
 class Annotator extends Delegator
   # Events to be bound on Annotator#element.
-  events:
-    ".annotator-hl mouseover": "onHighlightMouseover"
-    ".annotator-hl mouseout": "startViewerHideTimer"
-
-  html:
-    wrapper: '<div class="annotator-wrapper"></div>'
+  events: {}
+    #".annotator-hl mouseover": "onHighlightMouseover"
+    #".annotator-hl mouseout": "startViewerHideTimer"
 
   options: # Configuration options
     # Start Annotator in read-only mode. No controls will be shown.
@@ -151,10 +148,9 @@ class Annotator extends Delegator
   # Returns the instance for chaining.
   attach: (element) ->
     @element = $(element)
-    this.addEvents()
 
     # Set up the core interface components
-    this._setupWrapper()._setupViewer()._setupEditor()
+    #this._setupViewer()._setupEditor()
     this._setupDynamicStyle()
 
     for name of @plugins
@@ -191,24 +187,6 @@ class Annotator extends Delegator
   #
   #   var annotator = new ExtendedAnnotator(document.body, /* {options} */);
   @extend: extend
-
-  # Wraps the children of @element in a @wrapper div. NOTE: This method will
-  # also remove any script elements inside @element to prevent them
-  # re-executing.
-  #
-  # Returns itself to allow chaining.
-  _setupWrapper: ->
-    @wrapper = $(@html.wrapper)
-
-    # We need to remove all scripts within the element before wrapping the
-    # contents within a div. Otherwise when scripts are reappended to the DOM
-    # they will re-execute. This is an issue for scripts that call
-    # document.write() - such as ads - as they will clear the page.
-    @element.find('script').remove()
-    @element.wrapInner(@wrapper)
-    @wrapper = @element.find('.annotator-wrapper')
-
-    this
 
   # Creates an instance of Annotator.Viewer and assigns it to the @viewer
   # property, appends it to the @wrapper and sets up event listeners.
@@ -323,18 +301,6 @@ class Annotator extends Delegator
     if idx != -1
       Annotator._instances.splice(idx, 1)
 
-  # Public: Deletes the annotation by removing the highlight from the DOM.
-  #
-  # annotation - An annotation Object to delete.
-  #
-  # Returns deleted annotation.
-  cleanupAnnotation: (annotation) ->
-    if annotation._local?.highlights?
-      for h in annotation._local.highlights when h.parentNode?
-        $(h).replaceWith(h.childNodes)
-      delete annotation._local.highlights
-
-    annotation
 
   # Public: Loads an Array of annotations objects.
   #

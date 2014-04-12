@@ -39,6 +39,8 @@ class Highlights
   pluginInit: ->
     this.listenTo(@core, 'annotationsLoaded', this._loadAnnotations)
     this.listenTo(@core, 'annotationCreated', this._drawAnnotation)
+    this.listenTo(@core, 'annotationDeleted', this._undrawAnnotation)
+    this.listenTo(@core, 'annotationUpdated', this._redrawAnnotation)
 
   destroy: ->
     this.stopListening()
@@ -60,14 +62,16 @@ class Highlights
     for a in annotations
       this._drawAnnotation(a)
 
-  _drawAnnotation: (annotation) ->
-    # FIXME: don't use @core.wrapper here
-    root = @core.wrapper[0]
-
+  # Draw highlights for the annotation.
+  #
+  # annotation - An annotation Object for which to draw highlights.
+  #
+  # Returns nothing.
+  _drawAnnotation: (annotation) =>
     normedRanges = []
     for r in annotation.ranges
       try
-        normedRanges.push(Range.sniff(r).normalize(root))
+        normedRanges.push(Range.sniff(r).normalize(@element))
       catch e
         if e instanceof Range.RangeError
           # FIXME: This shouldn't happen here
@@ -85,6 +89,27 @@ class Highlights
     # Save the annotation data on each highlighter element.
     $(annotation._local.highlights).data('annotation', annotation)
     $(annotation._local.highlights).attr('data-annotation-id', annotation.id)
+
+  # Remove the drawn highlights for the given annotation.
+  #
+  # annotation - An annotation Object for which to purge highlights.
+  #
+  # Returns nothing.
+  _undrawAnnotation: (annotation) ->
+    if annotation._local?.highlights?
+      for h in annotation._local.highlights when h.parentNode?
+        $(h).replaceWith(h.childNodes)
+      delete annotation._local.highlights
+
+  # Redraw the highlights for the given annotation.
+  #
+  # annotation - An annotation Object for which to redraw highlights.
+  #
+  # Returns nothing.
+  _redrawAnnotation: (annotation) =>
+    this._undrawAnnotation(annotation)
+    this._drawAnnotation(annotation)
+
 
 BackboneEvents.mixin(Highlights.prototype)
 

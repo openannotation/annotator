@@ -15,46 +15,36 @@ class Adder
 
   constructor: (element) ->
     @element = element
-    @mouseIsDown = false
     @ignoreMouseup = false
     @selectedRanges = null
 
   configure: ({@core}) ->
 
   pluginInit: ->
-    this._addEvents()
-    # Create adder. FIXME: Don't use @core.wrapper here.
-    this.adder = $(adderHtml).appendTo(@core.wrapper).hide()
+    if @element.ownerDocument?
+      @document = @element.ownerDocument
+      this.adder = $(adderHtml).appendTo(@document.body).hide()
+      this._addEvents()
+    else
+      console.warn("You created an instance of the Adder on an element that
+                    doesn't have an ownerDocument. This won't work! Please
+                    ensure the element is added to the DOM before the plugin is
+                    configured:", @element)
 
   destroy: ->
     this._removeEvents()
 
   _addEvents: ->
-    $(@element)
-    .on("click.#{ns}", '.annotator-adder button', this._onClick)
-    .on("mousedown.#{ns}", '.annotator-adder button', this._onMousedown)
+    $(@adder)
+    .on("click.#{ns}", 'button', this._onClick)
+    .on("mousedown.#{ns}", 'button', this._onMousedown)
 
-    if @element.ownerDocument?
-      $(@element.ownerDocument)
-      .on("mouseup.#{ns}", this._checkForEndSelection)
-      .on("mousedown.#{ns}", this._checkForStartSelection)
-    else
-      console.warn("You created an instance of the Adder on an element that
-                    doesn't have an ownerDocument. This probably won't work!
-                    Please ensure the element is added to the DOM before the
-                    plugin is configured:", @element)
+    $(@document.body)
+    .on("mouseup.#{ns}", this._checkForEndSelection)
 
   _removeEvents: ->
-    $(@element).off(".#{ns}")
-
-  # Event callback: called when the mouse button is depressed (and thus a DOM
-  # selection might have been started).
-  #
-  # event - A mousedown Event object.
-  #
-  # Returns nothing.
-  _checkForStartSelection: (event) =>
-    @mouseIsDown = true
+    $(@adder).off(".#{ns}")
+    $(@document.body).off(".#{ns}")
 
   # Event callback: called when the mouse button is released. Checks to see if a
   # selection has been made and if so displays the adder.
@@ -63,8 +53,6 @@ class Adder
   #
   # Returns nothing.
   _checkForEndSelection: (event) =>
-    @mouseIsDown = false
-
     # This prevents the note image from jumping away on the mouseup
     # of a click on icon.
     if @ignoreMouseup
@@ -80,15 +68,18 @@ class Adder
       return if this._isAnnotator(container)
 
     if event and @selectedRanges.length
-      # FIXME: Don't use @core.wrapper here.
+      offset = @adder.parent().offset()
       @adder
-        .css(Util.mousePosition(event, @core.wrapper[0]))
+        .css({
+          top: event.pageY - offset.top,
+          left: event.pageX - offset.left,
+        })
         .show()
     else
       @adder.hide()
 
   # Public: Gets the current selection excluding any nodes that fall outside of
-  # the wrapper element. Then returns an Array of NormalizedRange instances.
+  # the adder `element`. Then returns an Array of NormalizedRange instances.
   #
   # Returns Array of NormalizedRange instances.
   _getSelectedRanges: ->
@@ -100,12 +91,10 @@ class Adder
       ranges = for i in [0...selection.rangeCount]
         r = selection.getRangeAt(i)
         browserRange = new Range.BrowserRange(r)
-        # FIXME: Don't use @core.wrapper here.
-        normedRange = browserRange.normalize().limit(@core.wrapper[0])
+        normedRange = browserRange.normalize().limit(@element)
 
-        # If the new range falls fully outside the wrapper, we
-        # should add it back to the document but not return it from
-        # this method
+        # If the new range falls fully outside our @element, we should add it
+        # back to the document but not return it from this method.
         rangesToIgnore.push(r) if normedRange is null
 
         normedRange
@@ -118,7 +107,7 @@ class Adder
     for r in rangesToIgnore
       selection.addRange(r)
 
-    # Remove any ranges that fell outside of @core.wrapper.
+    # Remove any ranges that fell outside @element.
     $.grep ranges, (range) ->
       # Add the normed range back to the selection if it exists.
       selection.addRange(range.toRange()) if range
@@ -130,6 +119,10 @@ class Adder
   #
   # Returns nothing.
   _onMousedown: (event) =>
+    # Do nothing for right-clicks, middle-clicks, etc.
+    if event.which != 1
+      return
+
     event?.preventDefault()
     # Prevent the selection code from firing when the mouse button is released
     @ignoreMouseup = true
@@ -142,10 +135,13 @@ class Adder
   #
   # Returns nothing.
   _onClick: (event) =>
+    # Do nothing for right-clicks, middle-clicks, etc.
+    if event.which != 1
+      return
+
     event?.preventDefault()
 
     # Hide the adder
-    position = @adder.position()
     @adder.hide()
     @ignoreMouseup = false
 
@@ -165,9 +161,8 @@ class Adder
 
     for normed in @selectedRanges
       annotation.quote.push($.trim(normed.text()))
-      # FIXME: don't use @core.wrapper here
       annotation.ranges.push(
-        normed.serialize(@core.wrapper[0], '.annotator-hl')
+        normed.serialize(@element, '.annotator-hl')
       )
 
     # Join all the quotes into one string.
@@ -186,7 +181,6 @@ class Adder
       .parents()
       .addBack()
       .filter('[class^=annotator-]')
-      .not(@core.wrapper) # FIXME: don't use @core.wrapper here
       .length
 
 
