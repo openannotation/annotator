@@ -4,7 +4,6 @@ Delegator = require('./delegator')
 Range = require('./range')
 Util = require('./util')
 Widget = require('./widget')
-Viewer = require('./viewer')
 Editor = require('./editor')
 Notification = require('./notification')
 Factory = require('./factory')
@@ -16,6 +15,7 @@ AnnotationRegistry = require('./annotations')
 Adder = require('./plugin/adder')
 Highlights = require('./plugin/highlights')
 NullStore = require('./plugin/nullstore')
+Viewer = require('./plugin/viewer')
 
 $ = Util.$
 _t = Util.TranslationString
@@ -52,11 +52,6 @@ proxyEventFor = (annotator, from) ->
     annotator.trigger.apply(annotator, args)
 
 class Annotator extends Delegator
-  # Events to be bound on Annotator#element.
-  events: {}
-    #".annotator-hl mouseover": "onHighlightMouseover"
-    #".annotator-hl mouseout": "startViewerHideTimer"
-
   options: # Configuration options
     # Start Annotator in read-only mode. No controls will be shown.
     readOnly: false
@@ -64,10 +59,6 @@ class Annotator extends Delegator
   plugins: {}
 
   editor: null
-
-  viewer: null
-
-  viewerHideTimer: null
 
   # Public: Creates an instance of the Annotator.
   #
@@ -150,7 +141,7 @@ class Annotator extends Delegator
     @element = $(element)
 
     # Set up the core interface components
-    #this._setupViewer()._setupEditor()
+    #this._setupEditor()
     this._setupDynamicStyle()
 
     for name of @plugins
@@ -187,37 +178,6 @@ class Annotator extends Delegator
   #
   #   var annotator = new ExtendedAnnotator(document.body, /* {options} */);
   @extend: extend
-
-  # Creates an instance of Annotator.Viewer and assigns it to the @viewer
-  # property, appends it to the @wrapper and sets up event listeners.
-  #
-  # Returns itself to allow chaining.
-  _setupViewer: ->
-    @viewer = new Annotator.Viewer(readOnly: @options.readOnly)
-    @viewer.hide()
-      .on("edit", this.onEditAnnotation)
-      .on("delete", (annotation) =>
-        @viewer.hide()
-        this.publish('beforeAnnotationDeleted', [annotation])
-        # Delete highlight elements.
-        this.cleanupAnnotation(annotation)
-        # Delete annotation
-        this.annotations.delete(annotation)
-          .done => this.publish('annotationDeleted', [annotation])
-      )
-      .addField({
-        load: (field, annotation) =>
-          if annotation.text
-            $(field).html(Util.escape(annotation.text))
-          else
-            $(field).html("<i>#{_t 'No Comment'}</i>")
-          this.publish('annotationViewerTextField', [field, annotation])
-      })
-      .element.appendTo(@wrapper).bind({
-        "mouseover": this.clearViewerHideTimer
-        "mouseout": this.startViewerHideTimer
-      })
-    this
 
   # Creates an instance of the Annotator.Editor and assigns it to @editor.
   # Appends this to the @wrapper and sets up event listeners.
@@ -280,7 +240,6 @@ class Annotator extends Delegator
   destroy: ->
     $('#annotator-dynamic-style').remove()
 
-    @viewer.destroy()
     @editor.destroy()
 
     # coffeelint: disable=missing_fat_arrows
@@ -422,71 +381,6 @@ class Annotator extends Delegator
   onEditorSubmit: (annotation) =>
     this.publish('annotationEditorSubmit', [@editor, annotation])
 
-  # Public: Loads the @viewer with an Array of annotations and positions it
-  # at the location provided. Calls the 'annotationViewerShown' event.
-  #
-  # annotation - An Array of annotations to load into the viewer.
-  # location   - Position to set the Viewer in the form {top: y, left: x}
-  #
-  # Examples
-  #
-  #   annotator.showViewer(
-  #    [{text: "my comment"}, {text: "my other comment"}],
-  #    {top: 34, left: 234})
-  #   )
-  #
-  # Returns itself to allow chaining.
-  showViewer: (annotations, location) =>
-    @viewer.element.css(location)
-    @viewer.load(annotations)
-
-    this.publish('annotationViewerShown', [@viewer, annotations])
-
-  # Annotator#element event callback. Allows 250ms for mouse pointer to get from
-  # annotation highlight to @viewer to manipulate annotations. If timer expires
-  # the @viewer is hidden.
-  #
-  # Returns nothing.
-  startViewerHideTimer: =>
-    # Don't do this if timer has already been set by another annotation.
-    if not @viewerHideTimer
-      @viewerHideTimer = setTimeout @viewer.hide, 250
-
-  # Viewer#element event callback. Clears the timer set by
-  # Annotator#startViewerHideTimer() when the @viewer is moused over.
-  #
-  # Returns nothing.
-  clearViewerHideTimer: =>
-    clearTimeout(@viewerHideTimer)
-    @viewerHideTimer = false
-
-  # Annotator#element callback. Displays viewer with all annotations
-  # associated with highlight Elements under the cursor.
-  #
-  # event - A mouseover Event object.
-  #
-  # Returns nothing.
-  onHighlightMouseover: (event) =>
-    # Cancel any pending hiding of the viewer.
-    this.clearViewerHideTimer()
-
-    # Don't do anything if we're making a selection
-    return false if @mouseIsDown
-
-    # If the viewer is already shown, hide it first
-    @viewer.hide() if @viewer.isShown()
-
-    # coffeelint: disable=missing_fat_arrows
-    annotations = $(event.target)
-      .parents('.annotator-hl')
-      .addBack()
-      .map(-> return $(this).data("annotation"))
-      .toArray()
-    # coffeelint: enable=missing_fat_arrows
-
-    # Now show the viewer with the wanted annotations
-    this.showViewer(annotations, Util.mousePosition(event, @wrapper[0]))
-
   # Annotator#viewer callback function. Displays the Annotator#editor in the
   # positions of the Annotator#viewer and loads the passed annotation for
   # editing.
@@ -554,7 +448,6 @@ Annotator.Delegator = Delegator
 Annotator.Range = Range
 Annotator.Util = Util
 Annotator.Widget = Widget
-Annotator.Viewer = Viewer
 Annotator.Editor = Editor
 Annotator.Notification = Notification
 Annotator.Plugin = Plugin
@@ -568,6 +461,7 @@ Annotator.hideNotification = notification.hide
 Annotator.Plugin.register('Adder', Adder)
 Annotator.Plugin.register('Highlights', Highlights)
 Annotator.Plugin.register('NullStore', NullStore)
+Annotator.Plugin.register('Viewer', Viewer)
 
 # Expose a global instance registry
 Annotator._instances = []

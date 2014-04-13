@@ -125,6 +125,7 @@
 
       var Adder = Annotator.Plugin.fetch('Adder');
       var Highlights = Annotator.Plugin.fetch('Highlights');
+      var Viewer = Annotator.Plugin.fetch('Viewer');
       var Store = Annotator.Plugin.fetch('Store');
       var Auth = Annotator.Plugin.fetch('Auth');
       var Unsupported = Annotator.Plugin.fetch('Unsupported');
@@ -135,6 +136,7 @@
       var devAnnotator = factory
         .addPlugin(Adder, elem)
         .addPlugin(Highlights, elem)
+        .addPlugin(Viewer, elem)
         .setStore(Store, {prefix: 'http://localhost:5000'})
         // .addPlugin(Auth, {tokenUrl: 'http://localhost:4000/api/token'})
         // .addPlugin(Permissions)
