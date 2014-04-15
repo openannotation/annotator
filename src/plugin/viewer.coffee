@@ -41,6 +41,12 @@ class Viewer extends Widget
     defaultFields: true # Add the default field(s) to the viewer.
     readOnly: false # Start the viewer in read-only mode. No controls will be
                     # shown.
+    showEditButton: false # Show the viewer's "edit" button. If shown, the
+                          # button will fire an annotation "update" event, to
+                          # which an appropriate editor instance can respond and
+                          # display an editor.
+    showDeleteButton: false # Show the viewer's "delete" button. If shown, the
+                            # button will fire an annotation "delete" event.
 
   # Public: Creates an instance of the Viewer object.
   #
@@ -202,12 +208,17 @@ class Viewer extends Widget
         edit.remove()
         del.remove()
       else
-        controller = {
-          showEdit: -> edit.removeAttr('disabled')
-          hideEdit: -> edit.attr('disabled', 'disabled')
-          showDelete: -> del.removeAttr('disabled')
-          hideDelete: -> del.attr('disabled', 'disabled')
-        }
+        controller = {}
+        if @options.showEditButton
+          controller.showEdit = -> edit.removeAttr('disabled')
+          controller.hideEdit = -> edit.attr('disabled', 'disabled')
+        else
+          edit.remove()
+        if @options.showDeleteButton
+          controller.showDelete = -> del.removeAttr('disabled')
+          controller.hideDelete = -> del.attr('disabled', 'disabled')
+        else
+          del.remove()
 
       for field in @fields
         element = $(field.element).clone().appendTo(item)[0]

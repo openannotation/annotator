@@ -136,7 +136,10 @@
       var devAnnotator = factory
         .addPlugin(Adder, elem)
         .addPlugin(Highlights, elem)
-        .addPlugin(Viewer, elem)
+        .addPlugin(Viewer, elem, {
+          showEditButton: true,
+          showDeleteButton: true,
+        })
         .setStore(Store, {prefix: 'http://localhost:5000'})
         // .addPlugin(Auth, {tokenUrl: 'http://localhost:4000/api/token'})
         // .addPlugin(Permissions)
