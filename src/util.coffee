@@ -1,4 +1,5 @@
 $ = require('jquery')
+Promise = require('es6-promise').Promise
 
 
 # I18N
@@ -22,6 +23,8 @@ Util = {}
 # Provide access to our copy of jQuery on the Annotator object
 Util.$ = $
 
+# Provide a Promise implementation
+Util.Promise = Promise
 
 # Public: Create a Gettext translated string from a message id
 #

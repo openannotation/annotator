@@ -9,6 +9,7 @@
   "dependencies": {
     "backbone-events-standalone": "~0.2.1",
     "backbone-extend-standalone": "~0.1.2",
+    "es6-promise": "~0.1.1",
     "jquery": "~1.11.0"
   },
   "devDependencies": {
