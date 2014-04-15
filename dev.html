@@ -149,9 +149,6 @@
       devAnnotator.attach(elem);
       devAnnotator.annotations.load({uri: window.location.href});
 
-      devAnnotator.annotations.on("all", function () {
-        console.log("AnnotationRegistry event:", arguments);
-      });
       devAnnotator.on("all", function () {
         console.log("Annotator event:", arguments);
       });

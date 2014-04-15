@@ -32,24 +32,6 @@ _Annotator = this.Annotator
 handleError = ->
   console.error.apply(console, arguments)
 
-# Proxy events from the annotation registry
-PROXY_EVENTS = {
-  beforeCreate: 'beforeAnnotationCreated'
-  create: 'annotationCreated'
-  beforeUpdate: 'beforeAnnotationUpdated'
-  update: 'annotationUpdated'
-  beforeDelete: 'beforeAnnotationDeleted'
-  delete: 'annotationDeleted'
-  load: 'annotationsLoaded'
-}
-
-# Function returning a closure which should be called for a particular event
-# from the annotation registry
-proxyEventFor = (annotator, from) ->
-  ->
-    args = Array::slice.call(arguments)
-    args.unshift(PROXY_EVENTS[from])
-    annotator.trigger.apply(annotator, args)
 
 class Annotator extends Delegator
   options: # Configuration options
@@ -125,11 +107,7 @@ class Annotator extends Delegator
           @plugins[name] = p
           break
 
-    @annotations = new AnnotationRegistry()
-    @annotations.configure(core: this)
-
-    for from of PROXY_EVENTS
-      this.listenTo(@annotations, from, proxyEventFor(this, from))
+    @annotations = new AnnotationRegistry(this, @store)
 
   # Public: attach the Annotator and its associated event handling to the
   # specified element.
@@ -279,7 +257,8 @@ class Annotator extends Delegator
                              implement your own store plugin with an appropriate
                              query method if you wish to implement direct
                              loading of annotations in the page.")
-    @annotations._deprecatedDirectLoad(annotations)
+
+    this.trigger('loadAnnotations', annotations, null) # null meta object
     this
 
   # Public: Calls the Store#dumpAnnotations() method.
