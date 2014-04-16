@@ -20,7 +20,7 @@ unless JSON and JSON.parse and JSON.stringify
 Util = {}
 
 
-# Provide access to our copy of jQuery on the Annotator object
+# Provide access to our copy of jQuery
 Util.$ = $
 
 # Provide a Promise implementation

@@ -124,6 +124,7 @@
       var elem = document.getElementById('airlock');
 
       var Adder = Annotator.Plugin.fetch('Adder');
+      var Editor = Annotator.Plugin.fetch('Editor');
       var Highlights = Annotator.Plugin.fetch('Highlights');
       var Viewer = Annotator.Plugin.fetch('Viewer');
       var Store = Annotator.Plugin.fetch('Store');
@@ -140,6 +141,7 @@
           showEditButton: true,
           showDeleteButton: true,
         })
+        .addPlugin(Editor)
         .setStore(Store, {prefix: 'http://localhost:5000'})
         // .addPlugin(Auth, {tokenUrl: 'http://localhost:4000/api/token'})
         // .addPlugin(Permissions)

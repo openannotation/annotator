@@ -4,7 +4,6 @@ Delegator = require('./delegator')
 Range = require('./range')
 Util = require('./util')
 Widget = require('./widget')
-Editor = require('./editor')
 Notification = require('./notification')
 Factory = require('./factory')
 Plugin = require('./plugin')
@@ -13,6 +12,7 @@ AnnotationRegistry = require('./annotations')
 
 # Core plugins
 Adder = require('./plugin/adder')
+Editor = require('./plugin/editor')
 Highlights = require('./plugin/highlights')
 NullStore = require('./plugin/nullstore')
 Viewer = require('./plugin/viewer')
@@ -39,8 +39,6 @@ class Annotator extends Delegator
     readOnly: false
 
   plugins: {}
-
-  editor: null
 
   # Public: Creates an instance of the Annotator.
   #
@@ -86,9 +84,15 @@ class Annotator extends Delegator
       # and use it to bootstrap.
       factory = new Factory()
       factory.setStore(NullStore)
+      factory.addPlugin(Highlights, element)
+      factory.addPlugin(Viewer, element, {
+        readOnly: @options.readOnly,
+        showEditButton: true,
+        showDeleteButton: true,
+      })
       if not @options.readOnly
         factory.addPlugin(Adder, element)
-      factory.addPlugin(Highlights, element)
+        factory.addPlugin(Editor)
       factory.configureInstance(this)
 
       this.attach(element)
@@ -119,7 +123,6 @@ class Annotator extends Delegator
     @element = $(element)
 
     # Set up the core interface components
-    #this._setupEditor()
     this._setupDynamicStyle()
 
     for name of @plugins
@@ -156,27 +159,6 @@ class Annotator extends Delegator
   #
   #   var annotator = new ExtendedAnnotator(document.body, /* {options} */);
   @extend: extend
-
-  # Creates an instance of the Annotator.Editor and assigns it to @editor.
-  # Appends this to the @wrapper and sets up event listeners.
-  #
-  # Returns itself for chaining.
-  _setupEditor: ->
-    @editor = new Annotator.Editor()
-    @editor.hide()
-      .on('hide', this.onEditorHide)
-      .on('save', this.onEditorSubmit)
-      .addField({
-        type: 'textarea',
-        label: _t('Comments') + '\u2026'
-        load: (field, annotation) ->
-          $(field).find('textarea').val(annotation.text || '')
-        submit: (field, annotation) ->
-          annotation.text = $(field).find('textarea').val()
-      })
-
-    @editor.element.appendTo(@wrapper)
-    this
 
   # Sets up any dynamically calculated CSS for the Annotator.
   #
@@ -217,18 +199,6 @@ class Annotator extends Delegator
   # Returns nothing.
   destroy: ->
     $('#annotator-dynamic-style').remove()
-
-    @editor.destroy()
-
-    # coffeelint: disable=missing_fat_arrows
-    @wrapper.find('.annotator-hl').each ->
-      $(this).contents().insertBefore(this)
-      $(this).remove()
-    # coffeelint: enable=missing_fat_arrows
-
-    @wrapper.contents().insertBefore(@wrapper)
-    @wrapper.remove()
-    @element.data('annotator', null)
 
     for plugin in @plugins
       plugin.destroy()
@@ -312,81 +282,6 @@ class Annotator extends Delegator
 
     this # allow chaining
 
-  # Public: Waits for the @editor to submit or hide, returning a promise that
-  # is resolved or rejected depending on whether the annotation was saved or
-  # cancelled.
-  editAnnotation: (annotation, position) ->
-    dfd = $.Deferred()
-    resolve = dfd.resolve.bind(dfd, annotation)
-    reject = dfd.reject.bind(dfd, annotation)
-
-    this.showEditor(annotation, position)
-    this.subscribe('annotationEditorSubmit', resolve)
-    this.once 'annotationEditorHidden', =>
-      this.unsubscribe('annotationEditorSubmit', resolve)
-      reject() if dfd.state() is 'pending'
-
-    dfd.promise()
-
-  # Public: Loads the @editor with the provided annotation and updates its
-  # position in the window.
-  #
-  # annotation - An annotation to load into the editor.
-  # location   - Position to set the Editor in the form {top: y, left: x}
-  #
-  # Examples
-  #
-  #   annotator.showEditor({text: "my comment"}, {top: 34, left: 234})
-  #
-  # Returns itself to allow chaining.
-  showEditor: (annotation, location) =>
-    @editor.element.css(location)
-    @editor.load(annotation)
-    this.publish('annotationEditorShown', [@editor, annotation])
-    this
-
-  # Callback method called when the @editor fires the "hide" event. Itself
-  # publishes the 'annotationEditorHidden' event.
-  #
-  # Returns nothing.
-  onEditorHide: =>
-    this.publish('annotationEditorHidden', [@editor])
-
-  # Callback method called when the @editor fires the "save" event. Itself
-  # publishes the 'annotationEditorSubmit' event and creates/updates the
-  # edited annotation.
-  #
-  # Returns nothing.
-  onEditorSubmit: (annotation) =>
-    this.publish('annotationEditorSubmit', [@editor, annotation])
-
-  # Annotator#viewer callback function. Displays the Annotator#editor in the
-  # positions of the Annotator#viewer and loads the passed annotation for
-  # editing.
-  #
-  # annotation - An annotation Object for editing.
-  #
-  # Returns nothing.
-  onEditAnnotation: (annotation) =>
-    position = @viewer.element.position()
-    @viewer.hide()
-
-    $.when(annotation)
-
-    .done (annotation) =>
-      this.publish('beforeAnnotationUpdated', [annotation])
-
-    .then (annotation) =>
-      this.editAnnotation(annotation, position)
-    .then (annotation) =>
-      this.annotations.update(annotation)
-        # Handle storage errors
-        .fail(handleError)
-
-    .done (annotation) =>
-      this.publish('annotationUpdated', [annotation])
-
-
 # An Annotator Factory with the core constructor defaulted to Annotator
 class Annotator.Factory extends Factory
   constructor: (core = Annotator) ->
@@ -427,7 +322,6 @@ Annotator.Delegator = Delegator
 Annotator.Range = Range
 Annotator.Util = Util
 Annotator.Widget = Widget
-Annotator.Editor = Editor
 Annotator.Notification = Notification
 Annotator.Plugin = Plugin
 
@@ -438,6 +332,7 @@ Annotator.hideNotification = notification.hide
 
 # Register the default store
 Annotator.Plugin.register('Adder', Adder)
+Annotator.Plugin.register('Editor', Editor)
 Annotator.Plugin.register('Highlights', Highlights)
 Annotator.Plugin.register('NullStore', NullStore)
 Annotator.Plugin.register('Viewer', Viewer)

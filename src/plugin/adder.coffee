@@ -69,11 +69,13 @@ class Adder
 
     if event and @selectedRanges.length
       offset = @adder.parent().offset()
+      interactionPoint = {
+        top: event.pageY - offset.top,
+        left: event.pageX - offset.left,
+      }
+      @core.interactionPoint = interactionPoint
       @adder
-        .css({
-          top: event.pageY - offset.top,
-          left: event.pageX - offset.left,
-        })
+        .css(interactionPoint)
         .show()
     else
       @adder.hide()

@@ -182,9 +182,12 @@ class Viewer extends Widget
   #   viewer.load([annotation1, annotation2, annotation3])
   #
   # Returns itslef.
-  load: (annotations, position) =>
-    if position?
-      @widget.css({top: position.top, left: position.left})
+  load: (annotations) =>
+    if @core.interactionPoint?
+      @widget.css({
+        top: @core.interactionPoint.top,
+        left: @core.interactionPoint.left
+      })
 
     @annotations = annotations || []
 
@@ -264,9 +267,10 @@ class Viewer extends Widget
   # event - An Event object.
   #
   # Returns nothing.
-  _onEditClick: (event) ->
+  _onEditClick: (event) =>
     item = $(event.target).parents('.annotator-annotation').data('annotation')
-    console.log("Would edit", item)
+    this.hide()
+    @core.annotations.update(item)
 
   # Event callback: called when the delete button is clicked.
   #
@@ -318,13 +322,11 @@ class Viewer extends Widget
 
       # Now show the viewer with the wanted annotations
       offset = @widget.parent().offset()
-      this.load(
-        annotations,
-        {
-          top: event.pageY - offset.top,
-          left: event.pageX - offset.left,
-        }
-      )
+      @core.interactionPoint = {
+        top: event.pageY - offset.top,
+        left: event.pageX - offset.left,
+      }
+      this.load(annotations)
 
       # FIXME: deprecate this event
       @core.trigger('annotationViewerShown', this, annotations)

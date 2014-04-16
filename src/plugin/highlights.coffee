@@ -44,6 +44,11 @@ class Highlights
 
   destroy: ->
     this.stopListening()
+    # coffeelint: disable=missing_fat_arrows
+    @wrapper.find('.annotator-hl').each ->
+      $(this).contents().insertBefore(this)
+      $(this).remove()
+    # coffeelint: enable=missing_fat_arrows
 
   _loadAnnotations: (annotations, meta) =>
     loader = (annList = []) =>
