@@ -2,9 +2,10 @@ BackboneEvents = require('backbone-events-standalone')
 Range = require('../range')
 Util = require('../util')
 $ = Util.$
+Promise = Util.Promise
 
 # Wraps the DOM Nodes within the provided range with a highlight
-# element of the specified class and returns the highlight Elements.
+# element of the specified class and returns the highlight Elements.
 #
 # normedRange - A NormalizedRange to be highlighted.
 # cssClass - A CSS class to use for the highlight (default: 'annotator-hl')
@@ -26,53 +27,69 @@ highlightRange = (normedRange, cssClass = 'annotator-hl') ->
 # Public: Provide a simple way to display page annotations
 class Highlights
   options:
+    # The CSS class to apply to drawn highlights
+    highlightClass: 'annotator-hl'
     # Number of annotations to draw at once
     chunkSize: 10
     # Time (in ms) to pause between drawing chunks of annotations
     chunkDelay: 10
 
+  # Public: Create a new instance of the Highlights plugin.
+  #
+  # element - The root Element on which to dereference annotation ranges and
+  #           draw highlights.
+  # options - An options Object containing configuration options for the plugin.
+  #           See `Highlights.options` for available options.
+  #
+  # Returns a new plugin instance.
   constructor: (@element, options) ->
     @options = $.extend(true, {}, @options, options)
 
   configure: ({@core}) ->
 
   pluginInit: ->
-    this.listenTo(@core, 'annotationsLoaded', this._loadAnnotations)
-    this.listenTo(@core, 'annotationCreated', this._drawAnnotation)
-    this.listenTo(@core, 'annotationDeleted', this._undrawAnnotation)
-    this.listenTo(@core, 'annotationUpdated', this._redrawAnnotation)
+    this.listenTo(@core, 'annotationsLoaded', this.drawAll)
+    this.listenTo(@core, 'annotationCreated', this.draw)
+    this.listenTo(@core, 'annotationDeleted', this.undraw)
+    this.listenTo(@core, 'annotationUpdated', this.redraw)
 
   destroy: ->
     this.stopListening()
-    # coffeelint: disable=missing_fat_arrows
-    @wrapper.find('.annotator-hl').each ->
-      $(this).contents().insertBefore(this)
-      $(this).remove()
-    # coffeelint: enable=missing_fat_arrows
+    $(@element).find(".#{@options.highlightClass}").each (i, el) ->
+      $(el).contents().insertBefore(el)
+      $(el).remove()
 
-  _loadAnnotations: (annotations, meta) =>
-    loader = (annList = []) =>
-      now = annotations.splice(0, @options.chunkSize)
+  # Public: Draw highlights for all the given annotations
+  #
+  # annotations - An Array of annotation Objects for which to draw highlights.
+  #
+  # Returns nothing.
+  drawAll: (annotations) =>
+    return new Promise((resolve, reject) =>
+      highlights = []
 
-      this._drawAnnotations(now)
+      loader = (annList = []) =>
+        now = annList.splice(0, @options.chunkSize)
 
-      # If there are more to do, do them after a delay
-      if annList.length > 0
-        setTimeout((-> loader(annList)), @options.chunkDelay)
+        for a in now
+          highlights = highlights.concat(this.draw(a))
 
-    clone = annotations.slice()
-    loader annotations
+        # If there are more to do, do them after a delay
+        if annList.length > 0
+          setTimeout((-> loader(annList)), @options.chunkDelay)
+        else
+          resolve(highlights)
 
-  _drawAnnotations: (annotations) ->
-    for a in annotations
-      this._drawAnnotation(a)
+      clone = annotations.slice()
+      loader(clone)
+    )
 
-  # Draw highlights for the annotation.
+  # Public: Draw highlights for the annotation.
   #
   # annotation - An annotation Object for which to draw highlights.
   #
-  # Returns nothing.
-  _drawAnnotation: (annotation) =>
+  # Returns an Array of drawn highlight elements.
+  draw: (annotation) =>
     normedRanges = []
     for r in annotation.ranges
       try
@@ -89,31 +106,38 @@ class Highlights
     annotation._local.highlights ?= []
 
     for normed in normedRanges
-      $.merge annotation._local.highlights, highlightRange(normed)
+      $.merge(
+        annotation._local.highlights,
+        highlightRange(normed, @options.highlightClass)
+      )
 
     # Save the annotation data on each highlighter element.
     $(annotation._local.highlights).data('annotation', annotation)
-    $(annotation._local.highlights).attr('data-annotation-id', annotation.id)
+    # Add a data attribute for annotation id if the annotation has one
+    if annotation.id?
+      $(annotation._local.highlights).attr('data-annotation-id', annotation.id)
 
-  # Remove the drawn highlights for the given annotation.
+    return annotation._local.highlights
+
+  # Public: Remove the drawn highlights for the given annotation.
   #
   # annotation - An annotation Object for which to purge highlights.
   #
   # Returns nothing.
-  _undrawAnnotation: (annotation) ->
+  undraw: (annotation) ->
     if annotation._local?.highlights?
       for h in annotation._local.highlights when h.parentNode?
         $(h).replaceWith(h.childNodes)
       delete annotation._local.highlights
 
-  # Redraw the highlights for the given annotation.
+  # Public: Redraw the highlights for the given annotation.
   #
   # annotation - An annotation Object for which to redraw highlights.
   #
   # Returns nothing.
-  _redrawAnnotation: (annotation) =>
-    this._undrawAnnotation(annotation)
-    this._drawAnnotation(annotation)
+  redraw: (annotation) =>
+    this.undraw(annotation)
+    this.draw(annotation)
 
 
 BackboneEvents.mixin(Highlights.prototype)

@@ -27,21 +27,6 @@ describe 'Annotator', ->
 
       assert(stub.calledOnce)
 
-    it "should call Annotator#onHighlightMouseover() when mouse moves over a highlight", ->
-      stub = sinon.stub(annotator, 'onHighlightMouseover')
-
-      highlight = $('<span class="annotator-hl" />').appendTo(annotator.element)
-      highlight.mouseover()
-
-      assert(stub.calledOnce)
-
-    it "should call Annotator#startViewerHideTimer() when mouse moves off a highlight", ->
-      stub = sinon.stub(annotator, 'startViewerHideTimer')
-
-      highlight = $('<span class="annotator-hl" />').appendTo(annotator.element)
-      highlight.mouseout()
-
-      assert(stub.calledOnce)
 
   describe "constructor", ->
     beforeEach ->
@@ -383,7 +368,6 @@ describe 'Annotator', ->
         normalize: sinon.stub().returns(normalizedRange)
       }
       sinon.stub(Range, 'sniff').returns(sniffedRange)
-      sinon.stub(annotator, 'highlightRange').returns(element)
       sinon.spy(annotator, 'publish')
 
       annotationObj = {
@@ -430,45 +414,6 @@ describe 'Annotator', ->
 
       assert.isTrue(annotator.publish.calledWith('rangeNormalizeFail', [annotation, 1, e]))
 
-    it "should call Annotator#highlightRange() with the normed range", ->
-      assert.isTrue(annotator.highlightRange.calledWith(normalizedRange))
-
-    it "should store the annotation in the highlighted element's data store", ->
-      assert.equal(element.data('annotation'), annotation)
-
-    it "should set the data-annotation-id of the highlight element to the annotation's id", ->
-      assert.equal(element.attr('data-annotation-id'), annotation.id)
-
-  describe "cleanupAnnotation", ->
-    annotation = null
-    div = null
-
-    beforeEach ->
-      annotation = {
-        text: "my annotation comment"
-        _local:
-          highlights: $('<span><em>Hats</em></span><span><em>Gloves</em></span>')
-      }
-      div = $('<div />').append(annotation._local.highlights)
-
-    it "should remove the highlights from the DOM", ->
-      highlights = annotation._local.highlights
-      highlights.each ->
-        assert.lengthOf($(this).parent(), 1)
-
-      annotator.cleanupAnnotation(annotation)
-      highlights.each ->
-        assert.lengthOf($(this).parent(), 0)
-
-      assert.isUndefined(annotation._local.highlights, "highlights property removed")
-
-    it "should leave the content of the highlights in place", ->
-      annotator.cleanupAnnotation(annotation)
-      assert.equal(div.html(), '<em>Hats</em><em>Gloves</em>')
-
-    it "should not choke when there are no highlights", ->
-      assert.doesNotThrow((-> annotator.cleanupAnnotation({})), Error)
-
   describe "loadAnnotations", ->
     beforeEach ->
       sinon.stub(annotator, 'setupAnnotation')
@@ -506,36 +451,6 @@ describe 'Annotator', ->
     it "returns the results of the Store plugins dumpAnnotations method", ->
       annotator.store = { dumpAnnotations: -> [1,2,3] }
       assert.deepEqual(annotator.dumpAnnotations(), [1,2,3])
-
-  describe "highlightRange", ->
-    it "should return a highlight element for every textNode in the range", ->
-      textNodes = (document.createTextNode(text) for text in ['hello', 'world'])
-      mockRange =
-        textNodes: -> textNodes
-
-      elements = annotator.highlightRange(mockRange)
-      assert.lengthOf(elements, 2)
-      assert.equal(elements[0].className, 'annotator-hl')
-      assert.equal(elements[0].firstChild, textNodes[0])
-      assert.equal(elements[1].firstChild, textNodes[1])
-
-    it "should ignore textNodes that contain only whitespace", ->
-      textNodes = (document.createTextNode(text) for text in ['hello', '\n ', '      '])
-      mockRange =
-        textNodes: -> textNodes
-
-      elements = annotator.highlightRange(mockRange)
-      assert.lengthOf(elements, 1)
-      assert.equal(elements[0].className, 'annotator-hl')
-      assert.equal(elements[0].firstChild, textNodes[0])
-
-    it "should set highlight element class names to its second argument", ->
-      textNodes = (document.createTextNode(text) for text in ['hello', 'world'])
-      mockRange =
-        textNodes: -> textNodes
-
-      elements = annotator.highlightRange(mockRange, 'monkeys')
-      assert.equal(elements[0].className, 'monkeys')
 
   describe "addPlugin", ->
     plugin = null
@@ -768,38 +683,6 @@ describe 'Annotator', ->
       for element in elements
         assert.isFalse(annotator.isAnnotator(element))
 
-  describe "onHighlightMouseover", ->
-    element = null
-    mockEvent = null
-    mockOffset = null
-    annotation = null
-
-    beforeEach ->
-      annotation = {text: "my comment"}
-      element = $('<span />').data('annotation', annotation)
-      mockEvent = {
-        target: element[0]
-      }
-      mockOffset = {top: 0, left: 0}
-
-      sinon.stub(Util, 'mousePosition').returns(mockOffset)
-      sinon.spy(annotator, 'showViewer')
-
-      annotator.viewerHideTimer = 60
-      annotator.onHighlightMouseover(mockEvent)
-
-    afterEach ->
-      Util.mousePosition.restore()
-
-    it "should clear the current @viewerHideTimer", ->
-      assert.isFalse(annotator.viewerHideTimer)
-
-    it "should fetch the current mouse position", ->
-      assert.isTrue(Util.mousePosition.calledWith(mockEvent, annotator.wrapper[0]))
-
-    it "should display the Annotation#viewer with annotations", ->
-      assert.isTrue(annotator.showViewer.calledWith([annotation], mockOffset))
-
   describe "onAdderMousedown", ->
     it "should set the @ignoreMouseup property to true", ->
       annotator.ignoreMouseup = false
@@ -837,7 +720,6 @@ describe 'Annotator', ->
       sinon.spy(annotator.annotations, 'create')
       sinon.stub(annotator, 'showEditor')
       sinon.stub(Range, 'sniff').returns(sniffedRange)
-      sinon.stub(annotator, 'highlightRange').returns(element)
       sinon.spy(element, 'addClass')
       annotator.selectedRanges = ['foo']
       annotator.onAdderClick()
@@ -853,19 +735,6 @@ describe 'Annotator', ->
 
     it "should display the editor", ->
       assert(annotator.showEditor.calledOnce)
-
-    it "should add temporary highlights to the document to show the user what they selected", ->
-      assert(annotator.highlightRange.calledWith(normalizedRange))
-      assert.equal(element[0].className, 'annotator-hl annotator-hl-temporary')
-
-    it "should persist the temporary highlights if the annotation is saved", ->
-      annotator.publish('annotationEditorSubmit')
-      assert.equal(element[0].className, 'annotator-hl')
-
-    it "should set the data-annotation-id of the highlight element to the
-        annotation's id", ->
-      annotator.publish('annotationEditorSubmit')
-      assert.equal(element.attr('data-annotation-id'), '1')
 
     it "should create the annotation if the edit is saved", ->
       annotator.onEditorSubmit(annotation)

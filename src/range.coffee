@@ -1,6 +1,7 @@
 xpath = require('./xpath')
 Util = require('./util')
 $ = Util.$
+_t = Util.TranslationString
 
 
 Range = {}
