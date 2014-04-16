@@ -12,22 +12,6 @@ describe 'Annotator', ->
   beforeEach -> annotator = new Annotator($('<div></div>')[0])
   afterEach  -> $(document).unbind()
 
-  describe "events", ->
-    it "should call Annotator#onAdderClick() when adder is clicked", ->
-      stub = sinon.stub(annotator, 'onAdderClick')
-
-      annotator.element.find('.annotator-adder button').click()
-
-      assert(stub.calledOnce)
-
-    it "should call Annotator#onAdderMousedown() when mouse button is held down on adder", ->
-      stub = sinon.stub(annotator, 'onAdderMousedown')
-
-      annotator.element.find('.annotator-adder button').mousedown()
-
-      assert(stub.calledOnce)
-
-
   describe "constructor", ->
     beforeEach ->
       sinon.stub(annotator, '_setupWrapper').returns(annotator)
@@ -47,10 +31,6 @@ describe 'Annotator', ->
     it "should create an empty @plugin object", ->
       Annotator.prototype.constructor.call(annotator, annotator.element[0])
       assert.isTrue(annotator.hasOwnProperty('plugins'))
-
-    it "should create the adder properties from the @html strings", ->
-      Annotator.prototype.constructor.call(annotator, annotator.element[0])
-      assert.instanceOf(annotator.adder, $)
 
     it "should call Annotator#_setupWrapper()", ->
       Annotator.prototype.constructor.call(annotator, annotator.element[0])
@@ -79,50 +59,9 @@ describe 'Annotator', ->
       assert(annotator._setupDynamicStyle.called)
 
   describe "#destroy()", ->
-    it "should unbind Annotator's events from the page", ->
-      stub = sinon.stub(annotator, 'checkForStartSelection')
-
-      annotator._setupDocumentEvents()
-      annotator.destroy()
-      $(document).mousedown()
-
-      assert.isFalse(stub.called)
-      $(document).unbind('mousedown')
-
     it "should remove Annotator's elements from the page", ->
       annotator.destroy()
       assert.equal(annotator.element.find('[class^=annotator-]').length, 0)
-
-  describe "_setupDocumentEvents", ->
-    beforeEach: ->
-      $(document).unbind('mouseup').unbind('mousedown')
-
-    it "should call Annotator#checkForStartSelection() when mouse button is pressed", ->
-      stub = sinon.stub(annotator, 'checkForStartSelection')
-      annotator._setupDocumentEvents()
-      $(document).mousedown()
-      assert(stub.calledOnce)
-
-    it "should call Annotator#checkForEndSelection() when mouse button is lifted", ->
-      stub = sinon.stub(annotator, 'checkForEndSelection')
-      annotator._setupDocumentEvents()
-      $(document).mouseup()
-      assert(stub.calledOnce)
-
-  describe "_setupWrapper", ->
-    it "should wrap children of @element in the @html.wrapper element", ->
-      annotator.element = $('<div><span>contents</span></div>')
-      annotator._setupWrapper()
-      assert.equal(annotator.wrapper.html(), '<span>contents</span>')
-
-    it "should remove all script elements prior to wrapping", ->
-      div = document.createElement('div')
-      div.appendChild(document.createElement('script'))
-
-      annotator.element = $(div)
-      annotator._setupWrapper()
-
-      assert.equal(annotator.wrapper[0].innerHTML, '')
 
   describe "_setupViewer", ->
     mockViewer = null
@@ -279,72 +218,6 @@ describe 'Annotator', ->
       check(10000)
 
       $fix.hide()
-
-  describe "getSelectedRanges", ->
-    mockGlobal = null
-    mockSelection = null
-    mockRange = null
-    mockBrowserRange = null
-
-    beforeEach ->
-      mockBrowserRange = {
-        cloneRange: sinon.stub()
-      }
-      mockBrowserRange.cloneRange.returns(mockBrowserRange)
-
-      # This mock pretends to be both NormalizedRange and BrowserRange.
-      mockRange = {
-        limit: sinon.stub()
-        normalize: sinon.stub()
-        toRange: sinon.stub().returns('range')
-      }
-      mockRange.limit.returns(mockRange)
-      mockRange.normalize.returns(mockRange)
-
-      # https://developer.mozilla.org/en/nsISelection
-      mockSelection = {
-        getRangeAt: sinon.stub().returns(mockBrowserRange)
-        removeAllRanges: sinon.spy()
-        addRange: sinon.spy()
-        rangeCount: 1
-      }
-      mockGlobal = {
-        getSelection: sinon.stub().returns(mockSelection)
-      }
-      sinon.stub(Util, 'getGlobal').returns(mockGlobal)
-      sinon.stub(Range, 'BrowserRange').returns(mockRange)
-
-    afterEach ->
-      Util.getGlobal.restore()
-      Range.BrowserRange.restore()
-
-    it "should retrieve the global object and call getSelection()", ->
-      annotator.getSelectedRanges()
-      assert(mockGlobal.getSelection.calledOnce)
-
-    it "should retrieve the global object and call getSelection()", ->
-      ranges = annotator.getSelectedRanges()
-      assert.deepEqual(ranges, [mockRange])
-
-    it "should remove any failed calls to NormalizedRange#limit(), but re-add them to the global selection", ->
-      mockRange.limit.returns(null)
-      ranges = annotator.getSelectedRanges()
-      assert.deepEqual(ranges, [])
-      assert.isTrue(mockSelection.addRange.calledWith(mockBrowserRange))
-
-    it "should return an empty array if selection.isCollapsed is true", ->
-      mockSelection.isCollapsed = true
-      ranges = annotator.getSelectedRanges()
-      assert.deepEqual(ranges, [])
-
-    it "should deselect all current ranges", ->
-      ranges = annotator.getSelectedRanges()
-      assert(mockSelection.removeAllRanges.calledOnce)
-
-    it "should reassign the newly normalized ranges", ->
-      ranges = annotator.getSelectedRanges()
-      assert(mockSelection.addRange.calledOnce)
-      assert.isTrue(mockSelection.addRange.calledWith('range'))
 
   describe "setupAnnotation", ->
     annotation = null
@@ -576,174 +449,6 @@ describe 'Annotator', ->
       annotator.viewerHideTimer = 456
       annotator.clearViewerHideTimer()
       assert.isFalse(annotator.viewerHideTimer)
-
-  describe "checkForStartSelection", ->
-    beforeEach ->
-      sinon.spy(annotator, 'startViewerHideTimer')
-      annotator.mouseIsDown = false
-      annotator.checkForStartSelection()
-
-    it "should call Annotator#startViewerHideTimer()", ->
-      assert(annotator.startViewerHideTimer.calledOnce)
-
-    it "should NOT call #startViewerHideTimer() if mouse is over the annotator", ->
-      annotator.startViewerHideTimer.reset()
-      annotator.checkForStartSelection({target: annotator.viewer.element})
-      assert.isFalse(annotator.startViewerHideTimer.called)
-
-    it "should set @mouseIsDown to true", ->
-      assert.isTrue(annotator.mouseIsDown)
-
-  describe "checkForEndSelection", ->
-    mockEvent = null
-    mockOffset = null
-    mockRanges = null
-
-    beforeEach ->
-      mockEvent = { target: document.createElement('span') }
-      mockOffset = {top: 0, left: 0}
-      mockRanges = [{}]
-
-      sinon.stub(Util, 'mousePosition').returns(mockOffset)
-      sinon.stub(annotator.adder, 'show').returns(annotator.adder)
-      sinon.stub(annotator.adder, 'hide').returns(annotator.adder)
-      sinon.stub(annotator.adder, 'css').returns(annotator.adder)
-      sinon.stub(annotator, 'getSelectedRanges').returns(mockRanges)
-
-      annotator.mouseIsDown    = true
-      annotator.selectedRanges = []
-      annotator.checkForEndSelection(mockEvent)
-
-    afterEach ->
-      Util.mousePosition.restore()
-
-    it "should get the current selection from Annotator#getSelectedRanges()", ->
-      assert(annotator.getSelectedRanges.calledOnce)
-
-    it "should set @mouseIsDown to false", ->
-      assert.isFalse(annotator.mouseIsDown)
-
-    it "should set the Annotator#selectedRanges property", ->
-      assert.equal(annotator.selectedRanges, mockRanges)
-
-    it "should display the Annotator#adder if valid selection", ->
-      assert(annotator.adder.show.calledOnce)
-      assert.isTrue(annotator.adder.css.calledWith(mockOffset))
-      assert.isTrue(Util.mousePosition.calledWith(mockEvent, annotator.wrapper[0]))
-
-    it "should hide the Annotator#adder if NOT valid selection", ->
-      annotator.adder.hide.reset()
-      annotator.adder.show.reset()
-      annotator.getSelectedRanges.returns([])
-
-      annotator.checkForEndSelection(mockEvent)
-      assert(annotator.adder.hide.calledOnce)
-      assert.isFalse(annotator.adder.show.called)
-
-    it "should hide the Annotator#adder if target is part of the annotator", ->
-      annotator.adder.hide.reset()
-      annotator.adder.show.reset()
-
-      mockNode = document.createElement('span')
-      mockEvent.target = annotator.viewer.element[0]
-
-      sinon.stub(annotator, 'isAnnotator').returns(true)
-      annotator.getSelectedRanges.returns([{commonAncestor: mockNode}])
-
-      annotator.checkForEndSelection(mockEvent)
-      assert.isTrue(annotator.isAnnotator.calledWith(mockNode))
-
-      assert.isFalse(annotator.adder.hide.called)
-      assert.isFalse(annotator.adder.show.called)
-
-    it "should return if @ignoreMouseup is true", ->
-      annotator.getSelectedRanges.reset()
-      annotator.ignoreMouseup = true
-      annotator.checkForEndSelection(mockEvent)
-      assert.isFalse(annotator.getSelectedRanges.called)
-
-  describe "isAnnotator", ->
-    it "should return true if the element is part of the annotator", ->
-      elements = [
-        annotator.viewer.element
-        annotator.adder
-        annotator.editor.element.find('ul')
-      ]
-
-      for element in elements
-        assert.isTrue(annotator.isAnnotator(element))
-
-    it "should return false if the element is NOT part of the annotator", ->
-      elements = [
-        null
-        annotator.element.parent()
-        document.createElement('span')
-        annotator.wrapper
-      ]
-      for element in elements
-        assert.isFalse(annotator.isAnnotator(element))
-
-  describe "onAdderMousedown", ->
-    it "should set the @ignoreMouseup property to true", ->
-      annotator.ignoreMouseup = false
-      annotator.onAdderMousedown()
-      assert.isTrue(annotator.ignoreMouseup)
-
-  describe "onAdderClick", ->
-    annotation = null
-    mockOffset = null
-    mockSubscriber = null
-    quote = null
-    element = null
-    normalizedRange = null
-    sniffedRange = null
-
-    beforeEach ->
-      annotation =
-        text: "test"
-      quote = 'This is some annotated text'
-      element = $('<span />').addClass('annotator-hl')
-
-      mockOffset = {top: 0, left:0}
-
-      normalizedRange = {
-        text: sinon.stub().returns(quote)
-        serialize: sinon.stub().returns({})
-      }
-      sniffedRange = {
-        normalize: sinon.stub().returns(normalizedRange)
-      }
-
-      sinon.stub(annotator.adder, 'hide')
-      sinon.stub(annotator.adder, 'position').returns(mockOffset)
-      sinon.spy(annotator, 'setupAnnotation')
-      sinon.spy(annotator.annotations, 'create')
-      sinon.stub(annotator, 'showEditor')
-      sinon.stub(Range, 'sniff').returns(sniffedRange)
-      sinon.spy(element, 'addClass')
-      annotator.selectedRanges = ['foo']
-      annotator.onAdderClick()
-
-    afterEach ->
-      Range.sniff.restore()
-
-    it "should hide the adder", ->
-      assert(annotator.adder.hide.calledOnce)
-
-    it "should set up the annotation", ->
-      assert(annotator.setupAnnotation.calledOnce)
-
-    it "should display the editor", ->
-      assert(annotator.showEditor.calledOnce)
-
-    it "should create the annotation if the edit is saved", ->
-      annotator.onEditorSubmit(annotation)
-      assert(annotator.annotations.create.calledOnce)
-
-    it "should not create the annotation if editing is cancelled", ->
-      do annotator.onEditorHide
-      do annotator.onEditorSubmit
-      assert.isFalse(annotator.annotations.create.called)
 
   describe "onEditAnnotation", ->
     annotation = null

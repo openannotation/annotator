@@ -3,7 +3,7 @@ Util = require('../src/util')
 $ = Util.$
 
 class MockSelection
-  rangeCount: 1
+  rangeCount: 0
   isCollapsed: false
 
   constructor: (fixElem, data) ->
@@ -23,14 +23,25 @@ class MockSelection
       @commonAncestor = @commonAncestor.parentNode
     @commonAncestorXPath = xpath.fromNode($(@commonAncestor))[0]
 
-  getRangeAt: ->
-    {
+    @ranges = []
+    this.addRange({
       startContainer: @startContainer
-      startOffset:    @startOffset
-      endContainer:   @endContainer
-      endOffset:      @endOffset
+      startOffset: @startOffset
+      endContainer: @endContainer
+      endOffset: @endOffset
       commonAncestorContainer: @commonAncestor
-    }
+    })
+
+  getRangeAt: (i) ->
+    @ranges[i]
+
+  removeAllRanges: ->
+    @ranges = []
+    @rangeCount = 0
+
+  addRange: (r) ->
+    @ranges.push(r)
+    @rangeCount += 1
 
   resolvePath: (path) ->
     if typeof path is "number"

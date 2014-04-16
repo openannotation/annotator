@@ -3,12 +3,13 @@ Util = require('../util')
 $ = Util.$
 _t = Util.TranslationString
 
-ns = 'annotator-adder'
-adderHtml = """
-            <div class="annotator-adder">
-              <button type="button">#{_t('Annotate')}</button>
-            </div>
-            """
+ADDER_NS = 'annotator-adder'
+ADDER_HIDE_CLASS = 'annotator-hide'
+ADDER_HTML = """
+             <div class="annotator-adder #{ADDER_HIDE_CLASS}">
+               <button type="button">#{_t('Annotate')}</button>
+             </div>
+             """
 
 # Public: Provide an easy selection adder for HTML documents
 class Adder
@@ -23,8 +24,13 @@ class Adder
   pluginInit: ->
     if @element.ownerDocument?
       @document = @element.ownerDocument
-      this.adder = $(adderHtml).appendTo(@document.body).hide()
-      this._addEvents()
+      @adder = $(ADDER_HTML).appendTo(@document.body)[0]
+      $(@adder)
+      .on("click.#{ADDER_NS}", 'button', this._onClick)
+      .on("mousedown.#{ADDER_NS}", 'button', this._onMousedown)
+
+      $(@document.body)
+      .on("mouseup.#{ADDER_NS}", this._checkForEndSelection)
     else
       console.warn("You created an instance of the Adder on an element that
                     doesn't have an ownerDocument. This won't work! Please
@@ -32,19 +38,41 @@ class Adder
                     configured:", @element)
 
   destroy: ->
-    this._removeEvents()
-
-  _addEvents: ->
     $(@adder)
-    .on("click.#{ns}", 'button', this._onClick)
-    .on("mousedown.#{ns}", 'button', this._onMousedown)
+    .off(".#{ADDER_NS}")
+    .remove()
+    $(@document.body).off(".#{ADDER_NS}")
 
-    $(@document.body)
-    .on("mouseup.#{ns}", this._checkForEndSelection)
+  # Public: Show the adder.
+  #
+  # Returns nothing.
+  show: =>
+    if @core.interactionPoint?
+      $(@adder).css({
+        top: @core.interactionPoint.top,
+        left: @core.interactionPoint.left
+      })
+    $(@adder).removeClass(ADDER_HIDE_CLASS)
 
-  _removeEvents: ->
-    $(@adder).off(".#{ns}")
-    $(@document.body).off(".#{ns}")
+  # Public: Hide the adder.
+  #
+  # Returns nothing.
+  hide: =>
+    $(@adder).addClass(ADDER_HIDE_CLASS)
+
+  # Public: Returns true if the adder is currently displayed, false otherwise.
+  #
+  # Examples
+  #
+  #   adder.show()
+  #   adder.isShown() # => true
+  #
+  #   adder.hide()
+  #   adder.isShown() # => false
+  #
+  # Returns true if the adder is visible.
+  isShown: ->
+    not $(@adder).hasClass(ADDER_HIDE_CLASS)
 
   # Event callback: called when the mouse button is released. Checks to see if a
   # selection has been made and if so displays the adder.
@@ -61,24 +89,23 @@ class Adder
     # Get the currently selected ranges.
     @selectedRanges = this._getSelectedRanges()
 
+    if @selectedRanges.length == 0
+      this.hide()
+      return
+
+    # Don't show the adder if the selection was of a part of Annotator itself.
     for range in @selectedRanges
       container = range.commonAncestor
       if $(container).hasClass('annotator-hl')
         container = $(container).parents('[class!=annotator-hl]')[0]
-      return if this._isAnnotator(container)
+      if this._isAnnotator(container)
+        this.hide()
+        return
 
-    if event and @selectedRanges.length
-      offset = @adder.parent().offset()
-      interactionPoint = {
-        top: event.pageY - offset.top,
-        left: event.pageX - offset.left,
-      }
-      @core.interactionPoint = interactionPoint
-      @adder
-        .css(interactionPoint)
-        .show()
-    else
-      @adder.hide()
+    # If we got this far, there are real selected ranges on a part of the page
+    # we're interested in. Show the adder!
+    @core.interactionPoint = Util.mousePosition(event)
+    this.show()
 
   # Public: Gets the current selection excluding any nodes that fall outside of
   # the adder `element`. Then returns an Array of NormalizedRange instances.
@@ -144,7 +171,7 @@ class Adder
     event?.preventDefault()
 
     # Hide the adder
-    @adder.hide()
+    this.hide()
     @ignoreMouseup = false
 
     # Create a new annotation

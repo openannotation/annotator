@@ -161,14 +161,14 @@ Util.maxZIndex = ($elements) ->
       parseInt($(el).css('z-index'), 10) or -1
   Math.max.apply(Math, all)
 
-Util.mousePosition = (e, offsetEl) ->
-  # If the offset element is not a positioning root use its offset parent
-  unless $(offsetEl).css('position') in ['absolute', 'fixed', 'relative']
-    offsetEl = $(offsetEl).offsetParent()[0]
-  offset = $(offsetEl).offset()
+# Returns the absolute position of the mouse relative to the top-left rendered
+# corner of the page (taking into account padding/margin/border on the body
+# element as necessary).
+Util.mousePosition = (event) ->
+  offset = $(Util.getGlobal().document.body).offset()
   {
-    top: e.pageY - offset.top,
-    left: e.pageX - offset.left
+    top: event.pageY - offset.top,
+    left: event.pageX - offset.left,
   }
 
 # Checks to see if an event parameter is provided and contains the prevent
