@@ -1,7 +1,7 @@
 Annotator
 =========
 
-[![Build Status](https://secure.travis-ci.org/openannotation/annotator.png)](http://travis-ci.org/openannotation/annotator)
+[![Build Status](https://secure.travis-ci.org/openannotation/annotator.svg?branch=master)](http://travis-ci.org/openannotation/annotator)
 [![Stories in Ready](https://badge.waffle.io/openannotation/annotator.png?label=ready&title=Ready)](https://waffle.io/openannotation/annotator)
 
 Annotator is a web annotation system. Loaded into a webpage, it provides the
