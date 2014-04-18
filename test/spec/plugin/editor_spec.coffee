@@ -1,7 +1,6 @@
 Editor = require('../../src/editor')
 
-
-describe 'Editor', ->
+xdescribe 'Editor', ->
   editor = null
 
   beforeEach ->

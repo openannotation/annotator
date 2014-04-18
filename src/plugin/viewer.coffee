@@ -39,8 +39,10 @@ class Viewer extends Widget
   # Configuration options
   options:
     defaultFields: true # Add the default field(s) to the viewer.
-    readOnly: false # Start the viewer in read-only mode. No controls will be
-                    # shown.
+    inactivityDelay: 500 # Time, in milliseconds, before the viewer is hidden
+                         # when a user mouses off the viewer.
+    activityDelay: 100 # Time, in milliseconds, before the viewer is updated
+                       # when a user mouses over another annotation.
     showEditButton: false # Show the viewer's "edit" button. If shown, the
                           # button will fire an annotation "update" event, to
                           # which an appropriate editor instance can respond and
@@ -50,12 +52,15 @@ class Viewer extends Widget
 
   # Public: Creates an instance of the Viewer object.
   #
-  # options - An Object literal containing options.
+  # element - An Element within which to attach events to show the viewer
+  #           automatically when the user's mouse hovers over annotation
+  #           highlights.
+  # options - An Object containing options.
   #
   # Examples
   #
   #   # Creates a new viewer, adds a custom field and displays an annotation.
-  #   viewer = new Viewer()
+  #   viewer = new Viewer(elem)
   #   viewer.addField({
   #     load: someLoadCallback
   #   })
@@ -69,6 +74,8 @@ class Viewer extends Widget
     @fields = []
     @annotations = []
     @hideTimer = null
+    @hideTimerDfd = null
+    @hideTimerActivity = null
     @mouseDown = false
 
     if @options.defaultFields
@@ -80,7 +87,7 @@ class Viewer extends Widget
             $(field).html("<i>#{_t 'No Comment'}</i>")
           # FIXME: deprecate and remove this event
           if @core?
-            @core.publish('annotationViewerTextField', [field, annotation])
+            @core.trigger('annotationViewerTextField', field, annotation)
       })
 
   configure: ({@core}) ->
@@ -112,24 +119,15 @@ class Viewer extends Widget
     $(@element).off(".#{ns}")
     super
 
-  # Public: Displays the Viewer and first the "show" event. Can be used as an
-  # event callback and will call Event#preventDefault() on the supplied event.
+  # Public: Show the viewer.
   #
-  # event - Event object provided if method is called by event
-  #         listener (default:undefined)
-  #
-  # Examples
-  #
-  #   # Displays the editor.
-  #   viewer.show()
-  #
-  #   # Displays the viewer on click (prevents default action).
-  #   $('a.show-viewer').bind('click', viewer.show)
-  #
-  # Returns itself.
-  show: (event) =>
-    Util.preventEventDefault event
-
+  # Returns nothing.
+  show: ->
+    if @core.interactionPoint?
+      $(@widget).css({
+        top: @core.interactionPoint.top,
+        left: @core.interactionPoint.left
+      })
     controls = $(@widget)
       .find('.annotator-controls')
       .addClass(@classes.showControls)
@@ -138,58 +136,36 @@ class Viewer extends Widget
     $(@widget).removeClass(@classes.hide)
     this.checkOrientation()
 
-  # Public: Checks to see if the Viewer is currently displayed.
+  # Public: Hide the viewer.
+  #
+  # Returns nothing.
+  hide: ->
+    $(@widget).addClass(@classes.hide)
+
+  # Public: Returns true if the viewer is currently displayed, false otherwise.
   #
   # Examples
   #
   #   viewer.show()
-  #   viewer.isShown() # => Returns true
+  #   viewer.isShown() # => true
   #
   #   viewer.hide()
-  #   viewer.isShown() # => Returns false
+  #   viewer.isShown() # => false
   #
-  # Returns true if the Viewer is visible.
+  # Returns true if the viewer is visible.
   isShown: ->
     not $(@widget).hasClass(@classes.hide)
 
-  # Public: Hides the Editor and fires the "hide" event. Can be used as an event
-  # callback and will call Event#preventDefault() on the supplied event.
+  # Public: Load annotations into the viewer and show it.
   #
-  # event - Event object provided if method is called by event
-  #         listener (default:undefined)
-  #
-  # Examples
-  #
-  #   # Hides the editor.
-  #   viewer.hide()
-  #
-  #   # Hide the viewer on click (prevents default action).
-  #   $('a.hide-viewer').bind('click', viewer.hide)
-  #
-  # Returns itself.
-  hide: (event) =>
-    Util.preventEventDefault event
-    $(@widget).addClass(@classes.hide)
-
-  # Public: Loads annotations into the viewer and shows it. Fires the "load"
-  # event once the viewer is loaded passing the annotations into the callback.
-  #
-  # annotation - An Array of annotation elements.
-  # position - An Object describing where to display the viewer (with properties
-  #            `top` and `left`)
+  # annotation - An Array of annotations.
   #
   # Examples
   #
   #   viewer.load([annotation1, annotation2, annotation3])
   #
-  # Returns itslef.
+  # Returns nothing.
   load: (annotations) =>
-    if @core.interactionPoint?
-      $(@widget).css({
-        top: @core.interactionPoint.top,
-        left: @core.interactionPoint.left
-      })
-
     @annotations = annotations || []
 
     list = $(@widget).find('ul:first').empty()
@@ -208,21 +184,17 @@ class Viewer extends Widget
       else
         link.attr('href', links[0].href)
 
-      if @options.readOnly
-        edit.remove()
-        del.remove()
+      controller = {}
+      if @options.showEditButton
+        controller.showEdit = -> edit.removeAttr('disabled')
+        controller.hideEdit = -> edit.attr('disabled', 'disabled')
       else
-        controller = {}
-        if @options.showEditButton
-          controller.showEdit = -> edit.removeAttr('disabled')
-          controller.hideEdit = -> edit.attr('disabled', 'disabled')
-        else
-          edit.remove()
-        if @options.showDeleteButton
-          controller.showDelete = -> del.removeAttr('disabled')
-          controller.hideDelete = -> del.attr('disabled', 'disabled')
-        else
-          del.remove()
+        edit.remove()
+      if @options.showDeleteButton
+        controller.showDelete = -> del.removeAttr('disabled')
+        controller.hideDelete = -> del.attr('disabled', 'disabled')
+      else
+        del.remove()
 
       for field in @fields
         element = $(field.element).clone().appendTo(item)[0]
@@ -311,15 +283,13 @@ class Viewer extends Widget
     if @mouseDown
       return
 
-    this._startHideTimer()
+    this._startHideTimer(true)
     .done =>
-      # coffeelint: disable=missing_fat_arrows
       annotations = $(event.target)
         .parents('.annotator-hl')
         .addBack()
-        .map(-> return $(this).data("annotation"))
+        .map((idx, elem) -> $(elem).data("annotation"))
         .toArray()
-      # coffeelint: enable=missing_fat_arrows
 
       # Now show the viewer with the wanted annotations
       offset = $(@widget).parent().offset()
@@ -344,24 +314,41 @@ class Viewer extends Widget
   # viewer has been hidden. If the viewer is already hidden, the promise will be
   # resolved instantly.
   #
+  # activity - A boolean indicating whether the need to hide is due to a user
+  #            actively indicating a desire to view another annotation (as
+  #            opposed to merely mousing off the current one). Default: false
+  #
   # Returns a Promise.
-  _startHideTimer: =>
+  _startHideTimer: (activity = false) =>
     # If timer has already been set, use that one.
     if @hideTimer
-      return @hideTimerDfd
+      if activity == false or @hideTimerActivity == activity
+        return @hideTimerDfd
+      else
+        # The pending timeout is an inactivity timeout, so likely to be too
+        # slow. Clear the pending timeout and start a new (shorter) one!
+        this._clearHideTimer()
+
+    if activity
+      timeout = @options.activityDelay
+    else
+      timeout = @options.inactivityDelay
 
     @hideTimerDfd = $.Deferred()
 
     if not this.isShown()
+      @hideTimer = null
       @hideTimerDfd.resolve()
+      @hideTimerActivity = null
     else
       @hideTimer = setTimeout((=>
         this.hide()
         @hideTimerDfd.resolve()
         @hideTimer = null
-      ), 250)
+      ), timeout)
+      @hideTimerActivity = !!activity
 
-    return @hideTimerDfd
+    return @hideTimerDfd.promise()
 
   # Clears the hide timer. Also rejects any promise returned by a previous call
   # to _startHideTimer.
@@ -369,8 +356,9 @@ class Viewer extends Widget
   # Returns nothing.
   _clearHideTimer: =>
     clearTimeout(@hideTimer)
-    @hideTimerDfd.reject()
     @hideTimer = null
+    @hideTimerDfd.reject()
+    @hideTimerActivity = null
 
 # Private: simple parser for hypermedia link structure
 #

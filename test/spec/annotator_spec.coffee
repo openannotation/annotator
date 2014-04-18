@@ -14,10 +14,6 @@ describe 'Annotator', ->
 
   describe "constructor", ->
     beforeEach ->
-      sinon.stub(annotator, '_setupWrapper').returns(annotator)
-      sinon.stub(annotator, '_setupViewer').returns(annotator)
-      sinon.stub(annotator, '_setupEditor').returns(annotator)
-      sinon.stub(annotator, '_setupDocumentEvents').returns(annotator)
       sinon.stub(annotator, '_setupDynamicStyle').returns(annotator)
 
     it 'should include the default modules', ->
@@ -32,28 +28,6 @@ describe 'Annotator', ->
       Annotator.prototype.constructor.call(annotator, annotator.element[0])
       assert.isTrue(annotator.hasOwnProperty('plugins'))
 
-    it "should call Annotator#_setupWrapper()", ->
-      Annotator.prototype.constructor.call(annotator, annotator.element[0])
-      assert(annotator._setupWrapper.called)
-
-    it "should call Annotator#_setupViewer()", ->
-      Annotator.prototype.constructor.call(annotator, annotator.element[0])
-      assert(annotator._setupViewer.called)
-
-    it "should call Annotator#_setupEditor()", ->
-      Annotator.prototype.constructor.call(annotator, annotator.element[0])
-      assert(annotator._setupEditor.called)
-
-    it "should call Annotator#_setupDocumentEvents()", ->
-      Annotator.prototype.constructor.call(annotator, annotator.element[0])
-      assert(annotator._setupDocumentEvents.called)
-
-    it "should NOT call Annotator#_setupDocumentEvents() if options.readOnly is true", ->
-      Annotator.prototype.constructor.call(annotator, annotator.element[0], {
-        readOnly: true
-      })
-      assert.isFalse(annotator._setupDocumentEvents.called)
-
     it "should call Annotator#_setupDynamicStyle()", ->
       Annotator.prototype.constructor.call(annotator, annotator.element[0])
       assert(annotator._setupDynamicStyle.called)
@@ -62,128 +36,6 @@ describe 'Annotator', ->
     it "should remove Annotator's elements from the page", ->
       annotator.destroy()
       assert.equal(annotator.element.find('[class^=annotator-]').length, 0)
-
-  describe "_setupViewer", ->
-    mockViewer = null
-
-    beforeEach ->
-      element = $('<div />')
-
-      mockViewer =
-        fields: []
-        element: element
-
-      mockViewer.on = -> mockViewer
-      mockViewer.hide = -> mockViewer
-      mockViewer.addField = (options) ->
-        mockViewer.fields.push options
-        mockViewer
-
-      sinon.spy(mockViewer, 'on')
-      sinon.spy(mockViewer, 'hide')
-      sinon.spy(mockViewer, 'addField')
-      sinon.stub(element, 'bind').returns(element)
-      sinon.stub(element, 'appendTo').returns(element)
-      sinon.stub(Annotator, 'Viewer').returns(mockViewer)
-
-      annotator._setupViewer()
-
-    afterEach ->
-      Annotator.Viewer.restore()
-
-    it "should create a new instance of Annotator.Viewer and set Annotator#viewer", ->
-      assert.strictEqual(annotator.viewer, mockViewer)
-
-    it "should hide the annotator on creation", ->
-      assert(mockViewer.hide.calledOnce)
-
-    it "should setup the default text field", ->
-      args = mockViewer.addField.lastCall.args[0]
-
-      assert(mockViewer.addField.calledOnce)
-      assert.equal(typeof args.load, "function")
-
-    it "should set the contents of the field on load", ->
-      field = document.createElement('div')
-      annotation = {text: "test"}
-
-      annotator.viewer.fields[0].load(field, annotation)
-      assert.equal($(field).html(), "test")
-
-    it "should set the contents of the field to placeholder text when empty", ->
-      field = document.createElement('div')
-      annotation = {text: ""}
-
-      annotator.viewer.fields[0].load(field, annotation)
-      assert.equal($(field).html(), "<i>No Comment</i>")
-
-    it "should setup the default text field to publish an event on load", ->
-      field = document.createElement('div')
-      annotation = {text: "test"}
-      callback = sinon.spy()
-
-      annotator.on('annotationViewerTextField', callback)
-      annotator.viewer.fields[0].load(field, annotation)
-      assert(callback.calledWith(field, annotation))
-
-    it "should subscribe to custom events", ->
-      assert.equal('edit', mockViewer.on.args[0][0])
-      assert.equal('delete', mockViewer.on.args[1][0])
-
-    it "should bind to browser mouseover and mouseout events", ->
-      assert(mockViewer.element.bind.calledWith({
-        'mouseover': annotator.clearViewerHideTimer
-        'mouseout':  annotator.startViewerHideTimer
-      }))
-
-    it "should append the Viewer#element to the Annotator#wrapper", ->
-      assert(mockViewer.element.appendTo.calledWith(annotator.wrapper))
-
-  describe "_setupEditor", ->
-    mockEditor = null
-
-    beforeEach ->
-      element = $('<div />')
-
-      mockEditor = {
-        element: element
-      }
-      mockEditor.on = -> mockEditor
-      mockEditor.hide = -> mockEditor
-      mockEditor.addField = -> document.createElement('li')
-
-      sinon.spy(mockEditor, 'on')
-      sinon.spy(mockEditor, 'hide')
-      sinon.spy(mockEditor, 'addField')
-      sinon.stub(element, 'appendTo').returns(element)
-      sinon.stub(Annotator, 'Editor').returns(mockEditor)
-
-      annotator._setupEditor()
-
-    afterEach ->
-      Annotator.Editor.restore()
-
-    it "should create a new instance of Annotator.Editor and set Annotator#editor", ->
-      assert.strictEqual(annotator.editor, mockEditor)
-
-    it "should hide the annotator on creation", ->
-      assert(mockEditor.hide.calledOnce)
-
-    it "should add the default textarea field", ->
-      options = mockEditor.addField.lastCall.args[0]
-
-      assert(mockEditor.addField.calledOnce)
-      assert.equal(options.type, 'textarea')
-      assert.equal(options.label, 'Comments\u2026')
-      assert.typeOf(options.load, 'function')
-      assert.typeOf(options.submit, 'function')
-
-    it "should subscribe to custom events", ->
-      assert(mockEditor.on.calledWith('hide', annotator.onEditorHide))
-      assert(mockEditor.on.calledWith('save', annotator.onEditorSubmit))
-
-    it "should append the Editor#element to the Annotator#wrapper", ->
-      assert(mockEditor.element.appendTo.calledWith(annotator.wrapper))
 
   describe "_setupDynamicStyle", ->
     $fix = null
@@ -219,7 +71,7 @@ describe 'Annotator', ->
 
       $fix.hide()
 
-  describe "setupAnnotation", ->
+  xdescribe "setupAnnotation", ->
     annotation = null
     quote = null
     comment = null
@@ -287,7 +139,7 @@ describe 'Annotator', ->
 
       assert.isTrue(annotator.publish.calledWith('rangeNormalizeFail', [annotation, 1, e]))
 
-  describe "loadAnnotations", ->
+  xdescribe "loadAnnotations", ->
     beforeEach ->
       sinon.stub(annotator, 'setupAnnotation')
       sinon.spy(annotator, 'publish')
@@ -359,126 +211,6 @@ describe 'Annotator', ->
       assert.isFalse(annotator.plugins['Bar']?)
       assert(console.error.calledOnce)
       console.error.restore()
-
-  describe "showEditor", ->
-    beforeEach ->
-      sinon.spy(annotator, 'publish')
-      sinon.spy(annotator.editor, 'load')
-      sinon.spy(annotator.editor.element, 'css')
-
-    it "should call Editor#load() on the Annotator#editor", ->
-      annotation = {text: 'my annotation comment'}
-      annotator.showEditor(annotation, {})
-      assert.isTrue(annotator.editor.load.calledWith(annotation))
-
-    it "should set the top/left properties of the Editor#element", ->
-      location = {top: 20, left: 20}
-      annotator.showEditor({}, location)
-      assert.isTrue(annotator.editor.element.css.calledWith(location))
-
-    it "should publish the 'annotationEditorShown' event passing the editor and annotations", ->
-      annotation = {text: 'my annotation comment'}
-      annotator.showEditor(annotation, {})
-      assert(annotator.publish.calledWith('annotationEditorShown', [annotator.editor, annotation]))
-
-  describe "onEditorHide", ->
-    it "should publish the 'annotationEditorHidden' event and provide the Editor and annotation", ->
-      sinon.spy(annotator, 'publish')
-      annotator.onEditorHide()
-      assert(annotator.publish.calledWith('annotationEditorHidden', [annotator.editor]))
-
-    it "should set the Annotator#ignoreMouseup property to false", ->
-      annotator.ignoreMouseup = true
-      annotator.onEditorHide()
-      assert.isFalse(annotator.ignoreMouseup)
-
-  describe "onEditorSubmit", ->
-    annotation = null
-
-    beforeEach ->
-      annotation = {"text": "bah"}
-      sinon.spy(annotator, 'publish')
-      sinon.spy(annotator, 'setupAnnotation')
-
-    it "should publish the 'annotationEditorSubmit' event and pass the Editor and annotation", ->
-      annotator.onEditorSubmit(annotation)
-      assert(annotator.publish.calledWith('annotationEditorSubmit', [annotator.editor, annotation]))
-
-  describe "showViewer", ->
-    beforeEach ->
-      sinon.spy(annotator, 'publish')
-      sinon.spy(annotator.viewer, 'load')
-      sinon.spy(annotator.viewer.element, 'css')
-
-    it "should call Viewer#load() on the Annotator#viewer", ->
-      annotations = [{text: 'my annotation comment'}]
-      annotator.showViewer(annotations, {})
-      assert.isTrue(annotator.viewer.load.calledWith(annotations))
-
-    it "should set the top/left properties of the Editor#element", ->
-      location = {top: 20, left: 20}
-      annotator.showViewer([], location)
-      assert.isTrue(annotator.viewer.element.css.calledWith(location))
-
-    it "should publish the 'annotationViewerShown' event passing the viewer and annotations", ->
-      annotations = [{text: 'my annotation comment'}]
-      annotator.showViewer(annotations, {})
-      assert(annotator.publish.calledWith('annotationViewerShown', [annotator.viewer, annotations]))
-
-  describe "startViewerHideTimer", ->
-    beforeEach ->
-      sinon.spy(annotator.viewer, 'hide')
-
-    it "should call Viewer.hide() on the Annotator#viewer after 250ms", ->
-      clock = sinon.useFakeTimers()
-      annotator.startViewerHideTimer()
-      clock.tick(250)
-      assert(annotator.viewer.hide.calledOnce)
-      clock.restore()
-
-    it "should NOT call Viewer.hide() on the Annotator#viewer if @viewerHideTimer is set", ->
-      clock = sinon.useFakeTimers()
-      annotator.viewerHideTimer = 60
-      annotator.startViewerHideTimer()
-      clock.tick(250)
-      assert.isFalse(annotator.viewer.hide.calledOnce)
-      clock.restore()
-
-  describe "clearViewerHideTimer", ->
-    it "should clear the @viewerHideTimer property", ->
-      annotator.viewerHideTimer = 456
-      annotator.clearViewerHideTimer()
-      assert.isFalse(annotator.viewerHideTimer)
-
-  describe "onEditAnnotation", ->
-    annotation = null
-    mockOffset = null
-    mockSubscriber = null
-
-    beforeEach ->
-      annotation = {id: 123, text: "my mock annotation"}
-      mockOffset = {top: 0, left: 0}
-      mockSubscriber = sinon.spy()
-      sinon.spy(annotator, "showEditor")
-      sinon.spy(annotator.annotations, "update")
-      sinon.spy(annotator.viewer, "hide")
-      sinon.stub(annotator.viewer.element, "position").returns(mockOffset)
-      annotator.onEditAnnotation(annotation)
-
-    it "should hide the viewer", ->
-      assert(annotator.viewer.hide.calledOnce)
-
-    it "should show the editor", ->
-      assert(annotator.showEditor.calledOnce)
-
-    it "should update the annotation if the edit is saved", ->
-      annotator.onEditorSubmit(annotation)
-      assert(annotator.annotations.update.calledWith(annotation))
-
-    it "should not update the annotation if editing is cancelled", ->
-      do annotator.onEditorHide
-      annotator.onEditorSubmit(annotation)
-      assert.isFalse(annotator.annotations.update.calledWith(annotation))
 
 
 describe 'Annotator.Factory', ->
