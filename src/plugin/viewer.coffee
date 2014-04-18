@@ -89,7 +89,8 @@ class Viewer extends Widget
     if @element.ownerDocument?
       @document = @element.ownerDocument
       @item = $(@html.item)
-      @widget = $(@html.viewer).appendTo(@document.body)
+      @widget = $(@html.viewer).appendTo(@document.body).get(0)
+      $(@widget)
       .on("click.#{ns}", '.annotator-edit', this._onEditClick)
       .on("click.#{ns}", '.annotator-delete', this._onDeleteClick)
       .on("mouseenter.#{ns}", this._onMouseenter)
@@ -129,12 +130,12 @@ class Viewer extends Widget
   show: (event) =>
     Util.preventEventDefault event
 
-    controls = @widget
+    controls = $(@widget)
       .find('.annotator-controls')
       .addClass(@classes.showControls)
     setTimeout((=> controls.removeClass(@classes.showControls)), 500)
 
-    @widget.removeClass(@classes.hide)
+    $(@widget).removeClass(@classes.hide)
     this.checkOrientation()
 
   # Public: Checks to see if the Viewer is currently displayed.
@@ -149,7 +150,7 @@ class Viewer extends Widget
   #
   # Returns true if the Viewer is visible.
   isShown: ->
-    not @widget.hasClass(@classes.hide)
+    not $(@widget).hasClass(@classes.hide)
 
   # Public: Hides the Editor and fires the "hide" event. Can be used as an event
   # callback and will call Event#preventDefault() on the supplied event.
@@ -168,7 +169,7 @@ class Viewer extends Widget
   # Returns itself.
   hide: (event) =>
     Util.preventEventDefault event
-    @widget.addClass(@classes.hide)
+    $(@widget).addClass(@classes.hide)
 
   # Public: Loads annotations into the viewer and shows it. Fires the "load"
   # event once the viewer is loaded passing the annotations into the callback.
@@ -184,14 +185,14 @@ class Viewer extends Widget
   # Returns itslef.
   load: (annotations) =>
     if @core.interactionPoint?
-      @widget.css({
+      $(@widget).css({
         top: @core.interactionPoint.top,
         left: @core.interactionPoint.left
       })
 
     @annotations = annotations || []
 
-    list = @widget.find('ul:first').empty()
+    list = $(@widget).find('ul:first').empty()
     for annotation in @annotations
       item = $(@item).clone().appendTo(list).data('annotation', annotation)
       controls = item.find('.annotator-controls')
@@ -321,7 +322,7 @@ class Viewer extends Widget
       # coffeelint: enable=missing_fat_arrows
 
       # Now show the viewer with the wanted annotations
-      offset = @widget.parent().offset()
+      offset = $(@widget).parent().offset()
       @core.interactionPoint = {
         top: event.pageY - offset.top,
         left: event.pageX - offset.left,

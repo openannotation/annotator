@@ -58,7 +58,7 @@ class Editor extends Widget
 
     @fields = []
     @annotation = {}
-    @widget = $(@html)
+    @widget = $(@html).get(0)
 
     if @options.defaultFields
       this.addField({
@@ -73,7 +73,7 @@ class Editor extends Widget
   configure: ({@core}) ->
 
   pluginInit: ->
-    @widget.appendTo(@options.document.body)
+    $(@widget).appendTo(@options.document.body)
     .on("submit.#{ns}", 'form', this._onFormSubmit)
     .on("click.#{ns}", '.annotator-save', this._onSaveClick)
     .on("click.#{ns}", '.annotator-cancel', this._onCancelClick)
@@ -91,14 +91,16 @@ class Editor extends Widget
   #
   # Returns itself.
   show: ->
-    @widget.removeClass(@classes.hide)
-    @widget.find('.annotator-save').addClass(@classes.focus)
+    $(@widget)
+    .removeClass(@classes.hide)
+    .find('.annotator-save')
+    .addClass(@classes.focus)
 
     # invert if necessary
     this.checkOrientation()
 
     # give main textarea focus
-    @widget.find(":input:first").focus()
+    $(@widget).find(":input:first").focus()
 
     #this._setupDraggables()
 
@@ -107,7 +109,7 @@ class Editor extends Widget
   #
   # Returns itself.
   hide: ->
-    @widget.addClass(@classes.hide)
+    $(@widget).addClass(@classes.hide)
 
   # Public: Loads an annotation into the Editor and displays it.
   #
@@ -121,7 +123,7 @@ class Editor extends Widget
   # Returns itself.
   load: (annotation) =>
     if @core.interactionPoint?
-      @widget.css({
+      $(@widget).css({
         top: @core.interactionPoint.top,
         left: @core.interactionPoint.left
       })
@@ -238,7 +240,7 @@ class Editor extends Widget
       element.addClass('annotator-checkbox')
       element.append($('<label />', {for: field.id, html: field.label}))
 
-    @widget.find('ul:first').append(element)
+    $(@widget).find('ul:first').append(element)
 
     @fields.push field
 
@@ -247,10 +249,10 @@ class Editor extends Widget
   checkOrientation: ->
     super
 
-    list = @widget.find('ul')
-    controls = @widget.find('.annotator-controls')
+    list = $(@widget).find('ul')
+    controls = $(@widget).find('.annotator-controls')
 
-    if @widget.hasClass(@classes.invert.y)
+    if $(@widget).hasClass(@classes.invert.y)
       controls.insertBefore(list)
     else if controls.is(':first-child')
       controls.insertAfter(list)
@@ -283,7 +285,7 @@ class Editor extends Widget
   #
   # Returns nothing
   _onCancelMouseover: =>
-    @widget.find('.' + @classes.focus).removeClass(@classes.focus)
+    $(@widget).find('.' + @classes.focus).removeClass(@classes.focus)
 
   # Event callback: listens for the following special keypresses.
   # - escape: Hides the editor
@@ -315,20 +317,20 @@ class Editor extends Widget
   #
   # Returns nothing.
   _setupDraggables: ->
-    @widget.find('.annotator-resize').remove()
+    $(@widget).find('.annotator-resize').remove()
 
     # Find the first/last item element depending on orientation
-    if @widget.hasClass(@classes.invert.y)
-      cornerItem = @widget.find('.annotator-item:last')
+    if $(@widget).hasClass(@classes.invert.y)
+      cornerItem = $(@widget).find('.annotator-item:last')
     else
-      cornerItem = @widget.find('.annotator-item:first')
+      cornerItem = $(@widget).find('.annotator-item:first')
 
     if cornerItem
       $('<span class="annotator-resize"></span>').appendTo(cornerItem)
 
     mousedown = null
     classes   = @classes
-    editor    = @widget
+    editor    = $(@widget)
     textarea  = null
     resize    = editor.find('.annotator-resize')
     controls  = editor.find('.annotator-controls')

@@ -22,13 +22,13 @@ class Widget
   #
   # Returns nothing.
   destroy: ->
-    @widget.remove()
+    $(@widget).remove()
 
   checkOrientation: ->
     this.resetOrientation()
 
     window   = $(Util.getGlobal())
-    widget   = @widget.children(":first")
+    widget   = $(@widget).children(":first")
     offset   = widget.offset()
     viewport = {
       top: window.scrollTop(),
@@ -55,7 +55,7 @@ class Widget
   #
   # Returns itself for chaining.
   resetOrientation: ->
-    @widget.removeClass(@classes.invert.x).removeClass(@classes.invert.y)
+    $(@widget).removeClass(@classes.invert.x).removeClass(@classes.invert.y)
     this
 
   # Public: Inverts the widget on the X axis.
@@ -66,7 +66,7 @@ class Widget
   #
   # Returns itself for chaining.
   invertX: ->
-    @widget.addClass @classes.invert.x
+    $(@widget).addClass(@classes.invert.x)
     this
 
   # Public: Inverts the widget on the Y axis.
@@ -77,20 +77,20 @@ class Widget
   #
   # Returns itself for chaining.
   invertY: ->
-    @widget.addClass @classes.invert.y
+    $(@widget).addClass(@classes.invert.y)
     this
 
   # Public: Find out whether or not the widget is currently upside down
   #
   # Returns a boolean: true if the widget is upside down
   isInvertedY: ->
-    @widget.hasClass @classes.invert.y
+    $(@widget).hasClass(@classes.invert.y)
 
   # Public: Find out whether or not the widget is currently right aligned
   #
   # Returns a boolean: true if the widget is right aligned
   isInvertedX: ->
-    @widget.hasClass @classes.invert.x
+    $(@widget).hasClass(@classes.invert.x)
 
 
 # Export the Widget object
