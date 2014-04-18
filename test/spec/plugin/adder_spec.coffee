@@ -18,6 +18,7 @@ describe 'Adder plugin', ->
 
   afterEach ->
     plugin.destroy()
+    h.clearFixtures()
 
   it 'should start hidden', ->
     assert.isFalse(plugin.isShown())
