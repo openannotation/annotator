@@ -1,5 +1,6 @@
 h = require('helpers')
 Adder = require('../../../src/plugin/adder')
+Range = require('../../../src/range')
 Util = require('../../../src/util')
 $ = Util.$
 
@@ -11,7 +12,11 @@ describe 'Adder plugin', ->
   beforeEach ->
     h.addFixture('adder')
     elem = h.fix()
-    core = {}
+    core = {
+      annotations: {
+        create: sinon.spy()
+      }
+    }
     plugin = new Adder(elem)
     plugin.configure({core: core})
     plugin.pluginInit()
@@ -22,6 +27,7 @@ describe 'Adder plugin', ->
 
   it 'should start hidden', ->
     assert.isFalse(plugin.isShown())
+
 
   describe '.show()', ->
     it 'should make the adder widget visible', ->
@@ -43,11 +49,13 @@ describe 'Adder plugin', ->
         core.interactionPoint
       )
 
+
   describe '.hide()', ->
     it 'should hide the adder widget', ->
       plugin.show()
       plugin.hide()
       assert.isFalse($(plugin.adder).is(':visible'))
+
 
   describe '.isShown()', ->
     it 'should return true if the adder is shown', ->
@@ -64,6 +72,61 @@ describe 'Adder plugin', ->
       plugin.destroy()
       assert.isFalse(document.body in $(plugin.adder).parents())
 
+
+  describe '.create(ranges)', ->
+    range1 = null
+    range2 = null
+
+    beforeEach ->
+      range1 = {
+        text: -> '  Hello world!   '
+        serialize: -> {serialised: "range1"}
+      }
+      range2 = {
+        text: -> 'Giraffes wearing sunglasses'
+        serialize: -> {serialised: "range2"}
+      }
+
+    it "should return an annotation with a quote field, containing the quoted
+        text, stripped of leading and trailing whitespace", ->
+      annotation = plugin.create([range1])
+      assert.equal(annotation.quote, 'Hello world!')
+
+    it 'should join the quotes of multiple ranges with " / "', ->
+      annotation = plugin.create([range1, range2])
+      assert.equal(
+        annotation.quote,
+        'Hello world! / Giraffes wearing sunglasses'
+      )
+
+    it "should return an annotation with a ranges field, containing an array
+        of serialized ranges", ->
+      annotation = plugin.create([range1, range2])
+      assert.deepEqual(annotation.ranges, [
+        {serialised: "range1"},
+        {serialised: "range2"},
+      ])
+
+
+  describe '.captureDocumentSelection()', ->
+
+    beforeEach ->
+      mockSelection = new h.MockSelection(
+        h.fix(),
+        ['/div/p', 0, '/div/p', 1, 'Hello world!', '--']
+      )
+      sinon.stub(Util.getGlobal(), 'getSelection').returns(mockSelection)
+
+    afterEach ->
+      Util.getGlobal().getSelection.restore()
+
+    it "should capture and normalise the current document selections", ->
+      ranges = plugin.captureDocumentSelection()
+      assert.equal(ranges.length, 1)
+      assert.equal(ranges[0].text(), 'Hello world!')
+      assert.equal(ranges[0].normalize(), ranges[0])
+
+
   describe 'event listeners', ->
     mockOffset = null
     mockRanges = null
@@ -75,7 +138,6 @@ describe 'Adder plugin', ->
         h.fix(),
         ['/div/p', 0, '/div/p', 1, 'Hello world!', '--']
       )
-      core.annotations = {create: sinon.stub()}
       sinon.stub(Util, 'mousePosition').returns(mockOffset)
       sinon.stub(Util.getGlobal(), 'getSelection').returns(mockSelection)
 

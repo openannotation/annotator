@@ -1,5 +1,6 @@
 BackboneEvents = require('backbone-events-standalone')
 Highlights = require('../../../src/plugin/highlights')
+Range = require('../../../src/range')
 Annotator = require('annotator')
 $ = Annotator.Util.$
 
@@ -163,6 +164,9 @@ describe 'Highlights plugin', ->
         }]
       }
 
+    afterEach ->
+      Range.sniff.restore?()
+
     it "should return drawn highlights", ->
       highlights = plugin.draw(ann)
 
@@ -190,6 +194,27 @@ describe 'Highlights plugin', ->
 
       assert.equal(highlights.length, 1)
       assert.equal($(highlights[0]).attr('data-annotation-id'), ann.id)
+
+    # FIXME: This probably shouldn't be part of the Highlights plugin
+    it "should trigger 'rangeNormalizeFail' if the annotation fails to
+        normalize", (done) ->
+      e = new Range.RangeError("typ", "msg")
+      sinon.stub(Range, 'sniff').returns({
+        normalize: sinon.stub().throws(e)
+      })
+      core.on('rangeNormalizeFail', (annotation, range, err) ->
+        try
+          assert.equal(annotation.id, 123)
+          assert.deepEqual(range, {fake: 'range'})
+          assert.equal(err, e)
+          done()
+        catch ex
+          done(ex)
+      )
+      plugin.draw({
+        id: 123
+        ranges: [{fake: 'range'}]
+      })
 
 
   describe '.undraw(annotation)', ->

@@ -97,7 +97,7 @@ class Highlights
       catch e
         if e instanceof Range.RangeError
           # FIXME: This shouldn't happen here
-          @core.trigger('rangeNormalizeFail', [annotation, r, e])
+          @core.trigger('rangeNormalizeFail', annotation, r, e)
         else
           # Oh Javascript, why you so crap? This will lose the traceback.
           throw e

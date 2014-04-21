@@ -17,7 +17,6 @@ class Adder
   constructor: (element) ->
     @element = element
     @ignoreMouseup = false
-    @selectedRanges = null
 
   configure: ({@core}) ->
 
@@ -74,44 +73,39 @@ class Adder
   isShown: ->
     not $(@adder).hasClass(ADDER_HIDE_CLASS)
 
-  # Event callback: called when the mouse button is released. Checks to see if a
-  # selection has been made and if so displays the adder.
+  # Public: Create an annotation.
   #
-  # event - A mouseup Event object.
+  # ranges - An Array of NormalizedRanges to use when creating the annotation.
+  #          Defaults to the currently selected ranges within the document.
   #
-  # Returns nothing.
-  _checkForEndSelection: (event) =>
-    # This prevents the note image from jumping away on the mouseup
-    # of a click on icon.
-    if @ignoreMouseup
-      return
+  # Returns the initialised annotation.
+  create: (ranges = null) ->
+    if ranges is null
+      ranges = this.captureDocumentSelection()
 
-    # Get the currently selected ranges.
-    @selectedRanges = this._getSelectedRanges()
+    annotation = {
+      quote: [],
+      ranges: [],
+    }
 
-    if @selectedRanges.length == 0
-      this.hide()
-      return
+    for normed in ranges
+      annotation.quote.push($.trim(normed.text()))
+      annotation.ranges.push(
+        normed.serialize(@element, '.annotator-hl')
+      )
 
-    # Don't show the adder if the selection was of a part of Annotator itself.
-    for range in @selectedRanges
-      container = range.commonAncestor
-      if $(container).hasClass('annotator-hl')
-        container = $(container).parents('[class!=annotator-hl]')[0]
-      if this._isAnnotator(container)
-        this.hide()
-        return
+    # Join all the quotes into one string.
+    annotation.quote = annotation.quote.join(' / ')
 
-    # If we got this far, there are real selected ranges on a part of the page
-    # we're interested in. Show the adder!
-    @core.interactionPoint = Util.mousePosition(event)
-    this.show()
+    @core.annotations.create(annotation)
 
-  # Public: Gets the current selection excluding any nodes that fall outside of
-  # the adder `element`. Then returns an Array of NormalizedRange instances.
+    return annotation
+
+  # Public: capture the current selection from the document, excluding any nodes
+  # that fall outside of the adder's `element`.
   #
-  # Returns Array of NormalizedRange instances.
-  _getSelectedRanges: ->
+  # Returns an Array of NormalizedRange instances.
+  captureDocumentSelection: ->
     selection = Util.getGlobal().getSelection()
 
     ranges = []
@@ -137,10 +131,46 @@ class Adder
       selection.addRange(r)
 
     # Remove any ranges that fell outside @element.
-    $.grep ranges, (range) ->
+    ranges = $.grep(ranges, (range) ->
       # Add the normed range back to the selection if it exists.
       selection.addRange(range.toRange()) if range
       range
+    )
+
+    return ranges
+
+  # Event callback: called when the mouse button is released. Checks to see if a
+  # selection has been made and if so displays the adder.
+  #
+  # event - A mouseup Event object.
+  #
+  # Returns nothing.
+  _checkForEndSelection: (event) =>
+    # This prevents the note image from jumping away on the mouseup
+    # of a click on icon.
+    if @ignoreMouseup
+      return
+
+    # Get the currently selected ranges.
+    @selectedRanges = this.captureDocumentSelection()
+
+    if @selectedRanges.length == 0
+      this.hide()
+      return
+
+    # Don't show the adder if the selection was of a part of Annotator itself.
+    for range in @selectedRanges
+      container = range.commonAncestor
+      if $(container).hasClass('annotator-hl')
+        container = $(container).parents('[class!=annotator-hl]')[0]
+      if this._isAnnotator(container)
+        this.hide()
+        return
+
+    # If we got this far, there are real selected ranges on a part of the page
+    # we're interested in. Show the adder!
+    @core.interactionPoint = Util.mousePosition(event)
+    this.show()
 
   # Event callback: called when the mouse button is depressed on the adder.
   #
@@ -175,29 +205,7 @@ class Adder
     @ignoreMouseup = false
 
     # Create a new annotation
-    annotation = this._createAnnotation()
-    @core.annotations.create(annotation)
-
-  # Initialise an annotation, generating a serializable representation of the
-  # annotation from the current selection.
-  #
-  # Returns the initialised annotation.
-  _createAnnotation: ->
-    annotation = {
-      quote: [],
-      ranges: [],
-    }
-
-    for normed in @selectedRanges
-      annotation.quote.push($.trim(normed.text()))
-      annotation.ranges.push(
-        normed.serialize(@element, '.annotator-hl')
-      )
-
-    # Join all the quotes into one string.
-    annotation.quote = annotation.quote.join(' / ')
-
-    annotation
+    this.create(@selectedRanges)
 
   # Determines if the provided element is part of Annotator. Useful for ignoring
   # mouse actions on the annotator elements.
