@@ -313,6 +313,23 @@ describe 'Highlights plugin', ->
         catch e
           done(e)
 
+    it "should draw highlights in chunks of @options.chunkSize at a time,
+        pausing for @options.chunkDelay between draws", ->
+      clock = sinon.useFakeTimers()
+      sinon.stub(plugin, 'draw')
+
+      plugin.options.chunkSize = 7
+      plugin.options.chunkDelay = 42
+
+      annotations = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
+
+      plugin.drawAll(annotations)
+      assert.equal(plugin.draw.callCount, 7)
+      clock.tick(42)
+      assert.equal(plugin.draw.callCount, 13)
+
+      clock.restore()
+      plugin.draw.restore()
 
   describe '.destroy()', ->
 

@@ -62,34 +62,6 @@ describe 'Annotator', ->
 
       $fix.hide()
 
-  xdescribe "loadAnnotations", ->
-    beforeEach ->
-      sinon.stub(annotator, 'setupAnnotation')
-      sinon.spy(annotator, 'publish')
-
-    it "should call Annotator#setupAnnotation for each annotation in the Array", ->
-      annotations = [{}, {}, {}, {}]
-      annotator.loadAnnotations(annotations)
-      assert.equal(annotator.setupAnnotation.callCount, 4)
-
-    it "should publish the annotationsLoaded event with all loaded annotations", ->
-      annotations = [{}, {}, {}, {}]
-      annotator.loadAnnotations(annotations.slice())
-      assert.isTrue(annotator.publish.calledWith('annotationsLoaded', [annotations]))
-
-    it "should break the annotations into blocks of 10", ->
-      clock = sinon.useFakeTimers()
-      annotations = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
-
-      annotator.loadAnnotations(annotations)
-      assert.equal(annotator.setupAnnotation.callCount, 10)
-
-      while annotations.length > 0
-        clock.tick(10)
-
-      assert.equal(annotator.setupAnnotation.callCount, 13)
-      clock.restore()
-
   describe "dumpAnnotations", ->
     it "returns false and prints a warning if no Store plugin is active", ->
       sinon.stub(console, 'warn')
