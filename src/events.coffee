@@ -11,6 +11,8 @@ eventSplitter = /\s+/
 #
 # This code is heavily inspired by the bookshelf project's "trigger-then"
 # package: https://github.com/bookshelf/trigger-then
+#
+# coffeelint: disable=missing_fat_arrows
 triggerThen = (name) ->
   return Promise.all([]) unless @_events
   args = slice.call(arguments, 1)
@@ -35,6 +37,7 @@ triggerThen = (name) ->
   catch e
     return Promise.reject(e)
   Promise.all(dfds)
+# coffeelint: enable=missing_fat_arrows
 
 Events = {}
 
@@ -42,6 +45,8 @@ for own k, v of BackboneEvents when k != 'BackboneEvents'
   Events[k] = v
 
 Events.triggerThen = triggerThen
+
+# coffeelint: disable=missing_fat_arrows
 Events.mixin = (proto) ->
   exports = [
     "on"
@@ -58,5 +63,6 @@ Events.mixin = (proto) ->
   for name in exports
     proto[name] = this[name]
   this
+# coffeelint: enable=missing_fat_arrows
 
 module.exports = Events
