@@ -1,222 +1,348 @@
-Editor = require('../../src/editor')
+Events = require('../../../src/events')
+Editor = require('../../../src/plugin/editor')
+Util = require('../../../src/util')
+$ = Util.$
 
-xdescribe 'Editor', ->
-  editor = null
+describe 'Editor plugin', ->
+  core = null
+  plugin = null
 
   beforeEach ->
-    editor = new Editor()
+    core = {}
+    Events.mixin(core)
 
-  afterEach ->
-    editor.element.remove()
 
-  it "should have an element property", ->
-    assert.ok(editor.element)
-    assert.isTrue(editor.element.hasClass('annotator-editor'))
+  describe 'in default configuration', ->
 
-  describe "events", ->
-    it "should call Editor#submit() when the form is submitted", ->
-      sinon.spy(editor, 'submit')
-      # Prevent the default form submission in the browser.
-      editor.element.find('form').submit((e) -> e.preventDefault()).submit()
-      assert(editor.submit.calledOnce)
-
-    it "should call Editor#submit() when the save button is clicked", ->
-      sinon.spy(editor, 'submit')
-      editor.element.find('.annotator-save').click()
-      assert(editor.submit.calledOnce)
-
-    it "should call Editor#hide() when the cancel button is clicked", ->
-      sinon.spy(editor, 'hide')
-      editor.element.find('.annotator-cancel').click()
-      assert(editor.hide.calledOnce)
-
-    it "should call Editor#onCancelButtonMouseover() when mouse moves over cancel", ->
-      sinon.spy(editor, 'onCancelButtonMouseover')
-      editor.element.find('.annotator-cancel').mouseover()
-      assert(editor.onCancelButtonMouseover.calledOnce)
-
-    it "should call Editor#processKeypress() when a key is pressed in a textarea", ->
-      # Editor needs a text area field.
-      editor.element.find('ul').append('<li><textarea></textarea></li>')
-
-      sinon.spy(editor, 'processKeypress')
-      editor.element.find('textarea').keydown()
-      assert(editor.processKeypress.calledOnce)
-
-  describe "show", ->
-    it "should make the editor visible", ->
-      editor.show()
-      assert.isFalse(editor.element.hasClass('annotator-hide'))
-
-    it "should publish the 'show' event", ->
-      sinon.spy(editor, 'publish')
-      editor.show()
-      assert.isTrue(editor.publish.calledWith('show'))
-
-  describe "hide", ->
-    it "should hide the editor from view", ->
-      editor.hide()
-      assert.isTrue(editor.element.hasClass('annotator-hide'))
-
-    it "should publish the 'show' event", ->
-      sinon.spy(editor, 'publish')
-      editor.hide()
-      assert.isTrue(editor.publish.calledWith('hide'))
-
-  describe "load", ->
     beforeEach ->
-      editor.annotation = {text: 'test'}
-      editor.fields = [
-        {
-          element: 'element0',
-          load: sinon.spy()
-        },
-        {
-          element: 'element1',
-          load: sinon.spy()
-        }
-      ]
-
-      # TODO: investigate why the following tests fail (editor.load blocks)
-      #       unless the following has been called.
-      # sinon.spy(editor, 'show')
-
-    it "should call #show()", ->
-      sinon.spy(editor, 'show')
-      editor.load()
-      assert(editor.show.calledOnce)
-
-    it "should set the current annotation", ->
-      editor.load({text: 'Hello there'})
-      assert.equal(editor.annotation.text, 'Hello there')
-
-    it "should call the load callback on each field in the group", ->
-      editor.load()
-      assert(editor.fields[0].load.calledOnce)
-      assert(editor.fields[1].load.calledOnce)
-
-    it "should pass the field element and an annotation to the callback", ->
-      editor.load()
-      assert(editor.fields[0].load.calledWith(editor.fields[0].element, editor.annotation))
-
-    it "should publish the 'load' event", ->
-      sinon.spy(editor, 'publish')
-      editor.load()
-      assert.isTrue(editor.publish.calledWith('load', [editor.annotation]))
-
-  describe "submit", ->
-    beforeEach ->
-      editor.annotation = {text: 'test'}
-      editor.fields = [
-        {
-          element: 'element0',
-          submit: sinon.spy()
-        },
-        {
-          element: 'element1',
-          submit: sinon.spy()
-        }
-      ]
-
-    it "should call #hide()", ->
-      sinon.spy(editor, 'hide')
-      editor.submit()
-      assert(editor.hide.calledOnce)
-
-    it "should call the submit callback on each field in the group", ->
-      editor.submit()
-      assert(editor.fields[0].submit.calledOnce)
-      assert(editor.fields[1].submit.calledOnce)
-
-    it "should pass the field element and an annotation to the callback", ->
-      editor.submit()
-      assert(editor.fields[0].submit.calledWith(editor.fields[0].element, editor.annotation))
-
-    it "should publish the 'save' event", ->
-      sinon.spy(editor, 'publish')
-      editor.submit()
-      assert.isTrue(editor.publish.calledWith('save', [editor.annotation]))
-
-  describe "addField", ->
-    content = null
-
-    beforeEach -> content = editor.element.children()
+      plugin = new Editor()
+      plugin.configure({core: core})
+      plugin.pluginInit()
 
     afterEach ->
-      editor.element.empty().append(content)
-      editor.fields = []
+      plugin.destroy()
 
-    it "should append a new field to the @fields property", ->
-      length = editor.fields.length
+    it 'should start hidden', ->
+      assert.isFalse(plugin.isShown())
 
-      editor.addField()
-      assert.lengthOf(editor.fields, length + 1)
+    describe '.show()', ->
+      it 'should make the editor widget visible', ->
+        plugin.show()
+        assert.isTrue(plugin.isShown())
 
-      editor.addField()
-      assert.lengthOf(editor.fields, length + 2)
+      it 'should use the interactionPoint set on the core object to set its
+          position, if available', ->
+        core.interactionPoint = {
+          top: '100px'
+          left: '200px'
+        }
+        plugin.show()
+        assert.deepEqual(
+          {
+            top: plugin.widget.style.top
+            left: plugin.widget.style.left
+          },
+          core.interactionPoint
+        )
 
-    it "should append a new list element to the editor", ->
-      length = editor.element.find('li').length
 
-      editor.addField()
-      assert.lengthOf(editor.element.find('li'), length + 1)
+    describe '.hide()', ->
+      it 'should hide the editor widget', ->
+        plugin.show()
+        plugin.hide()
+        assert.isFalse(plugin.isShown())
 
-      editor.addField()
-      assert.lengthOf(editor.element.find('li'), length + 2)
 
-    it "should append an input element if no type is specified", ->
-      editor.addField()
-      assert.equal(editor.element.find('li:last :input').prop('type'), 'text')
+    describe '.destroy()', ->
+      it 'should remove the editor from the document', ->
+        plugin.destroy()
+        assert.isFalse(document.body in $(plugin.widget).parents())
 
-    it "should give each element a new id", ->
-      editor.addField()
-      firstID = editor.element.find('li:last :input').attr('id')
 
-      editor.addField()
-      secondID = editor.element.find('li:last :input').attr('id')
-      assert.notEqual(firstID, secondID)
+    describe '.load(annotation)', ->
 
-    it "should append a textarea element if 'textarea' type is specified", ->
-      editor.addField({type: 'textarea'})
-      assert.equal(editor.element.find('li:last :input').prop('type'), 'textarea')
+      it 'should show the widget', ->
+        plugin.load({text: "Hello, world."})
+        assert.isTrue(plugin.isShown())
 
-    it "should append a checkbox element if 'checkbox' type is specified", ->
-      editor.addField({type: 'checkbox'})
-      assert.equal(editor.element.find('li:last :input').prop('type'), 'checkbox')
+      it 'should show the annotation text for editing', ->
+        plugin.load({text: "Hello, world."})
+        assert.equal($(plugin.widget).find('textarea').val(), "Hello, world.")
 
-    it "should append a label element with a for attribute matching the checkbox id", ->
-      editor.addField({type: 'checkbox'})
+
+    describe '.submit()', ->
+      ann = null
+
+      beforeEach ->
+        ann = {text: "Giraffes are tall."}
+        plugin.load(ann)
+
+      it 'should hide the widget', ->
+        plugin.submit()
+        assert.isFalse(plugin.isShown())
+
+      it 'should save any changes made to the annotation text', ->
+        $(plugin.widget).find('textarea').val('Lions are strong.')
+        plugin.submit()
+        assert.equal(ann.text, 'Lions are strong.')
+
+
+    describe '.cancel()', ->
+      ann = null
+
+      beforeEach ->
+        ann = {text: "Blue whales are large."}
+        plugin.load(ann)
+
+      it 'should hide the widget', ->
+        plugin.submit()
+        assert.isFalse(plugin.isShown())
+
+      it 'should NOT save changes made to the annotation text', ->
+        $(plugin.widget).find('textarea').val('Mice are small.')
+        plugin.cancel()
+        assert.equal(ann.text, 'Blue whales are large.')
+
+
+    describe 'custom fields', ->
+      ann = null
+      field = null
+      elem = null
+
+      beforeEach ->
+        ann = {text: "Donkeys with beachballs"}
+        field = {
+          label: "Example field"
+          load: sinon.spy()
+          submit: sinon.spy()
+        }
+        elem = plugin.addField(field)
+
+      it 'should call the load callback of added fields when an annotation is
+          loaded into the editor', ->
+        plugin.load(ann)
+        sinon.assert.calledOnce(field.load)
+
+      it 'should pass a DOM Node as the first argument to the load callback', ->
+        plugin.load(ann)
+        callArgs = field.load.args[0]
+        assert.equal(callArgs[0].nodeType, 1)
+
+      it 'should pass an annotation as the second argument to the load
+          callback', ->
+        plugin.load(ann)
+        callArgs = field.load.args[0]
+        assert.equal(callArgs[1], ann)
+
+      it 'should return the created field element from .addField(field)', ->
+        assert.equal(elem.nodeType, 1)
+
+      it 'should add the plugin label to the field element', ->
+        assert($(elem).html().indexOf('Example field') >= 0)
+
+      it 'should add an <input> element by default', ->
+        assert.equal($(elem).find(':input').prop('tagName'), 'INPUT')
+
+      it 'should add a <textarea> element if type is "textarea"', ->
+        elem2 = plugin.addField({
+          label: "My textarea"
+          type: "textarea"
+          load: ->
+          submit: ->
+        })
+        assert.equal($(elem2).find(':input').prop('tagName'), 'TEXTAREA')
+
+      it 'should add a <select> element if type is "select"', ->
+        elem2 = plugin.addField({
+          label: "My select"
+          type: "select"
+          load: ->
+          submit: ->
+        })
+        assert.equal($(elem2).find(':input').prop('tagName'), 'SELECT')
+
+      it 'should add an <input type="checkbox"> element if type is
+          "checkbox"', ->
+        elem2 = plugin.addField({
+          label: "My checkbox"
+          type: "checkbox"
+          load: ->
+          submit: ->
+        })
+        assert.equal($(elem2).find(':input').prop('tagName'), 'INPUT')
+        assert.equal($(elem2).find(':input').attr('type'), 'checkbox')
+
+      it 'should call the submit callback of added fields when the editor
+          is submitted', ->
+        plugin.load(ann)
+        plugin.submit()
+        sinon.assert.calledOnce(field.submit)
+
+      it 'should pass a DOM Node as the first argument to the submit
+          callback', ->
+        plugin.load(ann)
+        plugin.submit()
+        callArgs = field.submit.args[0]
+        assert.equal(callArgs[0].nodeType, 1)
+
+      it 'should pass an annotation as the second argument to the load
+          callback', ->
+        plugin.load(ann)
+        plugin.submit()
+        callArgs = field.submit.args[0]
+        assert.equal(callArgs[1], ann)
+
+
+  describe 'with the defaultFields option set to false', ->
+
+    beforeEach ->
+      plugin = new Editor({
+        defaultFields: false
+      })
+      plugin.configure({core: core})
+      plugin.pluginInit()
+
+    afterEach ->
+      plugin.destroy()
+
+    it 'should not add the default fields', ->
+      plugin.load({text: "Anteaters with torches"})
       assert.equal(
-        editor.element.find('li:last :input').attr('id'),
-        editor.element.find('li:last label').attr('for')
+        $(plugin.widget).html().indexOf("Anteaters with torches"),
+        -1
       )
 
-    it "should set placeholder text if a label is provided", ->
-      editor.addField({type: 'textarea', label: 'Tags…'})
-      assert.equal(editor.element.find('li:last :input').attr('placeholder'), 'Tags…')
 
-    it "should return the created list item", ->
-      assert.equal(editor.addField().tagName, 'LI')
+  describe 'event handlers', ->
+    ann = null
 
-  describe "processKeypress", ->
     beforeEach ->
-      sinon.spy(editor, 'hide')
-      sinon.spy(editor, 'submit')
+      plugin = new Editor()
+      plugin.configure({core: core})
+      plugin.pluginInit()
+      ann = {text: 'Turtles with armbands'}
 
-    it "should call Editor#hide() if the escape key is pressed", ->
-      editor.processKeypress({keyCode: 27})
-      assert(editor.hide.calledOnce)
+    afterEach ->
+      plugin.destroy()
 
-    it "should call Editor#submit() if the enter key is pressed", ->
-      editor.processKeypress({keyCode: 13})
-      assert(editor.submit.calledOnce)
+    it 'should submit when the editor form is submitted', ->
+      plugin.load(ann)
+      $(plugin.widget).find('textarea').val('Turtles with bandanas')
+      $(plugin.widget).find('form').submit()
+      assert.equal(ann.text, 'Turtles with bandanas')
+      assert.isFalse(plugin.isShown())
 
-    it "should NOT call Editor#submit() if the shift key is held down", ->
-      editor.processKeypress({keyCode: 13, shiftKey: true})
-      assert.isFalse(editor.submit.called)
+    it 'should submit when the editor submit button is clicked', ->
+      plugin.load(ann)
+      $(plugin.widget).find('textarea').val('Turtles with bandanas')
+      $(plugin.widget).find('.annotator-save').click()
+      assert.equal(ann.text, 'Turtles with bandanas')
+      assert.isFalse(plugin.isShown())
 
-  describe "onCancelButtonMouseover", ->
-    it "should remove the focus class from submit when cancel is hovered", ->
-      editor.element.find('.annotator-save').addClass('annotator-focus')
-      editor.onCancelButtonMouseover()
-      assert.lengthOf(editor.element.find('.annotator-focus'), 0)
+    it 'should cancel editing when the editor cancel button is clicked', ->
+      plugin.load(ann)
+      $(plugin.widget).find('textarea').val('Turtles with bandanas')
+      $(plugin.widget).find('.annotator-cancel').click()
+      assert.equal(ann.text, 'Turtles with armbands')
+      assert.isFalse(plugin.isShown())
+
+    it 'should submit when the user hits <Return> in the main textarea', ->
+      plugin.load(ann)
+      $(plugin.widget).find('textarea')
+      .val('Turtles with bandanas')
+      .trigger({
+        type: 'keydown'
+        which: 13  # Return key
+      })
+      assert.equal(ann.text, 'Turtles with bandanas')
+      assert.isFalse(plugin.isShown())
+
+    it 'should NOT submit when the user hits <Shift>-<Return> in the main
+        textarea', ->
+      plugin.load(ann)
+      $(plugin.widget).find('textarea')
+      .val('Turtles with bandanas')
+      .trigger({
+        type: 'keydown'
+        which: 13  # Return key
+        shiftKey: true
+      })
+      assert.equal(ann.text, 'Turtles with armbands')
+      assert.isTrue(plugin.isShown())
+
+    it 'should cancel editing when the user hits <Esc> in the main textarea', ->
+      plugin.load(ann)
+      $(plugin.widget).find('textarea')
+      .val('Turtles with bandanas')
+      .trigger({
+        type: 'keydown'
+        which: 27  # Escape key
+      })
+      assert.equal(ann.text, 'Turtles with armbands')
+      assert.isFalse(plugin.isShown())
+
+    it 'should load the annotation into the editor when a new annotation is
+        created', ->
+      core.trigger('beforeAnnotationCreated', ann)
+      assert.isTrue(plugin.isShown())
+      assert.equal(
+        $(plugin.widget).find('textarea').val(),
+        "Turtles with armbands"
+      )
+
+    it 'should load the annotation into the editor when an annotation is
+        updated', ->
+      core.trigger('beforeAnnotationUpdated', ann)
+      assert.isTrue(plugin.isShown())
+      assert.equal(
+        $(plugin.widget).find('textarea').val(),
+        "Turtles with armbands"
+      )
+
+    it 'should return a promise to beforeAnnotationCreated that is resolved if
+        the editor is submitted', (done) ->
+      core.triggerThen('beforeAnnotationCreated', ann)
+      .then ->
+        try
+          assert.equal(ann.text, "Updated in the editor")
+          done()
+        catch e
+          done(e)
+      $(plugin.widget).find('textarea').val('Updated in the editor')
+      plugin.submit()
+
+    it 'should return a promise to beforeAnnotationCreated that is rejected if
+        editing is cancelled', (done) ->
+      core.triggerThen('beforeAnnotationCreated', ann)
+      .catch ->
+        done()
+      .then ->
+        done(
+          new Error("ERROR: promise was resolved when it should have been
+                     rejected!")
+        )
+      plugin.cancel()
+
+    it 'should return a promise to beforeAnnotationUpdated that is resolved if
+        the editor is submitted', (done) ->
+      core.triggerThen('beforeAnnotationUpdated', ann)
+      .then ->
+        try
+          assert.equal(ann.text, "Updated in the editor")
+          done()
+        catch e
+          done(e)
+      $(plugin.widget).find('textarea').val('Updated in the editor')
+      plugin.submit()
+
+    it 'should return a promise to beforeAnnotationUpdated that is rejected if
+        editing is cancelled', (done) ->
+      core.triggerThen('beforeAnnotationUpdated', ann)
+      .catch ->
+        done()
+      .then ->
+        done(
+          new Error("ERROR: promise was resolved when it should have been
+                     rejected!")
+        )
+      plugin.cancel()

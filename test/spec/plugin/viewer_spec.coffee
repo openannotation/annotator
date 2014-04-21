@@ -106,8 +106,8 @@ describe 'Viewer plugin', ->
         field = {load: sinon.spy()}
         plugin.addField(field)
 
-      it 'should call the load callback of added fields when the viewer is
-          shown', ->
+      it 'should call the load callback of added fields when annotations are
+          loaded into the viewer', ->
         plugin.load([ann])
         sinon.assert.calledOnce(field.load)
 

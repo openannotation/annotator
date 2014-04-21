@@ -87,10 +87,16 @@ class Editor extends Widget
     $(@widget).off(".#{ns}")
     super
 
-  # Public: Displays the Editor.
+  # Public: Show the editor.
   #
-  # Returns itself.
+  # Returns nothing.
   show: ->
+    if @core.interactionPoint?
+      $(@widget).css({
+        top: @core.interactionPoint.top,
+        left: @core.interactionPoint.left
+      })
+
     $(@widget)
     .removeClass(@classes.hide)
     .find('.annotator-save')
@@ -102,33 +108,36 @@ class Editor extends Widget
     # give main textarea focus
     $(@widget).find(":input:first").focus()
 
-    #this._setupDraggables()
+    this._setupDraggables()
 
-
-  # Public: Hides the Editor.
+  # Public: Hide the editor.
   #
-  # Returns itself.
+  # Returns nothing.
   hide: ->
     $(@widget).addClass(@classes.hide)
 
-  # Public: Loads an annotation into the Editor and displays it.
-  #
-  # annotation - An annotation Object to display for editing.
+  # Public: Returns true if the editor is currently displayed, false otherwise.
   #
   # Examples
   #
-  #   # Diplays the editor with the annotation loaded.
-  #   editor.load({text: 'My Annotation'})
+  #   editor.show()
+  #   editor.isShown() # => true
   #
-  # Returns itself.
-  load: (annotation) =>
-    if @core.interactionPoint?
-      $(@widget).css({
-        top: @core.interactionPoint.top,
-        left: @core.interactionPoint.left
-      })
+  #   editor.hide()
+  #   editor.isShown() # => false
+  #
+  # Returns true if the viewer is visible.
+  isShown: ->
+    not $(@widget).hasClass(@classes.hide)
 
+  # Public: Load an annotation into the editor and display it.
+  #
+  # annotation - An annotation Object to display for editing.
+  #
+  # Returns nothing.
+  load: (annotation) =>
     @annotation = annotation
+
     for field in @fields
       field.load(field.element, @annotation)
 
@@ -136,7 +145,7 @@ class Editor extends Widget
 
   # Public: Submits the editor and saves any changes made to the annotation.
   #
-  # Returns itself.
+  # Returns nothing.
   submit: ->
     for field in @fields
       field.submit(field.element, @annotation)
@@ -295,9 +304,9 @@ class Editor extends Widget
   #
   # Returns nothing
   _onTextareaKeydown: (event) =>
-    if event.keyCode is 27 # "Escape" key => abort.
+    if event.which is 27 # "Escape" key => abort.
       this.cancel()
-    else if event.keyCode is 13 and !event.shiftKey
+    else if event.which is 13 and !event.shiftKey
       # If "return" was pressed without the shift key, we're done.
       this.submit()
 
