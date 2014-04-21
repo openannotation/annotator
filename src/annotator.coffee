@@ -13,7 +13,7 @@ AnnotationRegistry = require('./annotations')
 # Core plugins
 Adder = require('./plugin/adder')
 Editor = require('./plugin/editor')
-Highlights = require('./plugin/highlights')
+Highlighter = require('./plugin/highlighter')
 NullStore = require('./plugin/nullstore')
 Viewer = require('./plugin/viewer')
 
@@ -84,7 +84,7 @@ class Annotator extends Delegator
       # and use it to bootstrap.
       factory = new Factory()
       factory.setStore(NullStore)
-      factory.addPlugin(Highlights, element)
+      factory.addPlugin(Highlighter, element)
       factory.addPlugin(Viewer, element, {
         showEditButton: not @options.readOnly,
         showDeleteButton: not @options.readOnly,
@@ -332,7 +332,7 @@ Annotator.hideNotification = notification.hide
 # Register the default store
 Annotator.Plugin.register('Adder', Adder)
 Annotator.Plugin.register('Editor', Editor)
-Annotator.Plugin.register('Highlights', Highlights)
+Annotator.Plugin.register('Highlighter', Highlighter)
 Annotator.Plugin.register('NullStore', NullStore)
 Annotator.Plugin.register('Viewer', Viewer)
 

@@ -125,7 +125,7 @@
 
       var Adder = Annotator.Plugin.fetch('Adder');
       var Editor = Annotator.Plugin.fetch('Editor');
-      var Highlights = Annotator.Plugin.fetch('Highlights');
+      var Highlighter = Annotator.Plugin.fetch('Highlighter');
       var Viewer = Annotator.Plugin.fetch('Viewer');
       var Store = Annotator.Plugin.fetch('Store');
       var Auth = Annotator.Plugin.fetch('Auth');
@@ -136,7 +136,7 @@
 
       var devAnnotator = factory
         .addPlugin(Adder, elem)
-        .addPlugin(Highlights, elem)
+        .addPlugin(Highlighter, elem)
         .addPlugin(Viewer, elem, {
           showEditButton: true,
           showDeleteButton: true,

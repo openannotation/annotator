@@ -1,5 +1,5 @@
 BackboneEvents = require('backbone-events-standalone')
-Highlights = require('../../../src/plugin/highlights')
+Highlighter = require('../../../src/plugin/highlighter')
 Range = require('../../../src/range')
 Annotator = require('annotator')
 $ = Annotator.Util.$
@@ -133,7 +133,7 @@ testData = [
 ]
 
 
-describe 'Highlights plugin', ->
+describe 'Highlighter plugin', ->
   elem = null
   core = null
   plugin = null
@@ -142,7 +142,7 @@ describe 'Highlights plugin', ->
     elem = $(testDocument).get(0)
     core = {}
     BackboneEvents.mixin(core)
-    plugin = new Highlights(elem)
+    plugin = new Highlighter(elem)
     plugin.configure({core: core})
     plugin.pluginInit()
 
@@ -195,7 +195,7 @@ describe 'Highlights plugin', ->
       assert.equal(highlights.length, 1)
       assert.equal($(highlights[0]).attr('data-annotation-id'), ann.id)
 
-    # FIXME: This probably shouldn't be part of the Highlights plugin
+    # FIXME: This probably shouldn't be part of the Highlighter plugin
     it "should trigger 'rangeNormalizeFail' if the annotation fails to
         normalize", (done) ->
       e = new Range.RangeError("typ", "msg")
