@@ -4,6 +4,7 @@ $ = Annotator.Util.$
 
 
 describe 'Tags plugin', ->
+  el = null
   annotator = null
   plugin = null
 
@@ -13,6 +14,11 @@ describe 'Tags plugin', ->
     plugin = new Tags(el)
     plugin.annotator = annotator
     plugin.pluginInit()
+
+  afterEach ->
+    annotator.destroy()
+    plugin.destroy?()
+    $(el).remove()
 
   it "should parse whitespace-delimited tags into an array", ->
     str = 'one two  three\tfourFive'
@@ -81,7 +87,7 @@ describe 'Tags plugin', ->
       assert.lengthOf($(field).parent(), 0)
 
 
-describe 'Annotator.Plugin.Tags.filterCallback', ->
+describe 'Tags plugin filterCallback', ->
   filter = null
   beforeEach -> filter = Tags.filterCallback
 

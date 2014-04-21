@@ -34,7 +34,9 @@ describe 'Annotator::setupPlugins', ->
       sinon.spy(annotator, 'addPlugin')
       annotator.setupPlugins()
 
-    afterEach -> window.Showdown = _Showdown
+    afterEach ->
+      window.Showdown = _Showdown
+      annotator.destroy()
 
     describe 'it includes the Unsupported plugin', ->
       it 'should add the Unsupported plugin by default', ->
@@ -70,6 +72,9 @@ describe 'Annotator::setupPlugins', ->
         Filter:
           appendTo: h.fix()
 
+    afterEach ->
+      annotator.destroy()
+
     it 'should add the Store plugin', ->
       assert(annotator.addPlugin.calledWith('Store'))
 
@@ -81,6 +86,9 @@ describe 'Annotator::setupPlugins', ->
 
   describe 'called with plugin options', ->
     beforeEach -> annotator = new Annotator(h.fix())
+
+    afterEach ->
+      annotator.destroy()
 
     it 'should override default plugin options', ->
       annotator.setupPlugins null,

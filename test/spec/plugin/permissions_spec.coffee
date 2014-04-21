@@ -15,7 +15,10 @@ describe 'Permissions plugin', ->
     permissions.annotator = annotator
     permissions.pluginInit()
 
-  afterEach -> $(el).remove()
+  afterEach ->
+    annotator.destroy()
+    permissions.destroy()
+    $(el).remove()
 
   it "it should add the current user object to newly created annotations on beforeAnnotationCreated", ->
     ann = {}

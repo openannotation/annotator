@@ -9,8 +9,11 @@ $ = Util.$
 describe 'Annotator', ->
   annotator = null
 
-  beforeEach -> annotator = new Annotator($('<div></div>')[0])
-  afterEach  -> $(document).unbind()
+  beforeEach ->
+    annotator = new Annotator($('<div></div>')[0])
+
+  afterEach ->
+    annotator.destroy()
 
   describe "constructor", ->
     beforeEach ->
@@ -19,18 +22,6 @@ describe 'Annotator', ->
     it 'should include the default modules', ->
       assert.isObject(annotator['annotations'], 'annotations service exists')
       assert.isObject(annotator['annotations'], 'storage service exists')
-
-    it "should have a jQuery wrapper as @element", ->
-      Annotator.prototype.constructor.call(annotator, annotator.element[0])
-      assert.instanceOf(annotator.element, $)
-
-    it "should create an empty @plugin object", ->
-      Annotator.prototype.constructor.call(annotator, annotator.element[0])
-      assert.isTrue(annotator.hasOwnProperty('plugins'))
-
-    it "should call Annotator#_setupDynamicStyle()", ->
-      Annotator.prototype.constructor.call(annotator, annotator.element[0])
-      assert(annotator._setupDynamicStyle.called)
 
   describe "#destroy()", ->
     it "should remove Annotator's elements from the page", ->
