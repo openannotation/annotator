@@ -55,13 +55,12 @@ describe 'Events', ->
       t.on('foo', -> p1)
       t.on('foo', -> p2)
 
-      t.triggerThen('foo')
-      .catch ->
+      p = t.triggerThen('foo')
+      p.catch ->
         assert.deepEqual(['a', 'b'], out)
         done()
-      .then ->
-        assert.fail('Should have rejected this promise!')
-        done()
+      p.then ->
+        done(new Error('Should have rejected this promise!'))
 
       out.push('a')
       resolver()
@@ -74,12 +73,11 @@ describe 'Events', ->
 
       t.on('foo', -> console.log(i.do.not.exist))
 
-      t.triggerThen('foo')
-      .catch ->
+      p = t.triggerThen('foo')
+      p.catch ->
         done()
-      .then ->
-        assert.fail('Should have rejected this promise!')
-        done()
+      p.then ->
+        done(new Error('Should have rejected this promise!'))
 
     it 'should trigger the magic "all" listener', (done) ->
       out = []

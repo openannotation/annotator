@@ -313,10 +313,10 @@ describe 'Editor plugin', ->
 
     it 'should return a promise to beforeAnnotationCreated that is rejected if
         editing is cancelled', (done) ->
-      core.triggerThen('beforeAnnotationCreated', ann)
-      .catch ->
+      p = core.triggerThen('beforeAnnotationCreated', ann)
+      p.catch ->
         done()
-      .then ->
+      p.then ->
         done(
           new Error("ERROR: promise was resolved when it should have been
                      rejected!")
@@ -337,10 +337,10 @@ describe 'Editor plugin', ->
 
     it 'should return a promise to beforeAnnotationUpdated that is rejected if
         editing is cancelled', (done) ->
-      core.triggerThen('beforeAnnotationUpdated', ann)
-      .catch ->
+      p = core.triggerThen('beforeAnnotationUpdated', ann)
+      p.catch ->
         done()
-      .then ->
+      p.then ->
         done(
           new Error("ERROR: promise was resolved when it should have been
                      rejected!")
