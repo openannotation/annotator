@@ -104,13 +104,15 @@ class Editor extends Widget
   #
   # Returns nothing.
   show: ->
+    widget = $(@widget)
+
     if @core.interactionPoint?
-      $(@widget).css({
+      widget.css({
         top: @core.interactionPoint.top,
         left: @core.interactionPoint.left
       })
 
-    $(@widget)
+    widget
     .removeClass(@classes.hide)
     .find('.annotator-save')
     .addClass(@classes.focus)
@@ -119,7 +121,7 @@ class Editor extends Widget
     this.checkOrientation()
 
     # give main textarea focus
-    $(@widget).find(":input:first").focus()
+    widget.find(":input:first").focus()
 
     this._setupDraggables()
 
@@ -271,10 +273,12 @@ class Editor extends Widget
   checkOrientation: ->
     super
 
-    list = $(@widget).find('ul')
-    controls = $(@widget).find('.annotator-controls')
+    widget = $(@widget)
 
-    if $(@widget).hasClass(@classes.invert.y)
+    list = widget.find('ul')
+    controls = widget.find('.annotator-controls')
+
+    if widget.hasClass(@classes.invert.y)
       controls.insertBefore(list)
     else if controls.is(':first-child')
       controls.insertAfter(list)
@@ -336,23 +340,23 @@ class Editor extends Widget
   #
   # Returns nothing.
   _setupDraggables: ->
-    $(@widget).find('.annotator-resize').remove()
+    widget = $(@widget)
+    widget.find('.annotator-resize').remove()
 
     # Find the first/last item element depending on orientation
-    if $(@widget).hasClass(@classes.invert.y)
-      cornerItem = $(@widget).find('.annotator-item:last')
+    if widget.hasClass(@classes.invert.y)
+      cornerItem = widget.find('.annotator-item:last')
     else
-      cornerItem = $(@widget).find('.annotator-item:first')
+      cornerItem = widget.find('.annotator-item:first')
 
     if cornerItem
       $('<span class="annotator-resize"></span>').appendTo(cornerItem)
 
     mousedown = null
     classes   = @classes
-    editor    = $(@widget)
     textarea  = null
-    resize    = editor.find('.annotator-resize')
-    controls  = editor.find('.annotator-controls')
+    resize    = widget.find('.annotator-resize')
+    controls  = widget.find('.annotator-controls')
     throttle  = false
 
     # coffeelint: disable=missing_fat_arrows
@@ -365,7 +369,7 @@ class Editor extends Widget
         }
 
         # Find the first text area if there is one.
-        textarea = editor.find('textarea:first')
+        textarea = widget.find('textarea:first')
 
         $(window).bind({
           'mouseup.annotator-editor-resize': onMouseup
@@ -389,8 +393,8 @@ class Editor extends Widget
           height = textarea.outerHeight()
           width  = textarea.outerWidth()
 
-          directionX = if editor.hasClass(classes.invert.x) then -1 else  1
-          directionY = if editor.hasClass(classes.invert.y) then  1 else -1
+          directionX = if widget.hasClass(classes.invert.x) then -1 else  1
+          directionY = if widget.hasClass(classes.invert.y) then  1 else -1
 
           textarea.height height + (diff.top  * directionY)
           textarea.width  width  + (diff.left * directionX)
@@ -402,9 +406,9 @@ class Editor extends Widget
           mousedown.left = event.pageX unless textarea.outerWidth()  == width
 
         else if mousedown.element == controls[0]
-          editor.css({
-            top: parseInt(editor.css('top'), 10) + diff.top
-            left: parseInt(editor.css('left'), 10) + diff.left
+          widget.css({
+            top: parseInt(widget.css('top'), 10) + diff.top
+            left: parseInt(widget.css('left'), 10) + diff.left
           })
 
           mousedown.top  = event.pageY

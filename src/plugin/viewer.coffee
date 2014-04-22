@@ -136,17 +136,18 @@ class Viewer extends Widget
   #
   # Returns nothing.
   show: ->
+    widget = $(@widget)
     if @core.interactionPoint?
-      $(@widget).css({
+      widget.css({
         top: @core.interactionPoint.top,
         left: @core.interactionPoint.left
       })
-    controls = $(@widget)
+    controls = widget
       .find('.annotator-controls')
       .addClass(@classes.showControls)
     setTimeout((=> controls.removeClass(@classes.showControls)), 500)
 
-    $(@widget).removeClass(@classes.hide)
+    widget.removeClass(@classes.hide)
     this.checkOrientation()
 
   # Public: Hide the viewer.
