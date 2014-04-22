@@ -143,9 +143,9 @@
         })
         .addPlugin(Editor)
         .setStore(Store, {prefix: 'http://localhost:5000'})
-        // .addPlugin(Auth, {tokenUrl: 'http://localhost:4000/api/token'})
-        // .addPlugin(Permissions)
-        // .addPlugin(Unsupported)
+        .addPlugin(Auth, {tokenUrl: 'http://localhost:4000/api/token'})
+        .addPlugin(Permissions)
+        .addPlugin(Unsupported)
         .getInstance();
 
       devAnnotator.subscribe('beforeAnnotationCreated', function (annotation) {
