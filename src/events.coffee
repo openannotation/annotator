@@ -1,8 +1,6 @@
 BackboneEvents = require('backbone-events-standalone')
 Promise = require('./util').Promise
 
-push = Array::push
-slice = Array::slice
 eventSplitter = /\s+/
 
 # Fires events as `trigger` normally would, but assumes that some of the
@@ -13,27 +11,27 @@ eventSplitter = /\s+/
 # package: https://github.com/bookshelf/trigger-then
 #
 # coffeelint: disable=missing_fat_arrows
-triggerThen = (name) ->
+triggerThen = (name, args...) ->
   return Promise.all([]) unless @_events
-  args = slice.call(arguments, 1)
   dfds = []
-  evts = undefined
   if eventSplitter.test(name)
     names = name.split(eventSplitter)
     for name in names
-      Array::push.call(dfds, triggerThen.apply(this, [name].concat(args)))
+      dfds.push(triggerThen.apply(this, [name, args...]))
     return Promise.all(dfds)
   else
-    evts = @_events[name]
+    events = @_events[name]
   allEvents = @_events.all
 
   # Wrap in a try/catch to reject the promise if any errors are thrown within
   # the handlers.
   try
-    if evts
-      push.apply(dfds, ev.callback.apply(ev.ctx, args) for ev in evts)
+    if events
+      results = (ev.callback.apply(ev.ctx, args) for ev in events)
+      dfds = dfds.concat(results)
     if allEvents
-      push.apply(dfds, ev.callback.apply(ev.ctx, arguments) for ev in allEvents)
+      results = (ev.callback.apply(ev.ctx, [name, args...]) for ev in allEvents)
+      dfds = dfds.concat(results)
   catch e
     return Promise.reject(e)
   Promise.all(dfds)
