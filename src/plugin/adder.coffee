@@ -73,16 +73,12 @@ class Adder
   isShown: ->
     not $(@adder).hasClass(ADDER_HIDE_CLASS)
 
-  # Public: Create an annotation.
+  # Public: Create a skeleton for an annotation, based on a list of ranges.
   #
   # ranges - An Array of NormalizedRanges to use when creating the annotation.
-  #          Defaults to the currently selected ranges within the document.
   #
-  # Returns the initialised annotation.
-  create: (ranges = null) ->
-    if ranges is null
-      ranges = this.captureDocumentSelection()
-
+  # Returns the data structure which should be used to init the annotation.
+  createSkeleton: (ranges) ->
     annotation = {
       quote: [],
       ranges: [],
@@ -96,8 +92,6 @@ class Adder
 
     # Join all the quotes into one string.
     annotation.quote = annotation.quote.join(' / ')
-
-    @core.annotations.create(annotation)
 
     return annotation
 
@@ -152,14 +146,14 @@ class Adder
       return
 
     # Get the currently selected ranges.
-    @selectedRanges = this.captureDocumentSelection()
+    selectedRanges = this.captureDocumentSelection()
 
-    if @selectedRanges.length == 0
+    if selectedRanges.length == 0
       this.hide()
       return
 
     # Don't show the adder if the selection was of a part of Annotator itself.
-    for range in @selectedRanges
+    for range in selectedRanges
       container = range.commonAncestor
       if $(container).hasClass('annotator-hl')
         container = $(container).parents('[class!=annotator-hl]')[0]
@@ -170,6 +164,9 @@ class Adder
     # If we got this far, there are real selected ranges on a part of the page
     # we're interested in. Show the adder!
     @core.interactionPoint = Util.mousePosition(event)
+    @selectedSkeleton = this.createSkeleton(selectedRanges)
+    console.log "Selected skeleton is", @selectedSkeleton
+
     this.show()
 
   # Event callback: called when the mouse button is depressed on the adder.
@@ -205,7 +202,7 @@ class Adder
     @ignoreMouseup = false
 
     # Create a new annotation
-    this.create(@selectedRanges)
+    @core.annotations.create(@selectedSkeleton)
 
   # Determines if the provided element is part of Annotator. Useful for ignoring
   # mouse actions on the annotator elements.
