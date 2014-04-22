@@ -86,9 +86,7 @@ Util.getTextNodes = (jq) ->
     else
       return node
 
-  # coffeelint: disable=missing_fat_arrows
   jq.map -> Util.flatten(getTextNodes(this))
-  # coffeelint: enable=missing_fat_arrows
 
 # Public: determine the last text node inside or before the given node
 Util.getLastTextNodeUpTo = (n) ->
@@ -148,9 +146,7 @@ Util.escape = (html) ->
 
 Util.uuid = (-> counter = -1; -> counter += 1)()
 
-# coffeelint: disable=missing_fat_arrows
 Util.getGlobal = -> (-> this)()
-# coffeelint: enable=missing_fat_arrows
 
 # Return the maximum z-index of any element in $elements (a jQuery collection).
 Util.maxZIndex = ($elements) ->
