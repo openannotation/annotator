@@ -25,26 +25,20 @@ describe 'AnnotationRegistry', ->
 
       a.create({some: 'data'})
       .then ->
-        try
-          assert(s.create.calledOnce, 'store .create() called once')
-          assert(
-            s.create.calledWith(sinon.match({some: 'data'})),
-            'store .create() called with correct args'
-          )
-          done()
-        catch e
-          done(e)
+        assert(s.create.calledOnce, 'store .create() called once')
+        assert(
+          s.create.calledWith(sinon.match({some: 'data'})),
+          'store .create() called with correct args'
+        )
+      .then(done, done)
 
     it "should return a promise resolving to the created annotation", (done) ->
       ann = {some: 'data'}
       a.create(ann)
       .then (ret) ->
-        try
-          assert.equal(ret, ann)
-          assert.property(ret, 'id', 'created annotation has an id')
-          done()
-        catch e
-          done(e)
+        assert.equal(ret, ann)
+        assert.property(ret, 'id', 'created annotation has an id')
+      .then(done, done)
 
   describe '#update()', ->
 
@@ -52,15 +46,12 @@ describe 'AnnotationRegistry', ->
 
       a.update({id: '123', some: 'data'})
       .then ->
-        try
-          assert(s.update.calledOnce, 'store .update() called once')
-          assert(
-            s.update.calledWith(sinon.match({id: '123', some: 'data'})),
-            'store .update() called with correct args'
-          )
-          done()
-        catch e
-          done(e)
+        assert(s.update.calledOnce, 'store .update() called once')
+        assert(
+          s.update.calledWith(sinon.match({id: '123', some: 'data'})),
+          'store .update() called with correct args'
+        )
+      .then(done, done)
 
     it "should throw a TypeError if the data lacks an id", ->
       ann = {some: 'data'}
@@ -72,15 +63,12 @@ describe 'AnnotationRegistry', ->
 
       a.delete({id: '123', some: 'data'})
       .then ->
-        try
-          assert(s.delete.calledOnce, 'store .delete() called once')
-          assert(
-            s.delete.calledWith(sinon.match({id: '123', some: 'data'})),
-            'store .delete() called with correct args'
-          )
-          done()
-        catch e
-          done(e)
+        assert(s.delete.calledOnce, 'store .delete() called once')
+        assert(
+          s.delete.calledWith(sinon.match({id: '123', some: 'data'})),
+          'store .delete() called with correct args'
+        )
+      .then(done, done)
 
     it "should throw a TypeError if the data lacks an id", ->
       ann = {some: 'data'}

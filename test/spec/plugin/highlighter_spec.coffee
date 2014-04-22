@@ -305,13 +305,10 @@ describe 'Highlighter plugin', ->
        highlights", (done) ->
       plugin.drawAll(anns)
       .then (highlights) ->
-        try
-          assert.equal(highlights.length, 2)
-          assert.equal($(highlights[0]).text(), 'Hello world!')
-          assert.equal($(highlights[1]).text(), 'Giraffes like leaves')
-          done()
-        catch e
-          done(e)
+        assert.equal(highlights.length, 2)
+        assert.equal($(highlights[0]).text(), 'Hello world!')
+        assert.equal($(highlights[1]).text(), 'Giraffes like leaves')
+      .then(done, done)
 
     it "should draw highlights in chunks of @options.chunkSize at a time,
         pausing for @options.chunkDelay between draws", ->

@@ -303,11 +303,8 @@ describe 'Editor plugin', ->
         the editor is submitted', (done) ->
       core.triggerThen('beforeAnnotationCreated', ann)
       .then ->
-        try
-          assert.equal(ann.text, "Updated in the editor")
-          done()
-        catch e
-          done(e)
+        assert.equal(ann.text, "Updated in the editor")
+      .then(done, done)
       $(plugin.widget).find('textarea').val('Updated in the editor')
       plugin.submit()
 
@@ -327,11 +324,8 @@ describe 'Editor plugin', ->
         the editor is submitted', (done) ->
       core.triggerThen('beforeAnnotationUpdated', ann)
       .then ->
-        try
-          assert.equal(ann.text, "Updated in the editor")
-          done()
-        catch e
-          done(e)
+        assert.equal(ann.text, "Updated in the editor")
+      .then(done, done)
       $(plugin.widget).find('textarea').val('Updated in the editor')
       plugin.submit()
 
