@@ -1,4 +1,4 @@
-Range = require('../range')
+BackboneEvents = require('backbone-events-standalone')
 Util = require('../util')
 $ = Util.$
 _t = Util.TranslationString
@@ -11,7 +11,7 @@ ADDER_HTML = """
              </div>
              """
 
-# Public: Provide an easy selection adder for HTML documents
+# Public: Provide an adder button to use for creating annotations
 class Adder
 
   constructor: (element) ->
@@ -23,20 +23,32 @@ class Adder
   pluginInit: ->
     if @element.ownerDocument?
       @document = @element.ownerDocument
+      $(@document.body).on("mouseup.#{ADDER_NS}", this._onMouseup)
       @adder = $(ADDER_HTML).appendTo(@document.body)[0]
       $(@adder)
       .on("click.#{ADDER_NS}", 'button', this._onClick)
       .on("mousedown.#{ADDER_NS}", 'button', this._onMousedown)
 
-      $(@document.body)
-      .on("mouseup.#{ADDER_NS}", this._checkForEndSelection)
+      this.listenTo(@core, 'selection', @onSelection)
+
     else
       console.warn("You created an instance of the Adder on an element that
                     doesn't have an ownerDocument. This won't work! Please
                     ensure the element is added to the DOM before the plugin is
                     configured:", @element)
 
+  onSelection: (annotationSkeleton) =>
+    if annotationSkeleton # Did we get any data?
+      # We have received a prepared annotation skeleton.
+      @selectedSkeleton = annotationSkeleton
+      @show()
+    else
+      # No data means that this was a failed selection.
+      # Hide the adder.
+      @hide()
+
   destroy: ->
+    this.stopListening()
     $(@adder)
     .off(".#{ADDER_NS}")
     .remove()
@@ -73,105 +85,6 @@ class Adder
   isShown: ->
     not $(@adder).hasClass(ADDER_HIDE_CLASS)
 
-  # Public: Create an annotation.
-  #
-  # ranges - An Array of NormalizedRanges to use when creating the annotation.
-  #          Defaults to the currently selected ranges within the document.
-  #
-  # Returns the initialised annotation.
-  create: (ranges = null) ->
-    if ranges is null
-      ranges = this.captureDocumentSelection()
-
-    annotation = {
-      quote: [],
-      ranges: [],
-    }
-
-    for normed in ranges
-      annotation.quote.push($.trim(normed.text()))
-      annotation.ranges.push(
-        normed.serialize(@element, '.annotator-hl')
-      )
-
-    # Join all the quotes into one string.
-    annotation.quote = annotation.quote.join(' / ')
-
-    @core.annotations.create(annotation)
-
-    return annotation
-
-  # Public: capture the current selection from the document, excluding any nodes
-  # that fall outside of the adder's `element`.
-  #
-  # Returns an Array of NormalizedRange instances.
-  captureDocumentSelection: ->
-    selection = Util.getGlobal().getSelection()
-
-    ranges = []
-    rangesToIgnore = []
-    unless selection.isCollapsed
-      ranges = for i in [0...selection.rangeCount]
-        r = selection.getRangeAt(i)
-        browserRange = new Range.BrowserRange(r)
-        normedRange = browserRange.normalize().limit(@element)
-
-        # If the new range falls fully outside our @element, we should add it
-        # back to the document but not return it from this method.
-        rangesToIgnore.push(r) if normedRange is null
-
-        normedRange
-
-      # BrowserRange#normalize() modifies the DOM structure and deselects the
-      # underlying text as a result. So here we remove the selected ranges and
-      # reapply the new ones.
-      selection.removeAllRanges()
-
-    for r in rangesToIgnore
-      selection.addRange(r)
-
-    # Remove any ranges that fell outside @element.
-    ranges = $.grep(ranges, (range) ->
-      # Add the normed range back to the selection if it exists.
-      selection.addRange(range.toRange()) if range
-      range
-    )
-
-    return ranges
-
-  # Event callback: called when the mouse button is released. Checks to see if a
-  # selection has been made and if so displays the adder.
-  #
-  # event - A mouseup Event object.
-  #
-  # Returns nothing.
-  _checkForEndSelection: (event) =>
-    # This prevents the note image from jumping away on the mouseup
-    # of a click on icon.
-    if @ignoreMouseup
-      return
-
-    # Get the currently selected ranges.
-    @selectedRanges = this.captureDocumentSelection()
-
-    if @selectedRanges.length == 0
-      this.hide()
-      return
-
-    # Don't show the adder if the selection was of a part of Annotator itself.
-    for range in @selectedRanges
-      container = range.commonAncestor
-      if $(container).hasClass('annotator-hl')
-        container = $(container).parents('[class!=annotator-hl]')[0]
-      if this._isAnnotator(container)
-        this.hide()
-        return
-
-    # If we got this far, there are real selected ranges on a part of the page
-    # we're interested in. Show the adder!
-    @core.interactionPoint = Util.mousePosition(event)
-    this.show()
-
   # Event callback: called when the mouse button is depressed on the adder.
   #
   # event - A mousedown Event object
@@ -185,6 +98,21 @@ class Adder
     event?.preventDefault()
     # Prevent the selection code from firing when the mouse button is released
     @ignoreMouseup = true
+
+  # Event callback: called when the mouse button is released
+  #
+  # event - A mouseup Event object
+  #
+  # Returns nothing.
+  _onMouseup: (event) =>
+    # Do nothing for right-clicks, middle-clicks, etc.
+    if event.which != 1
+      return
+
+    # Prevent the selection code from firing when the ignoreMouseup flag is set
+    if @ignoreMouseup
+      event.stopImmediatePropagation()
+
 
   # Event callback: called when the adder is clicked. The click event is used as
   # well as the mousedown so that we get the :active state on the @adder when
@@ -205,21 +133,9 @@ class Adder
     @ignoreMouseup = false
 
     # Create a new annotation
-    this.create(@selectedRanges)
+    @core.annotations.create(@selectedSkeleton)
 
-  # Determines if the provided element is part of Annotator. Useful for ignoring
-  # mouse actions on the annotator elements.
-  #
-  # element - An Element or TextNode to check.
-  #
-  # Returns true if the element is a child of an annotator element.
-  _isAnnotator: (element) ->
-    !!$(element)
-      .parents()
-      .addBack()
-      .filter('[class^=annotator-]')
-      .length
-
+BackboneEvents.mixin(Adder.prototype)
 
 # This is a core plugin (registered by default with Annotator), so we don't
 # register here. If you're writing a plugin of your own, please refer to a
