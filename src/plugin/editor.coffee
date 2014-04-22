@@ -325,13 +325,10 @@ class Editor extends Widget
 
   # Event callback: called as an annotation is being created or updated.
   _editAnnotation: (annotation) =>
-    @dfd = {}
-    promise = new Promise((resolve, reject) =>
-      @dfd.resolve = resolve
-      @dfd.reject = reject
+    return new Promise((resolve, reject) =>
+      @dfd = {resolve, reject}
+      this.load(annotation)
     )
-    this.load(annotation)
-    return promise
 
   # Sets up mouse events for resizing and dragging the editor window.
   # window events are bound only when needed and throttled to only update
