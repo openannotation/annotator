@@ -1,3 +1,4 @@
+BackboneEvents = require('backbone-events-standalone')
 Range = require('../range')
 Util = require('../util')
 $ = Util.$
@@ -18,9 +19,7 @@ class Adder
     @element = element
 
   configure: ({@core}) ->
-      @core.ignoreMouseup = false
-      @core.onSuccessfulSelection = @show
-      @core.onFailedSelection = @hide
+    @core.ignoreMouseup = false
 
   pluginInit: ->
     if @element.ownerDocument?
@@ -30,11 +29,18 @@ class Adder
       .on("click.#{ADDER_NS}", 'button', this._onClick)
       .on("mousedown.#{ADDER_NS}", 'button', this._onMousedown)
 
+      this.listenTo(@core, 'successfulSelection', @onSuccessfulSelection)
+      this.listenTo(@core, 'failedSelection', @hide)
+
     else
       console.warn("You created an instance of the Adder on an element that
                     doesn't have an ownerDocument. This won't work! Please
                     ensure the element is added to the DOM before the plugin is
                     configured:", @element)
+
+  onSuccessfulSelection: (annotationSkeleton) =>
+    @selectedSkeleton = annotationSkeleton
+    @show()
 
   destroy: ->
     $(@adder)
@@ -105,8 +111,9 @@ class Adder
     @core.ignoreMouseup = false
 
     # Create a new annotation
-    @core.annotations.create(@core.selectedSkeleton)
+    @core.annotations.create(@selectedSkeleton)
 
+BackboneEvents.mixin(Adder.prototype)
 
 # This is a core plugin (registered by default with Annotator), so we don't
 # register here. If you're writing a plugin of your own, please refer to a

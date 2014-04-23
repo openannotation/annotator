@@ -103,7 +103,7 @@ class TextSelector
     selectedRanges = this.captureDocumentSelection()
 
     if selectedRanges.length == 0
-      @core.onFailedSelection?()
+      @core.trigger('failedSelection')
       return
 
     # Don't show the adder if the selection was of a part of Annotator itself.
@@ -112,16 +112,16 @@ class TextSelector
       if $(container).hasClass('annotator-hl')
         container = $(container).parents('[class!=annotator-hl]')[0]
       if this._isAnnotator(container)
-        @core.onFailedSelection?()
+        @core.trigger('failedSelection')
         return
 
     # If we got this far, there are real selected ranges on a part of the page
     # we're interested in. Show the adder!
     @core.interactionPoint = Util.mousePosition(event)
-    @core.selectedSkeleton = this.createSkeleton(selectedRanges)
 
-    @core.onSuccessfulSelection?()
+    selectedSkeleton = this.createSkeleton(selectedRanges)
 
+    @core.trigger('successfulSelection', selectedSkeleton)
 
   # Determines if the provided element is part of Annotator. Useful for ignoring
   # mouse actions on the annotator elements.
