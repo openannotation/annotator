@@ -43,6 +43,7 @@ class Adder
     @show()
 
   destroy: ->
+    this.stopListening()        
     $(@adder)
     .off(".#{ADDER_NS}")
     .remove()
