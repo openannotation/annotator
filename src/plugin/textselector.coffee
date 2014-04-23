@@ -5,7 +5,7 @@ _t = Util.TranslationString
 
 SELECT_NS = 'annotator-textselect'
 
-# Public: Provide an easy selection adder for HTML documents
+# Public: Provide support to annotate text selections in HTML documents
 class TextSelector
 
   constructor: (element) ->

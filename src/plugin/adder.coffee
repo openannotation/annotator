@@ -11,7 +11,7 @@ ADDER_HTML = """
              </div>
              """
 
-# Public: Provide an easy selection adder for HTML documents
+# Public: Provide an adder button to use for creating annotations
 class Adder
 
   constructor: (element) ->
