@@ -227,7 +227,7 @@ class Annotator extends Delegator
                              query method if you wish to implement direct
                              loading of annotations in the page.")
 
-    this.trigger('loadAnnotations', annotations, null) # null meta object
+    this.trigger('annotationsLoaded', annotations, null) # null meta object
     this
 
   # Public: Calls the Store#dumpAnnotations() method.
