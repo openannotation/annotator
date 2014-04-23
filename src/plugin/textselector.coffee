@@ -94,10 +94,6 @@ class TextSelector
   #
   # Returns nothing.
   _checkForEndSelection: (event) =>
-    # This prevents the note image from jumping away on the mouseup
-    # of a click on icon.
-    if @core.ignoreMouseup
-      return
 
     # Get the currently selected ranges.
     selectedRanges = this.captureDocumentSelection()

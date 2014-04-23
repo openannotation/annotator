@@ -17,13 +17,14 @@ class Adder
 
   constructor: (element) ->
     @element = element
+    @ignoreMouseup = false
 
   configure: ({@core}) ->
-    @core.ignoreMouseup = false
 
   pluginInit: ->
     if @element.ownerDocument?
       @document = @element.ownerDocument
+      $(@document.body).on("mouseup.#{ADDER_NS}", this._onMouseup)
       @adder = $(ADDER_HTML).appendTo(@document.body)[0]
       $(@adder)
       .on("click.#{ADDER_NS}", 'button', this._onClick)
@@ -47,6 +48,7 @@ class Adder
     $(@adder)
     .off(".#{ADDER_NS}")
     .remove()
+    $(@document.body).off(".#{ADDER_NS}")
 
   # Public: Show the adder.
   #
@@ -91,7 +93,22 @@ class Adder
 
     event?.preventDefault()
     # Prevent the selection code from firing when the mouse button is released
-    @core.ignoreMouseup = true
+    @ignoreMouseup = true
+
+  # Event callback: called when the mouse button is released
+  #
+  # event - A mouseup Event object
+  #
+  # Returns nothing.
+  _onMouseup: (event) =>
+    # Do nothing for right-clicks, middle-clicks, etc.
+    if event.which != 1
+      return
+
+    # Prevent the selection code from firing when the ignoreMouseup flag is set
+    if @ignoreMouseup
+      event.stopImmediatePropagation()
+
 
   # Event callback: called when the adder is clicked. The click event is used as
   # well as the mousedown so that we get the :active state on the @adder when
@@ -109,7 +126,7 @@ class Adder
 
     # Hide the adder
     this.hide()
-    @core.ignoreMouseup = false
+    @ignoreMouseup = false
 
     # Create a new annotation
     @core.annotations.create(@selectedSkeleton)
