@@ -231,7 +231,7 @@ class Permissions extends Annotator.Plugin
   # Returns nothing.
   addFieldsToAnnotation: (annotation) =>
     if annotation
-      annotation.permissions = @options.permissions
+      annotation.permissions = $.extend(true, {}, @options.permissions)
       if @user
         annotation.user = @user
 
@@ -281,7 +281,8 @@ class Permissions extends Annotator.Plugin
   #
   # Returns nothing.
   updateAnnotationPermissions: (type, field, annotation) =>
-    annotation.permissions = @options.permissions unless annotation.permissions
+    unless annotation.permissions
+      annotation.permissions = $.extend(true, {}, @options.permissions)
 
     dataKey = type + '-permissions'
 
