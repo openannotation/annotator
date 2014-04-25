@@ -1,3 +1,4 @@
+BackboneEvents = require('backbone-events-standalone')
 h = require('helpers')
 Adder = require('../../../src/plugin/adder')
 Range = require('../../../src/range')
@@ -17,6 +18,7 @@ describe 'Adder plugin', ->
         create: sinon.spy()
       }
     }
+    BackboneEvents.mixin(core)
     plugin = new Adder(elem)
     plugin.configure({core: core})
     plugin.pluginInit()
@@ -73,60 +75,6 @@ describe 'Adder plugin', ->
       assert.isFalse(document.body in $(plugin.adder).parents())
 
 
-  describe '.create(ranges)', ->
-    range1 = null
-    range2 = null
-
-    beforeEach ->
-      range1 = {
-        text: -> '  Hello world!   '
-        serialize: -> {serialised: "range1"}
-      }
-      range2 = {
-        text: -> 'Giraffes wearing sunglasses'
-        serialize: -> {serialised: "range2"}
-      }
-
-    it "should return an annotation with a quote field, containing the quoted
-        text, stripped of leading and trailing whitespace", ->
-      annotation = plugin.create([range1])
-      assert.equal(annotation.quote, 'Hello world!')
-
-    it 'should join the quotes of multiple ranges with " / "', ->
-      annotation = plugin.create([range1, range2])
-      assert.equal(
-        annotation.quote,
-        'Hello world! / Giraffes wearing sunglasses'
-      )
-
-    it "should return an annotation with a ranges field, containing an array
-        of serialized ranges", ->
-      annotation = plugin.create([range1, range2])
-      assert.deepEqual(annotation.ranges, [
-        {serialised: "range1"},
-        {serialised: "range2"},
-      ])
-
-
-  describe '.captureDocumentSelection()', ->
-
-    beforeEach ->
-      mockSelection = new h.MockSelection(
-        h.fix(),
-        ['/div/p', 0, '/div/p', 1, 'Hello world!', '--']
-      )
-      sinon.stub(Util.getGlobal(), 'getSelection').returns(mockSelection)
-
-    afterEach ->
-      Util.getGlobal().getSelection.restore()
-
-    it "should capture and normalise the current document selections", ->
-      ranges = plugin.captureDocumentSelection()
-      assert.equal(ranges.length, 1)
-      assert.equal(ranges[0].text(), 'Hello world!')
-      assert.equal(ranges[0].normalize(), ranges[0])
-
-
   describe 'event listeners', ->
     mockOffset = null
     mockRanges = null
@@ -145,52 +93,28 @@ describe 'Adder plugin', ->
       Util.mousePosition.restore()
       Util.getGlobal().getSelection.restore()
 
-    it "should show itself if a selection was made (on mouseup)", ->
-      $(Util.getGlobal().document.body).trigger('mouseup')
+    it "should show itself on successfulSelection events", ->
+      core.trigger("successfulSelection");
       assert.isTrue(plugin.isShown())
 
-    it "should not show itself if the selection was empty (on mouseup)", ->
-      mockSelection.removeAllRanges()
-      $(Util.getGlobal().document.body).trigger('mouseup')
+    it "should hide itself on failedSelection events", ->
+      plugin.show()
+      core.trigger("failedSelection");
       assert.isFalse(plugin.isShown())
 
-    it "should not show itself if the current selection is of an Annotator
-        element", ->
-      # Set the selection to a div which has the 'annotator-adder' class set.
-      mockSelection = new h.MockSelection(
-        h.fix(),
-        ['/div/div/p', 0, '/div/div/p', 1, 'Part of the Annotator UI.', '--']
-      )
-      Util.getGlobal().getSelection.restore()
-      sinon.stub(Util.getGlobal(), 'getSelection').returns(mockSelection)
-
-      $(Util.getGlobal().document.body).trigger('mouseup')
-      assert.isFalse(plugin.isShown())
-
-    it "should set the interactionPoint to the mouse position if a selection
-        was made (on mouseup)", ->
-      $(Util.getGlobal().document.body).trigger('mouseup')
-      assert.equal(core.interactionPoint, mockOffset)
-
-    it "should create an annotation from the current selection when
+    it "should create an annotation from the skeleton received in the successfulSelection event when
         left-clicked", ->
-      $(Util.getGlobal().document.body).trigger('mouseup')
+      skeleton =
+        magic: "data"
+      core.trigger('successfulSelection', skeleton)
       $(plugin.adder).find('button').trigger({
         type: 'click',
         which: 1,
       })
       sinon.assert.called(core.annotations.create)
       ann = core.annotations.create.args[0][0]  # first arg from first call
-      assert.equal(ann.quote, "Hello world!")
-      assert.deepEqual(
-        ann.ranges[0].toObject(),
-        {
-          start: "/div[1]/p[1]",
-          startOffset: 0,
-          end: "/div[1]/p[1]",
-          endOffset: 12,
-        }
-      )
+      # Was the annotation really created from the skeleton we passed?
+      assert.equal(ann, skeleton)
 
     it "should not create an annotation from the current selection when
         right-clicked", ->
@@ -209,33 +133,3 @@ describe 'Adder plugin', ->
       })
       assert.isFalse(plugin.isShown())
 
-    it "should ignore annotator-created highlight elements when creating
-        annotations", ->
-      # Set the selection to a span which has the 'annotator-hl' class set.
-      mockSelection = new h.MockSelection(
-        h.fix(),
-        ['/div/p[2]/span', 0, '/div/p[2]/span', 1,
-         'Giraffes like leaves.', '--']
-      )
-      Util.getGlobal().getSelection.restore()
-      sinon.stub(Util.getGlobal(), 'getSelection').returns(mockSelection)
-
-      # Make selection
-      $(Util.getGlobal().document.body).trigger('mouseup')
-      # Click on adder
-      $(plugin.adder).find('button').trigger({
-        type: 'click',
-        which: 1,
-      })
-      sinon.assert.called(core.annotations.create)
-      ann = core.annotations.create.args[0][0]  # first arg from first call
-      assert.equal(ann.quote, "Giraffes like leaves.")
-      assert.deepEqual(
-        ann.ranges[0].toObject(),
-        {
-          start: "/div[1]/p[2]",
-          startOffset: 0,
-          end: "/div[1]/p[2]",
-          endOffset: 21,
-        }
-      )

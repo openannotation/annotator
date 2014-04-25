@@ -27,7 +27,7 @@ describe 'Text Selector plugin', ->
     plugin.destroy()
     h.clearFixtures()
 
-  describe '.create(ranges)', ->
+  describe '.createSkeleton(ranges)', ->
     range1 = null
     range2 = null
 
