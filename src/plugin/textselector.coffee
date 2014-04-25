@@ -18,8 +18,8 @@ class TextSelector
       $(@document.body)
       .on("mouseup.#{SELECT_NS}", this._checkForEndSelection)
     else
-      console.warn("You created an instance of the TextSelector on an element that
-                    doesn't have an ownerDocument. This won't work! Please
+      console.warn("You created an instance of the TextSelector on an element
+                    that doesn't have an ownerDocument. This won't work! Please
                     ensure the element is added to the DOM before the plugin is
                     configured:", @element)
 
