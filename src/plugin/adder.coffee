@@ -1,5 +1,4 @@
 BackboneEvents = require('backbone-events-standalone')
-Range = require('../range')
 Util = require('../util')
 $ = Util.$
 _t = Util.TranslationString

@@ -1,7 +1,6 @@
 Range = require('../range')
 Util = require('../util')
 $ = Util.$
-_t = Util.TranslationString
 
 SELECT_NS = 'annotator-textselect'
 
