@@ -1,11 +1,10 @@
-Delegator = require('./delegator')
 Util = require('./util')
 $ = Util.$
 
 
 # Public: Base class for the Editor and Viewer elements. Contains methods that
 # are shared between the two.
-class Widget extends Delegator
+class Widget
   # Classes used to alter the widgets state.
   classes:
     hide: 'annotator-hide'
@@ -15,31 +14,21 @@ class Widget extends Delegator
 
   # Public: Creates a new Widget instance.
   #
-  # element - The Element that represents the widget in the DOM.
-  # options - An Object literal of options.
-  #
-  # Examples
-  #
-  #   element = document.createElement('div')
-  #   widget  = new Annotator.Widget(element)
-  #
   # Returns a new Widget instance.
-  constructor: (element, options) ->
-    super
+  constructor: ->
     @classes = $.extend {}, Widget.prototype.classes, @classes
 
   # Public: Unbind the widget's events and remove its element from the DOM.
   #
   # Returns nothing.
   destroy: ->
-    this.removeEvents()
-    @element.remove()
+    $(@widget).remove()
 
   checkOrientation: ->
     this.resetOrientation()
 
     window   = $(Util.getGlobal())
-    widget   = @element.children(":first")
+    widget   = $(@widget).children(":first")
     offset   = widget.offset()
     viewport = {
       top: window.scrollTop(),
@@ -66,7 +55,7 @@ class Widget extends Delegator
   #
   # Returns itself for chaining.
   resetOrientation: ->
-    @element.removeClass(@classes.invert.x).removeClass(@classes.invert.y)
+    $(@widget).removeClass(@classes.invert.x).removeClass(@classes.invert.y)
     this
 
   # Public: Inverts the widget on the X axis.
@@ -77,7 +66,7 @@ class Widget extends Delegator
   #
   # Returns itself for chaining.
   invertX: ->
-    @element.addClass @classes.invert.x
+    $(@widget).addClass(@classes.invert.x)
     this
 
   # Public: Inverts the widget on the Y axis.
@@ -88,20 +77,20 @@ class Widget extends Delegator
   #
   # Returns itself for chaining.
   invertY: ->
-    @element.addClass @classes.invert.y
+    $(@widget).addClass(@classes.invert.y)
     this
 
   # Public: Find out whether or not the widget is currently upside down
   #
   # Returns a boolean: true if the widget is upside down
   isInvertedY: ->
-    @element.hasClass @classes.invert.y
+    $(@widget).hasClass(@classes.invert.y)
 
   # Public: Find out whether or not the widget is currently right aligned
   #
   # Returns a boolean: true if the widget is right aligned
   isInvertedX: ->
-    @element.hasClass @classes.invert.x
+    $(@widget).hasClass(@classes.invert.x)
 
 
 # Export the Widget object

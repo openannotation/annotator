@@ -1,20 +1,14 @@
-Util = require('./util')
-Widget = require('./widget')
-
+Events = require('../events')
+Util = require('../util')
+Widget = require('../widget')
+Promise = Util.Promise
 $ = Util.$
 _t = Util.TranslationString
 
+ns = 'annotator-editor'
 
 # Public: Creates an element for editing annotations.
 class Editor extends Widget
-
-  # Events to be bound to @element.
-  events:
-    "form submit": "submit"
-    ".annotator-save click": "submit"
-    ".annotator-cancel click": "hide"
-    ".annotator-cancel mouseover": "onCancelButtonMouseover"
-    "textarea keydown": "processKeypress"
 
   # Classes to toggle state.
   classes:
@@ -23,7 +17,7 @@ class Editor extends Widget
 
   # HTML template for @element.
   html: """
-        <div class="annotator-outer annotator-editor">
+        <div class="annotator-outer annotator-editor annotator-hide">
           <form class="annotator-widget">
             <ul class="annotator-listing"></ul>
             <div class="annotator-controls">
@@ -35,13 +29,14 @@ class Editor extends Widget
         </div>
         """
 
-  options: {} # Configuration options
+  # Configuration options
+  options:
+    document: Util.getGlobal().document
+    defaultFields: true # Add the default field(s) to the editor.
 
-  # Public: Creates an instance of the Editor object. This will create the
-  # @element from the @html string and set up all events.
+  # Public: Creates an instance of the Editor object.
   #
-  # options - An Object literal containing options. There are currently no
-  #           options implemented.
+  # options - An Object literal containing options.
   #
   # Examples
   #
@@ -58,123 +53,129 @@ class Editor extends Widget
   #
   # Returns a new Editor instance.
   constructor: (options) ->
-    super $(@html)[0], options
+    super
+    @options = $.extend(true, {}, @options, options)
 
     @fields = []
     @annotation = {}
+    @widget = $(@html).get(0)
 
-  # Public: Displays the Editor and fires a "show" event.
-  # Can be used as an event callback and will call Event#preventDefault()
-  # on the supplied event.
-  #
-  # event - Event object provided if method is called by event
-  #         listener (default:undefined)
-  #
-  # Examples
-  #
-  #   # Displays the editor.
-  #   editor.show()
-  #
-  #   # Displays the editor on click (prevents default action).
-  #   $('a.show-editor').bind('click', editor.show)
-  #
-  # Returns itself.
-  show: (event) =>
-    Util.preventEventDefault event
+    if @options.defaultFields
+      this.addField({
+        type: 'textarea',
+        label: _t('Comments') + '\u2026'
+        load: (field, annotation) ->
+          $(field).find('textarea').val(annotation.text || '')
+        submit: (field, annotation) ->
+          annotation.text = $(field).find('textarea').val()
+      })
 
-    @element.removeClass(@classes.hide)
-    @element.find('.annotator-save').addClass(@classes.focus)
+  configure: ({@core}) ->
+    Object.defineProperty(@core, 'editor', {
+      configurable: true
+      get: =>
+        # FIXME: This is a deprecation warning which suggests an alternative
+        # method which also triggers a deprecation warning. We need to discuss a
+        # better method of tying plugins like Tags, Permissions, etc, into the
+        # Editor.
+        Util.deprecationWarning("The Editor is now an optional plugin, and
+                                 plugins should not refer to it using
+                                 annotator.editor! Please use
+                                 annotator.plugins.Editor instead.")
+        this
+    })
+
+  pluginInit: ->
+    $(@widget).appendTo(@options.document.body)
+    .on("submit.#{ns}", 'form', this._onFormSubmit)
+    .on("click.#{ns}", '.annotator-save', this._onSaveClick)
+    .on("click.#{ns}", '.annotator-cancel', this._onCancelClick)
+    .on("mouseover.#{ns}", '.annotator-cancel', this._onCancelMouseover)
+    .on("keydown.#{ns}", 'textarea', this._onTextareaKeydown)
+    this.listenTo(@core, 'beforeAnnotationCreated', this._editAnnotation)
+    this.listenTo(@core, 'beforeAnnotationUpdated', this._editAnnotation)
+
+  destroy: ->
+    this.stopListening()
+    $(@widget).off(".#{ns}")
+    super
+
+  # Public: Show the editor.
+  #
+  # Returns nothing.
+  show: ->
+    widget = $(@widget)
+
+    if @core.interactionPoint?
+      widget.css({
+        top: @core.interactionPoint.top,
+        left: @core.interactionPoint.left
+      })
+
+    widget
+    .removeClass(@classes.hide)
+    .find('.annotator-save')
+    .addClass(@classes.focus)
 
     # invert if necessary
     this.checkOrientation()
 
     # give main textarea focus
-    @element.find(":input:first").focus()
+    widget.find(":input:first").focus()
 
-    this.setupDraggables()
+    this._setupDraggables()
 
-    this.publish('show')
-
-
-  # Public: Hides the Editor and fires a "hide" event. Can be used as an event
-  # callback and will call Event#preventDefault() on the supplied event.
+  # Public: Hide the editor.
   #
-  # event - Event object provided if method is called by event
-  #         listener (default:undefined)
+  # Returns nothing.
+  hide: ->
+    $(@widget).addClass(@classes.hide)
+
+  # Public: Returns true if the editor is currently displayed, false otherwise.
   #
   # Examples
   #
-  #   # Hides the editor.
+  #   editor.show()
+  #   editor.isShown() # => true
+  #
   #   editor.hide()
+  #   editor.isShown() # => false
   #
-  #   # Hide the editor on click (prevents default action).
-  #   $('a.hide-editor').bind('click', editor.hide)
-  #
-  # Returns itself.
-  hide: (event) =>
-    Util.preventEventDefault event
+  # Returns true if the viewer is visible.
+  isShown: ->
+    not $(@widget).hasClass(@classes.hide)
 
-    @element.addClass(@classes.hide)
-    this.publish('hide')
-
-  # Public: Loads an annotation into the Editor and displays it setting
-  # Editor#annotation to the provided annotation. It fires the "load" event
-  # providing the current annotation subscribers can modify the annotation
-  # before it updates the editor fields.
+  # Public: Load an annotation into the editor and display it.
   #
   # annotation - An annotation Object to display for editing.
   #
-  # Examples
-  #
-  #   # Diplays the editor with the annotation loaded.
-  #   editor.load({text: 'My Annotation'})
-  #
-  #   editor.on('load', (annotation) ->
-  #     console.log annotation.text
-  #   ).load({text: 'My Annotation'})
-  #   # => Outputs "My Annotation"
-  #
-  # Returns itself.
+  # Returns nothing.
   load: (annotation) =>
     @annotation = annotation
-
-    this.publish('load', [@annotation])
 
     for field in @fields
       field.load(field.element, @annotation)
 
     this.show()
 
-  # Public: Hides the Editor and passes the annotation to all registered fields
-  # so they can update its state. It then fires the "save" event so that other
-  # parties can further modify the annotation.
-  # Can be used as an event callback and will call Event#preventDefault() on the
-  # supplied event.
+  # Public: Submits the editor and saves any changes made to the annotation.
   #
-  # event - Event object provided if method is called by event
-  #         listener (default:undefined)
-  #
-  # Examples
-  #
-  #   # Submits the editor.
-  #   editor.submit()
-  #
-  #   # Submits the editor on click (prevents default action).
-  #   $('button.submit-editor').bind('click', editor.submit)
-  #
-  #   # Appends "Comment: " to the annotation comment text.
-  #   editor.on('save', (annotation) ->
-  #     annotation.text = "Comment: " + annotation.text
-  #   ).submit()
-  #
-  # Returns itself.
-  submit: (event) =>
-    Util.preventEventDefault event
-
+  # Returns nothing.
+  submit: ->
     for field in @fields
       field.submit(field.element, @annotation)
+    if @dfd?
+      @dfd.resolve()
 
-    this.publish('save', [@annotation])
+    this.hide()
+
+  # Public: Cancels the editing process, discarding any edits made to the
+  # annotation.
+  #
+  # Returns itself.
+  cancel: ->
+    if @dfd?
+      @dfd.reject('editing cancelled')
 
     this.hide()
 
@@ -263,7 +264,7 @@ class Editor extends Widget
       element.addClass('annotator-checkbox')
       element.append($('<label />', {for: field.id, html: field.label}))
 
-    @element.find('ul:first').append(element)
+    $(@widget).find('ul:first').append(element)
 
     @fields.push field
 
@@ -272,63 +273,92 @@ class Editor extends Widget
   checkOrientation: ->
     super
 
-    list = @element.find('ul')
-    controls = @element.find('.annotator-controls')
+    widget = $(@widget)
 
-    if @element.hasClass(@classes.invert.y)
+    list = widget.find('ul')
+    controls = widget.find('.annotator-controls')
+
+    if widget.hasClass(@classes.invert.y)
       controls.insertBefore(list)
     else if controls.is(':first-child')
       controls.insertAfter(list)
 
     this
 
-  # Event callback. Listens for the following special keypresses.
+  # Event callback: called when a user clicks the editor form (by pressing
+  # return, for example).
+  #
+  # Returns nothing
+  _onFormSubmit: (event) =>
+    Util.preventEventDefault event
+    this.submit()
+
+  # Event callback: called when a user clicks the editor's save button.
+  #
+  # Returns nothing
+  _onSaveClick: (event) =>
+    Util.preventEventDefault event
+    this.submit()
+
+  # Event callback: called when a user clicks the editor's cancel button.
+  #
+  # Returns nothing
+  _onCancelClick: (event) =>
+    Util.preventEventDefault event
+    this.cancel()
+
+  # Event callback: called when a user mouses over the editor's cancel button.
+  #
+  # Returns nothing
+  _onCancelMouseover: =>
+    $(@widget).find('.' + @classes.focus).removeClass(@classes.focus)
+
+  # Event callback: listens for the following special keypresses.
   # - escape: Hides the editor
   # - enter:  Submits the editor
   #
   # event - A keydown Event object.
   #
   # Returns nothing
-  processKeypress: (event) =>
-    if event.keyCode is 27 # "Escape" key => abort.
-      this.hide()
-    else if event.keyCode is 13 and !event.shiftKey
+  _onTextareaKeydown: (event) =>
+    if event.which is 27 # "Escape" key => abort.
+      this.cancel()
+    else if event.which is 13 and !event.shiftKey
       # If "return" was pressed without the shift key, we're done.
       this.submit()
 
-  # Event callback. Removes the focus class from the submit button when the
-  # cancel button is hovered.
-  #
-  # Returns nothing
-  onCancelButtonMouseover: =>
-    @element.find('.' + @classes.focus).removeClass(@classes.focus)
+  # Event callback: called as an annotation is being created or updated.
+  _editAnnotation: (annotation) =>
+    return new Promise((resolve, reject) =>
+      @dfd = {resolve, reject}
+      this.load(annotation)
+    )
 
   # Sets up mouse events for resizing and dragging the editor window.
   # window events are bound only when needed and throttled to only update
   # the positions at most 60 times a second.
   #
   # Returns nothing.
-  setupDraggables: ->
-    @element.find('.annotator-resize').remove()
+  _setupDraggables: ->
+    widget = $(@widget)
+    widget.find('.annotator-resize').remove()
 
     # Find the first/last item element depending on orientation
-    if @element.hasClass(@classes.invert.y)
-      cornerItem = @element.find('.annotator-item:last')
+    if widget.hasClass(@classes.invert.y)
+      cornerItem = widget.find('.annotator-item:last')
     else
-      cornerItem = @element.find('.annotator-item:first')
+      cornerItem = widget.find('.annotator-item:first')
 
     if cornerItem
       $('<span class="annotator-resize"></span>').appendTo(cornerItem)
 
     mousedown = null
     classes   = @classes
-    editor    = @element
     textarea  = null
-    resize    = editor.find('.annotator-resize')
-    controls  = editor.find('.annotator-controls')
+    resize    = widget.find('.annotator-resize')
+    controls  = widget.find('.annotator-controls')
     throttle  = false
 
-    # coffeelint: disable=missing_fat_arrows
     onMousedown = (event) ->
       if event.target == this
         mousedown = {
@@ -338,14 +368,13 @@ class Editor extends Widget
         }
 
         # Find the first text area if there is one.
-        textarea = editor.find('textarea:first')
+        textarea = widget.find('textarea:first')
 
         $(window).bind({
           'mouseup.annotator-editor-resize': onMouseup
           'mousemove.annotator-editor-resize': onMousemove
         })
         event.preventDefault()
-    # coffeelint: enable=missing_fat_arrows
 
     onMouseup = ->
       mousedown = null
@@ -362,8 +391,8 @@ class Editor extends Widget
           height = textarea.outerHeight()
           width  = textarea.outerWidth()
 
-          directionX = if editor.hasClass(classes.invert.x) then -1 else  1
-          directionY = if editor.hasClass(classes.invert.y) then  1 else -1
+          directionX = if widget.hasClass(classes.invert.x) then -1 else  1
+          directionY = if widget.hasClass(classes.invert.y) then  1 else -1
 
           textarea.height height + (diff.top  * directionY)
           textarea.width  width  + (diff.left * directionX)
@@ -375,9 +404,9 @@ class Editor extends Widget
           mousedown.left = event.pageX unless textarea.outerWidth()  == width
 
         else if mousedown.element == controls[0]
-          editor.css({
-            top: parseInt(editor.css('top'), 10) + diff.top
-            left: parseInt(editor.css('left'), 10) + diff.left
+          widget.css({
+            top: parseInt(widget.css('top'), 10) + diff.top
+            left: parseInt(widget.css('left'), 10) + diff.left
           })
 
           mousedown.top  = event.pageY
@@ -390,5 +419,11 @@ class Editor extends Widget
     controls.bind 'mousedown', onMousedown
 
 
-# Export the Editor object
+Events.mixin(Editor::)
+
+# This is a core plugin (registered by default with Annotator), so we don't
+# register here. If you're writing a plugin of your own, please refer to a
+# non-core plugin (such as Document or Store) to see how to register your plugin
+# with Annotator.
+
 module.exports = Editor

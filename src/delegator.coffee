@@ -153,9 +153,9 @@ _parseEvents = (eventsObj) ->
   return events
 
 
-# Mix in backbone events
-BackboneEvents = require('backbone-events-standalone')
-BackboneEvents.mixin(Delegator::)
+# Mix in events handler
+Events = require('./events')
+Events.mixin(Delegator::)
 
 # Export Delegator object
 module.exports = Delegator

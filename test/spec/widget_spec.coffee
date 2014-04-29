@@ -1,22 +1,26 @@
 $ = require('../../src/util').$
 Widget = require('../../src/widget')
 
+class MyWidget extends Widget
+  constructor: (@widget) ->
+    super
 
 describe "Widget", ->
+  element = null
   widget = null
 
   beforeEach ->
     element = $('<div />')[0]
-    widget  = new Widget(element)
+    widget  = new MyWidget(element)
 
   describe "constructor", ->
     it "should extend the Widget#classes object with child classes", ->
-      class ChildWidget extends Widget
+      class ChildWidget extends MyWidget
         classes:
           customClass: 'my-custom-class'
           anotherClass: 'another-class'
 
-      child = new ChildWidget()
+      child = new ChildWidget(element)
       assert.deepEqual(child.classes, {
         hide: 'annotator-hide'
         invert:
@@ -27,16 +31,16 @@ describe "Widget", ->
       })
 
   describe "invertX", ->
-    it "should add the Widget#classes.invert.x class to the Widget#element", ->
-      widget.element.removeClass(widget.classes.invert.x)
+    it "should add the Widget#classes.invert.x class to the Widget#widget", ->
+      $(widget.widget).removeClass(widget.classes.invert.x)
       widget.invertX()
-      assert.isTrue(widget.element.hasClass(widget.classes.invert.x))
+      assert.isTrue($(widget.widget).hasClass(widget.classes.invert.x))
 
   describe "invertY", ->
-    it "should add the Widget#classes.invert.y class to the Widget#element", ->
-      widget.element.removeClass(widget.classes.invert.y)
+    it "should add the Widget#classes.invert.y class to the Widget#widget", ->
+      $(widget.widget).removeClass(widget.classes.invert.y)
       widget.invertY()
-      assert.isTrue(widget.element.hasClass(widget.classes.invert.y))
+      assert.isTrue($(widget.widget).hasClass(widget.classes.invert.y))
 
   describe "isInvertedY", ->
     it "should return the vertical inverted status of the Widget", ->
@@ -51,14 +55,14 @@ describe "Widget", ->
       assert.isTrue(widget.isInvertedX())
 
   describe "resetOrientation", ->
-    it "should remove the Widget#classes.invert classes from the Widget#element", ->
-      widget.element
-            .addClass(widget.classes.invert.x)
-            .addClass(widget.classes.invert.y)
+    it "should remove the Widget#classes.invert classes from the Widget#widget", ->
+      $(widget.widget)
+      .addClass(widget.classes.invert.x)
+      .addClass(widget.classes.invert.y)
 
       widget.resetOrientation()
-      assert.isFalse(widget.element.hasClass(widget.classes.invert.x))
-      assert.isFalse(widget.element.hasClass(widget.classes.invert.y))
+      assert.isFalse($(widget.widget).hasClass(widget.classes.invert.x))
+      assert.isFalse($(widget.widget).hasClass(widget.classes.invert.y))
 
   describe "checkOrientation", ->
     mocks = [
@@ -101,16 +105,15 @@ describe "Widget", ->
         width: sinon.stub().returns(window.width)
         scrollTop: sinon.stub().returns(window.scrollTop)
         scrollLeft: sinon.stub().returns(window.scrollLeft)
+        children: sinon.stub().returns({
+          offset: sinon.stub().returns(element.offset)
+          width:  sinon.stub().returns(element.width)
+        })
       })
 
-      sinon.stub(widget.element, 'children').returns({
-        offset: sinon.stub().returns(element.offset)
-        width:  sinon.stub().returns(element.width)
-      })
-
-      sinon.spy(widget, 'invertX')
-      sinon.spy(widget, 'invertY')
-      sinon.spy(widget, 'resetOrientation')
+      sinon.stub(widget, 'invertX')
+      sinon.stub(widget, 'invertY')
+      sinon.stub(widget, 'resetOrientation')
 
       widget.checkOrientation()
 

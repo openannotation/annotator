@@ -3,7 +3,7 @@ Document = require('../../../src/plugin/document')
 $ = Util.$
 
 
-describe 'Annotator.Plugin.Document', ->
+describe 'Document plugin', ->
   $fix = null
   plugin = null
   metadata = null

@@ -2,7 +2,7 @@ Filter = require('../../../src/plugin/filter')
 $ = require('../../../src/util').$
 
 
-describe "Annotator.Plugins.Filter", ->
+describe 'Filter plugin', ->
   plugin  = null
   element = null
 

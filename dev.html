@@ -16,6 +16,35 @@
     <script src="lib/plugin/filter.js"></script>
 
     <link rel="stylesheet" type="text/css" href="css/annotator.css">
+    <style>
+      /* This is evil but people do it. This checks that we correctly
+         calculate the position of the adder and other UI elements in any
+         situation. */
+      body {
+        position: relative;
+        margin-top: 3em;
+      }
+      #absolute {
+        border: 1px solid #eee;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 1em;
+        margin: 0;
+        position: absolute;
+        top: 1em;
+        right: 1em;
+        width: 20em;
+      }
+      #fixed {
+        border: 1px solid #eee;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 1em;
+        margin: 0;
+        position: fixed;
+        bottom: 1em;
+        right: 1em;
+        width: 20em;
+      }
+    </style>
   </head>
 
   <body>
@@ -34,6 +63,10 @@
       </ol>
 
       <blockquote><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus magna. Cras in mi at felis aliquet congue. Ut a est eget ligula molestie gravida. Curabitur massa. Donec eleifend, libero at sagittis mollis, tellus est malesuada tellus, at luctus turpis elit sit amet quam. Vivamus pretium ornare est.</p></blockquote>
+
+      <p id='absolute'>Here's an interesting one. This is absolutely positioned content. If we can't get the adder positioning right on this one then we're screwed.</p>
+
+      <p id='fixed'>And the same but with <code>position: fixed;</code> Make the window smaller and scroll to make sure that adder/viewer/editor positioning is still correct.</p>
 
       <h3>Header Level 3</h3>
 
@@ -90,6 +123,10 @@
 
       var elem = document.getElementById('airlock');
 
+      var Adder = Annotator.Plugin.fetch('Adder');
+      var Editor = Annotator.Plugin.fetch('Editor');
+      var Highlighter = Annotator.Plugin.fetch('Highlighter');
+      var Viewer = Annotator.Plugin.fetch('Viewer');
       var Store = Annotator.Plugin.fetch('Store');
       var Auth = Annotator.Plugin.fetch('Auth');
       var Unsupported = Annotator.Plugin.fetch('Unsupported');
@@ -98,6 +135,13 @@
       var factory = new Annotator.Factory();
 
       var devAnnotator = factory
+        .addPlugin(Adder, elem)
+        .addPlugin(Highlighter, elem)
+        .addPlugin(Viewer, elem, {
+          showEditButton: true,
+          showDeleteButton: true,
+        })
+        .addPlugin(Editor)
         .setStore(Store, {prefix: 'http://localhost:5000'})
         .addPlugin(Auth, {tokenUrl: 'http://localhost:4000/api/token'})
         .addPlugin(Permissions)
@@ -108,7 +152,11 @@
         annotation.uri = window.location.href;
       })
       devAnnotator.attach(elem);
-      devAnnotator.load({uri: window.location.href});
+      devAnnotator.annotations.load({uri: window.location.href});
+
+      devAnnotator.on("all", function () {
+        console.log("Annotator event:", arguments);
+      });
     </script>
   </body>
 
