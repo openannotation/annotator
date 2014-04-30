@@ -290,8 +290,9 @@ class Annotator.Factory extends Factory
 # Sniff the browser environment and attempt to add missing functionality.
 g = Util.getGlobal()
 
-if not g.document?.evaluate?
-  $.getScript('http://assets.annotateit.org/vendor/xpath.min.js')
+# Checks for the presence of wicked-good-xpath
+# It is always safe to install it, it'll not overwrite existing functions
+if g.wgxpath? then g.wgxpath.install()
 
 if not g.getSelection?
   $.getScript('http://assets.annotateit.org/vendor/ierange.min.js')
