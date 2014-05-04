@@ -67,7 +67,7 @@ See `Plugin development`_.
 Development
 -----------
 
-See `HACKING.rst <./HACKING.rst`__.
+See `HACKING.rst <./HACKING.rst>`__.
 
 
 Reporting a bug
@@ -97,7 +97,7 @@ encouraged to use for any questions and discussions. We can also be found in
 
 .. _mailing list: https://lists.okfn.org/mailman/listinfo/annotator-dev
 .. |IRC| replace:: the ``#annotator`` channel on Freenode
-.. _IRC: https://webchat.freenode.net/?channels=#annotator>
+.. _IRC: https://webchat.freenode.net/?channels=#annotator
 
 
 .. |Build Status| image:: https://secure.travis-ci.org/openannotation/annotator.svg?branch=master
