@@ -14,7 +14,7 @@ BOOKMARKLET_PKG := pkg/annotator-bookmarklet.js pkg/annotator.css \
 	pkg/bootstrap.js
 
 MISC_PKG := pkg/package.json pkg/main.js pkg/index.js \
-	pkg/AUTHORS pkg/LICENSE-GPL pkg/LICENSE-MIT pkg/README.markdown
+	pkg/AUTHORS pkg/LICENSE-GPL pkg/LICENSE-MIT pkg/README.rst
 
 BUILD := ./tools/build
 DEPS := ./tools/build -d
