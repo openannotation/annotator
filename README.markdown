@@ -50,7 +50,7 @@ Usage
 
 See [Getting started with Annotator][gettingstarted].
 
-[gettingstarted][http://docs.annotatorjs.org/en/latest/getting-started.html]
+[gettingstarted]: http://docs.annotatorjs.org/en/latest/getting-started.html
 
 
 Writing a plugin
@@ -58,7 +58,7 @@ Writing a plugin
 
 See [Plugin development][plugindev].
 
-[plugindev][http://docs.annotatorjs.org/en/latest/hacking/plugin-development.html]
+[plugindev]: http://docs.annotatorjs.org/en/latest/hacking/plugin-development.html
 
 
 Development
@@ -94,5 +94,3 @@ encouraged to use for any questions and discussions. We can also be found in the
 
 [ml]: https://lists.okfn.org/mailman/listinfo/annotator-dev
 [irc]: https://webchat.freenode.net/?channels=#annotator
-
-
