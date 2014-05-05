@@ -35,6 +35,12 @@ class Delegator
 
     this.addEvents()
 
+  # Public: Destroy the instance, unbinding all events.
+  #
+  # Returns nothing.
+  destroy: ->
+    this.removeEvents()
+
   # Public: binds the function names in the @events Object to their events.
   #
   # The @events Object should be a set of key/value pairs where the key is the

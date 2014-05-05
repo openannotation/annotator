@@ -25,9 +25,6 @@ class Plugin extends Delegator
       for event, functionName of @_oldStyleEvents
         this.listenTo(@annotator, event, this[functionName])
 
-  destroy: ->
-    this.removeEvents()
-
   _addEvent: (selector, event, functionName) ->
     if selector == '' and _isCustomEvent(event)
       @_oldStyleEvents ?= {}

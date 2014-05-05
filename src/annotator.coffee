@@ -197,12 +197,13 @@ class Annotator extends Delegator
   #
   # Returns nothing.
   destroy: ->
+    super
+
     $('#annotator-dynamic-style').remove()
 
     for name, plugin of @plugins
       plugin.destroy?()
 
-    this.removeEvents()
     idx = Annotator._instances.indexOf(this)
     if idx != -1
       Annotator._instances.splice(idx, 1)
