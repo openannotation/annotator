@@ -62,8 +62,8 @@ class Delegator
   #   @options = {"form submit": "submitForm"}
   #
   #   # This will bind the updateAnnotationStore() method to the custom
-  #   # annotation:save event. NOTE: Because this is a custom event the 
-  #   # Delegator#subscribe() method will be used and updateAnnotationStore() 
+  #   # annotation:save event. NOTE: Because this is a custom event the
+  #   # Delegator#subscribe() method will be used and updateAnnotationStore()
   #   # will not recieve an event parameter like the previous two examples.
   #   @options = {"annotation:save": "updateAnnotationStore"}
   #
