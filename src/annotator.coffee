@@ -180,6 +180,8 @@ class Annotator extends Delegator
   #
   # Returns nothing.
   destroy: ->
+    super
+
     $(document).unbind({
       "mouseup":   this.checkForEndSelection
       "mousedown": this.checkForStartSelection
@@ -202,7 +204,6 @@ class Annotator extends Delegator
     for name, plugin of @plugins
       @plugins[name].destroy()
 
-    this.removeEvents()
     idx = Annotator._instances.indexOf(this)
     if idx != -1
       Annotator._instances.splice(idx, 1)
@@ -726,9 +727,6 @@ class Annotator.Plugin extends Delegator
     super
 
   pluginInit: ->
-
-  destroy: ->
-    this.removeEvents()
 
 # Sniff the browser environment and attempt to add missing functionality.
 g = Util.getGlobal()
