@@ -12,16 +12,9 @@ class LegacyRanges
   configure: ({@core}) ->
 
   pluginInit: ->
-    if @element.ownerDocument?
-      this.listenTo @core, 'rawSelection', (raw) =>
-        if raw.type is "text ranges"
-          @core.trigger "selection", @createSkeleton raw.ranges
-
-    else
-      console.warn("You created an instance of the LegacyRanges on an element
-                    that doesn't have an ownerDocument. This won't work! Please
-                    ensure the element is added to the DOM before the plugin is
-                    configured:", @element)
+    this.listenTo @core, 'rawSelection', (raw) =>
+      if raw.type is "text ranges"
+        @core.trigger "selection", @createSkeleton raw.ranges
 
   destroy: ->
     this.stopListening()
