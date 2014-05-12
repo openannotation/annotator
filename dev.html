@@ -138,11 +138,11 @@
       var factory = new Annotator.Factory();
 
       var devAnnotator = factory
-        .addPlugin(Adder, elem)
+        .addPlugin(Adder)
         .addPlugin(TextSelector, elem)
         .addPlugin(LegacyRanges, elem)
         .addPlugin(Highlighter, elem)
-        .addPlugin(Viewer, elem, {
+        .addPlugin(Viewer, {
           showEditButton: true,
           showDeleteButton: true,
         })

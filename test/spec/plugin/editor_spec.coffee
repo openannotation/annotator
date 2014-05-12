@@ -39,8 +39,8 @@ describe 'Editor plugin', ->
         plugin.show()
         assert.deepEqual(
           {
-            top: plugin.widget.style.top
-            left: plugin.widget.style.left
+            top: plugin.element[0].style.top
+            left: plugin.element[0].style.left
           },
           core.interactionPoint
         )
@@ -56,7 +56,7 @@ describe 'Editor plugin', ->
     describe '.destroy()', ->
       it 'should remove the editor from the document', ->
         plugin.destroy()
-        assert.isFalse(document.body in $(plugin.widget).parents())
+        assert.isFalse(document.body in plugin.element.parents())
 
 
     describe '.load(annotation)', ->
@@ -67,7 +67,7 @@ describe 'Editor plugin', ->
 
       it 'should show the annotation text for editing', ->
         plugin.load({text: "Hello, world."})
-        assert.equal($(plugin.widget).find('textarea').val(), "Hello, world.")
+        assert.equal(plugin.element.find('textarea').val(), "Hello, world.")
 
 
     describe '.submit()', ->
@@ -82,7 +82,7 @@ describe 'Editor plugin', ->
         assert.isFalse(plugin.isShown())
 
       it 'should save any changes made to the annotation text', ->
-        $(plugin.widget).find('textarea').val('Lions are strong.')
+        plugin.element.find('textarea').val('Lions are strong.')
         plugin.submit()
         assert.equal(ann.text, 'Lions are strong.')
 
@@ -99,7 +99,7 @@ describe 'Editor plugin', ->
         assert.isFalse(plugin.isShown())
 
       it 'should NOT save changes made to the annotation text', ->
-        $(plugin.widget).find('textarea').val('Mice are small.')
+        plugin.element.find('textarea').val('Mice are small.')
         plugin.cancel()
         assert.equal(ann.text, 'Blue whales are large.')
 
@@ -208,7 +208,7 @@ describe 'Editor plugin', ->
     it 'should not add the default fields', ->
       plugin.load({text: "Anteaters with torches"})
       assert.equal(
-        $(plugin.widget).html().indexOf("Anteaters with torches"),
+        plugin.element.html().indexOf("Anteaters with torches"),
         -1
       )
 
@@ -227,28 +227,28 @@ describe 'Editor plugin', ->
 
     it 'should submit when the editor form is submitted', ->
       plugin.load(ann)
-      $(plugin.widget).find('textarea').val('Turtles with bandanas')
-      $(plugin.widget).find('form').submit()
+      plugin.element.find('textarea').val('Turtles with bandanas')
+      plugin.element.find('form').submit()
       assert.equal(ann.text, 'Turtles with bandanas')
       assert.isFalse(plugin.isShown())
 
     it 'should submit when the editor submit button is clicked', ->
       plugin.load(ann)
-      $(plugin.widget).find('textarea').val('Turtles with bandanas')
-      $(plugin.widget).find('.annotator-save').click()
+      plugin.element.find('textarea').val('Turtles with bandanas')
+      plugin.element.find('.annotator-save').click()
       assert.equal(ann.text, 'Turtles with bandanas')
       assert.isFalse(plugin.isShown())
 
     it 'should cancel editing when the editor cancel button is clicked', ->
       plugin.load(ann)
-      $(plugin.widget).find('textarea').val('Turtles with bandanas')
-      $(plugin.widget).find('.annotator-cancel').click()
+      plugin.element.find('textarea').val('Turtles with bandanas')
+      plugin.element.find('.annotator-cancel').click()
       assert.equal(ann.text, 'Turtles with armbands')
       assert.isFalse(plugin.isShown())
 
     it 'should submit when the user hits <Return> in the main textarea', ->
       plugin.load(ann)
-      $(plugin.widget).find('textarea')
+      plugin.element.find('textarea')
       .val('Turtles with bandanas')
       .trigger({
         type: 'keydown'
@@ -260,7 +260,7 @@ describe 'Editor plugin', ->
     it 'should NOT submit when the user hits <Shift>-<Return> in the main
         textarea', ->
       plugin.load(ann)
-      $(plugin.widget).find('textarea')
+      plugin.element.find('textarea')
       .val('Turtles with bandanas')
       .trigger({
         type: 'keydown'
@@ -272,7 +272,7 @@ describe 'Editor plugin', ->
 
     it 'should cancel editing when the user hits <Esc> in the main textarea', ->
       plugin.load(ann)
-      $(plugin.widget).find('textarea')
+      plugin.element.find('textarea')
       .val('Turtles with bandanas')
       .trigger({
         type: 'keydown'
@@ -286,7 +286,7 @@ describe 'Editor plugin', ->
       core.trigger('beforeAnnotationCreated', ann)
       assert.isTrue(plugin.isShown())
       assert.equal(
-        $(plugin.widget).find('textarea').val(),
+        plugin.element.find('textarea').val(),
         "Turtles with armbands"
       )
 
@@ -295,7 +295,7 @@ describe 'Editor plugin', ->
       core.trigger('beforeAnnotationUpdated', ann)
       assert.isTrue(plugin.isShown())
       assert.equal(
-        $(plugin.widget).find('textarea').val(),
+        plugin.element.find('textarea').val(),
         "Turtles with armbands"
       )
 
@@ -305,7 +305,7 @@ describe 'Editor plugin', ->
       .then ->
         assert.equal(ann.text, "Updated in the editor")
       .then(done, done)
-      $(plugin.widget).find('textarea').val('Updated in the editor')
+      plugin.element.find('textarea').val('Updated in the editor')
       plugin.submit()
 
     it 'should return a promise to beforeAnnotationCreated that is rejected if
@@ -326,7 +326,7 @@ describe 'Editor plugin', ->
       .then ->
         assert.equal(ann.text, "Updated in the editor")
       .then(done, done)
-      $(plugin.widget).find('textarea').val('Updated in the editor')
+      plugin.element.find('textarea').val('Updated in the editor')
       plugin.submit()
 
     it 'should return a promise to beforeAnnotationUpdated that is rejected if

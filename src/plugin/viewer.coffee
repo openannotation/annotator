@@ -10,31 +10,32 @@ class Viewer extends Widget
 
   # Classes for toggling annotator state.
   classes:
-    hide: 'annotator-hide'
     showControls: 'annotator-visible'
 
   # HTML templates for @widget and @item properties.
-  html:
-    viewer: """
-      <div class="annotator-outer annotator-viewer annotator-hide">
-        <ul class="annotator-widget annotator-listing"></ul>
-      </div>
-      """
-    item: """
-      <li class="annotator-annotation annotator-item">
-        <span class="annotator-controls">
-          <a href="#"
-             title="View as webpage"
-             class="annotator-link">View as webpage</a>
-          <button type="button"
-                  title="Edit"
-                  class="annotator-edit">Edit</button>
-          <button type="button"
-                  title="Delete"
-                  class="annotator-delete">Delete</button>
-        </span>
-      </li>
-      """
+  template:
+    """
+    <div class="annotator-outer annotator-viewer annotator-hide">
+      <ul class="annotator-widget annotator-listing"></ul>
+    </div>
+    """
+
+  itemTemplate:
+    """
+    <li class="annotator-annotation annotator-item">
+      <span class="annotator-controls">
+        <a href="#"
+           title="View as webpage"
+           class="annotator-link">View as webpage</a>
+        <button type="button"
+                title="Edit"
+                class="annotator-edit">Edit</button>
+        <button type="button"
+                title="Delete"
+                class="annotator-delete">Delete</button>
+      </span>
+    </li>
+    """
 
   # Configuration options
   options:
@@ -67,9 +68,8 @@ class Viewer extends Widget
   #   viewer.load(annotation)
   #
   # Returns a new Viewer instance.
-  constructor: (@element, options) ->
+  constructor: (options) ->
     super
-    @options = $.extend(true, {}, @options, options)
 
     @fields = []
     @annotations = []
@@ -106,69 +106,45 @@ class Viewer extends Widget
     })
 
   pluginInit: ->
-    if @element.ownerDocument?
-      @document = @element.ownerDocument
-      @item = $(@html.item)
-      @widget = $(@html.viewer).appendTo(@document.body).get(0)
-      $(@widget)
-      .on("click.#{ns}", '.annotator-edit', this._onEditClick)
-      .on("click.#{ns}", '.annotator-delete', this._onDeleteClick)
-      .on("mouseenter.#{ns}", this._onMouseenter)
-      .on("mouseleave.#{ns}", this._onMouseleave)
-      $(@element)
-      .on("mouseover.#{ns}", '.annotator-hl', this._onHighlightMouseover)
-      .on("mouseleave.#{ns}", '.annotator-hl', this._onHighlightMouseleave)
-      $(@document.body)
-      .on("mousedown.#{ns}", (e) => @mouseDown = true if e.which == 1)
-      .on("mouseup.#{ns}", (e) => @mouseDown = false if e.which == 1)
-    else
-      console.warn("You created an instance of the Viewer on an element that
-                    doesn't have an ownerDocument. This won't work! Please
-                    ensure the element is added to the DOM before the plugin is
-                    configured:", @element)
+    @document = @core.element[0].ownerDocument
+
+    @element
+    .on("click.#{ns}", '.annotator-edit', this._onEditClick)
+    .on("click.#{ns}", '.annotator-delete', this._onDeleteClick)
+    .on("mouseenter.#{ns}", this._onMouseenter)
+    .on("mouseleave.#{ns}", this._onMouseleave)
+
+    @core.element
+    .on("mouseover.#{ns}", '.annotator-hl', this._onHighlightMouseover)
+    .on("mouseleave.#{ns}", '.annotator-hl', this._onHighlightMouseleave)
+
+    $(@document.body)
+    .on("mousedown.#{ns}", (e) => @mouseDown = true if e.which == 1)
+    .on("mouseup.#{ns}", (e) => @mouseDown = false if e.which == 1)
+
+    this.render()
 
   destroy: ->
-    $(@widget).off(".#{ns}")
-    $(@element).off(".#{ns}")
     super
+    @element.off(".#{ns}")
+    @core.element.off(".#{ns}")
+    $(@document.body).off(".#{ns}")
 
   # Public: Show the viewer.
   #
   # Returns nothing.
   show: ->
-    widget = $(@widget)
     if @core.interactionPoint?
-      widget.css({
+      @element.css({
         top: @core.interactionPoint.top,
         left: @core.interactionPoint.left
       })
-    controls = widget
+    controls = @element
       .find('.annotator-controls')
       .addClass(@classes.showControls)
     setTimeout((=> controls.removeClass(@classes.showControls)), 500)
 
-    widget.removeClass(@classes.hide)
-    this.checkOrientation()
-
-  # Public: Hide the viewer.
-  #
-  # Returns nothing.
-  hide: ->
-    $(@widget).addClass(@classes.hide)
-
-  # Public: Returns true if the viewer is currently displayed, false otherwise.
-  #
-  # Examples
-  #
-  #   viewer.show()
-  #   viewer.isShown() # => true
-  #
-  #   viewer.hide()
-  #   viewer.isShown() # => false
-  #
-  # Returns true if the viewer is visible.
-  isShown: ->
-    not $(@widget).hasClass(@classes.hide)
+    super
 
   # Public: Load annotations into the viewer and show it.
   #
@@ -182,9 +158,13 @@ class Viewer extends Widget
   load: (annotations) =>
     @annotations = annotations || []
 
-    list = $(@widget).find('ul:first').empty()
+    list = @element.find('ul:first').empty()
     for annotation in @annotations
-      item = $(@item).clone().appendTo(list).data('annotation', annotation)
+      item = $(@itemTemplate)
+      .clone()
+      .appendTo(list)
+      .data('annotation', annotation)
+
       controls = item.find('.annotator-controls')
 
       link = controls.find('.annotator-link')
@@ -221,7 +201,7 @@ class Viewer extends Widget
   #
   # options - An options Object. Options are as follows:
   #           load - Callback Function called when the view is loaded with an
-  #                  annotation. Recieves a newly created clone of @item and
+  #                  annotation. Recieves a newly created clone of an item and
   #                  the annotation to be displayed (it will be called once
   #                  for each annotation being loaded).
   #
@@ -306,7 +286,7 @@ class Viewer extends Widget
         .toArray()
 
       # Now show the viewer with the wanted annotations
-      offset = $(@widget).parent().offset()
+      offset = @element.parent().offset()
       @core.interactionPoint = {
         top: event.pageY - offset.top,
         left: event.pageX - offset.left,

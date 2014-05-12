@@ -87,12 +87,12 @@ class Annotator extends Delegator
       factory = new Factory()
       factory.setStore(NullStore)
       factory.addPlugin(Highlighter, element)
-      factory.addPlugin(Viewer, element, {
+      factory.addPlugin(Viewer, {
         showEditButton: not @options.readOnly,
         showDeleteButton: not @options.readOnly,
       })
       if not @options.readOnly
-        factory.addPlugin(Adder, element)
+        factory.addPlugin(Adder)
         factory.addPlugin(TextSelector, element)
         factory.addPlugin(LegacyRanges, element)
         factory.addPlugin(Editor)
