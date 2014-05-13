@@ -200,6 +200,10 @@ class Permissions extends Annotator.Plugin
           return true
       })
 
+  destroy: ->
+    @annotator.unsubscribe('beforeAnnotationCreated',
+      this.addFieldsToAnnotation)
+
   # Public: Sets the Permissions#user property.
   #
   # user - A String or Object to represent the current user.
