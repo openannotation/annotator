@@ -125,6 +125,8 @@
       var elem = document.getElementById('airlock');
 
       var Adder = Annotator.Plugin.fetch('Adder');
+      var TextSelector = Annotator.Plugin.fetch('TextSelector');
+      var LegacyRanges = Annotator.Plugin.fetch('LegacyRanges');
       var Editor = Annotator.Plugin.fetch('Editor');
       var Highlighter = Annotator.Plugin.fetch('Highlighter');
       var Viewer = Annotator.Plugin.fetch('Viewer');
@@ -137,6 +139,8 @@
 
       var devAnnotator = factory
         .addPlugin(Adder, elem)
+        .addPlugin(TextSelector, elem)
+        .addPlugin(LegacyRanges, elem)
         .addPlugin(Highlighter, elem)
         .addPlugin(Viewer, elem, {
           showEditButton: true,

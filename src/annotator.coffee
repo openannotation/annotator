@@ -12,6 +12,8 @@ AnnotationRegistry = require('./annotations')
 
 # Core plugins
 Adder = require('./plugin/adder')
+TextSelector = require('./plugin/textselector')
+LegacyRanges = require('./plugin/legacyranges')
 Editor = require('./plugin/editor')
 Highlighter = require('./plugin/highlighter')
 NullStore = require('./plugin/nullstore')
@@ -91,6 +93,8 @@ class Annotator extends Delegator
       })
       if not @options.readOnly
         factory.addPlugin(Adder, element)
+        factory.addPlugin(TextSelector, element)
+        factory.addPlugin(LegacyRanges, element)
         factory.addPlugin(Editor)
       factory.configureInstance(this)
 
@@ -333,6 +337,8 @@ Annotator.hideNotification = notification.hide
 
 # Register the default store
 Annotator.Plugin.register('Adder', Adder)
+Annotator.Plugin.register('TextSelector', TextSelector)
+Annotator.Plugin.register('LegacyRanges', LegacyRanges)
 Annotator.Plugin.register('Editor', Editor)
 Annotator.Plugin.register('Highlighter', Highlighter)
 Annotator.Plugin.register('NullStore', NullStore)
