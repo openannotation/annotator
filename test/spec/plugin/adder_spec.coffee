@@ -1,25 +1,19 @@
-BackboneEvents = require('backbone-events-standalone')
 h = require('helpers')
+Annotator = require('annotator')
 Adder = require('../../../src/plugin/adder')
 Range = require('../../../src/range')
 Util = require('../../../src/util')
 $ = Util.$
 
 describe 'Adder plugin', ->
-  elem = null
   core = null
   plugin = null
 
   beforeEach ->
     h.addFixture('adder')
-    elem = h.fix()
-    core = {
-      annotations: {
-        create: sinon.spy()
-      }
-    }
-    BackboneEvents.mixin(core)
-    plugin = new Adder(elem)
+    core = new Annotator.Delegator(el: h.fix())
+    core.annotations = create: sinon.spy()
+    plugin = new Adder()
     plugin.configure({core: core})
     plugin.pluginInit()
 
@@ -34,7 +28,7 @@ describe 'Adder plugin', ->
   describe '.show()', ->
     it 'should make the adder widget visible', ->
       plugin.show()
-      assert.isTrue($(plugin.adder).is(':visible'))
+      assert.isTrue(plugin.element.is(':visible'))
 
     it 'should use the interactionPoint set on the core object to set its
         position, if available', ->
@@ -45,8 +39,8 @@ describe 'Adder plugin', ->
       plugin.show()
       assert.deepEqual(
         {
-          top: plugin.adder.style.top
-          left: plugin.adder.style.left
+          top: plugin.element[0].style.top
+          left: plugin.element[0].style.left
         },
         core.interactionPoint
       )
@@ -56,7 +50,7 @@ describe 'Adder plugin', ->
     it 'should hide the adder widget', ->
       plugin.show()
       plugin.hide()
-      assert.isFalse($(plugin.adder).is(':visible'))
+      assert.isFalse(plugin.element.is(':visible'))
 
 
   describe '.isShown()', ->
@@ -72,7 +66,7 @@ describe 'Adder plugin', ->
   describe '.destroy()', ->
     it 'should remove the adder from the document', ->
       plugin.destroy()
-      assert.isFalse(document.body in $(plugin.adder).parents())
+      assert.isFalse(document.body in plugin.element.parents())
 
 
   describe 'event listeners', ->
@@ -107,7 +101,7 @@ describe 'Adder plugin', ->
       skeleton =
         magic: "data"
       core.trigger('selection', skeleton)
-      $(plugin.adder).find('button').trigger({
+      plugin.element.find('button').trigger({
         type: 'click',
         which: 1,
       })
@@ -119,7 +113,7 @@ describe 'Adder plugin', ->
     it "should not create an annotation from the current selection when
         right-clicked", ->
       $(Util.getGlobal().document.body).trigger('mouseup')
-      $(plugin.adder).find('button').trigger({
+      plugin.element.find('button').trigger({
         type: 'click',
         which: 3,
       })
@@ -127,9 +121,8 @@ describe 'Adder plugin', ->
 
     it "should hide the adder when left-clicked", ->
       $(Util.getGlobal().document.body).trigger('mouseup')
-      $(plugin.adder).find('button').trigger({
+      plugin.element.find('button').trigger({
         type: 'click',
         which: 1,
       })
       assert.isFalse(plugin.isShown())
-
