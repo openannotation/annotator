@@ -12,6 +12,12 @@ class Viewer extends Widget
   classes:
     showControls: 'annotator-visible'
 
+  events:
+    ".annotator-edit click": "_onEditClick"
+    ".annotator-delete click": "_onDeleteClick"
+    "mouseenter": "_onMouseenter"
+    "mouseleave": "_onMouseleave"
+
   # HTML templates for @widget and @item properties.
   template:
     """
@@ -108,12 +114,6 @@ class Viewer extends Widget
   pluginInit: ->
     @document = @core.element[0].ownerDocument
 
-    @element
-    .on("click.#{ns}", '.annotator-edit', this._onEditClick)
-    .on("click.#{ns}", '.annotator-delete', this._onDeleteClick)
-    .on("mouseenter.#{ns}", this._onMouseenter)
-    .on("mouseleave.#{ns}", this._onMouseleave)
-
     @core.element
     .on("mouseover.#{ns}", '.annotator-hl', this._onHighlightMouseover)
     .on("mouseleave.#{ns}", '.annotator-hl', this._onHighlightMouseleave)
@@ -126,7 +126,6 @@ class Viewer extends Widget
 
   destroy: ->
     super
-    @element.off(".#{ns}")
     @core.element.off(".#{ns}")
     $(@document.body).off(".#{ns}")
 
@@ -234,7 +233,7 @@ class Viewer extends Widget
   # event - An Event object.
   #
   # Returns nothing.
-  _onEditClick: (event) =>
+  _onEditClick: (event) ->
     item = $(event.target).parents('.annotator-annotation').data('annotation')
     this.hide()
     @core.annotations.update(item)
@@ -244,7 +243,7 @@ class Viewer extends Widget
   # event - An Event object.
   #
   # Returns nothing.
-  _onDeleteClick: (event) =>
+  _onDeleteClick: (event) ->
     item = $(event.target).parents('.annotator-annotation').data('annotation')
     this.hide()
     @core.annotations.delete(item)
@@ -254,7 +253,7 @@ class Viewer extends Widget
   # event - An Event object.
   #
   # Returns nothing.
-  _onMouseenter: (event) =>
+  _onMouseenter: (event) ->
     this._clearHideTimer()
 
   # Event callback: called when a user's cursor leaves the viewer element.
@@ -262,7 +261,7 @@ class Viewer extends Widget
   # event - An Event object.
   #
   # Returns nothing.
-  _onMouseleave: (event) =>
+  _onMouseleave: (event) ->
     this._startHideTimer()
 
   # Event callback: called when a user triggers `mouseover` on a highlight

@@ -4,7 +4,6 @@ Promise = Util.Promise
 $ = Util.$
 _t = Util.TranslationString
 
-ns = 'annotator-editor'
 
 # Public: Creates an element for editing annotations.
 class Editor extends Widget
@@ -13,6 +12,13 @@ class Editor extends Widget
   classes:
     hide: 'annotator-hide'
     focus: 'annotator-focus'
+
+  events:
+    "form submit": "_onFormSubmit"
+    ".annotator-save click": "_onSaveClick"
+    ".annotator-cancel click": "_onCancelClick"
+    ".annotator-cancel mouseover": "_onCancelMouseover"
+    "textarea keydown": "_onTextareaKeydown"
 
   # HTML template for @element.
   template:
@@ -83,22 +89,13 @@ class Editor extends Widget
     })
 
   pluginInit: ->
-    @element
-    .on("submit.#{ns}", 'form', this._onFormSubmit)
-    .on("click.#{ns}", '.annotator-save', this._onSaveClick)
-    .on("click.#{ns}", '.annotator-cancel', this._onCancelClick)
-    .on("mouseover.#{ns}", '.annotator-cancel', this._onCancelMouseover)
-    .on("keydown.#{ns}", 'textarea', this._onTextareaKeydown)
-
     this.listenTo(@core, 'beforeAnnotationCreated', this._editAnnotation)
     this.listenTo(@core, 'beforeAnnotationUpdated', this._editAnnotation)
-
     this.render()
 
   destroy: ->
     super
     this.stopListening()
-    $(@element).off(".#{ns}")
 
   # Public: Show the editor.
   #
@@ -263,28 +260,28 @@ class Editor extends Widget
   # return, for example).
   #
   # Returns nothing
-  _onFormSubmit: (event) =>
+  _onFormSubmit: (event) ->
     Util.preventEventDefault event
     this.submit()
 
   # Event callback: called when a user clicks the editor's save button.
   #
   # Returns nothing
-  _onSaveClick: (event) =>
+  _onSaveClick: (event) ->
     Util.preventEventDefault event
     this.submit()
 
   # Event callback: called when a user clicks the editor's cancel button.
   #
   # Returns nothing
-  _onCancelClick: (event) =>
+  _onCancelClick: (event) ->
     Util.preventEventDefault event
     this.cancel()
 
   # Event callback: called when a user mouses over the editor's cancel button.
   #
   # Returns nothing
-  _onCancelMouseover: =>
+  _onCancelMouseover: ->
     @element.find('.' + @classes.focus).removeClass(@classes.focus)
 
   # Event callback: listens for the following special keypresses.
@@ -294,7 +291,7 @@ class Editor extends Widget
   # event - A keydown Event object.
   #
   # Returns nothing
-  _onTextareaKeydown: (event) =>
+  _onTextareaKeydown: (event) ->
     if event.which is 27 # "Escape" key => abort.
       this.cancel()
     else if event.which is 13 and !event.shiftKey
