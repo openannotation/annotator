@@ -5,14 +5,12 @@ Util = require('../../../src/util')
 $ = Util.$
 
 describe 'Viewer plugin', ->
-  elem = null
   core = null
   plugin = null
 
   beforeEach ->
     h.addFixture('viewer')
-    elem = h.fix()
-    core = {}
+    core = {element: $(h.fix())}
     BackboneEvents.mixin(core)
 
   afterEach ->
@@ -21,7 +19,7 @@ describe 'Viewer plugin', ->
   describe 'in default configuration', ->
 
     beforeEach ->
-      plugin = new Viewer(elem)
+      plugin = new Viewer()
       plugin.configure({core: core})
       plugin.pluginInit()
 
@@ -39,7 +37,7 @@ describe 'Viewer plugin', ->
       }])
 
       assert.equal(
-        $(plugin.widget).find('.annotator-link').attr('href'),
+        plugin.element.find('.annotator-link').attr('href'),
         'http://example.com/foo'
       )
 
@@ -57,8 +55,8 @@ describe 'Viewer plugin', ->
         plugin.show()
         assert.deepEqual(
           {
-            top: plugin.widget.style.top
-            left: plugin.widget.style.left
+            top: plugin.element[0].style.top
+            left: plugin.element[0].style.left
           },
           core.interactionPoint
         )
@@ -74,7 +72,7 @@ describe 'Viewer plugin', ->
     describe '.destroy()', ->
       it 'should remove the viewer from the document', ->
         plugin.destroy()
-        assert.isFalse(document.body in $(plugin.widget).parents())
+        assert.isFalse(document.body in plugin.element.parents())
 
 
     describe '.load(annotations)', ->
@@ -85,14 +83,14 @@ describe 'Viewer plugin', ->
 
       it 'should show the annotation text (one annotation)', ->
         plugin.load([{text: "Hello, world."}])
-        assert.isTrue($(plugin.widget).html().indexOf("Hello, world.") >= 0)
+        assert.isTrue(plugin.element.html().indexOf("Hello, world.") >= 0)
 
       it 'should show the annotation text (multiple annotations)', ->
         plugin.load([
           {text: "Penguins with hats"}
           {text: "Elephants with scarves"}
         ])
-        html = $(plugin.widget).html()
+        html = plugin.element.html()
         assert.isTrue(html.indexOf("Penguins with hats") >= 0)
         assert.isTrue(html.indexOf("Elephants with scarves") >= 0)
 
@@ -130,13 +128,13 @@ describe 'Viewer plugin', ->
       it 'should insert the field elements into the viewer', ->
         plugin.load([ann])
         callArgs = field.load.args[0]
-        assert.isTrue(plugin.widget in $(callArgs[0]).parents())
+        assert.isTrue(plugin.element[0] in $(callArgs[0]).parents())
 
 
   describe 'with the readOnly option set to true', ->
 
     beforeEach ->
-      plugin = new Viewer(elem)
+      plugin = new Viewer()
       plugin.configure({core: core})
       plugin.pluginInit()
 
@@ -147,7 +145,7 @@ describe 'Viewer plugin', ->
   describe 'with the showEditButton option set to true', ->
 
     beforeEach ->
-      plugin = new Viewer(elem, {
+      plugin = new Viewer({
         showEditButton: true
       })
       plugin.configure({core: core})
@@ -158,7 +156,7 @@ describe 'Viewer plugin', ->
 
     it 'should contain an edit button', ->
       plugin.load([{text: "Anteaters with torches"}])
-      assert($(plugin.widget).find('.annotator-edit'))
+      assert(plugin.element.find('.annotator-edit'))
 
     it 'should pass a controller for the edit button as the third argument to
         the load callback of custom fields', ->
@@ -173,14 +171,14 @@ describe 'Viewer plugin', ->
       ann = {text: "Rabbits with cloaks"}
       plugin.load([ann])
       core.annotations = {update: sinon.spy()}
-      $(plugin.widget).find('.annotator-edit').click()
+      plugin.element.find('.annotator-edit').click()
       sinon.assert.calledWith(core.annotations.update, ann)
 
 
   describe 'with the showDeleteButton option set to true', ->
 
     beforeEach ->
-      plugin = new Viewer(elem, {
+      plugin = new Viewer({
         showDeleteButton: true
       })
       plugin.configure({core: core})
@@ -191,7 +189,7 @@ describe 'Viewer plugin', ->
 
     it 'should contain an delete button', ->
       plugin.load([{text: "Anteaters with torches"}])
-      assert($(plugin.widget).find('.annotator-delete'))
+      assert(plugin.element.find('.annotator-delete'))
 
     it 'should pass a controller for the edit button as the third argument to
         the load callback of custom fields', ->
@@ -206,14 +204,14 @@ describe 'Viewer plugin', ->
       ann = {text: "Rabbits with cloaks"}
       plugin.load([ann])
       core.annotations = {delete: sinon.spy()}
-      $(plugin.widget).find('.annotator-delete').click()
+      plugin.element.find('.annotator-delete').click()
       sinon.assert.calledWith(core.annotations.delete, ann)
 
 
   describe 'with the defaultFields option set to false', ->
 
     beforeEach ->
-      plugin = new Viewer(elem, {
+      plugin = new Viewer({
         defaultFields: false
       })
       plugin.configure({core: core})
@@ -225,7 +223,7 @@ describe 'Viewer plugin', ->
     it 'should not add the default fields', ->
       plugin.load([{text: "Anteaters with torches"}])
       assert.equal(
-        $(plugin.widget).html().indexOf("Anteaters with torches"),
+        plugin.element.html().indexOf("Anteaters with torches"),
         -1
       )
 
@@ -234,13 +232,13 @@ describe 'Viewer plugin', ->
     clock = null
 
     beforeEach ->
-      plugin = new Viewer(elem, {
+      plugin = new Viewer({
         activityDelay: 50,
         inactivityDelay: 200
       })
       plugin.configure({core: core})
       plugin.pluginInit()
-      hl = $(elem).find('.annotator-hl.one')
+      hl = core.element.find('.annotator-hl.one')
       hl.data('annotation', {text: "Cats with mats"})
       clock = sinon.useFakeTimers()
 
@@ -252,19 +250,19 @@ describe 'Viewer plugin', ->
         its element', ->
       hl.mouseover()
       assert.isTrue(plugin.isShown())
-      assert.isTrue($(plugin.widget).html().indexOf("Cats with mats") >= 0)
+      assert.isTrue(plugin.element.html().indexOf("Cats with mats") >= 0)
 
     it 'should redraw the viewer when another highlight is moused over, but
         only after a short delay (the activityDelay)', ->
-      hl2 = $(elem).find('.annotator-hl.two')
+      hl2 = core.element.find('.annotator-hl.two')
       hl2.data('annotation', {text: "Dogs with bones"})
       hl.mouseover()
       hl2.mouseover()
       clock.tick(49)
-      assert.isTrue($(plugin.widget).html().indexOf("Cats with mats") >= 0)
+      assert.isTrue(plugin.element.html().indexOf("Cats with mats") >= 0)
       clock.tick(2)
-      assert.equal($(plugin.widget).html().indexOf("Cats with mats"), -1)
-      assert.isTrue($(plugin.widget).html().indexOf("Dogs with bones") >= 0)
+      assert.equal(plugin.element.html().indexOf("Cats with mats"), -1)
+      assert.isTrue(plugin.element.html().indexOf("Dogs with bones") >= 0)
 
     it 'should hide the viewer when the user mouses off the highlight, after a
         delay (the inactivityDelay)', ->
@@ -280,7 +278,7 @@ describe 'Viewer plugin', ->
       hl.mouseover()
       hl.mouseleave()
       clock.tick(199)
-      $(plugin.widget).mouseenter()
+      plugin.element.mouseenter()
       clock.tick(100)
       assert.isTrue(plugin.isShown())
 
@@ -289,8 +287,8 @@ describe 'Viewer plugin', ->
       hl.mouseover()
       hl.mouseleave()
       clock.tick(199)
-      $(plugin.widget).mouseenter()
-      $(plugin.widget).mouseleave()
+      plugin.element.mouseenter()
+      plugin.element.mouseleave()
       clock.tick(199)
       assert.isTrue(plugin.isShown())
       clock.tick(2)

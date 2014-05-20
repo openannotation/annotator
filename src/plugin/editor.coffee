@@ -1,11 +1,9 @@
-Events = require('../events')
 Util = require('../util')
 Widget = require('../widget')
 Promise = Util.Promise
 $ = Util.$
 _t = Util.TranslationString
 
-ns = 'annotator-editor'
 
 # Public: Creates an element for editing annotations.
 class Editor extends Widget
@@ -15,23 +13,30 @@ class Editor extends Widget
     hide: 'annotator-hide'
     focus: 'annotator-focus'
 
+  events:
+    "form submit": "_onFormSubmit"
+    ".annotator-save click": "_onSaveClick"
+    ".annotator-cancel click": "_onCancelClick"
+    ".annotator-cancel mouseover": "_onCancelMouseover"
+    "textarea keydown": "_onTextareaKeydown"
+
   # HTML template for @element.
-  html: """
-        <div class="annotator-outer annotator-editor annotator-hide">
-          <form class="annotator-widget">
-            <ul class="annotator-listing"></ul>
-            <div class="annotator-controls">
-              <a href="#cancel" class="annotator-cancel">#{_t('Cancel')}</a>
-              <a href="#save"
-                 class="annotator-save annotator-focus">#{_t('Save')}</a>
-            </div>
-          </form>
+  template:
+    """
+    <div class="annotator-outer annotator-editor annotator-hide">
+      <form class="annotator-widget">
+        <ul class="annotator-listing"></ul>
+        <div class="annotator-controls">
+          <a href="#cancel" class="annotator-cancel">#{_t('Cancel')}</a>
+          <a href="#save"
+             class="annotator-save annotator-focus">#{_t('Save')}</a>
         </div>
-        """
+      </form>
+    </div>
+    """
 
   # Configuration options
   options:
-    document: Util.getGlobal().document
     defaultFields: true # Add the default field(s) to the editor.
 
   # Public: Creates an instance of the Editor object.
@@ -54,11 +59,9 @@ class Editor extends Widget
   # Returns a new Editor instance.
   constructor: (options) ->
     super
-    @options = $.extend(true, {}, @options, options)
 
     @fields = []
     @annotation = {}
-    @widget = $(@html).get(0)
 
     if @options.defaultFields
       this.addField({
@@ -86,64 +89,34 @@ class Editor extends Widget
     })
 
   pluginInit: ->
-    $(@widget).appendTo(@options.document.body)
-    .on("submit.#{ns}", 'form', this._onFormSubmit)
-    .on("click.#{ns}", '.annotator-save', this._onSaveClick)
-    .on("click.#{ns}", '.annotator-cancel', this._onCancelClick)
-    .on("mouseover.#{ns}", '.annotator-cancel', this._onCancelMouseover)
-    .on("keydown.#{ns}", 'textarea', this._onTextareaKeydown)
     this.listenTo(@core, 'beforeAnnotationCreated', this._editAnnotation)
     this.listenTo(@core, 'beforeAnnotationUpdated', this._editAnnotation)
+    this.render()
 
   destroy: ->
-    this.stopListening()
-    $(@widget).off(".#{ns}")
     super
+    this.stopListening()
 
   # Public: Show the editor.
   #
   # Returns nothing.
   show: ->
-    widget = $(@widget)
-
     if @core.interactionPoint?
-      widget.css({
+      @element.css({
         top: @core.interactionPoint.top,
         left: @core.interactionPoint.left
       })
 
-    widget
-    .removeClass(@classes.hide)
+    @element
     .find('.annotator-save')
     .addClass(@classes.focus)
 
-    # invert if necessary
-    this.checkOrientation()
+    super
 
     # give main textarea focus
-    widget.find(":input:first").focus()
+    @element.find(":input:first").focus()
 
     this._setupDraggables()
-
-  # Public: Hide the editor.
-  #
-  # Returns nothing.
-  hide: ->
-    $(@widget).addClass(@classes.hide)
-
-  # Public: Returns true if the editor is currently displayed, false otherwise.
-  #
-  # Examples
-  #
-  #   editor.show()
-  #   editor.isShown() # => true
-  #
-  #   editor.hide()
-  #   editor.isShown() # => false
-  #
-  # Returns true if the viewer is visible.
-  isShown: ->
-    not $(@widget).hasClass(@classes.hide)
 
   # Public: Load an annotation into the editor and display it.
   #
@@ -264,7 +237,7 @@ class Editor extends Widget
       element.addClass('annotator-checkbox')
       element.append($('<label />', {for: field.id, html: field.label}))
 
-    $(@widget).find('ul:first').append(element)
+    @element.find('ul:first').append(element)
 
     @fields.push field
 
@@ -273,12 +246,10 @@ class Editor extends Widget
   checkOrientation: ->
     super
 
-    widget = $(@widget)
+    list = @element.find('ul')
+    controls = @element.find('.annotator-controls')
 
-    list = widget.find('ul')
-    controls = widget.find('.annotator-controls')
-
-    if widget.hasClass(@classes.invert.y)
+    if @element.hasClass(@classes.invert.y)
       controls.insertBefore(list)
     else if controls.is(':first-child')
       controls.insertAfter(list)
@@ -289,29 +260,29 @@ class Editor extends Widget
   # return, for example).
   #
   # Returns nothing
-  _onFormSubmit: (event) =>
+  _onFormSubmit: (event) ->
     Util.preventEventDefault event
     this.submit()
 
   # Event callback: called when a user clicks the editor's save button.
   #
   # Returns nothing
-  _onSaveClick: (event) =>
+  _onSaveClick: (event) ->
     Util.preventEventDefault event
     this.submit()
 
   # Event callback: called when a user clicks the editor's cancel button.
   #
   # Returns nothing
-  _onCancelClick: (event) =>
+  _onCancelClick: (event) ->
     Util.preventEventDefault event
     this.cancel()
 
   # Event callback: called when a user mouses over the editor's cancel button.
   #
   # Returns nothing
-  _onCancelMouseover: =>
-    $(@widget).find('.' + @classes.focus).removeClass(@classes.focus)
+  _onCancelMouseover: ->
+    @element.find('.' + @classes.focus).removeClass(@classes.focus)
 
   # Event callback: listens for the following special keypresses.
   # - escape: Hides the editor
@@ -320,7 +291,7 @@ class Editor extends Widget
   # event - A keydown Event object.
   #
   # Returns nothing
-  _onTextareaKeydown: (event) =>
+  _onTextareaKeydown: (event) ->
     if event.which is 27 # "Escape" key => abort.
       this.cancel()
     else if event.which is 13 and !event.shiftKey
@@ -340,14 +311,13 @@ class Editor extends Widget
   #
   # Returns nothing.
   _setupDraggables: ->
-    widget = $(@widget)
-    widget.find('.annotator-resize').remove()
+    @element.find('.annotator-resize').remove()
 
     # Find the first/last item element depending on orientation
-    if widget.hasClass(@classes.invert.y)
-      cornerItem = widget.find('.annotator-item:last')
+    if @element.hasClass(@classes.invert.y)
+      cornerItem = @element.find('.annotator-item:last')
     else
-      cornerItem = widget.find('.annotator-item:first')
+      cornerItem = @element.find('.annotator-item:first')
 
     if cornerItem
       $('<span class="annotator-resize"></span>').appendTo(cornerItem)
@@ -355,8 +325,8 @@ class Editor extends Widget
     mousedown = null
     classes   = @classes
     textarea  = null
-    resize    = widget.find('.annotator-resize')
-    controls  = widget.find('.annotator-controls')
+    resize    = @element.find('.annotator-resize')
+    controls  = @element.find('.annotator-controls')
     throttle  = false
 
     onMousedown = (event) ->
@@ -368,7 +338,7 @@ class Editor extends Widget
         }
 
         # Find the first text area if there is one.
-        textarea = widget.find('textarea:first')
+        textarea = @element.find('textarea:first')
 
         $(window).bind({
           'mouseup.annotator-editor-resize': onMouseup
@@ -391,8 +361,8 @@ class Editor extends Widget
           height = textarea.outerHeight()
           width  = textarea.outerWidth()
 
-          directionX = if widget.hasClass(classes.invert.x) then -1 else  1
-          directionY = if widget.hasClass(classes.invert.y) then  1 else -1
+          directionX = if @element.hasClass(classes.invert.x) then -1 else  1
+          directionY = if @element.hasClass(classes.invert.y) then  1 else -1
 
           textarea.height height + (diff.top  * directionY)
           textarea.width  width  + (diff.left * directionX)
@@ -404,9 +374,9 @@ class Editor extends Widget
           mousedown.left = event.pageX unless textarea.outerWidth()  == width
 
         else if mousedown.element == controls[0]
-          widget.css({
-            top: parseInt(widget.css('top'), 10) + diff.top
-            left: parseInt(widget.css('left'), 10) + diff.left
+          @element.css({
+            top: parseInt(@element.css('top'), 10) + diff.top
+            left: parseInt(@element.css('left'), 10) + diff.left
           })
 
           mousedown.top  = event.pageY
@@ -418,8 +388,6 @@ class Editor extends Widget
     resize.bind   'mousedown', onMousedown
     controls.bind 'mousedown', onMousedown
 
-
-Events.mixin(Editor::)
 
 # This is a core plugin (registered by default with Annotator), so we don't
 # register here. If you're writing a plugin of your own, please refer to a

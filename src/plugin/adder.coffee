@@ -1,41 +1,53 @@
-BackboneEvents = require('backbone-events-standalone')
+Widget = require('../widget')
 Util = require('../util')
 $ = Util.$
 _t = Util.TranslationString
 
 ADDER_NS = 'annotator-adder'
-ADDER_HIDE_CLASS = 'annotator-hide'
-ADDER_HTML = """
-             <div class="annotator-adder #{ADDER_HIDE_CLASS}">
-               <button type="button">#{_t('Annotate')}</button>
-             </div>
-             """
+ADDER_HTML =
+  """
+  <div class="annotator-adder annotator-hide">
+    <button type="button">#{_t('Annotate')}</button>
+  </div>
+  """
 
 # Public: Provide an adder button to use for creating annotations
-class Adder
+class Adder extends Widget
+  events:
+    "button click": "_onClick"
+    "button mousedown": "_onMousedown"
 
-  constructor: (element) ->
-    @element = element
+  template: ADDER_HTML
+
+  constructor: (options) ->
+    super
     @ignoreMouseup = false
 
   configure: ({@core}) ->
+    Object.defineProperty(@core, 'adder', {
+      configurable: true
+      get: =>
+        # FIXME: This is a deprecation warning which suggests an alternative
+        # method which also triggers a deprecation warning. We need to discuss a
+        # better method of tying plugins like Tags, Permissions, etc, into the
+        # Editor.
+        Util.deprecationWarning("The Adder is now an optional plugin, and
+                                 plugins should not refer to it using
+                                 annotator.adder! Please use
+                                 annotator.plugins.Adder instead.")
+        this
+    })
 
   pluginInit: ->
-    if @element.ownerDocument?
-      @document = @element.ownerDocument
-      $(@document.body).on("mouseup.#{ADDER_NS}", this._onMouseup)
-      @adder = $(ADDER_HTML).appendTo(@document.body)[0]
-      $(@adder)
-      .on("click.#{ADDER_NS}", 'button', this._onClick)
-      .on("mousedown.#{ADDER_NS}", 'button', this._onMousedown)
+    @document = @element[0].ownerDocument
+    $(@document.body).on("mouseup.#{ADDER_NS}", this._onMouseup)
+    this.listenTo(@core, 'selection', @onSelection)
+    this.render()
 
-      this.listenTo(@core, 'selection', @onSelection)
-
-    else
-      console.warn("You created an instance of the Adder on an element that
-                    doesn't have an ownerDocument. This won't work! Please
-                    ensure the element is added to the DOM before the plugin is
-                    configured:", @element)
+  destroy: ->
+    super
+    this.stopListening(@core, 'selection', @onSelection)
+    $(@document.body).off(".#{ADDER_NS}")
 
   onSelection: (annotationSkeleton) =>
     if annotationSkeleton # Did we get any data?
@@ -47,50 +59,23 @@ class Adder
       # Hide the adder.
       @hide()
 
-  destroy: ->
-    this.stopListening()
-    $(@adder)
-    .off(".#{ADDER_NS}")
-    .remove()
-    $(@document.body).off(".#{ADDER_NS}")
-
   # Public: Show the adder.
   #
   # Returns nothing.
   show: =>
     if @core.interactionPoint?
-      $(@adder).css({
+      @element.css({
         top: @core.interactionPoint.top,
         left: @core.interactionPoint.left
       })
-    $(@adder).removeClass(ADDER_HIDE_CLASS)
-
-  # Public: Hide the adder.
-  #
-  # Returns nothing.
-  hide: =>
-    $(@adder).addClass(ADDER_HIDE_CLASS)
-
-  # Public: Returns true if the adder is currently displayed, false otherwise.
-  #
-  # Examples
-  #
-  #   adder.show()
-  #   adder.isShown() # => true
-  #
-  #   adder.hide()
-  #   adder.isShown() # => false
-  #
-  # Returns true if the adder is visible.
-  isShown: ->
-    not $(@adder).hasClass(ADDER_HIDE_CLASS)
+    super
 
   # Event callback: called when the mouse button is depressed on the adder.
   #
   # event - A mousedown Event object
   #
   # Returns nothing.
-  _onMousedown: (event) =>
+  _onMousedown: (event) ->
     # Do nothing for right-clicks, middle-clicks, etc.
     if event.which != 1
       return
@@ -104,7 +89,7 @@ class Adder
   # event - A mouseup Event object
   #
   # Returns nothing.
-  _onMouseup: (event) =>
+  _onMouseup: (event) ->
     # Do nothing for right-clicks, middle-clicks, etc.
     if event.which != 1
       return
@@ -115,13 +100,13 @@ class Adder
 
 
   # Event callback: called when the adder is clicked. The click event is used as
-  # well as the mousedown so that we get the :active state on the @adder when
+  # well as the mousedown so that we get the :active state on the adder when
   # clicked.
   #
   # event - A mousedown Event object
   #
   # Returns nothing.
-  _onClick: (event) =>
+  _onClick: (event) ->
     # Do nothing for right-clicks, middle-clicks, etc.
     if event.which != 1
       return
@@ -135,7 +120,6 @@ class Adder
     # Create a new annotation
     @core.annotations.create(@selectedSkeleton)
 
-BackboneEvents.mixin(Adder.prototype)
 
 # This is a core plugin (registered by default with Annotator), so we don't
 # register here. If you're writing a plugin of your own, please refer to a
