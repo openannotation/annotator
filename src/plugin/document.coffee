@@ -18,7 +18,7 @@ class Document
   # returns the primary URI for the document being annotated
   uri: ->
     uri = decodeURIComponent document.location.href
-    for link in @metadata
+    for link in @metadata.link
       if link.rel == "canonical"
         uri = link.href
     return uri
