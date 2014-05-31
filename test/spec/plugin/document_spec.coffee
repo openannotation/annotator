@@ -53,6 +53,7 @@ describe 'Document plugin', ->
     head.append('<meta name="eprints.title" content="Computer Lib / Dream Machines">')
     head.append('<meta name="prism.title" content="Literary Machines">')
     head.append('<link rel="alternate" href="feed" type="application/rss+xml"></link>')
+    head.append('<link rel="canonical" href="http://example.com/bookmark/canonical.html"></link>')
 
     beforeEach ->
       metadata = plugin.getDocumentMetadata()
@@ -62,7 +63,7 @@ describe 'Document plugin', ->
 
     it 'should have links with absoulte hrefs and types', ->
       assert.ok(metadata.link)
-      assert.equal(metadata.link.length, 7)
+      assert.equal(metadata.link.length, 8)
       assert.equal(metadata.link[0].href, window.location.href)
       assert.equal(metadata.link[1].rel, "alternate")
       assert.match(metadata.link[1].href, /^.+foo\.pdf$/)
@@ -72,13 +73,15 @@ describe 'Document plugin', ->
       assert.equal(metadata.link[2].type, "application/msword")
       assert.equal(metadata.link[3].rel, "bookmark")
       assert.equal(metadata.link[3].href, "http://example.com/bookmark")
-      assert.equal(metadata.link[4].href, "doi:10.1175/JCLI-D-11-00015.1")
-      assert.match(metadata.link[5].href, /.+foo\.pdf$/)
-      assert.equal(metadata.link[5].type, "application/pdf")
-      assert.equal(metadata.link[6].href, "doi:10.1175/JCLI-D-11-00015.1")
+      assert.equal(metadata.link[4].rel, "canonical")
+      assert.equal(metadata.link[4].href, "http://example.com/bookmark/canonical.html")
+      assert.equal(metadata.link[5].href, "doi:10.1175/JCLI-D-11-00015.1")
+      assert.match(metadata.link[6].href, /.+foo\.pdf$/)
+      assert.equal(metadata.link[6].type, "application/pdf")
+      assert.equal(metadata.link[7].href, "doi:10.1175/JCLI-D-11-00015.1")
 
     it 'should ignore atom and RSS feeds and alternate languages', ->
-      assert.equal(metadata.link.length, 7)
+      assert.equal(metadata.link.length, 8)
 
     it 'should have highwire metadata', ->
       assert.ok(metadata.highwire)
@@ -113,10 +116,15 @@ describe 'Document plugin', ->
         'http://example.com/images/icon.ico'
       )
 
+  describe '#uri()', ->
+    it 'should give back the canonical uri', ->
+      uri = plugin.uri()
+      assert.equal(uri, 'http://example.com/bookmark/canonical.html')
+
   describe '#uris()', ->
     it 'should de-duplicate uris', ->
       uris = plugin.uris()
-      assert.equal(uris.length, 5)
+      assert.equal(uris.length, 6)
 
   describe '#_absoluteUrl', ->
     it 'should add the protocol when the url starts with two slashes', ->
