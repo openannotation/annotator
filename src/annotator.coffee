@@ -296,7 +296,6 @@ g = Util.getGlobal()
 
 # Checks for the presence of wicked-good-xpath
 # It is always safe to install it, it'll not overwrite existing functions
-g = Util.getGlobal()
 if g.wgxpath?
   g.wgxpath.install()
 else
