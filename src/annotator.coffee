@@ -294,6 +294,15 @@ class Annotator.Factory extends Factory
 # Sniff the browser environment and attempt to add missing functionality.
 g = Util.getGlobal()
 
+# Checks for the presence of wicked-good-xpath
+# It is always safe to install it, it'll not overwrite existing functions
+g = Util.getGlobal()
+if g.wgxpath?
+  g.wgxpath.install()
+else
+  console.log "Looks like you forgot to load the Wicked-Good-Xpath library."
+  console.log 'Try <script src="lib/vendor/wgxpath.install.js"></script> to your HTML.'
+
 if not g.getSelection?
   $.getScript('http://assets.annotateit.org/vendor/ierange.min.js')
 
