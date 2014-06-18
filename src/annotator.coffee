@@ -300,7 +300,7 @@ if g.wgxpath?
   g.wgxpath.install()
 else
   console.log "Looks like you forgot to load the Wicked-Good-Xpath library."
-  console.log 'Try <script src="lib/vendor/wgxpath.install.js"></script> to your HTML.'
+  console.log "Search for wgxpath.install.js, shipped with Annotator."
 
 if not g.getSelection?
   $.getScript('http://assets.annotateit.org/vendor/ierange.min.js')
