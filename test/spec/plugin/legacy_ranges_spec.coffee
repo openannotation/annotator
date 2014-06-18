@@ -1,7 +1,7 @@
 BackboneEvents = require('backbone-events-standalone')
 h = require('helpers')
 LegacyRanges = require('../../../src/plugin/legacyranges')
-Range = require('../../../src/range')
+Range = require('xpath-range').Range
 Util = require('../../../src/util')
 $ = Util.$
 

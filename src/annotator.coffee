@@ -1,7 +1,6 @@
 extend = require('backbone-extend-standalone')
 
 Delegator = require('./delegator')
-Range = require('./range')
 Util = require('./util')
 Widget = require('./widget')
 Notification = require('./notification')
@@ -297,7 +296,11 @@ g = Util.getGlobal()
 
 # Checks for the presence of wicked-good-xpath
 # It is always safe to install it, it'll not overwrite existing functions
-if g.wgxpath? then g.wgxpath.install()
+if g.wgxpath?
+  g.wgxpath.install()
+else
+  console.log "Looks like you forgot to load the Wicked-Good-Xpath library."
+  console.log "Search for wgxpath.install.js, shipped with Annotator."
 
 if not g.getSelection?
   $.getScript('http://assets.annotateit.org/vendor/ierange.min.js')
@@ -324,7 +327,6 @@ if not g.Node?
 
 # Export other modules for use in plugins.
 Annotator.Delegator = Delegator
-Annotator.Range = Range
 Annotator.Util = Util
 Annotator.Widget = Widget
 Annotator.Notification = Notification

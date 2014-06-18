@@ -1,6 +1,6 @@
 BackboneEvents = require('backbone-events-standalone')
 Highlighter = require('../../../src/plugin/highlighter')
-Range = require('../../../src/range')
+Range = require('xpath-range').Range
 Annotator = require('annotator')
 $ = Annotator.Util.$
 

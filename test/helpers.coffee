@@ -1,4 +1,4 @@
-xpath = require('../src/xpath')
+xpath = require('xpath-range').xpath
 Util = require('../src/util')
 $ = Util.$
 

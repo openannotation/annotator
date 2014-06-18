@@ -1,7 +1,7 @@
 BackboneEvents = require('backbone-events-standalone')
 h = require('helpers')
 TextSelector = require('../../../src/plugin/textselector')
-Range = require('../../../src/range')
+Range = require('xpath-range').Range
 Util = require('../../../src/util')
 $ = Util.$
 
