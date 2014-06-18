@@ -1,5 +1,5 @@
 BackboneEvents = require('backbone-events-standalone')
-Range = require('../range')
+Range = require('xpath-range').Range
 Util = require('../util')
 $ = Util.$
 Promise = Util.Promise

@@ -1,7 +1,6 @@
 extend = require('backbone-extend-standalone')
 
 Delegator = require('./delegator')
-Range = require('./range')
 Util = require('./util')
 Widget = require('./widget')
 Notification = require('./notification')
@@ -295,10 +294,6 @@ class Annotator.Factory extends Factory
 # Sniff the browser environment and attempt to add missing functionality.
 g = Util.getGlobal()
 
-# Checks for the presence of wicked-good-xpath
-# It is always safe to install it, it'll not overwrite existing functions
-if g.wgxpath? then g.wgxpath.install()
-
 if not g.getSelection?
   $.getScript('http://assets.annotateit.org/vendor/ierange.min.js')
 
@@ -324,7 +319,6 @@ if not g.Node?
 
 # Export other modules for use in plugins.
 Annotator.Delegator = Delegator
-Annotator.Range = Range
 Annotator.Util = Util
 Annotator.Widget = Widget
 Annotator.Notification = Notification
