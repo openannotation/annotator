@@ -155,7 +155,7 @@ Util.maxZIndex = ($elements) ->
       -1
     else
       # Use parseFloat since we may get scientific notation for large values.
-      parseFloat($(el).css('z-index'), 10) or -1
+      parseFloat($(el).css('z-index')) or -1
   Math.max.apply(Math, all)
 
 # Returns the absolute position of the mouse relative to the top-left rendered
