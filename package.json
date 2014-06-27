@@ -10,7 +10,7 @@
     "backbone-events-standalone": "~0.2.1",
     "backbone-extend-standalone": "~0.1.2",
     "es6-promise": "~0.1.1",
-    "xpath-range": "0.0.2-dev02",
+    "xpath-range": "0.0.3",
     "jquery": "~1.11.0"
   },
   "devDependencies": {
