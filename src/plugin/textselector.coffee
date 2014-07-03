@@ -1,4 +1,4 @@
-Range = require('../range')
+Range = require('xpath-range').Range
 Util = require('../util')
 $ = Util.$
 

@@ -1,7 +1,7 @@
 h = require('helpers')
 Annotator = require('annotator')
 Adder = require('../../../src/plugin/adder')
-Range = require('../../../src/range')
+Range = require('xpath-range').Range
 Util = require('../../../src/util')
 $ = Util.$
 

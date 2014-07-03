@@ -1,7 +1,6 @@
 extend = require('backbone-extend-standalone')
 
 Delegator = require('./delegator')
-Range = require('./range')
 Util = require('./util')
 Widget = require('./widget')
 Notification = require('./notification')
@@ -324,7 +323,6 @@ if not g.Node?
 
 # Export other modules for use in plugins.
 Annotator.Delegator = Delegator
-Annotator.Range = Range
 Annotator.Util = Util
 Annotator.Widget = Widget
 Annotator.Notification = Notification
