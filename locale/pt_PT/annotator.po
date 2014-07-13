@@ -3,19 +3,19 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Rivo Zängov <eraser@eraser.ee>, 2012
+# Manuela Silva <manuela.silva@sky.com>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: Annotator\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-03-16 12:27+0000\n"
-"PO-Revision-Date: 2013-11-20 09:40+0000\n"
-"Last-Translator: Rivo Zängov <eraser@eraser.ee>\n"
-"Language-Team: Estonian (http://www.transifex.com/projects/p/annotator/language/et/)\n"
+"PO-Revision-Date: 2014-04-16 09:00+0000\n"
+"Last-Translator: Manuela Silva <manuela.silva@sky.com>\n"
+"Language-Team: Portuguese (Portugal) (http://www.transifex.com/projects/p/annotator/language/pt_PT/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: et\n"
+"Language: pt_PT\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: lib/extensions.js:23
@@ -30,7 +30,7 @@ msgstr ""
 
 #: lib/console.js:17
 msgid "Not implemented:"
-msgstr ""
+msgstr "Não implementado:"
 
 #: lib/range.js:13
 msgid "Could not sniff range type"
@@ -46,7 +46,7 @@ msgstr ""
 
 #: lib/range.js:247
 msgid "'. Is this the right document?"
-msgstr "'. kas see on õige dokument?"
+msgstr "'. Este é o documento correto?"
 
 #: lib/annotator.js:47
 msgid "Annotate"
@@ -54,11 +54,11 @@ msgstr ""
 
 #: lib/annotator.js:114
 msgid "No Comment"
-msgstr "Kommentaare pole"
+msgstr "Nenhum Comentário"
 
 #: lib/annotator.js:129
 msgid "Comments"
-msgstr "Kommentaarid"
+msgstr "Comentários"
 
 #: lib/annotator.js:265
 msgid "Can't dump annotations without Store plugin."
@@ -70,7 +70,7 @@ msgstr ""
 
 #: lib/annotator.js:296
 msgid "Could not load "
-msgstr "Ei suutnud laadida "
+msgstr "Não foi possível carregar"
 
 #: lib/annotator.js:296
 msgid " plugin. Have you included the appropriate <script> tag?"
@@ -78,31 +78,31 @@ msgstr ""
 
 #: lib/editor.js:22
 msgid "Cancel"
-msgstr "Loobu"
+msgstr "Cancelar"
 
 #: lib/editor.js:22
 msgid "Save"
-msgstr "Salvesta"
+msgstr "Guardar"
 
 #: lib/plugin/tags.js:35
 msgid "Add some tags here"
-msgstr "Lisa siia mõned sildid"
+msgstr ""
 
 #: lib/plugin/tags.js:44
 msgid "Tag"
-msgstr "Silt"
+msgstr ""
 
 #: lib/plugin/auth.js:62
 msgid "Couldn't get auth token:"
-msgstr "Audentimiskoodi hankimine ebaõnnestus:"
+msgstr ""
 
 #: lib/plugin/auth.js:87
 msgid "Didn't get a valid token."
-msgstr "Audentimiskood polnud korrektne."
+msgstr ""
 
 #: lib/plugin/auth.js:89
 msgid "Getting a new token in 10s."
-msgstr "Uue koodi hankimine 10s pärast."
+msgstr ""
 
 #: lib/plugin/store.js:61
 msgid "Warning: No ID returned from server for annotation "
@@ -130,7 +130,7 @@ msgstr ""
 
 #: lib/plugin/store.js:210
 msgid "Sorry you are not allowed to "
-msgstr ""
+msgstr "Desculpe, não está autorizado a "
 
 #: lib/plugin/store.js:213
 msgid "Sorry we could not connect to the annotations store"
@@ -142,35 +142,35 @@ msgstr ""
 
 #: lib/plugin/store.js:219
 msgid "API request failed:"
-msgstr "API päring ebaõnnestus:"
+msgstr "O pedido API falhou:"
 
 #: lib/plugin/filter.js:27
 msgid "Navigate:"
-msgstr "Navigeeri:"
+msgstr "Navegar:"
 
 #: lib/plugin/filter.js:27
 msgid "Previous"
-msgstr "Eelmine"
+msgstr "Anterior"
 
 #: lib/plugin/filter.js:27
 msgid "Next"
-msgstr "Järgmine"
+msgstr "Seguinte"
 
 #: lib/plugin/filter.js:27
 msgid "Filter by:"
-msgstr "Filtreeri"
+msgstr "Filtrar por:"
 
 #: lib/plugin/filter.js:28
 msgid "Clear"
-msgstr "Tühjenda"
+msgstr "Limpar"
 
 #: lib/plugin/filter.js:71
 msgid "Annotation"
-msgstr ""
+msgstr "Anotação"
 
 #: lib/plugin/filter.js:118
 msgid "Filter by "
-msgstr "Filtreeri  "
+msgstr "Filtrar por "
 
 #: lib/plugin/markdown.js:18
 msgid ""
@@ -179,16 +179,16 @@ msgstr ""
 
 #: lib/plugin/unsupported.js:13
 msgid "Sorry your current browser does not support the Annotator"
-msgstr ""
+msgstr "Desculpe, o seu navegador atual não suporta o Annotator"
 
 #: lib/plugin/permissions.js:74
 msgid "Allow anyone to <strong>view</strong> this annotation"
-msgstr ""
+msgstr "Permitir que todas as pessoas <strong>visualizaem</strong> esta anotação"
 
 #: lib/plugin/permissions.js:82
 msgid "Allow anyone to <strong>edit</strong> this annotation"
-msgstr ""
+msgstr "Permitir que todas as pessoas <strong>editem</strong> esta anotação"
 
 #: lib/plugin/permissions.js:92
 msgid "User"
-msgstr "Kasutata"
+msgstr "Utilizador"

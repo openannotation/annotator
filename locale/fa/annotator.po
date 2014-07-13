@@ -3,192 +3,192 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Rivo Zängov <eraser@eraser.ee>, 2012
+# Babak Vandad <Babak_Vandad@yahoo.com>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: Annotator\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-03-16 12:27+0000\n"
 "PO-Revision-Date: 2013-11-20 09:40+0000\n"
-"Last-Translator: Rivo Zängov <eraser@eraser.ee>\n"
-"Language-Team: Estonian (http://www.transifex.com/projects/p/annotator/language/et/)\n"
+"Last-Translator: Babak Vandad <Babak_Vandad@yahoo.com>\n"
+"Language-Team: Persian (http://www.transifex.com/projects/p/annotator/language/fa/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: et\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: fa\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #: lib/extensions.js:23
 msgid "Annotator requires jQuery: have you included lib/vendor/jquery.js?"
-msgstr ""
+msgstr "حاشیه‌نویس به بسته‌ی jQuery نیاز دارد: آیا lib/vendor/jquery.js را لحاظ کرده‌اید؟"
 
 #: lib/extensions.js:27
 msgid ""
 "Annotator requires a JSON implementation: have you included "
 "lib/vendor/json2.js?"
-msgstr ""
+msgstr "حاشیه‌نویس به یک پیاده‌سازی از JSON نیاز دارد: آیا lib/vendor/json2.js را لحاظ کرده‌اید؟"
 
 #: lib/console.js:17
 msgid "Not implemented:"
-msgstr ""
+msgstr "پیاده‌سازی نشده است:"
 
 #: lib/range.js:13
 msgid "Could not sniff range type"
-msgstr ""
+msgstr "نوعِ بازه درک نشد"
 
 #: lib/range.js:31
 msgid "You may only call normalize() once on a BrowserRange!"
-msgstr ""
+msgstr " در یک BrowserRange، تنها یک بار می‌توانید normalize() را صدا بزنید!"
 
 #: lib/range.js:247
 msgid "Error deserializing range: can't find XPath '"
-msgstr ""
+msgstr "خطای خواندن بازه: XPath پیدا نشد. '"
 
 #: lib/range.js:247
 msgid "'. Is this the right document?"
-msgstr "'. kas see on õige dokument?"
+msgstr "'. آیا این سندِ مورد نظر است؟"
 
 #: lib/annotator.js:47
 msgid "Annotate"
-msgstr ""
+msgstr "حاشیه‌نویسی"
 
 #: lib/annotator.js:114
 msgid "No Comment"
-msgstr "Kommentaare pole"
+msgstr "بدون نظر"
 
 #: lib/annotator.js:129
 msgid "Comments"
-msgstr "Kommentaarid"
+msgstr "نظرات"
 
 #: lib/annotator.js:265
 msgid "Can't dump annotations without Store plugin."
-msgstr ""
+msgstr "بدون افزونه‌ی انبار، نمی‌توان از حاشیه‌نویسی‌ها روبرداشت."
 
 #: lib/annotator.js:286
 msgid "You cannot have more than one instance of any plugin."
-msgstr ""
+msgstr "نمی‌توانید پیش از یک نمونه از هر افزونه داشته باشید."
 
 #: lib/annotator.js:296
 msgid "Could not load "
-msgstr "Ei suutnud laadida "
+msgstr "نمی‌توان بارگیری کرد"
 
 #: lib/annotator.js:296
 msgid " plugin. Have you included the appropriate <script> tag?"
-msgstr ""
+msgstr "افزونه. آیا برچسب <script> مناسب را لحاظ کرده‌اید؟"
 
 #: lib/editor.js:22
 msgid "Cancel"
-msgstr "Loobu"
+msgstr "لغو"
 
 #: lib/editor.js:22
 msgid "Save"
-msgstr "Salvesta"
+msgstr "ذخیره"
 
 #: lib/plugin/tags.js:35
 msgid "Add some tags here"
-msgstr "Lisa siia mõned sildid"
+msgstr "اینجا چند برچسب اضافه کنید"
 
 #: lib/plugin/tags.js:44
 msgid "Tag"
-msgstr "Silt"
+msgstr "برچسب"
 
 #: lib/plugin/auth.js:62
 msgid "Couldn't get auth token:"
-msgstr "Audentimiskoodi hankimine ebaõnnestus:"
+msgstr "ژتون احراز هویت قابل دریافت نیست:"
 
 #: lib/plugin/auth.js:87
 msgid "Didn't get a valid token."
-msgstr "Audentimiskood polnud korrektne."
+msgstr "ژتون معتبری دریافت نشد."
 
 #: lib/plugin/auth.js:89
 msgid "Getting a new token in 10s."
-msgstr "Uue koodi hankimine 10s pärast."
+msgstr "دریافت یک ژتون تا 10 ثانیه."
 
 #: lib/plugin/store.js:61
 msgid "Warning: No ID returned from server for annotation "
-msgstr ""
+msgstr "اخطار: هیچ شناسه‌ای برای حاشیه‌نویسی از سرویس‌دهنده دریافت نشد."
 
 #: lib/plugin/store.js:98
 msgid "Trying to update unregistered annotation!"
-msgstr ""
+msgstr "تلاش برای به‌روزرسانی حاشیه‌ی ثبت نشده!"
 
 #: lib/plugin/store.js:202 lib/plugin/store.js:206
 msgid "Sorry we could not "
-msgstr ""
+msgstr "متأسفانه نتوانستیم"
 
 #: lib/plugin/store.js:202 lib/plugin/store.js:210
 msgid " this annotation"
-msgstr ""
+msgstr "این حاشیه"
 
 #: lib/plugin/store.js:204
 msgid "Sorry we could not search the store for annotations"
-msgstr ""
+msgstr "متأسفیم، ما نتوانستیم در انبار به دنبال حاشیه‌نویسی‌ها بگردیم."
 
 #: lib/plugin/store.js:206
 msgid " the annotations from the store"
-msgstr ""
+msgstr "حاشیه‌نویسی‌ها از انبار"
 
 #: lib/plugin/store.js:210
 msgid "Sorry you are not allowed to "
-msgstr ""
+msgstr "متأسفانه شما اجازه ندارید"
 
 #: lib/plugin/store.js:213
 msgid "Sorry we could not connect to the annotations store"
-msgstr ""
+msgstr "متأسفیم، ما نتوانستیم به انبار حاشیه‌نویسی‌ها متصل شویم"
 
 #: lib/plugin/store.js:216
 msgid "Sorry something went wrong with the annotation store"
-msgstr ""
+msgstr "متأسفیم، مشکلی در انبار حاشیه‌نویسی‌ها رخ داده است."
 
 #: lib/plugin/store.js:219
 msgid "API request failed:"
-msgstr "API päring ebaõnnestus:"
+msgstr "درخاست API رد شد:"
 
 #: lib/plugin/filter.js:27
 msgid "Navigate:"
-msgstr "Navigeeri:"
+msgstr "گشت:"
 
 #: lib/plugin/filter.js:27
 msgid "Previous"
-msgstr "Eelmine"
+msgstr "قبلی"
 
 #: lib/plugin/filter.js:27
 msgid "Next"
-msgstr "Järgmine"
+msgstr "بعدی"
 
 #: lib/plugin/filter.js:27
 msgid "Filter by:"
-msgstr "Filtreeri"
+msgstr "سوا کردن با:"
 
 #: lib/plugin/filter.js:28
 msgid "Clear"
-msgstr "Tühjenda"
+msgstr "از نو"
 
 #: lib/plugin/filter.js:71
 msgid "Annotation"
-msgstr ""
+msgstr "حاشیه‌نویسی"
 
 #: lib/plugin/filter.js:118
 msgid "Filter by "
-msgstr "Filtreeri  "
+msgstr "سوا کردن با"
 
 #: lib/plugin/markdown.js:18
 msgid ""
 "To use the Markdown plugin, you must include Showdown into the page first."
-msgstr ""
+msgstr "برای استفاده از افزونه‌ی «Markdown»، ابتدا باید «Showdown» را در صفحه اول لحاظ کنید."
 
 #: lib/plugin/unsupported.js:13
 msgid "Sorry your current browser does not support the Annotator"
-msgstr ""
+msgstr "متأسفیم، این مرورگر از حاشیه‌نویس پشتیبانی نمی‌کند"
 
 #: lib/plugin/permissions.js:74
 msgid "Allow anyone to <strong>view</strong> this annotation"
-msgstr ""
+msgstr "به همه اجازه‌ی <strong>دیدن</strong> این حاشیه‌نویسی را بده"
 
 #: lib/plugin/permissions.js:82
 msgid "Allow anyone to <strong>edit</strong> this annotation"
-msgstr ""
+msgstr "به همه اجازه‌ی <strong>ویرایش</strong> این حاشیه‌نویسی را بده"
 
 #: lib/plugin/permissions.js:92
 msgid "User"
-msgstr "Kasutata"
+msgstr "کاربر"

@@ -3,26 +3,26 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-#   <tongyancn+transifex@gmail.com>, 2012.
+# ferryman <tongyancn+transifex@gmail.com>, 2012
 msgid ""
 msgstr ""
 "Project-Id-Version: Annotator\n"
-"Report-Msgid-Bugs-To: https://github.com/okfn/annotator/issues\n"
+"Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-03-16 12:27+0000\n"
-"PO-Revision-Date: 2012-03-28 06:40+0000\n"
+"PO-Revision-Date: 2013-11-20 09:40+0000\n"
 "Last-Translator: ferryman <tongyancn+transifex@gmail.com>\n"
-"Language-Team: Chinese (China) (http://www.transifex.net/projects/p/annotator/language/zh_CN/)\n"
+"Language-Team: Chinese (China) (http://www.transifex.com/projects/p/annotator/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: zh_CN\n"
-"Plural-Forms: nplurals=1; plural=0\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
-#: lib/util.js:23
+#: lib/extensions.js:23
 msgid "Annotator requires jQuery: have you included lib/vendor/jquery.js?"
 msgstr "Annotator 依赖 JQuery, 请检查页面是否包含 lib/vendor/jquery.js？ "
 
-#: lib/util.js:27
+#: lib/extensions.js:27
 msgid ""
 "Annotator requires a JSON implementation: have you included "
 "lib/vendor/json2.js?"

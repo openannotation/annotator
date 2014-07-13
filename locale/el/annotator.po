@@ -1,0 +1,194 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# 
+# Translators:
+# Konstantinos Stampoulis, 2013
+msgid ""
+msgstr ""
+"Project-Id-Version: Annotator\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-03-16 12:27+0000\n"
+"PO-Revision-Date: 2013-11-20 09:40+0000\n"
+"Last-Translator: Konstantinos Stampoulis\n"
+"Language-Team: Greek (http://www.transifex.com/projects/p/annotator/language/el/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: el\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: lib/extensions.js:23
+msgid "Annotator requires jQuery: have you included lib/vendor/jquery.js?"
+msgstr "Το Annotator χρειάζεται την jQuery: έχετε συμπεριλάβει το lib/vendor/jquery.js;"
+
+#: lib/extensions.js:27
+msgid ""
+"Annotator requires a JSON implementation: have you included "
+"lib/vendor/json2.js?"
+msgstr "Το Annotator χρειάζεται χρήση της JSON: έχετε συμπεριλάβει το lib/vendor/json2.js;"
+
+#: lib/console.js:17
+msgid "Not implemented:"
+msgstr "Δεν εφαρμόζονται:"
+
+#: lib/range.js:13
+msgid "Could not sniff range type"
+msgstr "Δεν ήταν δυνατό να ανιχνευθεί ο τύπος εύρους"
+
+#: lib/range.js:31
+msgid "You may only call normalize() once on a BrowserRange!"
+msgstr "Μπορείτε να καλέστε την normalize() μια μόνο φορά στο BrowserRange!"
+
+#: lib/range.js:247
+msgid "Error deserializing range: can't find XPath '"
+msgstr "Σφάλμα αποσειριοποίησης του εύρους: δεν βρέθηκε το XPath '"
+
+#: lib/range.js:247
+msgid "'. Is this the right document?"
+msgstr "'. Είναι το σωστό αρχείο;"
+
+#: lib/annotator.js:47
+msgid "Annotate"
+msgstr "Επισήμανση"
+
+#: lib/annotator.js:114
+msgid "No Comment"
+msgstr "Χωρίς Σχόλιο"
+
+#: lib/annotator.js:129
+msgid "Comments"
+msgstr "Σχόλια"
+
+#: lib/annotator.js:265
+msgid "Can't dump annotations without Store plugin."
+msgstr "Δεν μπορούν να αποθηκευτούν οι επισημάνσεις χωρίς την επέκταση Store."
+
+#: lib/annotator.js:286
+msgid "You cannot have more than one instance of any plugin."
+msgstr "Δεν μπορείτε να έχετε περισσότερες από μια φορές ένα plugin"
+
+#: lib/annotator.js:296
+msgid "Could not load "
+msgstr "Δεν ήταν δυνατή η φόρτωση"
+
+#: lib/annotator.js:296
+msgid " plugin. Have you included the appropriate <script> tag?"
+msgstr "επέκταση. Έχετε συμπεριλάβει την σχετική ετικέτα <script>;"
+
+#: lib/editor.js:22
+msgid "Cancel"
+msgstr "Ακύρωση"
+
+#: lib/editor.js:22
+msgid "Save"
+msgstr "Αποθήκευση"
+
+#: lib/plugin/tags.js:35
+msgid "Add some tags here"
+msgstr "Προσθήκη μερικών ετικετών εδώ"
+
+#: lib/plugin/tags.js:44
+msgid "Tag"
+msgstr "Ετικέτα"
+
+#: lib/plugin/auth.js:62
+msgid "Couldn't get auth token:"
+msgstr "Δεν ήταν δυνατό να ανακτηθεί αναγνωριστικό αδειοδότησης:"
+
+#: lib/plugin/auth.js:87
+msgid "Didn't get a valid token."
+msgstr "Δεν λήφθηκε έγκυρο αναγνωριστικό"
+
+#: lib/plugin/auth.js:89
+msgid "Getting a new token in 10s."
+msgstr "Λαμβάνεται νέο αναγνωριστικό σε 10 δευτερόλεπτα."
+
+#: lib/plugin/store.js:61
+msgid "Warning: No ID returned from server for annotation "
+msgstr "Προειδοποίηση: Κανένα ID δεν επιστράφηκε από τον διακομιστή για επισήμανση"
+
+#: lib/plugin/store.js:98
+msgid "Trying to update unregistered annotation!"
+msgstr "Προσπάθεια για ενημέρωση μη καταχωρημένης επισήμανσης"
+
+#: lib/plugin/store.js:202 lib/plugin/store.js:206
+msgid "Sorry we could not "
+msgstr "Λυπόμαστε, δεν μπορέσαμε"
+
+#: lib/plugin/store.js:202 lib/plugin/store.js:210
+msgid " this annotation"
+msgstr "αυτή την επισήμανση"
+
+#: lib/plugin/store.js:204
+msgid "Sorry we could not search the store for annotations"
+msgstr "Λυπόμαστε, δεν μπορέσαμε να αναζητήσουμε την αποθήκη για επισημάνσεις"
+
+#: lib/plugin/store.js:206
+msgid " the annotations from the store"
+msgstr "τις επισημάνσεις από την αποθήκη"
+
+#: lib/plugin/store.js:210
+msgid "Sorry you are not allowed to "
+msgstr "Λυπόμαστε, δεν σας επιτρέπεται να"
+
+#: lib/plugin/store.js:213
+msgid "Sorry we could not connect to the annotations store"
+msgstr "Λυπόμαστε, δεν μπορέσαμε να συνδεθούμε στην αποθήκη επισημάνσεων"
+
+#: lib/plugin/store.js:216
+msgid "Sorry something went wrong with the annotation store"
+msgstr "Λυπόμαστε, κάτι πήγε στραβά με την αποθήκη επισημάνσεων"
+
+#: lib/plugin/store.js:219
+msgid "API request failed:"
+msgstr "Το αίτημα API απέτυχε:"
+
+#: lib/plugin/filter.js:27
+msgid "Navigate:"
+msgstr "Περιήγηση:"
+
+#: lib/plugin/filter.js:27
+msgid "Previous"
+msgstr "Προηγούμενο"
+
+#: lib/plugin/filter.js:27
+msgid "Next"
+msgstr "Επόμενο"
+
+#: lib/plugin/filter.js:27
+msgid "Filter by:"
+msgstr "Φιλτράρισμα με:"
+
+#: lib/plugin/filter.js:28
+msgid "Clear"
+msgstr "Εκκαθάριση"
+
+#: lib/plugin/filter.js:71
+msgid "Annotation"
+msgstr "Επισήμανση"
+
+#: lib/plugin/filter.js:118
+msgid "Filter by "
+msgstr "Φιλτράρισμα με:"
+
+#: lib/plugin/markdown.js:18
+msgid ""
+"To use the Markdown plugin, you must include Showdown into the page first."
+msgstr "Για να χρησιμοποιήσετε την επέκταση Markdown, πρέπει να συμπεριλάβετε στην σελίδα πρώτα το Showdown."
+
+#: lib/plugin/unsupported.js:13
+msgid "Sorry your current browser does not support the Annotator"
+msgstr "Λυπόμαστε, ο τρέχον περιηγητής σας δεν υποστηρίζει το Annotator"
+
+#: lib/plugin/permissions.js:74
+msgid "Allow anyone to <strong>view</strong> this annotation"
+msgstr "Να επιτρέπεται σε οποιονδήποτε να <strong>δει</strong> αυτή την επισήμανση"
+
+#: lib/plugin/permissions.js:82
+msgid "Allow anyone to <strong>edit</strong> this annotation"
+msgstr "Να επιτρέπεται σε οποιονδήποτε να <strong>επεξεργαστεί</strong> αυτή την επισήμανση"
+
+#: lib/plugin/permissions.js:92
+msgid "User"
+msgstr "Χρήστης"

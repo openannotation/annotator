@@ -3,26 +3,26 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-#   <transifex@steinbrecher.co>, 2012.
+# Steini <transifex@steinbrecher.co>, 2012
 msgid ""
 msgstr ""
 "Project-Id-Version: Annotator\n"
-"Report-Msgid-Bugs-To: https://github.com/okfn/annotator/issues\n"
+"Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-03-16 12:27+0000\n"
-"PO-Revision-Date: 2012-03-24 12:13+0000\n"
+"PO-Revision-Date: 2013-11-20 09:40+0000\n"
 "Last-Translator: Steini <transifex@steinbrecher.co>\n"
-"Language-Team: German (Germany) (http://www.transifex.net/projects/p/annotator/language/de_DE/)\n"
+"Language-Team: German (Germany) (http://www.transifex.com/projects/p/annotator/language/de_DE/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: de_DE\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/util.js:23
+#: lib/extensions.js:23
 msgid "Annotator requires jQuery: have you included lib/vendor/jquery.js?"
 msgstr "Annotator benötigt jQuery: Wurde lib/vendor/jquery.js inkludiert?"
 
-#: lib/util.js:27
+#: lib/extensions.js:27
 msgid ""
 "Annotator requires a JSON implementation: have you included "
 "lib/vendor/json2.js?"
@@ -66,7 +66,7 @@ msgstr ""
 
 #: lib/annotator.js:286
 msgid "You cannot have more than one instance of any plugin."
-msgstr ""
+msgstr "Von diesem Plugin darf nur eine Instanz geöffnet sein."
 
 #: lib/annotator.js:296
 msgid "Could not load "
@@ -98,7 +98,7 @@ msgstr "Auth-Token konnte nicht bezogen werden:"
 
 #: lib/plugin/auth.js:87
 msgid "Didn't get a valid token."
-msgstr ""
+msgstr "Ein gültiger Token konnte nicht bezogen werden."
 
 #: lib/plugin/auth.js:89
 msgid "Getting a new token in 10s."
@@ -130,7 +130,7 @@ msgstr " "
 
 #: lib/plugin/store.js:210
 msgid "Sorry you are not allowed to "
-msgstr ""
+msgstr "Sorry, Sie dürfen nicht "
 
 #: lib/plugin/store.js:213
 msgid "Sorry we could not connect to the annotations store"
