@@ -3,4 +3,5 @@
 .DS_Store
 .cake_task_cache
 *.sublime-workspace
+doc/_build/
 node_modules
