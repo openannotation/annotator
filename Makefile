@@ -11,4 +11,7 @@ test: develop
 develop:
 	./tools/build
 
-.PHONY: test develop
+doc:
+	cd doc && $(MAKE) html
+
+.PHONY: test develop doc
