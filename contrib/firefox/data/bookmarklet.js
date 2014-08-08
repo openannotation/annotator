@@ -139,7 +139,7 @@
 
     loadjQuery: function () {
       var script   = document.createElement('script'),
-          fallback = 'https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js',
+          fallback = 'resource://firefox-at-annotateit-dot-org/annotateit/data/jquery.min.js',
           timer;
 
       timer = setTimeout(function () {
@@ -164,8 +164,8 @@
     },
 
     load: function (callback) {
-      var annotatorSource = this.config('externals.source', 'http://assets.annotateit.org/bookmarklet/annotator.min.js'),
-          annotatorStyles = this.config('externals.styles', 'http://assets.annotateit.org/bookmarklet/annotator.min.css');
+      var annotatorSource = this.config('externals.source', 'resource://firefox-at-annotateit-dot-org/annotateit/data/annotator-bookmarklet.min.js'),
+          annotatorStyles = this.config('externals.styles', 'resource://firefox-at-annotateit-dot-org/annotateit/data/annotator.css');
 
       head.appendChild(jQuery('<link />', {
         rel: 'stylesheet',
@@ -270,9 +270,5 @@
     jQuery = window.jQuery;
   }
 }(
-{externals: {
-  jQuery: 'resource://firefox-at-annotateit-dot-org/annotateit/data/jquery.min.js',
-  source: 'resource://firefox-at-annotateit-dot-org/annotateit/data/annotator-bookmarklet.min.js',
-  style: 'resource://firefox-at-annotateit-dot-org/annotateit/data/annotator.min.css',
-}}
+{}
 , this, this.document));
