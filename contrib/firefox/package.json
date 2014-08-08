@@ -5,5 +5,5 @@
   "description": "Web Annotation with AnnotatorJS.org & storage at AnnotateIt.org",
   "author": "Benjamin Young <byoung@bigbluehat>",
   "license": "MIT",
-  "version": "0.1.0"
+  "version": "0.1.1"
 }
