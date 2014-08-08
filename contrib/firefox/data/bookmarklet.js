@@ -164,7 +164,7 @@
     },
 
     load: function (callback) {
-      var annotatorSource = this.config('externals.source', 'resource://firefox-at-annotateit-dot-org/annotateit/data/annotator-bookmarklet.min.js'),
+      var annotatorSource = this.config('externals.source', 'resource://firefox-at-annotateit-dot-org/annotateit/data/annotator-bookmarklet.js'),
           annotatorStyles = this.config('externals.styles', 'resource://firefox-at-annotateit-dot-org/annotateit/data/annotator.css');
 
       head.appendChild(jQuery('<link />', {
