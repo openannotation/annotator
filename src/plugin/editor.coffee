@@ -222,7 +222,8 @@ class Editor extends Widget
 
     switch (field.type)
       when 'textarea'          then input = $('<textarea />')
-      when 'input', 'checkbox' then input = $('<input />')
+      when 'checkbox' then input = $('<input type="checkbox" />')
+      when 'input' then input = $('<input />')
       when 'select' then input = $('<select />')
 
     element.append(input)
@@ -233,7 +234,6 @@ class Editor extends Widget
     })
 
     if field.type == 'checkbox'
-      input[0].type = 'checkbox'
       element.addClass('annotator-checkbox')
       element.append($('<label />', {for: field.id, html: field.label}))
 
