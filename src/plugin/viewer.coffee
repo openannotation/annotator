@@ -378,14 +378,17 @@ class LinkParser
 
   get: (rel, cond = {}) ->
     cond = $.extend({}, cond, {rel: rel})
-    keys = (k for own k, v of cond)
-    for d in @data
-      match = keys.reduce ((m, k) -> m and (d[k] is cond[k])), true
+
+    for link in @data
+      match = true
+      for key,value of cond
+        if link[key] isnt value
+          match = false
+
       if match
-        d
+        link
       else
         continue
-
 
 # This is a core plugin (registered by default with Annotator), so we don't
 # register here. If you're writing a plugin of your own, please refer to a

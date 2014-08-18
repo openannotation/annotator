@@ -20,7 +20,8 @@ describe 'Viewer plugin', ->
 
     beforeEach ->
       plugin = new Viewer()
-      plugin.configure({core: core})
+      plugin.core = core
+      core.editor = plugin
       plugin.pluginInit()
 
     afterEach ->
@@ -32,13 +33,30 @@ describe 'Viewer plugin', ->
     it 'should display an external link if the annotation provides one', ->
       plugin.load([{
         links: [
-          {rel: "alternate", href: "http://example.com/foo", type: "text/html"}
+          {rel: "alternate", href: "http://example.com/foo", type: "text/html"},
+          {rel: "default", href: "http://example.com/foo2", type: "application/pdf"},
+          {rel: "alternate", href: "http://example.com/foo3", type: "text/html"},
+          {rel: "default", href: "http://example.com/foo4", type: "text/html"},
+          {rel: "alternate", href: "http://example.com/foo5", type: "application/pdf"},
         ]
       }])
 
       assert.equal(
         plugin.element.find('.annotator-link').attr('href'),
         'http://example.com/foo'
+      )
+
+    it 'should not display an external link if the annotation doesn\'t provide a valid one', ->
+      plugin.load([{
+        links: [
+          {rel: "default", href: "http://example.com/foo2", type: "application/pdf"},
+          {rel: "default", href: "http://example.com/foo4", type: "text/html"},
+          {rel: "alternate", href: "http://example.com/foo5", type: "application/pdf"},
+        ]
+      }])
+
+      assert.isUndefined(
+        plugin.element.find('.annotator-link').attr('href')
       )
 
     describe '.show()', ->
@@ -135,7 +153,8 @@ describe 'Viewer plugin', ->
 
     beforeEach ->
       plugin = new Viewer()
-      plugin.configure({core: core})
+      plugin.core = core
+      core.editor = plugin
       plugin.pluginInit()
 
     afterEach ->
@@ -148,7 +167,8 @@ describe 'Viewer plugin', ->
       plugin = new Viewer({
         showEditButton: true
       })
-      plugin.configure({core: core})
+      plugin.core = core
+      core.editor = plugin
       plugin.pluginInit()
 
     afterEach ->
@@ -181,7 +201,8 @@ describe 'Viewer plugin', ->
       plugin = new Viewer({
         showDeleteButton: true
       })
-      plugin.configure({core: core})
+      plugin.core = core
+      core.editor = plugin
       plugin.pluginInit()
 
     afterEach ->
@@ -214,7 +235,8 @@ describe 'Viewer plugin', ->
       plugin = new Viewer({
         defaultFields: false
       })
-      plugin.configure({core: core})
+      plugin.core = core
+      core.editor = plugin
       plugin.pluginInit()
 
     afterEach ->
@@ -236,7 +258,8 @@ describe 'Viewer plugin', ->
         activityDelay: 50,
         inactivityDelay: 200
       })
-      plugin.configure({core: core})
+      plugin.core = core
+      core.editor = plugin
       plugin.pluginInit()
       hl = core.element.find('.annotator-hl.one')
       hl.data('annotation', {text: "Cats with mats"})
