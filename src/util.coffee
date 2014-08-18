@@ -1,6 +1,8 @@
 $ = require('jquery')
 Promise = require('es6-promise').Promise
 
+if !window.getSelection
+  require('../lib/vendor/ierange-m2-packed.js')
 
 # I18N
 gettext = null
