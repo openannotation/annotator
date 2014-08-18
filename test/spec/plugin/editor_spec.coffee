@@ -170,8 +170,8 @@ describe 'Editor plugin', ->
           load: ->
           submit: ->
         })
-        # assert.equal($(elem2).find(':input').prop('tagName'), 'INPUT')
-        # assert.equal($(elem2).find(':input').attr('type'), 'checkbox')
+        assert.equal($(elem2).find(':input').prop('tagName'), 'INPUT')
+        assert.equal($(elem2).find(':input').attr('type'), 'checkbox')
 
       it 'should call the submit callback of added fields when the editor
           is submitted', ->
