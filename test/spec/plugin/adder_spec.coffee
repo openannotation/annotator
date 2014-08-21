@@ -15,6 +15,8 @@ describe 'Adder plugin', ->
     core = new Delegator(el: h.fix())
     core.annotations = create: sinon.spy()
     plugin = new Adder()
+    # Set the core on the plugin and vice-versa.
+    # The old plugin.configure() is deprecated
     plugin.core = core
     core.editor = plugin
     plugin.pluginInit()
