@@ -16,7 +16,10 @@ describe 'Editor plugin', ->
 
     beforeEach ->
       plugin = new Editor()
-      plugin.configure({core: core})
+      # Set the core on the plugin and vice-versa.
+      # The old plugin.configure() is deprecated
+      plugin.core = core
+      core.editor = plugin
       plugin.pluginInit()
 
     afterEach ->
@@ -199,7 +202,10 @@ describe 'Editor plugin', ->
       plugin = new Editor({
         defaultFields: false
       })
-      plugin.configure({core: core})
+      # Set the core on the plugin and vice-versa.
+      # The old plugin.configure() is deprecated
+      plugin.core = core
+      core.editor = plugin
       plugin.pluginInit()
 
     afterEach ->
@@ -218,7 +224,10 @@ describe 'Editor plugin', ->
 
     beforeEach ->
       plugin = new Editor()
-      plugin.configure({core: core})
+      # Set the core on the plugin and vice-versa.
+      # The old plugin.configure() is deprecated
+      plugin.core = core
+      core.editor = plugin
       plugin.pluginInit()
       ann = {text: 'Turtles with armbands'}
 
