@@ -24,19 +24,7 @@ class Adder extends Widget
     @ignoreMouseup = false
 
   configure: ({@core}) ->
-    Object.defineProperty(@core, 'adder', {
-      configurable: true
-      get: =>
-        # FIXME: This is a deprecation warning which suggests an alternative
-        # method which also triggers a deprecation warning. We need to discuss a
-        # better method of tying plugins like Tags, Permissions, etc, into the
-        # Editor.
-        Util.deprecationWarning("The Adder is now an optional plugin, and
-                                 plugins should not refer to it using
-                                 annotator.adder! Please use
-                                 annotator.plugins.Adder instead.")
-        this
-    })
+    @core.adder = this
 
   pluginInit: ->
     @document = @element[0].ownerDocument
