@@ -65,7 +65,7 @@ describe 'Markdown plugin', ->
       assert.isTrue(plugin.convert.calledWith(input))
 
     it 'should update the content in the field', ->
-      assert.equal($(field).html(), output)
+      assert.equal($(field).html().toLowerCase(), output.toLowerCase())
 
     it "should escape any existing HTML to prevent XSS", ->
       assert.isTrue(Annotator.Util.escape.calledWith(input))
