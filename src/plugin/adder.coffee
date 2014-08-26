@@ -24,6 +24,10 @@ class Adder extends Widget
     @ignoreMouseup = false
 
   configure: ({@core}) ->
+    # The Adder is now an optional plugin, and
+    # plugins should not refer to it using
+    # annotator.adder! Please use
+    # annotator.plugins.Adder instead.
     @core.adder = this
 
   pluginInit: ->

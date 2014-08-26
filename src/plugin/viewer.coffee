@@ -97,6 +97,10 @@ class Viewer extends Widget
       })
 
   configure: ({@core}) ->
+    # The Viewer is now an optional plugin, and
+    # plugins should not refer to it using
+    # annotator.viewer! Please use
+    # annotator.plugins.Viewer instead.
     @core.viewer = this
 
   pluginInit: ->

@@ -74,6 +74,10 @@ class Editor extends Widget
       })
 
   configure: ({@core}) ->
+    # The Editor is now an optional plugin, and
+    # plugins should not refer to it using
+    # annotator.editor! Please use
+    # annotator.plugins.Editor instead.
     @core.editor = this
 
   pluginInit: ->
