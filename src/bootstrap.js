@@ -60,7 +60,7 @@ If this is set to `true` the [Tags plugin][#wiki-tags] will be loaded.
 
   while (globals.length) {
     namespace = globals.shift();
-    isLoaded[namespace] = window.hasOwnProperty(namespace);
+    isLoaded[namespace] = Object.prototype.hasOwnProperty.call(window, namespace);
   }
 
   notification = (function () {
