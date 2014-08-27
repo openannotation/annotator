@@ -98,7 +98,6 @@ If this is set to `true` the [Tags plugin][#wiki-tags] will be loaded.
 
     // Apply newer styles for modern browsers.
     element.style.position = 'fixed';
-    element.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
     element.onclick = function () {
       this.parentNode.removeChild(this);
     };
