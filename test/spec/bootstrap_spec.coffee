@@ -52,7 +52,10 @@ describe "bookmarklet", ->
         el.onload.call()
 
   afterEach ->
-    delete window.Annotator
+    try
+      delete window.Annotator
+    catch error
+      window.Annotator = undefined
 
     bookmarklet.notification.show.restore()
     bookmarklet.notification.message.restore()

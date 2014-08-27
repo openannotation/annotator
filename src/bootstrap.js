@@ -279,7 +279,11 @@ If this is set to `true` the [Tags plugin][#wiki-tags] will be loaded.
       // were not there before.
       for (namespace in isLoaded) {
         if (isLoaded.hasOwnProperty(namespace) && !isLoaded[namespace]) {
-          delete window[namespace];
+          try {
+            delete window[namespace];
+          } catch(e) {
+            window[namespace] = undefined;
+          }
         }
       }
 
