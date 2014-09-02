@@ -211,14 +211,17 @@ If this is set to `true` the [Tags plugin][#wiki-tags] will be loaded.
       script._loaded = false;
 
       var scriptLoaded = function () {
-        script._loaded = true;
-        callback();
+        if(script._loaded !== true) {
+          script._loaded = true;
+          callback();
+        }
       };
 
       script.onload = scriptLoaded;
       script.onreadystatechange = function() {
-        if ( this.readyState !== "loaded" && !script._loaded ) return;
-        scriptLoaded();
+        if ( this.readyState === "loaded" ) {
+          scriptLoaded();
+        }
       };
 
       setTimeout(function () {
