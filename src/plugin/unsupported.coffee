@@ -1,4 +1,4 @@
-Annotator = require('../annotator')
+Annotator = require('annotator')
 $ = Annotator.Util.$
 _t = Annotator._t
 
