@@ -196,4 +196,4 @@ describe "bookmarklet.notification", ->
   describe "remove", ->
     it "should remove the element from the document.body", ->
       notification.remove()
-      assert.isNull(notification.element.parentNode)
+      assert.isNull(notification.element.parentElement)
