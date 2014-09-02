@@ -65,7 +65,12 @@ describe 'Markdown plugin', ->
       assert.isTrue(plugin.convert.calledWith(input))
 
     it 'should update the content in the field', ->
+      # In IE, tags might be converted into all uppercase,
+      # so we need to normalize those.
       assert.equal($(field).html().toLowerCase(), output.toLowerCase())
+
+      # But also make sure the text is exactly the same.
+      assert.equal($(field).text(), $(output).text())
 
     it "should escape any existing HTML to prevent XSS", ->
       assert.isTrue(Annotator.Util.escape.calledWith(input))
