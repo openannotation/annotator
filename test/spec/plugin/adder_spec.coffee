@@ -1,6 +1,5 @@
 h = require('helpers')
 Annotator = require('annotator')
-Delegator = require('../../../src/delegator')
 Adder = require('../../../src/plugin/adder')
 Range = require('xpath-range').Range
 Util = require('../../../src/util')
@@ -12,7 +11,7 @@ describe 'Adder plugin', ->
 
   beforeEach ->
     h.addFixture('adder')
-    core = new Delegator(el: h.fix())
+    core = new Annotator.Delegator(el: h.fix())
     core.annotations = create: sinon.spy()
     plugin = new Adder()
     plugin.configure({core: core})
