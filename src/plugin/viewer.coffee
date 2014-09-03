@@ -97,19 +97,11 @@ class Viewer extends Widget
       })
 
   configure: ({@core}) ->
-    Object.defineProperty(@core, 'viewer', {
-      configurable: true
-      get: =>
-        # FIXME: This is a deprecation warning which suggests an alternative
-        # method which also triggers a deprecation warning. We need to discuss a
-        # better method of tying plugins like Tags, Permissions, etc, into the
-        # Editor.
-        Util.deprecationWarning("The Viewer is now an optional plugin, and
-                                 plugins should not refer to it using
-                                 annotator.viewer! Please use
-                                 annotator.plugins.Viewer instead.")
-        this
-    })
+    # The Viewer is now an optional plugin, and
+    # plugins should not refer to it using
+    # annotator.viewer! Please use
+    # annotator.plugins.Viewer instead.
+    @core.viewer = this
 
   pluginInit: ->
     @document = @core.element[0].ownerDocument

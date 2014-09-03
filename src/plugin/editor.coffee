@@ -74,19 +74,11 @@ class Editor extends Widget
       })
 
   configure: ({@core}) ->
-    Object.defineProperty(@core, 'editor', {
-      configurable: true
-      get: =>
-        # FIXME: This is a deprecation warning which suggests an alternative
-        # method which also triggers a deprecation warning. We need to discuss a
-        # better method of tying plugins like Tags, Permissions, etc, into the
-        # Editor.
-        Util.deprecationWarning("The Editor is now an optional plugin, and
-                                 plugins should not refer to it using
-                                 annotator.editor! Please use
-                                 annotator.plugins.Editor instead.")
-        this
-    })
+    # The Editor is now an optional plugin, and
+    # plugins should not refer to it using
+    # annotator.editor! Please use
+    # annotator.plugins.Editor instead.
+    @core.editor = this
 
   pluginInit: ->
     this.listenTo(@core, 'beforeAnnotationCreated', this._editAnnotation)

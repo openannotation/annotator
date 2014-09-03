@@ -52,7 +52,10 @@ describe "bookmarklet", ->
         el.onload.call()
 
   afterEach ->
-    delete window.Annotator
+    try
+      delete window.Annotator
+    catch error
+      window.Annotator = undefined
 
     bookmarklet.notification.show.restore()
     bookmarklet.notification.message.restore()
@@ -193,4 +196,4 @@ describe "bookmarklet.notification", ->
   describe "remove", ->
     it "should remove the element from the document.body", ->
       notification.remove()
-      assert.isNull(notification.element.parentNode)
+      assert.isNull(notification.element.parentElement)

@@ -51,21 +51,10 @@ Plugin._ctors = {}
 # ctor - The plugin constructor function.
 Plugin.register = (name, ctor) ->
   Plugin._ctors[name] = ctor
-
-  # Register a property so that this constructor can be accessed in the old
-  # and deprecate way, directly on the pool instance, but throw a deprecation
-  # warning when accessed.
-  #
   # @slatedForDeprecation 2.1.0
-  Object.defineProperty(Plugin, name, {
-    configurable: true
-    get: ->
-      Util.deprecationWarning("Direct access to plugin constructors through
-                               the Annotator.Plugin namespace is deprecated.
-                               Please use Annotator.Plugin.fetch('#{name}')!")
-      Plugin._ctors[name]
-  })
-
+  # Direct access to plugin constructors through
+  # the Annotator.Plugin namespace is deprecated.
+  # Please use Annotator.Plugin.fetch('#{name}')!
 
 # Fetch a plugin constructor from the pool by name.
 #

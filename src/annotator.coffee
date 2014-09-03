@@ -166,11 +166,7 @@ class Annotator extends Delegator
   #
   # Returns itself for chaining.
   _setupDynamicStyle: ->
-    style = $('#annotator-dynamic-style')
-
-    if (!style.length)
-      style = $('<style id="annotator-dynamic-style"></style>')
-                .appendTo(document.head)
+    $('#annotator-dynamic-style').remove()
 
     notclasses = ['adder', 'outer', 'notice', 'filter']
     sel = '*' + (":not(.annotator-#{x})" for x in notclasses).join('')
@@ -183,7 +179,7 @@ class Annotator extends Delegator
     # have high z-indices that we can't catch using the above method.
     max = Math.max(max, 1000)
 
-    style.text [
+    rules = [
       ".annotator-adder, .annotator-outer, .annotator-notice {"
       "  z-index: #{max + 20};"
       "}"
@@ -191,6 +187,11 @@ class Annotator extends Delegator
       "  z-index: #{max + 10};"
       "}"
     ].join("\n")
+
+    style = $('<style>' + rules + '</style>')
+              .attr('id', 'annotator-dynamic-style')
+              .attr('type', 'text/css')
+              .appendTo('head')
 
     this
 

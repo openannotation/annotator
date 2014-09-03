@@ -60,7 +60,10 @@ If this is set to `true` the [Tags plugin][#wiki-tags] will be loaded.
 
   while (globals.length) {
     namespace = globals.shift();
-    isLoaded[namespace] = window.hasOwnProperty(namespace);
+    // window.hasOwnProperty doesn't exist in older IE, so we use
+    // Object.prototype.hasOwnProperty which does exist.
+    // https://github.com/openannotation/annotator/issues/420
+    isLoaded[namespace] = Object.prototype.hasOwnProperty.call(window, namespace);
   }
 
   notification = (function () {
@@ -95,7 +98,6 @@ If this is set to `true` the [Tags plugin][#wiki-tags] will be loaded.
 
     // Apply newer styles for modern browsers.
     element.style.position = 'fixed';
-    element.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
     element.onclick = function () {
       this.parentNode.removeChild(this);
     };
@@ -209,14 +211,17 @@ If this is set to `true` the [Tags plugin][#wiki-tags] will be loaded.
       script._loaded = false;
 
       var scriptLoaded = function () {
-        script._loaded = true;
-        callback();
+        if(script._loaded !== true) {
+          script._loaded = true;
+          callback();
+        }
       };
 
       script.onload = scriptLoaded;
       script.onreadystatechange = function() {
-        if ( this.readyState !== "loaded" && !script._loaded ) return;
-        scriptLoaded();
+        if ( this.readyState === "loaded" ) {
+          scriptLoaded();
+        }
       };
 
       setTimeout(function () {
@@ -277,7 +282,11 @@ If this is set to `true` the [Tags plugin][#wiki-tags] will be loaded.
       // were not there before.
       for (namespace in isLoaded) {
         if (isLoaded.hasOwnProperty(namespace) && !isLoaded[namespace]) {
-          delete window[namespace];
+          try {
+            delete window[namespace];
+          } catch(e) {
+            window[namespace] = undefined;
+          }
         }
       }
 
