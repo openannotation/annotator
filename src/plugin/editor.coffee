@@ -350,8 +350,8 @@ class Editor extends Widget
         }
 
         if mousedown.element == resize[0]
-          height = textarea.outerHeight()
-          width  = textarea.outerWidth()
+          height = textarea.height()
+          width  = textarea.width()
 
           directionX = if @element.hasClass(classes.invert.x) then -1 else  1
           directionY = if @element.hasClass(classes.invert.y) then  1 else -1
@@ -362,8 +362,8 @@ class Editor extends Widget
           # Only update the mousedown object if the dimensions
           # have changed, otherwise they have reached their minimum
           # values.
-          mousedown.top  = event.pageY unless textarea.outerHeight() == height
-          mousedown.left = event.pageX unless textarea.outerWidth()  == width
+          mousedown.top  = event.pageY unless textarea.height() == height
+          mousedown.left = event.pageX unless textarea.width()  == width
 
         else if mousedown.element == controls[0]
           @element.css({
