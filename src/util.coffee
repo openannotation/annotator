@@ -19,6 +19,8 @@ unless JSON and JSON.parse and JSON.stringify
 
 Util = {}
 
+# Enable CORS support for Ajax
+$.support.cors = true;
 
 # Provide access to our copy of jQuery
 Util.$ = $
