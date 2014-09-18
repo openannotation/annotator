@@ -30,11 +30,11 @@
 }
 
 .annotator-resize,
-.annotator-widget::after,
-.annotator-editor a::after,
+.annotator-widget:after,
+.annotator-editor a:after,
 .annotator-viewer .annotator-controls button,
 .annotator-viewer .annotator-controls a,
-.annotator-filter .annotator-filter-navigation button::after,
+.annotator-filter .annotator-filter-navigation button:after,
 .annotator-filter .annotator-filter-property .annotator-filter-clear {
 	background-image: url(../img/annotator-glyph-sprite.png);
 	background-repeat: no-repeat;
@@ -168,7 +168,7 @@
 	list-style: none;
 }
 
-.annotator-widget::after {
+.annotator-widget:after {
 	content: "";
 	display: block;
 	width: 18px;
@@ -179,12 +179,12 @@
 	left: 8px;
 }
 
-.annotator-invert-x .annotator-widget::after {
+.annotator-invert-x .annotator-widget:after {
 	left: auto;
 	right: 8px;
 }
 
-.annotator-invert-y .annotator-widget::after {
+.annotator-invert-y .annotator-widget:after {
 	background-position: 0 -15px;
 	bottom: auto;
 	top: -9px;
@@ -501,7 +501,7 @@
 	border-radius: 5px;
 }
 
-.annotator-editor a::after {
+.annotator-editor a:after {
 	position: absolute;
 	top: 50%;
 	left: 5px;
@@ -553,8 +553,8 @@
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.42);
 }
 
-.annotator-editor a:hover::after,
-.annotator-editor a:focus::after {
+.annotator-editor a:hover:after,
+.annotator-editor a:focus:after {
 	margin-top: -8px;
 	background-position: 0 -105px;
 }
@@ -593,18 +593,18 @@
 	);
 }
 
-.annotator-editor a.annotator-save::after {
+.annotator-editor a.annotator-save:after {
 	background-position: 0 -120px;
 }
 
-.annotator-editor a.annotator-save:hover::after,
-.annotator-editor a.annotator-save:focus::after,
-.annotator-editor a.annotator-save.annotator-focus::after {
+.annotator-editor a.annotator-save:hover:after,
+.annotator-editor a.annotator-save:focus:after,
+.annotator-editor a.annotator-save.annotator-focus:after {
 	margin-top: -8px;
 	background-position: 0 -135px;
 }
 
-.annotator-editor .annotator-widget::after {
+.annotator-editor .annotator-widget:after {
 	background-position: 0 -30px;
 }
 
@@ -612,7 +612,7 @@
 	background-color: #f2f2f2;
 }
 
-.annotator-editor.annotator-invert-y .annotator-widget::after {
+.annotator-editor.annotator-invert-y .annotator-widget:after {
 	background-position: 0 -45px;
 	height: 11px;
 }
@@ -853,7 +853,7 @@
 	color: transparent;
 }
 
-.annotator-filter .annotator-filter-navigation button::after {
+.annotator-filter .annotator-filter-navigation button:after {
 	position: absolute;
 	top: 8px;
 	left: 8px;
@@ -864,7 +864,7 @@
 	background-position: 0 -210px;
 }
 
-.annotator-filter .annotator-filter-navigation button:hover::after {
+.annotator-filter .annotator-filter-navigation button:hover:after {
 	background-position: 0 -225px;
 }
 
@@ -876,13 +876,13 @@
 	border-left: none;
 }
 
-.annotator-filter .annotator-filter-navigation .annotator-filter-next::after {
+.annotator-filter .annotator-filter-navigation .annotator-filter-next:after {
 	left: auto;
 	right: 7px;
 	background-position: 0 -240px;
 }
 
-.annotator-filter .annotator-filter-navigation .annotator-filter-next:hover::after {
+.annotator-filter .annotator-filter-navigation .annotator-filter-next:hover:after {
 	background-position: 0 -255px;
 }
 
