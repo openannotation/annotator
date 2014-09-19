@@ -31,7 +31,8 @@ class TextSelector
   #
   # Returns an Array of NormalizedRange instances.
   captureDocumentSelection: ->
-    selection = Util.getGlobal().getSelection()
+    win = rangy ? Util.getGlobal()
+    selection = win.getSelection()
 
     ranges = []
     rangesToIgnore = []

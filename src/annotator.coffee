@@ -350,7 +350,9 @@ Annotator._instances = []
 Annotator._t = _t
 
 # Returns true if the Annotator can be used in the current browser.
-Annotator.supported = -> Util.getGlobal().getSelection?
+Annotator.supported = ->
+  win = rangy ? Util.getGlobal()
+  win.getSelection?
 
 # Restores the Annotator property on the global object to it's
 # previous value and returns the Annotator.
