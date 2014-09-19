@@ -1,7 +1,7 @@
 Annotator
 =========
 
-|Build Status| |Stories in Ready|
+|Build Status| |Stories in Ready| |Version on NPM|
 
 Annotator is a JavaScript library for building annotation systems on the web. It
 provides a set of tools to annotate text (and other content) in webpages, and to
@@ -104,3 +104,5 @@ encouraged to use for any questions and discussions. We can also be found in
    :target: http://travis-ci.org/openannotation/annotator
 .. |Stories in Ready| image:: https://badge.waffle.io/openannotation/annotator.png?label=ready&title=Ready
    :target: https://waffle.io/openannotation/annotator
+.. |Version on NPM| image:: http://img.shields.io/npm/v/annotator.svg
+   :target: https://www.npmjs.org/package/annotator
