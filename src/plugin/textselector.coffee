@@ -58,7 +58,11 @@ class TextSelector
     # Remove any ranges that fell outside @element.
     ranges = $.grep(ranges, (range) ->
       # Add the normed range back to the selection if it exists.
-      selection.addRange(range.toRange()) if range
+      if range
+        drange = @document.createRange()
+        drange.setStartBefore(range.start)
+        drange.setEndAfter(range.end)
+        selection.addRange(drange)
       range
     )
 
