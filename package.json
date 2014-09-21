@@ -7,7 +7,7 @@
     "url": "https://github.com/okfn/annotator.git"
   },
   "devDependencies": {
-    "coffee-script": "1.6.x",
+    "coffee-script": "1.7.x",
     "uglify-js": "2.3.6",
     "mapcat": "0.2.0",
     "coffeebarx": "0.0.3",
