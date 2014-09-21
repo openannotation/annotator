@@ -104,7 +104,7 @@ annotator.%.js: plugin/%.coffee _preamble.map
 	@echo $@
 	@if [ -e $(basename $<).map ]; then \
 	  uglifyjs $< --source-map _$(basename $<).min.map --in-source-map $(basename $<).map > _$@ 2>/dev/null ; \
-	  sed -e 's/\("version":3,\)/\1"file":"'_$@'",/' -i '' _$(basename $<).min.map ; \
+	  sed -e 's/\("version":3,\)/\1"file":"'_$@'",/' -i.bak _$(basename $<).min.map ; \
 	  mapcat _preamble.map _$(basename $<).min.map -m $(basename $<).min.map -j $@ ; \
 	else \
 	  uglifyjs $< > $@ 2>/dev/null ; \
@@ -123,7 +123,7 @@ locales:
 	> locale/annotator.pot
 
 clean:
-	rm -rf *.js *.css *.map *_mapsrc _preamble* _tmp
+	rm -rf *.js *.css *.map *.bak *_mapsrc _preamble* _tmp
 
 # don't remove intermediate .js files when building plugins
 .SECONDARY:
