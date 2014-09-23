@@ -3,15 +3,20 @@ Annotator
 
 |Build Status| |Stories in Ready| |Version on NPM|
 
-.. warning:: Unstable code in this branch
-   Please be aware that the current stable release of Annotator is v1.2.9 and
-   can be found on `the releases page`_ or the `v1.2.x branch`_.
-
-   The code in the master branch is what will become v2.0 in due course, but is
-   likely to have a highly unstable API. You are recommended not to build on the
-   contents of the master branch at this stage.
-
-.. _v1.2.x branch: https://github.com/openannotation/annotator/tree/v1.2.x
+::
+  ┌──────────────────────────────────────────────────────┐
+  │ WARNING! Unstable code in this branch!               │
+  ├──────────────────────────────────────────────────────┤
+  │ Please be aware that the current stable release of   │
+  │ Annotator is v1.2.9 and can be found on the releases │
+  │ page (see below) or the v1.2.x branch.               │
+  │                                                      │
+  │ The code in the master branch is what will become    │
+  │ v2.0 in due course, but is likely to have a highly   │
+  │ unstable API. You are advised NOT to build on the    │
+  │ contents of the master branch at this stage unless   │
+  │ you are happy dealing with APIs breaking frequently! │
+  └──────────────────────────────────────────────────────┘
 
 Annotator is a JavaScript library for building annotation systems on the web. It
 provides a set of tools to annotate text (and other content) in webpages, and to
