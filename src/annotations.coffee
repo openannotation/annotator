@@ -6,9 +6,9 @@ class AnnotationRegistry
 
   # Public: create a new annotation registry object.
   #
-  # core - The Annotator instance on which lifecycle events are to be raised
   # store - The Store implementation which manages persistence
-  constructor: (@core, @store) ->
+  # runHook - A function which can be used to run lifecycle hooks
+  constructor: (@store, @runHook) ->
 
   # Creates and returns a new annotation object.
   #
@@ -92,12 +92,12 @@ class AnnotationRegistry
   load: (query) ->
     this.query(query)
       .then (annotations, meta) =>
-        @core.trigger('annotationsLoaded', annotations, meta)
+        this.runHook('onAnnotationsLoaded', [annotations, meta])
 
   # Private: cycle a store event, keeping track of the annotation object and
   # updating it as necessary.
   _cycle: (obj, storeFunc, beforeEvent, afterEvent) ->
-    @core.triggerThen(beforeEvent, obj)
+    this.runHook(beforeEvent, [obj])
     .then =>
       safeCopy = $.extend(true, {}, obj)
       delete safeCopy._local
@@ -112,7 +112,7 @@ class AnnotationRegistry
           # Update with store return value
           $.extend(obj, ret)
 
-          @core.trigger(afterEvent, obj)
+          this.runHook(afterEvent, [obj])
 
           return obj
 

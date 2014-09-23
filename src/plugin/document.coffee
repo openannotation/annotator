@@ -165,6 +165,6 @@ class Document
     d.href = url
     d.href
 
-Annotator.Plugin.register('Document', Document)
+Annotator.Plugin.Document = Document
 
 module.exports = Document

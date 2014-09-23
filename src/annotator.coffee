@@ -1,22 +1,9 @@
-extend = require('backbone-extend-standalone')
+core = require('./core')
 
-Delegator = require('./delegator')
 Util = require('./util')
-Widget = require('./widget')
-Notification = require('./notification')
-Factory = require('./factory')
-Plugin = require('./plugin')
 
-AnnotationRegistry = require('./annotations')
-
-# Core plugins
-Adder = require('./plugin/adder')
-TextSelector = require('./plugin/textselector')
-LegacyRanges = require('./plugin/legacyranges')
-Editor = require('./plugin/editor')
-Highlighter = require('./plugin/highlighter')
 NullStore = require('./plugin/nullstore')
-Viewer = require('./plugin/viewer')
+DefaultUI = require('./plugin/defaultui').DefaultUI
 
 $ = Util.$
 _t = Util.TranslationString
@@ -28,18 +15,14 @@ handleError = ->
   console.error.apply(console, arguments)
 
 
-class Annotator extends Delegator
+# Annotator represents a sane default configuration of AnnotatorCore, with a
+# default set of plugins and a user interface.
+class Annotator extends core.AnnotatorCore
   options: # Configuration options
     # Start Annotator in read-only mode. No controls will be shown.
     readOnly: false
 
-  plugins: {}
-
   # Public: Creates an instance of the Annotator.
-  #
-  # Legacy signature: In Annotator v1.2.x this element required a DOM Element on
-  # which to watch for annotations as well as any options. This is no longer
-  # required and may eventually be deprecated.
   #
   # NOTE: If the Annotator is not supported by the current browser it will not
   # perform any setup and simply return a basic object. This allows plugins
@@ -62,103 +45,24 @@ class Annotator extends Delegator
   #
   # Returns a new instance of the Annotator.
   constructor: (element, options) ->
+    super
+
+    @element = $(element)
     @options = $.extend(true, {}, @options, options)
-    @plugins = {}
 
     Annotator._instances.push(this)
-
-    # Check for old-style plugin bindings and issue deprecation warnings
-    Annotator.Plugin._rebindOldPlugins()
 
     # Return early if the annotator is not supported.
     return this unless Annotator.supported()
 
-    if element
-      # If element is supplied, then we are operating in legacy mode, rather
-      # than being created by a Factory instance. Create the Factory ourselves
-      # and use it to bootstrap.
-      factory = new Factory()
-      factory.setStore(NullStore)
-      factory.addPlugin(Highlighter, element)
-      factory.addPlugin(Viewer, {
-        showEditButton: not @options.readOnly,
-        showDeleteButton: not @options.readOnly,
-      })
-      if not @options.readOnly
-        factory.addPlugin(Adder)
-        factory.addPlugin(TextSelector, element)
-        factory.addPlugin(LegacyRanges, element)
-        factory.addPlugin(Editor)
-      factory.configureInstance(this)
+    this.setStorage(NullStore)
+    this.addPlugin((reg) -> DefaultUI(@element, reg))
 
-      this.attach(element)
-
-  # Configure the Annotator. Typically called by an Annotator.Factory, or the
-  # constructor when operating in legacy (v1) mode.
-  configure: (config) ->
-    {@store, plugins} = config
-    @plugins = {}
-
-    # TODO: Stop using this hash to find plugins
-    # This block is super hacky and dumb.
-    for p in plugins
-      for name, klass of Annotator.Plugin._ctors
-        if p.constructor is klass
-          @plugins[name] = p
-          break
-
-    @annotations = new AnnotationRegistry(this, @store)
-
-  # Public: attach the Annotator and its associated event handling to the
-  # specified element.
-  #
-  # element - The element on which bind delegated events
-  #
-  # Returns the instance for chaining.
-  attach: (element) ->
-    @element = $(element)
-
-    # Set up the core interface components
     this._setupDynamicStyle()
-
-    for name of @plugins
-      p = @plugins[name]
-      # TODO: Issue deprecation warning for plugins that use pluginInit
-      p.annotator = this  # this must remain for backwards compatibility for as
-                          # long as we support calling pluginInit
-      p.pluginInit?()
-
-    # Return this for chaining
-    this
-
-  # Public: Creates a subclass of Annotator.
-  #
-  # See the documentation from Backbone: http://backbonejs.org/#Model-extend
-  #
-  # Examples
-  #
-  #   var ExtendedAnnotator = Annotator.extend({
-  #     setupAnnotation: function (annotation) {
-  #       // Invoke the built-in implementation
-  #       try {
-  #         Annotator.prototype.setupAnnotation.call(this, annotation);
-  #       } catch (e) {
-  #         if (e instanceof Annotator.Range.RangeError) {
-  #           // Try to locate the Annotation using the quote
-  #         } else {
-  #           throw e;
-  #         }
-  #       }
-  #
-  #       return annotation;
-  #   });
-  #
-  #   var annotator = new ExtendedAnnotator(document.body, /* {options} */);
-  @extend: extend
 
   # Sets up any dynamically calculated CSS for the Annotator.
   #
-  # Returns itself for chaining.
+  # Returns the instance for chaining.
   _setupDynamicStyle: ->
     $('#annotator-dynamic-style').remove()
 
@@ -189,7 +93,6 @@ class Annotator extends Delegator
 
     this
 
-
   # Public: Destroy the current Annotator instance, unbinding all events and
   # disposing of all relevant elements.
   #
@@ -199,92 +102,10 @@ class Annotator extends Delegator
 
     $('#annotator-dynamic-style').remove()
 
-    for name, plugin of @plugins
-      plugin.destroy?()
-
     idx = Annotator._instances.indexOf(this)
     if idx != -1
       Annotator._instances.splice(idx, 1)
 
-
-  # Public: Loads an Array of annotations objects.
-  #
-  # annotations - An Array of annotation Objects.
-  #
-  # Examples
-  #
-  #   loadAnnotationsFromStore (annotations) ->
-  #     annotator.loadAnnotations(annotations)
-  #
-  # @slatedForDeprecation 2.1.0
-  #
-  # Returns itself for chaining.
-  loadAnnotations: (annotations = []) ->
-    Util.deprecationWarning("Annotator#loadAnnotations is deprecated and will be
-                             removed in a future version of Annotator. Please
-                             implement your own store plugin with an appropriate
-                             query method if you wish to implement direct
-                             loading of annotations in the page.")
-
-    this.trigger('annotationsLoaded', annotations, null) # null meta object
-    this
-
-  # Public: Calls the Store#dumpAnnotations() method.
-  #
-  # Returns dumped annotations Array or false if Store is not loaded.
-  dumpAnnotations: ->
-    if @store?.dumpAnnotations?
-      @store.dumpAnnotations()
-    else
-      console.warn(_t("Can't dump annotations without store plugin."))
-      return false
-
-  # Public: Registers a plugin with the Annotator. A plugin can only be
-  # registered once. The plugin will be instantiated in the following order.
-  #
-  # 1. A new instance of the plugin will be created (providing the @element and
-  #    options as params) then assigned to the @plugins registry.
-  # 2. The current Annotator instance will be attached to the plugin.
-  # 3. The Plugin#pluginInit() method will be called if it exists.
-  #
-  # name    - Plugin to instantiate. Must be in the Annotator.Plugins namespace.
-  # options - Any options to be provided to the plugin constructor.
-  #
-  # Examples
-  #
-  #   annotator
-  #     .addPlugin('Tags')
-  #     .addPlugin('Store', {
-  #       prefix: '/store'
-  #     })
-  #     .addPlugin('Permissions', {
-  #       user: 'Bill'
-  #     })
-  #
-  # Returns itself to allow chaining.
-  addPlugin: (name, options) ->
-    # TODO: Add a deprecation warning
-
-    klass = Annotator.Plugin.fetch(name)
-    if typeof klass is 'function'
-      plug = new klass(@element[0], options)
-      plug.annotator = this
-      plug.pluginInit?()
-      @plugins[name] = plug
-    else
-      console.error(
-        _t("Could not load ") +
-        name +
-        _t(" plugin. Have you included the appropriate <script> tag?")
-      )
-
-    this # allow chaining
-
-# An Annotator Factory with the core constructor defaulted to Annotator
-class Annotator.Factory extends Factory
-  constructor: (core = Annotator) ->
-    super core
-    this.setStore(NullStore)
 
 # Sniff the browser environment and attempt to add missing functionality.
 g = Util.getGlobal()
@@ -315,27 +136,20 @@ if not g.Node?
     DOCUMENT_FRAGMENT_NODE: 11
     NOTATION_NODE: 12
 
+# Create namespace object for core-provided plugins
+Annotator.Plugin = {}
 
 # Export other modules for use in plugins.
-Annotator.Delegator = Delegator
+Annotator.Core = core.AnnotatorCore
+Annotator.Delegator = require('./delegator')
+Annotator.Notification = require('./notification')
 Annotator.Util = Util
-Annotator.Widget = Widget
-Annotator.Notification = Notification
-Annotator.Plugin = Plugin
+Annotator.Widget = require('./widget')
 
 # Attach notification methods to the Annotation object
-notification = new Notification()
+notification = new Annotator.Notification()
 Annotator.showNotification = notification.show
 Annotator.hideNotification = notification.hide
-
-# Register the default store
-Annotator.Plugin.register('Adder', Adder)
-Annotator.Plugin.register('TextSelector', TextSelector)
-Annotator.Plugin.register('LegacyRanges', LegacyRanges)
-Annotator.Plugin.register('Editor', Editor)
-Annotator.Plugin.register('Highlighter', Highlighter)
-Annotator.Plugin.register('NullStore', NullStore)
-Annotator.Plugin.register('Viewer', Viewer)
 
 # Expose a global instance registry
 Annotator._instances = []

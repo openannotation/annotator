@@ -328,6 +328,6 @@ class Permissions extends Annotator.Plugin
     this.setUser(token.userId)
 
 
-Annotator.Plugin.register('Permissions', Permissions)
+Annotator.Plugin.Permissions = Permissions
 
 module.exports = Permissions

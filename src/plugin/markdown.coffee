@@ -58,6 +58,6 @@ class Markdown extends Annotator.Plugin
   convert: (text) ->
     @converter.makeHtml text
 
-Annotator.Plugin.register('Markdown', Markdown)
+Annotator.Plugin.Markdown = Markdown
 
 module.exports = Markdown

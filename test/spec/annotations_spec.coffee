@@ -1,4 +1,3 @@
-Events = require('../../src/events')
 AnnotationRegistry = require('../../src/annotations')
 NullStore = require('../../src/plugin/nullstore')
 $ = require('../../src/util').$
@@ -9,10 +8,9 @@ describe 'AnnotationRegistry', ->
   s = null
 
   beforeEach ->
+    noop = -> Promise.resolve()
     s = new NullStore()
-    core = {}
-    Events.mixin(core)
-    a = new AnnotationRegistry(core, s)
+    a = new AnnotationRegistry(s, noop)
 
     sinon.spy(s, 'create')
     sinon.spy(s, 'update')

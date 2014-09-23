@@ -170,6 +170,6 @@ Tags.filterCallback = (input, tags = []) ->
 
   matches == keywords.length
 
-Annotator.Plugin.register('Tags', Tags)
+Annotator.Plugin.Tags = Tags
 
 module.exports = Tags

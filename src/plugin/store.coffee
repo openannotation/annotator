@@ -325,6 +325,6 @@ class Store
 
     console.error _t("API request failed:") + " '#{xhr.status}'"
 
-Annotator.Plugin.register('Store', Store)
+Annotator.Plugin.Store = Store
 
 module.exports = Store

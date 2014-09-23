@@ -379,6 +379,6 @@ class Filter extends Annotator.Plugin
   _onClearClick: (event) ->
     $(event.target).prev('input').val('').keyup().blur()
 
-Annotator.Plugin.register('Filter', Filter)
+Annotator.Plugin.Filter = Filter
 
 module.exports = Filter

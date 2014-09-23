@@ -28,6 +28,6 @@ class Unsupported
           $('html').addClass('ie6')
       )
 
-Annotator.Plugin.register('Unsupported', Unsupported)
+Annotator.Plugin.Unsupported = Unsupported
 
 module.exports = Unsupported
