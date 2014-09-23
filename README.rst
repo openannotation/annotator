@@ -4,6 +4,7 @@ Annotator
 |Build Status| |Stories in Ready| |Version on NPM|
 
 ::
+
   ┌──────────────────────────────────────────────────────┐
   │ WARNING! Unstable code in this branch!               │
   ├──────────────────────────────────────────────────────┤
