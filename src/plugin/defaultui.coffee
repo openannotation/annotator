@@ -1,7 +1,6 @@
 UI = require('../ui')
 # LegacyRanges = require('./legacyranges')
 # Editor = require('./editor')
-# Highlighter = require('./highlighter')
 
 # FIXME: restore readOnly mode
 #
@@ -12,11 +11,20 @@ UI = require('../ui')
 DefaultUI = (element, options) ->
   (registry) ->
     adder = new UI.Adder(registry)
+    highlighter = new UI.Highlighter(element)
     textSelector = new UI.TextSelector(element, {
       onSelection: adder.onSelection
     })
 
     return {
+      destroy: ->
+        adder.destroy()
+        highlighter.destroy()
+        textSelector.destroy()
+      onAnnotationsLoaded: highlighter.drawAll
+      onAnnotationCreated: highlighter.draw
+      onAnnotationDeleted: highlighter.undraw
+      onAnnotationUpdated: highlighter.redraw
     }
 
 exports.DefaultUI = DefaultUI
