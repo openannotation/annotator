@@ -1,10 +1,11 @@
-$ = require('./util').$
+{$, Promise} = require('./util')
 
-# Public: Provides CRUD methods for annotations which call corresponding plugin
-# hooks.
-class AnnotationRegistry
+# StorageAdapter wraps a concrete implementation of the Storage interface, and
+# ensures that the appropriate hooks are fired when annotations are created,
+# updated, deleted, etc.
+class StorageAdapter
 
-  # Public: create a new annotation registry object.
+  # Public: create a new storage adapter object.
   #
   # store - The Store implementation which manages persistence
   # runHook - A function which can be used to run lifecycle hooks
@@ -28,7 +29,12 @@ class AnnotationRegistry
   #
   # Returns a Promise of an annotation Object.
   create: (obj = {}) ->
-    this._cycle(obj, 'create', 'beforeAnnotationCreated', 'annotationCreated')
+    this._cycle(
+      obj,
+      'create',
+      'onBeforeAnnotationCreated',
+      'onAnnotationCreated'
+    )
 
   # Updates an annotation.
   #
@@ -53,7 +59,12 @@ class AnnotationRegistry
   update: (obj) ->
     if not obj.id?
       throw new TypeError("annotation must have an id for update()")
-    this._cycle(obj, 'update', 'beforeAnnotationUpdated', 'annotationUpdated')
+    this._cycle(
+      obj,
+      'update',
+      'onBeforeAnnotationUpdated',
+      'onAnnotationUpdated'
+    )
 
   # Public: Deletes the annotation.
   #
@@ -70,7 +81,12 @@ class AnnotationRegistry
   delete: (obj) ->
     if not obj.id?
       throw new TypeError("annotation must have an id for delete()")
-    this._cycle(obj, 'delete', 'beforeAnnotationDeleted', 'annotationDeleted')
+    this._cycle(
+      obj,
+      'delete',
+      'onBeforeAnnotationDeleted',
+      'onAnnotationDeleted'
+    )
 
   # Public: Queries the store
   #
@@ -79,7 +95,7 @@ class AnnotationRegistry
   #
   # Returns a Promise resolving to the store return value.
   query: (query) ->
-    return @store.query(query)
+    return Promise.resolve(@store.query(query))
 
   # Public: Load and draw annotations from a given query.
   #
@@ -91,8 +107,8 @@ class AnnotationRegistry
   # Returns a Promise that resolves when loading is complete.
   load: (query) ->
     this.query(query)
-      .then (annotations, meta) =>
-        this.runHook('onAnnotationsLoaded', [annotations, meta])
+      .then (result) =>
+        this.runHook('onAnnotationsLoaded', [result])
 
   # Private: cycle a store event, keeping track of the annotation object and
   # updating it as necessary.
@@ -102,7 +118,10 @@ class AnnotationRegistry
       safeCopy = $.extend(true, {}, obj)
       delete safeCopy._local
 
-      @store[storeFunc](safeCopy)
+      # We use Promise.resolve() to coerce the result of the store function,
+      # which can be either a value or a promise, to a promise.
+      result = @store[storeFunc](safeCopy)
+      Promise.resolve(result)
         .then (ret) =>
           # Empty object without changing identity
           for own k, v of obj
@@ -116,4 +135,4 @@ class AnnotationRegistry
 
           return obj
 
-module.exports = AnnotationRegistry
+exports.StorageAdapter = StorageAdapter

@@ -1,4 +1,4 @@
-StorageAdapter = require('./annotations')
+StorageAdapter = require('./storageadapter').StorageAdapter
 Promise = require('./util').Promise
 
 # AnnotatorCore is the coordination point for all annotation functionality. On
