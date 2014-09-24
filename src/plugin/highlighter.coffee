@@ -1,4 +1,3 @@
-BackboneEvents = require('backbone-events-standalone')
 Range = require('xpath-range').Range
 Util = require('../util')
 $ = Util.$
@@ -45,16 +44,8 @@ class Highlighter
   constructor: (@element, options) ->
     @options = $.extend(true, {}, @options, options)
 
-  configure: ({@core}) ->
-
-  pluginInit: ->
-    this.listenTo(@core, 'annotationsLoaded', this.drawAll)
-    this.listenTo(@core, 'annotationCreated', this.draw)
-    this.listenTo(@core, 'annotationDeleted', this.undraw)
-    this.listenTo(@core, 'annotationUpdated', this.redraw)
 
   destroy: ->
-    this.stopListening()
     $(@element).find(".#{@options.highlightClass}").each (i, el) ->
       $(el).contents().insertBefore(el)
       $(el).remove()
@@ -140,7 +131,6 @@ class Highlighter
     this.draw(annotation)
 
 
-BackboneEvents.mixin(Highlighter.prototype)
 
 # This is a core plugin (registered by default with Annotator), so we don't
 # register here. If you're writing a plugin of your own, please refer to a

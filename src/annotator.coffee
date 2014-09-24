@@ -18,9 +18,6 @@ handleError = ->
 # Annotator represents a sane default configuration of AnnotatorCore, with a
 # default set of plugins and a user interface.
 class Annotator extends core.AnnotatorCore
-  options: # Configuration options
-    # Start Annotator in read-only mode. No controls will be shown.
-    readOnly: false
 
   # Public: Creates an instance of the Annotator.
   #
@@ -47,8 +44,8 @@ class Annotator extends core.AnnotatorCore
   constructor: (element, options) ->
     super
 
-    @element = $(element)
-    @options = $.extend(true, {}, @options, options)
+    @element = element
+    @options = options
 
     Annotator._instances.push(this)
 
@@ -56,7 +53,7 @@ class Annotator extends core.AnnotatorCore
     return this unless Annotator.supported()
 
     this.setStorage(NullStore)
-    this.addPlugin((reg) -> DefaultUI(@element, reg))
+    this.addPlugin(DefaultUI(element))
 
     this._setupDynamicStyle()
 

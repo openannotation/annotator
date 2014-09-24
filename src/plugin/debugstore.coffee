@@ -1,42 +1,36 @@
 Annotator = require('annotator')
-$ = Annotator.Util.$
-
 
 uuid = (-> counter = -1; -> counter += 1)()
 
-log = (args...) ->
-  console.debug("DebugStore", args...)
+trace = (action, annotation) ->
+  console.debug("DebugStore: #{action}", JSON.parse(JSON.stringify(annotation)))
 
-perform = (action, annotation) ->
-  log(action, JSON.parse(JSON.stringify(annotation)))
-  dfd = $.Deferred()
-  dfd.resolve(annotation)
-  return dfd.promise()
 
 # Public: The DebugStore plugin can be used to print details of the annotation
 # persistence processes to the console when developing other parts of Annotator.
-class DebugStore
+DebugStore = ->
 
   create: (annotation) ->
     annotation.id = uuid()
-    return perform('create', annotation)
+    trace('create', annotation)
+    return annotation
 
   update: (annotation) ->
-    return perform('update', annotation)
+    trace('update', annotation)
+    return annotation
 
   delete: (annotation) ->
-    return perform('destroy', annotation)
+    trace('destroy', annotation)
+    return annotation
 
   query: (queryObj) ->
-    dfd = $.Deferred()
-    perform('query', queryObj)
-    dfd.resolve([], {total: 0})
-    return dfd.promise()
+    trace('query', queryObj)
+    return {results: [], metadata: {total: 0}}
 
   setHeader: (key, value) ->
-    log("would set header '#{key}'='#{value}'")
+    trace('setHeader', "#{key}=#{value}")
 
 
 Annotator.Plugin.DebugStore = DebugStore
 
-module.exports = DebugStore
+exports.DebugStore = DebugStore
