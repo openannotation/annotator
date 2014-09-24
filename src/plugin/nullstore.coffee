@@ -1,54 +1,42 @@
-$ = require('../util').$
-
-# Get an unique identifier
+# Get a unique identifier
 id = (-> counter = -1; -> counter += 1)()
 
-# Public: Adds persistence hooks for annotations.
+# Public: a no-op Storage implementation
 class NullStore
 
   # Public: create an annotation
   #
   # annotation - An annotation Object to create.
   #
-  # Returns a promise of the new annotation Object.
+  # Returns an annotation Object.
   create: (annotation) ->
-    dfd = $.Deferred()
     if not annotation.id?
       annotation.id = id()
-    dfd.resolve(annotation)
-    return dfd.promise()
+    return annotation
 
   # Public: update an annotation
   #
   # annotation - An annotation Object to be updated.
   #
-  # Returns a promise of the updated annotation Object.
+  # Returns an annotation Object.
   update: (annotation) ->
-    dfd = $.Deferred()
-    dfd.resolve(annotation)
-    return dfd.promise()
+    return annotation
 
   # Public: delete an annotation
   #
   # annotation - An annotation Object to be deleted.
   #
-  # Returns a promise of the result of the delete operation.
+  # Returns an annotation Object.
   delete: (annotation) ->
-    dfd = $.Deferred()
-    dfd.resolve(annotation)
-    return dfd.promise()
+    return annotation
 
   # Public: query the store for annotations
   #
-  # Returns a Promise resolving to the query results and query metadata.
+  # queryObj - A query Object.
+  #
+  # Returns an Object representing query results.
   query: (queryObj) ->
-    dfd = $.Deferred()
-    dfd.resolve([], {})
-    return dfd.promise()
+    return {results: []}
 
-# This is a core plugin (registered by default with Annotator), so we don't
-# register here. If you're writing a plugin of your own, please refer to a
-# non-core plugin (such as Document or Store) to see how to register your plugin
-# with Annotator.
 
-module.exports = NullStore
+exports.NullStore = NullStore

@@ -1,4 +1,4 @@
-NullStore = require('../../../src/plugin/nullstore')
+NullStore = require('../../../src/plugin/nullstore').NullStore
 
 describe 'NullStore', ->
   s = null
@@ -8,44 +8,25 @@ describe 'NullStore', ->
     s = new NullStore()
     ann = {id: 123, some: 'data'}
 
-  describe '#create()', ->
+  it "#create() should return the created annotation", ->
+    res = s.create(ann)
+    assert.deepEqual(res, ann)
 
-    it "should return a promise resolving to the created annotation", (done) ->
-      s.create(ann)
-        .done (ret) ->
-          assert.equal(ret, ann)
-          done()
-        .fail (obj, msg) ->
-          done(new Error("promise rejected: #{msg}"))
+  it "#create() should assign a locally unique id to created annotations", ->
+    res1 = s.create({some: 'data'})
+    assert.property(res1, 'id')
+    res2 = s.create({some: 'data'})
+    assert.property(res2, 'id')
+    assert.notEqual(res1.id, res2.id)
 
-  describe '#update()', ->
+  it "#update() should return the updated annotation", ->
+    res = s.update(ann)
+    assert.deepEqual(res, ann)
 
-    it "should return a promise resolving to the updated annotation", (done) ->
-      s.update(ann)
-        .done (ret) ->
-          assert.equal(ret, ann)
-          done()
-        .fail (obj, msg) ->
-          done(new Error("promise rejected: #{msg}"))
+  it "#delete() should return the deleted annotation", ->
+    res = s.delete(ann)
+    assert.deepEqual(res, ann)
 
-  describe '#delete()', ->
-
-    it "should return a promise resolving to the deleted annotation object", (done) ->
-      ann = {id: 123, some: 'data'}
-      s.delete(ann)
-        .done (ret) ->
-          assert.equal(ret, ann)
-          done()
-        .fail (obj, msg) ->
-          done(new Error("promise rejected: #{msg}"))
-
-  describe '#query()', ->
-
-    it "should return a promise resolving to the results and metadata", (done) ->
-      s.query({foo: 'bar', type: 'giraffe'})
-        .done (res, meta) ->
-          assert.isArray(res)
-          assert.isObject(meta)
-          done()
-        .fail (obj, msg) ->
-          done(new Error("promise rejected: #{msg}"))
+  it "#query() should return empty query results", ->
+    res = s.query({foo: 'bar', type: 'giraffe'})
+    assert.deepEqual(res, {results: []})
