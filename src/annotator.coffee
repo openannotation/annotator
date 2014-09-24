@@ -2,7 +2,7 @@ core = require('./core')
 
 Util = require('./util')
 
-NullStore = require('./plugin/nullstore')
+NullStore = require('./nullstore').NullStore
 DefaultUI = require('./plugin/defaultui').DefaultUI
 
 $ = Util.$

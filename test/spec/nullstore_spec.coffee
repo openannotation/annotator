@@ -1,11 +1,11 @@
-NullStore = require('../../../src/plugin/nullstore').NullStore
+NullStore = require('../../src/nullstore').NullStore
 
 describe 'NullStore', ->
   s = null
   ann = null
 
   beforeEach ->
-    s = new NullStore()
+    s = NullStore()
     ann = {id: 123, some: 'data'}
 
   it "#create() should return the created annotation", ->

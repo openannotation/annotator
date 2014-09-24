@@ -2,7 +2,7 @@
 id = (-> counter = -1; -> counter += 1)()
 
 # Public: a no-op Storage implementation
-class NullStore
+NullStore = ->
 
   # Public: create an annotation
   #
