@@ -1,6 +1,6 @@
 UI = require('../ui')
+Util = require('../util')
 # LegacyRanges = require('./legacyranges')
-# Editor = require('./editor')
 
 # FIXME: restore readOnly mode
 #
@@ -10,21 +10,37 @@ UI = require('../ui')
 
 DefaultUI = (element, options) ->
   (registry) ->
+    interactionPoint = null
+
     adder = new UI.Adder(registry)
+    editor = new UI.Editor()
     highlighter = new UI.Highlighter(element)
     textSelector = new UI.TextSelector(element, {
-      onSelection: adder.onSelection
+      onSelection: (ranges, event) ->
+        interactionPoint = Util.mousePosition(event)
+        adder.onSelection(ranges, event)
     })
 
     return {
       destroy: ->
         adder.destroy()
+        editor.destroy()
         highlighter.destroy()
         textSelector.destroy()
+
       onAnnotationsLoaded: highlighter.drawAll
       onAnnotationCreated: highlighter.draw
       onAnnotationDeleted: highlighter.undraw
       onAnnotationUpdated: highlighter.redraw
+
+      onBeforeAnnotationCreated: (annotation) ->
+        # Editor#load returns a promise that is resolved if editing completes,
+        # and rejected if editing is cancelled. We return it here to "stall" the
+        # annotation process until the editing is done.
+        return editor.load(annotation, interactionPoint)
+
+      onBeforeAnnotationUpdated: (annotation) ->
+        return editor.load(annotation, interactionPoint)
     }
 
 exports.DefaultUI = DefaultUI
