@@ -12,7 +12,9 @@ DefaultUI = (element, options) ->
   (registry) ->
     interactionPoint = null
 
-    adder = new UI.Adder(registry)
+    adder = new UI.Adder({
+      onCreate: (ann) -> registry.annotations.create(ann)
+    })
     editor = new UI.Editor()
     highlighter = new UI.Highlighter(element)
     textSelector = new UI.TextSelector(element, {

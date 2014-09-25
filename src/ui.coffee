@@ -184,13 +184,16 @@ class Adder extends Widget
 
   template: ADDER_HTML
 
-  constructor: (registry, options) ->
-    super options
-    @registry = registry
-    @ignoreMouseup = false
+  # Configuration options
+  options:
+    onCreate: null # Callback, called when the user clicks the adder when an
+                   # annotation is loaded.
 
-    @interactionPoint = null
-    @selectedRanges = null
+  constructor: (options) ->
+    super
+
+    @ignoreMouseup = false
+    @annotation = null
 
     @document = @element[0].ownerDocument
     $(@document.body).on("mouseup.#{ADDER_NS}", this._onMouseup)
@@ -200,24 +203,38 @@ class Adder extends Widget
     super
     $(@document.body).off(".#{ADDER_NS}")
 
-  onSelection: (ranges, event) =>
-    if ranges?.length > 0
-      @selectedRanges = ranges
-      @interactionPoint = Util.mousePosition(event)
-      this.show()
-    else
-      @selectedRanges = []
-      @interactionPoint = null
-      this.hide()
+  # Public: Load an annotation and show the adder.
+  #
+  # annotation - An annotation Object to load.
+  # position - An Object specifying the position in which to show the editor
+  #            (optional).
+  #
+  # If the user clicks on the adder with an annotation loaded, the onCreate
+  # handler will be called. In this way, the adder can serve as an intermediary
+  # step between making a selection and creating an annotation.
+  #
+  # Returns nothing.
+  load: (annotation, position = null) ->
+    @annotation = annotation
+    this.show(position)
 
   # Public: Show the adder.
   #
+  # position - An Object specifying the position in which to show the editor
+  #            (optional).
+  #
+  # Examples
+  #
+  #   adder.show()
+  #   adder.hide()
+  #   adder.show({top: '100px', left: '80px'})
+  #
   # Returns nothing.
-  show: =>
-    if @interactionPoint?
+  show: (position = null) ->
+    if position?
       @element.css({
-        top: @interactionPoint.top,
-        left: @interactionPoint.left
+        top: position.top,
+        left: position.left
       })
     super
 
@@ -269,9 +286,8 @@ class Adder extends Widget
     @ignoreMouseup = false
 
     # Create a new annotation
-    @registry.annotations.create({
-      ranges: @selectedRanges
-    })
+    if @annotation? and typeof @options.onCreate == 'function'
+      @options.onCreate(@annotation)
 
 
 # Public: Creates an element for editing annotations.

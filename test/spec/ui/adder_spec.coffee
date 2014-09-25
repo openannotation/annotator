@@ -6,23 +6,17 @@ Util = require('../../../src/util')
 $ = Util.$
 
 
-class MockStorageAdapter
-
-  constructor: ->
-    @calls = []
-
-  create: (ann) ->
-    @calls.push(['create', ann])
-
-
 describe 'UI.Adder', ->
   a = null
-  mockRegistry = null
+  onCreate = null
 
   beforeEach ->
     h.addFixture('adder')
-    mockRegistry = {annotations: new MockStorageAdapter()}
-    a = new UI.Adder(mockRegistry)
+    onCreate = sinon.stub()
+
+    a = new UI.Adder({
+      onCreate: onCreate
+    })
 
   afterEach ->
     a.destroy()
@@ -37,6 +31,19 @@ describe 'UI.Adder', ->
       a.show()
       assert.isTrue(a.element.is(':visible'))
 
+    it 'sets the widget position if a position is provided', ->
+      position = {
+        top: '100px'
+        left: '200px'
+      }
+      a.show(position)
+      assert.deepEqual(
+        {
+          top: a.element[0].style.top
+          left: a.element[0].style.left
+        },
+        position
+      )
 
   describe '.hide()', ->
     it 'should hide the adder widget', ->
@@ -61,53 +68,45 @@ describe 'UI.Adder', ->
       assert.isFalse(document.body in a.element.parents())
 
 
-  describe '.onSelection()', ->
-    mockOffset = null
-    mockRanges = null
+  describe '.load()', ->
+    ann = null
 
     beforeEach ->
-      mockOffset = {top: 123, left: 456}
-      mockRanges = ['range1', 'range2']
+      ann = {text: 'foo'}
 
-      sinon.stub(Util, 'mousePosition').returns(mockOffset)
-
-    afterEach ->
-      Util.mousePosition.restore()
-
-    it "should show itself on selection events with valid data", ->
-      a.onSelection(mockRanges, null)
+    it "shows the widget", ->
+      a.load(ann)
       assert.isTrue(a.isShown())
 
-    it "should hide itself on empty selection events", ->
-      a.show()
-      a.onSelection([], null)
-      assert.isFalse(a.isShown())
+    it "sets the widget position if a position is provided", ->
+      position = {top: '123px', left: '456px'}
+      a.load(ann, position)
+      assert.deepEqual(
+        {
+          top: a.element[0].style.top
+          left: a.element[0].style.left
+        },
+        position
+      )
 
-    it "should use the event mouse position to position itself", ->
-      a.onSelection(mockRanges, null)
-      assert.equal(a.element.css('top'), '123px')
-      assert.equal(a.element.css('left'), '456px')
-
-    it "should create an annotation when the button is left-clicked", ->
-      a.onSelection(mockRanges, null)
+    it "calls the onCreate handler when the button is left-clicked", ->
+      a.load(ann)
       a.element.find('button').trigger({
         type: 'click',
         which: 1,
       })
-      assert.deepEqual(
-        mockRegistry.annotations.calls,
-        [['create', {ranges: mockRanges}]]
-      )
+      sinon.assert.calledWith(onCreate, ann)
 
-    it "should not create an annotation when the button is right-clicked", ->
-      a.onSelection(mockRanges, null)
+    it "does not call the onCreate handler when the button is right-clicked", ->
+      a.load(ann)
       a.element.find('button').trigger({
         type: 'click',
         which: 3,
       })
-      assert.deepEqual(mockRegistry.annotations.calls, [])
+      sinon.assert.notCalled(onCreate)
 
-    it "should hide the adder when the button is left-clicked", ->
+    it "hides the adder when the button is left-clicked", ->
+      a.load(ann)
       $(Util.getGlobal().document.body).trigger('mouseup')
       a.element.find('button').trigger({
         type: 'click',
