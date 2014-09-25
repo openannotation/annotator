@@ -78,7 +78,7 @@ describe 'UI.Editor', ->
             assert.equal(ann.text, "Updated in the editor")
           .then(done, done)
 
-      it 'should return a that is rejected if editing is
+      it 'should return a promise that is rejected if editing is
           subsequently cancelled', (done) ->
         ann = {text: "Hello, world"}
         res = plugin.load(ann)
@@ -90,7 +90,6 @@ describe 'UI.Editor', ->
             -> done(new Error("Promise should have been rejected!")),
             -> done()
           )
-          .then(done, done)
 
     describe '.submit()', ->
       ann = null
