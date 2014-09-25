@@ -11,9 +11,6 @@ _t = Util.TranslationString
 # Store a reference to the current Annotator object.
 _Annotator = this.Annotator
 
-handleError = ->
-  console.error.apply(console, arguments)
-
 
 # Annotator represents a sane default configuration of AnnotatorCore, with a
 # default set of plugins and a user interface.
