@@ -1,6 +1,5 @@
 UI = require('../ui')
 Util = require('../util')
-# LegacyRanges = require('./legacyranges')
 
 
 # Polyfill String#trim() for IE8
