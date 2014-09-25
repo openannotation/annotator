@@ -195,6 +195,9 @@ class Adder extends Widget
     @ignoreMouseup = false
     @annotation = null
 
+    if @options.onCreate?
+      @onCreate = @options.onCreate
+
     @document = @element[0].ownerDocument
     $(@document.body).on("mouseup.#{ADDER_NS}", this._onMouseup)
     this.render()
@@ -286,8 +289,8 @@ class Adder extends Widget
     @ignoreMouseup = false
 
     # Create a new annotation
-    if @annotation? and typeof @options.onCreate == 'function'
-      @options.onCreate(@annotation)
+    if @annotation? and typeof @onCreate == 'function'
+      @onCreate(@annotation)
 
 
 # Public: Creates an element for editing annotations.
@@ -772,9 +775,18 @@ class Highlighter
 # and can notify another object of a selection event
 class TextSelector
 
+  # Configuration options
+  options:
+    onSelection: null # Callback, called when the user makes a selection.
+                      # Receives the list of selected ranges (may be empty) and
+                      # the DOM Event that was detected as a selection.
+
   constructor: (element, options) ->
     @element = element
-    @options = options
+    @options = $.extend(true, {}, @options, options)
+
+    if @options.onSelection?
+      @onSelection = @options.onSelection
 
     if @element.ownerDocument?
       @document = @element.ownerDocument
@@ -839,8 +851,8 @@ class TextSelector
   # Returns nothing.
   _checkForEndSelection: (event) =>
     _nullSelection = =>
-      if typeof @options.onSelection == 'function'
-        @options.onSelection([], event)
+      if typeof @onSelection == 'function'
+        @onSelection([], event)
 
     # Get the currently selected ranges.
     selectedRanges = this.captureDocumentSelection()
@@ -858,8 +870,8 @@ class TextSelector
         _nullSelection()
         return
 
-    if typeof @options.onSelection == 'function'
-      @options.onSelection(selectedRanges, event)
+    if typeof @onSelection == 'function'
+      @onSelection(selectedRanges, event)
 
 
   # Determines if the provided element is part of Annotator. Useful for ignoring
