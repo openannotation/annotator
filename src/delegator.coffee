@@ -1,3 +1,4 @@
+BackboneEvents = require('backbone-events-standalone')
 $ = require('./util').$
 
 
@@ -160,8 +161,7 @@ _parseEvents = (eventsObj) ->
 
 
 # Mix in events handler
-Events = require('./events')
-Events.mixin(Delegator::)
+BackboneEvents.mixin(Delegator::)
 
 # Export Delegator object
 module.exports = Delegator
