@@ -290,7 +290,7 @@ class Adder extends Widget
 
     # Create a new annotation
     if @annotation? and typeof @onCreate == 'function'
-      @onCreate(@annotation)
+      @onCreate(@annotation, event)
 
 
 # Public: Creates an element for editing annotations.

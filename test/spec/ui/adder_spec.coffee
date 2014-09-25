@@ -89,8 +89,14 @@ describe 'UI.Adder', ->
         position
       )
 
-    it "calls the onCreate handler when the button is left-clicked", ->
+  describe 'event handlers', ->
+    ann = null
+
+    beforeEach ->
+      ann = {text: 'foo'}
       a.load(ann)
+
+    it "calls the onCreate handler when the button is left-clicked", ->
       a.element.find('button').trigger({
         type: 'click',
         which: 1,
@@ -98,15 +104,20 @@ describe 'UI.Adder', ->
       sinon.assert.calledWith(onCreate, ann)
 
     it "does not call the onCreate handler when the button is right-clicked", ->
-      a.load(ann)
       a.element.find('button').trigger({
         type: 'click',
         which: 3,
       })
       sinon.assert.notCalled(onCreate)
 
+    it "passes the triggering event to the onCreate handler", ->
+      a.element.find('button').trigger({
+        type: 'click',
+        which: 1,
+      })
+      assert.equal(onCreate.firstCall.args[1].type, 'click')
+
     it "hides the adder when the button is left-clicked", ->
-      a.load(ann)
       $(Util.getGlobal().document.body).trigger('mouseup')
       a.element.find('button').trigger({
         type: 'click',
