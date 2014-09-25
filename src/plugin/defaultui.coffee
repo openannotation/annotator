@@ -20,6 +20,10 @@ DefaultUI = (element, options) ->
         interactionPoint = Util.mousePosition(event)
         adder.onSelection(ranges, event)
     })
+    viewer = new UI.Viewer(registry, element, {
+      showEditButton: true
+      showDeleteButton: true
+    })
 
     return {
       destroy: ->
@@ -27,6 +31,7 @@ DefaultUI = (element, options) ->
         editor.destroy()
         highlighter.destroy()
         textSelector.destroy()
+        viewer.destroy()
 
       onAnnotationsLoaded: highlighter.drawAll
       onAnnotationCreated: highlighter.draw
