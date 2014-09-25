@@ -141,7 +141,6 @@ Annotator.Core = core.AnnotatorCore
 Annotator.Delegator = require('./delegator')
 Annotator.Notification = require('./notification')
 Annotator.Util = Util
-Annotator.Widget = require('./widget')
 
 # Attach notification methods to the Annotation object
 notification = new Annotator.Notification()

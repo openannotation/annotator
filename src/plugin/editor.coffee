@@ -1,12 +1,12 @@
 Util = require('../util')
-Widget = require('../widget')
+UI = require('../ui')
 Promise = Util.Promise
 $ = Util.$
 _t = Util.TranslationString
 
 
 # Public: Creates an element for editing annotations.
-class Editor extends Widget
+class Editor extends UI.Widget
 
   # Classes to toggle state.
   classes:

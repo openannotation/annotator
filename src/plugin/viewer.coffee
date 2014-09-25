@@ -1,12 +1,12 @@
 Util = require('../util')
-Widget = require('../widget')
+UI = require('../ui')
 $ = Util.$
 _t = Util.TranslationString
 
 ns = 'annotator-viewer'
 
 # Public: Creates an element for viewing annotations.
-class Viewer extends Widget
+class Viewer extends UI.Widget
 
   # Classes for toggling annotator state.
   classes:
