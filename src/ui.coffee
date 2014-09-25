@@ -973,7 +973,7 @@ class Viewer extends Widget
 
     if @options.defaultFields
       this.addField({
-        load: (field, annotation) =>
+        load: (field, annotation) ->
           if annotation.text
             $(field).html(Util.escape(annotation.text))
           else
@@ -984,12 +984,20 @@ class Viewer extends Widget
       @document = @options.autoViewHighlights.ownerDocument
 
       $(@options.autoViewHighlights)
-      .on("mouseover.#{VIEWER_NS}", '.annotator-hl', this._onHighlightMouseover)
-      .on("mouseleave.#{VIEWER_NS}", '.annotator-hl', this._onHighlightMouseleave)
+        .on(
+          "mouseover.#{VIEWER_NS}",
+          '.annotator-hl',
+          this._onHighlightMouseover
+        )
+        .on(
+          "mouseleave.#{VIEWER_NS}",
+          '.annotator-hl',
+          this._onHighlightMouseleave
+        )
 
       $(@document.body)
-      .on("mousedown.#{VIEWER_NS}", (e) => @mouseDown = true if e.which == 1)
-      .on("mouseup.#{VIEWER_NS}", (e) => @mouseDown = false if e.which == 1)
+        .on("mousedown.#{VIEWER_NS}", (e) => @mouseDown = true if e.which == 1)
+        .on("mouseup.#{VIEWER_NS}", (e) => @mouseDown = false if e.which == 1)
 
     this.render()
 
