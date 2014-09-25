@@ -1,5 +1,5 @@
-StorageAdapter = require('../../src/storageadapter').StorageAdapter
-{$, Promise} = require('../../src/util')
+Storage = require('../../../src/storage')
+{$, Promise} = require('../../../src/util')
 
 class MockHookRunner
 
@@ -11,7 +11,7 @@ class MockHookRunner
     return Promise.resolve()
 
 
-class MockStore
+class MockStorage
 
   create: (annotation) ->
     annotation.stored = true
@@ -37,7 +37,7 @@ class MockStore
     if typeof @_callRecorder == 'function'
       @_callRecorder(name)
 
-class FailingMockStore
+class FailingMockStorage
 
   create: (annotation) ->
     return Promise.reject("failure message")
@@ -61,7 +61,7 @@ keyAbsent = (key) ->
   )
 
 
-describe 'StorageAdapter', ->
+describe 'Storage.StorageAdapter', ->
   noop = -> Promise.resolve()
   a = null
   s = null
@@ -69,8 +69,8 @@ describe 'StorageAdapter', ->
 
   beforeEach ->
     sandbox = sinon.sandbox.create()
-    s = new MockStore()
-    a = new StorageAdapter(s, noop)
+    s = new MockStorage()
+    a = new Storage.StorageAdapter(s, noop)
 
     sandbox.spy(s, 'create')
     sandbox.spy(s, 'update')
@@ -103,8 +103,8 @@ describe 'StorageAdapter', ->
   # Helper function for testing that the return value from the adapter is a
   # correctly rejected promise
   assertPromiseRejected = (method, passed, expected, done) ->
-    s = new FailingMockStore()
-    a = new StorageAdapter(s, noop)
+    s = new FailingMockStorage()
+    a = new Storage.StorageAdapter(s, noop)
     a[method](passed)
     .then(
       -> done(new Error("Promise should not have been resolved!")),
@@ -150,9 +150,9 @@ describe 'StorageAdapter', ->
     it "should run the onBeforeAnnotationCreated/onAnnotationCreated hooks " +
        "before/after calling the store", (done) ->
       hr = new MockHookRunner()
-      s = new MockStore()
+      s = new MockStorage()
       s._callRecorder = hr.runHook
-      a = new StorageAdapter(s, hr.runHook)
+      a = new Storage.StorageAdapter(s, hr.runHook)
       ann = {some: 'data'}
       a.create(ann)
         .then ->
@@ -204,9 +204,9 @@ describe 'StorageAdapter', ->
     it "should run the onBeforeAnnotationUpdated/onAnnotationUpdated hooks " +
        "before/after calling the store", (done) ->
       hr = new MockHookRunner()
-      s = new MockStore()
+      s = new MockStorage()
       s._callRecorder = hr.runHook
-      a = new StorageAdapter(s, hr.runHook)
+      a = new Storage.StorageAdapter(s, hr.runHook)
       ann = {id: '123', some: 'data'}
       a.update(ann)
         .then ->
@@ -258,9 +258,9 @@ describe 'StorageAdapter', ->
     it "should run the onBeforeAnnotationDeleted/onAnnotationDeleted hooks " +
        "before/after calling the store", (done) ->
       hr = new MockHookRunner()
-      s = new MockStore()
+      s = new MockStorage()
       s._callRecorder = hr.runHook
-      a = new StorageAdapter(s, hr.runHook)
+      a = new Storage.StorageAdapter(s, hr.runHook)
       ann = {id: '123', some: 'data'}
       a.delete(ann)
         .then ->
@@ -286,8 +286,8 @@ describe 'StorageAdapter', ->
       .then(done, done)
 
     it "should return a promise that rejects if the store rejects", (done) ->
-      s = new FailingMockStore()
-      a = new StorageAdapter(s, noop)
+      s = new FailingMockStorage()
+      a = new Storage.StorageAdapter(s, noop)
       query = {url: 'foo'}
       res = a.query(query)
       res.then(
@@ -307,9 +307,9 @@ describe 'StorageAdapter', ->
     it "should run the onAnnotationsLoaded hook after calling " +
        "the store", (done) ->
       hr = new MockHookRunner()
-      s = new MockStore()
+      s = new MockStorage()
       s._callRecorder = hr.runHook
-      a = new StorageAdapter(s, hr.runHook)
+      a = new Storage.StorageAdapter(s, hr.runHook)
       query = {url: 'foo'}
       a.load(query)
         .then ->

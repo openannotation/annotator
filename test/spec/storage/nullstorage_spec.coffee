@@ -1,11 +1,11 @@
-NullStore = require('../../src/nullstore').NullStore
+Storage = require('../../../src/storage')
 
-describe 'NullStore', ->
+describe 'Storage.NullStorage', ->
   s = null
   ann = null
 
   beforeEach ->
-    s = NullStore()
+    s = Storage.NullStorage()
     ann = {id: 123, some: 'data'}
 
   it "#create() should return the created annotation", ->

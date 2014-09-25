@@ -11,13 +11,6 @@
     <script src="/lib/vendor/wgxpath.install.js"></script>
 
     <script src="lib/annotator.js"></script>
-    <script src="lib/plugin/debugstore.js"></script>
-    <script src="lib/plugin/store.js"></script>
-    <script src="lib/plugin/permissions.js"></script>
-    <script src="lib/plugin/auth.js"></script>
-    <script src="lib/plugin/tags.js"></script>
-    <script src="lib/plugin/unsupported.js"></script>
-    <script src="lib/plugin/filter.js"></script>
 
     <link rel="stylesheet" type="text/css" href="css/annotator.css">
     <style>
@@ -128,7 +121,7 @@
           elem = document.getElementById('airlock'),
           anno = new Annotator(elem);
 
-      anno.setStorage(Annotator.Plugin.DebugStore);
+      anno.setStorage(Annotator.Storage.DebugStorage);
     </script>
   </body>
 

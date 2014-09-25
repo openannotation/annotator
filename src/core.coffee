@@ -1,4 +1,4 @@
-StorageAdapter = require('./storageadapter').StorageAdapter
+Storage = require('./storage')
 Promise = require('./util').Promise
 
 # AnnotatorCore is the coordination point for all annotation functionality. On
@@ -11,7 +11,7 @@ class AnnotatorCore
     @registry = {}
 
     # This is here so it can be overridden when testing
-    @_storageAdapterType = StorageAdapter
+    @_storageAdapterType = Storage.StorageAdapter
 
   # Public: Register a plugin
   #
