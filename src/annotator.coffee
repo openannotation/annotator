@@ -1,12 +1,8 @@
-core = require('./core')
-
+Core = require('./core')
 Util = require('./util')
 
 NullStore = require('./nullstore').NullStore
 DefaultUI = require('./plugin/defaultui').DefaultUI
-
-$ = Util.$
-_t = Util.TranslationString
 
 # Store a reference to the current Annotator object.
 _Annotator = this.Annotator
@@ -14,7 +10,7 @@ _Annotator = this.Annotator
 
 # Annotator represents a sane default configuration of AnnotatorCore, with a
 # default set of plugins and a user interface.
-class Annotator extends core.AnnotatorCore
+class Annotator extends Core.AnnotatorCore
 
   # Public: Creates an instance of the Annotator.
   #
@@ -41,51 +37,13 @@ class Annotator extends core.AnnotatorCore
   constructor: (element, options) ->
     super
 
-    @element = element
-    @options = options
-
     Annotator._instances.push(this)
 
     # Return early if the annotator is not supported.
     return this unless Annotator.supported()
 
     this.setStorage(NullStore)
-    this.addPlugin(DefaultUI(element))
-
-    this._setupDynamicStyle()
-
-  # Sets up any dynamically calculated CSS for the Annotator.
-  #
-  # Returns the instance for chaining.
-  _setupDynamicStyle: ->
-    $('#annotator-dynamic-style').remove()
-
-    notclasses = ['adder', 'outer', 'notice', 'filter']
-    sel = '*' + (":not(.annotator-#{x})" for x in notclasses).join('')
-
-    # use the maximum z-index in the page
-    max = Util.maxZIndex($(document.body).find(sel))
-
-    # but don't go smaller than 1010, because this isn't bulletproof --
-    # dynamic elements in the page (notifications, dialogs, etc.) may well
-    # have high z-indices that we can't catch using the above method.
-    max = Math.max(max, 1000)
-
-    rules = [
-      ".annotator-adder, .annotator-outer, .annotator-notice {"
-      "  z-index: #{max + 20};"
-      "}"
-      ".annotator-filter {"
-      "  z-index: #{max + 10};"
-      "}"
-    ].join("\n")
-
-    style = $('<style>' + rules + '</style>')
-              .attr('id', 'annotator-dynamic-style')
-              .attr('type', 'text/css')
-              .appendTo('head')
-
-    this
+    this.addPlugin(DefaultUI(element, options))
 
   # Public: Destroy the current Annotator instance, unbinding all events and
   # disposing of all relevant elements.
@@ -93,8 +51,6 @@ class Annotator extends core.AnnotatorCore
   # Returns nothing.
   destroy: ->
     super
-
-    $('#annotator-dynamic-style').remove()
 
     idx = Annotator._instances.indexOf(this)
     if idx != -1
@@ -109,10 +65,10 @@ g = Util.getGlobal()
 if g.wgxpath? then g.wgxpath.install()
 
 if not g.getSelection?
-  $.getScript('http://assets.annotateit.org/vendor/ierange.min.js')
+  Util.$.getScript('http://assets.annotateit.org/vendor/ierange.min.js')
 
 if not g.JSON?
-  $.getScript('http://assets.annotateit.org/vendor/json2.min.js')
+  Util.$.getScript('http://assets.annotateit.org/vendor/json2.min.js')
 
 # Ensure the Node constants are defined
 if not g.Node?
@@ -134,7 +90,7 @@ if not g.Node?
 Annotator.Plugin = {}
 
 # Export other modules for use in plugins.
-Annotator.Core = core.AnnotatorCore
+Annotator.Core = Core
 Annotator.Delegator = require('./delegator')
 Annotator.Notification = require('./notification')
 Annotator.Util = Util
@@ -148,7 +104,7 @@ Annotator.hideNotification = notification.hide
 Annotator._instances = []
 
 # Bind gettext helper so plugins can use localisation.
-Annotator._t = _t
+Annotator._t = Util.TranslationString
 
 # Returns true if the Annotator can be used in the current browser.
 Annotator.supported = -> Util.getGlobal().getSelection?

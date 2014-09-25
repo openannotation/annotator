@@ -7,6 +7,7 @@ if not String::trim?
   String::trim = ->
     this.replace(/^[\s\xA0]+|[\s\xA0]+$/g, '')
 
+
 # Helper function to construct an annotation from a list of selected ranges
 annotationFactory = (contextEl, ignoreSelector) ->
   (ranges) ->
@@ -14,6 +15,42 @@ annotationFactory = (contextEl, ignoreSelector) ->
       quote: (r.text().trim() for r in ranges).join(' / ')
       ranges: (r.serialize(contextEl, ignoreSelector) for r in ranges)
     }
+
+
+# Helper function to inject CSS into the page that ensures Annotator elements
+# are displayed with the highest z-index.
+injectDynamicStyle = ->
+  Util.$('#annotator-dynamic-style').remove()
+
+  notclasses = ['adder', 'outer', 'notice', 'filter']
+  sel = '*' + (":not(.annotator-#{x})" for x in notclasses).join('')
+
+  # use the maximum z-index in the page
+  max = Util.maxZIndex(Util.$(document.body).find(sel))
+
+  # but don't go smaller than 1010, because this isn't bulletproof --
+  # dynamic elements in the page (notifications, dialogs, etc.) may well
+  # have high z-indices that we can't catch using the above method.
+  max = Math.max(max, 1000)
+
+  rules = [
+    ".annotator-adder, .annotator-outer, .annotator-notice {"
+    "  z-index: #{max + 20};"
+    "}"
+    ".annotator-filter {"
+    "  z-index: #{max + 10};"
+    "}"
+  ].join("\n")
+
+  style = Util.$('<style>' + rules + '</style>')
+    .attr('id', 'annotator-dynamic-style')
+    .attr('type', 'text/css')
+    .appendTo('head')
+
+
+# Helper function to remove dynamic stylesheets
+removeDynamicStyle = ->
+  Util.$('#annotator-dynamic-style').remove()
 
 
 # DefaultUI is a function that can be used to construct a plugin that will
@@ -67,6 +104,8 @@ DefaultUI = (element, options) ->
       else
         adder.hide()
 
+    injectDynamicStyle()
+
     return {
       destroy: ->
         adder.destroy()
@@ -74,6 +113,7 @@ DefaultUI = (element, options) ->
         highlighter.destroy()
         textSelector.destroy()
         viewer.destroy()
+        removeDynamicStyle()
 
       onAnnotationsLoaded: highlighter.drawAll
       onAnnotationCreated: highlighter.draw
