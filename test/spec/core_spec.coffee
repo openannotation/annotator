@@ -32,6 +32,13 @@ class StorageHelper
     MockStorage.lastInstance = this
 
 
+MockNotificationObj = {}
+
+
+MockNotification = ->
+  return MockNotificationObj
+
+
 MockStorage = ->
   return new StorageHelper()
 
@@ -130,6 +137,14 @@ describe 'AnnotatorCore', ->
       )
 
       delayedReject("fail...")
+
+  describe '#setNotification', ->
+    it 'should set registry `notification` to the return value of the
+        notification function', ->
+      b = new core.AnnotatorCore()
+
+      b.setNotification(MockNotification)
+      assert.strictEqual(b.registry.notification, MockNotificationObj)
 
   describe '#setStorage', ->
     it 'should call the storage function', ->

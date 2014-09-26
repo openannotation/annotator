@@ -1,7 +1,8 @@
 Core = require('./core')
+Notification = require('./notification')
+Storage = require('./storage')
 Util = require('./util')
 
-Storage = require('./storage')
 DefaultUI = require('./plugin/defaultui').DefaultUI
 
 # Store a reference to the current Annotator object.
@@ -64,6 +65,7 @@ class Annotator extends Core.AnnotatorCore
     # Return early if the annotator is not supported.
     return this unless Annotator.supported()
 
+    this.setNotification(Notification.Banner)
     this.setStorage(Storage.NullStorage)
     this.addPlugin(DefaultUI(element, options))
 
@@ -85,15 +87,10 @@ Annotator.Plugin = {}
 # Export other modules for use in plugins.
 Annotator.Core = Core
 Annotator.Delegator = require('./delegator')
-Annotator.Notification = require('./notification')
+Annotator.Notification = Notification
 Annotator.Storage = Storage
 Annotator.UI = require('./ui')
 Annotator.Util = Util
-
-# Attach notification methods to the Annotation object
-notification = new Annotator.Notification()
-Annotator.showNotification = notification.show
-Annotator.hideNotification = notification.hide
 
 # Expose a global instance registry
 Annotator._instances = []

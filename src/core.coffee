@@ -58,6 +58,18 @@ class AnnotatorCore
         results.push(plugin[name].apply(plugin, args))
     return Promise.all(results)
 
+  # Public: Set the notification implementation
+  #
+  # notificationFunc - A function returning a notification component. A
+  #                    notification component must implement the Notification
+  #                    interface.
+  #
+  # Returns the instance to allow chaining.
+  setNotification: (notificationFunc) ->
+    notification = notificationFunc()
+    @registry.notification = notification
+    this
+
   # Public: Set the storage implementation
   #
   # storageFunc - A function returning a storage plugin. A storage plugin must
