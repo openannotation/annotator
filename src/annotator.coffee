@@ -7,6 +7,28 @@ DefaultUI = require('./plugin/defaultui').DefaultUI
 # Store a reference to the current Annotator object.
 _Annotator = this.Annotator
 
+# Fill in any missing browser functionality...
+g = Util.getGlobal()
+
+# If wicked-good-xpath is available, install it. This will not overwrite any
+# native XPath functionality.
+if g.wgxpath? then g.wgxpath.install()
+
+# Ensure that Node constants are defined
+if not g.Node?
+  g.Node =
+    ELEMENT_NODE: 1
+    ATTRIBUTE_NODE: 2
+    TEXT_NODE: 3
+    CDATA_SECTION_NODE: 4
+    ENTITY_REFERENCE_NODE: 5
+    ENTITY_NODE: 6
+    PROCESSING_INSTRUCTION_NODE: 7
+    COMMENT_NODE: 8
+    DOCUMENT_NODE: 9
+    DOCUMENT_TYPE_NODE: 10
+    DOCUMENT_FRAGMENT_NODE: 11
+    NOTATION_NODE: 12
 
 # Annotator represents a sane default configuration of AnnotatorCore, with a
 # default set of plugins and a user interface.
@@ -57,29 +79,6 @@ class Annotator extends Core.AnnotatorCore
       Annotator._instances.splice(idx, 1)
 
 
-# Sniff the browser environment and attempt to add missing functionality.
-g = Util.getGlobal()
-
-# Checks for the presence of wicked-good-xpath
-# It is always safe to install it, it'll not overwrite existing functions
-if g.wgxpath? then g.wgxpath.install()
-
-# Ensure the Node constants are defined
-if not g.Node?
-  g.Node =
-    ELEMENT_NODE: 1
-    ATTRIBUTE_NODE: 2
-    TEXT_NODE: 3
-    CDATA_SECTION_NODE: 4
-    ENTITY_REFERENCE_NODE: 5
-    ENTITY_NODE: 6
-    PROCESSING_INSTRUCTION_NODE: 7
-    COMMENT_NODE: 8
-    DOCUMENT_NODE: 9
-    DOCUMENT_TYPE_NODE: 10
-    DOCUMENT_FRAGMENT_NODE: 11
-    NOTATION_NODE: 12
-
 # Create namespace object for core-provided plugins
 Annotator.Plugin = {}
 
@@ -102,12 +101,12 @@ Annotator._instances = []
 Annotator._t = Util.TranslationString
 
 # Returns true if the Annotator can be used in the current browser.
-Annotator.supported = -> Util.getGlobal().getSelection?
+Annotator.supported = -> g.getSelection?
 
 # Restores the Annotator property on the global object to it's
 # previous value and returns the Annotator.
 Annotator.noConflict = ->
-  Util.getGlobal().Annotator = _Annotator
+  g.Annotator = _Annotator
   return Annotator
 
 # Export Annotator object.
