@@ -72,8 +72,8 @@ class AnnotatorCore
 
   # Public: Set the storage implementation
   #
-  # storageFunc - A function returning a storage plugin. A storage plugin must
-  #              implement the Storage interface.
+  # storageFunc - A function returning a storage component. A storage component
+  #               must implement the Storage interface.
   #
   # Returns the instance to allow chaining.
   setStorage: (storageFunc) ->
