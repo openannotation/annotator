@@ -64,12 +64,6 @@ g = Util.getGlobal()
 # It is always safe to install it, it'll not overwrite existing functions
 if g.wgxpath? then g.wgxpath.install()
 
-if not g.getSelection?
-  Util.$.getScript('http://assets.annotateit.org/vendor/ierange.min.js')
-
-if not g.JSON?
-  Util.$.getScript('http://assets.annotateit.org/vendor/json2.min.js')
-
 # Ensure the Node constants are defined
 if not g.Node?
   g.Node =
