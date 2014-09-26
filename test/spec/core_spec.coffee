@@ -11,7 +11,7 @@ class PluginHelper
     @hookResult = undefined
     MockPlugin.lastInstance = this
 
-  destroy: ->
+  onDestroy: ->
     @destroyed = true
 
   onAnnotationCreated: ->
@@ -63,15 +63,17 @@ describe 'AnnotatorCore', ->
 
 
   describe '#destroy', ->
-    it "should call each plugin's destroy function, if it has one", ->
+    it "should call each plugin's onDestroy function, if it has one", (done) ->
       b = new core.AnnotatorCore()
       b.addPlugin(MockPlugin)
       b.addPlugin(MockPlugin)
       b.addPlugin(MockEmptyPlugin)
 
       b.destroy()
-      result = b.plugins.map (p) -> p.destroyed
-      assert.deepEqual([true, true, undefined], result)
+        .then ->
+          result = b.plugins.map (p) -> p.destroyed
+          assert.deepEqual([true, true, undefined], result)
+        .then(done, done)
 
 
   describe '#runHook', ->

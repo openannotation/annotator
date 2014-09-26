@@ -37,5 +37,5 @@ describe 'DefaultUI plugin', ->
   it "should remove its elements from the page when destroyed", ->
     el = $('<div></div>')[0]
     plug = DefaultUI(el)(null)
-    plug.destroy()
+    plug.onDestroy()
     assert.equal($(el).find('[class^=annotator-]').length, 0)

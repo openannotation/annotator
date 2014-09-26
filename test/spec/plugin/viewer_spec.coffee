@@ -48,5 +48,5 @@ describe 'Viewer plugin', ->
 
   it 'destroys the viewer component when destroyed', ->
     plugin = Viewer({}, mockViewerCtor)(mockRegistry)
-    plugin.destroy()
+    plugin.onDestroy()
     sinon.assert.calledOnce(mockViewer.destroy)

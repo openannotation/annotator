@@ -66,5 +66,5 @@ describe 'Highlighter plugin', ->
     sinon.assert.calledWith(mockHighlighter.drawAll, [ann, ann2])
 
   it 'destroys the highlighter component when destroyed', ->
-    plugin.destroy()
+    plugin.onDestroy()
     sinon.assert.calledOnce(mockHighlighter.destroy)

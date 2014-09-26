@@ -8,7 +8,7 @@ Editor = (options, editor = Annotator.UI.Editor) ->
     ed = new editor(options)
 
     return {
-      destroy: ->
+      onDestroy: ->
         ed.destroy()
 
       onBeforeAnnotationCreated: (annotation) ->

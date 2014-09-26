@@ -16,7 +16,7 @@ Viewer = (options, viewer = Annotator.UI.Viewer) ->
     vw = new viewer(options)
 
     return {
-      destroy: -> vw.destroy()
+      onDestroy: -> vw.destroy()
     }
 
 

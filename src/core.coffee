@@ -45,8 +45,7 @@ class AnnotatorCore
   #
   # Returns nothing.
   destroy: ->
-    for plugin in @plugins
-      plugin.destroy?()
+    this.runHook('onDestroy')
 
   # Public: Run the named hook with the provided arguments
   #

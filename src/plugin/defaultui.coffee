@@ -107,7 +107,7 @@ DefaultUI = (element, options) ->
     injectDynamicStyle()
 
     return {
-      destroy: ->
+      onDestroy: ->
         adder.destroy()
         editor.destroy()
         highlighter.destroy()

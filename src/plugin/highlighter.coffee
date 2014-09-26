@@ -9,7 +9,7 @@ Highlighter = (element, options, highlighter = Annotator.UI.Highlighter) ->
     hl = new highlighter(element, options)
 
     return {
-      destroy: ->
+      onDestroy: ->
         hl.destroy()
       onAnnotationsLoaded: hl.drawAll
       onAnnotationCreated: hl.draw

@@ -42,5 +42,5 @@ describe 'Editor plugin', ->
     assert.equal(result, "a promise, honest")
 
   it 'destroys the editor component when destroyed', ->
-    plugin.destroy()
+    plugin.onDestroy()
     sinon.assert.calledOnce(mockEditor.destroy)
