@@ -87,6 +87,7 @@ Annotator.Core = Core
 Annotator.Delegator = require('./delegator')
 Annotator.Notification = require('./notification')
 Annotator.Storage = Storage
+Annotator.UI = require('./ui')
 Annotator.Util = Util
 
 # Attach notification methods to the Annotation object
