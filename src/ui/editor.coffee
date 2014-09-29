@@ -5,6 +5,8 @@ $ = Util.$
 _t = Util.TranslationString
 Promise = Util.Promise
 
+NS = "annotator-editor"
+
 
 # Public: Creates an element for editing annotations.
 class Editor extends Widget
@@ -13,13 +15,6 @@ class Editor extends Widget
   classes:
     hide: 'annotator-hide'
     focus: 'annotator-focus'
-
-  events:
-    "form submit": "_onFormSubmit"
-    ".annotator-save click": "_onSaveClick"
-    ".annotator-cancel click": "_onCancelClick"
-    ".annotator-cancel mouseover": "_onCancelMouseover"
-    "textarea keydown": "_onTextareaKeydown"
 
   # HTML template for @element.
   template:
@@ -74,7 +69,19 @@ class Editor extends Widget
           annotation.text = $(field).find('textarea').val()
       })
 
+    @element
+      .on("submit.#{NS}", 'form', (e) => this._onFormSubmit(e))
+      .on("click.#{NS}", '.annotator-save', (e) => this._onSaveClick(e))
+      .on("click.#{NS}", '.annotator-cancel', (e) => this._onCancelClick(e))
+      .on("mouseover.#{NS}", '.annotator-cancel',
+          (e) => this._onCancelMouseover(e))
+      .on("keydown.#{NS}", 'textarea', (e) => this._onTextareaKeydown(e))
+
     this.render()
+
+  destroy: ->
+    @element.off(".#{NS}")
+    super
 
   # Public: Show the editor.
   #

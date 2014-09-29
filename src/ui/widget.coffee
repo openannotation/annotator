@@ -1,4 +1,3 @@
-Delegator = require('../delegator')
 Util = require('../util')
 
 $ = Util.$
@@ -6,7 +5,7 @@ $ = Util.$
 
 # Public: Base class for the Editor and Viewer elements. Contains methods that
 # are shared between the two.
-class Widget extends Delegator
+class Widget
 
   # Classes used to alter the widgets state.
   classes:
@@ -26,15 +25,14 @@ class Widget extends Delegator
   #
   # Returns a new Widget instance.
   constructor: (options) ->
-    super $(@template)[0], options
+    @element = $(@template)
     @classes = $.extend {}, Widget.prototype.classes, @classes
-    @options = $.extend {}, Widget.prototype.options, @options
+    @options = $.extend {}, Widget.prototype.options, @options, options
 
   # Public: Destroy the Widget, unbinding all events and removing the element.
   #
   # Returns nothing.
   destroy: ->
-    super
     @element.remove()
 
   # Public: Renders the widget

@@ -4,16 +4,12 @@ Util = require('../util')
 $ = Util.$
 _t = Util.TranslationString
 
-ADDER_NS = 'annotator-adder'
+NS = 'annotator-adder'
 
 
 # Adder shows and hides an annotation adder button that can be clicked on to
 # create an annotation.
 class Adder extends Widget
-  events:
-    "button click": "_onClick"
-    "button mousedown": "_onMousedown"
-
   template:
     """
     <div class="annotator-adder annotator-hide">
@@ -35,13 +31,18 @@ class Adder extends Widget
     if @options.onCreate?
       @onCreate = @options.onCreate
 
+    @element
+      .on("click.#{NS}", 'button', (e) => this._onClick(e))
+      .on("mousedown.#{NS}", 'button', (e) => this._onMousedown(e))
+
     @document = @element[0].ownerDocument
-    $(@document.body).on("mouseup.#{ADDER_NS}", this._onMouseup)
+    $(@document.body).on("mouseup.#{NS}", this._onMouseup)
     this.render()
 
   destroy: ->
+    @element.off(".#{NS}")
+    $(@document.body).off(".#{NS}")
     super
-    $(@document.body).off(".#{ADDER_NS}")
 
   # Public: Load an annotation and show the adder.
   #

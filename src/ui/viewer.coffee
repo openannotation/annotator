@@ -4,7 +4,7 @@ Util = require('../util')
 $ = Util.$
 _t = Util.TranslationString
 
-VIEWER_NS = 'annotator-viewer'
+NS = 'annotator-viewer'
 
 
 # Public: Creates an element for viewing annotations.
@@ -13,12 +13,6 @@ class Viewer extends Widget
   # Classes for toggling annotator state.
   classes:
     showControls: 'annotator-visible'
-
-  events:
-    ".annotator-edit click": "_onEditClick"
-    ".annotator-delete click": "_onDeleteClick"
-    "mouseenter": "_onMouseenter"
-    "mouseleave": "_onMouseleave"
 
   # HTML templates for @widget and @item properties.
   template:
@@ -103,28 +97,27 @@ class Viewer extends Widget
       @document = @options.autoViewHighlights.ownerDocument
 
       $(@options.autoViewHighlights)
-        .on(
-          "mouseover.#{VIEWER_NS}",
-          '.annotator-hl',
-          this._onHighlightMouseover
-        )
-        .on(
-          "mouseleave.#{VIEWER_NS}",
-          '.annotator-hl',
-          this._onHighlightMouseleave
-        )
+        .on("mouseover.#{NS}", '.annotator-hl', this._onHighlightMouseover)
+        .on("mouseleave.#{NS}", '.annotator-hl', this._onHighlightMouseleave)
 
       $(@document.body)
-        .on("mousedown.#{VIEWER_NS}", (e) => @mouseDown = true if e.which == 1)
-        .on("mouseup.#{VIEWER_NS}", (e) => @mouseDown = false if e.which == 1)
+        .on("mousedown.#{NS}", (e) => @mouseDown = true if e.which == 1)
+        .on("mouseup.#{NS}", (e) => @mouseDown = false if e.which == 1)
+
+    @element
+      .on("click.#{NS}", '.annotator-edit', (e) => this._onEditClick(e))
+      .on("click.#{NS}", '.annotator-delete', (e) => this._onDeleteClick(e))
+      .on("mouseenter.#{NS}", (e) => this._onMouseenter(e))
+      .on("mouseleave.#{NS}", (e) => this._onMouseleave(e))
 
     this.render()
 
   destroy: ->
-    super
     if @options.autoViewHighlights?
-      $(@options.autoViewHighlights).off(".#{VIEWER_NS}")
-      $(@document.body).off(".#{VIEWER_NS}")
+      $(@options.autoViewHighlights).off(".#{NS}")
+      $(@document.body).off(".#{NS}")
+    @element.off(".#{NS}")
+    super
 
   # Public: Show the viewer.
   #
