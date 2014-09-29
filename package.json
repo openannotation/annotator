@@ -7,7 +7,6 @@
     "url": "https://github.com/okfn/annotator.git"
   },
   "dependencies": {
-    "backbone-events-standalone": "~0.2.4",
     "backbone-extend-standalone": "~0.1.2",
     "es6-promise": "~0.1.1",
     "xpath-range": "0.0.3",

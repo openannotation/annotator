@@ -86,7 +86,6 @@ Annotator.Plugin = {}
 
 # Export other modules for use in plugins.
 Annotator.Core = Core
-Annotator.Delegator = require('./delegator')
 Annotator.Notification = Notification
 Annotator.Storage = Storage
 Annotator.UI = require('./ui')
