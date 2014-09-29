@@ -1,20 +1,12 @@
-Delegator = require('../delegator')
 Util = require('../util')
 
 $ = Util.$
 _t = Util.TranslationString
 
+NS = 'annotator-filter'
 
-class Filter extends Delegator
-  # Events and callbacks to bind to the Filter#element.
-  events:
-    ".annotator-filter-property input focus": "_onFilterFocus"
-    ".annotator-filter-property input blur": "_onFilterBlur"
-    ".annotator-filter-property input keyup": "_onFilterKeyup"
-    ".annotator-filter-previous click": "_onPreviousClick"
-    ".annotator-filter-next click": "_onNextClick"
-    ".annotator-filter-clear click": "_onClearClick"
 
+class Filter
   # Common classes used to change plugin state.
   classes:
     active: 'annotator-filter-active'
@@ -90,11 +82,8 @@ class Filter extends Delegator
   #
   # Returns a new instance of the Filter plugin.
   constructor: (options) ->
-    element = $(@html.element).appendTo(options?.appendTo or @options.appendTo)
-
-    super element, options
-
-    @options.filters or= []
+    @options = $.extend(true, {}, @options, options)
+    @element = $(@html.element).appendTo(@options.appendTo)
 
     @filter  = $(@html.filter)
     @filters = []
@@ -104,6 +93,16 @@ class Filter extends Delegator
       this.addFilter(filter)
 
     this.updateHighlights()
+
+    filterInput = '.annotator-filter-property input'
+    @element
+      .on("focus.#{NS}", filterInput, this._onFilterFocus)
+      .on("blur.#{NS}", filterInput, this._onFilterBlur)
+      .on("keyup.#{NS}", filterInput, this._onFilterKeyup)
+      .on("click.#{NS}", '.annotator-filter-previous', this._onPreviousClick)
+      .on("click.#{NS}", '.annotator-filter-next', this._onNextClick)
+      .on("click.#{NS}", '.annotator-filter-clear', this._onClearClick)
+
     this._insertSpacer()
 
     if @options.addAnnotationFilter == true
@@ -113,10 +112,10 @@ class Filter extends Delegator
   #
   # Returns nothing.
   destroy: ->
-    super
     html = $('html')
     currentMargin = parseInt(html.css('padding-top'), 10) || 0
     html.css('padding-top', currentMargin - @element.outerHeight())
+    @element.off(".#{NS}")
     @element.remove()
 
   # Adds margin to the current document to ensure that the annotation toolbar

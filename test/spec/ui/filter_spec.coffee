@@ -20,31 +20,6 @@ describe 'UI.Filter', ->
     plugin.destroy()
     sandbox.restore()
 
-  describe "events", ->
-    filterElement = null
-
-    beforeEach ->
-      filterElement = $(plugin.html.filter)
-      plugin.element.append(filterElement)
-
-    afterEach ->
-      filterElement.remove()
-
-    it "should call Filter#_onFilterFocus when a filter input is focussed", ->
-      sandbox.spy(plugin, '_onFilterFocus')
-      filterElement.find('input').focus()
-      assert(plugin._onFilterFocus.calledOnce)
-
-    it "should call Filter#_onFilterBlur when a filter input is blurred", ->
-      sandbox.spy(plugin, '_onFilterBlur')
-      filterElement.find('input').blur()
-      assert(plugin._onFilterBlur.calledOnce)
-
-    it "should call Filter#_onFilterKeyup when a key is pressed in an input", ->
-      sandbox.spy(plugin, '_onFilterKeyup')
-      filterElement.find('input').keyup()
-      assert(plugin._onFilterKeyup.calledOnce)
-
   describe "default configuration", ->
     it "should have a default annotation filter", ->
       assert.equal(plugin.filters.length, 1)
