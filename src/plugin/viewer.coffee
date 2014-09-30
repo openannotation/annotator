@@ -111,8 +111,8 @@ class Viewer extends Widget
     .on("mouseleave.#{ns}", '.annotator-hl', this._onHighlightMouseleave)
 
     $(@document.body)
-    .on("mousedown.#{ns}", (e) => @mouseDown = true if e.which == 1)
-    .on("mouseup.#{ns}", (e) => @mouseDown = false if e.which == 1)
+    .on("mousedown.#{ns}", this._onMousedown)
+    .on("mouseup.#{ns}", this._onMouseup)
 
     this.render()
 
@@ -295,6 +295,24 @@ class Viewer extends Widget
   _onHighlightMouseleave: (event) =>
     this._startHideTimer()
 
+  # Event callback: called when a user releases a mouse button in the page
+  #
+  # event - An Event object.
+  #
+  # Returns nothing.
+  _oMouseup: (event) =>
+    @mouseDown = false if event.which == 1
+    return
+
+  # Event callback: called when a user presses down a mouse button in the page
+  #
+  # event - An Event object.
+  #
+  # Returns nothing.
+  _oMousedown: (event) =>
+    @mouseDown = true if event.which == 1
+    return
+    
   # Starts the hide timer. This returns a promise that is resolved when the
   # viewer has been hidden. If the viewer is already hidden, the promise will be
   # resolved instantly.
