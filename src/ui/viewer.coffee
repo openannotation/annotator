@@ -41,24 +41,32 @@ class Viewer extends Widget
 
   # Configuration options
   options:
-    defaultFields: true # Add the default field(s) to the viewer.
-    inactivityDelay: 500 # Time, in milliseconds, before the viewer is hidden
-                         # when a user mouses off the viewer.
-    activityDelay: 100 # Time, in milliseconds, before the viewer is updated
-                       # when a user mouses over another annotation.
-    showEditButton: false # Show the viewer's "edit" button. If shown, the
-                          # button will fire an annotation "update" event, to
-                          # which an appropriate editor instance can respond and
-                          # display an editor.
-    showDeleteButton: false # Show the viewer's "delete" button. If shown, the
-                            # button will fire an annotation "delete" event.
-    autoViewHighlights: null # If set to a DOM Element, will set up the viewer
-                             # to automatically display when the user hovers
-                             # over Annotator highlights within that element.
-    onEdit: null # Callback, called when the user clicks the edit button for an
-                 # annotation.
-    onDelete: null # Callback, called when the user clicks the delete button for
-                   # an annotation.
+    # Add the default field(s) to the viewer.
+    defaultFields: true
+
+    # Time, in milliseconds, before the viewer is hidden when a user mouses off
+    # the viewer.
+    inactivityDelay: 500
+
+    # Time, in milliseconds, before the viewer is updated when a user mouses
+    # over another annotation.
+    activityDelay: 100
+
+    # Show the viewer's "edit" button?
+    showEditButton: false
+
+    # Show the viewer's "delete" button?
+    showDeleteButton: false
+
+    # If set to a DOM Element, will set up the viewer to automatically display
+    # when the user hovers over Annotator highlights within that element.
+    autoViewHighlights: null
+
+    # Callback, called when the user clicks the edit button for an annotation.
+    onEdit: null
+
+    # Callback, called when the user clicks the delete button for an annotation.
+    onDelete: null
 
   # Public: Creates an instance of the Viewer object.
   #
@@ -98,7 +106,7 @@ class Viewer extends Widget
 
       $(@options.autoViewHighlights)
         .on("mouseover.#{NS}", '.annotator-hl', this._onHighlightMouseover)
-        .on("mouseleave.#{NS}", '.annotator-hl', this._onHighlightMouseleave)
+        .on("mouseleave.#{NS}", '.annotator-hl', => this._startHideTimer())
 
       $(@document.body)
         .on("mousedown.#{NS}", (e) => @mouseDown = true if e.which == 1)
@@ -107,8 +115,8 @@ class Viewer extends Widget
     @element
       .on("click.#{NS}", '.annotator-edit', (e) => this._onEditClick(e))
       .on("click.#{NS}", '.annotator-delete', (e) => this._onDeleteClick(e))
-      .on("mouseenter.#{NS}", (e) => this._onMouseenter(e))
-      .on("mouseleave.#{NS}", (e) => this._onMouseleave(e))
+      .on("mouseenter.#{NS}", => this._clearHideTimer())
+      .on("mouseleave.#{NS}", => this._startHideTimer())
 
     this.render()
 
@@ -250,22 +258,6 @@ class Viewer extends Widget
     if typeof @options.onDelete == 'function'
       @options.onDelete(item)
 
-  # Event callback: called when a user's cursor enters the viewer element.
-  #
-  # event - An Event object.
-  #
-  # Returns nothing.
-  _onMouseenter: (event) ->
-    this._clearHideTimer()
-
-  # Event callback: called when a user's cursor leaves the viewer element.
-  #
-  # event - An Event object.
-  #
-  # Returns nothing.
-  _onMouseleave: (event) ->
-    this._startHideTimer()
-
   # Event callback: called when a user triggers `mouseover` on a highlight
   # element.
   #
@@ -293,14 +285,6 @@ class Viewer extends Widget
         left: event.pageX - offset.left,
       }
       this.load(annotations, position)
-
-  # Event callback: called when a user's cursor leaves a highlight element.
-  #
-  # event - An Event object.
-  #
-  # Returns nothing.
-  _onHighlightMouseleave: (event) =>
-    this._startHideTimer()
 
   # Starts the hide timer. This returns a promise that is resolved when the
   # viewer has been hidden. If the viewer is already hidden, the promise will be
