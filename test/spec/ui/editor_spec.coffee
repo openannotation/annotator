@@ -1,7 +1,7 @@
 h = require('helpers')
 Range = require('xpath-range').Range
 
-UI = require('../../../src/ui')
+Editor = require('.../../../src/ui/editor')
 Util = require('../../../src/util')
 
 $ = Util.$
@@ -12,7 +12,7 @@ describe 'UI.Editor', ->
   describe 'in default configuration', ->
 
     beforeEach ->
-      plugin = new UI.Editor()
+      plugin = new Editor.Editor()
 
     afterEach ->
       plugin.destroy()
@@ -217,7 +217,7 @@ describe 'UI.Editor', ->
   describe 'with the defaultFields option set to false', ->
 
     beforeEach ->
-      plugin = new UI.Editor({
+      plugin = new Editor.Editor({
         defaultFields: false
       })
 
@@ -236,7 +236,7 @@ describe 'UI.Editor', ->
     ann = null
 
     beforeEach ->
-      plugin = new UI.Editor()
+      plugin = new Editor.Editor()
       ann = {text: 'Turtles with armbands'}
 
     afterEach ->
@@ -297,3 +297,221 @@ describe 'UI.Editor', ->
       })
       assert.equal(ann.text, 'Turtles with armbands')
       assert.isFalse(plugin.isShown())
+
+
+describe 'DragTracker', ->
+  $handle = null
+  callback = null
+  clock = null
+  dt = null
+
+  beforeEach ->
+    $handle = $('<div/>')
+    callback = sinon.stub()
+    clock = sinon.useFakeTimers()
+
+    # Needs to be in a document.
+    $handle.appendTo(h.fix())
+
+    dt = Editor.DragTracker($handle[0], callback)
+
+  afterEach ->
+    clock.restore()
+    h.clearFixtures()
+
+  mouseDown = (x = 0, y = 0) ->
+    $handle.trigger({
+      type: 'mousedown'
+      pageX: x
+      pageY: y
+      target: $handle[0]
+    })
+
+  mouseMove = (x = 0, y = 0) ->
+    $handle.trigger({type: 'mousemove', pageX: x, pageY: y})
+
+  mouseUp = (x = 0, y = 0) ->
+    $handle.trigger({type: 'mouseup', pageX: x, pageY: y})
+
+  it 'does not track when the mouse button is up', ->
+    mouseMove(5, 10)
+    sinon.assert.notCalled(callback)
+
+  it 'starts tracking when the mouse button is down', ->
+    mouseDown()
+    mouseMove(5, 10)
+    sinon.assert.calledOnce(callback)
+
+  it 'stops tracking when the mouse button is raised again', ->
+    mouseDown()
+    mouseUp()
+    mouseMove(5, 10)
+    sinon.assert.notCalled(callback)
+
+  it 'stops tracking when destroyed', ->
+    dt.destroy()
+    mouseDown()
+    mouseMove(5, 10)
+    sinon.assert.notCalled(callback)
+
+  it 'calls the callback with an object that contains the distance moved since
+      the last call', ->
+    mouseDown()
+    mouseMove(5, 10)
+    sinon.assert.calledWith(callback, {x: 5, y: 10})
+    clock.tick(20)
+    mouseMove(8, 12)
+    sinon.assert.calledWith(callback, {x: 3, y: 2})
+    clock.tick(20)
+    mouseMove(0, 0)
+    sinon.assert.calledWith(callback, {x: -8, y: -12})
+
+  it 'accumulates the distance moved if the callback returns false', ->
+    mouseDown()
+    callback.returns(false)
+    mouseMove(10, 10)
+    sinon.assert.calledWith(callback, {x: 10, y: 10})
+    clock.tick(20)
+    mouseMove(20, 20)
+    sinon.assert.calledWith(callback, {x: 20, y: 20})
+
+  it 'throttles calls to the callback to 60Hz (once every 16ms)', ->
+    mouseDown()
+    mouseMove(0, 0)
+    mouseMove(10, 10)
+    assert.equal(callback.callCount, 1)
+    clock.tick(10)
+    mouseMove(11, 11)
+    assert.equal(callback.callCount, 1)
+    clock.tick(16)
+    mouseMove(20, 20)
+    assert.equal(callback.callCount, 2)
+
+
+describe 'Mover', ->
+  $element = null
+  $handle = null
+  m = null
+
+  beforeEach ->
+    $element = $('<div/>')
+    $handle = $('<div/>')
+
+    # Needs to be in a document.
+    $element.appendTo(h.fix())
+    $handle.appendTo(h.fix())
+
+    # Needs to be responsive to setting top/left CSS properties
+    $element.css({position: 'absolute'})
+
+    m = Editor.Mover($element[0], $handle[0])
+
+  afterEach ->
+    h.clearFixtures()
+
+  mouseDown = (x = 0, y = 0) ->
+    $handle.trigger({
+      type: 'mousedown'
+      pageX: x
+      pageY: y
+      target: $handle[0]
+    })
+
+  mouseMove = (x = 0, y = 0) ->
+    $handle.trigger({type: 'mousemove', pageX: x, pageY: y})
+
+  it 'moves the element when the handle is dragged', ->
+    $element.css({top: 42, left: 123})
+
+    mouseDown()
+    mouseMove(456, 123)
+
+    after = {
+      top: parseInt($element.css('top'), 10)
+      left: parseInt($element.css('left'), 10)
+    }
+
+    assert.equal(after.top, 42 + 123)
+    assert.equal(after.left, 123 + 456)
+
+
+describe 'Resizer', ->
+  $element = null
+  $handle = null
+  options = null
+  r = null
+
+  beforeEach ->
+    $element = $('<div/>')
+    $handle = $('<div/>')
+
+    # Needs to be in a document.
+    $element.appendTo(h.fix())
+    $handle.appendTo(h.fix())
+
+    options = {
+      invertedX: sinon.stub().returns(false)
+      invertedY: sinon.stub().returns(false)
+    }
+
+    r = Editor.Resizer($element[0], $handle[0], options)
+
+  afterEach ->
+    h.clearFixtures()
+
+  mouseDown = (x = 0, y = 0) ->
+    $handle.trigger({
+      type: 'mousedown'
+      pageX: x
+      pageY: y
+      target: $handle[0]
+    })
+
+  mouseMove = (x = 0, y = 0) ->
+    $handle.trigger({type: 'mousemove', pageX: x, pageY: y})
+
+  it 'resizes the element when the handle is dragged', ->
+    $element
+      .height(42)
+      .width(123)
+
+    mouseDown()
+    mouseMove(456, -123)
+
+    afterHeight = $element.height()
+    afterWidth = $element.width()
+
+    assert.equal(afterHeight, 42 + 123)
+    assert.equal(afterWidth, 123 + 456)
+
+  it 'inverts the horizontal sense of the drag when invertedX returns true', ->
+    $element
+      .height(42)
+      .width(123)
+
+    options.invertedX.returns(true)
+
+    mouseDown()
+    mouseMove(-456, -123)
+
+    afterHeight = $element.height()
+    afterWidth = $element.width()
+
+    assert.equal(afterHeight, 42 + 123)
+    assert.equal(afterWidth, 123 + 456)
+
+  it 'inverts the vertical sense of the drag when invertedY returns true', ->
+    $element
+      .height(42)
+      .width(123)
+
+    options.invertedY.returns(true)
+
+    mouseDown()
+    mouseMove(456, 123)
+
+    afterHeight = $element.height()
+    afterWidth = $element.width()
+
+    assert.equal(afterHeight, 42 + 123)
+    assert.equal(afterWidth, 123 + 456)

@@ -300,11 +300,12 @@ class Editor extends Widget
       this.submit()
 
   # Sets up mouse events for resizing and dragging the editor window.
-  # window events are bound only when needed and throttled to only update
-  # the positions at most 60 times a second.
   #
   # Returns nothing.
   _setupDraggables: ->
+    @_resizer?.destroy()
+    @_mover?.destroy()
+
     @element.find('.annotator-resize').remove()
 
     # Find the first/last item element depending on orientation
@@ -316,73 +317,171 @@ class Editor extends Widget
     if cornerItem
       $('<span class="annotator-resize"></span>').appendTo(cornerItem)
 
-    mousedown = null
-    classes   = @classes
-    textarea  = null
-    resize    = @element.find('.annotator-resize')
-    controls  = @element.find('.annotator-controls')
-    throttle  = false
+    controls = @element.find('.annotator-controls')[0]
+    textarea = @element.find('textarea:first')[0]
+    resizeHandle = @element.find('.annotator-resize')[0]
 
-    self = this
+    @_resizer = Resizer(textarea, resizeHandle, {
+      invertedX: => @element.hasClass(@classes.invert.x)
+      invertedY: => @element.hasClass(@classes.invert.y)
+    })
 
-    onMousedown = (event) ->
-      if event.target == this
-        mousedown = {
-          element: this
-          top: event.pageY
-          left: event.pageX
-        }
-
-        # Find the first text area if there is one.
-        textarea = self.element.find('textarea:first')
-
-        $(window).bind({
-          'mouseup.annotator-editor-resize': onMouseup
-          'mousemove.annotator-editor-resize': onMousemove
-        })
-        event.preventDefault()
-
-    onMouseup = ->
-      mousedown = null
-      $(window).unbind '.annotator-editor-resize'
-
-    onMousemove = (event) ->
-      if mousedown and throttle == false
-        diff = {
-          top: event.pageY - mousedown.top
-          left: event.pageX - mousedown.left
-        }
-
-        if mousedown.element == resize[0]
-          height = textarea.height()
-          width  = textarea.width()
-
-          directionX = if self.element.hasClass(classes.invert.x) then -1 else 1
-          directionY = if self.element.hasClass(classes.invert.y) then 1 else -1
-
-          textarea.height height + (diff.top  * directionY)
-          textarea.width  width  + (diff.left * directionX)
-
-          # Only update the mousedown object if the dimensions
-          # have changed, otherwise they have reached their minimum
-          # values.
-          mousedown.top  = event.pageY unless textarea.height() == height
-          mousedown.left = event.pageX unless textarea.width()  == width
-
-        else if mousedown.element == controls[0]
-          self.element.css({
-            top: parseInt(self.element.css('top'), 10) + diff.top
-            left: parseInt(self.element.css('left'), 10) + diff.left
-          })
-
-          mousedown.top  = event.pageY
-          mousedown.left = event.pageX
-
-        throttle = true
-        setTimeout((-> throttle = false), 1000 / 60)
-
-    resize.bind   'mousedown', onMousedown
-    controls.bind 'mousedown', onMousedown
+    @_mover = Mover(@element[0], controls)
 
 
+# DragTracker for a callback to track changes made to the position of a
+# draggable "handle" element.
+#
+# handle - A DOM element to make draggable
+# callback - Callback function
+#
+# Callback arguments:
+#
+# delta - An Object with two properties, "x" and "y", denoting the amount the
+#         mouse has moved since the last (tracked) call.
+#
+# Callback returns: Boolean indicating whether to track the last movement.
+#
+DragTracker = (handle, callback) ->
+
+  lastPos = null
+  throttled = false
+
+  # Event handler for mousemove
+  mouseMove = (e) ->
+    if throttled or lastPos == null
+      return
+
+    delta = {
+      y: e.pageY - lastPos.top
+      x: e.pageX - lastPos.left
+    }
+
+    trackLastMove = true
+    # The callback function can return false to indicate that the tracker
+    # shouldn't keep updating the last position. This can be used to implement
+    # "walls" beyond which (for example) resizing has no effect.
+    if typeof callback == 'function'
+      trackLastMove = callback(delta)
+
+    if trackLastMove != false
+      lastPos = {
+        top: e.pageY
+        left: e.pageX
+      }
+
+    # Throttle repeated mousemove events
+    throttled = true
+    setTimeout((-> throttled = false), 1000 / 60)
+
+  # Event handler for mouseup
+  mouseUp = (e) ->
+    lastPos = null
+    $(handle.ownerDocument)
+      .off('mouseup', mouseUp)
+      .off('mousemove', mouseMove)
+
+  # Event handler for mousedown -- starts drag tracking
+  mouseDown = (e) ->
+    if e.target != handle
+      return
+
+    lastPos = {
+      top: e.pageY
+      left: e.pageX
+    }
+
+    $(handle.ownerDocument)
+      .on('mouseup', mouseUp)
+      .on('mousemove', mouseMove)
+
+    e.preventDefault()
+
+  # Public: turn off drag tracking for this DragTracker object.
+  destroy = ->
+    $(handle).off('mousedown', mouseDown)
+
+  $(handle).on('mousedown', mouseDown)
+
+  return {destroy: destroy}
+
+
+# Resizer is a component that uses a DragTracker under the hood to track the
+# dragging of a handle element, using that motion to resize another element.
+#
+# element - DOM Element to resize
+# handle - DOM Element to use as a resize handle
+# options - Object of options.
+#
+# Available options:
+#
+# invertedX - If this option is defined as a function, and that function returns
+#             a truthy value, the horizontal sense of the drag will be inverted.
+#             Useful if the drag handle is at the left of the element, and so
+#             dragging left means "grow the element"
+# invertedY - If this option is defined as a function, and that function returns
+#             a truthy value, the vertical sense of the drag will be inverted.
+#             Useful if the drag handle is at the bottom of the element, and so
+#             dragging down means "grow the element"
+Resizer = (element, handle, options) ->
+
+  $el = $(element)
+
+  # Translate the delta supplied by DragTracker into a delta that takes account
+  # of the invertedX and invertedY callbacks if defined.
+  translate = (delta) ->
+    directionX = 1
+    directionY = -1
+
+    if typeof options?.invertedX == 'function' and options.invertedX()
+      directionX = -1
+    if typeof options?.invertedY == 'function' and options.invertedY()
+      directionY = 1
+
+    return {
+      x: delta.x * directionX
+      y: delta.y * directionY
+    }
+
+  # Callback for DragTracker
+  resize = (delta) ->
+    height = $el.height()
+    width = $el.width()
+
+    translated = translate(delta)
+
+    if Math.abs(translated.x) > 0
+      $el.width(width + translated.x)
+    if Math.abs(translated.y) > 0
+      $el.height(height + translated.y)
+
+    # Did the element dimensions actually change? If not, then we've reached the
+    # minimum size, and we shouldn't track
+    return $el.height() != height or $el.width() != width
+
+  # We return the DragTracker object in order to expose its methods.
+  return DragTracker(handle, resize)
+
+
+# Mover is a component that uses a DragTracker under the hood to track the
+# dragging of a handle element, using that motion to move another element.
+#
+# element - DOM Element to move
+# handle - DOM Element to use as a move handle
+#
+Mover = (element, handle) ->
+
+  move = (delta) ->
+    $(element).css({
+      top: parseInt($(element).css('top'), 10) + delta.y
+      left: parseInt($(element).css('left'), 10) + delta.x
+    })
+
+  # We return the DragTracker object in order to expose its methods.
+  return DragTracker(handle, move)
+
+
+exports.DragTracker = DragTracker
 exports.Editor = Editor
+exports.Mover = Mover
+exports.Resizer = Resizer
