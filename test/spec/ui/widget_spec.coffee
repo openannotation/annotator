@@ -1,15 +1,16 @@
-$ = require('../../src/util').$
-Widget = require('../../src/widget')
+$ = require('../../../src/util').$
+UI = require('../../../src/ui')
 
-describe "Widget", ->
+describe "UI.Widget", ->
   widget = null
 
   beforeEach ->
-    widget  = new Widget()
+    widget  = new UI.Widget()
+
 
   describe "constructor", ->
     it "should extend the Widget#classes object with child classes", ->
-      class ChildWidget extends Widget
+      class ChildWidget extends UI.Widget
         classes:
           customClass: 'my-custom-class'
           anotherClass: 'another-class'
@@ -23,6 +24,7 @@ describe "Widget", ->
         customClass: 'my-custom-class'
         anotherClass: 'another-class'
       })
+
 
   describe "invertX", ->
     it "should add the Widget#classes.invert.x class to the Widget#widget", ->
@@ -49,7 +51,8 @@ describe "Widget", ->
       assert.isTrue(widget.isInvertedX())
 
   describe "resetOrientation", ->
-    it "should remove the Widget#classes.invert classes from the Widget#widget", ->
+    it "should remove the Widget#classes.invert classes from the
+        Widget#widget", ->
       widget.element
       .addClass(widget.classes.invert.x)
       .addClass(widget.classes.invert.y)
@@ -62,32 +65,32 @@ describe "Widget", ->
     mocks = [
       # Fits in viewport
       {
-        window:  { width: 920, scrollTop: 0, scrollLeft: 0 }
+        window: { width: 920, scrollTop: 0, scrollLeft: 0 }
         element: { offset: {top: 300, left: 0 }, width: 250 }
       }
       # Hidden to the right
       {
-        window:  { width: 920, scrollTop: 0, scrollLeft: 0 }
+        window: { width: 920, scrollTop: 0, scrollLeft: 0 }
         element: { offset: {top: 200, left: 900 }, width: 250 }
       }
       # Hidden to the top
       {
-        window:  { width: 920, scrollTop: 0, scrollLeft: 0 }
+        window: { width: 920, scrollTop: 0, scrollLeft: 0 }
         element: { offset: {top: -100, left: 0 }, width: 250 }
       }
       # Hidden to the top and right
       {
-        window:  { width: 920, scrollTop: 0, scrollLeft: 0 }
+        window: { width: 920, scrollTop: 0, scrollLeft: 0 }
         element: { offset: {top: -100, left: 900 }, width: 250 }
       }
       # Hidden at the top due to scrolling Y
       {
-        window:  { width: 920, scrollTop: 300, scrollLeft: 0 }
+        window: { width: 920, scrollTop: 300, scrollLeft: 0 }
         element: { offset: {top: 200, left: 0 }, width: 250 }
       }
       # Visible to the right due to scrolling X
       {
-        window:  { width: 750, scrollTop: 0 , scrollLeft: 300 }
+        window: { width: 750, scrollTop: 0 , scrollLeft: 300 }
         element: { offset: {top: 200, left: 750 }, width: 250 }
       }
     ]
@@ -103,7 +106,7 @@ describe "Widget", ->
 
       sinon.stub(widget.element, 'children').returns({
         offset: sinon.stub().returns(element.offset)
-        width:  sinon.stub().returns(element.width)
+        width: sinon.stub().returns(element.width)
       })
 
       sinon.stub(widget, 'invertX')
@@ -129,14 +132,17 @@ describe "Widget", ->
       assert.isFalse(widget.invertX.called)
       assert(widget.invertY.calledOnce)
 
-    it "should invert the widget if it does not fit horizontally or vertically", ->
+    it "should invert the widget if it does not fit horizontally or
+        vertically", ->
       assert(widget.invertX.calledOnce)
       assert(widget.invertY.calledOnce)
 
-    it "should invert the widget if it does not fit vertically and the window is scrolled", ->
+    it "should invert the widget if it does not fit vertically and the window
+        is scrolled", ->
       assert.isFalse(widget.invertX.called)
       assert(widget.invertY.calledOnce)
 
-    it "should invert the widget if it fits horizontally due to the window scrolled", ->
+    it "should invert the widget if it fits horizontally due to the window
+        scrolled", ->
       assert.isFalse(widget.invertX.called)
       assert.isFalse(widget.invertY.called)

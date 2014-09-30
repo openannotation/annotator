@@ -11,10 +11,6 @@ describe 'Markdown plugin', ->
 
   beforeEach ->
     plugin = new Markdown($('<div/>')[0])
-    plugin.annotator = annotator = {}
-
-    BackboneEvents = require('backbone-events-standalone')
-    BackboneEvents.mixin(annotator)
 
     sinon.spy(Markdown::, 'updateTextField')
     plugin.pluginInit()

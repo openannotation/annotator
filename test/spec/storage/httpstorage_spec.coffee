@@ -1,13 +1,12 @@
-Annotator = require('annotator')
-Store = require('../../../src/plugin/store')
-$ = Annotator.Util.$
+Storage = require('../../../src/storage')
+$ = require('../../../src/util').$
 
-describe "Store plugin", ->
+describe "Storage.HTTPStorage", ->
   store = null
   server = null
 
   beforeEach ->
-    store = new Store()
+    store = Storage.HTTPStorage()
     sinon.stub($, 'ajax').returns({})
 
   afterEach ->
@@ -119,7 +118,8 @@ describe "Store plugin", ->
     assert.deepEqual({json: '{"id":123}'}, opts.data)
     assert.isUndefined(opts.contentType)
 
-  it "should append _method to the form data if emulateHTTP and emulateJSON are both true", ->
+  it "should append _method to the form data if emulateHTTP and emulateJSON
+      are both true", ->
     store.options.emulateHTTP = true
     store.options.emulateJSON = true
     store.delete({id: 123})
@@ -130,50 +130,5 @@ describe "Store plugin", ->
       json: '{"id":123}',
     })
 
-  it "should extend the annotation with the content of annotationData", ->
-    store.options.annotationData = {custom: 'value', customArray: []}
-    store.create({id: 123})
-    [_, opts] = $.ajax.args[0]
-
-    assert.equal('{"id":123,"custom":"value","customArray":[]}', opts.data)
-
-  describe "_onError", ->
-    message = null
-    requests = [
-      {}
-      {}
-      {_action: 'search'}
-      {status: 401, _action: 'delete', '_id': 'cake'}
-      {status: 404, _action: 'delete', '_id': 'cake'}
-      {status: 500, _action: 'delete', '_id': 'cake'}
-    ]
-
-    beforeEach ->
-      sinon.stub(Annotator, 'showNotification')
-      sinon.stub(console,   'error')
-
-      store._onError requests.shift()
-      message = Annotator.showNotification.lastCall.args[0]
-
-    afterEach ->
-      Annotator.showNotification.restore()
-      console.error.restore()
-
-    it "should call call Annotator.showNotification() with a message and error style", ->
-      assert(Annotator.showNotification.calledOnce)
-      assert.equal(Annotator.showNotification.lastCall.args[1], Annotator.Notification.ERROR)
-
-    it "should call console.error with a message", ->
-      assert(console.error.calledOnce)
-
-    it "should give a default specific message if xhr._action is 'search'", ->
-      assert.equal(message, "Sorry we could not search the store for annotations")
-
-    it "should give a specific message if xhr.status == 401", ->
-      assert.equal(message, "Sorry you are not allowed to delete this annotation")
-
-    it "should give a specific message if xhr.status == 404", ->
-      assert.equal(message, "Sorry we could not connect to the annotations store")
-
-    it "should give a specific message if xhr.status == 500", ->
-      assert.equal(message, "Sorry something went wrong with the annotation store")
+  describe "error handling", ->
+    xit "should be tested"
