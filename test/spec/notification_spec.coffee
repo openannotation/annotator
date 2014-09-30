@@ -1,41 +1,53 @@
 Notification = require('../../src/notification')
+$ = require('../../src/util').$
 
 
-describe 'Notification', ->
+describe 'Notification.Banner', ->
   notification = null
 
   beforeEach ->
-    notification = new Notification()
+    notification = Notification.Banner()
 
   afterEach ->
-    notification.element.remove()
+    $(document.body).find('.annotator-notice').remove()
 
-  it 'should be appended to the document body when needed', ->
-    notification.show('test')
-    assert.equal(notification.element[0].parentNode, document.body)
+  describe '.create()', ->
+    it 'creates a new notification object', ->
+      n = notification.create('hello world')
+      assert.ok(n)
 
-  describe '.show()', ->
+  describe 'the returned notification object', ->
+    n = null
+    clock = null
     message = 'This is a notification message'
 
     beforeEach ->
-      notification.show(message)
+      n = notification.create(message)
+      clock = sinon.useFakeTimers()
 
-    it 'should have a class named "annotator-notice-show"', ->
-      assert.isTrue(notification.element.hasClass('annotator-notice-show'))
+    afterEach ->
+      clock.restore()
 
-    it 'should have a class named "annotator-notice-info"', ->
-      assert.isTrue(notification.element.hasClass('annotator-notice-info'))
+    it 'has an element that is visible in the document body', ->
+      assert.equal(n.element.parentNode, document.body)
 
-    it 'should update the notification message', ->
-      assert.equal(notification.element.html(), message)
+    it 'has the correct notification message', ->
+      assert.equal(n.element.innerHTML, message)
 
-  describe '.hide()', ->
-    beforeEach ->
-      notification.show()
-      notification.hide()
+    it 'has an element with the annotator-notice-info class by default', ->
+      assert.match(n.element.className, /\bannotator-notice-info\b/)
 
-    it 'should not have a class named "annotator-notice-show"', ->
-      assert.isFalse(notification.element.hasClass('annotator-notice-show'))
+    it 'has an element with the annotator-notice-success class if the severity
+        was Notification.SUCCESS', ->
+      n = notification.create(message, Notification.SUCCESS)
+      assert.match(n.element.className, /\bannotator-notice-success\b/)
 
-    it 'should not have a class named "annotator-notice-info"', ->
-      assert.isFalse(notification.element.hasClass('annotator-notice-info'))
+    it 'has an element with the annotator-notice-error class if the severity
+        was Notification.ERROR', ->
+      n = notification.create(message, Notification.ERROR)
+      assert.match(n.element.className, /\bannotator-notice-error\b/)
+
+    it 'has a close method which hides the notification', ->
+      n.close()
+      clock.tick(600)
+      assert.isNull(n.element.parentNode)

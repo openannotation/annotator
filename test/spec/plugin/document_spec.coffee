@@ -4,37 +4,17 @@ $ = Util.$
 
 
 describe 'Document plugin', ->
-  $fix = null
-  plugin = null
   metadata = null
-  annotator = null
 
-  beforeEach ->
-    plugin = new Document($('<div/>')[0])
-    plugin.annotator = annotator = {}
-
-    BackboneEvents = require('backbone-events-standalone')
-    BackboneEvents.mixin(annotator)
-
-    sinon.spy(Document::, 'beforeAnnotationCreated')
-    plugin.pluginInit()
-
-  afterEach ->
-    Document::beforeAnnotationCreated.restore()
-    plugin.destroy()
-
-  describe '#beforeAnnotationCreated()', ->
-    it 'should be called when beforeAnnotationEvent is fired', ->
+  describe 'Document plugin', ->
+    it 'adds document metadata to the annotation onBeforeAnnotationCreated', ->
+      # Document plugin doesn't use the registry, so we can pass null
+      plugin = new Document.Document(null)
       annotation = {}
-      annotator.trigger('beforeAnnotationCreated', annotation)
-      assert(plugin.beforeAnnotationCreated.calledWith(annotation))
-
-    it 'should add a document field to the annotation', ->
-      annotation = {}
-      plugin.beforeAnnotationCreated(annotation)
+      plugin.onBeforeAnnotationCreated(annotation)
       assert.property(annotation, 'document')
 
-  describe '#getDocumentMetadata()', ->
+  describe 'getDocumentMetadata() returned metadata', ->
     # add some metadata to the page
     head = $("head")
     head.append('<link rel="alternate" href="foo.pdf" type="application/pdf"></link>')
@@ -56,7 +36,7 @@ describe 'Document plugin', ->
     head.append('<link rel="canonical" href="http://example.com/bookmark/canonical.html"></link>')
 
     beforeEach ->
-      metadata = plugin.getDocumentMetadata()
+      metadata = Document.getDocumentMetadata()
 
     it 'should have a title, derived from highwire metadata if possible', ->
       assert.equal(metadata.title, 'Foo')
@@ -116,27 +96,17 @@ describe 'Document plugin', ->
         'http://example.com/images/icon.ico'
       )
 
-  describe '#uri()', ->
-    it 'should give back the canonical uri', ->
-      uri = plugin.uri()
-      assert.equal(uri, 'http://example.com/bookmark/canonical.html')
-
-  describe '#uris()', ->
-    it 'should de-duplicate uris', ->
-      uris = plugin.uris()
-      assert.equal(uris.length, 6)
-
-  describe '#_absoluteUrl', ->
+  describe 'absoluteUrl()', ->
     it 'should add the protocol when the url starts with two slashes', ->
-      result = plugin._absoluteUrl('//example.com/')
+      result = Document.absoluteUrl('//example.com/')
       assert.equal(result, 'http://example.com/')
 
     it 'should add a trailing slash when given an empty path', ->
-      result = plugin._absoluteUrl('http://example.com')
+      result = Document.absoluteUrl('http://example.com')
       assert.equal(result, 'http://example.com/')
 
     it 'should make a relative path into an absolute url', ->
-      result = plugin._absoluteUrl('path')
+      result = Document.absoluteUrl('path')
       expected = (
         document.location.protocol + '//' +
         document.location.host +
@@ -146,7 +116,7 @@ describe 'Document plugin', ->
       assert.equal(result, expected)
 
     it 'should make an absolute path into an absolute url', ->
-      result = plugin._absoluteUrl('/path')
+      result = Document.absoluteUrl('/path')
       expected = (
         document.location.protocol + '//' +
         document.location.host +

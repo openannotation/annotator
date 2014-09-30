@@ -1,22 +1,33 @@
 Range = require('xpath-range').Range
+
 Util = require('../util')
+
 $ = Util.$
 
-SELECT_NS = 'annotator-textselect'
+TEXTSELECTOR_NS = 'annotator-textselector'
 
-# Public: Provide support to annotate text selections in HTML documents
+
+# TextSelector monitors a document (or a specific element) for text selections
+# and can notify another object of a selection event
 class TextSelector
 
-  constructor: (element) ->
+  # Configuration options
+  options:
+    onSelection: null # Callback, called when the user makes a selection.
+                      # Receives the list of selected ranges (may be empty) and
+                      # the DOM Event that was detected as a selection.
+
+  constructor: (element, options) ->
     @element = element
+    @options = $.extend(true, {}, @options, options)
 
-  configure: ({@core}) ->
+    if @options.onSelection?
+      @onSelection = @options.onSelection
 
-  pluginInit: ->
     if @element.ownerDocument?
       @document = @element.ownerDocument
       $(@document.body)
-      .on("mouseup.#{SELECT_NS}", this._checkForEndSelection)
+      .on("mouseup.#{TEXTSELECTOR_NS}", this._checkForEndSelection)
     else
       console.warn("You created an instance of the TextSelector on an element
                     that doesn't have an ownerDocument. This won't work! Please
@@ -24,7 +35,7 @@ class TextSelector
                     configured:", @element)
 
   destroy: ->
-    $(@document.body).off(".#{SELECT_NS}")
+    $(@document.body).off(".#{TEXTSELECTOR_NS}")
 
   # Public: capture the current selection from the document, excluding any nodes
   # that fall outside of the adder's `element`.
@@ -75,12 +86,15 @@ class TextSelector
   #
   # Returns nothing.
   _checkForEndSelection: (event) =>
+    _nullSelection = =>
+      if typeof @onSelection == 'function'
+        @onSelection([], event)
 
     # Get the currently selected ranges.
     selectedRanges = this.captureDocumentSelection()
 
     if selectedRanges.length == 0
-      @core.trigger('selection')
+      _nullSelection()
       return
 
     # Don't show the adder if the selection was of a part of Annotator itself.
@@ -89,18 +103,12 @@ class TextSelector
       if $(container).hasClass('annotator-hl')
         container = $(container).parents('[class!=annotator-hl]')[0]
       if this._isAnnotator(container)
-        @core.trigger('selection')
+        _nullSelection()
         return
 
-    # If we got this far, there are real selected ranges on a part of the page
-    # we're interested in. Announce the raw text selection!
-    @core.interactionPoint = Util.mousePosition(event)
+    if typeof @onSelection == 'function'
+      @onSelection(selectedRanges, event)
 
-    rawSelection =
-      type: "text ranges"
-      ranges: selectedRanges
-
-    @core.trigger("rawSelection", rawSelection)
 
   # Determines if the provided element is part of Annotator. Useful for ignoring
   # mouse actions on the annotator elements.
@@ -115,10 +123,4 @@ class TextSelector
       .filter('[class^=annotator-]')
       .length
 
-
-# This is a core plugin (registered by default with Annotator), so we don't
-# register here. If you're writing a plugin of your own, please refer to a
-# non-core plugin (such as Document or Store) to see how to register your plugin
-# with Annotator.
-
-module.exports = TextSelector
+exports.TextSelector = TextSelector

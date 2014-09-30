@@ -1,170 +1,174 @@
 Annotator = require('annotator')
 $ = Annotator.Util.$
 
+# absoluteUrl turns a possibly relative URL into an absolute one
+absoluteUrl = (url) ->
+  d = document.createElement('a')
+  d.href = url
+  d.href
 
-class Document
-  pluginInit: ->
-    @metadata = {}
-    this.getDocumentMetadata()
-    @annotator.on('beforeAnnotationCreated',
-      this.beforeAnnotationCreated,
-      this)
 
-  destroy: ->
-    @annotator.off('beforeAnnotationCreated',
-      this.beforeAnnotationCreated,
-      this)
+getMetaTags = (prefix, attribute, delimiter) ->
+  tags = {}
+  for meta in $("meta")
+    name = $(meta).attr(attribute)
+    content = $(meta).prop("content")
+    if name
+      match = name.match(RegExp("^#{prefix}#{delimiter}(.+)$", "i"))
+      if match
+        n = match[1]
+        if tags[n]
+          tags[n].push(content)
+        else
+          tags[n] = [content]
+  return tags
 
-  # returns the primary URI for the document being annotated
-  uri: ->
-    uri = decodeURIComponent document.location.href
-    for link in @metadata.link
-      if link.rel == "canonical"
-        uri = link.href
-    return uri
 
-  # returns all uris for the document being annotated
+getHighwire = ->
+  return getMetaTags("citation", "name", "_")
 
-  uris: ->
-    uniqueUrls = {}
-    for link in @metadata.link
-      uniqueUrls[link.href] = true if link.href
-    return (href for href of uniqueUrls)
 
-  beforeAnnotationCreated: (annotation) ->
-    annotation.document = @metadata
+getFacebook = ->
+  return getMetaTags("og", "property", ":")
 
-  getDocumentMetadata: ->
-    # first look for some common metadata types
-    # TODO: look for microdata/rdfa?
-    this._getHighwire()
-    this._getDublinCore()
-    this._getFacebook()
-    this._getEprints()
-    this._getPrism()
-    this._getTwitter()
-    this._getFavicon()
 
-    # extract out/normalize some things
-    this._getTitle()
-    this._getLinks()
+getTwitter = ->
+  return getMetaTags("twitter", "name", ":")
 
-    return @metadata
 
-  _getHighwire: ->
-    return @metadata.highwire = this._getMetaTags("citation", "name", "_")
+getDublinCore = ->
+  return getMetaTags("dc", "name", ".")
 
-  _getFacebook: ->
-    return @metadata.facebook = this._getMetaTags("og", "property", ":")
 
-  _getTwitter: ->
-    return @metadata.twitter = this._getMetaTags("twitter", "name", ":")
+getPrism = ->
+  return getMetaTags("prism", "name", ".")
 
-  _getDublinCore: ->
-    return @metadata.dc = this._getMetaTags("dc", "name", ".")
 
-  _getPrism: ->
-    return @metadata.prism = this._getMetaTags("prism", "name", ".")
+getEprints = ->
+  return getMetaTags("eprints", "name", ".")
 
-  _getEprints: ->
-    return @metadata.eprints = this._getMetaTags("eprints", "name", ".")
 
-  _getMetaTags: (prefix, attribute, delimiter) ->
-    tags = {}
-    for meta in $("meta")
-      name = $(meta).attr(attribute)
-      content = $(meta).prop("content")
-      if name
-        match = name.match(RegExp("^#{prefix}#{delimiter}(.+)$", "i"))
-        if match
-          n = match[1]
-          if tags[n]
-            tags[n].push(content)
-          else
-            tags[n] = [content]
-    return tags
+getFavicon = ->
+  for link in $("link")
+    if $(link).prop("rel") in ["shortcut icon", "icon"]
+      return absoluteUrl(link.href)
 
-  _getTitle: ->
-    if @metadata.highwire.title
-      @metadata.title = @metadata.highwire.title[0]
-    else if @metadata.eprints.title
-      @metadata.title = @metadata.eprints.title
-    else if @metadata.prism.title
-      @metadata.title = @metadata.prism.title
-    else if @metadata.facebook.title
-      @metadata.title = @metadata.facebook.title
-    else if @metadata.twitter.title
-      @metadata.title = @metadata.twitter.title
-    else if @metadata.dc.title
-      @metadata.title = @metadata.dc.title
-    else
-      @metadata.title = $("head title").text()
 
-  _getLinks: ->
-    # we know our current location is a link for the document
-    @metadata.link = [href: document.location.href]
+getTitle = (d) ->
+  if d.highwire.title
+    return d.highwire.title[0]
+  else if d.eprints.title
+    return d.eprints.title
+  else if d.prism.title
+    return d.prism.title
+  else if d.facebook.title
+    return d.facebook.title
+  else if d.twitter.title
+    return d.twitter.title
+  else if d.dc.title
+    return d.dc.title
+  else
+    return $("head title").text()
 
-    # look for some relevant link relations
-    for link in $("link")
-      l = $(link)
-      rel = l.prop('rel')
-      if rel not in ["alternate", "canonical", "bookmark"] then continue
 
-      type = l.prop('type')
-      lang = l.prop('hreflang')
+getLinks = ->
+  # we know our current location is a link for the document
+  results = [href: document.location.href]
 
-      if rel is 'alternate'
-        # Ignore feeds resources
-        if type and type.match /^application\/(rss|atom)\+xml/ then continue
-        # Ignore alternate languages
-        if lang then continue
+  # look for some relevant link relations
+  for link in $("link")
+    l = $(link)
+    rel = l.prop('rel')
+    if rel not in ["alternate", "canonical", "bookmark"] then continue
 
-      href = this._absoluteUrl(l.prop('href')) # get absolute url
+    type = l.prop('type')
+    lang = l.prop('hreflang')
 
-      @metadata.link.push(href: href, rel: rel, type: type)
+    if rel is 'alternate'
+      # Ignore feeds resources
+      if type and type.match /^application\/(rss|atom)\+xml/ then continue
+      # Ignore alternate languages
+      if lang then continue
 
-    this._getHighwireLinks()
-    this._getDublinCoreLinks()
+    href = absoluteUrl(l.prop('href')) # get absolute url
 
-  _getHighwireLinks: ->
-    # look for links in scholar metadata
-    for name, values of @metadata.highwire
-      if name == "pdf_url"
-        for url in values
-          @metadata.link.push
-            href: this._absoluteUrl(url)
-            type: "application/pdf"
+    results.push(href: href, rel: rel, type: type)
 
-      # kind of a hack to express DOI identifiers as links but it's a
-      # convenient place to look them up later, and somewhat sane since
-      # they don't have a type
+  return results
 
-      if name == "doi"
-        for doi in values
-          if doi[0..3] != "doi:"
-            doi = "doi:" + doi
-          @metadata.link.push(href: doi)
 
-  _getDublinCoreLinks: ->
-    # look for links in dublincore data
-    for name, values of @metadata.dc
-      if name == "identifier"
-        for id in values
-          if id[0..3] == "doi:"
-            @metadata.link.push(href: id)
+getHighwireLinks = (highwireMeta) ->
+  results = []
 
-  _getFavicon: ->
-    for link in $("link")
-      if $(link).prop("rel") in ["shortcut icon", "icon"]
-        @metadata["favicon"] = this._absoluteUrl(link.href)
+  # look for links in scholar metadata
+  for name, values of highwireMeta
+    if name == "pdf_url"
+      for url in values
+        results.push
+          href: absoluteUrl(url)
+          type: "application/pdf"
 
-  # hack to get a absolute url from a possibly relative one
+    # kind of a hack to express DOI identifiers as links but it's a
+    # convenient place to look them up later, and somewhat sane since
+    # they don't have a type
 
-  _absoluteUrl: (url) ->
-    d = document.createElement('a')
-    d.href = url
-    d.href
+    if name == "doi"
+      for doi in values
+        if doi[0..3] != "doi:"
+          doi = "doi:" + doi
+        results.push(href: doi)
 
-Annotator.Plugin.register('Document', Document)
+  return results
 
-module.exports = Document
+
+getDublinCoreLinks = (dcMeta) ->
+  results = []
+
+  # look for links in dublincore data
+  for name, values of dcMeta
+    if name == "identifier"
+      for id in values
+        if id[0..3] == "doi:"
+          results.push(href: id)
+
+  return results
+
+
+getDocumentMetadata = ->
+  out = {}
+
+  # first look for some common metadata types
+  # TODO: look for microdata/rdfa?
+  out.highwire = getHighwire()
+  out.dc = getDublinCore()
+  out.facebook = getFacebook()
+  out.eprints = getEprints()
+  out.prism = getPrism()
+  out.twitter = getTwitter()
+
+  out.favicon = getFavicon()
+
+  # extract out/normalize some things
+  out.title = getTitle(out)
+  out.link = getLinks()
+  out.link = out.link.concat(getHighwireLinks(out.highwire))
+  out.link = out.link.concat(getDublinCoreLinks(out.dc))
+
+  return out
+
+
+Document = (registry) ->
+  metadata = getDocumentMetadata()
+
+  return {
+    onBeforeAnnotationCreated: (ann) ->
+      # Assign a copy of the document metadata to the annotation
+      ann.document = JSON.parse(JSON.stringify(metadata))
+  }
+
+
+Annotator.Plugin.Document = Document
+
+exports.Document = Document
+exports.absoluteUrl = absoluteUrl
+exports.getDocumentMetadata = getDocumentMetadata
