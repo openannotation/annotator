@@ -323,6 +323,8 @@ class Editor extends Widget
     controls  = @element.find('.annotator-controls')
     throttle  = false
 
+    self = this
+
     onMousedown = (event) ->
       if event.target == this
         mousedown = {
@@ -332,7 +334,7 @@ class Editor extends Widget
         }
 
         # Find the first text area if there is one.
-        textarea = @element.find('textarea:first')
+        textarea = self.element.find('textarea:first')
 
         $(window).bind({
           'mouseup.annotator-editor-resize': onMouseup
@@ -355,8 +357,8 @@ class Editor extends Widget
           height = textarea.height()
           width  = textarea.width()
 
-          directionX = if @element.hasClass(classes.invert.x) then -1 else  1
-          directionY = if @element.hasClass(classes.invert.y) then  1 else -1
+          directionX = if self.element.hasClass(classes.invert.x) then -1 else 1
+          directionY = if self.element.hasClass(classes.invert.y) then 1 else -1
 
           textarea.height height + (diff.top  * directionY)
           textarea.width  width  + (diff.left * directionX)
@@ -368,9 +370,9 @@ class Editor extends Widget
           mousedown.left = event.pageX unless textarea.width()  == width
 
         else if mousedown.element == controls[0]
-          @element.css({
-            top: parseInt(@element.css('top'), 10) + diff.top
-            left: parseInt(@element.css('left'), 10) + diff.left
+          self.element.css({
+            top: parseInt(self.element.css('top'), 10) + diff.top
+            left: parseInt(self.element.css('left'), 10) + diff.left
           })
 
           mousedown.top  = event.pageY
