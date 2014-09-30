@@ -329,8 +329,8 @@ class Editor extends Widget
     @_mover = Mover(@element[0], controls)
 
 
-# DragTracker for a callback to track changes made to the position of a
-# draggable "handle" element.
+# DragTracker is a function which allows a callback to track changes made to the
+# position of a draggable "handle" element.
 #
 # handle - A DOM element to make draggable
 # callback - Callback function
@@ -340,7 +340,9 @@ class Editor extends Widget
 # delta - An Object with two properties, "x" and "y", denoting the amount the
 #         mouse has moved since the last (tracked) call.
 #
-# Callback returns: Boolean indicating whether to track the last movement.
+# Callback returns: Boolean indicating whether to track the last movement. If
+# the movement is not tracked, then the amount the mouse has moved will be
+# accumulated and passed to the next mousemove event.
 #
 DragTracker = (handle, callback) ->
 
