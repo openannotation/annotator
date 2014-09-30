@@ -108,10 +108,12 @@ Community
 ---------
 
 The Annotator project has a `mailing list`_, ``annotator-dev``, which you're
-encouraged to use for any questions and discussions. We can also be found in
+encouraged to use for any questions and discussions. It is archived for easy
+browsing and search at `gmane.comp.web.annotator`_. We can also be found in
 |IRC|_.
 
 .. _mailing list: https://lists.okfn.org/mailman/listinfo/annotator-dev
+.. _gmane.comp.web.annotator: http://dir.gmane.org/gmane.comp.web.annotator
 .. |IRC| replace:: the ``#annotator`` channel on Freenode
 .. _IRC: https://webchat.freenode.net/?channels=#annotator
 
