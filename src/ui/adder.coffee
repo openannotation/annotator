@@ -86,7 +86,7 @@ class Adder extends Widget
   # Returns nothing.
   _onMousedown: (event) ->
     # Do nothing for right-clicks, middle-clicks, etc.
-    if event.which != 1
+    if event.which > 1
       return
 
     event?.preventDefault()
@@ -100,7 +100,7 @@ class Adder extends Widget
   # Returns nothing.
   _onMouseup: (event) ->
     # Do nothing for right-clicks, middle-clicks, etc.
-    if event.which != 1
+    if event.which > 1
       return
 
     # Prevent the selection code from firing when the ignoreMouseup flag is set
@@ -117,7 +117,7 @@ class Adder extends Widget
   # Returns nothing.
   _onClick: (event) ->
     # Do nothing for right-clicks, middle-clicks, etc.
-    if event.which != 1
+    if event.which > 1
       return
 
     event?.preventDefault()
