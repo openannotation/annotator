@@ -326,3 +326,17 @@ describe 'UI.Viewer', ->
       assert.isTrue(v.isShown())
       clock.tick(2)
       assert.isFalse(v.isShown())
+
+    # Regression test: Issue #431
+    it 'should not interfere with other mouseup and mousedown handlers on
+        the document', ->
+      doc = h.fix().ownerDocument
+      called = false
+      $(doc)
+        .on('mouseup', -> called = true)
+        .on('mousedown', -> called = true)
+      $(doc.body).trigger({type: 'mouseup', which: 2})
+      assert.isTrue(called, 'event should have propagated to the document')
+      called = false
+      $(doc.body).trigger({type: 'mousedown', which: 2})
+      assert.isTrue(called, 'event should have propagated to the document')

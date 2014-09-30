@@ -109,8 +109,16 @@ class Viewer extends Widget
         .on("mouseleave.#{NS}", '.annotator-hl', => this._startHideTimer())
 
       $(@document.body)
-        .on("mousedown.#{NS}", (e) => @mouseDown = true if e.which == 1)
-        .on("mouseup.#{NS}", (e) => @mouseDown = false if e.which == 1)
+        .on("mousedown.#{NS}", (e) =>
+          @mouseDown = true if e.which > 1
+          # Ensure that we don't return false, thus breaking other handlers.
+          return
+        )
+        .on("mouseup.#{NS}", (e) =>
+          @mouseDown = false if e.which > 1
+          # Ensure that we don't return false, thus breaking other handlers.
+          return
+        )
 
     @element
       .on("click.#{NS}", '.annotator-edit', (e) => this._onEditClick(e))
