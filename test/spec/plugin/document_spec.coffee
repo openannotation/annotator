@@ -114,7 +114,7 @@ describe 'Document plugin', ->
       assert.ok(metadata.prism)
       assert.deepEqual(metadata.prism.title, ['Literary Machines'])
 
-     it 'should have twitter card metadata', ->
+    it 'should have twitter card metadata', ->
       assert.ok(metadata.twitter)
       assert.deepEqual(metadata.twitter.site, ['@okfn'])
 
@@ -123,6 +123,19 @@ describe 'Document plugin', ->
         metadata.favicon
         'http://example.com/images/icon.ico'
       )
+
+    it 'does not have empty fields for nonexistent metadata', ->
+      tags.highwire.remove()
+      tags.facebook.remove()
+      metadata = Document.getDocumentMetadata()
+      assert.isUndefined(metadata.highwire)
+      assert.isUndefined(metadata.facebook)
+
+    it 'has the right title even if some metadata is missing', ->
+      tags.highwire.remove()
+      tags.facebook.remove()
+      metadata = Document.getDocumentMetadata()
+      assert.equal(metadata.title, 'Computer Lib / Dream Machines')
 
   describe 'absoluteUrl()', ->
     it 'should add the protocol when the url starts with two slashes', ->

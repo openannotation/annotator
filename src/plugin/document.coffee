@@ -1,6 +1,18 @@
 Annotator = require('annotator')
 $ = Annotator.Util.$
 
+# isEmpty returns a boolean indicating whether the passed object is empty
+isEmpty = (obj) ->
+  # null and undefined objects are empty
+  if not obj?
+    return true
+
+  for own k of obj
+    return false
+
+  return true
+
+
 # absoluteUrl turns a possibly relative URL into an absolute one
 absoluteUrl = (url) ->
   d = document.createElement('a')
@@ -55,17 +67,17 @@ getFavicon = ->
 
 
 getTitle = (d) ->
-  if d.highwire.title
+  if d.highwire?.title
     return d.highwire.title[0]
-  else if d.eprints.title
+  else if d.eprints?.title
     return d.eprints.title
-  else if d.prism.title
+  else if d.prism?.title
     return d.prism.title
-  else if d.facebook.title
+  else if d.facebook?.title
     return d.facebook.title
-  else if d.twitter.title
+  else if d.twitter?.title
     return d.twitter.title
-  else if d.dc.title
+  else if d.dc?.title
     return d.dc.title
   else
     return $("head title").text()
@@ -134,25 +146,39 @@ getDublinCoreLinks = (dcMeta) ->
   return results
 
 
+METADATA_FIELDS = {
+  dc: getDublinCore
+  eprints: getEprints
+  facebook: getFacebook
+  highwire: getHighwire
+  prism: getPrism
+  twitter: getTwitter
+}
+
+
 getDocumentMetadata = ->
   out = {}
 
   # first look for some common metadata types
   # TODO: look for microdata/rdfa?
-  out.highwire = getHighwire()
-  out.dc = getDublinCore()
-  out.facebook = getFacebook()
-  out.eprints = getEprints()
-  out.prism = getPrism()
-  out.twitter = getTwitter()
+  for name, fetcher of METADATA_FIELDS
+    result = fetcher()
+    if !isEmpty(result)
+      out[name] = result
 
-  out.favicon = getFavicon()
+  favicon = getFavicon()
+  if favicon?
+    out.favicon = favicon
 
   # extract out/normalize some things
   out.title = getTitle(out)
-  out.link = getLinks()
-  out.link = out.link.concat(getHighwireLinks(out.highwire))
-  out.link = out.link.concat(getDublinCoreLinks(out.dc))
+  link = getLinks()
+  if out.highwire?
+    link = link.concat(getHighwireLinks(out.highwire))
+  if out.dc?
+    link = link.concat(getDublinCoreLinks(out.dc))
+  if link.length > 0
+    out.link = link
 
   return out
 
