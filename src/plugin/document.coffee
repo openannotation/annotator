@@ -66,21 +66,13 @@ getFavicon = ->
       return absoluteUrl(link.href)
 
 
-getTitle = (d) ->
-  if d.highwire?.title
-    return d.highwire.title[0]
-  else if d.eprints?.title
-    return d.eprints.title
-  else if d.prism?.title
-    return d.prism.title
-  else if d.facebook?.title
-    return d.facebook.title
-  else if d.twitter?.title
-    return d.twitter.title
-  else if d.dc?.title
-    return d.dc.title
-  else
-    return $("head title").text()
+getTitle = (d, keys) ->
+  for k in keys
+    if d[k]?.title?.length >= 1
+      return d[k].title[0]
+
+  # Fall back to document title
+  return document.title
 
 
 getLinks = ->
@@ -156,6 +148,16 @@ METADATA_FIELDS = {
 }
 
 
+METADATA_TITLE_ORDER = [
+  'highwire'
+  'eprints'
+  'prism'
+  'facebook'
+  'twitter'
+  'dc'
+]
+
+
 getDocumentMetadata = ->
   out = {}
 
@@ -171,7 +173,7 @@ getDocumentMetadata = ->
     out.favicon = favicon
 
   # extract out/normalize some things
-  out.title = getTitle(out)
+  out.title = getTitle(out, METADATA_TITLE_ORDER)
   link = getLinks()
   if out.highwire?
     link = link.concat(getHighwireLinks(out.highwire))

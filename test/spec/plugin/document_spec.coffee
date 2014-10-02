@@ -66,9 +66,6 @@ describe 'Document plugin', ->
       for _, $elements of tags
         $elements.remove()
 
-    it 'should have a title, derived from highwire metadata if possible', ->
-      assert.equal(metadata.title, 'Foo')
-
     it 'should have links with absoulte hrefs and types', ->
       assert.ok(metadata.link)
       assert.equal(metadata.link.length, 8)
@@ -131,11 +128,22 @@ describe 'Document plugin', ->
       assert.isUndefined(metadata.highwire)
       assert.isUndefined(metadata.facebook)
 
-    it 'has the right title even if some metadata is missing', ->
-      tags.highwire.remove()
-      tags.facebook.remove()
+    it 'has a title derived from metadata, in preference order', ->
       metadata = Document.getDocumentMetadata()
-      assert.equal(metadata.title, 'Computer Lib / Dream Machines')
+      assert.strictEqual(metadata.title, 'Foo')
+      tags.highwire.remove()
+      metadata = Document.getDocumentMetadata()
+      assert.strictEqual(metadata.title, 'Computer Lib / Dream Machines')
+      tags.eprints.remove()
+      metadata = Document.getDocumentMetadata()
+      assert.strictEqual(metadata.title, 'Literary Machines')
+
+    it 'falls back to using the page title in the absence of metadata', ->
+      for _, $elements of tags
+        $elements.remove()
+      metadata = Document.getDocumentMetadata()
+      assert.strictEqual(metadata.title, document.title)
+
 
   describe 'absoluteUrl()', ->
     it 'should add the protocol when the url starts with two slashes', ->
