@@ -1,3 +1,8 @@
+.. warning:: OUT OF DATE DOCUMENTATION
+
+   The paragraphs that follow contain out-of-date documentation that we haven't
+   yet got round to updating.
+
 ``Permissions`` plugin
 ======================
 

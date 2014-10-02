@@ -1,13 +1,13 @@
-``Store`` plugin
-================
+``Annotator.Storage.HTTPStorage`` component
+===========================================
 
-This plugin sends annotations (serialised as JSON) to the server at key
-events broadcast by the annotator.
+This storage component sends annotations (serialised as JSON) to a server that
+implements the Storage API: :doc:`manufacturing/widgets`.
 
-Actions
+Methods
 -------
 
-The following actions are performed by the annotator.
+The following methods are implemented by this component.
 
 -  ``create``: POSTs an annotation (serialised as JSON) to the server.
    Called when the annotator publishes the "annotationCreated" event.
@@ -22,13 +22,13 @@ The following actions are performed by the annotator.
    a JSON object with a ``rows`` property containing an array of
    annotations.
 
-Stores
-------
+Backends
+--------
 
-For an example store check out our
-`annotator-store <http://github.com/okfn/annotator-store>`__ project on
-GitHub which you can use or examine as the basis for your own store. If
-you're looking to get up and running quickly then
+For an example backend check out our
+`annotator-store <https://github.com/openannotation/annotator-store>`__
+project on GitHub which you can use or examine as the basis for your own store.
+If you're looking to get up and running quickly then
 `annotateit.org <http://annotateit.org>`__ will store your annotations
 remotely under your account.
 
@@ -37,6 +37,11 @@ Interface Overview
 
 This plugin adds no additional UI to the Annotator but will display
 error notifications if a request to the store fails.
+
+.. warning:: OUT OF DATE DOCUMENTATION
+
+   The paragraphs that follow contain out-of-date documentation that we haven't
+   yet got round to updating.
 
 Usage
 -----
