@@ -32,12 +32,12 @@ describe "Storage.HTTPStorage", ->
     [url, _] = $.ajax.args[0]
     assert.equal("/store/annotations", url)
 
-  it "update URL should be /store/annotations/:id by default", ->
+  it "update URL should be /store/annotations/{id} by default", ->
     store.update({text: "Donkeys on giraffes", id: 123})
     [url, _] = $.ajax.args[0]
     assert.equal("/store/annotations/123", url)
 
-  it "delete URL should be /store/annotations/:id by default", ->
+  it "delete URL should be /store/annotations/{id} by default", ->
     store.delete({text: "Donkeys on giraffes", id: 123})
     [url, _] = $.ajax.args[0]
     assert.equal("/store/annotations/123", url)
@@ -45,8 +45,8 @@ describe "Storage.HTTPStorage", ->
   it "should request custom URLs as specified by its options", ->
     store.options.prefix = '/some/prefix'
     store.options.urls.create = '/createMe'
-    store.options.urls.update = '/:id/updateMe'
-    store.options.urls.destroy = '/:id/destroyMe'
+    store.options.urls.update = '/{id}/updateMe'
+    store.options.urls.destroy = '/{id}/destroyMe'
 
     store.create({text: "Donkeys on giraffes"})
     store.update({text: "Donkeys on giraffes", id: 123})
@@ -64,8 +64,8 @@ describe "Storage.HTTPStorage", ->
   it "should generate URLs correctly with an empty prefix", ->
     store.options.prefix = ''
     store.options.urls.create = '/createMe'
-    store.options.urls.update = '/:id/updateMe'
-    store.options.urls.destroy = '/:id/destroyMe'
+    store.options.urls.update = '/{id}/updateMe'
+    store.options.urls.destroy = '/{id}/destroyMe'
 
     store.create({text: "Donkeys on giraffes"})
     store.update({text: "Donkeys on giraffes", id: 123})
@@ -82,8 +82,8 @@ describe "Storage.HTTPStorage", ->
 
   it "should generate URLs with substitution markers in query strings", ->
     store.options.prefix = '/some/prefix'
-    store.options.urls.update = '/update?foo&id=:id'
-    store.options.urls.destroy = '/delete?id=:id&foo'
+    store.options.urls.update = '/update?foo&id={id}'
+    store.options.urls.destroy = '/delete?id={id}&foo'
 
     store.update({text: "Donkeys on giraffes", id: 123})
     store.delete({text: "Donkeys on giraffes", id: 123})

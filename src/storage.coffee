@@ -107,8 +107,10 @@ class HTTPStorageImpl
     prefix: '/store'
 
     # The server URLs for each available action. These URLs can be anything but
-    # must respond to the appropraite HTTP method. The token ":id" can be used
-    # anywhere in the URL and will be replaced with the annotation id.
+    # must respond to the appropriate HTTP method. The URLs are Level 1 URI
+    # Templates as defined in RFC6570:
+    #
+    #    http://tools.ietf.org/html/rfc6570#section-1.2
     #
     # create:  POST
     # update:  PUT
@@ -116,8 +118,8 @@ class HTTPStorageImpl
     # search:  GET
     urls:
       create: '/annotations'
-      update: '/annotations/:id'
-      destroy: '/annotations/:id'
+      update: '/annotations/{id}'
+      destroy: '/annotations/{id}'
       search: '/search'
 
   # Public: Initialises the instance.
@@ -279,11 +281,8 @@ class HTTPStorageImpl
   _urlFor: (action, id) ->
     url = if @options.prefix? then @options.prefix else ''
     url += @options.urls[action]
-    # If there's a '/:id' in the URL, either fill in the ID or remove the
-    # slash:
-    url = url.replace(/\/:id/, if id? then '/' + id else '')
-    # If there's a bare ':id' in the URL, then substitute directly:
-    url = url.replace(/:id/, if id? then id else '')
+    # If there's an '{id}' in the URL, then fill in the ID.
+    url = url.replace(/\{id\}/, if id? then id else '')
 
     url
 
