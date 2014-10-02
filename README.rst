@@ -1,7 +1,7 @@
 Annotator
 =========
 
-|Build Status| |Stories in Ready| |Version on NPM|
+|Build Status| |Version on NPM|
 
 ::
 
@@ -120,7 +120,5 @@ browsing and search at `gmane.comp.web.annotator`_. We can also be found in
 
 .. |Build Status| image:: https://secure.travis-ci.org/openannotation/annotator.svg?branch=master
    :target: http://travis-ci.org/openannotation/annotator
-.. |Stories in Ready| image:: https://badge.waffle.io/openannotation/annotator.png?label=ready&title=Ready
-   :target: https://waffle.io/openannotation/annotator
 .. |Version on NPM| image:: http://img.shields.io/npm/v/annotator.svg
    :target: https://www.npmjs.org/package/annotator
