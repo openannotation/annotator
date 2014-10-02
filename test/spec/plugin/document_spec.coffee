@@ -2,8 +2,44 @@ Util = require('../../../src/util')
 Document = require('../../../src/plugin/document')
 $ = Util.$
 
+FIXTURE_METADATA = {
+  links: [
+    '<link rel="alternate" href="foo.pdf" type="application/pdf"></link>',
+    '<link rel="alternate" href="foo.doc" type="application/msword"></link>',
+    '<link rel="bookmark" href="http://example.com/bookmark"></link>',
+    '<link rel="alternate" href="es/foo.html" hreflang="es" type="text/html"></link>',
+    '<link rel="alternate" href="feed" type="application/rss+xml"></link>',
+    '<link rel="canonical" href="http://example.com/bookmark/canonical.html"></link>'
+  ],
+  highwire: [
+    '<meta name="citation_doi" content="10.1175/JCLI-D-11-00015.1">',
+    '<meta name="citation_title" content="Foo">',
+    '<meta name="citation_pdf_url" content="foo.pdf">'
+  ],
+  dc: [
+    '<meta name="dc.identifier" content="doi:10.1175/JCLI-D-11-00015.1">',
+    '<meta name="dc.identifier" content="isbn:123456789">',
+    '<meta name="DC.type" content="Article">'
+  ],
+  facebook: [
+    '<meta property="og:url" content="http://example.com">'
+  ],
+  twitter: [
+    '<meta name="twitter:site" content="@okfn">'
+  ],
+  favicon: [
+    '<link rel="icon" href="http://example.com/images/icon.ico"></link>'
+  ],
+  eprints: [
+    '<meta name="eprints.title" content="Computer Lib / Dream Machines">'
+  ],
+  prism: [
+    '<meta name="prism.title" content="Literary Machines">'
+  ]
+}
 
 describe 'Document plugin', ->
+  tags = null
   metadata = null
 
   describe 'Document plugin', ->
@@ -15,28 +51,20 @@ describe 'Document plugin', ->
       assert.property(annotation, 'document')
 
   describe 'getDocumentMetadata() returned metadata', ->
-    # add some metadata to the page
-    head = $("head")
-    head.append('<link rel="alternate" href="foo.pdf" type="application/pdf"></link>')
-    head.append('<link rel="alternate" href="foo.doc" type="application/msword"></link>')
-    head.append('<link rel="bookmark" href="http://example.com/bookmark"></link>')
-    head.append('<link rel="alternate" href="es/foo.html" hreflang="es" type="text/html"></link>')
-    head.append('<meta name="citation_doi" content="10.1175/JCLI-D-11-00015.1">')
-    head.append('<meta name="citation_title" content="Foo">')
-    head.append('<meta name="citation_pdf_url" content="foo.pdf">')
-    head.append('<meta name="dc.identifier" content="doi:10.1175/JCLI-D-11-00015.1">')
-    head.append('<meta name="dc.identifier" content="isbn:123456789">')
-    head.append('<meta name="DC.type" content="Article">')
-    head.append('<meta property="og:url" content="http://example.com">')
-    head.append('<meta name="twitter:site" content="@okfn">')
-    head.append('<link rel="icon" href="http://example.com/images/icon.ico"></link>')
-    head.append('<meta name="eprints.title" content="Computer Lib / Dream Machines">')
-    head.append('<meta name="prism.title" content="Literary Machines">')
-    head.append('<link rel="alternate" href="feed" type="application/rss+xml"></link>')
-    head.append('<link rel="canonical" href="http://example.com/bookmark/canonical.html"></link>')
-
+    # Add some metadata tags to the document head
     beforeEach ->
+      tags = []
+
+      for name, t of FIXTURE_METADATA
+        html = t.join('\n')
+        tags[name] = $(html).appendTo('head')
+
       metadata = Document.getDocumentMetadata()
+
+    afterEach ->
+      # Remove tags from document head
+      for _, $elements of tags
+        $elements.remove()
 
     it 'should have a title, derived from highwire metadata if possible', ->
       assert.equal(metadata.title, 'Foo')
