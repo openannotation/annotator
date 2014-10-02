@@ -22,10 +22,10 @@ Annotator
 Annotator is a JavaScript library for building annotation systems on the web. It
 provides a set of tools to annotate text (and other content) in webpages, and to
 save those annotations to a remote storage system. For a simple demonstration,
-visit the demo_ or download a tagged release of Annotator from `the releases
-page`_ and open ``demo.html``.
+visit the `Annotator home page`_ or download a tagged release of Annotator from
+`the releases page`_ and open ``demo.html``.
 
-.. _demo: http://annotatorjs.org/demo
+.. _Annotator home page: http://annotatorjs.org/
 .. _the releases page: https://github.com/openannotation/annotator/releases
 
 Annotator aims to provide a sensible default configuration which allows for
