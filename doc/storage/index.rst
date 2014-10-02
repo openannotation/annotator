@@ -9,7 +9,7 @@ Storage
 Some kind of storage is needed to save your annotations after you leave
 a web page.
 
-To do this you can use the :doc:`storage/http` and a remote JSON API. This
+To do this you can use the :doc:`http` and a remote JSON API. This
 page describes the API expected by the Store plugin, and implemented by
 the `reference backend <https://github.com/okfn/annotator-store>`__. It
 is this backend that runs the `AnnotateIt <http://annotateit.org>`__ web
