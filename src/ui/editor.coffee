@@ -262,21 +262,21 @@ class Editor extends Widget
   #
   # Returns nothing
   _onFormSubmit: (event) ->
-    Util.preventEventDefault event
+    event?.preventDefault?()
     this.submit()
 
   # Event callback: called when a user clicks the editor's save button.
   #
   # Returns nothing
   _onSaveClick: (event) ->
-    Util.preventEventDefault event
+    event?.preventDefault?()
     this.submit()
 
   # Event callback: called when a user clicks the editor's cancel button.
   #
   # Returns nothing
   _onCancelClick: (event) ->
-    Util.preventEventDefault event
+    event?.preventDefault?()
     this.cancel()
 
   # Event callback: called when a user mouses over the editor's cancel button.

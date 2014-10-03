@@ -90,15 +90,6 @@ mousePosition = (event) ->
   }
 
 
-# preventEventDefault checks to see if an event parameter is provided and
-# contains the prevent default method. If it does it calls it.
-#
-# This is useful for methods that can be optionally used as callbacks
-# where the existance of the parameter must be checked before calling.
-preventEventDefault = (event) ->
-  event?.preventDefault?()
-
-
 # uuid returns an integer that is unique within the current session.
 uuid = (-> counter = -1; -> counter += 1)()
 
@@ -112,5 +103,4 @@ exports.flatten = flatten
 exports.getGlobal = getGlobal
 exports.maxZIndex = maxZIndex
 exports.mousePosition = mousePosition
-exports.preventEventDefault = preventEventDefault
 exports.uuid = uuid
