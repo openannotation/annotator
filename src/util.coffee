@@ -19,21 +19,6 @@ isArray = (o) ->
   return Object.prototype.toString.call(o) == '[object Array]'
 
 
-# contains returns a boolean indicating whether node A is an ancestor of node B.
-#
-# This function purposefully ignores the native browser function for this,
-# because it acts weird in PhantomJS (See
-# https://github.com/ariya/phantomjs/issues/11479).
-#
-# Returns a boolean
-contains = (parent, child) ->
-  node = child
-  while node?
-    if node is parent then return true
-    node = node.parentNode
-  return false
-
-
 # escape sanitizes special characters in text that could be interpreted as HTML.
 escape = (html) ->
   html
@@ -97,7 +82,6 @@ uuid = (-> counter = -1; -> counter += 1)()
 exports.$ = $
 exports.Promise = Promise
 exports.TranslationString = gettext
-exports.contains = contains
 exports.escape = escape
 exports.flatten = flatten
 exports.getGlobal = getGlobal

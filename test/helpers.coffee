@@ -2,6 +2,21 @@ xpath = require('xpath-range').xpath
 Util = require('../src/util')
 $ = Util.$
 
+# contains returns a boolean indicating whether node A is an ancestor of node B.
+#
+# This function purposefully ignores the native browser function for this,
+# because it acts weird in PhantomJS (See
+# https://github.com/ariya/phantomjs/issues/11479).
+#
+# Returns a boolean
+contains = (parent, child) ->
+  node = child
+  while node?
+    if node is parent then return true
+    node = node.parentNode
+  return false
+
+
 class MockSelection
   rangeCount: 0
   isCollapsed: false
@@ -19,7 +34,7 @@ class MockSelection
     @description    = data[5]
 
     @commonAncestor = @startContainer
-    while not Util.contains(@commonAncestor, @endContainer)
+    while not contains(@commonAncestor, @endContainer)
       @commonAncestor = @commonAncestor.parentNode
     @commonAncestorXPath = xpath.fromNode($(@commonAncestor))[0]
 
