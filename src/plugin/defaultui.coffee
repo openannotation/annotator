@@ -12,7 +12,8 @@ trim = (s) ->
     return s.replace(/^[\s\xA0]+|[\s\xA0]+$/g, '')
 
 
-# Helper function to construct an annotation from a list of selected ranges
+# annotationFactory returns a function that can be used to construct an
+# annotation from a list of selected ranges.
 annotationFactory = (contextEl, ignoreSelector) ->
   (ranges) ->
     {
