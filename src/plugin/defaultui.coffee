@@ -2,17 +2,21 @@ UI = require('../ui')
 Util = require('../util')
 
 
-# Polyfill String#trim() for IE8
-if not String::trim?
-  String::trim = ->
-    this.replace(/^[\s\xA0]+|[\s\xA0]+$/g, '')
+# trim strips whitespace from either end of a string.
+#
+# This usually exists in native code, but not in IE8.
+trim = (s) ->
+  if String.prototype.trim?
+    return String.prototype.trim.call(s)
+  else
+    return s.replace(/^[\s\xA0]+|[\s\xA0]+$/g, '')
 
 
 # Helper function to construct an annotation from a list of selected ranges
 annotationFactory = (contextEl, ignoreSelector) ->
   (ranges) ->
     {
-      quote: (r.text().trim() for r in ranges).join(' / ')
+      quote: (trim(r.text()) for r in ranges).join(' / ')
       ranges: (r.serialize(contextEl, ignoreSelector) for r in ranges)
     }
 
