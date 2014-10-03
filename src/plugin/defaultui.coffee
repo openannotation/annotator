@@ -17,6 +17,18 @@ annotationFactory = (contextEl, ignoreSelector) ->
     }
 
 
+# maxZIndex returns the maximum z-index of all elements in the provided set.
+maxZIndex = (elements) ->
+  all = for el in elements
+    $el = Util.$(el)
+    if $el.css('position') == 'static'
+      -1
+    else
+      # Use parseFloat since we may get scientific notation for large values.
+      parseFloat($el.css('z-index')) or -1
+  Math.max.apply(Math, all)
+
+
 # Helper function to inject CSS into the page that ensures Annotator elements
 # are displayed with the highest z-index.
 injectDynamicStyle = ->
@@ -26,7 +38,7 @@ injectDynamicStyle = ->
   sel = '*' + (":not(.annotator-#{x})" for x in notclasses).join('')
 
   # use the maximum z-index in the page
-  max = Util.maxZIndex(Util.$(document.body).find(sel))
+  max = maxZIndex(Util.$(document.body).find(sel).get())
 
   # but don't go smaller than 1010, because this isn't bulletproof --
   # dynamic elements in the page (notifications, dialogs, etc.) may well

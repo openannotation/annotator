@@ -53,17 +53,6 @@ if Gettext?
 getGlobal = -> (-> this)()
 
 
-# Return the maximum z-index of any element in $elements (a jQuery collection).
-maxZIndex = ($elements) ->
-  all = for el in $elements
-    if $(el).css('position') == 'static'
-      -1
-    else
-      # Use parseFloat since we may get scientific notation for large values.
-      parseFloat($(el).css('z-index')) or -1
-  Math.max.apply(Math, all)
-
-
 # Returns the absolute position of the mouse relative to the top-left rendered
 # corner of the page (taking into account padding/margin/border on the body
 # element as necessary).
@@ -85,6 +74,5 @@ exports.TranslationString = gettext
 exports.escape = escape
 exports.flatten = flatten
 exports.getGlobal = getGlobal
-exports.maxZIndex = maxZIndex
 exports.mousePosition = mousePosition
 exports.uuid = uuid
