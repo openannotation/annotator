@@ -5,7 +5,7 @@ var Core = require('./core'),
     Storage = require('./storage.coffee'),
     Util = require('./util');
 
-var defaultUI = require('./plugin/defaultui.coffee').DefaultUI;
+var defaultUI = require('./plugin/defaultui').DefaultUI;
 
 // Fill in any missing browser functionality...
 var g = Util.getGlobal();
