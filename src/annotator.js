@@ -5,13 +5,13 @@ var Core = require('./core'),
     Storage = require('./storage'),
     Util = require('./util');
 
-var DefaultUI = require('./plugin/defaultui').DefaultUI;
-
-// Store a reference to the current Annotator object.
-var _Annotator = this.Annotator;
+var defaultUI = require('./plugin/defaultui').DefaultUI;
 
 // Fill in any missing browser functionality...
 var g = Util.getGlobal();
+
+// Store a reference to the current Annotator object.
+var _Annotator = g.Annotator;
 
 // If wicked-good-xpath is available, install it. This will not overwrite any
 // native XPath functionality.
@@ -76,7 +76,7 @@ var Annotator = Core.AnnotatorCore.extend({
 
         this.setNotification(Notification.Banner);
         this.setStorage(Storage.NullStorage);
-        this.addPlugin(DefaultUI(element, options));
+        this.addPlugin(defaultUI(element, options));
     },
 
     // Public: Destroy the current Annotator instance, unbinding all events and
