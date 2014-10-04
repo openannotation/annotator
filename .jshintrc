@@ -1,0 +1,12 @@
+{
+    "es3": true,
+    "freeze": true,
+    "latedef": "nofunc",
+    "maxcomplexity": 8,
+    "node": true,
+    "strict": true,
+    "undef": true,
+    "unused": true,
+    "predef": ["-Promise"]
+}
+

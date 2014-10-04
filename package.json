@@ -40,7 +40,8 @@
   },
   "scripts": {
     "start": "./tools/serve",
-    "test": "./tools/lint && ./tools/test"
+    "test": "./tools/test",
+    "lint": "jshint src && coffeelint src && jscs src"
   },
   "browser": "./annotator.js",
   "testling": {
