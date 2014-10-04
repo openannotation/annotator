@@ -1,4 +1,4 @@
-Widget = require('./widget').Widget
+Widget = require('./widget.coffee').Widget
 Util = require('../util')
 
 $ = Util.$

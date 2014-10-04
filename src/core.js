@@ -2,7 +2,7 @@
 
 var extend = require('backbone-extend-standalone');
 
-var Storage = require('./storage'),
+var Storage = require('./storage.coffee'),
     Promise = require('./util').Promise;
 
 // AnnotatorCore is the coordination point for all annotation functionality. On

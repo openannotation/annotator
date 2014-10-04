@@ -1,4 +1,4 @@
-UI = require('../ui')
+UI = require('../ui/index.coffee')
 Util = require('../util')
 
 

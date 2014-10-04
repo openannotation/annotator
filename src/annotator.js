@@ -1,11 +1,11 @@
 "use strict";
 
 var Core = require('./core'),
-    Notification = require('./notification'),
-    Storage = require('./storage'),
+    Notification = require('./notification.coffee'),
+    Storage = require('./storage.coffee'),
     Util = require('./util');
 
-var defaultUI = require('./plugin/defaultui').DefaultUI;
+var defaultUI = require('./plugin/defaultui.coffee').DefaultUI;
 
 // Fill in any missing browser functionality...
 var g = Util.getGlobal();
@@ -101,7 +101,7 @@ Annotator.Plugin = {};
 Annotator.Core = Core;
 Annotator.Notification = Notification;
 Annotator.Storage = Storage;
-Annotator.UI = require('./ui');
+Annotator.UI = require('./ui/index.coffee');
 Annotator.Util = Util;
 
 // Expose a global instance registry
