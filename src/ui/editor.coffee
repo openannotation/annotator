@@ -8,6 +8,10 @@ Promise = Util.Promise
 NS = "annotator-editor"
 
 
+# uuid returns an integer that is unique within the current session.
+uuid = (-> counter = -1; -> counter += 1)()
+
+
 # Public: Creates an element for editing annotations.
 class Editor extends Widget
 
@@ -210,7 +214,7 @@ class Editor extends Widget
   # Returns the created <li> Element.
   addField: (options) ->
     field = $.extend({
-      id: 'annotator-field-' + Util.uuid()
+      id: 'annotator-field-' + uuid()
       type: 'input'
       label: ''
       load: ->

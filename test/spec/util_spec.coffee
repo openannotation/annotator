@@ -14,13 +14,3 @@ describe 'Util.escapeHtml()', ->
 
   it "escapes entity special characters strictly", ->
     assert.equal(Util.escapeHtml('&amp;'), '&amp;amp;')
-
-describe 'Util.uuid()', ->
-  it "should return a unique id on each call", ->
-    counter = 100
-    results = []
-
-    while counter--
-      current = Util.uuid()
-      assert.equal(results.indexOf(current), -1)
-      results.push current

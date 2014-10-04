@@ -49,14 +49,9 @@ mousePosition = (event) ->
   }
 
 
-# uuid returns an integer that is unique within the current session.
-uuid = (-> counter = -1; -> counter += 1)()
-
-
 exports.$ = $
 exports.Promise = Promise
 exports.TranslationString = gettext
 exports.escapeHtml = escapeHtml
 exports.getGlobal = getGlobal
 exports.mousePosition = mousePosition
-exports.uuid = uuid
