@@ -8,17 +8,6 @@ unless JSON and JSON.parse and JSON.stringify
                          included lib/vendor/json2.js?"))
 
 
-# isArray returns a boolean indicating whether the passed object is an Array.
-#
-# NB: This is tricky to get right. See the following for details:
-#
-#   http://perfectionkills.com/instanceof-considered-harmful-or-how-to-write-a-robust-isarray/
-#
-# Returns a boolean.
-isArray = (o) ->
-  return Object.prototype.toString.call(o) == '[object Array]'
-
-
 # escape sanitizes special characters in text that could be interpreted as HTML.
 escape = (html) ->
   html
@@ -26,18 +15,6 @@ escape = (html) ->
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
-
-
-# flatten turns a nested array structure into a single flat array.
-#
-# Returns an array.
-flatten = (array) ->
-  flat = []
-
-  for el in array
-    flat = flat.concat(if isArray(el) then flatten(el) else el)
-
-  return flat
 
 
 # I18N
@@ -72,7 +49,6 @@ exports.$ = $
 exports.Promise = Promise
 exports.TranslationString = gettext
 exports.escape = escape
-exports.flatten = flatten
 exports.getGlobal = getGlobal
 exports.mousePosition = mousePosition
 exports.uuid = uuid
