@@ -8,13 +8,21 @@ unless JSON and JSON.parse and JSON.stringify
                          included lib/vendor/json2.js?"))
 
 
-# escapeHtml sanitizes special characters in text that could be interpreted as HTML.
-escapeHtml = (html) ->
-  html
-    .replace(/&(?!\w+;)/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
+ESCAPE_MAP = {
+  "&": "&amp;"
+  "<": "&lt;"
+  ">": "&gt;"
+  '"': "&quot;"
+  "'": "&#39;"
+  "/": "&#47;"
+}
+
+# escapeHtml sanitizes special characters in text that could be interpreted as
+# HTML.
+escapeHtml = (string) ->
+  return String(string).replace(/[&<>"'\/]/g, (c) ->
+    return ESCAPE_MAP[c]
+  )
 
 
 # I18N
