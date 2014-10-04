@@ -96,7 +96,7 @@ class Viewer extends Widget
       this.addField({
         load: (field, annotation) ->
           if annotation.text
-            $(field).html(Util.escape(annotation.text))
+            $(field).html(Util.escapeHtml(annotation.text))
           else
             $(field).html("<i>#{_t 'No Comment'}</i>")
       })

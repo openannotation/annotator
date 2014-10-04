@@ -8,8 +8,8 @@ unless JSON and JSON.parse and JSON.stringify
                          included lib/vendor/json2.js?"))
 
 
-# escape sanitizes special characters in text that could be interpreted as HTML.
-escape = (html) ->
+# escapeHtml sanitizes special characters in text that could be interpreted as HTML.
+escapeHtml = (html) ->
   html
     .replace(/&(?!\w+;)/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -48,7 +48,7 @@ uuid = (-> counter = -1; -> counter += 1)()
 exports.$ = $
 exports.Promise = Promise
 exports.TranslationString = gettext
-exports.escape = escape
+exports.escapeHtml = escapeHtml
 exports.getGlobal = getGlobal
 exports.mousePosition = mousePosition
 exports.uuid = uuid

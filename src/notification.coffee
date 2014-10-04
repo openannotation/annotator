@@ -32,7 +32,7 @@ class BannerNotification
     $(@element)
       .addClass(@classes.show)
       .addClass(@classes[@severity])
-      .html(Util.escape(message || ""))
+      .html(Util.escapeHtml(message || ""))
       .appendTo(Util.getGlobal().document.body)
 
     $(@element)

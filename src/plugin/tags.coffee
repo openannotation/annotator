@@ -140,7 +140,7 @@ class Tags
       field.addClass('annotator-tags').html(->
         string = $.map(annotation.tags,(tag) ->
           '<span class="annotator-tag">' +
-          Annotator.Util.escape(tag) +
+          Annotator.Util.escapeHtml(tag) +
           '</span>'
         ).join(' ')
       )

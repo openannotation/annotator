@@ -2,9 +2,9 @@ h = require('helpers')
 Util = require('../../src/util')
 $ = Util.$
 
-describe 'Util.escape()', ->
+describe 'Util.escapeHtml()', ->
   it "should escape any HTML special characters into entities", ->
-    assert.equal(Util.escape('<>"&'), '&lt;&gt;&quot;&amp;')
+    assert.equal(Util.escapeHtml('<>"&'), '&lt;&gt;&quot;&amp;')
 
 describe 'Util.uuid()', ->
   it "should return a unique id on each call", ->

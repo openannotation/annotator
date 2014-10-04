@@ -310,7 +310,7 @@ class Permissions extends Annotator.Plugin
 
     username = @options.userString annotation.user
     if annotation.user and username and typeof username == 'string'
-      user = Annotator.Util.escape(@options.userString(annotation.user))
+      user = Annotator.Util.escapeHtml(@options.userString(annotation.user))
       field.html(user).addClass('annotator-user')
     else
       field.remove()

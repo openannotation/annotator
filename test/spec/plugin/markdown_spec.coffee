@@ -50,12 +50,12 @@ describe 'Markdown plugin', ->
       field = $('<div />')[0]
       annotation = {text: input}
       sinon.stub(plugin, 'convert').returns(output)
-      sinon.stub(Annotator.Util, 'escape').returns(input)
+      sinon.stub(Annotator.Util, 'escapeHtml').returns(input)
 
       plugin.updateTextField(field, annotation)
 
     afterEach ->
-      Annotator.Util.escape.restore()
+      Annotator.Util.escapeHtml.restore()
 
     it 'should process the annotation text as Markdown', ->
       assert.isTrue(plugin.convert.calledWith(input))
@@ -69,7 +69,7 @@ describe 'Markdown plugin', ->
       assert.equal($(field).text(), $(output).text())
 
     it "should escape any existing HTML to prevent XSS", ->
-      assert.isTrue(Annotator.Util.escape.calledWith(input))
+      assert.isTrue(Annotator.Util.escapeHtml.calledWith(input))
 
   describe "convert", ->
     it "should convert the provided text into markdown", ->
