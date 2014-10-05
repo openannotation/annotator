@@ -1,4 +1,4 @@
-###
+/*
 ** Annotator {{VERSION}}
 ** https://github.com/okfn/annotator/
 **
@@ -7,4 +7,4 @@
 ** https://github.com/okfn/annotator/blob/master/LICENSE
 **
 ** Built at: {{DATE}}
-###
+*/
