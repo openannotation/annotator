@@ -1,5 +1,5 @@
 exports.Adder = require('./adder.coffee').Adder
-exports.Editor = require('./editor.coffee').Editor
+exports.Editor = require('./editor').Editor
 exports.Filter = require('./filter.coffee').Filter
 exports.Highlighter = require('./highlighter.coffee').Highlighter
 exports.TextSelector = require('./textselector.coffee').TextSelector
