@@ -1,7 +1,7 @@
 "use strict";
 
 var Core = require('./core'),
-    Notification = require('./notification.coffee'),
+    Notification = require('./notification'),
     Storage = require('./storage.coffee'),
     Util = require('./util');
 
