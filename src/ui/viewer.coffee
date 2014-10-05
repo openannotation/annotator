@@ -11,11 +11,11 @@ NS = 'annotator-viewer'
 class Viewer extends Widget
 
   # Classes for toggling annotator state.
-  classes:
+  @classes:
     showControls: 'annotator-visible'
 
   # HTML templates for @widget and @item properties.
-  template:
+  @template:
     """
     <div class="annotator-outer annotator-viewer annotator-hide">
       <ul class="annotator-widget annotator-listing"></ul>
@@ -40,7 +40,7 @@ class Viewer extends Widget
     """
 
   # Configuration options
-  options:
+  @options:
     # Add the default field(s) to the viewer.
     defaultFields: true
 

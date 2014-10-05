@@ -10,7 +10,7 @@ NS = 'annotator-adder'
 # Adder shows and hides an annotation adder button that can be clicked on to
 # create an annotation.
 class Adder extends Widget
-  template:
+  @template:
     """
     <div class="annotator-adder annotator-hide">
       <button type="button">#{_t('Annotate')}</button>
@@ -18,7 +18,7 @@ class Adder extends Widget
     """
 
   # Configuration options
-  options:
+  @options:
     onCreate: null # Callback, called when the user clicks the adder when an
                    # annotation is loaded.
 

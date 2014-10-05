@@ -16,12 +16,12 @@ uuid = (-> counter = -1; -> counter += 1)()
 class Editor extends Widget
 
   # Classes to toggle state.
-  classes:
+  @classes:
     hide: 'annotator-hide'
     focus: 'annotator-focus'
 
   # HTML template for @element.
-  template:
+  @template:
     """
     <div class="annotator-outer annotator-editor annotator-hide">
       <form class="annotator-widget">
@@ -36,7 +36,7 @@ class Editor extends Widget
     """
 
   # Configuration options
-  options:
+  @options:
     defaultFields: true # Add the default field(s) to the editor.
 
   # Public: Creates an instance of the Editor object.
