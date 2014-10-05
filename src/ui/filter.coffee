@@ -1,359 +1,451 @@
-Util = require('../util')
+"use strict";
 
-$ = Util.$
-_t = Util.TranslationString
+var Util = require('../util');
 
-NS = 'annotator-filter'
+var $ = Util.$,
+    _t = Util.TranslationString;
+
+var NS = 'annotator-filter';
 
 
-class Filter
-  # Common classes used to change plugin state.
-  classes:
-    active: 'annotator-filter-active'
-    hl:
-      hide: 'annotator-hl-filtered'
-      active: 'annotator-hl-active'
+// Public: Creates a new instance of the Filter.
+//
+// options - An Object literal of options.
+//
+// Returns a new instance of the Filter plugin.
+function Filter(options) {
+    this.options = $.extend(true, {}, Filter.options, options);
+    this.classes = $.extend(true, {}, Filter.classes);
+    this.element = $(Filter.html.element).appendTo(this.options.appendTo);
 
-  # HTML templates for the plugin UI.
-  html:
-    element: """
-      <div class="annotator-filter">
-        <strong>#{_t('Navigate:')}</strong>
-        <span class="annotator-filter-navigation">
-          <button type="button"
-                  class="annotator-filter-previous">#{_t('Previous')}</button>
-          <button type="button"
-                  class="annotator-filter-next">#{_t('Next')}</button>
-        </span>
-        <strong>#{_t('Filter by:')}</strong>
-      </div>
-      """
-    filter: """
-      <span class="annotator-filter-property">
-        <label></label>
-        <input/>
-        <button type="button"
-                class="annotator-filter-clear">#{_t('Clear')}</button>
-      </span>
-      """
+    this.filter  = $(Filter.html.filter);
+    this.filters = [];
+    this.current  = 0;
 
-  # Default options for the plugin.
-  options:
-    # A CSS selector or Element to append the plugin toolbar to.
-    appendTo: 'body'
+    for (var i = 0, len = this.options.filters; i < len; i++) {
+        var filter = this.options.filters[i];
+        this.addFilter(filter);
+    }
 
-    # A CSS selector or Element to find and filter highlights in.
-    filterElement: 'body'
+    this.updateHighlights();
 
-    # An array of filters can be provided on initialisation.
-    filters: []
-
-    # Adds a default filter on annotations.
-    addAnnotationFilter: true
-
-    # Public: Determines if the property is contained within the provided
-    # annotation property. Default is to split the string on spaces and only
-    # return true if all keywords are contained in the string. This method
-    # can be overridden by the user when initialising the plugin.
-    #
-    # string   - An input String from the fitler.
-    # property - The annotation propery to query.
-    #
-    # Examples
-    #
-    #   plugin.option.getKeywords('hello', 'hello world how are you?')
-    #   # => Returns true
-    #
-    #   plugin.option.getKeywords('hello bill', 'hello world how are you?')
-    #   # => Returns false
-    #
-    # Returns an Array of keyword Strings.
-    isFiltered: (input, property) ->
-      return false unless input and property
-
-      for keyword in (input.split /\s+/)
-        return false if property.indexOf(keyword) == -1
-
-      return true
-
-  # Public: Creates a new instance of the Filter.
-  #
-  # options - An Object literal of options.
-  #
-  # Returns a new instance of the Filter plugin.
-  constructor: (options) ->
-    @options = $.extend(true, {}, @options, options)
-    @element = $(@html.element).appendTo(@options.appendTo)
-
-    @filter  = $(@html.filter)
-    @filters = []
-    @current  = 0
-
-    for filter in @options.filters
-      this.addFilter(filter)
-
-    this.updateHighlights()
-
-    filterInput = '.annotator-filter-property input'
-    @element
-      .on("focus.#{NS}", filterInput, this._onFilterFocus)
-      .on("blur.#{NS}", filterInput, this._onFilterBlur)
-      .on("keyup.#{NS}", filterInput, this._onFilterKeyup)
-      .on("click.#{NS}", '.annotator-filter-previous', this._onPreviousClick)
-      .on("click.#{NS}", '.annotator-filter-next', this._onNextClick)
-      .on("click.#{NS}", '.annotator-filter-clear', this._onClearClick)
-
-    this._insertSpacer()
-
-    if @options.addAnnotationFilter == true
-      this.addFilter {label: _t('Annotation'), property: 'text'}
-
-  # Public: remove the filter plugin instance and unbind events.
-  #
-  # Returns nothing.
-  destroy: ->
-    html = $('html')
-    currentMargin = parseInt(html.css('padding-top'), 10) || 0
-    html.css('padding-top', currentMargin - @element.outerHeight())
-    @element.off(".#{NS}")
-    @element.remove()
-
-  # Adds margin to the current document to ensure that the annotation toolbar
-  # doesn't cover the page when not scrolled.
-  #
-  # Returns itself
-  _insertSpacer: ->
-    html = $('html')
-    currentMargin = parseInt(html.css('padding-top'), 10) || 0
-    html.css('padding-top', currentMargin + @element.outerHeight())
-    this
-
-  # Public: Adds a filter to the toolbar. The filter must have both a label
-  # and a property of an annotation object to filter on.
-  #
-  # options - An Object literal containing the filters options.
-  #           label      - A public facing String to represent the filter.
-  #           property   - An annotation property String to filter on.
-  #           isFiltered - A callback Function that recieves the field input
-  #                        value and the annotation property value. See
-  #                        @options.isFiltered() for details.
-  #
-  # Examples
-  #
-  #   # Set up a filter to filter on the annotation.user property.
-  #   filter.addFilter({
-  #     label: User,
-  #     property: 'user'
-  #   })
-  #
-  # Returns itself to allow chaining.
-  addFilter: (options) ->
-    filter = $.extend({
-      label: ''
-      property: ''
-      isFiltered: @options.isFiltered
-    }, options)
-
-    # Skip if a filter for this property has been loaded.
-    unless (f for f in @filters when f.property == filter.property).length
-      filter.id = 'annotator-filter-' + filter.property
-      filter.annotations = []
-      filter.element = @filter.clone().appendTo(@element)
-      filter.element.find('label')
-        .html(filter.label)
-        .attr('for', filter.id)
-      filter.element.find('input')
-        .attr({
-          id: filter.id
-          placeholder: _t('Filter by ') + filter.label + '\u2026'
+    var filterInput = '.annotator-filter-property input',
+        self = this;
+    this.element
+        .on("focus." + NS, filterInput, function (e) {
+            self._onFilterFocus(e);
         })
-      filter.element.find('button').hide()
+        .on("blur." + NS, filterInput, function (e) {
+            self._onFilterBlur(e);
+        })
+        .on("keyup." + NS, filterInput, function (e) {
+            self._onFilterKeyup(e);
+        })
+        .on("click." + NS, '.annotator-filter-previous', function (e) {
+            self._onPreviousClick(e);
+        })
+        .on("click." + NS, '.annotator-filter-next', function (e) {
+            self._onNextClick(e);
+        })
+        .on("click." + NS, '.annotator-filter-clear', function (e) {
+            self._onClearClick(e);
+        });
 
-      # Add the filter to the elements data store.
-      filter.element.data 'filter', filter
+    this._insertSpacer();
 
-      @filters.push filter
+    if (this.options.addAnnotationFilter) {
+        this.addFilter({label: _t('Annotation'), property: 'text'});
+    }
+}
 
-    this
+// Public: remove the filter plugin instance and unbind events.
+//
+// Returns nothing.
+Filter.prototype.destroy = function () {
+    var html = $('html'),
+        currentMargin = parseInt(html.css('padding-top'), 10) || 0;
+    html.css('padding-top', currentMargin - this.element.outerHeight());
+    this.element.off("." + NS);
+    this.element.remove();
+};
 
-  # Public: Updates the filter.annotations property. Then updates the state
-  # of the elements in the DOM. Calls the filter.isFiltered() method to
-  # determine if the annotation should remain.
-  #
-  # filter - A filter Object from @filters
-  #
-  # Examples
-  #
-  #   filter.updateFilter(myFilter)
-  #
-  # Returns itself for chaining
-  updateFilter: (filter) ->
-    filter.annotations = []
+// Adds margin to the current document to ensure that the annotation toolbar
+// doesn't cover the page when not scrolled.
+//
+// Returns itself
+Filter.prototype._insertSpacer = function () {
+    var html = $('html'),
+        currentMargin = parseInt(html.css('padding-top'), 10) || 0;
+    html.css('padding-top', currentMargin + this.element.outerHeight());
+    return this;
+};
 
-    this.updateHighlights()
-    this.resetHighlights()
-    input = $.trim filter.element.find('input').val()
+// Public: Adds a filter to the toolbar. The filter must have both a label
+// and a property of an annotation object to filter on.
+//
+// options - An Object literal containing the filters options.
+//           label      - A public facing String to represent the filter.
+//           property   - An annotation property String to filter on.
+//           isFiltered - A callback Function that recieves the field input
+//                        value and the annotation property value. See
+//                        this.options.isFiltered() for details.
+//
+// Examples
+//
+//   # Set up a filter to filter on the annotation.user property.
+//   filter.addFilter({
+//     label: User,
+//     property: 'user'
+//   })
+//
+// Returns itself to allow chaining.
+Filter.prototype.addFilter = function (options) {
+    var filter = $.extend({
+        label: '',
+        property: '',
+        isFiltered: this.options.isFiltered
+    }, options);
 
-    if input
-      annotations = @highlights.map -> $(this).data('annotation')
+    // Skip if a filter for this property has been loaded.
+    var hasFilterForProp = false;
+    for (var i = 0, len = this.filters.length; i < len; i++) {
+        var f = this.filters[i];
+        if (f.property === filter.property) {
+            hasFilterForProp = true;
+            break;
+        }
+    }
+    if (!hasFilterForProp) {
+        filter.id = 'annotator-filter-' + filter.property;
+        filter.annotations = [];
+        filter.element = this.filter.clone().appendTo(this.element);
+        filter.element.find('label')
+            .html(filter.label)
+            .attr('for', filter.id);
+        filter.element.find('input')
+            .attr({
+                id: filter.id,
+                placeholder: _t('Filter by ') + filter.label + '\u2026'
+            });
+        filter.element.find('button').hide();
 
-      for annotation in $.makeArray(annotations)
-        property = annotation[filter.property]
-        if filter.isFiltered input, property
-          filter.annotations.push annotation
+        // Add the filter to the elements data store.
+        filter.element.data('filter', filter);
 
-      this.filterHighlights()
+        this.filters.push(filter);
+    }
 
-  # Public: Updates the @highlights property with the latest highlight
-  # elements in the DOM.
-  #
-  # Returns a jQuery collection of the highlight elements.
-  updateHighlights: =>
-    # Ignore any hidden highlights.
-    @highlights = $(@options.filterElement).find('.annotator-hl:visible')
-    @filtered   = @highlights.not(@classes.hl.hide)
+    return this;
+};
 
-  # Public: Runs through each of the filters and removes all highlights not
-  # currently in scope.
-  #
-  # Returns itself for chaining.
-  filterHighlights: ->
-    activeFilters = $.grep @filters, (filter) -> !!filter.annotations.length
+// Public: Updates the filter.annotations property. Then updates the state
+// of the elements in the DOM. Calls the filter.isFiltered() method to
+// determine if the annotation should remain.
+//
+// filter - A filter Object from this.filters
+//
+// Examples
+//
+//   filter.updateFilter(myFilter)
+//
+// Returns itself for chaining
+Filter.prototype.updateFilter = function (filter) {
+    filter.annotations = [];
 
-    filtered = activeFilters[0]?.annotations || []
-    if activeFilters.length > 1
-      # If there are more than one filter then only annotations matched in every
-      # filter should remain.
-      annotations = []
+    this.updateHighlights();
+    this.resetHighlights();
+    var input = $.trim(filter.element.find('input').val());
 
+    if (!input) {
+        return;
+    }
 
-      $.each activeFilters, ->
-        $.merge(annotations, this.annotations)
+    var annotations = this.highlights.map(function () {
+        return $(this).data('annotation');
+    });
+    annotations = $.makeArray(annotations);
 
-      uniques  = []
-      filtered = []
-      $.each annotations, ->
-        if $.inArray(this, uniques) == -1
-          uniques.push this
-        else
-          filtered.push this
+    for (var i = 0, len = annotations.length; i < len; i++) {
+        var annotation = annotations[i],
+            property = annotation[filter.property];
 
+        if (filter.isFiltered(input, property)) {
+            filter.annotations.push(annotation);
+        }
+    }
 
-    highlights = @highlights
-    for annotation, index in filtered
-      highlights = highlights.not(annotation._local.highlights)
+    this.filterHighlights();
+};
 
-    highlights.addClass(@classes.hl.hide)
+// Public: Updates the this.highlights property with the latest highlight
+// elements in the DOM.
+//
+// Returns a jQuery collection of the highlight elements.
+Filter.prototype.updateHighlights = function () {
+    // Ignore any hidden highlights.
+    this.highlights = $(this.options.filterElement)
+        .find('.annotator-hl:visible');
+    this.filtered = this.highlights.not(this.classes.hl.hide);
+};
 
-    @filtered = @highlights.not(@classes.hl.hide)
-    this
+// Public: Runs through each of the filters and removes all highlights not
+// currently in scope.
+//
+// Returns itself for chaining.
+Filter.prototype.filterHighlights = function () {
+    var activeFilters = $.grep(this.filters, function (filter) {
+        return Boolean(filter.annotations.length);
+    });
 
-  # Public: Removes hidden class from all annotations.
-  #
-  # Returns itself for chaining.
-  resetHighlights: ->
-    @highlights.removeClass(@classes.hl.hide)
-    @filtered = @highlights
-    this
+    var filtered = [];
+    if (activeFilters.length > 0) {
+        filtered = activeFilters[0].annotations;
+    }
+    if (activeFilters.length > 1) {
+        // If there are more than one filter then only annotations matched in
+        // every filter should remain.
+        var annotations = [];
 
-  # Updates the filter field on focus.
-  #
-  # event - A focus Event object.
-  #
-  # Returns nothing
-  _onFilterFocus: (event) =>
-    input = $(event.target)
-    input.parent().addClass(@classes.active)
-    input.next('button').show()
+        $.each(activeFilters, function () {
+            $.merge(annotations, this.annotations);
+        });
 
-  # Updates the filter field on blur.
-  #
-  # event - A blur Event object.
-  #
-  # Returns nothing.
-  _onFilterBlur: (event) =>
-    unless event.target.value
-      input = $(event.target)
-      input.parent().removeClass(@classes.active)
-      input.next('button').hide()
+        var uniques = [];
+        filtered = [];
+        $.each(annotations, function () {
+            if ($.inArray(this, uniques) === -1) {
+                uniques.push(this);
+            } else {
+                filtered.push(this);
+            }
+        });
+    }
 
-  # Updates the filter based on the id of the filter element.
-  #
-  # event - A keyup Event
-  #
-  # Returns nothing.
-  _onFilterKeyup: (event) =>
-    filter = $(event.target).parent().data('filter')
-    this.updateFilter filter if filter
+    var highlights = this.highlights;
+    for (var i = 0, len = filtered.length; i < len; i++) {
+        highlights = highlights.not(filtered[i]._local.highlights);
+    }
+    highlights.addClass(this.classes.hl.hide);
+    this.filtered = this.highlights.not(this.classes.hl.hide);
 
-  # Locates the next/previous highlighted element in @highlights from the
-  # current one or goes to the very first/last element respectively.
-  #
-  # previous - If true finds the previously highlighted element.
-  #
-  # Returns itself.
-  _findNextHighlight: (previous) ->
-    return this unless @highlights.length
+    return this;
+};
 
-    offset      = if previous then 0    else -1
-    resetOffset = if previous then -1   else 0
-    operator    = if previous then 'lt' else 'gt'
+// Public: Removes hidden class from all annotations.
+//
+// Returns itself for chaining.
+Filter.prototype.resetHighlights = function () {
+    this.highlights.removeClass(this.classes.hl.hide);
+    this.filtered = this.highlights;
+    return this;
+};
 
-    active  = @highlights.not('.' + @classes.hl.hide)
-    current = active.filter('.' + @classes.hl.active)
-    current = active.eq(offset) unless current.length
+// Updates the filter field on focus.
+//
+// event - A focus Event object.
+//
+// Returns nothing
+Filter.prototype._onFilterFocus = function (event) {
+    var input = $(event.target);
+    input.parent().addClass(this.classes.active);
+    input.next('button').show();
+};
 
-    annotation = current.data 'annotation'
+// Updates the filter field on blur.
+//
+// event - A blur Event object.
+//
+// Returns nothing.
+Filter.prototype._onFilterBlur = function (event) {
+    if (!event.target.value) {
+        var input = $(event.target);
+        input.parent().removeClass(this.classes.active);
+        input.next('button').hide();
+    }
+};
 
-    index = active.index current[0]
-    next  = active.filter(":#{operator}(#{index})")
-                  .not(annotation._local.highlights)
-                  .eq(resetOffset)
-    next  = active.eq(resetOffset) unless next.length
+// Updates the filter based on the id of the filter element.
+//
+// event - A keyup Event
+//
+// Returns nothing.
+Filter.prototype._onFilterKeyup = function (event) {
+    var filter = $(event.target).parent().data('filter');
+    if (filter) {
+        this.updateFilter(filter);
+    }
+};
 
-    this._scrollToHighlight next.data('annotation')._local.highlights
+// Locates the next/previous highlighted element in this.highlights from the
+// current one or goes to the very first/last element respectively.
+//
+// previous - If true finds the previously highlighted element.
+//
+// Returns itself.
+Filter.prototype._findNextHighlight = function (previous) {
+    if (this.highlights.length === 0) {
+        return this;
+    }
 
-  # Locates the next highlighted element in @highlights from the current one
-  # or goes to the very first element.
-  #
-  # event - A click Event.
-  #
-  # Returns nothing
-  _onNextClick: (event) =>
-    this._findNextHighlight()
+    var offset = -1,
+        resetOffset = 0,
+        operator = 'gt';
 
-  # Locates the previous highlighted element in @highlights from the current one
-  # or goes to the very last element.
-  #
-  # event - A click Event.
-  #
-  # Returns nothing
-  _onPreviousClick: (event) =>
-    this._findNextHighlight true
+    if (previous) {
+        offset = 0;
+        resetOffset = -1;
+        operator = 'lt';
+    }
 
-  # Scrolls to the highlight provided. An adds an active class to it.
-  #
-  # highlight - Either highlight Element or an Array of elements. This value
-  #             is usually retrieved from annotation._local.highlights.
-  #
-  # Returns nothing.
-  _scrollToHighlight: (highlight) ->
-    highlight = $(highlight)
+    var active = this.highlights.not('.' + this.classes.hl.hide),
+        current = active.filter('.' + this.classes.hl.active);
 
-    @highlights.removeClass(@classes.hl.active)
-    highlight.addClass(@classes.hl.active)
+    if (current.length === 0) {
+        current = active.eq(offset);
+    }
+
+    var annotation = current.data('annotation');
+
+    var index = active.index(current[0]),
+        next = active.filter(":" + operator + "(" + index + ")")
+            .not(annotation._local.highlights)
+            .eq(resetOffset);
+
+    if (next.length === 0) {
+        next = active.eq(resetOffset);
+    }
+
+    this._scrollToHighlight(next.data('annotation')._local.highlights);
+};
+
+// Locates the next highlighted element in this.highlights from the current one
+// or goes to the very first element.
+//
+// event - A click Event.
+//
+// Returns nothing
+Filter.prototype._onNextClick = function () {
+    this._findNextHighlight();
+};
+
+// Locates the previous highlighted element in this.highlights from the current
+// one or goes to the very last element.
+//
+// event - A click Event.
+//
+// Returns nothing
+Filter.prototype._onPreviousClick = function () {
+    this._findNextHighlight(true);
+};
+
+// Scrolls to the highlight provided. An adds an active class to it.
+//
+// highlight - Either highlight Element or an Array of elements. This value
+//             is usually retrieved from annotation._local.highlights.
+//
+// Returns nothing.
+Filter.prototype._scrollToHighlight = function (highlight) {
+    highlight = $(highlight);
+
+    this.highlights.removeClass(this.classes.hl.active);
+    highlight.addClass(this.classes.hl.active);
 
     $('html, body').animate({
-      scrollTop: highlight.offset().top - (@element.height() + 20)
-    }, 150)
+        scrollTop: highlight.offset().top - (this.element.height() + 20)
+    }, 150);
+};
 
-  # Clears the relevant input when the clear button is clicked.
-  #
-  # event - A click Event object.
-  #
-  # Returns nothing.
-  _onClearClick: (event) ->
-    $(event.target).prev('input').val('').keyup().blur()
+// Clears the relevant input when the clear button is clicked.
+//
+// event - A click Event object.
+//
+// Returns nothing.
+Filter.prototype._onClearClick = function (event) {
+    $(event.target).prev('input').val('').keyup().blur();
+};
+
+// Common classes used to change plugin state.
+Filter.classes = {
+    active: 'annotator-filter-active',
+    hl: {
+        hide: 'annotator-hl-filtered',
+        active: 'annotator-hl-active'
+    }
+};
+
+// HTML templates for the plugin UI.
+Filter.html = {
+    element: [
+        '<div class="annotator-filter">',
+        '  <strong>' + _t('Navigate:') + '</strong>',
+        '  <span class="annotator-filter-navigation">',
+        '    <button type="button"',
+        '            class="annotator-filter-previous">' +
+            _t('Previous') +
+            '</button>',
+        '    <button type="button"',
+        '            class="annotator-filter-next">' + _t('Next') + '</button>',
+        '  </span>',
+        '  <strong>' + _t('Filter by:') + '</strong>',
+        '</div>'
+    ].join('\n'),
+
+    filter: [
+        '<span class="annotator-filter-property">',
+        '  <label></label>',
+        '  <input/>',
+        '  <button type="button"',
+        '          class="annotator-filter-clear">' + _t('Clear') + '</button>',
+        '</span>'
+    ].join('\n')
+};
+
+// Default options for the plugin.
+Filter.options = {
+    // A CSS selector or Element to append the plugin toolbar to.
+    appendTo: 'body',
+
+    // A CSS selector or Element to find and filter highlights in.
+    filterElement: 'body',
+
+    // An array of filters can be provided on initialisation.
+    filters: [],
+
+    // Adds a default filter on annotations.
+    addAnnotationFilter: true,
+
+    // Public: Determines if the property is contained within the provided
+    // annotation property. Default is to split the string on spaces and only
+    // return true if all keywords are contained in the string. This method
+    // can be overridden by the user when initialising the plugin.
+    //
+    // string   - An input String from the fitler.
+    // property - The annotation propery to query.
+    //
+    // Examples
+    //
+    //   plugin.option.getKeywords('hello', 'hello world how are you?')
+    //   # => Returns true
+    //
+    //   plugin.option.getKeywords('hello bill', 'hello world how are you?')
+    //   # => Returns false
+    //
+    // Returns an Array of keyword Strings.
+    isFiltered: function (input, property) {
+        if (!(input && property)) {
+            return false;
+        }
+
+        var keywords = input.split(/\s+/);
+        for (var i = 0, len = keywords.length; i < len; i++) {
+            if (property.indexOf(keywords[i]) === -1) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+};
 
 
-exports.Filter = Filter
+exports.Filter = Filter;
