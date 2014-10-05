@@ -1,382 +1,482 @@
-Widget = require('./widget').Widget
-Util = require('../util')
+"use strict";
 
-$ = Util.$
-_t = Util.TranslationString
+var Widget = require('./widget').Widget,
+    Util = require('../util');
 
-NS = 'annotator-viewer'
+var $ = Util.$,
+    _t = Util.TranslationString;
+
+var NS = 'annotator-viewer';
 
 
-# Public: Creates an element for viewing annotations.
-class Viewer extends Widget
+// Private: simple parser for hypermedia link structure
+//
+// Examples:
+//
+//   links = [
+//     {
+//       rel: 'alternate',
+//       href: 'http://example.com/pages/14.json',
+//       type: 'application/json'
+//     },
+//     {
+//       rel: 'prev':
+//       href: 'http://example.com/pages/13'
+//     }
+//   ]
+//
+//   parseLinks(links, 'alternate')
+//   # => [{rel: 'alternate', href: 'http://...', ... }]
+//   parseLinks(links, 'alternate', {type: 'text/html'})
+//   # => []
+//
+function parseLinks(data, rel, cond) {
+    cond = $.extend({}, cond, {rel: rel});
 
-  # Classes for toggling annotator state.
-  @classes:
+    var results = [];
+    for (var i = 0, len = data.length; i < len; i++) {
+        var d = data[i],
+            match = true;
+
+        for (var k in cond) {
+            if (cond.hasOwnProperty(k) && d[k] !== cond[k]) {
+                match = false;
+                break;
+            }
+        }
+
+        if (match) {
+            results.push(d);
+        }
+    }
+
+    return results;
+}
+
+
+// Public: Creates an element for viewing annotations.
+var Viewer = Widget.extend({
+
+    // Public: Creates an instance of the Viewer object.
+    //
+    // options - An Object containing options.
+    //
+    // Examples
+    //
+    //   # Creates a new viewer, adds a custom field and displays an annotation.
+    //   viewer = new Viewer()
+    //   viewer.addField({
+    //     load: someLoadCallback
+    //   })
+    //   viewer.load(annotation)
+    //
+    // Returns a new Viewer instance.
+    constructor: function (options) {
+        Widget.call(this, options);
+
+        this.itemTemplate = Viewer.itemTemplate;
+        this.fields = [];
+        this.annotations = [];
+        this.hideTimer = null;
+        this.hideTimerDfd = null;
+        this.hideTimerActivity = null;
+        this.mouseDown = false;
+
+        if (this.options.defaultFields) {
+            this.addField({
+                load: function (field, annotation) {
+                    if (annotation.text) {
+                        $(field).html(Util.escapeHtml(annotation.text));
+                    } else {
+                        $(field).html("<i>" + _t('No Comment') + "</i>");
+                    }
+                }
+            });
+        }
+
+        var self = this;
+
+        if (this.options.autoViewHighlights) {
+            this.document = this.options.autoViewHighlights.ownerDocument;
+
+            $(this.options.autoViewHighlights)
+                .on("mouseover." + NS, '.annotator-hl', function (event) {
+                    self._onHighlightMouseover(event);
+                })
+                .on("mouseleave." + NS, '.annotator-hl', function () {
+                    self._startHideTimer();
+                });
+
+            $(this.document.body)
+                .on("mousedown." + NS, function (e) {
+                    if (e.which > 1) {
+                        this.mouseDown = true;
+                    }
+                })
+                .on("mouseup." + NS, function (e) {
+                    if (e.which > 1) {
+                        this.mouseDown = false;
+                    }
+                });
+        }
+
+        this.element
+            .on("click." + NS, '.annotator-edit', function (e) {
+                self._onEditClick(e);
+            })
+            .on("click." + NS, '.annotator-delete', function (e) {
+                self._onDeleteClick(e);
+            })
+            .on("mouseenter." + NS, function () {
+                self._clearHideTimer();
+            })
+            .on("mouseleave." + NS, function () {
+                self._startHideTimer();
+            });
+
+        this.render();
+    },
+
+    destroy: function () {
+        if (this.options.autoViewHighlights) {
+            $(this.options.autoViewHighlights).off("." + NS);
+            $(this.document.body).off("." + NS);
+        }
+        this.element.off("." + NS);
+        Widget.prototype.destroy.call(this);
+    },
+
+    // Public: Show the viewer.
+    //
+    // position - An Object specifying the position in which to show the editor
+    //            (optional).
+    //
+    // Examples
+    //
+    //   viewer.show()
+    //   viewer.hide()
+    //   viewer.show({top: '100px', left: '80px'})
+    //
+    // Returns nothing.
+    show: function (position) {
+        if (typeof position != 'undefined' && position !== null) {
+            this.element.css({
+                top: position.top,
+                left: position.left
+            });
+        }
+
+        var controls = this.element
+            .find('.annotator-controls')
+            .addClass(this.classes.showControls);
+
+        var self = this;
+        setTimeout(function () {
+            controls.removeClass(self.classes.showControls);
+        }, 500);
+
+        Widget.prototype.show.call(this);
+    },
+
+    // Public: Load annotations into the viewer and show it.
+    //
+    // annotation - An Array of annotations.
+    //
+    // Examples
+    //
+    //   viewer.load([annotation1, annotation2, annotation3])
+    //
+    // Returns nothing.
+    load: function (annotations, position) {
+        this.annotations = annotations || [];
+
+        var list = this.element.find('ul:first').empty();
+
+        for (var i = 0, len = this.annotations.length; i < len; i++) {
+            var annotation = this.annotations[i];
+            this._annotationItem(annotation)
+              .appendTo(list)
+              .data('annotation', annotation);
+        }
+
+        this.show(position);
+    },
+
+    // Private: create the list item for a single annotation
+    _annotationItem: function (annotation) {
+        var item = $(this.itemTemplate).clone();
+
+        var controls = item.find('.annotator-controls'),
+            link = controls.find('.annotator-link'),
+            edit = controls.find('.annotator-edit'),
+            del  = controls.find('.annotator-delete');
+
+        var links = parseLinks(
+            annotation.links || [],
+            'alternate',
+            {'type': 'text/html'}
+        );
+        var hasValidLink = (links.length > 0 &&
+                            typeof links[0].href != 'undefined' &&
+                            links[0].href !== null);
+
+        if (hasValidLink) {
+            link.attr('href', links[0].href);
+        } else {
+            link.remove();
+        }
+
+        var controller = {};
+        if (this.options.showEditButton) {
+            controller.showEdit = function () {
+                edit.removeAttr('disabled');
+            };
+            controller.hideEdit = function () {
+                edit.attr('disabled', 'disabled');
+            };
+        } else {
+            edit.remove();
+        }
+        if (this.options.showDeleteButton) {
+            controller.showDelete = function () {
+                del.removeAttr('disabled');
+            };
+            controller.hideDelete = function () {
+                del.attr('disabled', 'disabled');
+            };
+        } else {
+            del.remove();
+        }
+
+        for (var i = 0, len = this.fields.length; i < len; i++) {
+            var field = this.fields[i];
+            var element = $(field.element).clone().appendTo(item)[0];
+            field.load(element, annotation, controller);
+        }
+
+        return item;
+    },
+
+    // Public: Adds an addional field to an annotation view. A callback can be
+    // provided to update the view on load.
+    //
+    // options - An options Object. Options are as follows:
+    //           load - Callback Function called when the view is loaded with an
+    //                  annotation. Recieves a newly created clone of an item
+    //                  and the annotation to be displayed (it will be called
+    //                  once for each annotation being loaded).
+    //
+    // Examples
+    //
+    //   # Display a user name.
+    //   viewer.addField({
+    //     # This is called when the viewer is loaded.
+    //     load: (field, annotation) ->
+    //       field = $(field)
+    //
+    //       if annotation.user
+    //         field.text(annotation.user) # Display the user
+    //       else
+    //         field.remove()              # Do not display the field.
+    //   })
+    //
+    // Returns itself.
+    addField: function (options) {
+        var field = $.extend({
+            load: function () {}
+        }, options);
+
+        field.element = $('<div />')[0];
+        this.fields.push(field);
+        return this;
+    },
+
+    // Event callback: called when the edit button is clicked.
+    //
+    // event - An Event object.
+    //
+    // Returns nothing.
+    _onEditClick: function (event) {
+        var item = $(event.target)
+            .parents('.annotator-annotation')
+            .data('annotation');
+        this.hide();
+        if (typeof this.options.onEdit == 'function') {
+            this.options.onEdit(item);
+        }
+    },
+
+    // Event callback: called when the delete button is clicked.
+    //
+    // event - An Event object.
+    //
+    // Returns nothing.
+    _onDeleteClick: function (event) {
+        var item = $(event.target)
+            .parents('.annotator-annotation')
+            .data('annotation');
+        this.hide();
+        if (typeof this.options.onDelete == 'function') {
+            this.options.onDelete(item);
+        }
+    },
+
+    // Event callback: called when a user triggers `mouseover` on a highlight
+    // element.
+    //
+    // event - An Event object.
+    //
+    // Returns nothing.
+    _onHighlightMouseover: function (event) {
+        // If the mouse button is currently depressed, we're probably trying to
+        // make a selection, so we shouldn't show the viewer.
+        if (this.mouseDown) {
+            return;
+        }
+
+        var self = this;
+        this._startHideTimer(true)
+            .done(function () {
+                var annotations = $(event.target)
+                    .parents('.annotator-hl')
+                    .addBack()
+                    .map(function (_, elem) {
+                        return $(elem).data("annotation");
+                    })
+                    .toArray();
+
+                // Now show the viewer with the wanted annotations
+                var offset = self.element.parent().offset(),
+                    position = {
+                        top: event.pageY - offset.top,
+                        left: event.pageX - offset.left
+                    };
+                self.load(annotations, position);
+            });
+    },
+
+    // Starts the hide timer. This returns a promise that is resolved when the
+    // viewer has been hidden. If the viewer is already hidden, the promise will
+    // be resolved instantly.
+    //
+    // activity - A boolean indicating whether the need to hide is due to a user
+    //            actively indicating a desire to view another annotation (as
+    //            opposed to merely mousing off the current one). Default: false
+    //
+    // Returns a Promise.
+    _startHideTimer: function (activity) {
+        if (typeof activity == 'undefined' || activity === null) {
+            activity = false;
+        }
+
+        // If timer has already been set, use that one.
+        if (this.hideTimer) {
+            if (activity === false || this.hideTimerActivity === activity) {
+                return this.hideTimerDfd;
+            } else {
+                // The pending timeout is an inactivity timeout, so likely to be
+                // too slow. Clear the pending timeout and start a new (shorter)
+                // one!
+                this._clearHideTimer();
+            }
+        }
+
+        var timeout;
+        if (activity) {
+            timeout = this.options.activityDelay;
+        } else {
+            timeout = this.options.inactivityDelay;
+        }
+
+        this.hideTimerDfd = $.Deferred();
+
+        if (!this.isShown()) {
+            this.hideTimer = null;
+            this.hideTimerDfd.resolve();
+            this.hideTimerActivity = null;
+        } else {
+            var self = this;
+            this.hideTimer = setTimeout(function () {
+                self.hide();
+                self.hideTimerDfd.resolve();
+                self.hideTimer = null;
+            }, timeout);
+            this.hideTimerActivity = Boolean(activity);
+        }
+
+        return this.hideTimerDfd.promise();
+    },
+
+    // Clears the hide timer. Also rejects any promise returned by a previous
+    // call to _startHideTimer.
+    //
+    // Returns nothing.
+    _clearHideTimer: function () {
+        clearTimeout(this.hideTimer);
+        this.hideTimer = null;
+        this.hideTimerDfd.reject();
+        this.hideTimerActivity = null;
+    }
+});
+
+// Classes for toggling annotator state.
+Viewer.classes = {
     showControls: 'annotator-visible'
+};
 
-  # HTML templates for @widget and @item properties.
-  @template:
-    """
-    <div class="annotator-outer annotator-viewer annotator-hide">
-      <ul class="annotator-widget annotator-listing"></ul>
-    </div>
-    """
+// HTML templates for this.widget and this.item properties.
+Viewer.template = [
+    '<div class="annotator-outer annotator-viewer annotator-hide">',
+    '  <ul class="annotator-widget annotator-listing"></ul>',
+    '</div>'
+].join('\n');
 
-  itemTemplate:
-    """
-    <li class="annotator-annotation annotator-item">
-      <span class="annotator-controls">
-        <a href="#"
-           title="View as webpage"
-           class="annotator-link">View as webpage</a>
-        <button type="button"
-                title="Edit"
-                class="annotator-edit">Edit</button>
-        <button type="button"
-                title="Delete"
-                class="annotator-delete">Delete</button>
-      </span>
-    </li>
-    """
+Viewer.itemTemplate = [
+    '<li class="annotator-annotation annotator-item">',
+    '  <span class="annotator-controls">',
+    '    <a href="#"',
+    '       title="' + _t('View as webpage') + '"',
+    '       class="annotator-link">' + _t('View as webpage') + '</a>',
+    '    <button type="button"',
+    '            title="' + _t('Edit') + '"',
+    '            class="annotator-edit">' + _t('Edit') + '</button>',
+    '    <button type="button"',
+    '            title="' + _t('Delete') + '"',
+    '            class="annotator-delete">' + _t('Delete') + '</button>',
+    '  </span>',
+    '</li>'
+].join('\n');
 
-  # Configuration options
-  @options:
-    # Add the default field(s) to the viewer.
-    defaultFields: true
+// Configuration options
+Viewer.options = {
+    // Add the default field(s) to the viewer.
+    defaultFields: true,
 
-    # Time, in milliseconds, before the viewer is hidden when a user mouses off
-    # the viewer.
-    inactivityDelay: 500
+    // Time, in milliseconds, before the viewer is hidden when a user mouses off
+    // the viewer.
+    inactivityDelay: 500,
 
-    # Time, in milliseconds, before the viewer is updated when a user mouses
-    # over another annotation.
-    activityDelay: 100
+    // Time, in milliseconds, before the viewer is updated when a user mouses
+    // over another annotation.
+    activityDelay: 100,
 
-    # Show the viewer's "edit" button?
-    showEditButton: false
+    // Show the viewer's "edit" button?
+    showEditButton: false,
 
-    # Show the viewer's "delete" button?
-    showDeleteButton: false
+    // Show the viewer's "delete" button?
+    showDeleteButton: false,
 
-    # If set to a DOM Element, will set up the viewer to automatically display
-    # when the user hovers over Annotator highlights within that element.
-    autoViewHighlights: null
+    // If set to a DOM Element, will set up the viewer to automatically display
+    // when the user hovers over Annotator highlights within that element.
+    autoViewHighlights: null,
 
-    # Callback, called when the user clicks the edit button for an annotation.
-    onEdit: null
+    // Callback, called when the user clicks the edit button for an annotation.
+    onEdit: null,
 
-    # Callback, called when the user clicks the delete button for an annotation.
+    // Callback, called when the user clicks the delete button for an
+    // annotation.
     onDelete: null
-
-  # Public: Creates an instance of the Viewer object.
-  #
-  # options - An Object containing options.
-  #
-  # Examples
-  #
-  #   # Creates a new viewer, adds a custom field and displays an annotation.
-  #   viewer = new Viewer()
-  #   viewer.addField({
-  #     load: someLoadCallback
-  #   })
-  #   viewer.load(annotation)
-  #
-  # Returns a new Viewer instance.
-  constructor: (options) ->
-    super
-
-    @fields = []
-    @annotations = []
-    @hideTimer = null
-    @hideTimerDfd = null
-    @hideTimerActivity = null
-    @mouseDown = false
-
-    if @options.defaultFields
-      this.addField({
-        load: (field, annotation) ->
-          if annotation.text
-            $(field).html(Util.escapeHtml(annotation.text))
-          else
-            $(field).html("<i>#{_t 'No Comment'}</i>")
-      })
-
-    if @options.autoViewHighlights?
-      @document = @options.autoViewHighlights.ownerDocument
-
-      $(@options.autoViewHighlights)
-        .on("mouseover.#{NS}", '.annotator-hl', this._onHighlightMouseover)
-        .on("mouseleave.#{NS}", '.annotator-hl', => this._startHideTimer())
-
-      $(@document.body)
-        .on("mousedown.#{NS}", (e) =>
-          @mouseDown = true if e.which > 1
-          # Ensure that we don't return false, thus breaking other handlers.
-          return
-        )
-        .on("mouseup.#{NS}", (e) =>
-          @mouseDown = false if e.which > 1
-          # Ensure that we don't return false, thus breaking other handlers.
-          return
-        )
-
-    @element
-      .on("click.#{NS}", '.annotator-edit', (e) => this._onEditClick(e))
-      .on("click.#{NS}", '.annotator-delete', (e) => this._onDeleteClick(e))
-      .on("mouseenter.#{NS}", => this._clearHideTimer())
-      .on("mouseleave.#{NS}", => this._startHideTimer())
-
-    this.render()
-
-  destroy: ->
-    if @options.autoViewHighlights?
-      $(@options.autoViewHighlights).off(".#{NS}")
-      $(@document.body).off(".#{NS}")
-    @element.off(".#{NS}")
-    super
-
-  # Public: Show the viewer.
-  #
-  # position - An Object specifying the position in which to show the editor
-  #            (optional).
-  #
-  # Examples
-  #
-  #   viewer.show()
-  #   viewer.hide()
-  #   viewer.show({top: '100px', left: '80px'})
-  #
-  # Returns nothing.
-  show: (position = null) ->
-    if position?
-      @element.css({
-        top: position.top,
-        left: position.left
-      })
-
-    controls = @element
-      .find('.annotator-controls')
-      .addClass(@classes.showControls)
-    setTimeout((=> controls.removeClass(@classes.showControls)), 500)
-
-    super
-
-  # Public: Load annotations into the viewer and show it.
-  #
-  # annotation - An Array of annotations.
-  #
-  # Examples
-  #
-  #   viewer.load([annotation1, annotation2, annotation3])
-  #
-  # Returns nothing.
-  load: (annotations, position = null) =>
-    @annotations = annotations || []
-
-    list = @element.find('ul:first').empty()
-    for annotation in @annotations
-      item = $(@itemTemplate)
-      .clone()
-      .appendTo(list)
-      .data('annotation', annotation)
-
-      controls = item.find('.annotator-controls')
-
-      link = controls.find('.annotator-link')
-      edit = controls.find('.annotator-edit')
-      del  = controls.find('.annotator-delete')
-
-      links = new LinkParser(annotation.links or [])
-        .get('alternate', {'type': 'text/html'})
-      if links.length is 0 or not links[0].href?
-        link.remove()
-      else
-        link.attr('href', links[0].href)
-
-      controller = {}
-      if @options.showEditButton
-        controller.showEdit = -> edit.removeAttr('disabled')
-        controller.hideEdit = -> edit.attr('disabled', 'disabled')
-      else
-        edit.remove()
-      if @options.showDeleteButton
-        controller.showDelete = -> del.removeAttr('disabled')
-        controller.hideDelete = -> del.attr('disabled', 'disabled')
-      else
-        del.remove()
-
-      for field in @fields
-        element = $(field.element).clone().appendTo(item)[0]
-        field.load(element, annotation, controller)
-
-    this.show(position)
-
-  # Public: Adds an addional field to an annotation view. A callback can be
-  # provided to update the view on load.
-  #
-  # options - An options Object. Options are as follows:
-  #           load - Callback Function called when the view is loaded with an
-  #                  annotation. Recieves a newly created clone of an item and
-  #                  the annotation to be displayed (it will be called once
-  #                  for each annotation being loaded).
-  #
-  # Examples
-  #
-  #   # Display a user name.
-  #   viewer.addField({
-  #     # This is called when the viewer is loaded.
-  #     load: (field, annotation) ->
-  #       field = $(field)
-  #
-  #       if annotation.user
-  #         field.text(annotation.user) # Display the user
-  #       else
-  #         field.remove()              # Do not display the field.
-  #   })
-  #
-  # Returns itself.
-  addField: (options) ->
-    field = $.extend({
-      load: ->
-    }, options)
-
-    field.element = $('<div />')[0]
-    @fields.push(field)
-    this
-
-  # Event callback: called when the edit button is clicked.
-  #
-  # event - An Event object.
-  #
-  # Returns nothing.
-  _onEditClick: (event) ->
-    item = $(event.target).parents('.annotator-annotation').data('annotation')
-    this.hide()
-    if typeof @options.onEdit == 'function'
-      @options.onEdit(item)
-
-  # Event callback: called when the delete button is clicked.
-  #
-  # event - An Event object.
-  #
-  # Returns nothing.
-  _onDeleteClick: (event) ->
-    item = $(event.target).parents('.annotator-annotation').data('annotation')
-    this.hide()
-    if typeof @options.onDelete == 'function'
-      @options.onDelete(item)
-
-  # Event callback: called when a user triggers `mouseover` on a highlight
-  # element.
-  #
-  # event - An Event object.
-  #
-  # Returns nothing.
-  _onHighlightMouseover: (event) =>
-    # If the mouse button is currently depressed, we're probably trying to make
-    # a selection, so we shouldn't show the viewer.
-    if @mouseDown
-      return
-
-    this._startHideTimer(true)
-    .done =>
-      annotations = $(event.target)
-        .parents('.annotator-hl')
-        .addBack()
-        .map((idx, elem) -> $(elem).data("annotation"))
-        .toArray()
-
-      # Now show the viewer with the wanted annotations
-      offset = @element.parent().offset()
-      position = {
-        top: event.pageY - offset.top,
-        left: event.pageX - offset.left,
-      }
-      this.load(annotations, position)
-
-  # Starts the hide timer. This returns a promise that is resolved when the
-  # viewer has been hidden. If the viewer is already hidden, the promise will be
-  # resolved instantly.
-  #
-  # activity - A boolean indicating whether the need to hide is due to a user
-  #            actively indicating a desire to view another annotation (as
-  #            opposed to merely mousing off the current one). Default: false
-  #
-  # Returns a Promise.
-  _startHideTimer: (activity = false) =>
-    # If timer has already been set, use that one.
-    if @hideTimer
-      if activity == false or @hideTimerActivity == activity
-        return @hideTimerDfd
-      else
-        # The pending timeout is an inactivity timeout, so likely to be too
-        # slow. Clear the pending timeout and start a new (shorter) one!
-        this._clearHideTimer()
-
-    if activity
-      timeout = @options.activityDelay
-    else
-      timeout = @options.inactivityDelay
-
-    @hideTimerDfd = $.Deferred()
-
-    if not this.isShown()
-      @hideTimer = null
-      @hideTimerDfd.resolve()
-      @hideTimerActivity = null
-    else
-      @hideTimer = setTimeout((=>
-        this.hide()
-        @hideTimerDfd.resolve()
-        @hideTimer = null
-      ), timeout)
-      @hideTimerActivity = !!activity
-
-    return @hideTimerDfd.promise()
-
-  # Clears the hide timer. Also rejects any promise returned by a previous call
-  # to _startHideTimer.
-  #
-  # Returns nothing.
-  _clearHideTimer: =>
-    clearTimeout(@hideTimer)
-    @hideTimer = null
-    @hideTimerDfd.reject()
-    @hideTimerActivity = null
+};
 
 
-# Private: simple parser for hypermedia link structure
-#
-# Examples:
-#
-#   links = [
-#     {
-#       rel: 'alternate',
-#       href: 'http://example.com/pages/14.json',
-#       type: 'application/json'
-#     },
-#     {
-#       rel: 'prev':
-#       href: 'http://example.com/pages/13'
-#     }
-#   ]
-#
-#   lp = LinkParser(links)
-#   lp.get('alternate') # => [ { rel: 'alternate', href: 'http://...', ... } ]
-#   lp.get('alternate', {type: 'text/html'}) # => []
-#
-class LinkParser
-  constructor: (@data) ->
-
-  get: (rel, cond = {}) ->
-    cond = $.extend({}, cond, {rel: rel})
-    keys = (k for own k, v of cond)
-    for d in @data
-      match = keys.reduce ((m, k) -> m and (d[k] is cond[k])), true
-      if match
-        d
-      else
-        continue
-
-
-exports.Viewer = Viewer
+exports.Viewer = Viewer;
