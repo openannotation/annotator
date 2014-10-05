@@ -164,10 +164,10 @@ function DefaultUI(element) {
                 removeDynamicStyle();
             },
 
-            onAnnotationsLoaded: highlighter.drawAll,
-            onAnnotationCreated: highlighter.draw,
-            onAnnotationDeleted: highlighter.undraw,
-            onAnnotationUpdated: highlighter.redraw,
+            onAnnotationsLoaded: function (anns) { highlighter.drawAll(anns); },
+            onAnnotationCreated: function (ann) { highlighter.draw(ann); },
+            onAnnotationDeleted: function (ann) { highlighter.undraw(ann); },
+            onAnnotationUpdated: function (ann) { highlighter.redraw(ann); },
 
             onBeforeAnnotationCreated: function (annotation) {
                 // Editor#load returns a promise that is resolved if editing
