@@ -14,7 +14,7 @@ function Widget(options) {
     this.options = $.extend(
       {},
       Widget.options,
-      this.prototype.options,
+      this.constructor.options,
       options
     );
 }

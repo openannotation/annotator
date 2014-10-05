@@ -4,4 +4,4 @@ exports.Filter = require('./filter.coffee').Filter
 exports.Highlighter = require('./highlighter.coffee').Highlighter
 exports.TextSelector = require('./textselector.coffee').TextSelector
 exports.Viewer = require('./viewer.coffee').Viewer
-exports.Widget = require('./widget.coffee').Widget
+exports.Widget = require('./widget').Widget
