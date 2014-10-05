@@ -6,7 +6,7 @@ Util = require('../../../src/util')
 
 $ = Util.$
 
-describe 'UI.Editor', ->
+describe 'UI.Editor.Editor', ->
   plugin = null
 
   describe 'in default configuration', ->
@@ -299,7 +299,7 @@ describe 'UI.Editor', ->
       assert.isFalse(plugin.isShown())
 
 
-describe 'DragTracker', ->
+describe 'Editor.dragTracker', ->
   $handle = null
   callback = null
   clock = null
@@ -313,7 +313,7 @@ describe 'DragTracker', ->
     # Needs to be in a document.
     $handle.appendTo(h.fix())
 
-    dt = Editor.DragTracker($handle[0], callback)
+    dt = Editor.dragTracker($handle[0], callback)
 
   afterEach ->
     clock.restore()
@@ -388,7 +388,7 @@ describe 'DragTracker', ->
     assert.equal(callback.callCount, 2)
 
 
-describe 'Mover', ->
+describe 'Editor.mover', ->
   $element = null
   $handle = null
   m = null
@@ -404,7 +404,7 @@ describe 'Mover', ->
     # Needs to be responsive to setting top/left CSS properties
     $element.css({position: 'absolute'})
 
-    m = Editor.Mover($element[0], $handle[0])
+    m = Editor.mover($element[0], $handle[0])
 
   afterEach ->
     h.clearFixtures()
@@ -435,7 +435,7 @@ describe 'Mover', ->
     assert.equal(after.left, 123 + 456)
 
 
-describe 'Resizer', ->
+describe 'Editor.resizer', ->
   $element = null
   $handle = null
   options = null
@@ -454,7 +454,7 @@ describe 'Resizer', ->
       invertedY: sinon.stub().returns(false)
     }
 
-    r = Editor.Resizer($element[0], $handle[0], options)
+    r = Editor.resizer($element[0], $handle[0], options)
 
   afterEach ->
     h.clearFixtures()
