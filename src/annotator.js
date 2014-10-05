@@ -2,7 +2,7 @@
 
 var Core = require('./core'),
     Notification = require('./notification'),
-    Storage = require('./storage.coffee'),
+    Storage = require('./storage'),
     Util = require('./util');
 
 var defaultUI = require('./plugin/defaultui').DefaultUI;
