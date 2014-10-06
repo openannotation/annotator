@@ -21,6 +21,8 @@
     "mocha-phantomjs": "~3.3.2",
     "chai": "~1.7.2",
     "sinon": "~1.6.0",
+    "jscs": "~1.6.0",
+    "jshint": "~2.5.0",
     "jwt-simple": "~0.1.0",
     "iso8601": "~1.1.1",
     "connect": "~2.10.1",
@@ -41,7 +43,8 @@
   "scripts": {
     "start": "./tools/serve",
     "test": "./tools/test",
-    "lint": "jshint src && coffeelint src && jscs src"
+    "lint": "jshint src && coffeelint src && jscs src",
+    "travis": "jshint src && coffeelint src && jscs src && ./tools/test"
   },
   "browser": "./annotator.js",
   "testling": {
