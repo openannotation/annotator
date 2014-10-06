@@ -1,4 +1,4 @@
-exports.Adder = require('./adder.coffee').Adder
+exports.Adder = require('./adder').Adder
 exports.Editor = require('./editor').Editor
 exports.Filter = require('./filter').Filter
 exports.Highlighter = require('./highlighter').Highlighter
