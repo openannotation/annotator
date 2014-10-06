@@ -97,6 +97,7 @@ TextSelector.prototype.captureDocumentSelection = function () {
         selection.addRange(drange);
     }
 
+
     return ranges;
 };
 
