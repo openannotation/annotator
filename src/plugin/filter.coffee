@@ -1,20 +1,32 @@
-Annotator = require('annotator')
+"use strict";
 
-# Filter is a plugin that uses the Annotator.UI.Filter component to display a
-# filter bar to allow browsing and searching of annotations on the current page.
-Filter = (options, filter = Annotator.UI.Filter) ->
-  (reg) ->
-    fl = new filter(options)
+var Annotator = require('annotator');
 
-    return {
-      onDestroy: -> fl.destroy()
-      onAnnotationsLoaded: -> fl.updateHighlights()
-      onAnnotationCreated: -> fl.updateHighlights()
-      onAnnotationUpdated: -> fl.updateHighlights()
-      onAnnotationDeleted: -> fl.updateHighlights()
+// Filter is a plugin that uses the Annotator.UI.Filter component to display a
+// filter bar to allow browsing and searching of annotations on the current
+// page.
+function Filter(options, filter) {
+    if (typeof filter == 'undefined' || filter === null) {
+        filter = Annotator.UI.Filter;
     }
 
+    // Store the constructor in an uppercased variable
+    var Fl = filter;
 
-Annotator.Plugin.Filter = Filter
+    return function () {
+        var fl = new Fl(options);
 
-exports.Filter = Filter
+        return {
+            onDestroy: function () { fl.destroy(); },
+            onAnnotationsLoaded: function () { fl.updateHighlights(); },
+            onAnnotationCreated: function () { fl.updateHighlights(); },
+            onAnnotationUpdated: function () { fl.updateHighlights(); },
+            onAnnotationDeleted: function () { fl.updateHighlights(); }
+        };
+    };
+}
+
+
+Annotator.Plugin.Filter = Filter;
+
+exports.Filter = Filter;

@@ -1,24 +1,34 @@
-Annotator = require('annotator')
+"use strict";
 
-# Editor is a plugin that uses the Annotator.UI.Editor component to display an
-# editor widget allowing the user to provide a note (and other data) before an
-# annotation is created or updated.
-Editor = (options, editor = Annotator.UI.Editor) ->
-  (reg) ->
-    ed = new editor(options)
+var Annotator = require('annotator');
 
-    return {
-      onDestroy: ->
-        ed.destroy()
-
-      onBeforeAnnotationCreated: (annotation) ->
-        return ed.load(annotation)
-
-      onBeforeAnnotationUpdated: (annotation) ->
-        return ed.load(annotation)
+// Editor is a plugin that uses the Annotator.UI.Editor component to display an
+// editor widget allowing the user to provide a note (and other data) before an
+// annotation is created or updated.
+function Editor(options, editor) {
+    if (typeof editor == 'undefined' || editor === null) {
+        editor = Annotator.UI.Editor;
     }
 
+    // Store the constructor in an uppercased variable
+    var Ed = editor;
 
-Annotator.Plugin.Editor = Editor
+    return function () {
+        var ed = new Ed(options);
 
-exports.Editor = Editor
+        return {
+            onDestroy: function () { ed.destroy(); },
+            onBeforeAnnotationCreated: function (annotation) {
+                return ed.load(annotation);
+            },
+            onBeforeAnnotationUpdated: function (annotation) {
+                return ed.load(annotation);
+            }
+        };
+    };
+}
+
+
+Annotator.Plugin.Editor = Editor;
+
+exports.Editor = Editor;

@@ -1,25 +1,43 @@
-Annotator = require('annotator')
+"use strict";
 
-# Viewer is a plugin that uses the Annotator.UI.Viewer component to display an
-# viewer widget in response to some viewer action (such as mousing over an
-# annotator highlight element).
-Viewer = (options, viewer = Annotator.UI.Viewer) ->
-  (reg) ->
-    # Set default handlers for what happens when the user clicks the edit and
-    # delete buttons:
-    if typeof options.onEdit == 'undefined'
-      options.onEdit = (annotation) -> reg.annotations.update(annotation)
+var Annotator = require('annotator');
 
-    if typeof options.onDelete == 'undefined'
-      options.onDelete = (annotation) -> reg.annotations.delete(annotation)
 
-    vw = new viewer(options)
-
-    return {
-      onDestroy: -> vw.destroy()
+// Viewer is a plugin that uses the Annotator.UI.Viewer component to display an
+// viewer widget in response to some viewer action (such as mousing over an
+// annotator highlight element).
+function Viewer(options, viewer) {
+    if (typeof viewer == 'undefined' || viewer === null) {
+        viewer = Annotator.UI.Viewer;
     }
 
+    // Store the constructor in an uppercased variable
+    var Vw = viewer;
 
-Annotator.Plugin.Viewer = Viewer
+    return function (reg) {
+        // Set default handlers for what happens when the user clicks the edit
+        // and delete buttons:
+        if (typeof options.onEdit == 'undefined') {
+            options.onEdit = function (annotation) {
+                reg.annotations.update(annotation);
+            };
+        }
 
-exports.Viewer = Viewer
+        if (typeof options.onDelete == 'undefined') {
+            options.onDelete = function (annotation) {
+                reg.annotations['delete'](annotation);
+            };
+        }
+
+        var vw = new Vw(options);
+
+        return {
+            onDestroy: function () { vw.destroy(); }
+        };
+    };
+}
+
+
+Annotator.Plugin.Viewer = Viewer;
+
+exports.Viewer = Viewer;
