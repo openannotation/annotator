@@ -1,6 +1,6 @@
 "use strict";
 
-var UI = require('../ui/index.coffee'),
+var UI = require('../ui'),
     Util = require('../util');
 
 

@@ -101,7 +101,7 @@ Annotator.Plugin = {};
 Annotator.Core = Core;
 Annotator.Notification = Notification;
 Annotator.Storage = Storage;
-Annotator.UI = require('./ui/index.coffee');
+Annotator.UI = require('./ui');
 Annotator.Util = Util;
 
 // Expose a global instance registry
