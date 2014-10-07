@@ -1,4 +1,5 @@
-var $, DateToISO8601String, MockSelection, Util, addFixture, clearFixtures, contains, fix, fixtureElem, fixtureMemo, getFixture, setFixtureElem, textInNormedRange, xpath;
+// Disable cyclomatic complexity checking for this file
+// jshint -W074
 
 var xpath = require('xpath-range').xpath;
 
@@ -8,7 +9,7 @@ var Util = require('../src/util'),
 function contains(parent, child) {
     var node;
     node = child;
-    while (node != null) {
+    while (node !== null) {
         if (node === parent) {
             return true;
         }
@@ -151,7 +152,7 @@ function fix() {
 }
 
 function getFixture(fname) {
-    if (fixtureMemo[fname] == null) {
+    if (!(fname in fixtureMemo)) {
         fixtureMemo[fname] = $.ajax({
             url: "/test/fixtures/" + fname + ".html",
             async: false

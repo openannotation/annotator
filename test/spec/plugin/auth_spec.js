@@ -1,11 +1,6 @@
 var h = require('helpers');
 
-var Util = require('../../../src/util'),
-    Auth = require('../../../src/plugin/auth');
-
-var $ = Util.$;
-
-Date.prototype.toISO8601String = h.DateToISO8601String;
+var Auth = require('../../../src/plugin/auth');
 
 var B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
@@ -61,7 +56,7 @@ function makeToken() {
     var rawToken;
     rawToken = {
         consumerKey: "key",
-        issuedAt: new Date().toISO8601String(),
+        issuedAt: h.DateToISO8601String.call(new Date()),
         ttl: 300,
         userId: "testUser"
     };

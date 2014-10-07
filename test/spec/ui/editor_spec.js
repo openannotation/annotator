@@ -1,5 +1,4 @@
-var h = require('helpers'),
-    Range = require('xpath-range').Range;
+var h = require('helpers');
 
 var Editor = require('.../../../src/ui/editor'),
     Util = require('../../../src/util');

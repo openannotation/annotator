@@ -35,9 +35,7 @@ window._annotatorConfig = {
 
 
 describe("bookmarklet", function () {
-    var bookmarklet = null,
-        head = document.getElementsByTagName('head')[0],
-        body = document.body;
+    var bookmarklet = null;
 
     beforeEach(function () {
         window.Annotator = Annotator;
@@ -52,7 +50,7 @@ describe("bookmarklet", function () {
         sinon.spy(bookmarklet, "config");
 
         sinon.stub(bookmarklet, "_injectElement", function (where, el) {
-            if (el.onload != null) {
+            if (typeof el.onload == "function") {
                 el.onload.call();
             }
         });
@@ -201,7 +199,7 @@ describe("bookmarklet.notification", function () {
     describe("show", function () {
         it("should set the top style of the element", function () {
             notification.show();
-            return assert.equal(parseInt(notification.element.style.top), "0");
+            return assert.equal(parseInt(notification.element.style.top, 10), "0");
         });
         return it("should call notification.message", function () {
             notification.show("hello", "red");

@@ -31,7 +31,7 @@ function StorageHelper() {
     MockStorage.lastInstance = this;
 }
 
-MockNotificationObj = {};
+var MockNotificationObj = {};
 
 function MockNotification() {
     return MockNotificationObj;
@@ -111,7 +111,7 @@ describe('AnnotatorCore', function () {
             pluginTwo.hookResult = Promise.resolve("ok");
 
             var delayedResolve = null;
-            pluginThree.hookResult = new Promise(function (resolve, reject) {
+            pluginThree.hookResult = new Promise(function (resolve) {
                 delayedResolve = resolve;
             });
 
