@@ -1,118 +1,124 @@
-var $, Annotator, Tags;
+var Annotator = require('annotator'),
+    Tags = require('../../../src/plugin/tags');
 
-Annotator = require('annotator');
+var $ = Annotator.Util.$;
 
-Tags = require('../../../src/plugin/tags');
+describe('Tags plugin', function () {
+    var el = null,
+        annotator = null,
+        plugin = null;
 
-$ = Annotator.Util.$;
-
-describe('Tags plugin', function() {
-    var annotator, el, plugin;
-    el = null;
-    annotator = null;
-    plugin = null;
-    beforeEach(function() {
+    beforeEach(function () {
         el = $("<div><div class='annotator-editor-controls'></div></div>")[0];
         annotator = new Annotator($('<div/>')[0]);
         plugin = new Tags(el);
         plugin.annotator = annotator;
-        return plugin.pluginInit();
+        plugin.pluginInit();
     });
-    afterEach(function() {
+
+    afterEach(function () {
         annotator.destroy();
         if (typeof plugin.destroy === "function") {
             plugin.destroy();
         }
-        return $(el).remove();
+        $(el).remove();
     });
-    it("should parse whitespace-delimited tags into an array", function() {
-        var str;
-        str = 'one two  three\tfourFive';
-        return assert.deepEqual(plugin.parseTags(str), ['one', 'two', 'three', 'fourFive']);
+
+    it("should parse whitespace-delimited tags into an array", function () {
+        var str = 'one two  three\tfourFive';
+        assert.deepEqual(plugin.parseTags(str), ['one', 'two', 'three', 'fourFive']);
     });
-    it("should stringify a tags array into a space-delimited string", function() {
-        var ary;
-        ary = ['one', 'two', 'three'];
-        return assert.equal(plugin.stringifyTags(ary), "one two three");
+
+    it("should stringify a tags array into a space-delimited string", function () {
+        var ary = ['one', 'two', 'three'];
+        assert.equal(plugin.stringifyTags(ary), "one two three");
     });
-    describe("pluginInit", function() {
-        it("should add a field to the editor", function() {
+
+    describe("pluginInit", function () {
+        it("should add a field to the editor", function () {
             sinon.spy(annotator.editor, 'addField');
             plugin.pluginInit();
-            return assert(annotator.editor.addField.calledOnce);
+            assert(annotator.editor.addField.calledOnce);
         });
-        return it("should register a filter if the Filter plugin is loaded", function() {
+
+        it("should register a filter if the Filter plugin is loaded", function () {
             plugin.annotator.plugins.Filter = {
                 addFilter: sinon.spy()
             };
             plugin.pluginInit();
-            return assert(plugin.annotator.plugins.Filter.addFilter.calledOnce);
+            assert(plugin.annotator.plugins.Filter.addFilter.calledOnce);
         });
     });
-    describe("updateField", function() {
-        it("should set the value of the input", function() {
-            var annotation;
-            annotation = {
+
+    describe("updateField", function () {
+        it("should set the value of the input", function () {
+            var annotation = {
                 tags: ['apples', 'oranges', 'pears']
             };
             plugin.updateField(plugin.field, annotation);
-            return assert.equal(plugin.input.val(), 'apples oranges pears');
+            assert.equal(plugin.input.val(), 'apples oranges pears');
         });
-        return it("should set the clear the value of the input if there are no tags", function() {
-            var annotation;
-            annotation = {};
+
+        it("should set the clear the value of the input if there are no tags", function () {
+            var annotation = {};
             plugin.input.val('apples pears oranges');
             plugin.updateField(plugin.field, annotation);
-            return assert.equal(plugin.input.val(), '');
+            assert.equal(plugin.input.val(), '');
         });
     });
-    describe("setAnnotationTags", function() {
-        return it("should set the annotation's tags", function() {
-            var annotation;
-            annotation = {};
+
+    describe("setAnnotationTags", function () {
+        it("should set the annotation's tags", function () {
+            var annotation = {};
             plugin.input.val('apples oranges pears');
             plugin.setAnnotationTags(plugin.field, annotation);
-            return assert.deepEqual(annotation.tags, ['apples', 'oranges', 'pears']);
+            assert.deepEqual(annotation.tags, ['apples', 'oranges', 'pears']);
         });
     });
-    return describe("updateViewer", function() {
-        it("should insert the tags into the field", function() {
-            var annotation, field;
-            annotation = {
+
+    describe("updateViewer", function () {
+        it("should insert the tags into the field", function () {
+            var annotation = {
                 tags: ['foo', 'bar', 'baz']
             };
-            field = $('<div />')[0];
+            var field = $('<div />')[0];
             plugin.updateViewer(field, annotation);
-            return assert.deepEqual($(field).html(), ['<span class="annotator-tag">foo</span>', '<span class="annotator-tag">bar</span>', '<span class="annotator-tag">baz</span>'].join(' '));
+            assert.deepEqual($(field).html(), [
+                '<span class="annotator-tag">foo</span>',
+                '<span class="annotator-tag">bar</span>',
+                '<span class="annotator-tag">baz</span>'
+            ].join(' '));
         });
-        return it("should remove the field if there are no tags", function() {
-            var annotation, field;
-            annotation = {
+
+        it("should remove the field if there are no tags", function () {
+            var annotation = {
                 tags: []
             };
-            field = $('<div />')[0];
+            var field = $('<div />')[0];
             plugin.updateViewer(field, annotation);
             assert.lengthOf($(field).parent(), 0);
             annotation = {};
             field = $('<div />')[0];
             plugin.updateViewer(field, annotation);
-            return assert.lengthOf($(field).parent(), 0);
+            assert.lengthOf($(field).parent(), 0);
         });
     });
 });
 
-describe('Tags plugin filterCallback', function() {
-    var filter;
-    filter = null;
-    beforeEach(function() {
-        return filter = Tags.filterCallback;
+describe('Tags plugin filterCallback', function () {
+    var filter = null;
+
+    beforeEach(function () {
+        filter = Tags.filterCallback;
     });
-    it('should return true if all tags are matched by keywords', function() {
+
+    it('should return true if all tags are matched by keywords', function () {
         assert.isTrue(filter('cat dog mouse', ['cat', 'dog', 'mouse']));
-        return assert.isTrue(filter('cat dog', ['cat', 'dog', 'mouse']));
+        assert.isTrue(filter('cat dog', ['cat', 'dog', 'mouse']));
     });
-    return it('should NOT return true if all tags are NOT matched by keywords', function() {
+
+    it('should NOT return true if all tags are NOT matched by keywords', function () {
         assert.isFalse(filter('cat dog', ['cat']));
-        return assert.isFalse(filter('cat dog', []));
+        assert.isFalse(filter('cat dog', []));
     });
 });

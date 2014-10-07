@@ -1,12 +1,11 @@
 var $, DateToISO8601String, MockSelection, Util, addFixture, clearFixtures, contains, fix, fixtureElem, fixtureMemo, getFixture, setFixtureElem, textInNormedRange, xpath;
 
-xpath = require('xpath-range').xpath;
+var xpath = require('xpath-range').xpath;
 
-Util = require('../src/util');
+var Util = require('../src/util'),
+    $ = Util.$;
 
-$ = Util.$;
-
-contains = function(parent, child) {
+function contains(parent, child) {
     var node;
     node = child;
     while (node != null) {
@@ -16,9 +15,9 @@ contains = function(parent, child) {
         node = node.parentNode;
     }
     return false;
-};
+}
 
-MockSelection = function(fixElem, data) {
+function MockSelection(fixElem, data) {
     this.rangeCount = 0;
     this.isCollapsed = false;
     this.root = fixElem;
@@ -30,35 +29,37 @@ MockSelection = function(fixElem, data) {
     this.expectation = data[4];
     this.description = data[5];
     this.commonAncestor = this.startContainer;
+
     while (!contains(this.commonAncestor, this.endContainer)) {
         this.commonAncestor = this.commonAncestor.parentNode;
     }
     this.commonAncestorXPath = xpath.fromNode($(this.commonAncestor))[0];
+
     this.ranges = [];
-    return this.addRange({
+    this.addRange({
         startContainer: this.startContainer,
         startOffset: this.startOffset,
         endContainer: this.endContainer,
         endOffset: this.endOffset,
         commonAncestorContainer: this.commonAncestor
     });
-};
+}
 
-MockSelection.prototype.getRangeAt = function(i) {
+MockSelection.prototype.getRangeAt = function (i) {
     return this.ranges[i];
 };
 
-MockSelection.prototype.removeAllRanges = function() {
+MockSelection.prototype.removeAllRanges = function () {
     this.ranges = [];
-    return this.rangeCount = 0;
+    this.rangeCount = 0;
 };
 
-MockSelection.prototype.addRange = function(r) {
+MockSelection.prototype.addRange = function (r) {
     this.ranges.push(r);
-    return this.rangeCount += 1;
+    this.rangeCount += 1;
 };
 
-MockSelection.prototype.resolvePath = function(path) {
+MockSelection.prototype.resolvePath = function (path) {
     if (typeof path === "number") {
         return Util.getTextNodes($(this.root))[path];
     } else if (typeof path === "string") {
@@ -66,25 +67,22 @@ MockSelection.prototype.resolvePath = function(path) {
     }
 };
 
-MockSelection.prototype.resolveXPath = function(xpath) {
+MockSelection.prototype.resolveXPath = function (xpath) {
     return document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 };
 
-textInNormedRange = function(range) {
-    var textNodes;
-    textNodes = Util.getTextNodes($(range.commonAncestor));
-    textNodes = textNodes.slice(textNodes.index(range.start), +textNodes.index(range.end) + 1 || 9e9).get();
-    return textNodes.reduce((function(acc, next) {
+function textInNormedRange(range) {
+    var textNodes = Util.getTextNodes($(range.commonAncestor));
+    textNodes = textNodes.slice(
+        textNodes.index(range.start),
+        textNodes.index(range.end) + 1 || 9e9
+    ).get();
+    return textNodes.reduce((function (acc, next) {
         return acc += next.nodeValue;
     }), "");
-};
+}
 
-DateToISO8601String = function(format, offset) {
-    var d, date, offsetnum, secs, str, zeropad;
-    if (format == null) {
-        format = 6;
-    }
-
+function DateToISO8601String(format, offset) {
     /*
     accepted values for the format [1-6]:
      1 Year:
@@ -100,7 +98,12 @@ DateToISO8601String = function(format, offset) {
      6 Complete date plus hours, minutes, seconds and a decimal
          fraction of a second
          YYYY-MM-DDThh:mm:ss.sTZD (eg 1997-07-16T19:20:30.45+01:00)
-     */
+    */
+    var d, date, offsetnum, secs, str, zeropad;
+    if (typeof format == 'undefined' || format === null) {
+        format = 6;
+    }
+
     if (!offset) {
         offset = 'Z';
         date = this;
@@ -110,7 +113,7 @@ DateToISO8601String = function(format, offset) {
         offsetnum *= d[1] === '-' ? -1 : 1;
         date = new Date(Number(Number(this) + (offsetnum * 60000)));
     }
-    zeropad = function(num) {
+    zeropad = function (num) {
         return (num < 10 ? '0' : '') + num;
     };
     str = "";
@@ -134,21 +137,20 @@ DateToISO8601String = function(format, offset) {
         str += offset;
     }
     return str;
-};
+}
 
-fixtureElem = document.getElementById('fixtures');
+var fixtureElem = document.getElementById('fixtures');
+var fixtureMemo = {};
 
-fixtureMemo = {};
+function setFixtureElem(elem) {
+    fixtureElem = elem;
+}
 
-setFixtureElem = function(elem) {
-    return fixtureElem = elem;
-};
-
-fix = function() {
+function fix() {
     return fixtureElem;
-};
+}
 
-getFixture = function(fname) {
+function getFixture(fname) {
     if (fixtureMemo[fname] == null) {
         fixtureMemo[fname] = $.ajax({
             url: "/test/fixtures/" + fname + ".html",
@@ -156,28 +158,22 @@ getFixture = function(fname) {
         }).responseText;
     }
     return fixtureMemo[fname];
-};
+}
 
-addFixture = function(fname) {
-    return $(getFixture(fname)).appendTo(fixtureElem);
-};
+function addFixture(fname) {
+    $(getFixture(fname)).appendTo(fixtureElem);
+}
 
-clearFixtures = function() {
-    return $(fixtureElem).empty();
-};
+function clearFixtures() {
+    $(fixtureElem).empty();
+}
 
-exports.MockSelection = MockSelection;
-
-exports.textInNormedRange = textInNormedRange;
 
 exports.DateToISO8601String = DateToISO8601String;
-
-exports.setFixtureElem = setFixtureElem;
-
-exports.fix = fix;
-
-exports.getFixture = getFixture;
-
+exports.MockSelection = MockSelection;
 exports.addFixture = addFixture;
-
 exports.clearFixtures = clearFixtures;
+exports.fix = fix;
+exports.getFixture = getFixture;
+exports.setFixtureElem = setFixtureElem;
+exports.textInNormedRange = textInNormedRange;

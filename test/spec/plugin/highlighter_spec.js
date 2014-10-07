@@ -1,16 +1,13 @@
-var Highlighter;
+var Highlighter = require('../../../src/plugin/highlighter').Highlighter;
 
-Highlighter = require('../../../src/plugin/highlighter').Highlighter;
+describe('Highlighter plugin', function () {
+    var ann = null,
+        mockElement = null,
+        mockHighlighter = null,
+        plugin = null,
+        sandbox = null;
 
-describe('Highlighter plugin', function() {
-    var ann, mockElement, mockHighlighter, plugin, sandbox;
-    ann = null;
-    mockElement = null;
-    mockHighlighter = null;
-    plugin = null;
-    sandbox = null;
-    beforeEach(function() {
-        var mockHighlighterCtor;
+    beforeEach(function () {
         sandbox = sinon.sandbox.create();
         ann = {
             id: 'abc123',
@@ -31,30 +28,36 @@ describe('Highlighter plugin', function() {
             drawAll: sandbox.stub(),
             destroy: sandbox.stub()
         };
-        mockHighlighterCtor = sandbox.stub();
+
+        var mockHighlighterCtor = sandbox.stub();
         mockHighlighterCtor.returns(mockHighlighter);
+
         // Create a new plugin object. The Highlighter plugin doesn't use the
         // registry, so we can just pass null.
-        return plugin = Highlighter(mockElement, {}, mockHighlighterCtor)(null);
+        plugin = Highlighter(mockElement, {}, mockHighlighterCtor)(null);
     });
-    afterEach(function() {
-        return sandbox.restore();
+
+    afterEach(function () {
+        sandbox.restore();
     });
-    it('should draw highlights onAnnotationCreated', function() {
+
+    it('should draw highlights onAnnotationCreated', function () {
         plugin.onAnnotationCreated(ann);
-        return sinon.assert.calledWith(mockHighlighter.draw, ann);
+        sinon.assert.calledWith(mockHighlighter.draw, ann);
     });
-    it('should redraw highlights onAnnotationUpdated', function() {
+
+    it('should redraw highlights onAnnotationUpdated', function () {
         plugin.onAnnotationUpdated(ann);
-        return sinon.assert.calledWith(mockHighlighter.redraw, ann);
+        sinon.assert.calledWith(mockHighlighter.redraw, ann);
     });
-    it('should undraw highlights onAnnotationDeleted', function() {
+
+    it('should undraw highlights onAnnotationDeleted', function () {
         plugin.onAnnotationDeleted(ann);
-        return sinon.assert.calledWith(mockHighlighter.undraw, ann);
+        sinon.assert.calledWith(mockHighlighter.undraw, ann);
     });
-    it('should draw all highlights onAnnotationsLoaded', function() {
-        var ann2;
-        ann2 = {
+
+    it('should draw all highlights onAnnotationsLoaded', function () {
+        var ann2 = {
             id: 'def456',
             ranges: [
                 {
@@ -66,10 +69,11 @@ describe('Highlighter plugin', function() {
             ]
         };
         plugin.onAnnotationsLoaded([ann, ann2]);
-        return sinon.assert.calledWith(mockHighlighter.drawAll, [ann, ann2]);
+        sinon.assert.calledWith(mockHighlighter.drawAll, [ann, ann2]);
     });
-    return it('destroys the highlighter component when destroyed', function() {
+
+    it('destroys the highlighter component when destroyed', function () {
         plugin.onDestroy();
-        return sinon.assert.calledOnce(mockHighlighter.destroy);
+        sinon.assert.calledOnce(mockHighlighter.destroy);
     });
 });
