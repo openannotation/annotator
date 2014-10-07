@@ -17,55 +17,53 @@ contains = (parent, child) ->
   return false
 
 
-class MockSelection
-  rangeCount: 0
-  isCollapsed: false
+MockSelection = (fixElem, data) ->
+  @rangeCount = 0
+  @isCollapsed = false
 
-  constructor: (fixElem, data) ->
+  @root = fixElem
+  @rootXPath = xpath.fromNode($(fixElem))[0]
 
-    @root = fixElem
-    @rootXPath = xpath.fromNode($(fixElem))[0]
+  @startContainer = this.resolvePath(data[0])
+  @startOffset    = data[1]
+  @endContainer   = this.resolvePath(data[2])
+  @endOffset      = data[3]
+  @expectation    = data[4]
+  @description    = data[5]
 
-    @startContainer = this.resolvePath(data[0])
-    @startOffset    = data[1]
-    @endContainer   = this.resolvePath(data[2])
-    @endOffset      = data[3]
-    @expectation    = data[4]
-    @description    = data[5]
+  @commonAncestor = @startContainer
+  while not contains(@commonAncestor, @endContainer)
+    @commonAncestor = @commonAncestor.parentNode
+  @commonAncestorXPath = xpath.fromNode($(@commonAncestor))[0]
 
-    @commonAncestor = @startContainer
-    while not contains(@commonAncestor, @endContainer)
-      @commonAncestor = @commonAncestor.parentNode
-    @commonAncestorXPath = xpath.fromNode($(@commonAncestor))[0]
+  @ranges = []
+  this.addRange({
+    startContainer: @startContainer
+    startOffset: @startOffset
+    endContainer: @endContainer
+    endOffset: @endOffset
+    commonAncestorContainer: @commonAncestor
+  })
 
-    @ranges = []
-    this.addRange({
-      startContainer: @startContainer
-      startOffset: @startOffset
-      endContainer: @endContainer
-      endOffset: @endOffset
-      commonAncestorContainer: @commonAncestor
-    })
+MockSelection::getRangeAt = (i) ->
+  @ranges[i]
 
-  getRangeAt: (i) ->
-    @ranges[i]
+MockSelection::removeAllRanges = ->
+  @ranges = []
+  @rangeCount = 0
 
-  removeAllRanges: ->
-    @ranges = []
-    @rangeCount = 0
+MockSelection::addRange = (r) ->
+  @ranges.push(r)
+  @rangeCount += 1
 
-  addRange: (r) ->
-    @ranges.push(r)
-    @rangeCount += 1
+MockSelection::resolvePath = (path) ->
+  if typeof path is "number"
+    Util.getTextNodes($(@root))[path]
+  else if typeof path is "string"
+    this.resolveXPath(@rootXPath + path)
 
-  resolvePath: (path) ->
-    if typeof path is "number"
-      Util.getTextNodes($(@root))[path]
-    else if typeof path is "string"
-      this.resolveXPath(@rootXPath + path)
-
-  resolveXPath: (xpath) ->
-    document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
+MockSelection::resolveXPath = (xpath) ->
+  document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
 
 textInNormedRange = (range) ->
   textNodes = Util.getTextNodes($(range.commonAncestor))
