@@ -176,12 +176,14 @@ describe 'AnnotatorCore', ->
         MockStorage.lastInstance
       )
 
-    it 'should pass the adapter the bound runHook method of the annotator', ->
+    it 'should pass the adapter a hook runner which calls the runHook method of
+        the annotator', ->
       b = new core.AnnotatorCore()
       b._storageAdapterType = MockStorageAdapter
 
+      sinon.spy(b, 'runHook')
+
       b.setStorage(MockStorage)
-      assert.strictEqual(
-        MockStorageAdapter.lastInstance.hookRunner,
-        b.runHook
-      )
+      MockStorageAdapter.lastInstance.hookRunner('foo', [1, 2, 3])
+      sinon.assert.calledWith(b.runHook, 'foo', [1, 2, 3])
+      b.runHook.restore()

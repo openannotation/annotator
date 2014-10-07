@@ -66,7 +66,7 @@ describe 'Document plugin', ->
       for _, $elements of tags
         $elements.remove()
 
-    it 'should have links with absoulte hrefs and types', ->
+    it 'should have links with absolute hrefs and types', ->
       assert.ok(metadata.link)
       assert.equal(metadata.link.length, 8)
       assert.equal(metadata.link[0].href, window.location.href)

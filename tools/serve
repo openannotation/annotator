@@ -110,7 +110,7 @@ browserify()
 // Core
 browserify()
   .external('jquery')
-  .require('./src/annotator.coffee', {expose: 'annotator'})
+  .require('./src/annotator', {expose: 'annotator'})
   .serve(app, '/lib/annotator.js')
   .watch({debug: true});
 

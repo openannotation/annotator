@@ -11,7 +11,7 @@ else
 fi
 
 # print preamble, substituting variables
-cat ../src/preamble.coffee |
+cat ../src/preamble.js |
 sed -e "s/{{VERSION}}/$VERSION/g" \
     -e "s/{{YEAR}}/$YEAR/g" \
     -e "s/{{DATE}}/$DATE/g"
