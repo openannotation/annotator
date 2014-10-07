@@ -129,13 +129,13 @@ glob.sync('./src/**/*.coffee').forEach(function (p) {
 // Test helpers
 browserify()
   .external('jquery')
-  .require('./test/helpers.coffee', {expose: 'helpers'})
+  .require('./test/helpers.js', {expose: 'helpers'})
   .serve(app, '/test/helpers.js')
   .watch({debug: true});
 
 // Other test files
-glob.sync('./test/**/*.coffee').forEach(function (t) {
-  var loc = t.replace('./', '/').replace('.coffee', '.js');
+glob.sync('./test/**/*.js').forEach(function (t) {
+  var loc = t.replace('./', '/');
   browserify(t)
     .external('jquery')
     .external('annotator')
