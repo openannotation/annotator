@@ -3,20 +3,19 @@ Promise = require('../../src/util').Promise
 core = require('../../src/core')
 
 
-class PluginHelper
-  constructor: (reg) ->
-    @registry = reg
-    @destroyed = false
-    @hookCalls = []
-    @hookResult = undefined
-    MockPlugin.lastInstance = this
+PluginHelper = (reg) ->
+  @registry = reg
+  @destroyed = false
+  @hookCalls = []
+  @hookResult = undefined
+  MockPlugin.lastInstance = this
 
-  onDestroy: ->
-    @destroyed = true
+PluginHelper::onDestroy = ->
+  @destroyed = true
 
-  onAnnotationCreated: ->
-    @hookCalls.push(['onAnnotationCreated', arguments])
-    return @hookResult
+PluginHelper::onAnnotationCreated = ->
+  @hookCalls.push(['onAnnotationCreated', arguments])
+  return @hookResult
 
 
 MockPlugin = (reg) ->
@@ -27,9 +26,8 @@ MockEmptyPlugin = ->
   return {}
 
 
-class StorageHelper
-  constructor: ->
-    MockStorage.lastInstance = this
+StorageHelper = ->
+  MockStorage.lastInstance = this
 
 
 MockNotificationObj = {}
@@ -43,9 +41,10 @@ MockStorage = ->
   return new StorageHelper()
 
 
-class MockStorageAdapter
-  constructor: (@storage, @hookRunner) ->
-    MockStorageAdapter.lastInstance = this
+MockStorageAdapter = (storage, hookRunner) ->
+  @storage = storage
+  @hookRunner = hookRunner
+  MockStorageAdapter.lastInstance = this
 
 
 describe 'AnnotatorCore', ->
