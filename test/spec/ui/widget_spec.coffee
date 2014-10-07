@@ -10,10 +10,11 @@ describe "UI.Widget", ->
 
   describe "constructor", ->
     it "should extend the Widget#classes object with child classes", ->
-      class ChildWidget extends UI.Widget
-        @classes:
-          customClass: 'my-custom-class'
-          anotherClass: 'another-class'
+      ChildWidget = UI.Widget.extend({})
+
+      ChildWidget.classes =
+        customClass: 'my-custom-class'
+        anotherClass: 'another-class'
 
       child = new ChildWidget()
       assert.deepEqual(child.classes, {
