@@ -1,154 +1,183 @@
-xpath = require('xpath-range').xpath
-Util = require('../src/util')
-$ = Util.$
+var $, DateToISO8601String, MockSelection, Util, addFixture, clearFixtures, contains, fix, fixtureElem, fixtureMemo, getFixture, setFixtureElem, textInNormedRange, xpath;
 
-# contains returns a boolean indicating whether node A is an ancestor of node B.
-#
-# This function purposefully ignores the native browser function for this,
-# because it acts weird in PhantomJS (See
-# https://github.com/ariya/phantomjs/issues/11479).
-#
-# Returns a boolean
-contains = (parent, child) ->
-  node = child
-  while node?
-    if node is parent then return true
-    node = node.parentNode
-  return false
+xpath = require('xpath-range').xpath;
 
+Util = require('../src/util');
 
-MockSelection = (fixElem, data) ->
-  @rangeCount = 0
-  @isCollapsed = false
+$ = Util.$;
 
-  @root = fixElem
-  @rootXPath = xpath.fromNode($(fixElem))[0]
+contains = function(parent, child) {
+    var node;
+    node = child;
+    while (node != null) {
+        if (node === parent) {
+            return true;
+        }
+        node = node.parentNode;
+    }
+    return false;
+};
 
-  @startContainer = this.resolvePath(data[0])
-  @startOffset    = data[1]
-  @endContainer   = this.resolvePath(data[2])
-  @endOffset      = data[3]
-  @expectation    = data[4]
-  @description    = data[5]
+MockSelection = function(fixElem, data) {
+    this.rangeCount = 0;
+    this.isCollapsed = false;
+    this.root = fixElem;
+    this.rootXPath = xpath.fromNode($(fixElem))[0];
+    this.startContainer = this.resolvePath(data[0]);
+    this.startOffset = data[1];
+    this.endContainer = this.resolvePath(data[2]);
+    this.endOffset = data[3];
+    this.expectation = data[4];
+    this.description = data[5];
+    this.commonAncestor = this.startContainer;
+    while (!contains(this.commonAncestor, this.endContainer)) {
+        this.commonAncestor = this.commonAncestor.parentNode;
+    }
+    this.commonAncestorXPath = xpath.fromNode($(this.commonAncestor))[0];
+    this.ranges = [];
+    return this.addRange({
+        startContainer: this.startContainer,
+        startOffset: this.startOffset,
+        endContainer: this.endContainer,
+        endOffset: this.endOffset,
+        commonAncestorContainer: this.commonAncestor
+    });
+};
 
-  @commonAncestor = @startContainer
-  while not contains(@commonAncestor, @endContainer)
-    @commonAncestor = @commonAncestor.parentNode
-  @commonAncestorXPath = xpath.fromNode($(@commonAncestor))[0]
+MockSelection.prototype.getRangeAt = function(i) {
+    return this.ranges[i];
+};
 
-  @ranges = []
-  this.addRange({
-    startContainer: @startContainer
-    startOffset: @startOffset
-    endContainer: @endContainer
-    endOffset: @endOffset
-    commonAncestorContainer: @commonAncestor
-  })
+MockSelection.prototype.removeAllRanges = function() {
+    this.ranges = [];
+    return this.rangeCount = 0;
+};
 
-MockSelection::getRangeAt = (i) ->
-  @ranges[i]
+MockSelection.prototype.addRange = function(r) {
+    this.ranges.push(r);
+    return this.rangeCount += 1;
+};
 
-MockSelection::removeAllRanges = ->
-  @ranges = []
-  @rangeCount = 0
+MockSelection.prototype.resolvePath = function(path) {
+    if (typeof path === "number") {
+        return Util.getTextNodes($(this.root))[path];
+    } else if (typeof path === "string") {
+        return this.resolveXPath(this.rootXPath + path);
+    }
+};
 
-MockSelection::addRange = (r) ->
-  @ranges.push(r)
-  @rangeCount += 1
+MockSelection.prototype.resolveXPath = function(xpath) {
+    return document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+};
 
-MockSelection::resolvePath = (path) ->
-  if typeof path is "number"
-    Util.getTextNodes($(@root))[path]
-  else if typeof path is "string"
-    this.resolveXPath(@rootXPath + path)
+textInNormedRange = function(range) {
+    var textNodes;
+    textNodes = Util.getTextNodes($(range.commonAncestor));
+    textNodes = textNodes.slice(textNodes.index(range.start), +textNodes.index(range.end) + 1 || 9e9).get();
+    return textNodes.reduce((function(acc, next) {
+        return acc += next.nodeValue;
+    }), "");
+};
 
-MockSelection::resolveXPath = (xpath) ->
-  document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
+DateToISO8601String = function(format, offset) {
+    var d, date, offsetnum, secs, str, zeropad;
+    if (format == null) {
+        format = 6;
+    }
 
-textInNormedRange = (range) ->
-  textNodes = Util.getTextNodes($(range.commonAncestor))
-  textNodes = textNodes[textNodes.index(range.start)..textNodes.index(range.end)].get()
-  textNodes.reduce(((acc, next) -> acc += next.nodeValue), "")
+    /*
+    accepted values for the format [1-6]:
+     1 Year:
+         YYYY (eg 1997)
+     2 Year and month:
+         YYYY-MM (eg 1997-07)
+     3 Complete date:
+         YYYY-MM-DD (eg 1997-07-16)
+     4 Complete date plus hours and minutes:
+         YYYY-MM-DDThh:mmTZD (eg 1997-07-16T19:20+01:00)
+     5 Complete date plus hours, minutes and seconds:
+         YYYY-MM-DDThh:mm:ssTZD (eg 1997-07-16T19:20:30+01:00)
+     6 Complete date plus hours, minutes, seconds and a decimal
+         fraction of a second
+         YYYY-MM-DDThh:mm:ss.sTZD (eg 1997-07-16T19:20:30.45+01:00)
+     */
+    if (!offset) {
+        offset = 'Z';
+        date = this;
+    } else {
+        d = offset.match(/([-+])([0-9]{2}):([0-9]{2})/);
+        offsetnum = (Number(d[2]) * 60) + Number(d[3]);
+        offsetnum *= d[1] === '-' ? -1 : 1;
+        date = new Date(Number(Number(this) + (offsetnum * 60000)));
+    }
+    zeropad = function(num) {
+        return (num < 10 ? '0' : '') + num;
+    };
+    str = "";
+    str += date.getUTCFullYear();
+    if (format > 1) {
+        str += "-" + zeropad(date.getUTCMonth() + 1);
+    }
+    if (format > 2) {
+        str += "-" + zeropad(date.getUTCDate());
+    }
+    if (format > 3) {
+        str += "T" + zeropad(date.getUTCHours()) + ":" + zeropad(date.getUTCMinutes());
+    }
+    if (format > 5) {
+        secs = Number(date.getUTCSeconds() + "." + (date.getUTCMilliseconds() < 100 ? '0' : '') + zeropad(date.getUTCMilliseconds()));
+        str += ":" + zeropad(secs);
+    } else if (format > 4) {
+        str += ":" + zeropad(date.getUTCSeconds());
+    }
+    if (format > 3) {
+        str += offset;
+    }
+    return str;
+};
 
-DateToISO8601String = (format=6, offset) ->
-  ###
-  accepted values for the format [1-6]:
-   1 Year:
-     YYYY (eg 1997)
-   2 Year and month:
-     YYYY-MM (eg 1997-07)
-   3 Complete date:
-     YYYY-MM-DD (eg 1997-07-16)
-   4 Complete date plus hours and minutes:
-     YYYY-MM-DDThh:mmTZD (eg 1997-07-16T19:20+01:00)
-   5 Complete date plus hours, minutes and seconds:
-     YYYY-MM-DDThh:mm:ssTZD (eg 1997-07-16T19:20:30+01:00)
-   6 Complete date plus hours, minutes, seconds and a decimal
-     fraction of a second
-     YYYY-MM-DDThh:mm:ss.sTZD (eg 1997-07-16T19:20:30.45+01:00)
-  ###
-  if not offset
-    offset = 'Z'
-    date = this
-  else
-    d = offset.match(/([-+])([0-9]{2}):([0-9]{2})/)
-    offsetnum = (Number(d[2]) * 60) + Number(d[3])
-    offsetnum *= if d[1] is '-' then -1 else 1
-    date = new Date(Number(Number(this) + (offsetnum * 60000)))
+fixtureElem = document.getElementById('fixtures');
 
-  zeropad = (num) -> (if num < 10 then '0' else '') + num
+fixtureMemo = {};
 
-  str = ""
-  str += date.getUTCFullYear()
-  if format > 1
-    str += "-" + zeropad(date.getUTCMonth() + 1)
-  if format > 2
-    str += "-" + zeropad(date.getUTCDate())
-  if format > 3
-    str += "T" + zeropad(date.getUTCHours()) + ":" + zeropad(date.getUTCMinutes())
+setFixtureElem = function(elem) {
+    return fixtureElem = elem;
+};
 
-  if format > 5
-    secs = Number(date.getUTCSeconds() + "." + (if date.getUTCMilliseconds() < 100 then '0' else '') + zeropad(date.getUTCMilliseconds()))
-    str += ":" + zeropad(secs)
-  else if format > 4
-    str += ":" + zeropad(date.getUTCSeconds())
+fix = function() {
+    return fixtureElem;
+};
 
-  if format > 3
-    str += offset
+getFixture = function(fname) {
+    if (fixtureMemo[fname] == null) {
+        fixtureMemo[fname] = $.ajax({
+            url: "/test/fixtures/" + fname + ".html",
+            async: false
+        }).responseText;
+    }
+    return fixtureMemo[fname];
+};
 
-  str
+addFixture = function(fname) {
+    return $(getFixture(fname)).appendTo(fixtureElem);
+};
 
-# Ajax fixtures helpers
+clearFixtures = function() {
+    return $(fixtureElem).empty();
+};
 
-fixtureElem = document.getElementById('fixtures')
-fixtureMemo = {}
+exports.MockSelection = MockSelection;
 
-setFixtureElem = (elem) ->
-  fixtureElem = elem
+exports.textInNormedRange = textInNormedRange;
 
-fix = ->
-  fixtureElem
+exports.DateToISO8601String = DateToISO8601String;
 
-getFixture = (fname) ->
-  if not fixtureMemo[fname]?
-    fixtureMemo[fname] = $.ajax({
-      url: "/test/fixtures/#{fname}.html"
-      async: false
-    }).responseText
+exports.setFixtureElem = setFixtureElem;
 
-  fixtureMemo[fname]
+exports.fix = fix;
 
-addFixture = (fname) ->
-  $(getFixture(fname)).appendTo(fixtureElem)
+exports.getFixture = getFixture;
 
-clearFixtures = ->
-  $(fixtureElem).empty()
+exports.addFixture = addFixture;
 
-exports.MockSelection = MockSelection
-exports.textInNormedRange = textInNormedRange
-exports.DateToISO8601String = DateToISO8601String
-exports.setFixtureElem = setFixtureElem
-exports.fix = fix
-exports.getFixture = getFixture
-exports.addFixture = addFixture
-exports.clearFixtures = clearFixtures
+exports.clearFixtures = clearFixtures;
