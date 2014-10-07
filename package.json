@@ -43,8 +43,8 @@
   "scripts": {
     "start": "./tools/serve",
     "test": "./tools/test",
-    "lint": "jshint src && coffeelint src && jscs src",
-    "travis": "jshint src && coffeelint src && jscs src && ./tools/test"
+    "lint": "jshint src && coffeelint src && jscs src && jshint -c test/.jshintrc test && jscs -c test/.jscsrc test",
+    "travis": "jshint src && coffeelint src && jscs src && jshint -c test/.jshintrc test && jscs -c test/.jscsrc test && ./tools/test"
   },
   "browser": "./annotator.js",
   "testling": {

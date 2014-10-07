@@ -1,0 +1,22 @@
+{
+    "browser": true,
+    "es3": true,
+    "freeze": true,
+    "latedef": "nofunc",
+    "maxcomplexity": 10,
+    "node": true,
+    "undef": true,
+    "unused": true,
+    "predef": [
+        "-Promise",
+        "Showdown",
+        "afterEach",
+        "assert",
+        "beforeEach",
+        "describe",
+        "it",
+        "sinon",
+        "xit"
+    ]
+}
+
