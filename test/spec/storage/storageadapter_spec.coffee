@@ -1,55 +1,56 @@
 Storage = require('../../../src/storage')
 {$, Promise} = require('../../../src/util')
 
-class MockHookRunner
+MockHookRunner = ->
+  @calls = []
 
-  constructor: ->
-    @calls = []
-
-  runHook: (name, args) =>
+  this.runHook = (name, args) =>
     @calls.push({name: name, args: args})
     return Promise.resolve()
 
+  return this
 
-class MockStorage
 
-  create: (annotation) ->
-    annotation.stored = true
-    this._record('create')
-    return annotation
+MockStorage = ->
 
-  update: (annotation) ->
-    annotation.stored = true
-    this._record('update')
-    return annotation
+MockStorage::create = (annotation) ->
+  annotation.stored = true
+  this._record('create')
+  return annotation
 
-  delete: (annotation) ->
-    annotation.stored = true
-    this._record('delete')
-    return annotation
+MockStorage::update = (annotation) ->
+  annotation.stored = true
+  this._record('update')
+  return annotation
 
-  query: (queryObj) ->
-    this._record('query')
-    return [[], {total: 0}]
+MockStorage::delete = (annotation) ->
+  annotation.stored = true
+  this._record('delete')
+  return annotation
 
-  # Just a little helper to make sure hooks fire in the right order
-  _record: (name) ->
-    if typeof @_callRecorder == 'function'
-      @_callRecorder(name)
+MockStorage::query = (queryObj) ->
+  this._record('query')
+  return [[], {total: 0}]
 
-class FailingMockStorage
+# Just a little helper to make sure hooks fire in the right order
+MockStorage::_record = (name) ->
+  if typeof @_callRecorder == 'function'
+    @_callRecorder(name)
 
-  create: (annotation) ->
-    return Promise.reject("failure message")
 
-  update: (annotation) ->
-    return Promise.reject("failure message")
+FailingMockStorage = ->
 
-  delete: (annotation) ->
-    return Promise.reject("failure message")
+FailingMockStorage::create = (annotation) ->
+  return Promise.reject("failure message")
 
-  query: (queryObj) ->
-    return Promise.reject("failure message")
+FailingMockStorage::update = (annotation) ->
+  return Promise.reject("failure message")
+
+FailingMockStorage::delete = (annotation) ->
+  return Promise.reject("failure message")
+
+FailingMockStorage::query = (queryObj) ->
+  return Promise.reject("failure message")
 
 
 # A function which returns a Sinon matcher returning true only if the object
@@ -149,7 +150,7 @@ describe 'Storage.StorageAdapter', ->
 
     it "should run the onBeforeAnnotationCreated/onAnnotationCreated hooks " +
        "before/after calling the store", (done) ->
-      hr = new MockHookRunner()
+      hr = MockHookRunner()
       s = new MockStorage()
       s._callRecorder = hr.runHook
       a = new Storage.StorageAdapter(s, hr.runHook)
@@ -203,7 +204,7 @@ describe 'Storage.StorageAdapter', ->
 
     it "should run the onBeforeAnnotationUpdated/onAnnotationUpdated hooks " +
        "before/after calling the store", (done) ->
-      hr = new MockHookRunner()
+      hr = MockHookRunner()
       s = new MockStorage()
       s._callRecorder = hr.runHook
       a = new Storage.StorageAdapter(s, hr.runHook)
@@ -257,7 +258,7 @@ describe 'Storage.StorageAdapter', ->
 
     it "should run the onBeforeAnnotationDeleted/onAnnotationDeleted hooks " +
        "before/after calling the store", (done) ->
-      hr = new MockHookRunner()
+      hr = MockHookRunner()
       s = new MockStorage()
       s._callRecorder = hr.runHook
       a = new Storage.StorageAdapter(s, hr.runHook)
@@ -306,7 +307,7 @@ describe 'Storage.StorageAdapter', ->
 
     it "should run the onAnnotationsLoaded hook after calling " +
        "the store", (done) ->
-      hr = new MockHookRunner()
+      hr = MockHookRunner()
       s = new MockStorage()
       s._callRecorder = hr.runHook
       a = new Storage.StorageAdapter(s, hr.runHook)
