@@ -20,19 +20,43 @@ describe "Annotator.noConflict()", ->
 
 
 describe "Annotator.supported()", ->
+  scope = null
 
   beforeEach ->
-    window._Selection = window.getSelection
+    scope = {
+      getSelection: ->
+      JSON: JSON
+    }
 
-  afterEach ->
-    window.getSelection = window._Selection
+  it "returns true if all is well", ->
+    assert.isTrue(Annotator.supported(null, scope))
 
-  it "should return true if the browser has window.getSelection method", ->
-    window.getSelection = ->
-    assert.isTrue(Annotator.supported())
+  it "returns false if scope has no getSelection function", ->
+    delete scope.getSelection
+    assert.isFalse(Annotator.supported(null, scope))
 
-  xit "should return false if the browser has no window.getSelection method", ->
-    # The method currently checks for getSelection on load and will always
-    # return that result.
-    window.getSelection = undefined
-    assert.isFalse(Annotator.supported())
+  it "returns false if scope has no JSON object", ->
+    delete scope.JSON
+    assert.isFalse(Annotator.supported(null, scope))
+
+  it "returns false if scope JSON object has no stringify function", ->
+    scope.JSON = {
+      parse: ->
+    }
+    assert.isFalse(Annotator.supported(null, scope))
+
+  it "returns false if scope JSON object has no parse function", ->
+    scope.JSON = {
+      stringify: ->
+    }
+    assert.isFalse(Annotator.supported(null, scope))
+
+  it "returns extra details if details is true and all is well", ->
+    res = Annotator.supported(true, scope)
+    assert.isTrue(res.supported)
+    assert.deepEqual(res.errors, [])
+
+  it "returns extra details if details is true and everything is broken", ->
+    res = Annotator.supported(true, {})
+    assert.isFalse(res.supported)
+    assert.equal(res.errors.length, 2)

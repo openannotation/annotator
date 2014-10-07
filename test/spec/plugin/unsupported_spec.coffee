@@ -12,7 +12,13 @@ describe 'Unsupported plugin', ->
       }
     }
 
-    sinon.stub(Annotator, 'supported').returns(false)
+    sinon.stub(Annotator, 'supported').returns({
+      supported: false
+      errors: ['widgets are discombobulated']
+    })
 
     plug = Unsupported(mockRegistry)
-    sinon.assert.calledOnce(mockRegistry.notification.create)
+    sinon.assert.calledWith(
+      mockRegistry.notification.create,
+      sinon.match('widgets are discombobulated')
+    )

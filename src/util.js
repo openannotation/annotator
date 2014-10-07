@@ -56,15 +56,6 @@ function mousePosition(event) {
 }
 
 
-// FIXME: Consolidate checks of this sort into one place
-if (!(typeof JSON != 'undefined' &&
-      typeof JSON.parse == 'function' &&
-      typeof JSON.stringify == 'function')) {
-    console.error(gettext("Annotator requires a JSON implementation: have " +
-                          "you included lib/vendor/json2.js?"));
-}
-
-
 exports.$ = $;
 exports.Promise = Promise;
 exports.TranslationString = gettext;

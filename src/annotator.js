@@ -7,10 +7,8 @@ var Core = require('./core'),
 
 var defaultUI = require('./plugin/defaultui').DefaultUI;
 
-// Fill in any missing browser functionality...
+// Store a reference to the current Annotator object, if one exists.
 var g = Util.getGlobal();
-
-// Store a reference to the current Annotator object.
 var _Annotator = g.Annotator;
 
 // If wicked-good-xpath is available, install it. This will not overwrite any
@@ -90,11 +88,44 @@ Annotator.Util = Util;
 Annotator._instances = [];
 
 // Bind gettext helper so plugins can use localisation.
-Annotator._t = Util.TranslationString;
+var _t = Util.TranslationString;
+Annotator._t = _t;
 
-// Returns true if the Annotator can be used in the current browser.
-Annotator.supported = function () {
-    return (typeof g.getSelection == 'function');
+// Returns true if the Annotator can be used in the current environment.
+Annotator.supported = function (details, scope) {
+    if (typeof scope == 'undefined' || scope === null) {
+        scope = Util.getGlobal();
+    }
+
+    var errors = [];
+
+    if (typeof scope.getSelection != 'function') {
+        errors.push(_t("current scope lacks an implementation of the W3C " +
+                       "Range API"));
+    }
+    // We require a working JSON implementation.
+    if (typeof scope.JSON == 'undefined' ||
+        typeof scope.JSON.parse != 'function' ||
+        typeof scope.JSON.stringify != 'function') {
+        errors.push(_t("current scope lacks a working JSON implementation"));
+    }
+
+    if (errors.length > 0) {
+        if (details) {
+            return {
+                supported: false,
+                errors: errors
+            };
+        }
+        return false;
+    }
+    if (details) {
+        return {
+            supported: true,
+            errors: []
+        };
+    }
+    return true;
 };
 
 // Restores the Annotator property on the global object to it's

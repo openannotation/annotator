@@ -7,9 +7,13 @@ var Annotator = require('annotator'),
 // Unsupported serves one very simple purpose. It will display a notification to
 // the user if Annotator cannot support their current browser.
 function Unsupported(reg) {
-    if (!Annotator.supported()) {
+    var details = Annotator.supported(true);
+    if (!details.supported) {
         reg.notification.create(
-          _t("Sorry, the Annotator does not currently support your browser!")
+          _t("Sorry, the Annotator does not currently support your browser!") +
+          " " +
+          _t("Errors: ") +
+          details.errors.join(", ")
         );
     }
 }
