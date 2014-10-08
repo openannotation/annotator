@@ -27,6 +27,15 @@ function MockEmptyPlugin() {
     return {};
 }
 
+function AuthorizerHelper(reg) {
+    this.registry = reg;
+    MockAuthorizer.lastInstance = this;
+}
+
+function MockAuthorizer(reg) {
+    return new AuthorizerHelper(reg);
+}
+
 function NotifierHelper(reg) {
     this.registry = reg;
     MockNotifier.lastInstance = this;
@@ -150,6 +159,20 @@ describe('Annotator', function () {
             });
 
             delayedReject("fail...");
+        });
+    });
+
+    describe('#setAuthorizer', function () {
+        it('should call authorizer functions with a registry', function () {
+            var b = new core.Annotator();
+            b.setAuthorizer(MockAuthorizer);
+            assert.strictEqual(MockAuthorizer.lastInstance.registry, b.registry);
+        });
+
+        it('should set registry `authorizer` to the return value of the authorizer function', function () {
+            var b = new core.Annotator();
+            b.setAuthorizer(MockAuthorizer);
+            assert.strictEqual(b.registry.authorizer, MockAuthorizer.lastInstance);
         });
     });
 

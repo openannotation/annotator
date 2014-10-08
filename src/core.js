@@ -66,6 +66,18 @@ Annotator.prototype.runHook = function (name, args) {
     return Promise.all(results);
 };
 
+// Public: Set the authorizer implementation
+//
+// authorizerFunc - A function returning an authorizer component. An authorizer
+//                  component must implement the Authorizer interface.
+//
+// Returns the instance to allow chaining.
+Annotator.prototype.setAuthorizer = function (authorizerFunc) {
+    var authorizer = authorizerFunc(this.registry);
+    this.registry.authorizer = authorizer;
+    return this;
+};
+
 // Public: Set the notifier implementation
 //
 // notifierFunc - A function returning a notifier component. A notifier
