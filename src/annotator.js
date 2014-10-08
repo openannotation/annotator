@@ -17,9 +17,9 @@ if (typeof g.wgxpath == "function") {
     g.wgxpath.install();
 }
 
-// Annotator represents a sane default configuration of AnnotatorCore, with a
+// Annotator represents a sane default configuration of Annotator, with a
 // default set of plugins and a user interface.
-var Annotator = Core.AnnotatorCore.extend({
+var Annotator = Core.Annotator.extend({
 
     // Public: Creates an instance of the Annotator.
     //
@@ -45,7 +45,7 @@ var Annotator = Core.AnnotatorCore.extend({
     //
     // Returns a new instance of the Annotator.
     constructor: function (element, options) {
-        Core.AnnotatorCore.call(this);
+        Core.Annotator.call(this);
 
         Annotator._instances.push(this);
 
@@ -64,7 +64,7 @@ var Annotator = Core.AnnotatorCore.extend({
     //
     // Returns nothing.
     destroy: function () {
-        Core.AnnotatorCore.prototype.destroy.call(this);
+        Core.Annotator.prototype.destroy.call(this);
 
         var idx = Annotator._instances.indexOf(this);
         if (idx !== -1) {

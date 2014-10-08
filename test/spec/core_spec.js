@@ -51,16 +51,16 @@ function MockStorageAdapter(storage, hookRunner) {
     MockStorageAdapter.lastInstance = this;
 }
 
-describe('AnnotatorCore', function () {
+describe('Annotator', function () {
     describe('#addPlugin', function () {
         it('should call plugin functions with a registry', function () {
-            var b = new core.AnnotatorCore();
+            var b = new core.Annotator();
             b.addPlugin(MockPlugin);
             assert.strictEqual(MockPlugin.lastInstance.registry, b.registry);
         });
 
         it('should add the plugin object to its internal list of plugins', function () {
-            var b = new core.AnnotatorCore();
+            var b = new core.Annotator();
             b.addPlugin(MockPlugin);
             assert.deepEqual(b.plugins, [MockPlugin.lastInstance]);
         });
@@ -68,7 +68,7 @@ describe('AnnotatorCore', function () {
 
     describe('#destroy', function () {
         it("should call each plugin's onDestroy function, if it has one", function (done) {
-            var b = new core.AnnotatorCore();
+            var b = new core.Annotator();
             b.addPlugin(MockPlugin);
             b.addPlugin(MockPlugin);
             b.addPlugin(MockEmptyPlugin);
@@ -86,7 +86,7 @@ describe('AnnotatorCore', function () {
 
     describe('#runHook', function () {
         it('should run the named hook handler on each plugin', function () {
-            var b = new core.AnnotatorCore();
+            var b = new core.Annotator();
             b.addPlugin(MockPlugin);
             var pluginOne = MockPlugin.lastInstance;
             b.addPlugin(MockPlugin);
@@ -103,7 +103,7 @@ describe('AnnotatorCore', function () {
         });
 
         it('should return a promise that resolves if all the ' + 'handlers resolve', function (done) {
-            var b = new core.AnnotatorCore();
+            var b = new core.Annotator();
             b.addPlugin(MockPlugin);
             var pluginOne = MockPlugin.lastInstance;
             b.addPlugin(MockPlugin);
@@ -130,7 +130,7 @@ describe('AnnotatorCore', function () {
         });
 
         it('should return a promise that rejects if any handler rejects', function (done) {
-            var b = new core.AnnotatorCore();
+            var b = new core.Annotator();
             b.addPlugin(MockPlugin);
             var pluginOne = MockPlugin.lastInstance;
             b.addPlugin(MockPlugin);
@@ -155,13 +155,13 @@ describe('AnnotatorCore', function () {
 
     describe('#setNotifier', function () {
         it('should call notifier functions with a registry', function () {
-            var b = new core.AnnotatorCore();
+            var b = new core.Annotator();
             b.setNotifier(MockNotifier);
             assert.strictEqual(MockNotifier.lastInstance.registry, b.registry);
         });
 
         it('should set registry `notifier` to the return value of the notifier function', function () {
-            var b = new core.AnnotatorCore();
+            var b = new core.Annotator();
             b.setNotifier(MockNotifier);
             assert.strictEqual(b.registry.notifier, MockNotifier.lastInstance);
         });
@@ -169,14 +169,14 @@ describe('AnnotatorCore', function () {
 
     describe('#setStorage', function () {
         it('should call the storage function with a registry', function () {
-            var b = new core.AnnotatorCore();
+            var b = new core.Annotator();
             b._storageAdapterType = MockStorageAdapter;
             b.setStorage(MockStorage);
             assert.strictEqual(MockStorage.lastInstance.registry, b.registry);
         });
 
         it('should set registry `annotations` to be a storage adapter', function () {
-            var b = new core.AnnotatorCore();
+            var b = new core.Annotator();
             b._storageAdapterType = MockStorageAdapter;
             b.setStorage(MockStorage);
 
@@ -184,7 +184,7 @@ describe('AnnotatorCore', function () {
         });
 
         it('should pass the adapter the return value of the storage function', function () {
-            var b = new core.AnnotatorCore();
+            var b = new core.Annotator();
             b._storageAdapterType = MockStorageAdapter;
             b.setStorage(MockStorage);
 
@@ -192,7 +192,7 @@ describe('AnnotatorCore', function () {
         });
 
         it('should pass the adapter a hook runner which calls the runHook method of the annotator', function () {
-            var b = new core.AnnotatorCore();
+            var b = new core.Annotator();
             b._storageAdapterType = MockStorageAdapter;
             sinon.spy(b, 'runHook');
             b.setStorage(MockStorage);

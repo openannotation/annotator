@@ -103,7 +103,7 @@ function removeDynamicStyle() {
 //
 // Examples
 //
-//    ann = new AnnotatorCore()
+//    ann = new Annotator.Core.Annotator()
 //    ann.addPlugin(DefaultUI(document.body, {}))
 //
 // Returns an Annotator plugin.

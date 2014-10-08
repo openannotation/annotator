@@ -5,10 +5,10 @@ var extend = require('backbone-extend-standalone');
 var Storage = require('./storage'),
     Promise = require('./util').Promise;
 
-// AnnotatorCore is the coordination point for all annotation functionality. On
+// Annotator is the coordination point for all annotation functionality. On
 // its own it provides only the necessary code for coordinating the lifecycle of
 // annotation objects. It requires at least a storage plugin to be useful.
-function AnnotatorCore() {
+function Annotator() {
     this.plugins = [];
     this.registry = {};
 
@@ -37,7 +37,7 @@ function AnnotatorCore() {
 //     .addPlugin(creationNotifier)
 //
 // Returns the instance to allow chaining.
-AnnotatorCore.prototype.addPlugin = function (plugin) {
+Annotator.prototype.addPlugin = function (plugin) {
     this.plugins.push(plugin(this.registry));
     return this;
 };
@@ -48,14 +48,14 @@ AnnotatorCore.prototype.addPlugin = function (plugin) {
 // destroy method, if it exists, on each plugin object.
 //
 // Returns a Promise resolved when all plugin destroy hooks are completed.
-AnnotatorCore.prototype.destroy = function () {
+Annotator.prototype.destroy = function () {
     return this.runHook('onDestroy');
 };
 
 // Public: Run the named hook with the provided arguments
 //
 // Returns a Promise.all(...) over the hook handler return values.
-AnnotatorCore.prototype.runHook = function (name, args) {
+Annotator.prototype.runHook = function (name, args) {
     var results = [];
     for (var i = 0, len = this.plugins.length; i < len; i++) {
         var plugin = this.plugins[i];
@@ -72,7 +72,7 @@ AnnotatorCore.prototype.runHook = function (name, args) {
 //                component must implement the Notifier interface.
 //
 // Returns the instance to allow chaining.
-AnnotatorCore.prototype.setNotifier = function (notifierFunc) {
+Annotator.prototype.setNotifier = function (notifierFunc) {
     var notifier = notifierFunc(this.registry);
     this.registry.notifier = notifier;
     return this;
@@ -84,7 +84,7 @@ AnnotatorCore.prototype.setNotifier = function (notifierFunc) {
 //               must implement the Storage interface.
 //
 // Returns the instance to allow chaining.
-AnnotatorCore.prototype.setStorage = function (storageFunc) {
+Annotator.prototype.setStorage = function (storageFunc) {
     var self = this,
         storage = storageFunc(this.registry),
         adapter = new this._storageAdapterType(storage, function () {
@@ -94,9 +94,9 @@ AnnotatorCore.prototype.setStorage = function (storageFunc) {
     return this;
 };
 
-// Public: Create an object that extends (subclasses) AnnotatorCore.
-AnnotatorCore.extend = extend;
+// Public: Create an object that extends (subclasses) Annotator.
+Annotator.extend = extend;
 
 
 // Exports
-exports.AnnotatorCore = AnnotatorCore;
+exports.Annotator = Annotator;

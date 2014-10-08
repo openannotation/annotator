@@ -26,7 +26,7 @@ build your own annotation-based applications:
 
 .. code::
 
-   var annotator = new Annotator.Core.AnnotatorCore()
+   var annotator = new Annotator.Core.Annotator()
        .setStorage(Annotator.Storage.HTTPStorage)
        .addPlugin(Annotator.Plugin.DefaultUI(document.body))
        .addPlugin(Annotator.Plugin.Filter())
