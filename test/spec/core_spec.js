@@ -27,18 +27,22 @@ function MockEmptyPlugin() {
     return {};
 }
 
-function StorageHelper() {
+function NotificationHelper(reg) {
+    this.registry = reg;
+    MockNotification.lastInstance = this;
+}
+
+function MockNotification(reg) {
+    return new NotificationHelper(reg);
+}
+
+function StorageHelper(reg) {
+    this.registry = reg;
     MockStorage.lastInstance = this;
 }
 
-var MockNotificationObj = {};
-
-function MockNotification() {
-    return MockNotificationObj;
-}
-
-function MockStorage() {
-    return new StorageHelper();
+function MockStorage(reg) {
+    return new StorageHelper(reg);
 }
 
 function MockStorageAdapter(storage, hookRunner) {
@@ -150,20 +154,25 @@ describe('AnnotatorCore', function () {
     });
 
     describe('#setNotification', function () {
+        it('should call notification functions with a registry', function () {
+            var b = new core.AnnotatorCore();
+            b.setNotification(MockNotification);
+            assert.strictEqual(MockNotification.lastInstance.registry, b.registry);
+        });
+
         it('should set registry `notification` to the return value of the notification function', function () {
             var b = new core.AnnotatorCore();
             b.setNotification(MockNotification);
-            assert.strictEqual(b.registry.notification, MockNotificationObj);
+            assert.strictEqual(b.registry.notification, MockNotification.lastInstance);
         });
     });
 
     describe('#setStorage', function () {
-        it('should call the storage function', function () {
+        it('should call the storage function with a registry', function () {
             var b = new core.AnnotatorCore();
             b._storageAdapterType = MockStorageAdapter;
             b.setStorage(MockStorage);
-
-            assert.ok(MockStorage.lastInstance);
+            assert.strictEqual(MockStorage.lastInstance.registry, b.registry);
         });
 
         it('should set registry `annotations` to be a storage adapter', function () {

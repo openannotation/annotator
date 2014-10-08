@@ -74,7 +74,7 @@ AnnotatorCore.prototype.runHook = function (name, args) {
 //
 // Returns the instance to allow chaining.
 AnnotatorCore.prototype.setNotification = function (notificationFunc) {
-    var notification = notificationFunc();
+    var notification = notificationFunc(this.registry);
     this.registry.notification = notification;
     return this;
 };
@@ -86,17 +86,8 @@ AnnotatorCore.prototype.setNotification = function (notificationFunc) {
 //
 // Returns the instance to allow chaining.
 AnnotatorCore.prototype.setStorage = function (storageFunc) {
-    // setStorage takes a function returning a storage object, and not a storage
-    // object, for the sake of consistency with addPlugin, e.g.
-    //
-    // ann
-    //   .addPlugin(Annotator.Plugins.Tags)
-    //   .setStorage(Annotator.Plugins.NullStore)
-    //
-    // It's certainly not needed (as storage functions don't accept any
-    // arguments) but it does seem cleaner this way.
     var self = this,
-        storage = storageFunc(),
+        storage = storageFunc(this.registry),
         adapter = new this._storageAdapterType(storage, function () {
             return self.runHook.apply(self, arguments);
         });
