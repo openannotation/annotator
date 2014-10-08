@@ -9,7 +9,7 @@ var Annotator = require('annotator'),
 function Unsupported(reg) {
     var details = Annotator.supported(true);
     if (!details.supported) {
-        reg.notification.create(
+        reg.notifier.show(
           _t("Sorry, the Annotator does not currently support your browser!") +
           " " +
           _t("Errors: ") +

@@ -4,8 +4,8 @@ var Annotator = require('annotator'),
 describe('Unsupported plugin', function () {
     it('should notify the user if Annotator does not support the current browser', function () {
         var mockRegistry = {
-            notification: {
-                create: sinon.stub()
+            notifier: {
+                show: sinon.stub()
             }
         };
         sinon.stub(Annotator, 'supported').returns({
@@ -15,7 +15,7 @@ describe('Unsupported plugin', function () {
 
         Unsupported(mockRegistry);
         sinon.assert.calledWith(
-            mockRegistry.notification.create,
+            mockRegistry.notifier.show,
             sinon.match('widgets are discombobulated')
         );
     });

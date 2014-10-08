@@ -27,13 +27,13 @@ function MockEmptyPlugin() {
     return {};
 }
 
-function NotificationHelper(reg) {
+function NotifierHelper(reg) {
     this.registry = reg;
-    MockNotification.lastInstance = this;
+    MockNotifier.lastInstance = this;
 }
 
-function MockNotification(reg) {
-    return new NotificationHelper(reg);
+function MockNotifier(reg) {
+    return new NotifierHelper(reg);
 }
 
 function StorageHelper(reg) {
@@ -153,17 +153,17 @@ describe('AnnotatorCore', function () {
         });
     });
 
-    describe('#setNotification', function () {
-        it('should call notification functions with a registry', function () {
+    describe('#setNotifier', function () {
+        it('should call notifier functions with a registry', function () {
             var b = new core.AnnotatorCore();
-            b.setNotification(MockNotification);
-            assert.strictEqual(MockNotification.lastInstance.registry, b.registry);
+            b.setNotifier(MockNotifier);
+            assert.strictEqual(MockNotifier.lastInstance.registry, b.registry);
         });
 
-        it('should set registry `notification` to the return value of the notification function', function () {
+        it('should set registry `notifier` to the return value of the notifier function', function () {
             var b = new core.AnnotatorCore();
-            b.setNotification(MockNotification);
-            assert.strictEqual(b.registry.notification, MockNotification.lastInstance);
+            b.setNotifier(MockNotifier);
+            assert.strictEqual(b.registry.notifier, MockNotifier.lastInstance);
         });
     });
 

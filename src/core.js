@@ -66,16 +66,15 @@ AnnotatorCore.prototype.runHook = function (name, args) {
     return Promise.all(results);
 };
 
-// Public: Set the notification implementation
+// Public: Set the notifier implementation
 //
-// notificationFunc - A function returning a notification component. A
-//                    notification component must implement the Notification
-//                    interface.
+// notifierFunc - A function returning a notifier component. A notifier
+//                component must implement the Notifier interface.
 //
 // Returns the instance to allow chaining.
-AnnotatorCore.prototype.setNotification = function (notificationFunc) {
-    var notification = notificationFunc(this.registry);
-    this.registry.notification = notification;
+AnnotatorCore.prototype.setNotifier = function (notifierFunc) {
+    var notifier = notifierFunc(this.registry);
+    this.registry.notifier = notifier;
     return this;
 };
 

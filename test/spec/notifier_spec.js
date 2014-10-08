@@ -1,31 +1,31 @@
-var Notification = require('../../src/notification'),
+var Notifier = require('../../src/notifier'),
     $ = require('../../src/util').$;
 
-describe('Notification.Banner', function () {
-    var notification = null;
+describe('Notifier.Banner', function () {
+    var notifier = null;
 
     beforeEach(function () {
-        notification = Notification.Banner();
+        notifier = Notifier.Banner();
     });
 
     afterEach(function () {
         $(document.body).find('.annotator-notice').remove();
     });
 
-    describe('.create()', function () {
-        it('creates a new notification object', function () {
-            var n = notification.create('hello world');
+    describe('.show()', function () {
+        it('creates a new notifier object', function () {
+            var n = notifier.show('hello world');
             assert.ok(n);
         });
     });
 
-    describe('the returned notification object', function () {
+    describe('the returned notifier object', function () {
         var n = null,
             clock = null,
-            message = 'This is a notification message';
+            message = 'This is a notifier message';
 
         beforeEach(function () {
-            n = notification.create(message);
+            n = notifier.show(message);
             clock = sinon.useFakeTimers();
         });
 
@@ -37,7 +37,7 @@ describe('Notification.Banner', function () {
             assert.equal(n.element.parentNode, document.body);
         });
 
-        it('has the correct notification message', function () {
+        it('has the correct notifier message', function () {
             assert.equal(n.element.innerHTML, message);
         });
 
@@ -45,17 +45,17 @@ describe('Notification.Banner', function () {
             assert.match(n.element.className, /\bannotator-notice-info\b/);
         });
 
-        it('has an element with the annotator-notice-success class if the severity was Notification.SUCCESS', function () {
-            n = notification.create(message, Notification.SUCCESS);
+        it('has an element with the annotator-notice-success class if the severity was Notifier.SUCCESS', function () {
+            n = notifier.show(message, Notifier.SUCCESS);
             assert.match(n.element.className, /\bannotator-notice-success\b/);
         });
 
-        it('has an element with the annotator-notice-error class if the severity was Notification.ERROR', function () {
-            n = notification.create(message, Notification.ERROR);
+        it('has an element with the annotator-notice-error class if the severity was Notifier.ERROR', function () {
+            n = notifier.show(message, Notifier.ERROR);
             assert.match(n.element.className, /\bannotator-notice-error\b/);
         });
 
-        it('has a close method which hides the notification', function () {
+        it('has a close method which hides the notifier', function () {
             n.close();
             clock.tick(600);
             assert.isNull(n.element.parentNode);

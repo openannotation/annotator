@@ -1,7 +1,7 @@
 "use strict";
 
 var Core = require('./core'),
-    Notification = require('./notification'),
+    Notifier = require('./notifier'),
     Storage = require('./storage'),
     Util = require('./util');
 
@@ -54,7 +54,7 @@ var Annotator = Core.AnnotatorCore.extend({
             return this;
         }
 
-        this.setNotification(Notification.Banner);
+        this.setNotifier(Notifier.Banner);
         this.setStorage(Storage.NullStorage);
         this.addPlugin(defaultUI(element, options));
     },
@@ -79,7 +79,7 @@ Annotator.Plugin = {};
 
 // Export other modules for use in plugins.
 Annotator.Core = Core;
-Annotator.Notification = Notification;
+Annotator.Notifier = Notifier;
 Annotator.Storage = Storage;
 Annotator.UI = require('./ui');
 Annotator.Util = Util;
