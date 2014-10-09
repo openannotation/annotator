@@ -51,11 +51,6 @@ DefaultAuthorizer.prototype.permits = function permits(
             return true;
         }
 
-        if (tokens.length === 0) {
-            // Empty tokens array: no-one can perform action.
-            return false;
-        }
-
         for (var i = 0, len = tokens.length; i < len; i++) {
             if (this.userId(identity) === tokens[i]) {
                 return true;
