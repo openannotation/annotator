@@ -2,9 +2,20 @@ var h = require('helpers');
 
 var $ = require('../../../src/util').$;
 
-var DefaultUI = require('../../../src/plugin/defaultui').DefaultUI;
+var DefaultUI = require('../../../src/plugin/defaultui').DefaultUI,
+    UI = require('../../../src/ui');
 
 describe('DefaultUI plugin', function () {
+    var sandbox;
+
+    beforeEach(function () {
+        sandbox = sinon.sandbox.create();
+    });
+
+    afterEach(function () {
+        sandbox.restore();
+    });
+
     it('should add CSS to the document that ensures annotator elements have a suitably high z-index', function () {
         h.addFixture('annotator');
         var $fix = $(h.fix());
@@ -30,10 +41,70 @@ describe('DefaultUI plugin', function () {
         check(2000);
     });
 
-    it("should remove its elements from the page when destroyed", function () {
-        var el = $('<div></div>')[0];
-        var plug = DefaultUI(el)(null);
+    describe("Adder", function () {
+        var el, mockAdder, mockRegistry, plug;
+
+        beforeEach(function () {
+            el = $('<div></div>')[0];
+            mockAdder = {destroy: sandbox.stub()};
+            mockRegistry = {annotations: {create: sandbox.stub()}};
+            sandbox.stub(UI, 'Adder').returns(mockAdder);
+
+            plug = DefaultUI(el)(mockRegistry);
+        });
+
+        it("creates an Adder", function () {
+            sinon.assert.calledOnce(UI.Adder);
+        });
+
+        it("passes an onCreate handler which asks the registry to create an annotation", function () {
+            var callArgs = UI.Adder.args[0];
+            assert.property(callArgs[0], 'onCreate');
+            callArgs[0].onCreate({text: 'wibble'});
+            sinon.assert.calledWith(
+                mockRegistry.annotations.create,
+                {text: 'wibble'}
+            );
+        });
+    });
+
+    describe("Editor", function () {
+        var el, mockEditor, mockRegistry, plug;
+
+        beforeEach(function () {
+            el = $('<div></div>')[0];
+            mockEditor = {
+                addField: sandbox.stub(),
+                destroy: sandbox.stub()
+            };
+            mockRegistry = {annotations: {create: sandbox.stub()}};
+            sandbox.stub(UI, 'Editor').returns(mockEditor);
+
+            plug = DefaultUI(el)(mockRegistry);
+        });
+
+        it("creates an Editor", function () {
+            sinon.assert.calledOnce(UI.Editor);
+        });
+    });
+
+    it("should destroy the UI components when it is destroyed", function () {
+        var mockAdder = {destroy: sandbox.stub()},
+            mockEditor = {addField: sandbox.stub(), destroy: sandbox.stub()},
+            mockHighlighter = {destroy: sandbox.stub()},
+            mockTextSelector = {destroy: sandbox.stub()},
+            mockViewer = {destroy: sandbox.stub()};
+        sandbox.stub(UI, 'Adder').returns(mockAdder);
+        sandbox.stub(UI, 'Editor').returns(mockEditor);
+        sandbox.stub(UI, 'Highlighter').returns(mockHighlighter);
+        sandbox.stub(UI, 'TextSelector').returns(mockTextSelector);
+        sandbox.stub(UI, 'Viewer').returns(mockViewer);
+        var plug = DefaultUI(null)(null);
         plug.onDestroy();
-        assert.equal($(el).find('[class^=annotator-]').length, 0);
+        sinon.assert.calledOnce(mockAdder.destroy);
+        sinon.assert.calledOnce(mockEditor.destroy);
+        sinon.assert.calledOnce(mockHighlighter.destroy);
+        sinon.assert.calledOnce(mockTextSelector.destroy);
+        sinon.assert.calledOnce(mockViewer.destroy);
     });
 });
