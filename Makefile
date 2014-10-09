@@ -1,11 +1,9 @@
-vpath %.coffee src:src/plugin
-
-ANNOTATOR_SRC := annotator.coffee
+ANNOTATOR_SRC := src/annotator.js
 ANNOTATOR_PKG := pkg/annotator.js pkg/annotator.css
 
-PLUGIN_SRC := $(wildcard src/plugin/*.coffee)
+PLUGIN_SRC := $(wildcard src/plugin/*.js)
 PLUGIN_SRC := $(patsubst src/plugin/%,%,$(PLUGIN_SRC))
-PLUGIN_PKG := $(patsubst %.coffee,pkg/annotator.%.js,$(PLUGIN_SRC))
+PLUGIN_PKG := $(patsubst %.js,pkg/annotator.%.js,$(PLUGIN_SRC))
 
 FULL_SRC := $(ANNOTATOR_SRC) $(PLUGIN_SRC)
 FULL_PKG := pkg/annotator-full.js pkg/annotator.css
@@ -46,22 +44,13 @@ test:
 develop:
 	npm start
 
-doc: docco
+doc:
 	cd doc && $(MAKE) html
-	docco src/*.coffee -o doc/_build/html/docco/
-
-# Make the docco build timestamped off the docco.css file which is regenerated
-# on every docco build. This, in concert with the next task, can ensure that we
-# don't regenerate docco docs unless the source files have actually changed.
-docco: doc/_build/html/src/docco.css
-
-doc/_build/html/src/docco.css: $(wildcard src/**/*.coffee)
-	$(shell npm bin)/docco src/**/*.coffee -o doc/_build/html/src
 
 pkg/annotator.css: css/annotator.css
 	$(BUILD) -c
 
-pkg/%.js pkg/annotator.%.js: %.coffee
+pkg/%.js pkg/annotator.%.js: %.js
 
 pkg/%.js pkg/annotator.%.js pkg/annotator-%.js: | $(DEPDIR) $(PKGDIR)
 	$(eval $@_CMD := $(patsubst annotator.%.js,-p %.js,$(@F)))
@@ -80,7 +69,7 @@ $(DEPDIR) $(PKGDIR):
 -include $(DEPDIR)/*.d
 
 .PHONY: all annotator plugins annotator-full bookmarklet clean test develop \
-	dist doc docco
+	dist doc
 
 .SECONDEXPANSION:
 $(MISC_PKG): $$(@F)

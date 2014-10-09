@@ -14,7 +14,6 @@
   },
   "devDependencies": {
     "browser-resolve": "~1.2.1",
-    "coffee-script": "~1.7.1",
     "uglify-js": "~2.4.12",
     "uglifycss": "~0.0.5",
     "mocha": "~1.12.1",
@@ -27,15 +26,12 @@
     "iso8601": "~1.1.1",
     "connect": "~2.10.1",
     "browserify": "~3.30.1",
-    "coffeeify": "~0.6.0",
     "convert-source-map": "~0.3.1",
     "glob": "~3.2.6",
     "kew": "~0.2.2",
     "source-map": "~0.1.32",
     "watchify": "0.6.2",
-    "through": "~2.3.4",
-    "coffeelint": "~1.1.0",
-    "docco": "~0.6.3"
+    "through": "~2.3.4"
   },
   "engines": {
     "node": ">=0.8 <0.12"
@@ -43,8 +39,8 @@
   "scripts": {
     "start": "./tools/serve",
     "test": "./tools/test",
-    "lint": "jshint src && coffeelint src && jscs src && jshint -c test/.jshintrc test && jscs -c test/.jscsrc test",
-    "travis": "jshint src && coffeelint src && jscs src && jshint -c test/.jshintrc test && jscs -c test/.jscsrc test && ./tools/test"
+    "lint": "jshint src && jscs src && jshint -c test/.jshintrc test && jscs -c test/.jscsrc test",
+    "travis": "npm run lint && ./tools/test"
   },
   "browser": "./annotator.js",
   "testling": {

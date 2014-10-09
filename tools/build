@@ -3,8 +3,7 @@ var child_process = require('child_process');
 var fs = require('fs');
 var path = require('path');
 
-var coffee = require('coffee-script');
-var coffeeify = require('coffeeify');
+var browserify = require('browserify');
 var convert = require('convert-source-map');
 var glob = require('glob');
 var sourceMap = require('source-map');
@@ -67,27 +66,17 @@ function uglify(src, srcMap) {
 }
 
 
-// Convenience browserify factory for coffee
-exports.browserify = function (opts) {
-  if (!opts) opts = {};
-  if (Array.isArray(opts)) opts = {entries: opts}
-  if (typeof(opts) === 'string') opts = {entries: [opts]}
-  if (!opts.extensions) opts.extensions = [];
-  opts.extensions.push('.coffee');
-  return require('browserify')(opts).transform(coffeeify);
-};
 
 
 // Package the bundles when called as the main script
 if (require.main === module) {
   var depsOnly = false;
-  var libs = {};
   var preamble = null;
   var targets = Array.prototype.slice.call(process.argv, 2);
 
   child_process.exec('./tools/preamble', function (err, preambleSrc) {
     if (err) throw (err);
-    preamble = coffee.compile(preambleSrc, {bare: true}).trim() + '\n';
+    preamble = preambleSrc;
 
     while(targets.length) {
       var target = targets.shift();
@@ -173,7 +162,7 @@ if (require.main === module) {
   }
 
   function core () {
-    pack(exports.browserify('./src/annotator'), 'pkg/annotator.js', {
+    pack(browserify('./src/annotator'), 'pkg/annotator.js', {
       debug: true,
       standalone: 'Annotator'
     });
@@ -183,9 +172,9 @@ if (require.main === module) {
     var exportName = name.replace(/^\w/, function (c) {
       return c.toUpperCase();
     });
-    var source = './src/plugin/' + name + '.coffee';
+    var source = './src/plugin/' + name;
     var target = 'pkg/annotator.' + path.basename(name).toLowerCase() + '.js';
-    var b = exports.browserify()
+    var b = browserify()
       .external('jquery')
       .external('annotator')
       .require('./src/namespace', {expose: 'annotator'})
@@ -197,14 +186,14 @@ if (require.main === module) {
   }
 
   function full() {
-    var b = exports.browserify().require('./src/annotator', {
+    var b = browserify().require('./src/annotator', {
       entry: true
     , expose: 'annotator'
     });
 
     // Add the plugins
-    glob.sync('./src/plugin/*.coffee').forEach(function (p) {
-      pluginName = path.basename(p).replace('.coffee', '');
+    glob.sync('./src/plugin/*.js').forEach(function (p) {
+      pluginName = path.basename(p);
       moduleName = 'annotator-plugin-' + pluginName;
       b.require(p, {expose: moduleName});
     });
@@ -233,12 +222,12 @@ if (require.main === module) {
   }
 
   function bookmarklet() {
-    var b = exports.browserify().require('./src/annotator', {
+    var b = browserify().require('./src/annotator', {
       entry: true
     , expose: 'annotator'
     });
     glob.sync(
-      './src/plugin/{unsupported,auth,store,tags}.coffee'
+      './src/plugin/{unsupported,auth,store,tags}'
     ).forEach(function (p) {
       b.add(p);
     });
@@ -248,7 +237,7 @@ if (require.main === module) {
   }
 
   function bootstrap() {
-    pack(exports.browserify('./src/bootstrap'), 'pkg/bootstrap.js', {
+    pack(browserify('./src/bootstrap'), 'pkg/bootstrap.js', {
       debug: true
     });
   }
