@@ -4,7 +4,7 @@ var Widget = require('./widget').Widget,
     Util = require('../util');
 
 var $ = Util.$,
-    _t = Util.TranslationString;
+    _t = Util.gettext;
 
 var NS = 'annotator-viewer';
 

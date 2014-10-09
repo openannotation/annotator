@@ -94,7 +94,7 @@ Annotator.Util = Util;
 Annotator._instances = [];
 
 // Bind gettext helper so plugins can use localisation.
-var _t = Util.TranslationString;
+var _t = Util.gettext;
 Annotator._t = _t;
 
 // Returns true if the Annotator can be used in the current environment.

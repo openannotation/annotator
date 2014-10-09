@@ -58,7 +58,7 @@ function mousePosition(event) {
 
 exports.$ = $;
 exports.Promise = Promise;
-exports.TranslationString = gettext;
+exports.gettext = gettext;
 exports.escapeHtml = escapeHtml;
 exports.getGlobal = getGlobal;
 exports.mousePosition = mousePosition;

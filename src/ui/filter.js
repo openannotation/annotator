@@ -3,7 +3,7 @@
 var Util = require('../util');
 
 var $ = Util.$,
-    _t = Util.TranslationString;
+    _t = Util.gettext;
 
 var NS = 'annotator-filter';
 

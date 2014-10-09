@@ -1,6 +1,6 @@
 Annotator = require('annotator')
 $ = Annotator.Util.$
-_t = Annotator.Util.TranslationString
+_t = Annotator.Util.gettext
 
 
 # Public: Plugin for setting permissions on newly created annotations as well as

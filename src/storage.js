@@ -2,7 +2,7 @@
 
 var Util = require('./util'),
     $ = Util.$,
-    _t = Util.TranslationString,
+    _t = Util.gettext,
     Promise = Util.Promise;
 
 
