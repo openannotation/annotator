@@ -22,10 +22,30 @@ function Viewer(options, viewer) {
                 reg.annotations.update(annotation);
             };
         }
-
         if (typeof options.onDelete == 'undefined') {
             options.onDelete = function (annotation) {
                 reg.annotations['delete'](annotation);
+            };
+        }
+
+        // Set default handlers that determine whether the edit and delete
+        // buttons are shown in the viewer:
+        if (typeof options.permitEdit == 'undefined') {
+            options.permitEdit = function (annotation) {
+                return reg.authorizer.permits(
+                    'update',
+                    annotation,
+                    reg.identifier.who()
+                );
+            };
+        }
+        if (typeof options.permitDelete == 'undefined') {
+            options.permitDelete = function (annotation) {
+                return reg.authorizer.permits(
+                    'delete',
+                    annotation,
+                    reg.identifier.who()
+                );
             };
         }
 

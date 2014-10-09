@@ -12,6 +12,12 @@ describe('Viewer plugin', function () {
             annotations: {
                 update: sandbox.stub(),
                 "delete": sandbox.stub()
+            },
+            authorizer: {
+                permits: sandbox.stub()
+            },
+            identifier: {
+                who: sandbox.stub().returns('alice')
             }
         };
         mockViewer = {
@@ -47,6 +53,32 @@ describe('Viewer plugin', function () {
         sinon.assert.calledWith(mockRegistry.annotations["delete"], {
             text: 'foo'
         });
+    });
+
+    it('sets a default permitEdit handler that consults the authorizer', function () {
+        Viewer({}, mockViewerCtor)(mockRegistry);
+        var passedOptions = mockViewerCtor.firstCall.args[0];
+        assert(sinon.match.has('permitEdit').test(passedOptions));
+        passedOptions.permitEdit({text: 'foo'});
+        sinon.assert.calledWith(
+            mockRegistry.authorizer.permits,
+            'update',
+            {text: 'foo'},
+            'alice'
+        );
+    });
+
+    it('sets a default permitDelete handler that consults the authorizer', function () {
+        Viewer({}, mockViewerCtor)(mockRegistry);
+        var passedOptions = mockViewerCtor.firstCall.args[0];
+        assert(sinon.match.has('permitDelete').test(passedOptions));
+        passedOptions.permitDelete({text: 'foo'});
+        sinon.assert.calledWith(
+            mockRegistry.authorizer.permits,
+            'delete',
+            {text: 'foo'},
+            'alice'
+        );
     });
 
     it('destroys the viewer component when destroyed', function () {

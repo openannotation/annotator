@@ -150,13 +150,13 @@ describe('UI.Viewer', function () {
         });
     });
 
-    describe('with the showEditButton option set to true', function () {
+    describe('when the permitEdit function returns true', function () {
         var onEdit = null;
 
         beforeEach(function () {
             onEdit = sinon.stub();
             v = new UI.Viewer({
-                showEditButton: true,
+                permitEdit: function () { return true; },
                 onEdit: onEdit
             });
         });
@@ -191,13 +191,13 @@ describe('UI.Viewer', function () {
         });
     });
 
-    describe('with the showDeleteButton option set to true', function () {
+    describe('when the permitDelete function returns true', function () {
         var onDelete = null;
 
         beforeEach(function () {
             onDelete = sinon.stub();
             v = new UI.Viewer({
-                showDeleteButton: true,
+                permitDelete: function () { return true; },
                 onDelete: onDelete
             });
         });

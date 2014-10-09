@@ -1,6 +1,8 @@
 "use strict";
 
-var Core = require('./core'),
+var Authorizer = require('./authorizer'),
+    Core = require('./core'),
+    Identifier = require('./identifier'),
     Notifier = require('./notifier'),
     Storage = require('./storage'),
     Util = require('./util');
@@ -54,6 +56,8 @@ var Annotator = Core.Annotator.extend({
             return this;
         }
 
+        this.setAuthorizer(Authorizer.Default({}));
+        this.setIdentifier(Identifier.Default(null));
         this.setNotifier(Notifier.Banner);
         this.setStorage(Storage.NullStorage);
         this.addPlugin(defaultUI(element, options));
@@ -78,7 +82,9 @@ var Annotator = Core.Annotator.extend({
 Annotator.Plugin = {};
 
 // Export other modules for use in plugins.
+Annotator.Authorizer = Authorizer;
 Annotator.Core = Core;
+Annotator.Identifier = Identifier;
 Annotator.Notifier = Notifier;
 Annotator.Storage = Storage;
 Annotator.UI = require('./ui');

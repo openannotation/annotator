@@ -227,7 +227,8 @@ var Viewer = Widget.extend({
         }
 
         var controller = {};
-        if (this.options.showEditButton) {
+        if (typeof this.options.permitEdit == 'function' &&
+            this.options.permitEdit(annotation)) {
             controller.showEdit = function () {
                 edit.removeAttr('disabled');
             };
@@ -237,7 +238,8 @@ var Viewer = Widget.extend({
         } else {
             edit.remove();
         }
-        if (this.options.showDeleteButton) {
+        if (typeof this.options.permitDelete == 'function' &&
+            this.options.permitDelete(annotation)) {
             controller.showDelete = function () {
                 del.removeAttr('disabled');
             };
@@ -460,11 +462,13 @@ Viewer.options = {
     // over another annotation.
     activityDelay: 100,
 
-    // Show the viewer's "edit" button?
-    showEditButton: false,
+    // Hook, passed an annotation, which determines if the viewer's "edit"
+    // button is shown. If it is not a function, the button will not be shown.
+    permitEdit: null,
 
-    // Show the viewer's "delete" button?
-    showDeleteButton: false,
+    // Hook, passed an annotation, which determines if the viewer's "delete"
+    // button is shown. If it is not a function, the button will not be shown.
+    permitDelete: null,
 
     // If set to a DOM Element, will set up the viewer to automatically display
     // when the user hovers over Annotator highlights within that element.

@@ -127,13 +127,25 @@ function DefaultUI(element) {
             highlighter = new UI.Highlighter(element),
             textSelector = new UI.TextSelector(element),
             viewer = new UI.Viewer({
-                showEditButton: true,
-                showDeleteButton: true,
                 onEdit: function (ann) {
                     registry.annotations.update(ann);
                 },
                 onDelete: function (ann) {
                     registry.annotations['delete'](ann);
+                },
+                permitEdit: function (ann) {
+                    return registry.authorizer.permits(
+                        'update',
+                        ann,
+                        registry.identifier.who()
+                    );
+                },
+                permitDelete: function (ann) {
+                    return registry.authorizer.permits(
+                        'delete',
+                        ann,
+                        registry.identifier.who()
+                    );
                 },
                 autoViewHighlights: element
             });
