@@ -77,7 +77,14 @@ describe('DefaultUI plugin', function () {
                 addField: sandbox.stub(),
                 destroy: sandbox.stub()
             };
-            mockRegistry = {annotations: {create: sandbox.stub()}};
+            mockRegistry = {
+                annotations: {create: sandbox.stub()},
+                authorizer: {
+                    permits: sandbox.stub().returns(true),
+                    userId: function (u) { return u; }
+                },
+                identifier: {who: sandbox.stub().returns('alice')}
+            };
             sandbox.stub(UI, 'Editor').returns(mockEditor);
 
             plug = DefaultUI(el)(mockRegistry);
@@ -85,6 +92,84 @@ describe('DefaultUI plugin', function () {
 
         it("creates an Editor", function () {
             sinon.assert.calledOnce(UI.Editor);
+        });
+
+        it("adds permissions-related fields", function () {
+            sinon.assert.callCount(mockEditor.addField, 2);
+        });
+
+        describe("permissions field load/submit functions", function () {
+            var field;
+            var viewLoad, viewSubmit;
+
+            beforeEach(function () {
+                viewLoad = mockEditor.addField.args[0][0].load;
+                viewSubmit = mockEditor.addField.args[0][0].submit;
+
+                field = $('<div><input type="checkbox" disabled></div>')[0];
+            });
+
+            it("load hides a field if no user is set", function () {
+                mockRegistry.identifier.who.returns(null);
+                viewLoad(field, {});
+                assert.equal(field.style.display, 'none');
+            });
+
+            it("load hides a field if current user is not admin", function () {
+                var ann = {};
+                mockRegistry.authorizer.permits
+                    .withArgs('admin', ann, 'alice').returns(false);
+                viewLoad(field, ann);
+                assert.equal(field.style.display, 'none');
+            });
+
+            it("load hides a field if current user is not admin", function () {
+                var ann = {};
+                mockRegistry.authorizer.permits
+                    .withArgs('admin', ann, 'alice').returns(false);
+                viewLoad(field, ann);
+                assert.equal(field.style.display, 'none');
+            });
+
+            it("load shows a checked field if the action is authorised with a null user", function () {
+                mockRegistry.authorizer.permits.returns(true);
+                viewLoad(field, {});
+                assert.notEqual(field.style.display, 'none');
+                assert.isTrue(field.firstChild.checked);
+            });
+
+            it("load shows an unchecked field if the action isn't authorised with a null user", function () {
+                var ann = {};
+                mockRegistry.authorizer.permits
+                    .withArgs('read', ann, null).returns(false);
+                viewLoad(field, ann);
+                assert.notEqual(field.style.display, 'none');
+                assert.isFalse(field.firstChild.checked);
+            });
+
+            it("submit deletes the permissions field for the action if the checkbox is checked", function () {
+                var ann = {permissions: {'read': ['alice']}};
+                field.firstChild.checked = true;
+                viewSubmit(field, ann);
+                assert.notProperty(ann.permissions, 'read');
+            });
+
+            it("submit sets the permissions field for the action to [userId] if the checkbox is unchecked", function () {
+                var ann = {};
+                field.firstChild.checked = false;
+                viewSubmit(field, ann);
+                assert.property(ann, 'permissions');
+                assert.property(ann.permissions, 'read');
+                assert.deepEqual(ann.permissions.read, ['alice']);
+            });
+
+            it("submit doesn't touch the annotation if the current user is null", function () {
+                mockRegistry.identifier.who.returns(null);
+                var ann = {permissions: {'read': ['alice']}};
+                field.firstChild.checked = true;
+                viewSubmit(field, ann);
+                assert.deepEqual(ann.permissions, {'read': ['alice']});
+            });
         });
     });
 
