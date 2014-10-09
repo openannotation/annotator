@@ -36,6 +36,15 @@ function MockAuthorizer(reg) {
     return new AuthorizerHelper(reg);
 }
 
+function IdentifierHelper(reg) {
+    this.registry = reg;
+    MockIdentifier.lastInstance = this;
+}
+
+function MockIdentifier(reg) {
+    return new IdentifierHelper(reg);
+}
+
 function NotifierHelper(reg) {
     this.registry = reg;
     MockNotifier.lastInstance = this;
@@ -173,6 +182,20 @@ describe('Annotator', function () {
             var b = new core.Annotator();
             b.setAuthorizer(MockAuthorizer);
             assert.strictEqual(b.registry.authorizer, MockAuthorizer.lastInstance);
+        });
+    });
+
+    describe('#setIdentifier', function () {
+        it('should call identifier functions with a registry', function () {
+            var b = new core.Annotator();
+            b.setIdentifier(MockIdentifier);
+            assert.strictEqual(MockIdentifier.lastInstance.registry, b.registry);
+        });
+
+        it('should set registry `identifier` to the return value of the identifier function', function () {
+            var b = new core.Annotator();
+            b.setIdentifier(MockIdentifier);
+            assert.strictEqual(b.registry.identifier, MockIdentifier.lastInstance);
         });
     });
 

@@ -78,6 +78,18 @@ Annotator.prototype.setAuthorizer = function (authorizerFunc) {
     return this;
 };
 
+// Public: Set the identifier implementation
+//
+// identifierFunc - A function returning an identifier component. An identifier
+//                  component must implement the Identifier interface.
+//
+// Returns the instance to allow chaining.
+Annotator.prototype.setIdentifier = function (identifierFunc) {
+    var identifier = identifierFunc(this.registry);
+    this.registry.identifier = identifier;
+    return this;
+};
+
 // Public: Set the notifier implementation
 //
 // notifierFunc - A function returning a notifier component. A notifier
