@@ -15,7 +15,7 @@ var _Annotator = g.Annotator;
 
 // If wicked-good-xpath is available, install it. This will not overwrite any
 // native XPath functionality.
-if (typeof g.wgxpath == "function") {
+if (typeof g.wgxpath === "function") {
     g.wgxpath.install();
 }
 
@@ -99,20 +99,20 @@ Annotator._t = _t;
 
 // Returns true if the Annotator can be used in the current environment.
 Annotator.supported = function (details, scope) {
-    if (typeof scope == 'undefined' || scope === null) {
+    if (typeof scope === 'undefined' || scope === null) {
         scope = Util.getGlobal();
     }
 
     var errors = [];
 
-    if (typeof scope.getSelection != 'function') {
+    if (typeof scope.getSelection !== 'function') {
         errors.push(_t("current scope lacks an implementation of the W3C " +
                        "Range API"));
     }
     // We require a working JSON implementation.
-    if (typeof scope.JSON == 'undefined' ||
-        typeof scope.JSON.parse != 'function' ||
-        typeof scope.JSON.stringify != 'function') {
+    if (typeof scope.JSON === 'undefined' ||
+        typeof scope.JSON.parse !== 'function' ||
+        typeof scope.JSON.stringify !== 'function') {
         errors.push(_t("current scope lacks a working JSON implementation"));
     }
 

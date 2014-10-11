@@ -23,9 +23,9 @@ var id = (function () {
 // preventEventDefault prevents an event's default, but handles the condition
 // that the event is null or doesn't have a preventDefault function.
 function preventEventDefault(event) {
-    if (typeof event != 'undefined' &&
+    if (typeof event !== 'undefined' &&
         event !== null &&
-        typeof event.preventDefault == 'function') {
+        typeof event.preventDefault === 'function') {
         event.preventDefault();
     }
 }
@@ -65,7 +65,7 @@ function dragTracker(handle, callback) {
         // The callback function can return false to indicate that the tracker
         // shouldn't keep updating the last position. This can be used to
         // implement "walls" beyond which (for example) resizing has no effect.
-        if (typeof callback == 'function') {
+        if (typeof callback === 'function') {
             trackLastMove = callback(delta);
         }
 
@@ -137,7 +137,7 @@ function dragTracker(handle, callback) {
 //             element, and so dragging down means "grow the element"
 function resizer(element, handle, options) {
     var $el = $(element);
-    if (typeof options == 'undefined' || options === null) {
+    if (typeof options === 'undefined' || options === null) {
         options = {};
     }
 
@@ -147,10 +147,10 @@ function resizer(element, handle, options) {
         var directionX = 1,
             directionY = -1;
 
-        if (typeof options.invertedX == 'function' && options.invertedX()) {
+        if (typeof options.invertedX === 'function' && options.invertedX()) {
             directionX = -1;
         }
-        if (typeof options.invertedY == 'function' && options.invertedY()) {
+        if (typeof options.invertedY === 'function' && options.invertedY()) {
             directionY = 1;
         }
 
@@ -282,7 +282,7 @@ var Editor = Widget.extend({
     //
     // Returns nothing.
     show: function (position) {
-        if (typeof position != 'undefined' && position !== null) {
+        if (typeof position !== 'undefined' && position !== null) {
             this.element.css({
                 top: position.top,
                 left: position.left
@@ -332,7 +332,7 @@ var Editor = Widget.extend({
             var field = this.fields[i];
             field.submit(field.element, this.annotation);
         }
-        if (typeof this.dfd != 'undefined' && this.dfd !== null) {
+        if (typeof this.dfd !== 'undefined' && this.dfd !== null) {
             this.dfd.resolve();
         }
         this.hide();
@@ -343,7 +343,7 @@ var Editor = Widget.extend({
     //
     // Returns itself.
     cancel: function () {
-        if (typeof this.dfd != 'undefined' && this.dfd !== null) {
+        if (typeof this.dfd !== 'undefined' && this.dfd !== null) {
             this.dfd.reject('editing cancelled');
         }
         this.hide();
@@ -521,10 +521,10 @@ var Editor = Widget.extend({
     //
     // Returns nothing.
     _setupDraggables: function () {
-        if (typeof this._resizer != 'undefined' && this._resizer !== null) {
+        if (typeof this._resizer !== 'undefined' && this._resizer !== null) {
             this._resizer.destroy();
         }
-        if (typeof this._mover != 'undefined' && this._mover !== null) {
+        if (typeof this._mover !== 'undefined' && this._mover !== null) {
             this._mover.destroy();
         }
 

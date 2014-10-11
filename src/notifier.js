@@ -15,7 +15,7 @@ var INFO = 'info',
 //            Notifier.SUCCESS, or Notifier.ERROR)
 //
 function BannerNotifier(message, severity) {
-    if (typeof severity == 'undefined' || severity === null) {
+    if (typeof severity === 'undefined' || severity === null) {
         severity = INFO;
     }
 

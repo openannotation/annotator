@@ -6,7 +6,7 @@ var Annotator = require('annotator');
 // filter bar to allow browsing and searching of annotations on the current
 // page.
 function Filter(options, filter) {
-    if (typeof filter == 'undefined' || filter === null) {
+    if (typeof filter === 'undefined' || filter === null) {
         filter = Annotator.UI.Filter;
     }
 

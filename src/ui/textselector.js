@@ -27,7 +27,7 @@ function TextSelector(element, options) {
     this.options = $.extend(true, {}, TextSelector.options, options);
     this.onSelection = this.options.onSelection;
 
-    if (typeof this.element.ownerDocument != 'undefined' &&
+    if (typeof this.element.ownerDocument !== 'undefined' &&
         this.element.ownerDocument !== null) {
         var self = this;
         this.document = this.element.ownerDocument;
@@ -111,7 +111,7 @@ TextSelector.prototype._checkForEndSelection = function (event) {
     var self = this;
 
     var _nullSelection = function () {
-        if (typeof self.onSelection == 'function') {
+        if (typeof self.onSelection === 'function') {
             self.onSelection([], event);
         }
     };
@@ -136,7 +136,7 @@ TextSelector.prototype._checkForEndSelection = function (event) {
         }
     }
 
-    if (typeof this.onSelection == 'function') {
+    if (typeof this.onSelection === 'function') {
         this.onSelection(selectedRanges, event);
     }
 };

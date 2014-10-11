@@ -35,7 +35,7 @@ function getGlobal() {
 var gettext = (function () {
     var g = getGlobal();
 
-    if (typeof g.Gettext == 'function') {
+    if (typeof g.Gettext === 'function') {
         var _gettext = new g.Gettext({domain: "annotator"});
         return function (msgid) { return _gettext.gettext(msgid); };
     }

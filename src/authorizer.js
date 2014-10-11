@@ -11,7 +11,7 @@
 function DefaultAuthorizer(options) {
     this.options = options || {};
 
-    if (typeof this.options.userId == 'function') {
+    if (typeof this.options.userId === 'function') {
         this.userId = this.options.userId;
     }
 }

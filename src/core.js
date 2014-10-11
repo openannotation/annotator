@@ -59,7 +59,7 @@ Annotator.prototype.runHook = function (name, args) {
     var results = [];
     for (var i = 0, len = this.plugins.length; i < len; i++) {
         var plugin = this.plugins[i];
-        if (typeof plugin[name] == 'function') {
+        if (typeof plugin[name] === 'function') {
             results.push(plugin[name].apply(plugin, args));
         }
     }

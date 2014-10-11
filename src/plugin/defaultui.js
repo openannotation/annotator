@@ -8,7 +8,7 @@ var UI = require('../ui'),
 //
 // This usually exists in native code, but not in IE8.
 function trim(s) {
-    if (typeof String.prototype.trim == 'function') {
+    if (typeof String.prototype.trim === 'function') {
         return String.prototype.trim.call(s);
     } else {
         return s.replace(/^[\s\xA0]+|[\s\xA0]+$/g, '');

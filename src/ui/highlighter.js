@@ -16,7 +16,7 @@ var $ = Util.$,
 //
 // Returns an array of highlight Elements.
 function highlightRange(normedRange, cssClass) {
-    if (typeof cssClass == 'undefined' || cssClass === null) {
+    if (typeof cssClass === 'undefined' || cssClass === null) {
         cssClass = 'annotator-hl';
     }
     var white = /^\s*$/;
@@ -93,7 +93,7 @@ Highlighter.prototype.drawAll = function (annotations) {
         var highlights = [];
 
         function loader(annList) {
-            if (typeof annList == 'undefined' || annList === null) {
+            if (typeof annList === 'undefined' || annList === null) {
                 annList = [];
             }
 
@@ -134,12 +134,12 @@ Highlighter.prototype.draw = function (annotation) {
         }
     }
 
-    var hasLocal = (typeof annotation._local != 'undefined' &&
+    var hasLocal = (typeof annotation._local !== 'undefined' &&
                     annotation._local !== null);
     if (!hasLocal) {
         annotation._local = {};
     }
-    var hasHighlights = (typeof annotation._local.highlights != 'undefined' &&
+    var hasHighlights = (typeof annotation._local.highlights !== 'undefined' &&
                          annotation._local.highlights === null);
     if (!hasHighlights) {
         annotation._local.highlights = [];
@@ -157,7 +157,7 @@ Highlighter.prototype.draw = function (annotation) {
     $(annotation._local.highlights).data('annotation', annotation);
 
     // Add a data attribute for annotation id if the annotation has one
-    if (typeof annotation.id != 'undefined' && annotation.id !== null) {
+    if (typeof annotation.id !== 'undefined' && annotation.id !== null) {
         $(annotation._local.highlights)
             .attr('data-annotation-id', annotation.id);
     }
@@ -171,9 +171,9 @@ Highlighter.prototype.draw = function (annotation) {
 //
 // Returns nothing.
 Highlighter.prototype.undraw = function (annotation) {
-    var hasHighlights = (typeof annotation._local != 'undefined' &&
+    var hasHighlights = (typeof annotation._local !== 'undefined' &&
                          annotation._local !== null &&
-                         typeof annotation._local.highlights != 'undefined' &&
+                         typeof annotation._local.highlights !== 'undefined' &&
                          annotation._local.highlights !== null);
 
     if (!hasHighlights) {

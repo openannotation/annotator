@@ -56,7 +56,7 @@ function DebugStorage () {
 function NullStorage() {
     return {
         'create': function (annotation) {
-            if (typeof annotation.id == 'undefined' || annotation.id === null) {
+            if (typeof annotation.id === 'undefined' || annotation.id === null) {
                 annotation.id = id();
             }
             return annotation;
@@ -250,12 +250,12 @@ HTTPStorageImpl.prototype._apiRequestOptions = function (action, obj) {
 //
 // Returns URL String.
 HTTPStorageImpl.prototype._urlFor = function (action, id) {
-    if (typeof id == 'undefined' || id === null) {
+    if (typeof id === 'undefined' || id === null) {
         id = '';
     }
 
     var url = '';
-    if (typeof this.options.prefix != 'undefined' &&
+    if (typeof this.options.prefix !== 'undefined' &&
         this.options.prefix !== null) {
         url = this.options.prefix;
     }
@@ -396,7 +396,7 @@ function StorageAdapter(store, runHook) {
 //
 // Returns a Promise of an annotation Object.
 StorageAdapter.prototype.create = function (obj) {
-    if (typeof obj == 'undefined' || obj === null) {
+    if (typeof obj === 'undefined' || obj === null) {
         obj = {};
     }
     return this._cycle(
@@ -428,7 +428,7 @@ StorageAdapter.prototype.create = function (obj) {
 //
 // Returns a Promise of an annotation Object.
 StorageAdapter.prototype.update = function (obj) {
-    if (typeof obj.id == 'undefined' || obj.id === null) {
+    if (typeof obj.id === 'undefined' || obj.id === null) {
         throw new TypeError("annotation must have an id for update()");
     }
     return this._cycle(
@@ -452,7 +452,7 @@ StorageAdapter.prototype.update = function (obj) {
 //
 // Returns a Promise of an annotation Object.
 StorageAdapter.prototype['delete'] = function (obj) {
-    if (typeof obj.id == 'undefined' || obj.id === null) {
+    if (typeof obj.id === 'undefined' || obj.id === null) {
         throw new TypeError("annotation must have an id for delete()");
     }
     return this._cycle(
@@ -512,7 +512,7 @@ StorageAdapter.prototype._cycle = function (
             // Empty obj without changing identity
             for (var k in obj) {
                 if (obj.hasOwnProperty(k)) {
-                    if (k != '_local') {
+                    if (k !== '_local') {
                         delete obj[k];
                     }
                 }

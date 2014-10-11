@@ -159,7 +159,7 @@ var Viewer = Widget.extend({
     //
     // Returns nothing.
     show: function (position) {
-        if (typeof position != 'undefined' && position !== null) {
+        if (typeof position !== 'undefined' && position !== null) {
             this.element.css({
                 top: position.top,
                 left: position.left
@@ -217,7 +217,7 @@ var Viewer = Widget.extend({
             {'type': 'text/html'}
         );
         var hasValidLink = (links.length > 0 &&
-                            typeof links[0].href != 'undefined' &&
+                            typeof links[0].href !== 'undefined' &&
                             links[0].href !== null);
 
         if (hasValidLink) {
@@ -227,7 +227,7 @@ var Viewer = Widget.extend({
         }
 
         var controller = {};
-        if (typeof this.options.permitEdit == 'function' &&
+        if (typeof this.options.permitEdit === 'function' &&
             this.options.permitEdit(annotation)) {
             controller.showEdit = function () {
                 edit.removeAttr('disabled');
@@ -238,7 +238,7 @@ var Viewer = Widget.extend({
         } else {
             edit.remove();
         }
-        if (typeof this.options.permitDelete == 'function' &&
+        if (typeof this.options.permitDelete === 'function' &&
             this.options.permitDelete(annotation)) {
             controller.showDelete = function () {
                 del.removeAttr('disabled');
@@ -303,7 +303,7 @@ var Viewer = Widget.extend({
             .parents('.annotator-annotation')
             .data('annotation');
         this.hide();
-        if (typeof this.options.onEdit == 'function') {
+        if (typeof this.options.onEdit === 'function') {
             this.options.onEdit(item);
         }
     },
@@ -318,7 +318,7 @@ var Viewer = Widget.extend({
             .parents('.annotator-annotation')
             .data('annotation');
         this.hide();
-        if (typeof this.options.onDelete == 'function') {
+        if (typeof this.options.onDelete === 'function') {
             this.options.onDelete(item);
         }
     },
@@ -367,7 +367,7 @@ var Viewer = Widget.extend({
     //
     // Returns a Promise.
     _startHideTimer: function (activity) {
-        if (typeof activity == 'undefined' || activity === null) {
+        if (typeof activity === 'undefined' || activity === null) {
             activity = false;
         }
 

@@ -7,7 +7,7 @@ var Annotator = require('annotator');
 // component to draw/undraw highlights automatically when annotations are
 // created and removed.
 function Highlighter(element, options, highlighter) {
-    if (typeof highlighter == 'undefined' || highlighter === null) {
+    if (typeof highlighter === 'undefined' || highlighter === null) {
         highlighter = Annotator.UI.Highlighter;
     }
 

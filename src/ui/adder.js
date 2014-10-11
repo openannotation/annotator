@@ -72,7 +72,7 @@ var Adder = Widget.extend({
     //
     // Returns nothing.
     show: function (position) {
-        if (typeof position != 'undefined' && position !== null) {
+        if (typeof position !== 'undefined' && position !== null) {
             this.element.css({
                 top: position.top,
                 left: position.left
@@ -136,7 +136,7 @@ var Adder = Widget.extend({
         this.ignoreMouseup = false;
 
         // Create a new annotation
-        if (this.annotation !== null && typeof this.onCreate == 'function') {
+        if (this.annotation !== null && typeof this.onCreate === 'function') {
             this.onCreate(this.annotation, event);
         }
     }

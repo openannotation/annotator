@@ -1,31 +1,32 @@
+"use strict";
+
 // In order to build portable extension bundles that can be used with AMD and
 // script concatenation plugins are built with this module as 'annotator'.
 //
 // Annotator will export itself globally when the built UMD modules are used in
 // a legacy environment of simple script concatenation.
 
-// Ignore == comparisons of variables with null
-// jshint -W041
 // Ignore the use of undefined variables
 // jshint -W117
 
 var Annotator,
     self;
 
-if (self == null && typeof global !== "undefined" && global !== null) {
+function exists(x) {
+    return (typeof x !== 'undefined' && x !== null);
+}
+
+if (!exists(self) && exists(global)) {
     self = global;
 }
-
-if (self == null && typeof window !== "undefined" && window !== null) {
+if (!exists(self) && exists(window)) {
     self = window;
 }
-
-if (self != null && self.Annotator != null) {
+if (exists(self) && exists(self.Annotator)) {
     Annotator = self.Annotator;
 }
-
 // In a pure AMD environment, Annotator may not be exported globally.
-if (Annotator == null && self.define != null && self.define.amd != null) {
+if (!exists(Annotator) && exists(self.define) && exists(self.define.amd)) {
     Annotator = self.require('annotator');
 }
 

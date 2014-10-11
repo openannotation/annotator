@@ -1,4 +1,5 @@
 {
+    "eqeqeq": true,
     "es3": true,
     "freeze": true,
     "latedef": "nofunc",

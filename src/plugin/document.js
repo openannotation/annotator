@@ -8,7 +8,7 @@ var Util = Annotator.Util,
 // isEmpty returns a boolean indicating whether the passed object is empty
 function isEmpty(obj) {
     // null and undefined objects are empty
-    if (typeof obj == 'undefined' || obj === null) {
+    if (typeof obj === 'undefined' || obj === null) {
         return true;
     }
 
@@ -160,7 +160,7 @@ function getHighwireLinks(meta) {
     // convenient place to look them up later, and somewhat sane since
     // they don't have a type
     var dois = meta.doi;
-    if (typeof dois != 'undefined' && dois !== null) {
+    if (typeof dois !== 'undefined' && dois !== null) {
         for (i = 0, len = dois.length; i < len; i++) {
             var doi = dois[i];
             if (doi.slice(0, 4) !== "doi:") {
@@ -174,7 +174,7 @@ function getHighwireLinks(meta) {
     // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
     var urls = meta.pdf_url;
     // jscs:enable requireCamelCaseOrUpperCaseIdentifiers
-    if (typeof urls != 'undefined' && urls !== null) {
+    if (typeof urls !== 'undefined' && urls !== null) {
         for (i = 0, len = urls.length; i < len; i++) {
             results.push({
                 href: absoluteUrl(urls[i]),
@@ -192,7 +192,7 @@ function getDublinCoreLinks(meta) {
 
     // look for links in dublincore data
     var ident = meta.identifier;
-    if (typeof ident != 'undefined' && ident !== null) {
+    if (typeof ident !== 'undefined' && ident !== null) {
         for (var i = 0, len = ident.length; i < len; i++) {
             if (ident[i].slice(0, 4) === 'doi:') {
                 results.push({href: ident[i]});
