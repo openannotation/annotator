@@ -94,6 +94,19 @@ var Viewer = Widget.extend({
             });
         }
 
+        if (typeof this.options.onEdit !== 'function') {
+            throw new TypeError("onEdit callback must be a function");
+        }
+        if (typeof this.options.onDelete !== 'function') {
+            throw new TypeError("onDelete callback must be a function");
+        }
+        if (typeof this.options.permitEdit !== 'function') {
+            throw new TypeError("permitEdit callback must be a function");
+        }
+        if (typeof this.options.permitDelete !== 'function') {
+            throw new TypeError("permitDelete callback must be a function");
+        }
+
         var self = this;
 
         if (this.options.autoViewHighlights) {
@@ -227,8 +240,7 @@ var Viewer = Widget.extend({
         }
 
         var controller = {};
-        if (typeof this.options.permitEdit === 'function' &&
-            this.options.permitEdit(annotation)) {
+        if (this.options.permitEdit(annotation)) {
             controller.showEdit = function () {
                 edit.removeAttr('disabled');
             };
@@ -238,8 +250,7 @@ var Viewer = Widget.extend({
         } else {
             edit.remove();
         }
-        if (typeof this.options.permitDelete === 'function' &&
-            this.options.permitDelete(annotation)) {
+        if (this.options.permitDelete(annotation)) {
             controller.showDelete = function () {
                 del.removeAttr('disabled');
             };
@@ -303,9 +314,7 @@ var Viewer = Widget.extend({
             .parents('.annotator-annotation')
             .data('annotation');
         this.hide();
-        if (typeof this.options.onEdit === 'function') {
-            this.options.onEdit(item);
-        }
+        this.options.onEdit(item);
     },
 
     // Event callback: called when the delete button is clicked.
@@ -318,9 +327,7 @@ var Viewer = Widget.extend({
             .parents('.annotator-annotation')
             .data('annotation');
         this.hide();
-        if (typeof this.options.onDelete === 'function') {
-            this.options.onDelete(item);
-        }
+        this.options.onDelete(item);
     },
 
     // Event callback: called when a user triggers `mouseover` on a highlight
@@ -464,22 +471,22 @@ Viewer.options = {
 
     // Hook, passed an annotation, which determines if the viewer's "edit"
     // button is shown. If it is not a function, the button will not be shown.
-    permitEdit: null,
+    permitEdit: function () { return false; },
 
     // Hook, passed an annotation, which determines if the viewer's "delete"
     // button is shown. If it is not a function, the button will not be shown.
-    permitDelete: null,
+    permitDelete: function () { return false; },
 
     // If set to a DOM Element, will set up the viewer to automatically display
     // when the user hovers over Annotator highlights within that element.
     autoViewHighlights: null,
 
     // Callback, called when the user clicks the edit button for an annotation.
-    onEdit: null,
+    onEdit: function () {},
 
     // Callback, called when the user clicks the delete button for an
     // annotation.
-    onDelete: null
+    onDelete: function () {}
 };
 
 
