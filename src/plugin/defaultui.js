@@ -3,6 +3,7 @@
 var UI = require('../ui'),
     Util = require('../util');
 
+var _t = Util.gettext;
 
 // trim strips whitespace from either end of a string.
 //
@@ -96,6 +97,76 @@ function removeDynamicStyle() {
 }
 
 
+// Helper function to add permissions checkboxes to the editor
+function addPermissionsCheckboxes(editor, registry) {
+    function createLoadCallback(action) {
+        return function loadCallback(field, annotation) {
+            field = Util.$(field).show();
+
+            var u = registry.identifier.who();
+            var input = field.find('input');
+
+            // Do not show field if no user is set
+            if (typeof u === 'undefined' || u === null) {
+                field.hide();
+            }
+
+            // Do not show field if current user is not admin.
+            if (!(registry.authorizer.permits('admin', annotation, u))) {
+                field.hide();
+            }
+
+            // See if we can authorise without a user.
+            if (registry.authorizer.permits(action, annotation, null)) {
+                input.attr('checked', 'checked');
+            } else {
+                input.removeAttr('checked');
+            }
+        };
+    }
+
+    function createSubmitCallback(action) {
+        return function submitCallback(field, annotation) {
+            var u = registry.identifier.who();
+
+            // Don't do anything if no user is set
+            if (typeof u === 'undefined' || u === null) {
+                return;
+            }
+
+            if (!annotation.permissions) {
+                annotation.permissions = {};
+            }
+            if (Util.$(field).find('input').is(':checked')) {
+                delete annotation.permissions[action];
+            } else {
+                // While the permissions model allows for more complex entries
+                // than this, our UI presents a checkbox, so we can only
+                // interpret "prevent others from viewing" as meaning "allow
+                // only me to view". This may want changing in the future.
+                annotation.permissions[action] = [
+                    registry.authorizer.userId(u)
+                ];
+            }
+        };
+    }
+
+    editor.addField({
+        type: 'checkbox',
+        label: _t('Allow anyone to <strong>view</strong> this annotation'),
+        load: createLoadCallback('read'),
+        submit: createSubmitCallback('read')
+    });
+
+    editor.addField({
+        type: 'checkbox',
+        label: _t('Allow anyone to <strong>edit</strong> this annotation'),
+        load: createLoadCallback('update'),
+        submit: createSubmitCallback('update')
+    });
+}
+
+
 // DefaultUI is a function that can be used to construct a plugin that will
 // provide Annotator's default user interface.
 //
@@ -128,6 +199,7 @@ function DefaultUI(element) {
         });
 
         var editor = new UI.Editor();
+        addPermissionsCheckboxes(editor, registry);
 
         var highlighter = new UI.Highlighter(element);
 
