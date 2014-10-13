@@ -1,24 +1,26 @@
 var Storage = require('../../../src/storage');
-var $ = require('../../../src/util').$;
 
 describe("Storage.HTTPStorage", function () {
-    var store = null;
+    var store, xhr, lastReq;
 
     beforeEach(function () {
+        lastReq = null;
         store = Storage.HTTPStorage();
-        sinon.stub($, 'ajax').returns({});
+        xhr = sinon.useFakeXMLHttpRequest();
+        xhr.onCreate = function (r) {
+            lastReq = r;
+        };
     });
 
     afterEach(function () {
-        $.ajax.restore();
+        xhr.restore();
     });
 
     it("create should trigger a POST request", function () {
         store.create({
             text: "Donkeys on giraffes"
         });
-        var opts = $.ajax.args[0][1];
-        assert.equal("POST", opts.type);
+        assert.equal(lastReq.method, "POST");
     });
 
     it("update should trigger a PUT request", function () {
@@ -26,8 +28,7 @@ describe("Storage.HTTPStorage", function () {
             text: "Donkeys on giraffes",
             id: 123
         });
-        var opts = $.ajax.args[0][1];
-        assert.equal("PUT", opts.type);
+        assert.equal(lastReq.method, "PUT");
     });
 
     it("delete should trigger a DELETE request", function () {
@@ -35,16 +36,14 @@ describe("Storage.HTTPStorage", function () {
             text: "Donkeys on giraffes",
             id: 123
         });
-        var opts = $.ajax.args[0][1];
-        assert.equal("DELETE", opts.type);
+        assert.equal(lastReq.method, "DELETE");
     });
 
     it("create URL should be /store/annotations by default", function () {
         store.create({
             text: "Donkeys on giraffes"
         });
-        var url = $.ajax.args[0][0];
-        assert.equal("/store/annotations", url);
+        assert.equal(lastReq.url, "/store/annotations");
     });
 
     it("update URL should be /store/annotations/{id} by default", function () {
@@ -52,8 +51,7 @@ describe("Storage.HTTPStorage", function () {
             text: "Donkeys on giraffes",
             id: 123
         });
-        var url = $.ajax.args[0][0];
-        assert.equal("/store/annotations/123", url);
+        assert.equal(lastReq.url, "/store/annotations/123");
     });
 
     it("delete URL should be /store/annotations/{id} by default", function () {
@@ -61,8 +59,7 @@ describe("Storage.HTTPStorage", function () {
             text: "Donkeys on giraffes",
             id: 123
         });
-        var url = $.ajax.args[0][0];
-        assert.equal("/store/annotations/123", url);
+        assert.equal(lastReq.url, "/store/annotations/123");
     });
 
     it("should request custom URLs as specified by its options", function () {
@@ -70,23 +67,23 @@ describe("Storage.HTTPStorage", function () {
         store.options.urls.create = '/createMe';
         store.options.urls.update = '/{id}/updateMe';
         store.options.urls.destroy = '/{id}/destroyMe';
+
         store.create({
             text: "Donkeys on giraffes"
         });
+        assert.equal(lastReq.url, '/some/prefix/createMe');
+
         store.update({
             text: "Donkeys on giraffes",
             id: 123
         });
+        assert.equal(lastReq.url, '/some/prefix/123/updateMe');
+
         store["delete"]({
             text: "Donkeys on giraffes",
             id: 123
         });
-        var url = $.ajax.args[0][0];
-        assert.equal('/some/prefix/createMe', url);
-        url = $.ajax.args[1][0];
-        assert.equal('/some/prefix/123/updateMe', url);
-        url = $.ajax.args[2][0];
-        assert.equal('/some/prefix/123/destroyMe', url);
+        assert.equal(lastReq.url, '/some/prefix/123/destroyMe');
     });
 
     it("should generate URLs correctly with an empty prefix", function () {
@@ -94,41 +91,41 @@ describe("Storage.HTTPStorage", function () {
         store.options.urls.create = '/createMe';
         store.options.urls.update = '/{id}/updateMe';
         store.options.urls.destroy = '/{id}/destroyMe';
+
         store.create({
             text: "Donkeys on giraffes"
         });
+        assert.equal(lastReq.url, '/createMe');
+
         store.update({
             text: "Donkeys on giraffes",
             id: 123
         });
+        assert.equal(lastReq.url, '/123/updateMe');
+
         store["delete"]({
             text: "Donkeys on giraffes",
             id: 123
         });
-        var url = $.ajax.args[0][0];
-        assert.equal('/createMe', url);
-        url = $.ajax.args[1][0];
-        assert.equal('/123/updateMe', url);
-        url = $.ajax.args[2][0];
-        assert.equal('/123/destroyMe', url);
+        assert.equal(lastReq.url, '/123/destroyMe');
     });
 
     it("should generate URLs with substitution markers in query strings", function () {
         store.options.prefix = '/some/prefix';
         store.options.urls.update = '/update?foo&id={id}';
         store.options.urls.destroy = '/delete?id={id}&foo';
+
         store.update({
             text: "Donkeys on giraffes",
             id: 123
         });
+        assert.equal(lastReq.url, '/some/prefix/update?foo&id=123');
+
         store["delete"]({
             text: "Donkeys on giraffes",
             id: 123
         });
-        var url = $.ajax.args[0][0];
-        assert.equal('/some/prefix/update?foo&id=123', url);
-        url = $.ajax.args[1][0];
-        assert.equal('/some/prefix/delete?id=123&foo', url);
+        assert.equal(lastReq.url, '/some/prefix/delete?id=123&foo');
     });
 
     it("should send custom headers added with setHeader", function () {
@@ -137,9 +134,8 @@ describe("Storage.HTTPStorage", function () {
         store.create({
             text: "Donkeys on giraffes"
         });
-        var opts = $.ajax.args[0][1];
-        assert.equal('Apple', opts.headers.Fruit);
-        assert.equal('Green', opts.headers.Colour);
+        assert.equal(lastReq.requestHeaders.Fruit, 'Apple');
+        assert.equal(lastReq.requestHeaders.Colour, 'Green');
     });
 
     it("should emulate new-fangled HTTP if emulateHTTP is true", function () {
@@ -148,11 +144,11 @@ describe("Storage.HTTPStorage", function () {
             text: "Donkeys on giraffes",
             id: 123
         });
-        var opts = $.ajax.args[0][1];
-        assert.equal(opts.type, 'POST');
-        assert.deepEqual(opts.headers, {
-            'X-HTTP-Method-Override': 'DELETE'
-        });
+        assert.equal(lastReq.method, 'POST');
+        assert.equal(
+            lastReq.requestHeaders['X-HTTP-Method-Override'],
+            'DELETE'
+        );
     });
 
     it("should emulate proper JSON handling if emulateJSON is true", function () {
@@ -160,11 +156,14 @@ describe("Storage.HTTPStorage", function () {
         store["delete"]({
             id: 123
         });
-        var opts = $.ajax.args[0][1];
-        assert.deepEqual({
-            json: '{"id":123}'
-        }, opts.data);
-        assert.isUndefined(opts.contentType);
+        assert.equal(
+            lastReq.requestBody,
+            'json=' + encodeURIComponent('{"id":123}')
+        );
+        assert.equal(
+            lastReq.requestHeaders['Content-Type'],
+            'application/x-www-form-urlencoded;charset=utf-8'
+        );
     });
 
     it("should append _method to the form data if emulateHTTP and emulateJSON are both true", function () {
@@ -173,11 +172,7 @@ describe("Storage.HTTPStorage", function () {
         store["delete"]({
             id: 123
         });
-        var opts = $.ajax.args[0][1];
-        assert.deepEqual(opts.data, {
-            _method: 'DELETE',
-            json: '{"id":123}'
-        });
+        assert.include(lastReq.requestBody, '_method=DELETE');
     });
 
     describe("error handling", function () {
