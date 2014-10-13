@@ -38,7 +38,7 @@
   },
   "scripts": {
     "start": "./tools/serve",
-    "test": "./tools/test",
+    "test": "./tools/test -R dot",
     "lint": "jshint src && jscs src && jshint -c test/.jshintrc test && jscs -c test/.jscsrc test",
     "travis": "npm run lint && ./tools/test"
   },
