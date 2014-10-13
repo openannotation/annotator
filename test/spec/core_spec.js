@@ -27,33 +27,6 @@ function MockEmptyPlugin() {
     return {};
 }
 
-function AuthorizerHelper(reg) {
-    this.registry = reg;
-    MockAuthorizer.lastInstance = this;
-}
-
-function MockAuthorizer(reg) {
-    return new AuthorizerHelper(reg);
-}
-
-function IdentifierHelper(reg) {
-    this.registry = reg;
-    MockIdentifier.lastInstance = this;
-}
-
-function MockIdentifier(reg) {
-    return new IdentifierHelper(reg);
-}
-
-function NotifierHelper(reg) {
-    this.registry = reg;
-    MockNotifier.lastInstance = this;
-}
-
-function MockNotifier(reg) {
-    return new NotifierHelper(reg);
-}
-
 function StorageHelper(reg) {
     this.registry = reg;
     MockStorage.lastInstance = this;
@@ -174,42 +147,48 @@ describe('Annotator', function () {
     describe('#setAuthorizer', function () {
         it('should call authorizer functions with a registry', function () {
             var b = new core.Annotator();
-            b.setAuthorizer(MockAuthorizer);
-            assert.strictEqual(MockAuthorizer.lastInstance.registry, b.registry);
+            var spy = sinon.spy();
+            b.setAuthorizer(spy);
+            sinon.assert.calledWith(spy, b.registry);
         });
 
         it('should set registry `authorizer` to the return value of the authorizer function', function () {
             var b = new core.Annotator();
-            b.setAuthorizer(MockAuthorizer);
-            assert.strictEqual(b.registry.authorizer, MockAuthorizer.lastInstance);
+            var authorizer = {};
+            b.setAuthorizer(function () { return authorizer; });
+            assert.strictEqual(b.registry.authorizer, authorizer);
         });
     });
 
     describe('#setIdentifier', function () {
         it('should call identifier functions with a registry', function () {
             var b = new core.Annotator();
-            b.setIdentifier(MockIdentifier);
-            assert.strictEqual(MockIdentifier.lastInstance.registry, b.registry);
+            var spy = sinon.spy();
+            b.setIdentifier(spy);
+            sinon.assert.calledWith(spy, b.registry);
         });
 
         it('should set registry `identifier` to the return value of the identifier function', function () {
             var b = new core.Annotator();
-            b.setIdentifier(MockIdentifier);
-            assert.strictEqual(b.registry.identifier, MockIdentifier.lastInstance);
+            var identifier = {};
+            b.setIdentifier(function () { return identifier; });
+            assert.strictEqual(b.registry.identifier, identifier);
         });
     });
 
     describe('#setNotifier', function () {
         it('should call notifier functions with a registry', function () {
             var b = new core.Annotator();
-            b.setNotifier(MockNotifier);
-            assert.strictEqual(MockNotifier.lastInstance.registry, b.registry);
+            var spy = sinon.spy();
+            b.setNotifier(spy);
+            sinon.assert.calledWith(spy, b.registry);
         });
 
         it('should set registry `notifier` to the return value of the notifier function', function () {
             var b = new core.Annotator();
-            b.setNotifier(MockNotifier);
-            assert.strictEqual(b.registry.notifier, MockNotifier.lastInstance);
+            var notifier = {};
+            b.setNotifier(function () { return notifier; });
+            assert.strictEqual(b.registry.notifier, notifier);
         });
     });
 
