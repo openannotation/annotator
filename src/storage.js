@@ -56,7 +56,8 @@ function DebugStorage () {
 function NullStorage() {
     return {
         'create': function (annotation) {
-            if (typeof annotation.id === 'undefined' || annotation.id === null) {
+            if (typeof annotation.id === 'undefined' ||
+                annotation.id === null) {
                 annotation.id = id();
             }
             return annotation;
