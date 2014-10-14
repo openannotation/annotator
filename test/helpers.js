@@ -140,7 +140,7 @@ function DateToISO8601String(format, offset) {
     return str;
 }
 
-var fixtureElem = document.getElementById('fixtures');
+var fixtureElem = $('<div id="fixtures"></div>').appendTo('body')[0];
 var fixtureMemo = {};
 
 function setFixtureElem(elem) {
@@ -154,7 +154,7 @@ function fix() {
 function getFixture(fname) {
     if (!(fname in fixtureMemo)) {
         fixtureMemo[fname] = $.ajax({
-            url: "/test/fixtures/" + fname + ".html",
+            url: "/base/test/fixtures/" + fname + ".html",
             async: false
         }).responseText;
     }

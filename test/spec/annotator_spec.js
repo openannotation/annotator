@@ -1,4 +1,4 @@
-var Annotator = require('annotator');
+var Annotator = require('../../src/annotator');
 
 describe("Annotator.noConflict()", function () {
     var _Annotator = null;

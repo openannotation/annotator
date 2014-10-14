@@ -1,4 +1,4 @@
-var Annotator = require('annotator'),
+var Annotator = require('../../../src/annotator'),
     Markdown = require('../../../src/plugin/markdown');
 
 var $ = Annotator.Util.$;

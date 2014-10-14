@@ -1,4 +1,4 @@
-var h = require('helpers');
+var h = require('../../helpers');
 
 var $ = require('../../../src/util').$;
 

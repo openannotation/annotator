@@ -1,4 +1,4 @@
-var h = require('helpers');
+var h = require('../../helpers');
 
 var Editor = require('../../../src/ui/editor'),
     Util = require('../../../src/util');
