@@ -1,6 +1,6 @@
 var h = require('helpers');
 
-var Editor = require('.../../../src/ui/editor'),
+var Editor = require('../../../src/ui/editor'),
     Util = require('../../../src/util');
 
 var $ = Util.$;
