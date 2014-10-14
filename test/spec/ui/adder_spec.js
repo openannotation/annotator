@@ -27,9 +27,9 @@ describe('UI.Adder', function () {
     });
 
     describe('.show()', function () {
-        it('should make the adder widget visible', function () {
+        it('should show the adder widget', function () {
             a.show();
-            assert.isTrue(a.element.is(':visible'));
+            assert.isTrue(a.isShown());
         });
 
         it('sets the widget position if a position is provided', function () {
@@ -49,7 +49,7 @@ describe('UI.Adder', function () {
         it('should hide the adder widget', function () {
             a.show();
             a.hide();
-            assert.isFalse(a.element.is(':visible'));
+            assert.isFalse(a.isShown());
         });
     });
 
