@@ -1,6 +1,6 @@
 "use strict";
 
-var Annotator = require('annotator');
+var Annotator = require('annotator-plugintools').Annotator;
 
 
 // Viewer is a plugin that uses the Annotator.UI.Viewer component to display an

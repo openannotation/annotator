@@ -1,6 +1,6 @@
 "use strict";
 
-var Annotator = require('annotator');
+var Annotator = require('annotator-plugintools').Annotator;
 
 
 // Highlighter is a simple plugin that uses the Annotator.UI.Highlighter

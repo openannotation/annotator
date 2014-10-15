@@ -1,4 +1,4 @@
-Annotator = require('annotator')
+Annotator = require('annotator-plugintools').Annotator
 $ = Annotator.Util.$
 
 

@@ -22,6 +22,12 @@ if (!exists(self) && exists(global)) {
 if (!exists(self) && exists(window)) {
     self = window;
 }
+// CommonJS/Browserify environment, used while testing. This allows us to `npm
+// link` the current development version of Annotator into the
+// annotator-plugintools package and have that used by the Karma test runner.
+if (exists(self) && exists(require) && !exists(self.define)) {
+    Annotator = require('annotator');
+}
 if (exists(self) && exists(self.Annotator)) {
     Annotator = self.Annotator;
 }
@@ -42,4 +48,4 @@ if (typeof Annotator !== 'function') {
 // Note: when working in a CommonJS environment and bundling requirements into
 // applications then require calls should refer to modules from the npm lib
 // directory of annotator package and avoid this altogether.
-module.exports = Annotator;
+exports.Annotator = Annotator;

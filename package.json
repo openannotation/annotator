@@ -6,7 +6,9 @@
     "type": "git",
     "url": "https://github.com/okfn/annotator.git"
   },
+  "main": "./src/annotator.js",
   "dependencies": {
+    "annotator-plugintools": "^1.0.0",
     "backbone-extend-standalone": "~0.1.2",
     "es6-promise": "~0.1.1",
     "xpath-range": "0.0.5",
@@ -41,7 +43,6 @@
     "lint": "jshint src && jscs src && jshint -c test/.jshintrc test && jscs -c test/.jscsrc test",
     "travis": "npm run lint && ./tools/test"
   },
-  "browser": "./annotator.js",
   "testling": {
     "server": "tools/serve",
     "html": "test/runner.html",

@@ -1,6 +1,6 @@
 "use strict";
 
-var Annotator = require('annotator');
+var Annotator = require('annotator-plugintools').Annotator;
 
 var Util = Annotator.Util,
     $ = Util.$;
