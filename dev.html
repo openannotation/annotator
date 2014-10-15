@@ -4,11 +4,10 @@
     <meta charset="utf-8">
     <title>JS annotation test</title>
 
-    <script src="lib/vendor/jquery.js"></script><!-- dynamically provided -->
     <!--[if lt IE 9]>
     <script src="lib/vendor/json2.js"></script>
     <![endif]-->
-    <script src="/lib/vendor/wgxpath.install.js"></script>
+    <script src="lib/vendor/wgxpath.install.js"></script>
 
     <script src="lib/annotator.js"></script>
     <script src="lib/plugin/filter.js"></script>
@@ -117,8 +116,8 @@
     </div>
 
     <script>
-      var $ = require('jquery'),
-          Annotator = require('annotator'),
+      var Annotator = require('annotator'),
+          $ = Annotator.Util.$,
           elem = document.getElementById('airlock'),
           anno = new Annotator(elem);
 

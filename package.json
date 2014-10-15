@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "browser-resolve": "~1.2.1",
+    "browserify-middleware": "^4.1.0",
     "uglify-js": "~2.4.12",
     "uglifycss": "~0.0.5",
     "chai": "~1.7.2",
@@ -32,9 +33,7 @@
     "karma-cli": "0.0.4",
     "karma-mocha": "^0.1.9",
     "karma-phantomjs-launcher": "^0.1.4",
-    "kew": "~0.2.2",
     "source-map": "~0.1.32",
-    "watchify": "0.6.2",
     "through": "~2.3.4"
   },
   "engines": {
