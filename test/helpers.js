@@ -166,7 +166,8 @@ function addFixture(fname) {
 }
 
 function clearFixtures() {
-    $(fixtureElem).empty();
+    $(fixtureElem).remove();
+    fixtureElem = $('<div id="fixtures"></div>').appendTo('body')[0];
 }
 
 
