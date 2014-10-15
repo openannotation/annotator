@@ -2,10 +2,7 @@
 
 var Range = require('xpath-range').Range;
 
-var Util = require('../util');
-
-var $ = Util.$,
-    Promise = Util.Promise;
+var $ = require('../util').$;
 
 
 // highlightRange wraps the DOM Nodes within the provided range with a highlight
@@ -53,7 +50,7 @@ function reanchorRange(range, rootElement) {
             throw(e);
         }
         // Otherwise, we simply swallow the error. Callers are responsible
-        // for only trying to draw valid annotations.
+        // for only trying to draw valid highlights.
     }
     return null;
 }
@@ -62,8 +59,8 @@ function reanchorRange(range, rootElement) {
 // Highlighter provides a simple way to draw highlighted <span> tags over
 // annotated ranges within a document.
 //
-// element - The root Element on which to dereference annotation ranges and
-//           draw highlights.
+// element - The root Element on which to dereference ranges and draw
+//           highlights.
 // options - An options Object containing configuration options for the plugin.
 //           See `Highlighter.options` for available options.
 //
@@ -81,131 +78,47 @@ Highlighter.prototype.destroy = function () {
         });
 };
 
-// Public: Draw highlights for all the given annotations
+// Public: Draw highlights for the given ranges.
 //
-// annotations - An Array of annotation Objects for which to draw highlights.
+// range - An Array of Range Objects for which to draw highlights.
 //
-// Returns nothing.
-Highlighter.prototype.drawAll = function (annotations) {
-    var self = this;
-
-    var p = new Promise(function (resolve) {
-        var highlights = [];
-
-        function loader(annList) {
-            if (typeof annList === 'undefined' || annList === null) {
-                annList = [];
-            }
-
-            var now = annList.splice(0, self.options.chunkSize);
-            for (var i = 0, len = now.length; i < len; i++) {
-                highlights = highlights.concat(self.draw(now[i]));
-            }
-
-            // If there are more to do, do them after a delay
-            if (annList.length > 0) {
-                setTimeout(function () {
-                    loader(annList);
-                }, self.options.chunkDelay);
-            } else {
-                resolve(highlights);
-            }
-        }
-
-        var clone = annotations.slice();
-        loader(clone);
-    });
-
-    return p;
-};
-
-// Public: Draw highlights for the annotation.
-//
-// annotation - An annotation Object for which to draw highlights.
-//
-// Returns an Array of drawn highlight elements.
-Highlighter.prototype.draw = function (annotation) {
+// Returns an Array of highlight elements.
+Highlighter.prototype.draw = function (ranges) {
+    var highlights = [];
     var normedRanges = [];
 
-    for (var i = 0, ilen = annotation.ranges.length; i < ilen; i++) {
-        var r = reanchorRange(annotation.ranges[i], this.element);
+    for (var i = 0, ilen = ranges.length; i < ilen; i++) {
+        var r = reanchorRange(ranges[i], this.element);
         if (r !== null) {
             normedRanges.push(r);
         }
     }
 
-    var hasLocal = (typeof annotation._local !== 'undefined' &&
-                    annotation._local !== null);
-    if (!hasLocal) {
-        annotation._local = {};
-    }
-    var hasHighlights = (typeof annotation._local.highlights !== 'undefined' &&
-                         annotation._local.highlights === null);
-    if (!hasHighlights) {
-        annotation._local.highlights = [];
-    }
-
     for (var j = 0, jlen = normedRanges.length; j < jlen; j++) {
         var normed = normedRanges[j];
-        $.merge(
-            annotation._local.highlights,
-            highlightRange(normed, this.options.highlightClass)
-        );
+        highlights.push(highlightRange(normed, this.options.highlightClass));
     }
 
-    // Save the annotation data on each highlighter element.
-    $(annotation._local.highlights).data('annotation', annotation);
-
-    // Add a data attribute for annotation id if the annotation has one
-    if (typeof annotation.id !== 'undefined' && annotation.id !== null) {
-        $(annotation._local.highlights)
-            .attr('data-annotation-id', annotation.id);
-    }
-
-    return annotation._local.highlights;
+    return Array.prototype.concat.apply([], highlights);
 };
 
-// Public: Remove the drawn highlights for the given annotation.
+// Public: Remove a set of highlights.
 //
-// annotation - An annotation Object for which to purge highlights.
+// highlight - A Array of highlight elements to remove.
 //
 // Returns nothing.
-Highlighter.prototype.undraw = function (annotation) {
-    var hasHighlights = (typeof annotation._local !== 'undefined' &&
-                         annotation._local !== null &&
-                         typeof annotation._local.highlights !== 'undefined' &&
-                         annotation._local.highlights !== null);
-
-    if (!hasHighlights) {
-        return;
-    }
-
-    for (var i = 0, len = annotation._local.highlights.length; i < len; i++) {
-        var h = annotation._local.highlights[i];
+Highlighter.prototype.undraw = function (highlights) {
+    for (var i = 0, len = highlights.length; i < len; i++) {
+        var h = highlights[i];
         if (h.parentNode !== null) {
             $(h).replaceWith(h.childNodes);
         }
     }
-    delete annotation._local.highlights;
-};
-
-// Public: Redraw the highlights for the given annotation.
-//
-// annotation - An annotation Object for which to redraw highlights.
-//
-// Returns the list of newly-drawn highlights.
-Highlighter.prototype.redraw = function (annotation) {
-    this.undraw(annotation);
-    return this.draw(annotation);
 };
 
 Highlighter.options = {
     // The CSS class to apply to drawn highlights
-    highlightClass: 'annotator-hl',
-    // Number of annotations to draw at once
-    chunkSize: 10,
-    // Time (in ms) to pause between drawing chunks of annotations
-    chunkDelay: 10
+    highlightClass: 'annotator-hl'
 };
 
 

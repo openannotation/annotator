@@ -19,7 +19,7 @@
     "mocha": "~1.12.1",
     "mocha-phantomjs": "~3.3.2",
     "chai": "~1.7.2",
-    "sinon": "~1.6.0",
+    "sinon": "~1.8.0",
     "jscs": "~1.6.0",
     "jshint": "~2.5.0",
     "jwt-simple": "~0.1.0",

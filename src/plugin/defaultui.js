@@ -3,6 +3,9 @@
 var UI = require('../ui'),
     Util = require('../util');
 
+var $ = Util.$,
+    Promise = Util.Promise;
+
 var _t = Util.gettext;
 
 // trim strips whitespace from either end of a string.
@@ -241,6 +244,29 @@ function DefaultUI(element) {
 
         injectDynamicStyle();
 
+        // Set up an annotation in the document
+        function setupAnnotation(ann) {
+            var highlights = highlighter.draw(ann.ranges);
+            ann._local = ann._local || {};
+            ann._local.highlights = highlights;
+
+            // Save the annotation data on each highlight element.
+            $(highlights).data('annotation', ann);
+
+            // Add a data attribute for annotation id if the annotation has one
+            if (typeof ann.id !== 'undefined' && ann.id !== null) {
+                $(highlights).attr('data-annotation-id', ann.id);
+            }
+        }
+
+        // Clean up an annotation, removing it from the document
+        function cleanupAnnotation(ann) {
+            if (ann._local && ann._local.highlights) {
+                highlighter.undraw(ann._local.highlights);
+            }
+            delete ann._local;
+        }
+
         return {
             onDestroy: function () {
                 adder.destroy();
@@ -251,10 +277,45 @@ function DefaultUI(element) {
                 removeDynamicStyle();
             },
 
-            onAnnotationsLoaded: function (anns) { highlighter.drawAll(anns); },
-            onAnnotationCreated: function (ann) { highlighter.draw(ann); },
-            onAnnotationDeleted: function (ann) { highlighter.undraw(ann); },
-            onAnnotationUpdated: function (ann) { highlighter.redraw(ann); },
+            onAnnotationsLoaded: function (anns) {
+                var chunks = [];
+
+                // Break the annotations into chunks
+                for (var i = 0 ; i < anns.length ; i += 10) {
+                    chunks.push(anns.slice(i, i + 10));
+                }
+
+                // Return a promise that resolves to the original array of
+                // annotations after processing all chunks
+                return new Promise(function (resolve) {
+                    // Draw the highlights
+                    function loader() {
+                        var currentChunk = chunks.shift() || [];
+
+                        for (var i = 0 ; i < currentChunk.length ; i++) {
+                            setupAnnotation(currentChunk[i]);
+                        }
+
+                        // If there are more to do, do them after a delay
+                        if (chunks.length > 0) {
+                            setTimeout(loader, 10);
+                        } else {
+                            resolve(anns);
+                        }
+                    }
+
+                    loader();
+                });
+            },
+
+            onAnnotationCreated: setupAnnotation,
+
+            onAnnotationDeleted: cleanupAnnotation,
+
+            onAnnotationUpdated: function (ann) {
+                cleanupAnnotation(ann);
+                setupAnnotation(ann);
+            },
 
             onBeforeAnnotationCreated: function (annotation) {
                 // Editor#load returns a promise that is resolved if editing
