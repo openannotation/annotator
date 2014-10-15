@@ -1,6 +1,6 @@
 "use strict";
 
-var Annotator = require('annotator');
+var Annotator = require('annotator-plugintools').Annotator;
 
 // Filter is a plugin that uses the Annotator.UI.Filter component to display a
 // filter bar to allow browsing and searching of annotations on the current

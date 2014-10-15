@@ -1,4 +1,4 @@
-var Annotator = require('annotator'),
+var Annotator = require('../../src/annotator'),
     $ = require('../../src/util').$;
 
 require('../../src/bootstrap');

@@ -1,79 +1,14 @@
 #!/usr/bin/env node
 var path = require('path');
 
-var _browserify = require('browserify');
+var browserify = require('browserify-middleware');
 var connect = require('connect');
-var convert = require('convert-source-map');
 var jwt = require('jwt-simple');
 var glob = require('glob');
-var q = require('kew');
-var watchify = require('watchify');
 
 var CONSUMER_KEY = 'mockconsumer';
 var CONSUMER_SECRET = 'mockconsumersecret';
 var CONSUMER_TTL = 1800;
-
-
-function browserify(opts) {
-  var b = _browserify(opts);
-  b.serve = serve;
-  b.watch = watch;
-  return b;
-}
-
-
-// Serve a browserify bundle with connect middleware
-function serve(app, location) {
-  var bundle = this.bundle.bind(this);
-  var promise = q.defer();
-
-  this.bundle = function (opts) {
-    var p = promise;
-    return bundle(opts, function (err, result) {
-      if (p == null) return;
-      if (err) return p.reject(err);
-      p.resolve(result);
-    });
-  };
-
-  this.on('update', function () {
-    promise = q.defer();
-  });
-
-  app.use(location, function (req, res, next) {
-    res.setHeader('Content-Type', 'application/javascript');
-    promise.then(function (result) {
-      var src = convert.removeComments(result);
-      var srcMap = convert.fromSource(result);
-      var sources = srcMap.getProperty('sources');
-      var sourcesContent = srcMap.getProperty('sourcesContent');
-
-      // Make the source files resolve relative to the package root.
-      // Strip absolute path information from the source map sources
-      sources = sources.map(function (source) {
-        return '/' + path.relative(process.cwd(), source);
-      });
-
-      // Add all the sources and set the root relative to the workspace
-      srcMap.setProperty('sources', sources);
-
-      res.write(src);
-      res.write(srcMap.toComment());
-      res.end('\n;');
-    }).fail(next);
-  });
-
-  return this;
-}
-
-
-// Watch a bundle and rebuild changes
-function watch(options) {
-  watchify(this).on('update', this.bundle.bind(this, options));
-  this.bundle(options);
-  return this;
-}
-
 
 var app = module.exports = connect();
 
@@ -100,47 +35,15 @@ app.use('/api/token', function(request, response) {
   response.end(tok);
 });
 
-// jQuery
-browserify()
-  .require('jquery', {expose: 'jquery'})
-  .serve(app, '/lib/vendor/jquery.js')
-  .watch({debug: true});
+app.use('/lib/annotator.js', browserify(
+    [{'./src/annotator.js': {expose: 'annotator'}}]
+));
 
-// Core
-browserify()
-  .external('jquery')
-  .require('./src/annotator', {expose: 'annotator'})
-  .serve(app, '/lib/annotator.js')
-  .watch({debug: true});
-
-
-// Other files
-glob.sync('./src/**/*.js').forEach(function (p) {
-  var loc = '/lib/' + path.relative('./src/', p);
-  browserify()
-    .external('jquery')
-    .external('annotator')
-    .add(p)
-    .serve(app, loc)
-    .watch({debug: true});
-});
-
-// Test helpers
-browserify()
-  .external('jquery')
-  .require('./test/helpers.js', {expose: 'helpers'})
-  .serve(app, '/test/helpers.js')
-  .watch({debug: true});
-
-// Other test files
-glob.sync('./test/**/*.js').forEach(function (t) {
-  var loc = t.replace('./', '/');
-  browserify(t)
-    .external('jquery')
-    .external('annotator')
-    .external('helpers')
-    .serve(app, loc)
-    .watch({debug: true});
+glob.sync('./src/plugin/*.js').forEach(function (p) {
+    var loc = '/lib/' + path.relative('./src/', p);
+    app.use(loc, browserify(p, {
+        external: 'annotator'
+    }));
 });
 
 // Static files
@@ -152,5 +55,4 @@ if (require.main === module) {
   var port = process.env.PORT || 4000;
   app.listen(port);
   console.log("Development: http://localhost:" + port + "/dev.html");
-  console.log("Testing: http://localhost:" + port + "/test/runner.html");
 }

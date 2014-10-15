@@ -1,6 +1,6 @@
 "use strict";
 
-var Annotator = require('annotator');
+var Annotator = require('annotator-plugintools').Annotator;
 
 // Editor is a plugin that uses the Annotator.UI.Editor component to display an
 // editor widget allowing the user to provide a note (and other data) before an

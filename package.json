@@ -6,7 +6,9 @@
     "type": "git",
     "url": "https://github.com/okfn/annotator.git"
   },
+  "main": "./src/annotator.js",
   "dependencies": {
+    "annotator-plugintools": "^1.0.0",
     "backbone-extend-standalone": "~0.1.2",
     "es6-promise": "~0.1.1",
     "xpath-range": "0.0.5",
@@ -14,22 +16,24 @@
   },
   "devDependencies": {
     "browser-resolve": "~1.2.1",
+    "browserify-middleware": "^4.1.0",
     "uglify-js": "~2.4.12",
     "uglifycss": "~0.0.5",
-    "mocha": "~1.12.1",
-    "mocha-phantomjs": "~3.3.2",
     "chai": "~1.7.2",
     "sinon": "~1.6.0",
     "jscs": "~1.6.0",
     "jshint": "~2.5.0",
     "jwt-simple": "~0.1.0",
     "connect": "~2.10.1",
-    "browserify": "~3.30.1",
+    "browserify": "^6.1.0",
     "convert-source-map": "~0.3.1",
     "glob": "~3.2.6",
-    "kew": "~0.2.2",
+    "karma": "^0.12.24",
+    "karma-bro": "^0.8.0",
+    "karma-cli": "0.0.4",
+    "karma-mocha": "^0.1.9",
+    "karma-phantomjs-launcher": "^0.1.4",
     "source-map": "~0.1.32",
-    "watchify": "0.6.2",
     "through": "~2.3.4"
   },
   "engines": {
@@ -37,20 +41,8 @@
   },
   "scripts": {
     "start": "./tools/serve",
-    "test": "./tools/test -R dot",
+    "test": "karma start --single-run",
     "lint": "jshint src && jscs src && jshint -c test/.jshintrc test && jscs -c test/.jscsrc test",
-    "travis": "npm run lint && ./tools/test"
-  },
-  "browser": "./annotator.js",
-  "testling": {
-    "server": "tools/serve",
-    "html": "test/runner.html",
-    "browsers": [
-      "ie/6..latest",
-      "chrome/22..latest",
-      "firefox/16..latest",
-      "safari/5.0.5..latest",
-      "opera/11.0..latest"
-    ]
+    "travis": "npm run lint && npm run test"
   }
 }
