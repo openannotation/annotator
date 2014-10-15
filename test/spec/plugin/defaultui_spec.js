@@ -14,6 +14,7 @@ describe('DefaultUI plugin', function () {
 
     afterEach(function () {
         sandbox.restore();
+        h.clearFixtures();
     });
 
     it('should add CSS to the document that ensures annotator elements have a suitably high z-index', function () {
@@ -35,10 +36,12 @@ describe('DefaultUI plugin', function () {
 
         var plug = DefaultUI(h.fix())(null);
         check(1000);
+        plug.onDestroy();
 
         $fix.append('<div style="position: relative; z-index: 2000"></div>');
         plug = DefaultUI(h.fix())(null);
         check(2000);
+        plug.onDestroy();
     });
 
     describe("Adder", function () {
@@ -51,6 +54,10 @@ describe('DefaultUI plugin', function () {
             sandbox.stub(UI, 'Adder').returns(mockAdder);
 
             plug = DefaultUI(el)(mockRegistry);
+        });
+
+        afterEach(function () {
+            plug.onDestroy();
         });
 
         it("creates an Adder", function () {
@@ -88,6 +95,10 @@ describe('DefaultUI plugin', function () {
             sandbox.stub(UI, 'Editor').returns(mockEditor);
 
             plug = DefaultUI(el)(mockRegistry);
+        });
+
+        afterEach(function () {
+            plug.onDestroy();
         });
 
         it("creates an Editor", function () {
