@@ -9,8 +9,9 @@
   "dependencies": {
     "backbone-extend-standalone": "~0.1.2",
     "es6-promise": "~0.1.1",
-    "xpath-range": "0.0.5",
-    "jquery": "~1.11.0"
+    "jquery": "~1.11.0",
+    "raf": "~2.0.4",
+    "xpath-range": "0.0.5"
   },
   "devDependencies": {
     "browser-resolve": "~1.2.1",
@@ -19,7 +20,7 @@
     "mocha": "~1.12.1",
     "mocha-phantomjs": "~3.3.2",
     "chai": "~1.7.2",
-    "sinon": "~1.6.0",
+    "sinon": "~1.8.0",
     "jscs": "~1.6.0",
     "jshint": "~2.5.0",
     "jwt-simple": "~0.1.0",

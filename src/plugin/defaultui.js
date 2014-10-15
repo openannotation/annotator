@@ -1,7 +1,12 @@
 "use strict";
 
+var raf = require('raf');
+
 var UI = require('../ui'),
     Util = require('../util');
+
+var $ = Util.$,
+    Promise = Util.Promise;
 
 var _t = Util.gettext;
 
@@ -241,6 +246,46 @@ function DefaultUI(element) {
 
         injectDynamicStyle();
 
+        // Set up an annotation in the document
+        function setupAnnotation(ann) {
+            var highlights = highlighter.draw(ann.ranges);
+            ann._local = ann._local || {};
+            ann._local.highlights = highlights;
+
+            // Save the annotation data on each highlight element.
+            $(highlights).data('annotation', ann);
+
+            // Add a data attribute for annotation id if the annotation has one
+            if (typeof ann.id !== 'undefined' && ann.id !== null) {
+                $(highlights).attr('data-annotation-id', ann.id);
+            }
+        }
+
+        // Clean up an annotation, removing it from the document
+        function cleanupAnnotation(ann) {
+            if (ann._local && ann._local.highlights) {
+                highlighter.undraw(ann._local.highlights);
+            }
+            delete ann._local;
+        }
+
+        // Set up many annotations in the document
+        function setupManyAnnotations(anns) {
+            var remaining = anns.slice();
+
+            return new Promise(function (resolve) {
+                function loader() {
+                    if (remaining.length === 0) {
+                        return resolve(anns);
+                    }
+                    setupAnnotation(remaining.shift());
+                    raf(loader);
+                }
+
+                raf(loader);
+            });
+        }
+
         return {
             onDestroy: function () {
                 adder.destroy();
@@ -251,10 +296,14 @@ function DefaultUI(element) {
                 removeDynamicStyle();
             },
 
-            onAnnotationsLoaded: function (anns) { highlighter.drawAll(anns); },
-            onAnnotationCreated: function (ann) { highlighter.draw(ann); },
-            onAnnotationDeleted: function (ann) { highlighter.undraw(ann); },
-            onAnnotationUpdated: function (ann) { highlighter.redraw(ann); },
+            onAnnotationsLoaded: setupManyAnnotations,
+            onAnnotationCreated: setupAnnotation,
+            onAnnotationDeleted: cleanupAnnotation,
+
+            onAnnotationUpdated: function (ann) {
+                cleanupAnnotation(ann);
+                setupAnnotation(ann);
+            },
 
             onBeforeAnnotationCreated: function (annotation) {
                 // Editor#load returns a promise that is resolved if editing
