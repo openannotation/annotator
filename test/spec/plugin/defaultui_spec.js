@@ -302,10 +302,9 @@ describe('DefaultUI plugin', function () {
         });
 
         describe('when annotations are loaded', function () {
-            var clock, annotations, promise;
+            var annotations, promise;
 
             beforeEach(function () {
-                clock = sinon.useFakeTimers();
                 annotations = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}];
                 annotations.forEach(function (a, i) {
                     a.id = 'foo' + i;
@@ -314,10 +313,6 @@ describe('DefaultUI plugin', function () {
                     mockHighlighter.draw.onCall(i).returns(highlights);
                 });
                 promise = plug.onAnnotationsLoaded(annotations);
-            });
-
-            afterEach(function () {
-                clock.restore();
             });
 
             it('should promise to set up all the annotations', function (done) {
@@ -332,7 +327,6 @@ describe('DefaultUI plugin', function () {
                     });
                 })
                 .then(done, done);
-                clock.tick(11);
             });
         });
     });

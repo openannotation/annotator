@@ -1,5 +1,7 @@
 "use strict";
 
+var raf = require('raf');
+
 var UI = require('../ui'),
     Util = require('../util');
 
@@ -267,6 +269,23 @@ function DefaultUI(element) {
             delete ann._local;
         }
 
+        // Set up many annotations in the document
+        function setupManyAnnotations(anns) {
+            var remaining = anns.slice();
+
+            return new Promise(function (resolve) {
+                function loader() {
+                    if (remaining.length === 0) {
+                        return resolve(anns);
+                    }
+                    setupAnnotation(remaining.shift());
+                    raf(loader);
+                }
+
+                raf(loader);
+            });
+        }
+
         return {
             onDestroy: function () {
                 adder.destroy();
@@ -277,39 +296,8 @@ function DefaultUI(element) {
                 removeDynamicStyle();
             },
 
-            onAnnotationsLoaded: function (anns) {
-                var chunks = [];
-
-                // Break the annotations into chunks
-                for (var i = 0 ; i < anns.length ; i += 10) {
-                    chunks.push(anns.slice(i, i + 10));
-                }
-
-                // Return a promise that resolves to the original array of
-                // annotations after processing all chunks
-                return new Promise(function (resolve) {
-                    // Draw the highlights
-                    function loader() {
-                        var currentChunk = chunks.shift() || [];
-
-                        for (var i = 0 ; i < currentChunk.length ; i++) {
-                            setupAnnotation(currentChunk[i]);
-                        }
-
-                        // If there are more to do, do them after a delay
-                        if (chunks.length > 0) {
-                            setTimeout(loader, 10);
-                        } else {
-                            resolve(anns);
-                        }
-                    }
-
-                    loader();
-                });
-            },
-
+            onAnnotationsLoaded: setupManyAnnotations,
             onAnnotationCreated: setupAnnotation,
-
             onAnnotationDeleted: cleanupAnnotation,
 
             onAnnotationUpdated: function (ann) {
