@@ -137,7 +137,7 @@ class Annotator.Plugin.Auth extends Annotator.Plugin
       url: @options.tokenUrl
       dataType: 'text'
       xhrFields:
-        withCredentials: true # Send any auth cookies to the backend
+        withCredentials: true # Send any auth cookies to the backend
 
     # on success, set the auth token
     .done (data, status, xhr) =>

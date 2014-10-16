@@ -1,0 +1,7 @@
+Create two File Watchers.
+1. The first would apply only to files in 'src' directory (and not it's sub directories) and would run
+the make-annotator-js.cmd file. This file concatenates the source files and then compiles it into a single
+annotator.js
+
+2. The second File Watcher watches the files in the src/plugin directories and outputs to pkg/plugin
+

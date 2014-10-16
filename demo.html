@@ -13,30 +13,32 @@
     <script src="lib/vendor/json2.js"></script>
 
     <!-- The main Annotator script -->
-    <script src="pkg/annotator.min.js"></script>
+    <script src="pkg/annotator.js"></script>
 
     <!-- Annotator's styling and images -->
-    <link rel="stylesheet" type="text/css" href="pkg/annotator.min.css">
+    <link rel="stylesheet" type="text/css" href="css/annotator.css">
 
     <!-- The following plugins are entirely optional -->
 
     <!-- The Store plugin. Saves annotations to a remote backend -->
-    <script src="pkg/annotator.store.min.js"></script>
+    <script src="pkg/plugin/store.js"></script>
 
     <!-- The Auth plugin. Allows users of Annotator to authenticate themselves
          to the remote backend -->
-    <script src="pkg/annotator.auth.min.js"></script>
+    <script src="pkg/plugin/auth.js"></script>
 
     <!-- The Permissions plugin. See who created which annotation and create
          annotations as a specified user -->
-    <script src="pkg/annotator.permissions.min.js"></script>
+    <!--<script src="pkg/plugin/permissions.js"></script>-->
 
     <!-- The Tags plugin. Edit and display tag keywords on annotations -->
-    <script src="pkg/annotator.tags.min.js"></script>
+    <script src="pkg/plugin/tags.js"></script>
 
     <!-- The Markdown plugin. Treat annotation text as Markdown -->
     <script src="lib/vendor/showdown.js"></script>
-    <script src="pkg/annotator.markdown.min.js"></script>
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/highlight.min.js"></script>-->
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>-->
+    <script src="pkg/plugin/markdown.js"></script>
 
   </head>
 
@@ -83,11 +85,10 @@
           // This is the important bit: how to create the annotator and add
           // plugins
           $('#airlock').annotator()
-                       .annotator('addPlugin', 'Permissions')
                        .annotator('addPlugin', 'Markdown')
                        .annotator('addPlugin', 'Tags');
 
-          $('#airlock').data('annotator').plugins['Permissions'].setUser("Joe Bloggs");
+          $('#airlock').data('annotator');
         }
       });
     </script>
