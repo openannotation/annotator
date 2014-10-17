@@ -5,8 +5,8 @@ addons:
   sauce_connect: true
 env:
   global:
-  - secure: DCRo6VuiNTbdfv6aS3Ak8yN5rxZKnV8licKKqrgZxl74X4IfvrYYOh9vHASZIrn/HwaPrc19Yv8mt7caDd0ehru+bpgIRcwGgLdPiWB2QNKEJZ7Rjn61L3XaBuiArsQfpdd1j2s9cbMiDYAEHIU1qmPL7F5OsYqwwLP4guI5waY=
-  - secure: KFDnudRwAuxI6pGv1wYf0/FhtzXS8cCm1AEpujAFeB/taMoL1eDzHTGo8oBfaXgd9YLm4u5p/L+mlCIIlhkBRvjc92N6hYy443wX9i6LXSPqxS/Dp6GsoTQWg2mxyFSTxI4pb9KK12TtVGlpmu0BhEYtWjGmuCBmct4Cxc5E38c=
+  - secure: au7XtmQDR14Sbp/lvXkRWpW+WDtv1JnWkaxwnzsEAbE/49hPXvPi6LDMrexDPq4uc4ENHwgCJa/SR6yYBZmWSUS6TotxrRpSfi79V8AvB31lcQrHgtssOLcTJvOrSQPjWK+a9O9bdb/zS8s/5wnE9Y06A59vSHd482BR7FX9nCs=
+  - secure: nJzTL/VeaVaqWg+qOrDOVzOq/zr0KcVli2AmL6JYpNfSLDMk5ZFR8Qs2ZUXkerJY36KEzrZnYQ9SDMkhYtTUf6SpH3MoMDcs79wOMVBWKHdYX5jf1aIuE+75pNU15HK0vwtT1wV5uZurrkx46K/EKobjspIOy0Qs/jAQ8AVKuoE=
   matrix:
   - BROWSER=PhantomJS
   - BROWSER=SL_Chrome
