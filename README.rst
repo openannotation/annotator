@@ -3,6 +3,8 @@ Annotator
 
 |Build Status| |Version on NPM|
 
+|Build Matrix|
+
 ::
 
   ┌──────────────────────────────────────────────────────┐
@@ -121,3 +123,5 @@ browsing and search at `gmane.comp.web.annotator`_. We can also be found in
    :target: http://travis-ci.org/openannotation/annotator
 .. |Version on NPM| image:: http://img.shields.io/npm/v/annotator.svg
    :target: https://www.npmjs.org/package/annotator
+.. |Build Matrix| image:: https://saucelabs.com/browser-matrix/hypothesisannotator.svg
+   :target: https://saucelabs.com/u/hypothesisannotator
