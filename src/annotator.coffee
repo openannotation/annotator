@@ -785,7 +785,10 @@ $.fn.annotator = (options) ->
   this.each ->
     # check the data() cache, if it's there we'll call the method requested
     instance = $.data(this, 'annotator')
-    if instance
+    if options is 'destroy'
+      $.removeData(this, 'annotator')
+      instance?.destroy(args)
+    else if instance
       options && instance[options].apply(instance, args)
     else
       instance = new Annotator(this, options)
