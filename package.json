@@ -35,7 +35,8 @@
     "source-map": "~0.1.32",
     "through": "~2.3.4",
     "uglify-js": "~2.4.12",
-    "uglifycss": "~0.0.5"
+    "uglifycss": "~0.0.5",
+    "wgxpath": "^0.23.0"
   },
   "engines": {
     "node": ">=0.8 <0.12"
