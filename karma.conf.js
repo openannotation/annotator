@@ -10,10 +10,8 @@ module.exports = function (karma) {
             {pattern: 'node_modules/wgxpath/wgxpath.install.js', watched: false},
 
             // Test harness
-            {pattern: 'node_modules/chai/chai.js', watched: false},
             {pattern: 'node_modules/sinon/pkg/sinon.js', watched: false},
             {pattern: 'node_modules/sinon/pkg/sinon-ie.js', watched: false},
-            'test/init.js',
 
             // Test suites
             'test/spec/**/*_spec.js'

@@ -1,3 +1,5 @@
+var assert = require('assertive-chai').assert;
+
 var Identifier = require('../../src/identifier');
 
 

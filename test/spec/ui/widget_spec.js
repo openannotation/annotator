@@ -1,3 +1,5 @@
+var assert = require('assertive-chai').assert;
+
 var $ = require('../../../src/util').$;
 
 var UI = require('../../../src/ui');

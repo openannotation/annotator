@@ -1,3 +1,5 @@
+var assert = require('assertive-chai').assert;
+
 var Editor = require('../../../src/plugin/editor').Editor;
 
 describe('Editor plugin', function () {

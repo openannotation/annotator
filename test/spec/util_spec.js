@@ -1,3 +1,5 @@
+var assert = require('assertive-chai').assert;
+
 var Util = require('../../src/util');
 
 describe('Util.escapeHtml()', function () {

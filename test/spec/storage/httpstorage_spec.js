@@ -1,3 +1,5 @@
+var assert = require('assertive-chai').assert;
+
 var Storage = require('../../../src/storage');
 
 describe("Storage.HTTPStorage", function () {

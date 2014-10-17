@@ -1,3 +1,5 @@
+var assert = require('assertive-chai').assert;
+
 var Notifier = require('../../src/notifier'),
     $ = require('../../src/util').$;
 

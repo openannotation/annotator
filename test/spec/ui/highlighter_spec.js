@@ -1,3 +1,5 @@
+var assert = require('assertive-chai').assert;
+
 var Range = require('xpath-range').Range;
 
 var UI = require('../../../src/ui'),
