@@ -21,6 +21,14 @@ if (typeof g.wgxpath !== "undefined" &&
     g.wgxpath.install();
 }
 
+// If rangy is available, install it. This will not overwrite any native support
+// for the DOM Range APIs.
+if (typeof g.rangy !== "undefined" &&
+    g.rangy !== null &&
+    typeof g.rangy.shim === "function") {
+    g.rangy.shim();
+}
+
 // Annotator represents a sane default configuration of Annotator, with a
 // default set of plugins and a user interface.
 var Annotator = Core.Annotator.extend({

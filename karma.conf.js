@@ -7,6 +7,7 @@ module.exports = function (karma) {
             {pattern: 'test/fixtures/*.html', included: false},
 
             // IE-specific shims
+            {pattern: 'node_modules/rangy/lib/rangy-core.js', watched: false},
             {pattern: 'node_modules/wgxpath/wgxpath.install.js', watched: false},
 
             // Test harness
