@@ -11,31 +11,31 @@
     "annotator-plugintools": "^1.0.0",
     "backbone-extend-standalone": "~0.1.2",
     "es6-promise": "~0.1.1",
-    "xpath-range": "0.0.5",
-    "jquery": "~1.11.0"
+    "jquery": "~1.11.0",
+    "xpath-range": "0.0.5"
   },
   "devDependencies": {
     "browser-resolve": "~1.2.1",
+    "browserify": "^6.1.0",
     "browserify-middleware": "^4.1.0",
-    "uglify-js": "~2.4.12",
-    "uglifycss": "~0.0.5",
     "chai": "~1.7.2",
-    "sinon": "~1.6.0",
+    "connect": "~2.10.1",
+    "convert-source-map": "~0.3.1",
+    "glob": "~3.2.6",
     "jscs": "~1.6.0",
     "jshint": "~2.5.0",
     "jwt-simple": "~0.1.0",
-    "connect": "~2.10.1",
-    "browserify": "^6.1.0",
-    "convert-source-map": "~0.3.1",
-    "glob": "~3.2.6",
     "karma": "^0.12.24",
     "karma-bro": "^0.8.0",
     "karma-cli": "0.0.4",
     "karma-mocha": "^0.1.9",
     "karma-phantomjs-launcher": "^0.1.4",
     "karma-sauce-launcher": "^0.2.10",
+    "sinon": "~1.6.0",
     "source-map": "~0.1.32",
-    "through": "~2.3.4"
+    "through": "~2.3.4",
+    "uglify-js": "~2.4.12",
+    "uglifycss": "~0.0.5"
   },
   "engines": {
     "node": ">=0.8 <0.12"
