@@ -8,4 +8,19 @@ env:
     # Sauce Connect credentials
     - secure: DCRo6VuiNTbdfv6aS3Ak8yN5rxZKnV8licKKqrgZxl74X4IfvrYYOh9vHASZIrn/HwaPrc19Yv8mt7caDd0ehru+bpgIRcwGgLdPiWB2QNKEJZ7Rjn61L3XaBuiArsQfpdd1j2s9cbMiDYAEHIU1qmPL7F5OsYqwwLP4guI5waY=
     - secure: KFDnudRwAuxI6pGv1wYf0/FhtzXS8cCm1AEpujAFeB/taMoL1eDzHTGo8oBfaXgd9YLm4u5p/L+mlCIIlhkBRvjc92N6hYy443wX9i6LXSPqxS/Dp6GsoTQWg2mxyFSTxI4pb9KK12TtVGlpmu0BhEYtWjGmuCBmct4Cxc5E38c=
+  matrix:
+    - BROWSER=PhantomJS
+    - BROWSER=SL_Chrome
+    - BROWSER=SL_Firefox
+    - BROWSER=SL_Safari
+    - BROWSER=SL_IE_8
+    - BROWSER=SL_IE_9
+    - BROWSER=SL_IE_10
+    - BROWSER=SL_IE_11
+matrix:
+  allow_failures:
+    - env: BROWSER=SL_IE_8
+    - env: BROWSER=SL_IE_9
+    - env: BROWSER=SL_IE_10
+    - env: BROWSER=SL_IE_11
 script: "npm run travis"

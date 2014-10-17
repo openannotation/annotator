@@ -90,7 +90,7 @@ module.exports = function (karma) {
         karma.sauceLabs.startConnect = false;
         karma.sauceLabs.tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER;
 
-        karma.browsers = ['PhantomJS', 'SL_Chrome', 'SL_Firefox', 'SL_Safari'];
+        karma.browsers = [process.env.BROWSER];
         karma.reporters = ['dots', 'saucelabs'];
     }
 };
