@@ -7,6 +7,7 @@ env:
   global:
   - secure: au7XtmQDR14Sbp/lvXkRWpW+WDtv1JnWkaxwnzsEAbE/49hPXvPi6LDMrexDPq4uc4ENHwgCJa/SR6yYBZmWSUS6TotxrRpSfi79V8AvB31lcQrHgtssOLcTJvOrSQPjWK+a9O9bdb/zS8s/5wnE9Y06A59vSHd482BR7FX9nCs=
   - secure: nJzTL/VeaVaqWg+qOrDOVzOq/zr0KcVli2AmL6JYpNfSLDMk5ZFR8Qs2ZUXkerJY36KEzrZnYQ9SDMkhYtTUf6SpH3MoMDcs79wOMVBWKHdYX5jf1aIuE+75pNU15HK0vwtT1wV5uZurrkx46K/EKobjspIOy0Qs/jAQ8AVKuoE=
+  - COMMAND='npm run test'
   matrix:
   - BROWSER=PhantomJS
   - BROWSER=SL_Chrome
@@ -19,4 +20,6 @@ env:
 matrix:
   allow_failures:
   - env: BROWSER=SL_IE_8
-script: npm run travis
+  include:
+  - env: COMMAND='npm run lint'
+script: $COMMAND

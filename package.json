@@ -44,7 +44,6 @@
   "scripts": {
     "start": "./tools/serve",
     "test": "karma start --single-run",
-    "lint": "jshint src && jscs src && jshint -c test/.jshintrc test && jscs -c test/.jscsrc test",
-    "travis": "npm run lint && npm run test"
+    "lint": "jshint src && jscs src && jshint -c test/.jshintrc test && jscs -c test/.jscsrc test"
   }
 }
