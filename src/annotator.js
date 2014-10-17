@@ -15,7 +15,9 @@ var _Annotator = g.Annotator;
 
 // If wicked-good-xpath is available, install it. This will not overwrite any
 // native XPath functionality.
-if (typeof g.wgxpath === "function") {
+if (typeof g.wgxpath !== "undefined" &&
+    g.wgxpath !== null &&
+    typeof g.wgxpath.install === "function") {
     g.wgxpath.install();
 }
 

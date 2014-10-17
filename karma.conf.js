@@ -3,11 +3,17 @@ module.exports = function (karma) {
         frameworks: ["mocha", "browserify"],
 
         files: [
+            // Fixtures
             {pattern: 'test/fixtures/*.html', included: false},
-            {pattern: 'node_modules/chai/chai.js', watched: false},
+
+            // IE-specific shims
+            {pattern: 'node_modules/wgxpath/wgxpath.install.js', watched: false},
+
+            // Test harness
             {pattern: 'node_modules/sinon/pkg/sinon.js', watched: false},
             {pattern: 'node_modules/sinon/pkg/sinon-ie.js', watched: false},
-            'test/init.js',
+
+            // Test suites
             'test/spec/**/*_spec.js'
         ],
 
@@ -19,6 +25,7 @@ module.exports = function (karma) {
         ],
 
         preprocessors: {
+            'node_modules/wgxpath/wgxpath.install.js': 'browserify',
             'test/spec/**/*_spec.js': 'browserify'
         },
 

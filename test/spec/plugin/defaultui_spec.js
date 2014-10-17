@@ -1,3 +1,5 @@
+var assert = require('assertive-chai').assert;
+
 var h = require('../../helpers');
 
 var $ = require('../../../src/util').$;

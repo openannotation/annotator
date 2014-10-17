@@ -1,3 +1,5 @@
+var assert = require('assertive-chai').assert;
+
 var Authorizer = require('../../src/authorizer');
 
 

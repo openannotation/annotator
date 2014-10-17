@@ -19,7 +19,4 @@ env:
 matrix:
   allow_failures:
   - env: BROWSER=SL_IE_8
-  - env: BROWSER=SL_IE_9
-  - env: BROWSER=SL_IE_10
-  - env: BROWSER=SL_IE_11
 script: npm run travis

@@ -1,3 +1,5 @@
+var assert = require('assertive-chai').assert;
+
 var Promise = require('../../src/util').Promise;
 
 var core = require('../../src/core');

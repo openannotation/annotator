@@ -1,3 +1,5 @@
+var assert = require('assertive-chai').assert;
+
 var Viewer = require('../../../src/plugin/viewer').Viewer;
 
 describe('Viewer plugin', function () {

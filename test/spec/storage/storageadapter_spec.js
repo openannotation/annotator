@@ -1,3 +1,5 @@
+var assert = require('assertive-chai').assert;
+
 var Storage = require('../../../src/storage'),
     Util = require('../../../src/util');
 
