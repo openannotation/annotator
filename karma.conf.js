@@ -7,8 +7,10 @@ module.exports = function (karma) {
             {pattern: 'test/fixtures/*.html', included: false},
 
             // IE-specific shims
-            {pattern: 'node_modules/rangy/lib/rangy-core.js', watched: false},
-            {pattern: 'node_modules/wgxpath/wgxpath.install.js', watched: false},
+            {pattern: 'node_modules/console-shim/console-shim.min.js', watched: false}, // IE8
+            {pattern: 'node_modules/es5-shim/es5-shim.min.js', watched: false}, // IE8
+            {pattern: 'node_modules/rangy/lib/rangy-core.js', watched: false}, // IE8
+            {pattern: 'node_modules/wgxpath/wgxpath.install.js', watched: false}, // IE9-11
 
             // Test harness
             {pattern: 'node_modules/sinon/pkg/sinon.js', watched: false},
