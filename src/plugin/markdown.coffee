@@ -19,6 +19,23 @@ class Annotator.Plugin.Markdown extends Annotator.Plugin
     if Showdown?.converter?
       super
       @converter = new Showdown.converter()
+    else if marked?.Renderer?
+      super
+      if hljs?.highlight?
+        marked.setOptions {
+          highlight: (code, lang) ->
+            if lang == 'js' then lang = 'javascript'
+            else if lang == 'html' then lang = "xml"
+            (if hljs.getLanguage(lang) then hljs.highlight(lang, code).value else hljs.highlightAuto(code).value)
+          sanitize: true
+        }
+      else
+        marked.setOptions {
+          sanitize: true
+        }
+
+      @converter = makeHtml: (text)->
+        marked text
     else
       console.error Annotator._t("To use the Markdown plugin, you must include Showdown into the page first.")
 
