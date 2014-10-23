@@ -4,14 +4,6 @@
     <meta charset="utf-8">
     <title>JS annotation test</title>
 
-    <!--[if lt IE 9]>
-    <script src="lib/vendor/json2.js"></script>
-    <![endif]-->
-    <script src="lib/vendor/wgxpath.install.js"></script>
-
-    <script src="lib/annotator.js"></script>
-    <script src="lib/plugin/filter.js"></script>
-
     <link rel="stylesheet" type="text/css" href="css/annotator.css">
     <style>
       /* This is evil but people do it. This checks that we correctly
@@ -114,6 +106,11 @@
         </tbody>
       </table>
     </div>
+
+    <script src="node_modules/wgxpath/wgxpath.install.js"></script>
+
+    <script src="lib/annotator.js"></script>
+    <script src="lib/plugin/filter.js"></script>
 
     <script>
       var Annotator = require('annotator'),
