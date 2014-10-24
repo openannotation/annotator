@@ -56,6 +56,8 @@ Contents:
    storage/index
    hacking/plugin-development
 
+   roadmap
+
 Indices and tables
 ==================
 
