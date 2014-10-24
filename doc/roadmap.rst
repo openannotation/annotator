@@ -44,6 +44,8 @@ the holiday season and b) time for other developers to test and report bugs.
 
 The main goals for this release, which we aim to ship by April 15, 2015:
 
+-  Support for selections made using the keyboard
+-  Support in the core for annotation on touch devices
 -  Support for multiple typed selectors in annotations
 -  Support for components which resolve ('reanchor') an annotation's selectors
    into a form suitable for display in the page
