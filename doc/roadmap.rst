@@ -10,9 +10,9 @@ the release of Annotator 2.0 onwards, we will operate a time-based release
 process, and any features merged by the relevant cutoff dates will be in the
 release.
 
-.. note:: This is a living document. Nothing herein constitutes a promise of
-          guarantee that a given Annotator release will contain a given feature,
-          or that a release will happen on a specified date.
+.. note:: This is a living document. Nothing herein constitutes a guarantee that
+          a given Annotator release will contain a given feature, or that a
+          release will happen on a specified date.
 
 2.0
 +++
