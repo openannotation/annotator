@@ -80,7 +80,7 @@
         status = status || this.status.INFO;
 
         element.style.borderColor = status;
-        element.innerHTML = message;
+        element.textContent = message;
 
         return this;
       },
