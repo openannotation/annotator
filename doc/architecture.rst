@@ -9,7 +9,7 @@ First, a reminder of why we're restructuring Annotator at all. There are two
 overarching reasons to do this work:
 
 1.  To better serve the needs of more advanced users of the Annotator
-    codebase[#]_. In particular, in Annotator 1.2.x parts of the UI are
+    codebase [#adv]_. In particular, in Annotator 1.2.x parts of the UI are
     hard-coded into the core of Annotator and are not easily removed or swapped.
 
     We want Annotator 2.0 to serve users who don't want or need all of
@@ -25,9 +25,6 @@ overarching reasons to do this work:
     Our goal with Annotator 2.0 is to reflect on the lessons learned from the
     naive plugin system of Annotator 1.2, and build a much more powerful
     annotation library without adding unnecessary complexit.
-
-.. [#] We intend to do this while maintaining a similar ease-of-use for simpler
-       needs.
 
 Current work
 ------------
@@ -70,17 +67,13 @@ diagram) is that the entire lifecycle of an annotation is mediated through the
 storage.
 
 When annotations are to be created/updated, a user or a piece of UI code tells
-the storage plugin to create/update an annotation[#]_. When this happens the
-familiar "lifecycle hooks" are run::
+the storage plugin to create/update an annotation [#storage]_. When this happens
+the familiar "lifecycle hooks" are run::
 
     beforeAnnotationCreated
     annotationCreated
     beforeAnnotationUpdated
     annotationUpdated
-
-.. [#] In fact, these calls are mediated through a wrapper called the
-       ``StorageAdapter``, but this detail does not affect the current
-       discussion.
 
 There remains a class of generic plugins known as "lifecycle plugins," which can
 respond to these hooks (previously implemented as events). The order in which
@@ -145,15 +138,10 @@ The most important ideas are as follows:
 2. Persistence is just another client of the ``DOMAnnotations`` model. Rather
    than waiting on an HTTP round-trip before drawing an Annotation, we focus
    instead on regularly updating the state of the backend to reflect the current
-   state of annotation on the document[#]_.
+   state of annotation on the document [#persistence]_.
 
 3. Annotator is but one client of the underlying annotation data model, and
    shouldn't have privileged access to it.
-
-.. [#] This idea obviously nods towards many others who have done serious
-       thinking in this area: `Offline First <http://offlinefirst.org/>`_, `SLEEP
-       <http://dataprotocols.org/sleep/>`_, `CouchDB
-       <http://dataprotocols.org/couchdb-replication/>`_.
 
 So, what are the responsibilities of the ``DOMAnnotations`` layer and how do
 they differ from those of ``Annotator``? The key distinction is that
@@ -203,7 +191,7 @@ Updating an annotation
 
 1. User indicates that they want to make a change to an annotation.
 2. Annotator shows an editor and the user makes their intended edits.
-3. Annotator updates the annotation[#]_::
+3. Annotator updates the annotation [#changes]_::
 
        annotation.removeBody(annotation.bodies[0])
        annotation.addBody(newBody)
@@ -213,10 +201,6 @@ Updating an annotation
 5. The Annotator storage component is listening for this ``annotationchange``
    event on some parent node of the selected textnodes. At its own discretion it
    sends requests to the backend storage.
-
-.. [#] Open question: is there a nicer way to allow annotations to know that
-       bodies have changed without requiring removal and addition of bodies like
-       this.
 
 Loading an annotation from a remote store
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -375,3 +359,24 @@ annotation is available at ``event.detail.annotation``.
 Removing an annotation triggers an ``annotationremove`` event on every node
 associated with that annotation's targets. The annotation is available at
 ``event.detail.annotation``.
+
+----
+
+.. rubric:: Footnotes
+
+.. [#adv] We intend to do this while maintaining a similar ease-of-use for
+          simpler needs.
+
+.. [#storage] In fact, these calls are mediated through a wrapper called the
+              ``StorageAdapter``, but this detail does not affect the current
+              discussion.
+
+.. [#persistence] This idea obviously nods towards many others who have done
+                  serious thinking in this area: `Offline First
+                  <http://offlinefirst.org/>`_, `SLEEP
+                  <http://dataprotocols.org/sleep/>`_, `CouchDB
+                  <http://dataprotocols.org/couchdb-replication/>`_.
+
+.. [#changes] Open question: is there a nicer way to allow annotations to know
+              that bodies have changed without requiring removal and addition of
+              bodies like this.
