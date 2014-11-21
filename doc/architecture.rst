@@ -174,11 +174,11 @@ Creating a annotation on text content
        annotation.addTarget(target);
 
 5. This sequence of steps fires a custom DOM Event, ``annotationcreate``, on the
-   selected text nodes, as soon as the first target is added.
+   enclosing document, as soon as the first target is added.
 6. The Annotator storage component is listening for this ``annotationcreate``
-   event on some parent node of the selected textnodes. At its own discretion it
-   sends requests to the backend storage, which will likely included a
-   serialized copy of the annotation, which can be obtained using a simple::
+   event. At its own discretion it sends requests to the backend storage, which
+   will likely included a serialized copy of the annotation, which can be
+   obtained using a simple::
 
        JSON.stringify(annotation);
 
@@ -197,10 +197,9 @@ Updating an annotation
        annotation.addBody(newBody)
 
 4. This sequence of steps fires a custom DOM Event, ``annotationchange``, on the
-   nodes associated with the annotation target(s).
+   enclosing document.
 5. The Annotator storage component is listening for this ``annotationchange``
-   event on some parent node of the selected textnodes. At its own discretion it
-   sends requests to the backend storage.
+   event. At its own discretion it sends requests to the backend storage.
 
 Loading an annotation from a remote store
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -347,18 +346,18 @@ Events
 ~~~~~~
 
 Adding the first target to a new ``Annotation`` triggers an ``annotationcreate``
-event on nodes associated with that target. The annotation is available at
-``event.detail.annotation``.
+event (which does not bubble and is not cancelable) at the document associated
+with the annotation.. The annotation is available at ``event.detail.annotation``.
 
-Modifying an annotation (or any of its subproperties: targets, bodies,
-other data, etc.) triggers an ``annotationchange`` event on every node
-associated with that annotation's targets. In the event that a target is
-removed, the event is also triggered on the nodes of the removed target. The
-annotation is available at ``event.detail.annotation``.
+Modifying an annotation (or any of its subproperties: targets, bodies, other
+data, etc.) fires an ``annotationchange`` event (which does not bubble and is
+not cancelable) at the document associated with the annotation. In the event
+that a target is removed, the event is also triggered on the nodes of the
+removed target. The annotation is available at ``event.detail.annotation``.
 
-Removing an annotation triggers an ``annotationremove`` event on every node
-associated with that annotation's targets. The annotation is available at
-``event.detail.annotation``.
+Removing an annotation triggers an ``annotationremove`` event (which does not
+bubble and is not cancelable) at the document associated with the annotation.
+The annotation is available at ``event.detail.annotation``.
 
 ----
 
