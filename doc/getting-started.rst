@@ -114,7 +114,8 @@ This will set up the following:
    :doc:`Unsupported <plugins/unsupported>` plugins.
 2. The :doc:`Auth <plugins/auth>`, :doc:`Permissions <plugins/permissions>` and
    :doc:`Store <plugins/store>` plugins, for interaction with the `AnnotateIt
-   store <http://annotateit.org>`__.
+   store <http://annotateit.org>`__. NOTE: The Permissions plugin needs to be
+   referred to as AnnotateItPermissions when configuring it with setupPlugins.
 3. If the `Showdown <https://github.com/coreyti/showdown>`__ library has
    been included on the page the :doc:`plugins/markdown` will also
    be loaded.
