@@ -28,6 +28,13 @@ Widget.prototype.destroy = function () {
 
 // Public: Renders the widget
 Widget.prototype.render = function () {
+    if (this.options.extensions) {
+        for (var i = 0, len = this.options.extensions.length; i < len; i++) {
+            var extension = this.options.extensions[i];
+            extension(this);
+        }
+    }
+
     this.element.appendTo(this.options.appendTo);
 };
 
