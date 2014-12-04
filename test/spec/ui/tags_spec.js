@@ -26,12 +26,12 @@ describe('UI.Tags', function () {
 
     it("should parse whitespace-delimited tags into an array", function () {
         var str = 'one two  three\tfourFive';
-        assert.deepEqual(tags.parseTags(str), ['one', 'two', 'three', 'fourFive']);
+        assert.deepEqual(tags.options.parseTags(str), ['one', 'two', 'three', 'fourFive']);
     });
 
     it("should stringify a tags array into a space-delimited string", function () {
         var ary = ['one', 'two', 'three'];
-        assert.equal(tags.stringifyTags(ary), "one two three");
+        assert.equal(tags.options.stringifyTags(ary), "one two three");
     });
 
     describe("extensions", function () {

@@ -33,34 +33,6 @@ function Tags(options) {
     };
 }
 
-// Public: Extracts tags from the provided String.
-//
-// string - A String of tags seperated by spaces.
-//
-// Examples
-//
-//   plugin.parseTags('cake chocolate cabbage')
-//   # => ['cake', 'chocolate', 'cabbage']
-//
-// Returns Array of parsed tags.
-Tags.prototype.parseTags = function (string) {
-    return this.options.parseTags(string);
-};
-
-// Public: Takes an array of tags and serialises them into a String.
-//
-// array - An Array of tags.
-//
-// Examples
-//
-//   plugin.stringifyTags(['cake', 'chocolate', 'cabbage'])
-//   # => 'cake chocolate cabbage'
-//
-// Returns Array of parsed tags.
-Tags.prototype.stringifyTags = function (array) {
-    return this.options.stringifyTags(array);
-};
-
 // Annotator.Editor callback function. Updates the @input field with the
 // tags attached to the provided annotation.
 //
@@ -77,7 +49,7 @@ Tags.prototype.stringifyTags = function (array) {
 Tags.prototype.updateField = function (field, annotation) {
     var value = '';
     if (annotation.tags) {
-        value = this.stringifyTags(annotation.tags);
+        value = this.options.stringifyTags(annotation.tags);
     }
 
     this.input.val(value);
@@ -99,7 +71,7 @@ Tags.prototype.updateField = function (field, annotation) {
 //
 // Returns nothing.
 Tags.prototype.setAnnotationTags = function (field, annotation) {
-    annotation.tags = this.parseTags(this.input.val());
+    annotation.tags = this.options.parseTags(this.input.val());
 };
 
 // Annotator.Viewer callback function. Updates the annotation display with tags
