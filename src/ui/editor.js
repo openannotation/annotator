@@ -261,6 +261,7 @@ var Editor = Widget.extend({
                 self._onTextareaKeydown(e);
             });
 
+        this.installExtensions();
         this.render();
     },
 

@@ -38,7 +38,6 @@ Widget.prototype.installExtensions = function () {
 
 // Public: Renders the widget
 Widget.prototype.render = function () {
-    this.installExtensions();
     this.element.appendTo(this.options.appendTo);
 };
 
