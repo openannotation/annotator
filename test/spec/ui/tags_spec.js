@@ -1,100 +1,151 @@
 var assert = require('assertive-chai').assert;
 
 var UI = require('../../../src/ui'),
-    Editor = require('../../../src/ui/editor'),
     Util = require('../../../src/util');
 
 var $ = Util.$;
 
 describe('UI.Tags', function () {
-    var elem = null,
-        tags = null,
-        editor = null;
+    var tags = null,
+        sandbox = null;
 
     beforeEach(function () {
-        elem = $("<div><div class='annotator-editor-controls'></div></div>")[0];
-        tags = new UI.Tags(elem);
-        editor = new Editor.Editor({
-            extensions: [tags.configureEditor]
-        });
+        sandbox = sinon.sandbox.create();
+        tags = UI.createTagsPlugin({});
     });
 
     afterEach(function () {
-        $(elem).remove();
-        editor.destroy();
+        sandbox.restore();
     });
 
-    it("should parse whitespace-delimited tags into an array", function () {
-        var str = 'one two  three\tfourFive';
-        assert.deepEqual(tags.options.parseTags(str), ['one', 'two', 'three', 'fourFive']);
-    });
-
-    it("should stringify a tags array into a space-delimited string", function () {
-        var ary = ['one', 'two', 'three'];
-        assert.equal(tags.options.stringifyTags(ary), "one two three");
-    });
 
     describe("extensions", function () {
-        it("offers a configureEditor function ", function () {
-            assert.isFunction(tags.configureEditor);
+        it("offers a createEditorField function ", function () {
+            assert.isFunction(tags.createEditorField);
         });
 
-        it("offers a configureViewer function ", function () {
-            assert.isFunction(tags.configureViewer);
+        it("offers a createViewerField function ", function () {
+            assert.isFunction(tags.createViewerField);
         });
     });
 
-    describe("updateField", function () {
-        it("should set the value of the input", function () {
-            var annotation = {
-                tags: ['apples', 'oranges', 'pears']
-            };
-            tags.updateField(tags.field, annotation);
-            assert.equal(tags.input.val(), 'apples oranges pears');
+    describe("Editor", function () {
+        var elem = null,
+            editor = null,
+            spy = null,
+            input = null;
+
+        beforeEach(function () {
+            elem = $("<div><div class='annotator-editor-controls'></div></div>")[0];
+            spy = sandbox.spy(UI.Editor.prototype, 'addField');
+            editor = new UI.Editor({
+                defaultFields: false,
+                extensions: [tags.createEditorField]
+            });
+            input = $(editor.fields[0].element).find(':input');
         });
 
-        it("should set the clear the value of the input if there are no tags", function () {
+        afterEach(function () {
+            $(elem).remove();
+            editor.destroy();
+        });
+
+        it("should stringify a tags array into a space-delimited string", function () {
+            var annotation = {
+                tags: ['one', 'two', 'three']
+            }
+
+            var updateField = spy.getCall(0).args[0].load;
+            updateField({}, annotation);
+            assert.equal(input.val(), "one two three");
+        });
+
+        it("should parse whitespace-delimited tags into an array", function () {
+            var str = 'one two  three\tfourFive';
+            input.val(str);
+            var setAnnotationTags = spy.getCall(0).args[0].submit;
             var annotation = {};
-            tags.input.val('apples pears oranges');
-            tags.updateField(tags.field, annotation);
-            assert.equal(tags.input.val(), '');
+            setAnnotationTags({}, annotation);
+            assert.deepEqual(annotation.tags, ['one', 'two', 'three', 'fourFive']);
+        });
+
+        describe("updateField", function () {
+            it("should set the value of the input", function () {
+                var annotation = {
+                    tags: ['apples', 'oranges', 'pears']
+                };
+
+                var updateField = spy.getCall(0).args[0].load;
+                updateField({}, annotation);
+                assert.equal(input.val(), 'apples oranges pears');
+            });
+
+            it("should set the clear the value of the input if there are no tags", function () {
+                var annotation = {};
+                input.val('apples pears oranges');
+                var updateField = spy.getCall(0).args[0].load;
+                updateField({}, annotation);
+                assert.equal(input.val(), '');
+            });
+        });
+
+        describe("setAnnotationTags", function () {
+            it("should set the annotation's tags", function () {
+                var annotation = {};
+                input.val('apples oranges pears');
+                var setAnnotationTags = spy.getCall(0).args[0].submit;
+
+                setAnnotationTags({}, annotation);
+                assert.deepEqual(annotation.tags, ['apples', 'oranges', 'pears']);
+            });
         });
     });
 
-    describe("setAnnotationTags", function () {
-        it("should set the annotation's tags", function () {
-            var annotation = {};
-            tags.input.val('apples oranges pears');
-            tags.setAnnotationTags(tags.field, annotation);
-            assert.deepEqual(annotation.tags, ['apples', 'oranges', 'pears']);
-        });
-    });
+    describe("Viewer", function () {
+        var viewer = null,
+            spy = null;
 
-    describe("updateViewer", function () {
-        it("should insert the tags into the field", function () {
-            var annotation = {
-                tags: ['foo', 'bar', 'baz']
-            };
-            var field = $('<div />')[0];
-            tags.updateViewer(field, annotation);
-            assert.deepEqual($(field).html(), [
-                '<span class="annotator-tag">foo</span>',
-                '<span class="annotator-tag">bar</span>',
-                '<span class="annotator-tag">baz</span>'
-            ].join(' '));
+        beforeEach(function () {
+            spy = sandbox.spy(UI.Viewer.prototype, 'addField');
+            viewer = new UI.Viewer({
+                defaultFields: false,
+                extensions: [tags.createViewerField]
+            });
         });
 
-        it("should remove the field if there are no tags", function () {
-            var annotation = {
-                tags: []
-            };
-            var field = $('<div />')[0];
-            tags.updateViewer(field, annotation);
-            assert.lengthOf($(field).parent(), 0);
-            annotation = {};
-            field = $('<div />')[0];
-            tags.updateViewer(field, annotation);
-            assert.lengthOf($(field).parent(), 0);
+        afterEach(function () {
+            viewer.destroy();
+        });
+
+        describe("updateViewer", function () {
+            it("should insert the tags into the field", function () {
+                var annotation = {
+                    tags: ['foo', 'bar', 'baz']
+                };
+                var field = $('<div />')[0];
+                var updateViewer = spy.getCall(0).args[0].load;
+                updateViewer(field, annotation);
+                assert.deepEqual($(field).html(), [
+                    '<span class="annotator-tag">foo</span>',
+                    '<span class="annotator-tag">bar</span>',
+                    '<span class="annotator-tag">baz</span>'
+                ].join(' '));
+            });
+
+            it("should remove the field if there are no tags", function () {
+                var annotation = {
+                    tags: []
+                };
+                var field = $('<div />')[0];
+
+                var updateViewer = spy.getCall(0).args[0].load;
+                updateViewer(field, annotation);
+                assert.lengthOf($(field).parent(), 0);
+                annotation = {};
+                field = $('<div />')[0];
+                updateViewer(field, annotation);
+                assert.lengthOf($(field).parent(), 0);
+            });
         });
     });
 });

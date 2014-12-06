@@ -198,8 +198,8 @@ function DefaultUI(element) {
             }
         });
 
-        var tags = new UI.Tags(element, {});
-        var editor = new UI.Editor({extensions: [tags.configureEditor]});
+        var tags = UI.createTagsPlugin({});
+        var editor = new UI.Editor({extensions: [tags.createEditorField]});
 
         addPermissionsCheckboxes(editor, registry);
 
@@ -239,7 +239,7 @@ function DefaultUI(element) {
                 );
             },
             autoViewHighlights: element,
-            extensions: [tags.configureViewer]
+            extensions: [tags.createViewerField]
         });
 
         injectDynamicStyle();
