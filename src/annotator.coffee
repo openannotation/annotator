@@ -573,8 +573,6 @@ class Annotator extends Delegator
 
     for range in @selectedRanges
       container = range.commonAncestor
-      # MLW - Changed to fix overlapping annotations problem
-      # See https://github.com/openannotation/annotator/issues/466
       while $(container).hasClass('annotator-hl')
         container = $(container).parents('[class!=annotator-hl]')[0]
       return if this.isAnnotator(container)
