@@ -147,8 +147,6 @@ var Viewer = Widget.extend({
                 self._startHideTimer();
             });
 
-        this.installExtensions();
-        this.render();
     },
 
     destroy: function () {

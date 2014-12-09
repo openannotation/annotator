@@ -197,9 +197,11 @@ function DefaultUI(element) {
                 registry.annotations.create(ann);
             }
         });
+        adder.attach();
 
         var tags = UI.createTagsPlugin({});
         var editor = new UI.Editor({extensions: [tags.createEditorField]});
+        editor.attach();
 
         addPermissionsCheckboxes(editor, registry);
 
@@ -241,6 +243,7 @@ function DefaultUI(element) {
             autoViewHighlights: element,
             extensions: [tags.createViewerField]
         });
+        viewer.attach();
 
         injectDynamicStyle();
 

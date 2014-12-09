@@ -17,6 +17,7 @@ function Widget(options) {
       this.constructor.options,
       options
     );
+    this.extensionsInstalled = false;
 }
 
 // Public: Destroy the Widget, unbinding all events and removing the element.
@@ -36,9 +37,18 @@ Widget.prototype.installExtensions = function () {
     }
 };
 
-// Public: Renders the widget
-Widget.prototype.render = function () {
+Widget.prototype.mayInstallExtensions = function () {
+    if (!this.extensionsInstalled) {
+        this.extensionsInstalled = true;
+        this.installExtensions();
+    }
+};
+
+// Public: Attach the widget to a css selector or element
+// Plus do any post-construction install
+Widget.prototype.attach = function () {
     this.element.appendTo(this.options.appendTo);
+    this.mayInstallExtensions();
 };
 
 // Public: Show the widget.

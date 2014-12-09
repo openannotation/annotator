@@ -42,6 +42,7 @@ describe('UI.Tags', function () {
                 defaultFields: false,
                 extensions: [tags.createEditorField]
             });
+            editor.attach();
             input = $(editor.fields[0].element).find(':input');
         });
 
@@ -111,6 +112,7 @@ describe('UI.Tags', function () {
                 defaultFields: false,
                 extensions: [tags.createViewerField]
             });
+            viewer.attach();
         });
 
         afterEach(function () {
