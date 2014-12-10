@@ -192,7 +192,8 @@ describe('DefaultUI plugin', function () {
             mockEditor = {
                 addField: sandbox.stub(),
                 destroy: sandbox.stub(),
-                attach: sandbox.stub()},
+                attach: sandbox.stub()
+            },
             mockHighlighter = {destroy: sandbox.stub()},
             mockTextSelector = {destroy: sandbox.stub()},
             mockViewer = {destroy: sandbox.stub(), attach: sandbox.stub()};

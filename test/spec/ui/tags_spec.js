@@ -54,7 +54,7 @@ describe('UI.Tags', function () {
         it("should stringify a tags array into a space-delimited string", function () {
             var annotation = {
                 tags: ['one', 'two', 'three']
-            }
+            };
 
             var updateField = spy.getCall(0).args[0].load;
             updateField({}, annotation);

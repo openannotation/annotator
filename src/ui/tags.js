@@ -5,18 +5,40 @@ var Util = require('../util');
 var $ = Util.$,
     _t = Util.gettext;
 
+// Configuration options
+var defaultOptions = {
+    // Configurable function which accepts an array of tags and
+    // returns a string which will be used to fill the tags input.
+    stringifyTags: function (array) {
+        return array.join(" ");
+    },
+    // Configurable function which accepts a string (the contents)
+    // of the tags input as an argument, and returns an array of
+    // tags.
+    parseTags: function (string) {
+        string = $.trim(string);
+        var tags = [];
 
-function createTagsPlugin(options) {
-    var options = $.extend(true, {}, defaultOptions, options);
+        if (string) {
+            tags = string.split(/\s+/);
+        }
+
+        return tags;
+    }
+};
+
+function createTagsPlugin(opts) {
+    var options = $.extend(true, {}, defaultOptions, opts);
 
     return {
         createViewerField: configureViewer(options),
         createEditorField: configureEditor(options)
-    }
+    };
 }
 
-function configureViewer(options) {
-    // Annotator.Viewer callback function. Updates the annotation display with tags
+function configureViewer() {
+    // Annotator.Viewer callback function. Updates the annotation display
+    // with tags
     // removes the field from the Viewer if there are no tags to display.
     //
     // field      - The Element to populate with tags.
@@ -26,10 +48,11 @@ function configureViewer(options) {
     //
     //   field = $('<div />')[0]
     //   plugin.updateField(field, {tags: ['apples']})
-    //   field.innerHTML # => Returns '<span class="annotator-tag">apples</span>'
+    //   field.innerHTML # => Returns
+    //      '<span class="annotator-tag">apples</span>'
     //
     // Returns nothing.
-     function updateViewer (field, annotation) {
+    function updateViewer (field, annotation) {
         field = $(field);
         if (annotation.tags &&
             $.isArray(annotation.tags) &&
@@ -44,13 +67,13 @@ function configureViewer(options) {
         } else {
             field.remove();
         }
-    };
+    }
 
     function createViewerField (v) {
         v.addField({
             load: updateViewer
         });
-    };
+    }
 
     return createViewerField;
 }
@@ -81,7 +104,7 @@ function configureEditor(options) {
             value = options.stringifyTags(annotation.tags);
         }
         input.val(value);
-    };
+    }
 
     // Annotator.Editor callback function. Updates the annotation field with the
     // data retrieved from the @input property.
@@ -100,7 +123,7 @@ function configureEditor(options) {
     // Returns nothing.
     function setAnnotationTags (field, annotation) {
         annotation.tags = options.parseTags(input.val());
-    };
+    }
 
     function createEditorField (e) {
         field = e.addField({
@@ -110,32 +133,10 @@ function configureEditor(options) {
         });
 
         input = $(field).find(':input');
-    };
+    }
 
     return createEditorField;
 }
-
-// Configuration options
-var defaultOptions = {
-    // Configurable function which accepts an array of tags and
-    // returns a string which will be used to fill the tags input.
-    stringifyTags: function (array) {
-        return array.join(" ");
-    },
-    // Configurable function which accepts a string (the contents)
-    // of the tags input as an argument, and returns an array of
-    // tags.
-    parseTags: function (string) {
-        string = $.trim(string);
-        var tags = [];
-
-        if (string) {
-            tags = string.split(/\s+/);
-        }
-
-        return tags;
-    }
-};
 
 
 exports.createTagsPlugin = createTagsPlugin;

@@ -146,7 +146,6 @@ var Viewer = Widget.extend({
             .on("mouseleave." + NS, function () {
                 self._startHideTimer();
             });
-
     },
 
     destroy: function () {
