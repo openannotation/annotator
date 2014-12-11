@@ -1,6 +1,6 @@
 var assert = require('assertive-chai').assert;
 
-var Annotator = require('../../../src/annotator'),
+var Annotator = require('annotator'),
     Markdown = require('../../../src/plugin/markdown');
 
 var $ = Annotator.Util.$;
