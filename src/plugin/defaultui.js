@@ -199,7 +199,7 @@ function DefaultUI(element) {
         });
         adder.attach();
 
-        var tags = UI.createTagsPlugin({});
+        var tags = UI.tags({});
         var editor = new UI.Editor({extensions: [tags.createEditorField]});
         editor.attach();
 

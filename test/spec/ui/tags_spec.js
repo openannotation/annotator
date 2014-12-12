@@ -11,7 +11,7 @@ describe('UI.Tags', function () {
 
     beforeEach(function () {
         sandbox = sinon.sandbox.create();
-        tags = UI.createTagsPlugin({});
+        tags = UI.tags({});
     });
 
     afterEach(function () {
