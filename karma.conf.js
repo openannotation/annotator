@@ -20,8 +20,7 @@ module.exports = function (karma) {
         exclude: [
             'test/spec/bootstrap_spec.js',
             'test/spec/plugin/auth_spec.js',
-            'test/spec/plugin/markdown_spec.js',
-            'test/spec/plugin/tags_spec.js'
+            'test/spec/plugin/markdown_spec.js'
         ],
 
         preprocessors: {
