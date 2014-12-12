@@ -37,7 +37,7 @@ Widget.prototype.installExtensions = function () {
     }
 };
 
-Widget.prototype.mayInstallExtensions = function () {
+Widget.prototype._maybeInstallExtensions = function () {
     if (!this.extensionsInstalled) {
         this.extensionsInstalled = true;
         this.installExtensions();
@@ -48,7 +48,7 @@ Widget.prototype.mayInstallExtensions = function () {
 // Plus do any post-construction install
 Widget.prototype.attach = function () {
     this.element.appendTo(this.options.appendTo);
-    this.mayInstallExtensions();
+    this._maybeInstallExtensions();
 };
 
 // Public: Show the widget.
