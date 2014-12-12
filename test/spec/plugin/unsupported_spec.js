@@ -1,4 +1,4 @@
-var Annotator = require('../../../src/annotator'),
+var Annotator = require('annotator'),
     Unsupported = require('../../../src/plugin/unsupported').Unsupported;
 
 describe('Unsupported plugin', function () {

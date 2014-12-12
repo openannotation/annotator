@@ -1,6 +1,6 @@
 var assert = require('assertive-chai').assert;
 
-var Annotator = require('../../src/annotator'),
+var Annotator = require('annotator'),
     $ = require('../../src/util').$;
 
 require('../../src/bootstrap');

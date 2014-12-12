@@ -31,13 +31,12 @@ module.exports = function (karma) {
         browserify: {
             debug: true,
             prebundle: function (bundle) {
-                // This allows annotator-plugintools to require annotator as
-                // 'annotator' in the test environment.
-                bundle.require('./src/annotator', {expose: 'annotator'});
-                // This, for reasons that remain entirely unclear, fixes an
-                // issue where the above require doesn't seem to work, and the
-                // karma build dies saying "Cannot find module 'annotator' ..."
-                bundle.bundle();
+                // This is event is fired each time the bundle is built.
+                bundle.on('reset', function () {
+                    // This allows annotator-plugintools to require annotator
+                    // as 'annotator' in the test environment.
+                    bundle.require('./src/annotator', {expose: 'annotator'});
+                });
             }
         },
 
