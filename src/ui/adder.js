@@ -34,7 +34,6 @@ var Adder = Widget.extend({
         $(this.document.body).on("mouseup." + NS, function (e) {
             self._onMouseup(e);
         });
-        this.render();
     },
 
     destroy: function () {

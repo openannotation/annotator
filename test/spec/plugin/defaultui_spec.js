@@ -51,7 +51,7 @@ describe('DefaultUI plugin', function () {
 
         beforeEach(function () {
             el = $('<div></div>')[0];
-            mockAdder = {destroy: sandbox.stub()};
+            mockAdder = {destroy: sandbox.stub(), attach: sandbox.stub()};
             mockRegistry = {annotations: {create: sandbox.stub()}};
             sandbox.stub(UI, 'Adder').returns(mockAdder);
 
@@ -84,7 +84,8 @@ describe('DefaultUI plugin', function () {
             el = $('<div></div>')[0];
             mockEditor = {
                 addField: sandbox.stub(),
-                destroy: sandbox.stub()
+                destroy: sandbox.stub(),
+                attach: sandbox.stub()
             };
             mockRegistry = {
                 annotations: {create: sandbox.stub()},
@@ -187,11 +188,15 @@ describe('DefaultUI plugin', function () {
     });
 
     it("should destroy the UI components when it is destroyed", function () {
-        var mockAdder = {destroy: sandbox.stub()},
-            mockEditor = {addField: sandbox.stub(), destroy: sandbox.stub()},
+        var mockAdder = {destroy: sandbox.stub(), attach: sandbox.stub()},
+            mockEditor = {
+                addField: sandbox.stub(),
+                destroy: sandbox.stub(),
+                attach: sandbox.stub()
+            },
             mockHighlighter = {destroy: sandbox.stub()},
             mockTextSelector = {destroy: sandbox.stub()},
-            mockViewer = {destroy: sandbox.stub()};
+            mockViewer = {destroy: sandbox.stub(), attach: sandbox.stub()};
         sandbox.stub(UI, 'Adder').returns(mockAdder);
         sandbox.stub(UI, 'Editor').returns(mockEditor);
         sandbox.stub(UI, 'Highlighter').returns(mockHighlighter);

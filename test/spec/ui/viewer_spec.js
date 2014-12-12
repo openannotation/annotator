@@ -21,6 +21,7 @@ describe('UI.Viewer', function () {
     describe('in default configuration', function () {
         beforeEach(function () {
             v = new UI.Viewer();
+            v.attach();
         });
 
         afterEach(function () {
@@ -161,6 +162,7 @@ describe('UI.Viewer', function () {
                 permitEdit: function () { return true; },
                 onEdit: onEdit
             });
+            v.attach();
         });
 
         afterEach(function () {
@@ -202,6 +204,7 @@ describe('UI.Viewer', function () {
                 permitDelete: function () { return true; },
                 onDelete: onDelete
             });
+            v.attach();
         });
 
         afterEach(function () {
@@ -239,6 +242,7 @@ describe('UI.Viewer', function () {
             v = new UI.Viewer({
                 defaultFields: false
             });
+            v.attach();
         });
 
         afterEach(function () {
@@ -261,6 +265,7 @@ describe('UI.Viewer', function () {
                 inactivityDelay: 200,
                 autoViewHighlights: h.fix()
             });
+            v.attach();
             hl = $(h.fix()).find('.annotator-hl.one');
             hl.data('annotation', {
                 text: "Cats with mats"

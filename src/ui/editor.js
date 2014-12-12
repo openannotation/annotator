@@ -260,8 +260,6 @@ var Editor = Widget.extend({
             .on("keydown." + NS, 'textarea', function (e) {
                 self._onTextareaKeydown(e);
             });
-
-        this.render();
     },
 
     destroy: function () {

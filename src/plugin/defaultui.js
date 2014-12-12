@@ -197,8 +197,12 @@ function DefaultUI(element) {
                 registry.annotations.create(ann);
             }
         });
+        adder.attach();
 
-        var editor = new UI.Editor();
+        var tags = UI.tags({});
+        var editor = new UI.Editor({extensions: [tags.createEditorField]});
+        editor.attach();
+
         addPermissionsCheckboxes(editor, registry);
 
         var highlighter = new UI.Highlighter(element);
@@ -236,8 +240,10 @@ function DefaultUI(element) {
                     registry.identifier.who()
                 );
             },
-            autoViewHighlights: element
+            autoViewHighlights: element,
+            extensions: [tags.createViewerField]
         });
+        viewer.attach();
 
         injectDynamicStyle();
 
