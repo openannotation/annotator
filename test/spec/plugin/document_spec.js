@@ -12,7 +12,8 @@ var FIXTURE_METADATA = {
         '<link rel="bookmark" href="http://example.com/bookmark"></link>',
         '<link rel="alternate" href="es/foo.html" hreflang="es" type="text/html"></link>',
         '<link rel="alternate" href="feed" type="application/rss+xml"></link>',
-        '<link rel="canonical" href="http://example.com/bookmark/canonical.html"></link>'
+        '<link rel="canonical" href="http://example.com/bookmark/canonical.html"></link>',
+        '<link rel="shortlink" href="http://example.com/bookmark/short"></link>'
     ],
     highwire: [
         '<meta name="citation_doi" content="10.1175/JCLI-D-11-00015.1">',
@@ -66,7 +67,7 @@ describe('Document plugin', function () {
 
         it('should have links with absolute hrefs and types', function () {
             assert.ok(metadata.link);
-            assert.equal(metadata.link.length, 8);
+            assert.equal(metadata.link.length, 9);
             assert.equal(metadata.link[0].href, window.location.href);
             assert.equal(metadata.link[1].rel, "alternate");
             assert.match(metadata.link[1].href, /^.+foo\.pdf$/);
@@ -78,14 +79,16 @@ describe('Document plugin', function () {
             assert.equal(metadata.link[3].href, "http://example.com/bookmark");
             assert.equal(metadata.link[4].rel, "canonical");
             assert.equal(metadata.link[4].href, "http://example.com/bookmark/canonical.html");
-            assert.equal(metadata.link[5].href, "doi:10.1175/JCLI-D-11-00015.1");
-            assert.match(metadata.link[6].href, /.+foo\.pdf$/);
-            assert.equal(metadata.link[6].type, "application/pdf");
-            assert.equal(metadata.link[7].href, "doi:10.1175/JCLI-D-11-00015.1");
+            assert.equal(metadata.link[5].rel, "shortlink");
+            assert.equal(metadata.link[5].href, "http://example.com/bookmark/short");
+            assert.equal(metadata.link[6].href, "doi:10.1175/JCLI-D-11-00015.1");
+            assert.match(metadata.link[7].href, /.+foo\.pdf$/);
+            assert.equal(metadata.link[7].type, "application/pdf");
+            assert.equal(metadata.link[8].href, "doi:10.1175/JCLI-D-11-00015.1");
         });
 
         it('should ignore atom and RSS feeds and alternate languages', function () {
-            assert.equal(metadata.link.length, 8);
+            assert.equal(metadata.link.length, 9);
         });
 
         it('should have highwire metadata', function () {

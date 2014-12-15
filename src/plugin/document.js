@@ -127,6 +127,7 @@ function getLinks() {
 
         if (!(rel === "alternate" ||
               rel === "canonical" ||
+              rel === "shortlink" ||
               rel === "bookmark")) {
             return;
         }
