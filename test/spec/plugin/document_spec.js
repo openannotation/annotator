@@ -1,7 +1,6 @@
 var assert = require('assertive-chai').assert;
-
-var Util = require('../../../src/util'),
-    Document = require('../../../src/plugin/document');
+var Util = require('../../../src/util');
+var DocumentPlugin = require('../../../src/plugin/document');
 
 var $ = Util.$;
 
@@ -39,7 +38,7 @@ describe('Document plugin', function () {
     describe('Document plugin', function () {
         it('adds document metadata to the annotation onBeforeAnnotationCreated', function () {
             // Document plugin doesn't use the registry, so we can pass null
-            var plugin = new Document.Document(null);
+            var plugin = new DocumentPlugin.Document(null);
             var annotation = {};
             plugin.onBeforeAnnotationCreated(annotation);
             assert.property(annotation, 'document');
@@ -55,7 +54,7 @@ describe('Document plugin', function () {
                 var html = t.join('\n');
                 tags[name] = $(html).appendTo('head');
             }
-            metadata = Document.getDocumentMetadata();
+            metadata = DocumentPlugin.getDocumentMetadata();
         });
 
         afterEach(function () {
@@ -133,19 +132,19 @@ describe('Document plugin', function () {
         it('does not have empty fields for nonexistent metadata', function () {
             tags.highwire.remove();
             tags.facebook.remove();
-            metadata = Document.getDocumentMetadata();
+            metadata = DocumentPlugin.getDocumentMetadata();
             assert.isUndefined(metadata.highwire);
             assert.isUndefined(metadata.facebook);
         });
 
         it('has a title derived from metadata, in preference order', function () {
-            metadata = Document.getDocumentMetadata();
+            metadata = DocumentPlugin.getDocumentMetadata();
             assert.strictEqual(metadata.title, 'Foo');
             tags.highwire.remove();
-            metadata = Document.getDocumentMetadata();
+            metadata = DocumentPlugin.getDocumentMetadata();
             assert.strictEqual(metadata.title, 'Computer Lib / Dream Machines');
             tags.eprints.remove();
-            metadata = Document.getDocumentMetadata();
+            metadata = DocumentPlugin.getDocumentMetadata();
             assert.strictEqual(metadata.title, 'Literary Machines');
         });
 
@@ -153,31 +152,31 @@ describe('Document plugin', function () {
             for (var name in tags) {
                 tags[name].remove();
             }
-            metadata = Document.getDocumentMetadata();
+            metadata = DocumentPlugin.getDocumentMetadata();
             assert.strictEqual(metadata.title, document.title);
         });
     });
 
     describe('absoluteUrl()', function () {
         it('should add the protocol when the url starts with two slashes', function () {
-            var result = Document.absoluteUrl('//example.com/');
+            var result = DocumentPlugin.absoluteUrl('//example.com/');
             assert.equal(result, 'http://example.com/');
         });
 
         it('should add a trailing slash when given an empty path', function () {
-            var result = Document.absoluteUrl('http://example.com');
+            var result = DocumentPlugin.absoluteUrl('http://example.com');
             assert.equal(result, 'http://example.com/');
         });
 
         it('should make a relative path into an absolute url', function () {
-            var result = Document.absoluteUrl('path');
+            var result = DocumentPlugin.absoluteUrl('path');
             var expected = document.location.protocol + '//' + document.location.host + document.location.pathname.replace(/[^\/]+$/, '') + 'path';
             assert.equal(result, expected);
         });
 
         it('should make an absolute path into an absolute url', function () {
             var expected, result;
-            result = Document.absoluteUrl('/path');
+            result = DocumentPlugin.absoluteUrl('/path');
             expected = document.location.protocol + '//' + document.location.host + '/path';
             assert.equal(result, expected);
         });
