@@ -255,6 +255,29 @@ describe('UI.Viewer', function () {
         });
     });
 
+    describe('renderText', function () {
+        var renderText = null;
+
+        beforeEach(function () {
+            renderText = sinon.stub().returns("Wolves with sheep");
+
+            v = new UI.Viewer({
+                defaultFields: true,
+                renderText: renderText
+            });
+        });
+
+        afterEach(function () {
+            v.destroy();
+        });
+
+        it('calls the defaultRenderer to render the text field.', function () {
+            v.load([{text: "Tigers with cameras"}]);
+            var html = v.element.html();
+            assert.isTrue(html.indexOf("Wolves with sheep") >= 0);
+        });
+    });
+
     describe('event handlers', function () {
         var hl = null,
             clock = null;
