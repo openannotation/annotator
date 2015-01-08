@@ -202,7 +202,7 @@ class Annotator extends Delegator
     @element.data('annotator', null)
 
     for name, plugin of @plugins
-      @plugins[name].destroy()
+      @plugins[name].destroy?()
 
     idx = Annotator._instances.indexOf(this)
     if idx != -1
