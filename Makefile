@@ -1,39 +1,26 @@
-ANNOTATOR_SRC := src/annotator.js
-ANNOTATOR_PKG := pkg/annotator.js pkg/annotator.css
+BROWSERIFY := node_modules/.bin/browserify
+UGLIFYCSS := node_modules/.bin/uglifycss
+UGLIFYJS := node_modules/.bin/uglifyjs
 
-PLUGIN_SRC := $(wildcard src/plugin/*.js)
-PLUGIN_SRC := $(patsubst src/plugin/%,%,$(PLUGIN_SRC))
-PLUGIN_PKG := $(patsubst %.js,pkg/annotator.%.js,$(PLUGIN_SRC))
+# Check that the user has run 'npm install'
+ifeq ($(shell which $(BROWSERIFY) >/dev/null 2>&1; echo $$?), 1)
+$(error The 'browserify' command was not found. Please ensure you have run 'npm install' before running make.)
+endif
 
-FULL_SRC := $(ANNOTATOR_SRC) $(PLUGIN_SRC)
-FULL_PKG := pkg/annotator-full.js pkg/annotator.css
+# These are the plugins which are built separately and included in the
+# annotator-full build. Not all of the plugins in src/plugin are suited for this
+# at the moment.
+PLUGINS := \
+	document \
+	filter \
+	unsupported
+PLUGINS_PKG := $(patsubst %,pkg/annotator.%.js,$(PLUGINS))
 
-BOOKMARKLET_PKG := pkg/annotator-bookmarklet.js pkg/annotator.css \
-	pkg/bootstrap.js
+all: annotator plugins annotator-full
 
-MISC_PKG := pkg/package.json pkg/main.js pkg/index.js \
-	pkg/AUTHORS pkg/LICENSE-GPL pkg/LICENSE-MIT pkg/README.rst
-
-BUILD := ./tools/build
-DEPS := ./tools/build -d
-
-DEPDIR := .deps
-df = $(DEPDIR)/$(*F)
-
-PKGDIR := pkg
-
-all: annotator plugins annotator-full bookmarklet
-default: all
-
-annotator: $(ANNOTATOR_PKG)
-plugins: $(PLUGIN_PKG)
-annotator-full: $(FULL_PKG)
-bookmarklet: $(BOOKMARKLET_PKG)
-
-dist: $(ANNOTATOR_PKG) $(PLUGIN_PKG) $(FULL_PKG) $(BOOKMARKLET_PKG) $(MISC_PKG)
-	@$(eval VERSION := $(shell json version < pkg/package.json))
-	tar --transform 's,^pkg,annotator-$(VERSION),' \
-		-zcf annotator-$(VERSION).tar.gz pkg
+annotator: pkg/annotator.min.js pkg/annotator.min.css
+plugins: $(patsubst %.js,%.min.js,$(PLUGINS_PKG))
+annotator-full: pkg/annotator-full.min.js pkg/annotator.min.css
 
 clean:
 	rm -rf .deps pkg
@@ -47,29 +34,33 @@ develop:
 doc:
 	cd doc && $(MAKE) html
 
+pkg/%.min.css: pkg/%.css
+	@echo Writing $@
+	@$(UGLIFYCSS) $< >$@
+
+pkg/%.min.js: pkg/%.js
+	@echo Writing $@
+	@$(UGLIFYJS) --preamble "$$(tools/preamble)" $< >$@
+
 pkg/annotator.css: css/annotator.css
-	$(BUILD) -c
+	@mkdir -p pkg/
+	@tools/data_uri_ify <$< >$@
 
-pkg/%.js pkg/annotator.%.js: %.js
+pkg/annotator.js: src/annotator.js
+	@mkdir -p pkg/ .deps/
+	@$(BROWSERIFY) -s Annotator $< >$@
+	@$(BROWSERIFY) --list $< | \
+	sed 's#^#$@: #' >.deps/annotator.d
 
-pkg/%.js pkg/annotator.%.js pkg/annotator-%.js: | $(DEPDIR) $(PKGDIR)
-	$(eval $@_CMD := $(patsubst annotator.%.js,-p %.js,$(@F)))
-	$(eval $@_CMD := $(subst .js,,$($@_CMD)))
-	$(BUILD) $($@_CMD)
-	@$(DEPS) $($@_CMD) \
-		| sed -n 's/^\(.*\)/pkg\/$(@F): \1/p' \
-		| sort | uniq > $(df).d
+pkg/annotator.%.js: src/plugin/%.js
+	@mkdir -p pkg/ .deps/
+	@$(BROWSERIFY) -i annotator $< >$@
+	@$(BROWSERIFY) --list -i annotator $< | \
+	sed 's#^#$@: #' >.deps/annotator.$*.d
 
-$(MISC_PKG):
-	cp $(@F) pkg/
+pkg/annotator-full.js: pkg/annotator.js $(PLUGINS_PKG)
+	@cat $^ > $@
 
-$(DEPDIR) $(PKGDIR):
-	@mkdir -p $@
+-include .deps/*.d
 
--include $(DEPDIR)/*.d
-
-.PHONY: all annotator plugins annotator-full bookmarklet clean test develop \
-	dist doc
-
-.SECONDEXPANSION:
-$(MISC_PKG): $$(@F)
+.PHONY: all annotator plugins annotator-full clean test develop doc

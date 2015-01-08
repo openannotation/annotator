@@ -3,44 +3,8 @@
   <head>
     <meta charset="utf-8">
     <title>JS annotation test</title>
-
-    <!-- If you're sure your users will only be using browsers modern
-         enough to have their own JSON.parse and JSON.stringify
-         implementations you can skip this -->
-    <!--[if lt IE 9]>
-    <script src="lib/vendor/json2.js"></script>
-    <![endif]-->
-
-    <!-- Needed for Internet Explorer compatibility, providing
-         the missing document.evaluate() -->
-    <script src="/lib/vendor/wgxpath.install.js"></script>
-
-    <!-- The main Annotator script -->
-    <script src="pkg/annotator.min.js"></script>
-
     <!-- Annotator's styling and images -->
     <link rel="stylesheet" type="text/css" href="pkg/annotator.min.css">
-
-    <!-- The following plugins are entirely optional -->
-
-    <!-- The Store plugin. Saves annotations to a remote backend -->
-    <script src="pkg/annotator.store.min.js"></script>
-
-    <!-- The Auth plugin. Allows users of Annotator to authenticate themselves
-         to the remote backend -->
-    <script src="pkg/annotator.auth.min.js"></script>
-
-    <!-- The Permissions plugin. See who created which annotation and create
-         annotations as a specified user -->
-    <script src="pkg/annotator.permissions.min.js"></script>
-
-    <!-- The Tags plugin. Edit and display tag keywords on annotations -->
-    <script src="pkg/annotator.tags.min.js"></script>
-
-    <!-- The Markdown plugin. Treat annotation text as Markdown -->
-    <script src="lib/vendor/showdown.js"></script>
-    <script src="pkg/annotator.markdown.min.js"></script>
-
   </head>
 
   <body>
@@ -76,6 +40,8 @@
       </code></pre>
     </div>
 
+    <!-- The main Annotator script -->
+    <script src="pkg/annotator.min.js"></script>
     <script>
       if (typeof Annotator !== 'function') {
         alert("Ooops! it looks like you haven't built the Annotator concatenation file. " +
@@ -84,9 +50,6 @@
       } else {
         var elem = document.getElementById('airlock');
         var annotator = new Annotator(elem);
-        annotator.addPlugin('Permissions', {user: "Joe Bloggs"});
-        annotator.addPlugin('Markdown');
-        annotator.addPlugin('Tags');
       }
     </script>
   </body>

@@ -16,11 +16,9 @@
   },
   "devDependencies": {
     "assertive-chai": "^1.0.0",
-    "browser-resolve": "~1.2.1",
     "browserify": "^8.1.0",
     "browserify-middleware": "^4.1.0",
     "connect": "~2.10.1",
-    "convert-source-map": "~0.3.1",
     "glob": "~3.2.6",
     "jscs": "~1.6.0",
     "jshint": "~2.5.0",
@@ -32,8 +30,6 @@
     "karma-phantomjs-launcher": "^0.1.4",
     "karma-sauce-launcher": "^0.2.10",
     "sinon": "~1.6.0",
-    "source-map": "~0.1.32",
-    "through": "~2.3.4",
     "uglify-js": "~2.4.12",
     "uglifycss": "~0.0.5",
     "wgxpath": "^0.23.0"
