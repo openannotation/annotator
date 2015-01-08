@@ -97,6 +97,16 @@ describe 'Annotator', ->
       annotator.destroy()
       assert.equal(annotator.element.find('[class^=annotator-]').length, 0)
 
+    it "should call destroy on loaded plugins", ->
+      spy = sinon.spy()
+      annotator.myPlugin = {destroy: spy}
+      annotator.destroy()
+      assert(spy)
+
+    it "should not call destroy on a plugin that has not implemented the method", ->
+      annotator.plugins.myPlugin = {}
+      assert.doesNotThrow -> annotator.destroy()
+
   describe "_setupDocumentEvents", ->
     beforeEach: ->
       $(document).unbind('mouseup').unbind('mousedown')
