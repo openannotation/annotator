@@ -6,12 +6,7 @@ var UI = require('../../../src/ui'),
 var g = Util.getGlobal();
 
 describe('UI.markdown', function () {
-    var input = 'Is **this** [Markdown](http://daringfireball.com)?',
-        output = '<p>Is <strong>this</strong> <a href="http://daringfireball.com">Markdown</a>?</p>',
-        plugin = null;
-
-    afterEach(function () {
-    });
+    var plugin = null;
 
     describe("constructor", function () {
         it("should log an error if Showdown is not loaded", function () {
@@ -27,25 +22,23 @@ describe('UI.markdown', function () {
 
     describe("convert", function () {
         var showdown = null;
+        var escapeHtml = null;
+        var makeHtml = null;
 
         beforeEach(function () {
-            sinon.stub(Util, 'escapeHtml').returns(input);
+            escapeHtml = sinon.stub(Util, 'escapeHtml').returns('escaped');
+            makeHtml = sinon.stub().returns('converted');
 
             var fakeShowDown = {
                 converter: function () {
                     return {
-                        makeHtml: function () {
-                            return output;
-                        }
+                        makeHtml: makeHtml
                     };
                 }
             };
 
             showdown = g.Showdown;
             g.Showdown = fakeShowDown;
-
-            plugin = UI.markdown();
-            sinon.spy(plugin, 'convert');
         });
 
         afterEach(function () {
@@ -53,13 +46,12 @@ describe('UI.markdown', function () {
             g.Showdown = showdown;
         });
 
-        it("should escape any existing HTML to prevent XSS", function () {
-            plugin.convert(input);
-            assert.isTrue(Util.escapeHtml.calledWith(input));
+        it("should escape and convert the provided text into markdown", function () {
+            plugin = UI.markdown();
+            assert.equal(plugin.convert('foo'), 'converted');
+            assert.isTrue(escapeHtml.calledWith('foo'));
+            assert.isTrue(makeHtml.calledWith('escaped'));
         });
 
-        it("should convert the provided text into markdown", function () {
-            assert.equal(plugin.convert(input), output);
-        });
     });
 });
