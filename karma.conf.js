@@ -30,12 +30,12 @@ module.exports = function (karma) {
 
         browserify: {
             debug: true,
-            prebundle: function (bundle) {
+            configure: function (bundle) {
                 // This is event is fired each time the bundle is built.
-                bundle.on('reset', function () {
+                bundle.on('prebundle', function () {
                     // This allows annotator-plugintools to require annotator
                     // as 'annotator' in the test environment.
-                    bundle.require('./src/annotator', {expose: 'annotator'});
+                    bundle.require(__dirname + '/src/annotator.js', {expose: 'annotator'});
                 });
             }
         },
