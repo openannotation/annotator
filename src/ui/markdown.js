@@ -27,7 +27,7 @@ function createMarkdownPlugin () {
     // Returns HTML string.
     function convert (text) {
         text = Util.escapeHtml(text || '');
-        return converter.makeHtml(text);
+        return converter ? converter.makeHtml(text) : text;
     }
 
     return {

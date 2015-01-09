@@ -53,5 +53,10 @@ describe('UI.markdown', function () {
             assert.isTrue(makeHtml.calledWith('escaped'));
         });
 
+        it("should escape even if showdown is not loaded", function () {
+            g.Showdown = null;
+            plugin = UI.markdown();
+            assert.equal(plugin.convert('foo'), 'escaped');
+        });
     });
 });
