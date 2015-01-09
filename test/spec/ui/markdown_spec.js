@@ -9,13 +9,13 @@ describe('UI.markdown', function () {
     var plugin = null;
 
     describe("constructor", function () {
-        it("should log an error if Showdown is not loaded", function () {
-            sinon.stub(console, 'error');
+        it("should log warning if Showdown is not loaded", function () {
+            sinon.stub(console, 'warn');
             var showdown = g.Showdown;
             g.Showdown = null;
             plugin = UI.markdown();
-            assert(console.error.calledOnce);
-            console.error.restore();
+            assert(console.warn.calledOnce);
+            console.warn.restore();
             g.Showdown = showdown;
         });
     });

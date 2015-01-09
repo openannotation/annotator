@@ -11,7 +11,7 @@ function createMarkdownPlugin () {
     if (g.Showdown && typeof g.Showdown.converter === 'function') {
         converter = new g.Showdown.converter();
     } else {
-        console.error(_t("To use the Markdown plugin, you must" +
+        console.warn(_t("To use the Markdown plugin, you must" +
         " include Showdown into the page first."));
     }
 
