@@ -219,6 +219,8 @@ function DefaultUI(element) {
             }
         });
 
+        var markdown = UI.markdown();
+
         var viewer = new UI.Viewer({
             onEdit: function (ann) {
                 registry.annotations.update(ann);
@@ -241,7 +243,8 @@ function DefaultUI(element) {
                 );
             },
             autoViewHighlights: element,
-            extensions: [tags.createViewerField]
+            extensions: [tags.createViewerField],
+            renderText: markdown.convert
         });
         viewer.attach();
 
