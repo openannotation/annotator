@@ -485,8 +485,8 @@ StorageAdapter.prototype.query = function (query) {
 StorageAdapter.prototype.load = function (query) {
     var self = this;
     return this.query(query)
-        .then(function (result) {
-            self.runHook('onAnnotationsLoaded', [result]);
+        .then(function (data) {
+            self.runHook('onAnnotationsLoaded', [data.results]);
         });
 };
 
