@@ -19,7 +19,7 @@ the Annotator library, such as ``Annotator.UI``, ``Annotator.Storage``, etc.
 
 You can then build your plugin using browserify:
 
-    browserify myplugin.js > myplugin.bundle.js
+    browserify -x annotator myplugin.js > myplugin.bundle.js
 
 The output will be a bundle that can be included in your page after the main
 Annotator bundle:
