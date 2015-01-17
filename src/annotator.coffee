@@ -573,8 +573,6 @@ class Annotator extends Delegator
 
     for range in @selectedRanges
       container = range.commonAncestor
-      if $(container).hasClass('annotator-hl')
-        container = $(container).parents('[class!=annotator-hl]')[0]
       return if this.isAnnotator(container)
 
     if event and @selectedRanges.length
@@ -599,7 +597,13 @@ class Annotator extends Delegator
   #
   # Returns true if the element is a child of an annotator element.
   isAnnotator: (element) ->
-    !!$(element).parents().addBack().filter('[class^=annotator-]').not(@wrapper).length
+    !!$(element)
+      .parents()
+      .addBack()
+      .filter('[class^=annotator-]')
+      .not('[class=annotator-hl]')
+      .not(@wrapper)
+      .length
 
   # Annotator#element callback. Displays viewer with all annotations
   # associated with highlight Elements under the cursor.
