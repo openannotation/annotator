@@ -141,7 +141,7 @@ HTTPStorageImpl.prototype.query = function (queryObj) {
     this._apiRequest('search', queryObj)
         .done(function (obj) {
             var rows = obj.rows;
-            delete obj.row;
+            delete obj.rows;
             dfd.resolve({results: rows, metadata: obj});
         })
         .fail(function () {
@@ -485,8 +485,8 @@ StorageAdapter.prototype.query = function (query) {
 StorageAdapter.prototype.load = function (query) {
     var self = this;
     return this.query(query)
-        .then(function (result) {
-            self.runHook('onAnnotationsLoaded', [result]);
+        .then(function (data) {
+            self.runHook('onAnnotationsLoaded', [data.results]);
         });
 };
 
