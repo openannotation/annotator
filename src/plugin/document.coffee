@@ -108,7 +108,7 @@ class Annotator.Plugin.Document extends Annotator.Plugin
       type = l.prop('type')
       lang = l.prop('hreflang')
 
-      if rel not in ["alternate", "canonical", "bookmark"] then continue
+      if rel not in ["alternate", "canonical", "bookmark", "shortlink"] then continue
 
       if rel is 'alternate'
         # Ignore feeds resources
