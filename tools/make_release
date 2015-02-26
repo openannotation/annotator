@@ -87,7 +87,7 @@ confirm_proceed "Going to release v${VERSION} -- proceed?"
 # Update version in package.json
 
 echo "Bumping version in package.json and committing version bump"
-sed -i '' -e 's/"version": "[^"]*"/"version": "'"${VERSION}"'"/' package.json
+sed -i -e 's/"version": "[^"]*"/"version": "'"${VERSION}"'"/' package.json
 git commit package.json -m "Bump version -> v${VERSION}"
 
 # Generate package files
