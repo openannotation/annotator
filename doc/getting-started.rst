@@ -52,11 +52,15 @@ Including Annotator on your webpage
 
 You need to link the Annotator Javascript and CSS into the page.
 
-.. note:: Annotator requires jQuery 1.6 or greater.
+.. note::
 
+    Annotator requires jQuery 1.6 or greater.  We recommend using the latest
+    jQuery, unless need support for IE 6, 7 or 8, in which case we recommend 
+    jQuery 1.11.x.
+    
 .. code:: html
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="http://assets.annotateit.org/annotator/v1.1.0/annotator-full.min.js"></script>
     <link rel="stylesheet" href="http://assets.annotateit.org/annotator/v1.1.0/annotator.min.css">
 
