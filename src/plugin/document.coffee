@@ -84,15 +84,15 @@ class Annotator.Plugin.Document extends Annotator.Plugin
     if @metadata.highwire.title
       @metadata.title = @metadata.highwire.title[0]
     else if @metadata.eprints.title
-      @metadata.title = @metadata.eprints.title
+      @metadata.title = @metadata.eprints.title[0]
     else if @metadata.prism.title
-      @metadata.title = @metadata.prism.title
+      @metadata.title = @metadata.prism.title[0]
     else if @metadata.facebook.title
-      @metadata.title = @metadata.facebook.title
+      @metadata.title = @metadata.facebook.title[0]
     else if @metadata.twitter.title
-      @metadata.title = @metadata.twitter.title
+      @metadata.title = @metadata.twitter.title[0]
     else if @metadata.dc.title
-      @metadata.title = @metadata.dc.title
+      @metadata.title = @metadata.dc.title[0]
     else
       @metadata.title = $("head title").text()
  
