@@ -229,3 +229,5 @@ Storage Implementations
 -  PHP (Silex) and MongoDB-based basic implementation:
    https://github.com/julien-c/annotator-php (in particular, see
    `index.php <https://github.com/julien-c/annotator-php/blob/master/index.php>`__).
+-  eXanore an eXist-db library implementing the Annotator Storage API (currently under development)
+   https://github.com/bwbohl/eXanore
