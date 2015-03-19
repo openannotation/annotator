@@ -16,6 +16,8 @@ PLUGINS := \
 	unsupported
 PLUGINS_PKG := $(patsubst %,pkg/annotator.%.js,$(PLUGINS))
 
+SRC := $(shell find src -type f -name '*.js')
+
 all: annotator plugins annotator-full
 
 annotator: pkg/annotator.min.js pkg/annotator.min.css
@@ -33,6 +35,12 @@ develop:
 
 doc:
 	cd doc && $(MAKE) html
+
+apidoc: $(patsubst src/%.js,doc/api/%.rst,$(SRC))
+
+doc/api/%.rst: src/%.js
+	@mkdir -p $(@D)
+	tools/apidoc $< >$@
 
 pkg/%.min.css: pkg/%.css
 	@echo Writing $@
