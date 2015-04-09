@@ -44,7 +44,7 @@ function DebugStorage () {
 
         'query': function (queryObj) {
             trace('query', queryObj);
-            return {results: [], metadata: {total: 0}};
+            return {results: [], meta: {total: 0}};
         }
     };
 }
@@ -142,7 +142,7 @@ HTTPStorageImpl.prototype.query = function (queryObj) {
         .done(function (obj) {
             var rows = obj.rows;
             delete obj.rows;
-            dfd.resolve({results: rows, metadata: obj});
+            dfd.resolve({results: rows, meta: obj});
         })
         .fail(function () {
             dfd.reject.apply(dfd, arguments);

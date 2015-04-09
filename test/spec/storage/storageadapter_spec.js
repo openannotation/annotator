@@ -43,7 +43,7 @@ MockStorage.prototype["delete"] = function (annotation) {
 
 MockStorage.prototype.query = function () {
     this._record('query');
-    return [[], {total: 0}];
+    return {results: [{id: 'foo'}], meta: {total: 1}};
 };
 
 MockStorage.prototype._record = function (name) {
@@ -340,7 +340,7 @@ describe('Storage.StorageAdapter', function () {
             };
             a.query(query)
                 .then(function (ret) {
-                    assert.deepEqual(ret, [[], {total: 0}]);
+                    assert.deepEqual(ret, {results: [{id: 'foo'}], meta: {total: 1}});
                 })
                 .then(done, done);
         });
@@ -383,7 +383,7 @@ describe('Storage.StorageAdapter', function () {
                 .then(function () {
                     assert.deepEqual(hr.calls[0].name, 'query');
                     assert.deepEqual(hr.calls[1].name, 'onAnnotationsLoaded');
-                    assert.deepEqual(hr.calls[1].args, [[[], {total: 0}]]);
+                    assert.deepEqual(hr.calls[1].args, [[{id: 'foo'}]]);
                 })
                 .then(done, done);
         });
