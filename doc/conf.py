@@ -62,6 +62,7 @@ highlight_language = 'javascript'
 extensions = [
     'sphinx.ext.extlinks',
     'sphinx.ext.todo',
+    'sphinxcontrib.httpdomain',
 ]
 
 # A dictionary of external sites, mapping unique short alias names to a base

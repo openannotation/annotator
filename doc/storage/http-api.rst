@@ -1,199 +1,294 @@
-HTTP Storage API
-================
+Storage API
+===========
 
-The storage API is defined in terms of a ``prefix`` and a number of
-endpoints. It attempts to follow the principles of
-`REST <http://en.wikipedia.org/wiki/Representational_state_transfer>`__,
-and emits JSON documents to be parsed by the Annotator. Each of the
-following endpoints for the storage API is expected to be found on the
-web at ``prefix`` + ``path``. For example, if the prefix were
-``http://example.com/api``, then the **index** endpoint would be found
-at ``http://example.com/api/annotations``.
+This document details the HTTP API used by the :doc:`http`. It is targeted at
+developers interested in developing their own backend servers that integrate
+with Annotator, or developing tools that integrate with existing instances of
+the API.
 
-General rules are those common to most REST APIs. If a resource cannot
-be found, return ``404 NOT FOUND``. If an action is not permitted for
-the current user, return ``401 NOT AUTHORIZED``, otherwise return
-``200 OK``. Send JSON text with the header
-``Content-Type: application/json``.
+The storage API attempts to follow the principles of `REST
+<http://en.wikipedia.org/wiki/Representational_state_transfer>`__, and uses JSON
+as its primary interchange format.
 
-Below you can find details of the six core endpoints, **root**,
-**index**, **create**, **read**, **update**, **delete**, as well as an
-optional **search** API.
+.. contents::
 
-.. raw:: html
-
-   <h3 style='color: #c00'>
-
-WARNING:
-
-.. raw:: html
-
-   </h3>
-
-The spec below requires you return ``303 SEE OTHER`` from the **create**
-and **update** endpoints. Ideally this *is* what you'd do, but
-unfortunately most modern browsers (Firefox and Webkit) still make a
-hash of CORS requests when they include redirects. A simple workaround
-for the time being is to return ``200 OK`` and the JSON annotation that
-*would* be returned by the **read** endpoint in the body of the
-**create** and **update** responses. See bugs in
-`Chromium <http://code.google.com/p/chromium/issues/detail?id=70257>`__
-and `Webkit <https://bugs.webkit.org/show_bug.cgi?id=57600>`__.
-
-Specification
--------------
+Endpoints
+---------
 
 root
 ~~~~
 
--  method: ``GET``
--  path: ``/``
--  returns: object containing store metadata, including API version
+.. http:get:: /api
 
-Example:
+   API root. Returns an object containing store metadata, including hypermedia
+   links to the rest of the API.
 
-::
+   **Example request**:
 
-    $ curl http://example.com/api/
-    {
-      "name": "Annotator Store API",
-      "version": "2.0.0"
-    }
+   .. sourcecode:: http
 
-index
-~~~~~
+      GET /api
+      Host: example.com
+      Accept: application/json
 
--  method: ``GET``
--  path: ``/annotations``
--  returns: a list of all annotation objects
 
-Example (see :doc:`annotation-format` for details of the format of
-individual annotations):
+   **Example response**:
 
-.. code:: json
+   .. sourcecode:: http
 
-    $ curl http://example.com/api/annotations
-    [
+      HTTP/1.1 200 OK
+      Access-Control-Allow-Origin: *
+      Access-Control-Expose-Headers: Content-Length, Content-Type, Location
+      Content-Length: 1419
+      Content-Type: application/json
+
       {
-        "text": "Example annotation text",
-        "ranges": [ ... ],
-        ...
-      },
-      {
-        "text": "Another annotation",
-        "ranges": [ ... ],
-        ...
-      },
-      ...
-    ]
+          "message": "Annotator Store API",
+          "links": {
+              "annotation": {
+                  "create": {
+                      "desc": "Create a new annotation",
+                      "method": "POST",
+                      "url": "http://example.com/api/annotations"
+                  },
+                  "delete": {
+                      "desc": "Delete an annotation",
+                      "method": "DELETE",
+                      "url": "http://example.com/api/annotations/:id"
+                  },
+                  "read": {
+                      "desc": "Get an existing annotation",
+                      "method": "GET",
+                      "url": "http://example.com/api/annotations/:id"
+                  },
+                  "update": {
+                      "desc": "Update an existing annotation",
+                      "method": "PUT",
+                      "url": "http://example.com/api/annotations/:id"
+                  }
+              },
+              "search": {
+                  "desc": "Basic search API",
+                  "method": "GET",
+                  "url": "http://example.com/api/search"
+              }
+          }
+      }
 
-create
-~~~~~~
+   :reqheader Accept: desired response content type
+   :resheader Content-Type: response content type
+   :statuscode 200: no error
 
--  method: ``POST``
--  path: ``/annotations``
--  receives: an annotation object, sent with
-   ``Content-Type: application/json``
--  returns: ``303 SEE OTHER`` redirect to the appropriate **read**
-   endpoint
-
-Example:
-
-::
-
-    $ curl -i -X POST \
-           -H 'Content-Type: application/json' \
-           -d '{"text": "Annotation text"}' \
-           http://example.com/api/annotations
-    HTTP/1.0 303 SEE OTHER
-    Location: http://example.com/api/annotations/d41d8cd98f00b204e9800998ecf8427e
-    ...
 
 read
 ~~~~
 
--  method: ``GET``
--  path: ``/annotations/<id>``
--  returns: an annotation object
+.. http:get:: /api/annotations/(string:id)
 
-Example:
+   Retrieve a single annotation.
 
-::
+   **Example request**:
 
-    $ curl http://example.com/api/annotations/d41d8cd98f00b204e9800998ecf8427e
-    {
-      "id": "d41d8cd98f00b204e9800998ecf8427e",
-      "text": "Annotation text",
-      ...
-    }
+   .. sourcecode:: http
+
+     GET /api/annotations/utalbWjUaZK5ifydnohjmA
+     Host: example.com
+     Accept: application/json
+
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Type: application/json; charset=UTF-8
+
+      {
+          "created": "2013-08-26T13:31:49.339078+00:00",
+          "updated": "2013-08-26T14:09:14.121339+00:00",
+          "id": "utalbWjUQZK5ifydnohjmA",
+          "uri": "http://example.com/foo",
+          "user": "acct:johndoe@example.org",
+          ...
+      }
+
+   :reqheader Accept: desired response content type
+   :resheader Content-Type: response content type
+   :statuscode 200: no error
+   :statuscode 404: annotation with the specified `id` not found
+
+
+create
+~~~~~~
+
+.. http:post:: /api/annotations
+
+   Create a new annotation.
+
+   **Example request**:
+
+   .. sourcecode:: http
+
+      POST /api/annotations
+      Host: example.com
+      Accept: application/json
+      Content-Type: application/json;charset=UTF-8
+
+      {
+          "uri": "http://example.org/",
+          "user": "joebloggs",
+          "permissions": {
+              "read": ["group:__world__"],
+              "update": ["joebloggs"],
+              "delete": ["joebloggs"],
+              "admin": ["joebloggs"],
+          },
+          "target": [ ... ],
+          "text": "This is an annotation I made."
+      }
+
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Type: application/json; charset=UTF-8
+
+      {
+          "id": "AUxWM-HasREW1YKAwhil",
+          "uri": "http://example.org/",
+          "user": "joebloggs",
+          ...
+      }
+
+   :param id: annotation's unique id
+   :reqheader Accept: desired response content type
+   :reqheader Content-Type: request body content type
+   :resheader Content-Type: response content type
+   :>json string id: unique id of new annotation
+   :statuscode 200: no error
+   :statuscode 400: could not create annotation from your request (bad payload)
+
 
 update
 ~~~~~~
 
--  method: ``PUT``
--  path: ``/annotations/<id>``
--  receives: a (partial) annotation object, sent with
-   ``Content-Type: application/json``
--  returns: ``303 SEE OTHER`` redirect to the appropriate **read**
-   endpoint
+.. http:put:: /api/annotations/(string:id)
 
-Example:
+   Update the annotation with the given `id`. Requires a valid authentication
+   token.
 
-::
+   **Example request**:
 
-    $ curl -i -X PUT \
-           -H 'Content-Type: application/json' \
-           -d '{"text": "Updated annotation text"}' \
-           http://example.com/api/annotations/d41d8cd98f00b204e9800998ecf8427e
-    HTTP/1.0 303 SEE OTHER
-    Location: http://example.com/api/annotations/d41d8cd98f00b204e9800998ecf8427e
-    ...
+   .. sourcecode:: http
+
+      PUT /api/annotations/AUxWM-HasREW1YKAwhil
+      Host: example.com
+      Accept: application/json
+      Content-Type: application/json;charset=UTF-8
+
+      {
+          "uri": "http://example.org/foo",
+      }
+
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Type: application/json; charset=UTF-8
+
+      {
+          "id": "AUxWM-HasREW1YKAwhil",
+          "updated": "2015-03-26T13:09:42.646509+00:00"
+          "uri": "http://example.org/foo",
+          "user": "joebloggs",
+          ...
+      }
+
+   :param id: annotation's unique id
+   :reqheader Accept: desired response content type
+   :reqheader Content-Type: request body content type
+   :resheader Content-Type: response content type
+   :statuscode 200: no error
+   :statuscode 400: could not update annotation from your request (bad payload)
+   :statuscode 404: annotation with the given `id` was not found
+
 
 delete
 ~~~~~~
 
--  method: ``DELETE``
--  path: ``/annotations/<id>``
--  returns: ``204 NO CONTENT``, and -- obviously -- no content
+.. http:delete:: /api/annotations/(string:id)
 
-::
+   Delete the annotation with the given `id`. Requires a valid authentication
+   token.
 
-    $ curl -i -X DELETE http://example.com/api/annotations/d41d8cd98f00b204e9800998ecf8427e
-    HTTP/1.0 204 NO CONTENT
-    Content-Length: 0
+   **Example request**:
 
-Search API
-----------
+   .. sourcecode:: http
 
-You may also choose to implement a search API, which can be used by the
-Store plugin's ``loadFromSearch`` configuration option.
+      DELETE /api/annotations/AUxWM-HasREW1YKAwhil
+      Host: example.com
+      Accept: application/json
+
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 204 No Content
+      Content-Length: 0
+
+   :param id: annotation's unique id
+   :reqheader Accept: desired response content type
+   :resheader Content-Type: response content type
+   :statuscode 200: no error
+   :statuscode 404: annotation with the given `id` was not found
+
 
 search
 ~~~~~~
 
--  method: ``GET``
--  path: ``/search?text=foobar``
--  returns: an object with ``total`` and ``rows`` fields. ``total`` is
-   an integer denoting the *total* number of annotations matched by the
-   search, while ``rows`` is a list containing what might be a subset of
-   these annotations.
--  If implemented, this method should also support the ``limit`` and
-   ``offset`` query parameters for paging through results.
+.. http:get:: /api/search
 
-::
+   Search the database of annotations. Search for fields using query string
+   parameters.
 
-    $ curl http://example.com/api/search?text=annotation
-    {
-      "total": 43127,
-      "rows": [
-        {
-          "id": "d41d8cd98f00b204e9800998ecf8427e",
-          "text": "Updated annotation text",
-          ...
-        },
-        ...
-      ]
-    }
+   **Example request**:
+
+   .. sourcecode:: http
+
+      GET /api/search?text=foobar&limit=10
+      Host: example.com
+      Accept: application/json
+
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Length: 6771
+      Content-Type: application/json
+
+      {
+          "total": 43127,
+          "rows": [
+              {
+                  "id": "d41d8cd98f00b204e9800998ecf8427e",
+                  "text": "Updated annotation text",
+                  ...
+              },
+              ...
+          ]
+      }
+
+   :query offset: return results starting at `offset`
+   :query limit: return only `limit` results
+   :reqheader Accept: desired response content type
+   :reqheader Content-Type: request body content type
+   :resheader Content-Type: response content type
+   :>json int total: total number of results across all pages
+   :>json array rows: array of matching annotations
+   :statuscode 200: no error
+   :statuscode 400: could not search the database with your request (invalid query)
 
 Storage Implementations
 -----------------------
