@@ -54,6 +54,7 @@ describe('UI.markdown', function () {
         });
 
         it("should escape even if showdown is not loaded", function () {
+            sinon.stub(console, 'warn');
             g.Showdown = null;
             plugin = UI.markdown();
             assert.equal(plugin.convert('foo'), 'escaped');
