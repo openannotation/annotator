@@ -3,7 +3,8 @@
 var UI = require('../ui'),
     Util = require('../util');
 
-var _t = Util.gettext;
+var g = Util.getGlobal(),
+    _t = Util.gettext;
 
 // trim strips whitespace from either end of a string.
 //
@@ -68,7 +69,7 @@ function injectDynamicStyle() {
               ':not(annotator-filter)';
 
     // use the maximum z-index in the page
-    var max = maxZIndex(Util.$(Util.getGlobal().document.body).find(sel).get());
+    var max = maxZIndex(Util.$(g.document.body).find(sel).get());
 
     // but don't go smaller than 1010, because this isn't bulletproof --
     // dynamic elements in the page (notifications, dialogs, etc.) may well
@@ -219,9 +220,7 @@ function DefaultUI(element) {
             }
         });
 
-        var markdown = UI.markdown();
-
-        var viewer = new UI.Viewer({
+        var viewerOpts = {
             onEdit: function (ann) {
                 registry.annotations.update(ann);
             },
@@ -243,9 +242,14 @@ function DefaultUI(element) {
                 );
             },
             autoViewHighlights: element,
-            extensions: [tags.createViewerField],
-            renderText: markdown.convert
-        });
+            extensions: [tags.createViewerField]
+        };
+
+        if (g.Showdown && typeof g.Showdown.converter === 'function') {
+            viewerOpts.renderText = UI.markdown().convert;
+        }
+
+        var viewer = new UI.Viewer(viewerOpts);
         viewer.attach();
 
         injectDynamicStyle();
