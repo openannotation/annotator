@@ -17,7 +17,7 @@ PluginHelper.prototype.onDestroy = function () {
 };
 
 PluginHelper.prototype.onAnnotationCreated = function () {
-    this.hookCalls.push(['onAnnotationCreated', arguments]);
+    this.hookCalls.push(['onAnnotationCreated', [].slice.call(arguments)]);
     return this.hookResult;
 };
 
