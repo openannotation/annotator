@@ -10,13 +10,13 @@ The following elements are added to the Annotator interface by this
 plugin.
 
 Viewer
-^^^^^^
+~~~~~~
 
 The plugin adds a section to a viewed annotation displaying any tags
 that have been added.
 
 Editor
-^^^^^^
+~~~~~~
 
 The plugin adds an input field to the editor allowing the user to enter
 a space separated list of tags.
@@ -39,7 +39,7 @@ Options
 *There are no options available for this plugin*
 
 Adding autocompletion of tags
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------
 
 See `this
 example <https://github.com/okfn/annotator/issues/92#issuecomment-3985124>`__

@@ -16,7 +16,7 @@ The following elements are added to the Annotator interface by this
 plugin.
 
 Viewer
-^^^^^^
+~~~~~~
 
 The plugin adds a section to a viewed annotation displaying the name of
 the user who created it. It also checks the annotation's permissions to
@@ -24,7 +24,7 @@ see if the current user can **edit**/**delete** the current annotation
 and displays controls appropriately.
 
 Editor
-^^^^^^
+~~~~~~
 
 The plugin adds two fields with checkboxes to the annotation editor
 (these are only displayed if the current user has **admin** permissions
@@ -253,20 +253,3 @@ simply checks that the user is one of the tokens for the current action.
     // When called.
     userAuthorize('update', aliceAnnotation, 'Alice') // => Returns true
     userAuthorize('Alice', bobAnnotation, 'Bob')   // => Returns false
-
-.. raw:: html
-
-   <!-- There is code for this in the history.  However, it used the old, simpler API signature, which no longer applies.  Thus, updating it is required. -->
-
-A more complex example might involve you wanting to have a groups
-property on your user object. If the user is a member of the 'Admin'
-group they can perform any action on the annotation.
-
-// When called by a normal user. userAuthorize('update',
-adminAnnotation, { id: 1, group: 'user' }) // => Returns false
-
-// When called by an admin. userAuthorize('update', adminAnnotation, {
-id: 2, group: 'Admin' }) // => Returns true
-
-// When called by the owner. userAuthorize('update', regularAnnotation,
-ownerOfRegularAnnotation) // => Returns true \`\`\`

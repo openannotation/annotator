@@ -12,51 +12,38 @@ Annotator documentation
 
 .. highlight:: js
 
-This is where you can find out about Annotator, an open-source JavaScript
-library for building annotation systems on the web. At its simplest, Annotator
-allows you to start selecting text and annotating a document with a few lines of
-code:
+Welcome to the documentation for Annotator, an open-source JavaScript library
+for building annotation systems on the web. At its simplest, Annotator is an
+application that allows users to make textual annotations on any web page. You
+can deploy it using just a few lines of integration code.
 
-.. code::
+Annotator is also a library of composable tools for annotation applications.
+It includes tools for capturing and manipulating DOM selections, tools for
+storage and persistence of annotations, and a variety of user interface
+components. You can use a few or many of these components together to build your
+own custom annotation-based application.
 
-    var annotator = new Annotator(document.body);
+You can start learning about how to install and deploy Annotator below:
 
-But Annotator is also a loosely-coupled set of components that you can use to
-build your own annotation-based applications:
-
-.. code::
-
-   var annotator = new Annotator.Core.Annotator()
-       .setStorage(Annotator.Storage.HTTPStorage)
-       .addPlugin(Annotator.Plugin.DefaultUI(document.body))
-       .addPlugin(Annotator.Plugin.Filter())
-       .addPlugin(function (registry) {
-           return {
-               onAnnotationCreated: function (ann) {
-                   console.log("Annotation was created: ", ann);
-               }
-           }
-       });
-
-You can use the table of contents below to learn how to use Annotator and its
-various components.
-
-Contents:
 
 .. toctree::
    :maxdepth: 2
 
-   getting-started
-   annotation-format
-   authentication
-   permissions
-   internationalization
-
-   plugins/index
+   installing
+   usage
    storage/index
+   plugins/index
    hacking/plugin-development
 
+   annotation-format
+   authentication
+   internationalization
+
    roadmap
+
+
+.. todolist::
+
 
 Indices and tables
 ==================
