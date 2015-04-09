@@ -1,0 +1,186 @@
+#!/usr/bin/env node
+/*
+ * js2rst is a tool that parses JavaScript source supplied on STDIN and extracts
+ * documentation from documentation comments (those that start "/**").
+ *
+ * It prints reStructuredText to STDOUT.
+ *
+ * A single positional argument may be specified. If so, it is treated as the
+ * package name, and this is prefixed to any identifiers used in the
+ * documentation.
+ */
+
+"use strict";
+
+var concat = require('concat-stream');
+var esprima = require('esprima');
+
+/**
+ * data:: pkgPrefix
+ *
+ * The package path in dotted form (e.g. "foo.bar.baz") to prefix to any
+ * identifiers found in the processed source.
+ */
+var pkgPrefix = null;
+if (process.argv.length > 2) {
+    pkgPrefix = process.argv[2];
+}
+
+var processStream = concat(function (buf) {
+    processSource(buf.toString());
+});
+
+process.stdin.pipe(processStream);
+
+/**
+ * function:: processSource(src)
+ *
+ * Read JavaScript source and print any documentation comments to STDOUT. See
+ * :func:`processComment` for more details.
+ */
+function processSource(src) {
+    var ast = esprima.parse(src, {
+        attachComment: true
+    });
+    for (var i = 0, len = ast.comments.length; i < len; i++) {
+        var comment = ast.comments[i];
+
+        if (comment.type !== "Block") {
+            continue;
+        }
+
+        // Document comments must start with "/**"
+        if (comment.value[0] !== "*") {
+            continue;
+        }
+
+        processComment(comment);
+    }
+}
+
+/**
+ * function:: processComment(comment)
+ *
+ * Read an esprima comment node and print it to STDOUT after suitable
+ * transformations:
+ *
+ * -  remove leading whitespace and asterisks
+ * -  prefix identifiers with the package prefix where appropriate
+ */
+function processComment(comment) {
+    // Normalise newlines
+    var lines = comment.value.split(/\r?\n/);
+    lines = dedent(lines);
+    lines = trimLines(lines);
+
+    if (lines.length === 0) {
+        return;
+    }
+
+    if (pkgPrefix !== null) {
+        var directiveMatch = /^([a-z:]+::)(.*)/;
+        var result = directiveMatch.exec(lines[0]);
+        var directive = result[1];
+        var identifier = result[2];
+        if (result !== null) {
+            lines[0] = directive + ' ' + pkgPrefix;
+            // If there is an identifier, join it with a dot to the package
+            // prefix.
+            if (typeof identifier !== 'undefined') {
+                identifier = identifier.trim();
+                if (identifier !== '') {
+                    lines[0] += '.' + identifier;
+                }
+            }
+        }
+    }
+
+    process.stdout.write('..  ' + lines[0] + '\n');
+    process.stdout.write(indent(lines.slice(1), 4).join('\n') + '\n');
+    process.stdout.write('\n\n');
+}
+
+/**
+ * function:: dedent(lines)
+ *
+ * A little like Python's :py:mod:`textwrap.dedent`, this function will take the
+ * internal value of a docstring block comment and remove leading whitespace and
+ * stars, while also normalising the indent of each line to that of the least
+ * indented line.
+ */
+function dedent(lines) {
+    lines = lines.slice();
+
+    // Comment is assumed to be only the comment body, omitting the '/*' and
+    // '*/'. To make our regular expression simpler, we prepend to the comment
+    // so that alignment is preserved as in the original.
+    // li
+    if (lines.length > 0) {
+        lines[0] = '**' + lines[0];
+    }
+
+    var match = /^([*\s]*)[^*\s]/;
+    var trim = null;
+
+    // First pass determines trim size
+    for (var i = 0, len = lines.length; i < len; i++) {
+        var res = match.exec(lines[i]);
+        if (res === null) { continue; }
+
+        // If trim is set, check it's still the minimum indent size.
+        if (trim !== null) {
+            trim = Math.min(trim, res[1].length);
+            continue;
+        }
+
+        // Otherwise we just found the first line with content.
+        trim = res[1].length;
+    }
+
+    // Second pass for output
+    var output = [];
+    for (i = 0; i < len; i++) {
+        output.push(lines[i].slice(trim));
+    }
+    return output;
+}
+
+/**
+ * function:: indent(lines, count)
+ *
+ * Indent lines by count spaces.
+ */
+function indent(lines, count) {
+    var output = [];
+    var prefix = new Array(count + 1).join(' ');
+    for (var i = 0, len = lines.length; i < len; i++) {
+        output.push(prefix + lines[i]);
+    }
+    return output;
+}
+
+/**
+ * function:: trimLines(lines)
+ *
+ * Remove empty (or whitespace-only) lines from the beginning and end of a
+ * string.
+ *
+ * :param Array[String] lines: input lines
+ * :rtype: Array[String]
+ */
+function trimLines(lines) {
+    var len = lines.length;
+    var ws = /^\s*$/;
+    var start, end;
+    for (start = 0; start < len; start++) {
+        if (!ws.test(lines[start])) {
+            break;
+        }
+    }
+    for (end = len; end > start; end--) {
+        if (!ws.test(lines[end - 1])) {
+            break;
+        }
+    }
+    return lines.slice(start, end);
+}

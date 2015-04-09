@@ -1,0 +1,68 @@
+#!/bin/sh
+#
+# Usage: doc path/to/filename.js >output.rst
+#
+# doc generates reStructuredText documentation for JavaScript files. It is a
+# thin wrapper over the js2rst tool, which extracts docstrings from the code.
+#
+
+set -eu
+
+usage () {
+    echo "$(basename "$0") path/to/filename.js >output.rst"
+}
+
+abort () {
+    echo "$@, aborting" >&2
+    exit 1
+}
+
+skip () {
+    echo "$@, skipping" >&2
+    exit
+}
+
+pkgname () {
+    # Tell the docs what package a file is part of by putting a special comment
+    # in the source file that looks like:
+    #
+    #   /*package some.package.name */
+    #
+    # Note the deliberately missing space.
+    fgrep '/*package ' "$1" | awk '{print $2}'
+}
+
+preamble () {
+    local pkgname=$1
+    local title="$pkgname package"
+    echo $title
+    echo $title | sed 's/./=/g'
+    echo
+}
+
+main () {
+    local src=${1:=}
+
+    if [ -z "$src" ]; then
+        usage
+        exit 1
+    fi
+
+    local ext=${src##*.}
+    if [ "$ext" != "js" ]; then
+        abort "only runs on .js files"
+    fi
+
+    local pkgname=$(pkgname "$src")
+    if [ -z "$pkgname" ]; then
+        skip "no package name found for $src"
+    fi
+
+
+    echo ".. default-domain: js"
+    echo
+    preamble $pkgname
+    tools/js2rst $pkgname <$src
+}
+
+main "$@"
