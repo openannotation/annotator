@@ -1,12 +1,16 @@
+/*package annotator.authorizer */
+
 "use strict";
 
 /**
+ * class:: DefaultAuthorizer([options])
+ *
  * Default authorizer
  *
- * @constructor
- * @param {Object} options Configuration options.
- * @param {Function} options.userId Custom function mapping an identity to a
- *                                  userId.
+ * :param Object options:
+ *   Configuration options.
+ *
+ *   - `userId`: Custom function mapping an identity to a userId.
  */
 function DefaultAuthorizer(options) {
     this.options = options || {};
@@ -17,6 +21,8 @@ function DefaultAuthorizer(options) {
 }
 
 /**
+ * function:: DefaultAuthorizer.prototype.permits(action, annotation, identity)
+ *
  * Determines whether the user identified by identity is permitted to perform
  * the specified action on the given annotation.
  *
@@ -33,11 +39,11 @@ function DefaultAuthorizer(options) {
  * If the annotation has neither a "permissions" property nor a "user" property,
  * then all actions will be permitted.
  *
- * @param {String} action The action the user wishes to perform
- * @param {Object} annotation
- * @param {*} identity The identity of the user
+ * :param String action: The action the user wishes to perform
+ * :param Object annotation:
+ * :param identity: The identity of the user
  *
- * @returns {Boolean} Whether the action is permitted
+ * :returns Boolean: Whether the action is permitted
  */
 DefaultAuthorizer.prototype.permits = function permits(
     action, annotation, identity
@@ -69,12 +75,14 @@ DefaultAuthorizer.prototype.permits = function permits(
 };
 
 /**
+ * function:: DefaultAuthorizer.prototype.userId(identity)
+ *
  * A function for mapping an identity to a primitive userId. This default
  * implementation simply returns the identity, and can be used with identities
  * that are primitives (strings, integers).
  *
- * @param {*} identity
- * @returns {*} The userId of the passed identity.
+ * :param identity: A user identity.
+ * :returns: The userId of the passed identity.
  */
 DefaultAuthorizer.prototype.userId = function userId(identity) {
     return identity;

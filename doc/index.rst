@@ -40,6 +40,7 @@ You can start learning about how to install and deploy Annotator below:
    internationalization
 
    roadmap
+   api/index
 
 
 .. todolist::
