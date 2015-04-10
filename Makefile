@@ -1,5 +1,4 @@
 BROWSERIFY := node_modules/.bin/browserify
-UGLIFYCSS := node_modules/.bin/uglifycss
 UGLIFYJS := node_modules/.bin/uglifyjs
 
 # Check that the user has run 'npm install'
@@ -20,9 +19,9 @@ SRC := $(shell find src -type f -name '*.js')
 
 all: annotator plugins annotator-full
 
-annotator: pkg/annotator.min.js pkg/annotator.min.css
+annotator: pkg/annotator.min.js
 plugins: $(patsubst %.js,%.min.js,$(PLUGINS_PKG))
-annotator-full: pkg/annotator-full.min.js pkg/annotator.min.css
+annotator-full: pkg/annotator-full.min.js
 
 clean:
 	rm -rf .deps pkg
@@ -42,17 +41,9 @@ doc/api/%.rst: src/%.js
 	@mkdir -p $(@D)
 	tools/apidoc $< >$@
 
-pkg/%.min.css: pkg/%.css
-	@echo Writing $@
-	@$(UGLIFYCSS) $< >$@
-
 pkg/%.min.js: pkg/%.js
 	@echo Writing $@
 	@$(UGLIFYJS) --preamble "$$(tools/preamble)" $< >$@
-
-pkg/annotator.css: css/annotator.css
-	@mkdir -p pkg/
-	@tools/data_uri_ify <$< >$@
 
 pkg/annotator.js: browser.js
 	@mkdir -p pkg/ .deps/

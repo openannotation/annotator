@@ -25,7 +25,7 @@
 -------------------------------------------------------------------- */
 
 .annotator-adder {
-	background-image: url(../img/annotator-icon-sprite.png);
+	background-image: url(../img/annotator-icon-sprite.png?embed);
 	background-repeat: no-repeat;
 }
 
@@ -36,7 +36,7 @@
 .annotator-viewer .annotator-controls a,
 .annotator-filter .annotator-filter-navigation button:after,
 .annotator-filter .annotator-filter-property .annotator-filter-clear {
-	background-image: url(../img/annotator-glyph-sprite.png);
+	background-image: url(../img/annotator-glyph-sprite.png?embed);
 	background-repeat: no-repeat;
 }
 

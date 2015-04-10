@@ -1,5 +1,10 @@
 "use strict";
 
+var insertCss = require('insert-css');
+var css = require('../css/annotator.css');
+
+insertCss(css);
+
 var authorizer = require('./authorizer');
 var core = require('./core');
 var identifier = require('./identifier');
