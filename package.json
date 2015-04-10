@@ -29,6 +29,7 @@
     "karma-mocha": "^0.1.10",
     "karma-phantomjs-launcher": "^0.1.4",
     "karma-sauce-launcher": "^0.2.10",
+    "mocha": "^2.2.4",
     "sinon": "^1.14.1",
     "through": "^2.3.7",
     "uglify-js": "~2.4.12",
