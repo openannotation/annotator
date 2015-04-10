@@ -24,13 +24,12 @@
     "jscs": "~1.6.0",
     "jshint": "~2.5.0",
     "jwt-simple": "~0.1.0",
-    "karma": "^0.12.24",
-    "karma-browserify": "^2.0.0",
-    "karma-cli": "0.0.4",
-    "karma-mocha": "^0.1.9",
+    "karma": "^0.12.31",
+    "karma-browserify": "^4.1.2",
+    "karma-mocha": "^0.1.10",
     "karma-phantomjs-launcher": "^0.1.4",
     "karma-sauce-launcher": "^0.2.10",
-    "sinon": "~1.6.0",
+    "sinon": "^1.14.1",
     "through": "^2.3.7",
     "uglify-js": "~2.4.12",
     "wgxpath": "^0.23.0"
@@ -50,7 +49,7 @@
   },
   "scripts": {
     "start": "./tools/serve",
-    "test": "karma start --single-run",
+    "test": "./node_modules/karma/bin/karma start --single-run",
     "lint": "jshint src && jscs src && jshint -c test/.jshintrc test && jscs -c test/.jscsrc test"
   }
 }
