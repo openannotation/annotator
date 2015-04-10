@@ -1,3 +1,5 @@
+/*package annotator.notifier */
+
 "use strict";
 
 var util = require('./util');
@@ -7,13 +9,18 @@ var INFO = 'info',
     SUCCESS = 'success',
     ERROR = 'error';
 
-// BannerNotifier is simple notifier system that can be used to display
-// information, warnings and errors to the user.
-//
-// message - The notifier message text
-// severity - The severity of the message (one of Notifier.INFO,
-//            Notifier.SUCCESS, or Notifier.ERROR)
-//
+
+/**
+ * class:: BannerNotifier(message[, severity=notifier.INFO])
+ *
+ * BannerNotifier is simple notifier system that can be used to display
+ * information, warnings and errors to the user.
+ *
+ * :param String message: The notice message text.
+ * :param severity:
+ *    The severity of the notice (one of `notifier.INFO`, `notifier.SUCCESS`, or
+ *    `notifier.ERROR`)
+ */
 function BannerNotifier(message, severity) {
     if (typeof severity === 'undefined' || severity === null) {
         severity = INFO;
@@ -37,9 +44,13 @@ function BannerNotifier(message, severity) {
     setTimeout(function () { self.close(); }, 5000);
 }
 
-// Public: Close the notifier.
-//
-// Returns the instance.
+/**
+ * function:: BannerNotifier.prototype.close()
+ *
+ * Close the notifier.
+ *
+ * :returns: The notifier instance.
+ */
 BannerNotifier.prototype.close = function () {
     if (this.closed) {
         return;

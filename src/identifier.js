@@ -1,9 +1,14 @@
+/*package annotator.identifier */
+
 "use strict";
 
 /**
- * Default identifier
+ * function:: Default(identity)
  *
- * @param {*} identity The identity to report as the current user
+ * Default identifier implementation.
+ *
+ * :param identity: The identity to report as the current user.
+ * :returns: A function returning an identifier object.
  */
 function Default(identity) {
     return function () {
