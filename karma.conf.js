@@ -19,7 +19,7 @@ module.exports = function (karma) {
         ],
 
         exclude: [
-            'test/spec/plugin/auth_spec.js',
+            'test/spec/plugin/auth_spec.js'
         ],
 
         preprocessors: {
@@ -39,18 +39,18 @@ module.exports = function (karma) {
             'SL_Chrome': {
                 base: 'SauceLabs',
                 browserName: 'chrome',
-                version: '38'
+                version: '41'
             },
             'SL_Firefox': {
                 base: 'SauceLabs',
                 browserName: 'firefox',
-                version: '33'
+                version: '36'
             },
             'SL_Safari': {
                 base: 'SauceLabs',
                 browserName: 'safari',
-                platform: 'OS X 10.9',
-                version: '7'
+                platform: 'OS X 10.10',
+                version: '8'
             },
             'SL_IE_8': {
                 base: 'SauceLabs',
@@ -76,19 +76,22 @@ module.exports = function (karma) {
                 platform: 'Windows 8.1',
                 version: '11'
             }
-        },
-
-        sauceLabs: {
-            testName: 'Annotator'
         }
     });
 
     if (process.env.TRAVIS) {
         var buildLabel = 'TRAVIS #' + process.env.TRAVIS_BUILD_NUMBER + ' (' + process.env.TRAVIS_BUILD_ID + ')';
 
-        karma.sauceLabs.build = buildLabel;
-        karma.sauceLabs.startConnect = false;
-        karma.sauceLabs.tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER;
+        karma.sauceLabs = {
+            build: buildLabel,
+            startConnect: false,
+            testName: 'Annotator',
+            tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER
+        };
+
+        // Travis/Sauce runs frequently time out before data starts coming back
+        // from Sauce. This ups the timeout from 10 to 30 seconds.
+        karma.browserNoActivityTimeout = 30 * 1000;
 
         karma.browsers = [process.env.BROWSER];
         karma.reporters = ['dots', 'saucelabs'];
