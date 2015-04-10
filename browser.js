@@ -1,5 +1,10 @@
 "use strict";
 
+// Inject Annotator CSS
+var insertCss = require('insert-css');
+var css = require('./css/annotator.css');
+insertCss(css);
+
 var annotator = require('./src/annotator');
 var ui = require('./src/ui');
 var storage = require('./src/storage');
