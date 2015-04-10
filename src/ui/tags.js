@@ -1,9 +1,9 @@
 "use strict";
 
-var Util = require('../util');
+var util = require('../util');
 
-var $ = Util.$,
-    _t = Util.gettext;
+var $ = util.$;
+var _t = util.gettext;
 
 // Configuration options
 var defaultOptions = {
@@ -60,7 +60,7 @@ function configureViewer() {
             field.addClass('annotator-tags').html(function () {
                 return $.map(annotation.tags, function (tag) {
                     return '<span class="annotator-tag">' +
-                        Util.escapeHtml(tag) +
+                        util.escapeHtml(tag) +
                         '</span>';
                 }).join(' ');
             });

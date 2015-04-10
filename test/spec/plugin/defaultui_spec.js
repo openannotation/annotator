@@ -5,7 +5,7 @@ var h = require('../../helpers');
 var $ = require('../../../src/util').$;
 
 var DefaultUI = require('../../../src/plugin/defaultui').DefaultUI,
-    UI = require('../../../src/ui');
+    ui = require('../../../src/ui');
 
 describe('DefaultUI plugin', function () {
     var sandbox;
@@ -53,7 +53,7 @@ describe('DefaultUI plugin', function () {
             el = $('<div></div>')[0];
             mockAdder = {destroy: sandbox.stub(), attach: sandbox.stub()};
             mockRegistry = {annotations: {create: sandbox.stub()}};
-            sandbox.stub(UI, 'Adder').returns(mockAdder);
+            sandbox.stub(ui, 'Adder').returns(mockAdder);
 
             plug = DefaultUI(el)(mockRegistry);
         });
@@ -63,11 +63,11 @@ describe('DefaultUI plugin', function () {
         });
 
         it("creates an Adder", function () {
-            sinon.assert.calledOnce(UI.Adder);
+            sinon.assert.calledOnce(ui.Adder);
         });
 
         it("passes an onCreate handler which asks the registry to create an annotation", function () {
-            var callArgs = UI.Adder.args[0];
+            var callArgs = ui.Adder.args[0];
             assert.property(callArgs[0], 'onCreate');
             callArgs[0].onCreate({text: 'wibble'});
             sinon.assert.calledWith(
@@ -95,7 +95,7 @@ describe('DefaultUI plugin', function () {
                 },
                 identifier: {who: sandbox.stub().returns('alice')}
             };
-            sandbox.stub(UI, 'Editor').returns(mockEditor);
+            sandbox.stub(ui, 'Editor').returns(mockEditor);
 
             plug = DefaultUI(el)(mockRegistry);
         });
@@ -105,7 +105,7 @@ describe('DefaultUI plugin', function () {
         });
 
         it("creates an Editor", function () {
-            sinon.assert.calledOnce(UI.Editor);
+            sinon.assert.calledOnce(ui.Editor);
         });
 
         it("adds permissions-related fields", function () {
@@ -197,11 +197,11 @@ describe('DefaultUI plugin', function () {
             mockHighlighter = {destroy: sandbox.stub()},
             mockTextSelector = {destroy: sandbox.stub()},
             mockViewer = {destroy: sandbox.stub(), attach: sandbox.stub()};
-        sandbox.stub(UI, 'Adder').returns(mockAdder);
-        sandbox.stub(UI, 'Editor').returns(mockEditor);
-        sandbox.stub(UI, 'Highlighter').returns(mockHighlighter);
-        sandbox.stub(UI, 'TextSelector').returns(mockTextSelector);
-        sandbox.stub(UI, 'Viewer').returns(mockViewer);
+        sandbox.stub(ui, 'Adder').returns(mockAdder);
+        sandbox.stub(ui, 'Editor').returns(mockEditor);
+        sandbox.stub(ui, 'Highlighter').returns(mockHighlighter);
+        sandbox.stub(ui, 'TextSelector').returns(mockTextSelector);
+        sandbox.stub(ui, 'Viewer').returns(mockViewer);
         var plug = DefaultUI(null)(null);
         plug.onDestroy();
         sinon.assert.calledOnce(mockAdder.destroy);

@@ -1,9 +1,9 @@
 "use strict";
 
-var Annotator = require('annotator-plugintools').Annotator;
+var annotator = require('annotator');
 
-var Util = Annotator.Util,
-    $ = Util.$;
+var util = annotator.util;
+var $ = util.$;
 
 // isEmpty returns a boolean indicating whether the passed object is empty
 function isEmpty(obj) {
@@ -24,7 +24,7 @@ function isEmpty(obj) {
 
 // absoluteUrl turns a possibly relative URL into an absolute one
 function absoluteUrl(url) {
-    var d = Util.getGlobal().document.createElement('a');
+    var d = util.getGlobal().document.createElement('a');
     d.href = url;
     return d.href;
 }
@@ -112,13 +112,13 @@ function getTitle(d, keys) {
     }
 
     // Fall back to document title
-    return Util.getGlobal().document.title;
+    return util.getGlobal().document.title;
 }
 
 
 function getLinks() {
     // we know our current location is a link for the document
-    var results = [{href: Util.getGlobal().document.location.href}];
+    var results = [{href: util.getGlobal().document.location.href}];
 
     // look for some relevant link relations
     $("link").each(function (_, link) {
@@ -272,7 +272,7 @@ function Document() {
 }
 
 
-Annotator.Plugin.Document = Document;
+annotator.plugin.Document = Document;
 
 exports.Document = Document;
 exports.absoluteUrl = absoluteUrl;

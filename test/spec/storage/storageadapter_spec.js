@@ -1,9 +1,9 @@
 var assert = require('assertive-chai').assert;
 
-var Storage = require('../../../src/storage'),
-    Util = require('../../../src/util');
+var storage = require('../../../src/storage'),
+    util = require('../../../src/util');
 
-var Promise = Util.Promise;
+var Promise = util.Promise;
 
 
 function MockHookRunner() {
@@ -78,7 +78,7 @@ function keyAbsent(key) {
     }, String(key) + " was found in object");
 }
 
-describe('Storage.StorageAdapter', function () {
+describe('storage.StorageAdapter', function () {
     var noop = function () { return Promise.resolve(); },
         a = null,
         s = null,
@@ -87,7 +87,7 @@ describe('Storage.StorageAdapter', function () {
     beforeEach(function () {
         sandbox = sinon.sandbox.create();
         s = new MockStorage();
-        a = new Storage.StorageAdapter(s, noop);
+        a = new storage.StorageAdapter(s, noop);
         sandbox.spy(s, 'create');
         sandbox.spy(s, 'update');
         sandbox.spy(s, 'delete');
@@ -127,7 +127,7 @@ describe('Storage.StorageAdapter', function () {
     // a correctly rejected promise
     function assertPromiseRejected(method, passed, expected, done) {
         s = new FailingMockStorage();
-        a = new Storage.StorageAdapter(s, noop);
+        a = new storage.StorageAdapter(s, noop);
         a[method](passed)
             .then(function () {
                 done(new Error("Promise should not have been resolved!"));
@@ -178,7 +178,7 @@ describe('Storage.StorageAdapter', function () {
             var hr = MockHookRunner();
             s = new MockStorage();
             s._callRecorder = hr.runHook;
-            a = new Storage.StorageAdapter(s, hr.runHook);
+            a = new storage.StorageAdapter(s, hr.runHook);
             var ann = {
                 some: 'data'
             };
@@ -242,7 +242,7 @@ describe('Storage.StorageAdapter', function () {
             var hr = MockHookRunner();
             s = new MockStorage();
             s._callRecorder = hr.runHook;
-            a = new Storage.StorageAdapter(s, hr.runHook);
+            a = new storage.StorageAdapter(s, hr.runHook);
             var ann = {
                 id: '123',
                 some: 'data'
@@ -308,7 +308,7 @@ describe('Storage.StorageAdapter', function () {
             var hr = MockHookRunner();
             s = new MockStorage();
             s._callRecorder = hr.runHook;
-            a = new Storage.StorageAdapter(s, hr.runHook);
+            a = new storage.StorageAdapter(s, hr.runHook);
             var ann = {
                 id: '123',
                 some: 'data'
@@ -347,7 +347,7 @@ describe('Storage.StorageAdapter', function () {
 
         it("should return a promise that rejects if the store rejects", function (done) {
             s = new FailingMockStorage();
-            a = new Storage.StorageAdapter(s, noop);
+            a = new storage.StorageAdapter(s, noop);
             var query = {
                 url: 'foo'
             };
@@ -375,7 +375,7 @@ describe('Storage.StorageAdapter', function () {
             var hr = MockHookRunner();
             s = new MockStorage();
             s._callRecorder = hr.runHook;
-            a = new Storage.StorageAdapter(s, hr.runHook);
+            a = new storage.StorageAdapter(s, hr.runHook);
             var query = {
                 url: 'foo'
             };

@@ -1,9 +1,9 @@
 "use strict";
 
-var Util = require('../util');
+var util = require('../util');
 
-var $ = Util.$,
-    _t = Util.gettext;
+var $ = util.$;
+var _t = util.gettext;
 
 var NS = 'annotator-filter';
 

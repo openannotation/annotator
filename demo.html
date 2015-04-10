@@ -43,13 +43,13 @@
     <!-- The main Annotator script -->
     <script src="pkg/annotator.min.js"></script>
     <script>
-      if (typeof Annotator !== 'function') {
+      if (typeof annotator === 'undefined') {
         alert("Ooops! it looks like you haven't built the Annotator concatenation file. " +
               "Either download a tagged release from GitHub, or build the package " +
               "by running `make pkg` (or `./build/tools -a`).");
       } else {
         var elem = document.getElementById('airlock');
-        var annotator = new Annotator(elem);
+        var app = new annotator.Annotator(elem);
       }
     </script>
   </body>

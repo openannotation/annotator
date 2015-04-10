@@ -2,12 +2,12 @@ var assert = require('assertive-chai').assert;
 
 var h = require('../../helpers');
 
-var UI = require('../../../src/ui'),
-    Util = require('../../../src/util');
+var ui = require('../../../src/ui'),
+    util = require('../../../src/util');
 
-var $ = Util.$;
+var $ = util.$;
 
-describe('UI.Viewer', function () {
+describe('ui.Viewer', function () {
     var v = null;
 
     beforeEach(function () {
@@ -20,7 +20,7 @@ describe('UI.Viewer', function () {
 
     describe('in default configuration', function () {
         beforeEach(function () {
-            v = new UI.Viewer();
+            v = new ui.Viewer();
             v.attach();
         });
 
@@ -158,7 +158,7 @@ describe('UI.Viewer', function () {
 
         beforeEach(function () {
             onEdit = sinon.stub();
-            v = new UI.Viewer({
+            v = new ui.Viewer({
                 permitEdit: function () { return true; },
                 onEdit: onEdit
             });
@@ -200,7 +200,7 @@ describe('UI.Viewer', function () {
 
         beforeEach(function () {
             onDelete = sinon.stub();
-            v = new UI.Viewer({
+            v = new ui.Viewer({
                 permitDelete: function () { return true; },
                 onDelete: onDelete
             });
@@ -239,7 +239,7 @@ describe('UI.Viewer', function () {
 
     describe('with the defaultFields option set to false', function () {
         beforeEach(function () {
-            v = new UI.Viewer({
+            v = new ui.Viewer({
                 defaultFields: false
             });
             v.attach();
@@ -261,7 +261,7 @@ describe('UI.Viewer', function () {
         beforeEach(function () {
             renderText = sinon.stub().returns("Wolves with sheep");
 
-            v = new UI.Viewer({
+            v = new ui.Viewer({
                 defaultFields: true,
                 renderText: renderText
             });
@@ -283,7 +283,7 @@ describe('UI.Viewer', function () {
             clock = null;
 
         beforeEach(function () {
-            v = new UI.Viewer({
+            v = new ui.Viewer({
                 activityDelay: 50,
                 inactivityDelay: 200,
                 autoViewHighlights: h.fix()

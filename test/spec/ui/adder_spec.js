@@ -2,19 +2,19 @@ var assert = require('assertive-chai').assert;
 
 var h = require('../../helpers');
 
-var UI = require('../../../src/ui'),
-    Util = require('../../../src/util');
+var ui = require('../../../src/ui'),
+    util = require('../../../src/util');
 
-var $ = Util.$;
+var $ = util.$;
 
-describe('UI.Adder', function () {
+describe('ui.Adder', function () {
     var a = null,
         onCreate = null;
 
     beforeEach(function () {
         h.addFixture('adder');
         onCreate = sinon.stub();
-        a = new UI.Adder({
+        a = new ui.Adder({
             onCreate: onCreate
         });
     });
@@ -132,7 +132,7 @@ describe('UI.Adder', function () {
         });
 
         it("hides the adder when the button is left-clicked", function () {
-            $(Util.getGlobal().document.body).trigger('mouseup');
+            $(util.getGlobal().document.body).trigger('mouseup');
             a.element.find('button').trigger({
                 type: 'click',
                 which: 1

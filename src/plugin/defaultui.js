@@ -1,10 +1,10 @@
 "use strict";
 
-var UI = require('../ui'),
-    Util = require('../util');
+var ui = require('../ui');
+var util = require('../util');
 
-var g = Util.getGlobal(),
-    _t = Util.gettext;
+var g = util.getGlobal(),
+    _t = util.gettext;
 
 // trim strips whitespace from either end of a string.
 //
@@ -43,7 +43,7 @@ function annotationFactory(contextEl, ignoreSelector) {
 function maxZIndex(elements) {
     var max = -1;
     for (var i = 0, len = elements.length; i < len; i++) {
-        var $el = Util.$(elements[i]);
+        var $el = util.$(elements[i]);
         if ($el.css('position') !== 'static') {
             // Use parseFloat since we may get scientific notation for large
             // values.
@@ -60,7 +60,7 @@ function maxZIndex(elements) {
 // Helper function to inject CSS into the page that ensures Annotator elements
 // are displayed with the highest z-index.
 function injectDynamicStyle() {
-    Util.$('#annotator-dynamic-style').remove();
+    util.$('#annotator-dynamic-style').remove();
 
     var sel = '*' +
               ':not(annotator-adder)' +
@@ -69,7 +69,7 @@ function injectDynamicStyle() {
               ':not(annotator-filter)';
 
     // use the maximum z-index in the page
-    var max = maxZIndex(Util.$(g.document.body).find(sel).get());
+    var max = maxZIndex(util.$(g.document.body).find(sel).get());
 
     // but don't go smaller than 1010, because this isn't bulletproof --
     // dynamic elements in the page (notifications, dialogs, etc.) may well
@@ -85,7 +85,7 @@ function injectDynamicStyle() {
         "}"
     ].join("\n");
 
-    Util.$('<style>' + rules + '</style>')
+    util.$('<style>' + rules + '</style>')
         .attr('id', 'annotator-dynamic-style')
         .attr('type', 'text/css')
         .appendTo('head');
@@ -94,7 +94,7 @@ function injectDynamicStyle() {
 
 // Helper function to remove dynamic stylesheets
 function removeDynamicStyle() {
-    Util.$('#annotator-dynamic-style').remove();
+    util.$('#annotator-dynamic-style').remove();
 }
 
 
@@ -102,7 +102,7 @@ function removeDynamicStyle() {
 function addPermissionsCheckboxes(editor, registry) {
     function createLoadCallback(action) {
         return function loadCallback(field, annotation) {
-            field = Util.$(field).show();
+            field = util.$(field).show();
 
             var u = registry.identifier.who();
             var input = field.find('input');
@@ -138,7 +138,7 @@ function addPermissionsCheckboxes(editor, registry) {
             if (!annotation.permissions) {
                 annotation.permissions = {};
             }
-            if (Util.$(field).find('input').is(':checked')) {
+            if (util.$(field).find('input').is(':checked')) {
                 delete annotation.permissions[action];
             } else {
                 // While the permissions model allows for more complex entries
@@ -175,7 +175,7 @@ function addPermissionsCheckboxes(editor, registry) {
 //
 // Examples
 //
-//    ann = new Annotator.Core.Annotator()
+//    ann = new annotator.core.Annotator()
 //    ann.addPlugin(DefaultUI(document.body, {}))
 //
 // Returns an Annotator plugin.
@@ -193,26 +193,26 @@ function DefaultUI(element) {
         // Shared user interface state
         var interactionPoint = null;
 
-        var adder = new UI.Adder({
+        var adder = new ui.Adder({
             onCreate: function (ann) {
                 registry.annotations.create(ann);
             }
         });
         adder.attach();
 
-        var tags = UI.tags({});
-        var editor = new UI.Editor({extensions: [tags.createEditorField]});
+        var tags = ui.tags({});
+        var editor = new ui.Editor({extensions: [tags.createEditorField]});
         editor.attach();
 
         addPermissionsCheckboxes(editor, registry);
 
-        var highlighter = new UI.Highlighter(element);
+        var highlighter = new ui.Highlighter(element);
 
-        var textSelector = new UI.TextSelector(element, {
+        var textSelector = new ui.TextSelector(element, {
             onSelection: function (ranges, event) {
                 if (ranges.length > 0) {
                     var annotation = makeAnnotation(ranges);
-                    interactionPoint = Util.mousePosition(event);
+                    interactionPoint = util.mousePosition(event);
                     adder.load(annotation, interactionPoint);
                 } else {
                     adder.hide();
@@ -246,10 +246,10 @@ function DefaultUI(element) {
         };
 
         if (g.Showdown && typeof g.Showdown.converter === 'function') {
-            viewerOpts.renderText = UI.markdown().convert;
+            viewerOpts.renderText = ui.markdown().convert;
         }
 
-        var viewer = new UI.Viewer(viewerOpts);
+        var viewer = new ui.Viewer(viewerOpts);
         viewer.attach();
 
         injectDynamicStyle();

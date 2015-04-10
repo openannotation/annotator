@@ -1,17 +1,17 @@
 var assert = require('assertive-chai').assert;
 
-var UI = require('../../../src/ui'),
-    Util = require('../../../src/util');
+var ui = require('../../../src/ui'),
+    util = require('../../../src/util');
 
-var $ = Util.$;
+var $ = util.$;
 
-describe('UI.Tags', function () {
+describe('ui.Tags', function () {
     var tags = null,
         sandbox = null;
 
     beforeEach(function () {
         sandbox = sinon.sandbox.create();
-        tags = UI.tags({});
+        tags = ui.tags({});
     });
 
     afterEach(function () {
@@ -37,8 +37,8 @@ describe('UI.Tags', function () {
 
         beforeEach(function () {
             elem = $("<div><div class='annotator-editor-controls'></div></div>")[0];
-            spy = sandbox.spy(UI.Editor.prototype, 'addField');
-            editor = new UI.Editor({
+            spy = sandbox.spy(ui.Editor.prototype, 'addField');
+            editor = new ui.Editor({
                 defaultFields: false,
                 extensions: [tags.createEditorField]
             });
@@ -107,8 +107,8 @@ describe('UI.Tags', function () {
             spy = null;
 
         beforeEach(function () {
-            spy = sandbox.spy(UI.Viewer.prototype, 'addField');
-            viewer = new UI.Viewer({
+            spy = sandbox.spy(ui.Viewer.prototype, 'addField');
+            viewer = new ui.Viewer({
                 defaultFields: false,
                 extensions: [tags.createViewerField]
             });

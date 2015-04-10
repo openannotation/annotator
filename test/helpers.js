@@ -3,8 +3,8 @@
 
 var xpath = require('xpath-range').xpath;
 
-var Util = require('../src/util'),
-    $ = Util.$;
+var util = require('../src/util');
+var $ = util.$;
 
 function contains(parent, child) {
     var node;
@@ -62,7 +62,7 @@ MockSelection.prototype.addRange = function (r) {
 
 MockSelection.prototype.resolvePath = function (path) {
     if (typeof path === "number") {
-        return Util.getTextNodes($(this.root))[path];
+        return util.getTextNodes($(this.root))[path];
     } else if (typeof path === "string") {
         return this.resolveXPath(this.rootXPath + path);
     }
@@ -73,7 +73,7 @@ MockSelection.prototype.resolveXPath = function (xpath) {
 };
 
 function textInNormedRange(range) {
-    var textNodes = Util.getTextNodes($(range.commonAncestor));
+    var textNodes = util.getTextNodes($(range.commonAncestor));
     textNodes = textNodes.slice(
         textNodes.index(range.start),
         textNodes.index(range.end) + 1 || 9e9

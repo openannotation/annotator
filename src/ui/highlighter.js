@@ -2,10 +2,10 @@
 
 var Range = require('xpath-range').Range;
 
-var Util = require('../util');
+var util = require('../util');
 
-var $ = Util.$,
-    Promise = Util.Promise;
+var $ = util.$;
+var Promise = util.Promise;
 
 
 // highlightRange wraps the DOM Nodes within the provided range with a highlight

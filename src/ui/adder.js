@@ -1,10 +1,10 @@
 "use strict";
 
 var Widget = require('./widget').Widget,
-    Util = require('../util');
+    util = require('../util');
 
-var $ = Util.$,
-    _t = Util.gettext;
+var $ = util.$;
+var _t = util.gettext;
 
 var NS = 'annotator-adder';
 

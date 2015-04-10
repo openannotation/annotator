@@ -1,10 +1,7 @@
 #!/usr/bin/env node
-var path = require('path');
-
 var browserify = require('browserify-middleware');
 var connect = require('connect');
 var jwt = require('jwt-simple');
-var glob = require('glob');
 
 var CONSUMER_KEY = 'mockconsumer';
 var CONSUMER_SECRET = 'mockconsumersecret';
@@ -35,20 +32,15 @@ app.use('/api/token', function(request, response) {
   response.end(tok);
 });
 
-app.use('/lib/annotator.js', browserify(
-    [{'./src/annotator.js': {expose: 'annotator'}}]
-));
-
-glob.sync('./src/plugin/*.js').forEach(function (p) {
-    var loc = '/lib/' + path.relative('./src/', p);
-    app.use(loc, browserify(p, {
-        external: 'annotator'
-    }));
+app.use('/bundle/annotator.js', browserify('index.js', {standalone: 'annotator'}));
+app.use('/bundle/plugin', function (req, res, next) {
+  // browserify-middleware expects req.path to be set
+  req.path = req.url;
+  browserify('src/plugin/')(req, res, next);
 });
 
 // Static files
 app.use(connect.static(process.cwd()));
-
 
 // Go
 if (require.main === module) {

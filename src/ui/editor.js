@@ -1,11 +1,11 @@
 "use strict";
 
 var Widget = require('./widget').Widget,
-    Util = require('../util');
+    util = require('../util');
 
-var $ = Util.$,
-    _t = Util.gettext,
-    Promise = Util.Promise;
+var $ = util.$;
+var _t = util.gettext;
+var Promise = util.Promise;
 
 var NS = "annotator-editor";
 

@@ -1,13 +1,13 @@
 var assert = require('assertive-chai').assert;
 
-var Storage = require('../../../src/storage');
+var storage = require('../../../src/storage');
 
-describe('Storage.NullStorage', function () {
+describe('storage.NullStorage', function () {
     var s = null,
         ann = null;
 
     beforeEach(function () {
-        s = Storage.NullStorage();
+        s = storage.NullStorage();
         ann = {
             id: 123,
             some: 'data'

@@ -1,10 +1,10 @@
 "use strict";
 
 var Widget = require('./widget').Widget,
-    Util = require('../util');
+    util = require('../util');
 
-var $ = Util.$,
-    _t = Util.gettext;
+var $ = util.$,
+    _t = util.gettext;
 
 var NS = 'annotator-viewer';
 
@@ -83,7 +83,7 @@ var Viewer = Widget.extend({
         this.mouseDown = false;
 
         function defaultTextRenderer(text) {
-            return Util.escapeHtml(text);
+            return util.escapeHtml(text);
         }
         var renderText = this.options.renderText || defaultTextRenderer;
 

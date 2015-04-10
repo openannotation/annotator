@@ -2,8 +2,8 @@
 
 var extend = require('backbone-extend-standalone');
 
-var Storage = require('./storage'),
-    Promise = require('./util').Promise;
+var storage = require('./storage');
+var Promise = require('./util').Promise;
 
 // Annotator is the coordination point for all annotation functionality. On
 // its own it provides only the necessary code for coordinating the lifecycle of
@@ -13,7 +13,7 @@ function Annotator() {
     this.registry = {};
 
     // This is here so it can be overridden when testing
-    this._storageAdapterType = Storage.StorageAdapter;
+    this._storageAdapterType = storage.StorageAdapter;
 }
 
 // Public: Register a plugin

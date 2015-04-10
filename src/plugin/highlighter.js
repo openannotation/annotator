@@ -1,6 +1,6 @@
 "use strict";
 
-var Annotator = require('annotator-plugintools').Annotator;
+var annotator = require('annotator');
 
 
 // Highlighter is a simple plugin that uses the Annotator.UI.Highlighter
@@ -8,7 +8,7 @@ var Annotator = require('annotator-plugintools').Annotator;
 // created and removed.
 function Highlighter(element, options, highlighter) {
     if (typeof highlighter === 'undefined' || highlighter === null) {
-        highlighter = Annotator.UI.Highlighter;
+        highlighter = annotator.ui.Highlighter;
     }
 
     // Store the constructor in an uppercased variable
@@ -28,6 +28,6 @@ function Highlighter(element, options, highlighter) {
 }
 
 
-Annotator.Plugin.Highlighter = Highlighter;
+annotator.plugin.Highlighter = Highlighter;
 
 exports.Highlighter = Highlighter;

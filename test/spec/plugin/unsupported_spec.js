@@ -1,4 +1,4 @@
-var Annotator = require('annotator'),
+var annotator = require('annotator'),
     Unsupported = require('../../../src/plugin/unsupported').Unsupported;
 
 describe('Unsupported plugin', function () {
@@ -8,7 +8,7 @@ describe('Unsupported plugin', function () {
                 show: sinon.stub()
             }
         };
-        sinon.stub(Annotator, 'supported').returns({
+        sinon.stub(annotator, 'supported').returns({
             supported: false,
             errors: ['widgets are discombobulated']
         });

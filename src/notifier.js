@@ -1,7 +1,7 @@
 "use strict";
 
-var Util = require('./util'),
-    $ = Util.$;
+var util = require('./util');
+var $ = util.$;
 
 var INFO = 'info',
     SUCCESS = 'success',
@@ -26,8 +26,8 @@ function BannerNotifier(message, severity) {
     $(this.element)
         .addClass(BannerNotifier.classes.show)
         .addClass(BannerNotifier.classes[this.severity])
-        .html(Util.escapeHtml(message || ""))
-        .appendTo(Util.getGlobal().document.body);
+        .html(util.escapeHtml(message || ""))
+        .appendTo(util.getGlobal().document.body);
 
     var self = this;
 

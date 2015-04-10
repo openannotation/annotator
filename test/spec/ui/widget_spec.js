@@ -2,18 +2,18 @@ var assert = require('assertive-chai').assert;
 
 var $ = require('../../../src/util').$;
 
-var UI = require('../../../src/ui');
+var ui = require('../../../src/ui');
 
-describe("UI.Widget", function () {
+describe("ui.Widget", function () {
     var widget = null;
 
     beforeEach(function () {
-        widget = new UI.Widget();
+        widget = new ui.Widget();
     });
 
     describe("constructor", function () {
         it("should extend the Widget#classes object with child classes", function () {
-            var ChildWidget = UI.Widget.extend({});
+            var ChildWidget = ui.Widget.extend({});
             ChildWidget.classes = {
                 customClass: 'my-custom-class',
                 anotherClass: 'another-class'

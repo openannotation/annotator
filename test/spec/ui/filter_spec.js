@@ -1,18 +1,18 @@
 var assert = require('assertive-chai').assert;
 
-var UI = require('../../../src/ui'),
-    Util = require('../../../src/util');
+var ui = require('../../../src/ui'),
+    util = require('../../../src/util');
 
-var $ = Util.$;
+var $ = util.$;
 
-describe('UI.Filter', function () {
+describe('ui.Filter', function () {
     var plugin = null,
         element = null,
         sandbox = null;
 
     beforeEach(function () {
         element = $('<div />')[0];
-        plugin = new UI.Filter({
+        plugin = new ui.Filter({
             filterElement: element
         });
         sandbox = sinon.sandbox.create();

@@ -1,13 +1,13 @@
 "use strict";
 
-var Annotator = require('annotator-plugintools').Annotator;
+var annotator = require('annotator');
 
-// Editor is a plugin that uses the Annotator.UI.Editor component to display an
+// Editor is a plugin that uses the annotator.ui.Editor component to display an
 // editor widget allowing the user to provide a note (and other data) before an
 // annotation is created or updated.
 function Editor(options, editor) {
     if (typeof editor === 'undefined' || editor === null) {
-        editor = Annotator.UI.Editor;
+        editor = annotator.ui.Editor;
     }
 
     // Store the constructor in an uppercased variable
@@ -29,6 +29,6 @@ function Editor(options, editor) {
 }
 
 
-Annotator.Plugin.Editor = Editor;
+annotator.plugin.Editor = Editor;
 
 exports.Editor = Editor;

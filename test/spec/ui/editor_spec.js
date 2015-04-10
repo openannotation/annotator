@@ -3,11 +3,11 @@ var assert = require('assertive-chai').assert;
 var h = require('../../helpers');
 
 var Editor = require('../../../src/ui/editor'),
-    Util = require('../../../src/util');
+    util = require('../../../src/util');
 
-var $ = Util.$;
+var $ = util.$;
 
-describe('UI.Editor.Editor', function () {
+describe('ui.Editor.Editor', function () {
     var plugin = null;
 
     describe('in default configuration', function () {

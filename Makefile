@@ -54,16 +54,16 @@ pkg/annotator.css: css/annotator.css
 	@mkdir -p pkg/
 	@tools/data_uri_ify <$< >$@
 
-pkg/annotator.js: src/annotator.js
+pkg/annotator.js: browser.js
 	@mkdir -p pkg/ .deps/
-	@$(BROWSERIFY) -s Annotator $< >$@
+	@$(BROWSERIFY) -s annotator $< >$@
 	@$(BROWSERIFY) --list $< | \
 	sed 's#^#$@: #' >.deps/annotator.d
 
 pkg/annotator.%.js: src/plugin/%.js
 	@mkdir -p pkg/ .deps/
-	@$(BROWSERIFY) -i annotator $< >$@
-	@$(BROWSERIFY) --list -i annotator $< | \
+	@$(BROWSERIFY) $< >$@
+	@$(BROWSERIFY) --list $< | \
 	sed 's#^#$@: #' >.deps/annotator.$*.d
 
 pkg/annotator-full.js: pkg/annotator.js $(PLUGINS_PKG)

@@ -1,6 +1,6 @@
 "use strict";
 
-var Annotator = require('annotator-plugintools').Annotator;
+var annotator = require('annotator');
 
 
 // Viewer is a plugin that uses the Annotator.UI.Viewer component to display an
@@ -8,7 +8,7 @@ var Annotator = require('annotator-plugintools').Annotator;
 // annotator highlight element).
 function Viewer(options, viewer) {
     if (typeof viewer === 'undefined' || viewer === null) {
-        viewer = Annotator.UI.Viewer;
+        viewer = annotator.ui.Viewer;
     }
 
     // Store the constructor in an uppercased variable
@@ -58,6 +58,6 @@ function Viewer(options, viewer) {
 }
 
 
-Annotator.Plugin.Viewer = Viewer;
+annotator.plugin.Viewer = Viewer;
 
 exports.Viewer = Viewer;

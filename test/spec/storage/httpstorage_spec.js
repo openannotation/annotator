@@ -1,13 +1,13 @@
 var assert = require('assertive-chai').assert;
 
-var Storage = require('../../../src/storage');
+var storage = require('../../../src/storage');
 
-describe("Storage.HTTPStorage", function () {
+describe("storage.HTTPStorage", function () {
     var store, xhr, lastReq;
 
     beforeEach(function () {
         lastReq = null;
-        store = Storage.HTTPStorage();
+        store = storage.HTTPStorage();
         xhr = sinon.useFakeXMLHttpRequest();
         xhr.onCreate = function (r) {
             lastReq = r;

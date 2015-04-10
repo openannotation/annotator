@@ -1,29 +1,32 @@
 "use strict";
 
-var Authorizer = require('./authorizer'),
-    Core = require('./core'),
-    Identifier = require('./identifier'),
-    Notifier = require('./notifier'),
-    Storage = require('./storage'),
-    Util = require('./util');
+var authorizer = require('./authorizer');
+var core = require('./core');
+var identifier = require('./identifier');
+var notifier = require('./notifier');
+var storage = require('./storage');
+var util = require('./util');
 
 var defaultUI = require('./plugin/defaultui').DefaultUI;
 
-// Store a reference to the current Annotator object, if one exists.
-var g = Util.getGlobal();
-var _Annotator = g.Annotator;
+// Gettext
+var _t = util.gettext;
 
 // If wicked-good-xpath is available, install it. This will not overwrite any
 // native XPath functionality.
-if (typeof g.wgxpath !== "undefined" &&
-    g.wgxpath !== null &&
-    typeof g.wgxpath.install === "function") {
-    g.wgxpath.install();
+var wgxpath = util.getGlobal().wgxpath;
+if (typeof wgxpath !== "undefined" &&
+    wgxpath !== null &&
+    typeof wgxpath.install === "function") {
+    wgxpath.install();
 }
+
+// Global instance registry
+var instances = [];
 
 // Annotator represents a sane default configuration of Annotator, with a
 // default set of plugins and a user interface.
-var Annotator = Core.Annotator.extend({
+var Annotator = core.Annotator.extend({
 
     // Public: Creates an instance of the Annotator.
     //
@@ -49,19 +52,19 @@ var Annotator = Core.Annotator.extend({
     //
     // Returns a new instance of the Annotator.
     constructor: function (element, options) {
-        Core.Annotator.call(this);
+        core.Annotator.call(this);
 
-        Annotator._instances.push(this);
+        instances.push(this);
 
         // Return early if the annotator is not supported.
-        if (!Annotator.supported()) {
+        if (!supported()) {
             return this;
         }
 
-        this.setAuthorizer(Authorizer.Default({}));
-        this.setIdentifier(Identifier.Default(null));
-        this.setNotifier(Notifier.Banner);
-        this.setStorage(Storage.NullStorage);
+        this.setAuthorizer(authorizer.Default({}));
+        this.setIdentifier(identifier.Default(null));
+        this.setNotifier(notifier.Banner);
+        this.setStorage(storage.NullStorage);
         this.addPlugin(defaultUI(element, options));
     },
 
@@ -70,39 +73,20 @@ var Annotator = Core.Annotator.extend({
     //
     // Returns nothing.
     destroy: function () {
-        Core.Annotator.prototype.destroy.call(this);
+        core.Annotator.prototype.destroy.call(this);
 
-        var idx = Annotator._instances.indexOf(this);
+        var idx = instances.indexOf(this);
         if (idx !== -1) {
-            Annotator._instances.splice(idx, 1);
+            instances.splice(idx, 1);
         }
     }
 });
 
 
-// Create namespace object for core-provided plugins
-Annotator.Plugin = {};
-
-// Export other modules for use in plugins.
-Annotator.Authorizer = Authorizer;
-Annotator.Core = Core;
-Annotator.Identifier = Identifier;
-Annotator.Notifier = Notifier;
-Annotator.Storage = Storage;
-Annotator.UI = require('./ui');
-Annotator.Util = Util;
-
-// Expose a global instance registry
-Annotator._instances = [];
-
-// Bind gettext helper so plugins can use localisation.
-var _t = Util.gettext;
-Annotator._t = _t;
-
 // Returns true if the Annotator can be used in the current environment.
-Annotator.supported = function (details, scope) {
+function supported(details, scope) {
     if (typeof scope === 'undefined' || scope === null) {
-        scope = Util.getGlobal();
+        scope = util.getGlobal();
     }
 
     var errors = [];
@@ -134,15 +118,8 @@ Annotator.supported = function (details, scope) {
         };
     }
     return true;
-};
-
-// Restores the Annotator property on the global object to it's
-// previous value and returns the Annotator.
-Annotator.noConflict = function () {
-    g.Annotator = _Annotator;
-    return Annotator;
-};
+}
 
 
-// Export Annotator object.
-module.exports = Annotator;
+exports.Annotator = Annotator;
+exports.supported = supported;

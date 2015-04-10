@@ -2,9 +2,9 @@
 
 var Range = require('xpath-range').Range;
 
-var Util = require('../util');
+var util = require('../util');
 
-var $ = Util.$;
+var $ = util.$;
 
 var TEXTSELECTOR_NS = 'annotator-textselector';
 
@@ -59,7 +59,7 @@ TextSelector.prototype.captureDocumentSelection = function () {
         len,
         ranges = [],
         rangesToIgnore = [],
-        selection = Util.getGlobal().getSelection();
+        selection = util.getGlobal().getSelection();
 
     if (selection.isCollapsed) {
         return [];

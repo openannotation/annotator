@@ -2,8 +2,8 @@
 
 var extend = require('backbone-extend-standalone');
 
-var Util = require('../util'),
-    $ = Util.$;
+var util = require('../util');
+var $ = util.$;
 
 
 // Public: Base class for the Editor and Viewer elements. Contains methods that
@@ -86,7 +86,7 @@ Widget.prototype.isShown = function () {
 Widget.prototype.checkOrientation = function () {
     this.resetOrientation();
 
-    var $win = $(Util.getGlobal()),
+    var $win = $(util.getGlobal()),
         $widget = this.element.children(":first"),
         offset = $widget.offset(),
         viewport = {

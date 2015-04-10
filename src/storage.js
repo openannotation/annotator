@@ -1,9 +1,9 @@
 "use strict";
 
-var Util = require('./util'),
-    $ = Util.$,
-    _t = Util.gettext,
-    Promise = Util.Promise;
+var util = require('./util');
+var $ = util.$;
+var _t = util.gettext;
+var Promise = util.Promise;
 
 
 // id returns an identifier unique within this session

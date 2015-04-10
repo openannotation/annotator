@@ -1,11 +1,11 @@
 var assert = require('assertive-chai').assert;
 
-var UI = require('../../../src/ui'),
-    Util = require('../../../src/util');
+var ui = require('../../../src/ui'),
+    util = require('../../../src/util');
 
-var g = Util.getGlobal();
+var g = util.getGlobal();
 
-describe('UI.markdown', function () {
+describe('ui.markdown', function () {
     var plugin = null;
 
     describe("constructor", function () {
@@ -13,7 +13,7 @@ describe('UI.markdown', function () {
             sinon.stub(console, 'warn');
             var showdown = g.Showdown;
             g.Showdown = null;
-            plugin = UI.markdown();
+            plugin = ui.markdown();
             assert(console.warn.calledOnce);
             console.warn.restore();
             g.Showdown = showdown;
@@ -26,7 +26,7 @@ describe('UI.markdown', function () {
         var makeHtml = null;
 
         beforeEach(function () {
-            escapeHtml = sinon.stub(Util, 'escapeHtml').returns('escaped');
+            escapeHtml = sinon.stub(util, 'escapeHtml').returns('escaped');
             makeHtml = sinon.stub().returns('converted');
 
             var fakeShowDown = {
@@ -42,12 +42,12 @@ describe('UI.markdown', function () {
         });
 
         afterEach(function () {
-            Util.escapeHtml.restore();
+            util.escapeHtml.restore();
             g.Showdown = showdown;
         });
 
         it("should escape and convert the provided text into markdown", function () {
-            plugin = UI.markdown();
+            plugin = ui.markdown();
             assert.equal(plugin.convert('foo'), 'converted');
             assert.isTrue(escapeHtml.calledWith('foo'));
             assert.isTrue(makeHtml.calledWith('escaped'));
@@ -56,7 +56,7 @@ describe('UI.markdown', function () {
         it("should escape even if showdown is not loaded", function () {
             sinon.stub(console, 'warn');
             g.Showdown = null;
-            plugin = UI.markdown();
+            plugin = ui.markdown();
             assert.equal(plugin.convert('foo'), 'escaped');
         });
     });

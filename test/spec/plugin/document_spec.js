@@ -1,8 +1,8 @@
 var assert = require('assertive-chai').assert;
-var Util = require('../../../src/util');
+var util = require('../../../src/util');
 var DocumentPlugin = require('../../../src/plugin/document');
 
-var $ = Util.$;
+var $ = util.$;
 
 var FIXTURE_METADATA = {
     links: [

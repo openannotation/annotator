@@ -1,9 +1,9 @@
 "use strict";
 
-var Util = require('../util');
+var util = require('../util');
 
-var g = Util.getGlobal(),
-    _t = Util.gettext;
+var g = util.getGlobal();
+var _t = util.gettext;
 
 function createMarkdownPlugin () {
     var converter = null;
@@ -26,7 +26,7 @@ function createMarkdownPlugin () {
     //
     // Returns HTML string.
     function convert (text) {
-        text = Util.escapeHtml(text || '');
+        text = util.escapeHtml(text || '');
         return converter ? converter.makeHtml(text) : text;
     }
 

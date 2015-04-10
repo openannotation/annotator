@@ -6,9 +6,7 @@
     "type": "git",
     "url": "https://github.com/okfn/annotator.git"
   },
-  "main": "./src/annotator.js",
   "dependencies": {
-    "annotator-plugintools": "^1.0.0",
     "backbone-extend-standalone": "~0.1.2",
     "es6-promise": "~0.1.1",
     "jquery": "~1.11.0",
@@ -16,10 +14,10 @@
   },
   "devDependencies": {
     "assertive-chai": "^1.0.0",
-    "browserify": "^8.1.0",
-    "browserify-middleware": "^4.1.0",
+    "browserify": "^9.0.8",
+    "browserify-middleware": "^5.0.2",
+    "browserify-shim": "^3.8.3",
     "connect": "~2.10.1",
-    "glob": "~3.2.6",
     "jscs": "~1.6.0",
     "jshint": "~2.5.0",
     "jwt-simple": "~0.1.0",
@@ -33,6 +31,15 @@
     "uglify-js": "~2.4.12",
     "uglifycss": "~0.0.5",
     "wgxpath": "^0.23.0"
+  },
+  "browser": "browser.js",
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {
+    "annotator": "global:annotator"
   },
   "engines": {
     "node": ">=0.8 <0.12"

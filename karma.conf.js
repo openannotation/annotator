@@ -12,32 +12,23 @@ module.exports = function (karma) {
             // Test harness
             {pattern: 'node_modules/sinon/pkg/sinon.js', watched: false},
             {pattern: 'node_modules/sinon/pkg/sinon-ie.js', watched: false},
+            'test/init.js',
 
             // Test suites
             'test/spec/**/*_spec.js'
         ],
 
         exclude: [
-            'test/spec/bootstrap_spec.js',
             'test/spec/plugin/auth_spec.js',
-            'test/spec/plugin/markdown_spec.js'
         ],
 
         preprocessors: {
             'node_modules/wgxpath/wgxpath.install.js': 'browserify',
-            'test/spec/**/*_spec.js': 'browserify'
+            'test/**/*.js': 'browserify'
         },
 
         browserify: {
-            debug: true,
-            configure: function (bundle) {
-                // This is event is fired each time the bundle is built.
-                bundle.on('prebundle', function () {
-                    // This allows annotator-plugintools to require annotator
-                    // as 'annotator' in the test environment.
-                    bundle.require(__dirname + '/src/annotator.js', {expose: 'annotator'});
-                });
-            }
+            debug: true
         },
 
         browsers: ['PhantomJS'],

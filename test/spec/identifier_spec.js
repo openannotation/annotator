@@ -1,13 +1,13 @@
 var assert = require('assertive-chai').assert;
 
-var Identifier = require('../../src/identifier');
+var identifier = require('../../src/identifier');
 
 
-describe('Identifier.Default', function () {
+describe('identifier.Default', function () {
     describe('#who()', function () {
         it('returns the identity passed to the factory', function () {
-            var identifier = Identifier.Default('alice')();
-            assert.equal(identifier.who(), 'alice');
+            var ident = identifier.Default('alice')();
+            assert.equal(ident.who(), 'alice');
         });
     });
 });
