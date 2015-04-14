@@ -59,11 +59,18 @@ var Annotator = core.Annotator.extend({
             return this;
         }
 
-        this.setAuthorizer(authorizer.Default({}));
-        this.setIdentifier(identifier.Default(null));
-        this.setNotifier(notifier.Banner);
+        this.registry.registerUtility(authorizer.Default({}), 'authorizer');
+        this.registry.registerUtility(identifier.Default(null), 'identifier');
+        this.registry.registerUtility(notifier.Banner, 'notifier');
         this.setStorage(storage.NullStorage);
         this.addPlugin(defaultUI(element, options));
+
+        // For now, we set these properties explicitly on the registry. This is
+        // not how (or where) this should be done once we have a separate
+        // configuration stage.
+        this.registry.authorizer = this.registry.getUtility('authorizer')();
+        this.registry.identifier = this.registry.getUtility('identifier')();
+        this.registry.notifier = this.registry.getUtility('notifier')();
     },
 
     /**

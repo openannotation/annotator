@@ -146,54 +146,6 @@ describe('Annotator', function () {
         });
     });
 
-    describe('#setAuthorizer', function () {
-        it('should call authorizer functions with a registry', function () {
-            var b = new core.Annotator();
-            var spy = sinon.spy();
-            b.setAuthorizer(spy);
-            sinon.assert.calledWith(spy, b.registry);
-        });
-
-        it('should set registry `authorizer` to the return value of the authorizer function', function () {
-            var b = new core.Annotator();
-            var authorizer = {};
-            b.setAuthorizer(function () { return authorizer; });
-            assert.strictEqual(b.registry.authorizer, authorizer);
-        });
-    });
-
-    describe('#setIdentifier', function () {
-        it('should call identifier functions with a registry', function () {
-            var b = new core.Annotator();
-            var spy = sinon.spy();
-            b.setIdentifier(spy);
-            sinon.assert.calledWith(spy, b.registry);
-        });
-
-        it('should set registry `identifier` to the return value of the identifier function', function () {
-            var b = new core.Annotator();
-            var identifier = {};
-            b.setIdentifier(function () { return identifier; });
-            assert.strictEqual(b.registry.identifier, identifier);
-        });
-    });
-
-    describe('#setNotifier', function () {
-        it('should call notifier functions with a registry', function () {
-            var b = new core.Annotator();
-            var spy = sinon.spy();
-            b.setNotifier(spy);
-            sinon.assert.calledWith(spy, b.registry);
-        });
-
-        it('should set registry `notifier` to the return value of the notifier function', function () {
-            var b = new core.Annotator();
-            var notifier = {};
-            b.setNotifier(function () { return notifier; });
-            assert.strictEqual(b.registry.notifier, notifier);
-        });
-    });
-
     describe('#setStorage', function () {
         it('should call the storage function with a registry', function () {
             var b = new core.Annotator();

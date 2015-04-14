@@ -4,6 +4,7 @@
 
 var extend = require('backbone-extend-standalone');
 
+var registry = require('./registry');
 var storage = require('./storage');
 var Promise = require('./util').Promise;
 
@@ -16,7 +17,7 @@ var Promise = require('./util').Promise;
  */
 function Annotator() {
     this.plugins = [];
-    this.registry = {};
+    this.registry = new registry.Registry();
 
     // This is here so it can be overridden when testing
     this._storageAdapterType = storage.StorageAdapter;
@@ -87,56 +88,6 @@ Annotator.prototype.runHook = function (name, args) {
     return Promise.all(results);
 };
 
-/**
- * function:: Annotator.prototype.setAuthorizer(authorizerFunc)
- *
- * Set the authorizer implementation
- *
- * :param Function authorizerFunc:
- *   A function returning an authorizer component. An authorizer component must
- *   implement the Authorizer interface.
- *
- * :returns: The Annotator instance, to allow chained method calls.
- */
-Annotator.prototype.setAuthorizer = function (authorizerFunc) {
-    var authorizer = authorizerFunc(this.registry);
-    this.registry.authorizer = authorizer;
-    return this;
-};
-
-/**
- * function:: Annotator.prototype.setIdentifier(identifierFunc)
- *
- * Set the identifier implementation
- *
- * :param Function identifierFunc:
- *   A function returning an identifier component. An identifier component must
- *   implement the Identifier interface.
- *
- * :returns: The Annotator instance, to allow chained method calls.
- */
-Annotator.prototype.setIdentifier = function (identifierFunc) {
-    var identifier = identifierFunc(this.registry);
-    this.registry.identifier = identifier;
-    return this;
-};
-
-/**
- * function:: Annotator.prototype.setNotifier(notifierFunc)
- *
- * Set the notifier implementation
- *
- * :param Function notifierFunc:
- *   A function returning a notifier component. A notifier component must
- *   implement the Notifier interface.
- *
- * :returns: The Annotator instance, to allow chained method calls.
- */
-Annotator.prototype.setNotifier = function (notifierFunc) {
-    var notifier = notifierFunc(this.registry);
-    this.registry.notifier = notifier;
-    return this;
-};
 
 /**
  * function:: Annotator.prototype.setStorage(storageFunc)

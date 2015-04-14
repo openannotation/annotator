@@ -55,39 +55,6 @@ annotator.core package
     :returns Promise: Resolved when all over the hook handlers are complete.
 
 
-..  function:: annotator.core.Annotator.prototype.setAuthorizer(authorizerFunc)
-    
-    Set the authorizer implementation
-    
-    :param Function authorizerFunc:
-      A function returning an authorizer component. An authorizer component must
-      implement the Authorizer interface.
-    
-    :returns: The Annotator instance, to allow chained method calls.
-
-
-..  function:: annotator.core.Annotator.prototype.setIdentifier(identifierFunc)
-    
-    Set the identifier implementation
-    
-    :param Function identifierFunc:
-      A function returning an identifier component. An identifier component must
-      implement the Identifier interface.
-    
-    :returns: The Annotator instance, to allow chained method calls.
-
-
-..  function:: annotator.core.Annotator.prototype.setNotifier(notifierFunc)
-    
-    Set the notifier implementation
-    
-    :param Function notifierFunc:
-      A function returning a notifier component. A notifier component must
-      implement the Notifier interface.
-    
-    :returns: The Annotator instance, to allow chained method calls.
-
-
 ..  function:: annotator.core.Annotator.prototype.setStorage(storageFunc)
     
     Set the storage implementation
