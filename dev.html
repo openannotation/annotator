@@ -111,10 +111,11 @@
 
     <script>
       var elem = document.getElementById('airlock');
-      var app = new annotator.App();
-      app.addPlugin(annotator.plugin.Filter());
-      app.registry.registerUtility(annotator.storage.debugStorage, 'storage');
-      app.start(elem);
+      var app = new annotator.App()
+      .include(annotator.plugin.defaultUI, {element: elem})
+      .include(annotator.plugin.filter)
+      .include(annotator.storage.debugStorage)
+      .start()
     </script>
   </body>
 

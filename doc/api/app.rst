@@ -10,46 +10,28 @@ annotator package
     starting point for most deployments of Annotator.
 
 
-..  function:: annotator.App.prototype.finalize()
+..  function:: annotator.App.prototype.include(module[, options])
     
-    Tells the app that configuration is complete, and binds the various
+    Include a plugin module. If an `options` object is supplied, it will be
+    passed to the plugin module at initialisation.
+    
+    If the returned plugin has a `configure` function, this will be called with
+    the application registry as its first parameter.
+    
+    :param Object module:
+    :param Object options:
+    :returns: The Annotator instance, to allow chained method calls.
+
+
+..  function:: annotator.App.prototype.start()
+    
+    Tell the app that configuration is complete. This binds the various
     components passed to the registry to their canonical names so they can be
     used by the rest of the application.
     
-    You won't usually need to call this yourself.
-
-
-..  function:: annotator.App.prototype.start(element)
+    Runs the 'start' plugin hook.
     
-    Start listening for selection events on `element`.
-
-
-..  function:: annotator.App.prototype.addPlugin(plugin)
-    
-    Register a plugin
-    
-    **Examples**:
-    
-    ::
-    
-        function creationNotifier(registry) {
-            return {
-                onAnnotationCreated: function (ann) {
-                    console.log("annotationCreated", ann);
-                }
-            }
-        }
-    
-        annotator
-          .addPlugin(annotator.plugin.Tags)
-          .addPlugin(creationNotifier)
-    
-    
-    :param plugin:
-      A plugin to instantiate. A plugin is a function that accepts a Registry
-      object for the current App and returns a plugin object. A plugin
-      object may define function properties wi
-    :returns: The Annotator instance, to allow chained method calls.
+    :returns Promise: Resolved when all plugin 'start' hooks have completed.
 
 
 ..  function:: annotator.App.prototype.runHook(name[, args])
@@ -61,8 +43,8 @@ annotator package
 
 ..  function:: annotator.App.prototype.destroy()
     
-    Destroy the App. Unbinds all event handlers and runs the 'onDestroy' hooks
-    for any plugins.
+    Destroy the App. Unbinds all event handlers and runs the 'destroy' plugin
+    hook.
     
     :returns Promise: Resolved when destroyed.
 

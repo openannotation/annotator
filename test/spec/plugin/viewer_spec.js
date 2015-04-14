@@ -1,11 +1,11 @@
 var assert = require('assertive-chai').assert;
 
-var Viewer = require('../../../src/plugin/viewer').Viewer;
+var viewer = require('../../../src/plugin/viewer').viewer;
+var annotator = require('annotator');
 
-describe('Viewer plugin', function () {
+describe('viewer plugin', function () {
     var mockRegistry = null,
         mockViewer = null,
-        mockViewerCtor = null,
         sandbox = null;
 
     beforeEach(function () {
@@ -15,18 +15,17 @@ describe('Viewer plugin', function () {
                 update: sandbox.stub(),
                 "delete": sandbox.stub()
             },
-            authorizer: {
+            authz: {
                 permits: sandbox.stub()
             },
-            identifier: {
+            ident: {
                 who: sandbox.stub().returns('alice')
             }
         };
         mockViewer = {
             destroy: sandbox.stub()
         };
-        mockViewerCtor = sandbox.stub();
-        mockViewerCtor.returns(mockViewer);
+        sandbox.stub(annotator.ui, 'Viewer').returns(mockViewer);
     });
 
     afterEach(function () {
@@ -34,8 +33,8 @@ describe('Viewer plugin', function () {
     });
 
     it('sets a default onEdit handler that calls the storage update function', function () {
-        Viewer({}, mockViewerCtor)(mockRegistry);
-        var passedOptions = mockViewerCtor.firstCall.args[0];
+        viewer().configure(mockRegistry);
+        var passedOptions = annotator.ui.Viewer.firstCall.args[0];
         assert(sinon.match.has('onEdit').test(passedOptions));
         passedOptions.onEdit({
             text: 'foo'
@@ -46,8 +45,8 @@ describe('Viewer plugin', function () {
     });
 
     it('sets a default onDelete handler that calls the storage delete function', function () {
-        Viewer({}, mockViewerCtor)(mockRegistry);
-        var passedOptions = mockViewerCtor.firstCall.args[0];
+        viewer().configure(mockRegistry);
+        var passedOptions = annotator.ui.Viewer.firstCall.args[0];
         assert(sinon.match.has('onDelete').test(passedOptions));
         passedOptions.onDelete({
             text: 'foo'
@@ -57,26 +56,26 @@ describe('Viewer plugin', function () {
         });
     });
 
-    it('sets a default permitEdit handler that consults the authorizer', function () {
-        Viewer({}, mockViewerCtor)(mockRegistry);
-        var passedOptions = mockViewerCtor.firstCall.args[0];
+    it('sets a default permitEdit handler that consults the authorization policy', function () {
+        viewer().configure(mockRegistry);
+        var passedOptions = annotator.ui.Viewer.firstCall.args[0];
         assert(sinon.match.has('permitEdit').test(passedOptions));
         passedOptions.permitEdit({text: 'foo'});
         sinon.assert.calledWith(
-            mockRegistry.authorizer.permits,
+            mockRegistry.authz.permits,
             'update',
             {text: 'foo'},
             'alice'
         );
     });
 
-    it('sets a default permitDelete handler that consults the authorizer', function () {
-        Viewer({}, mockViewerCtor)(mockRegistry);
-        var passedOptions = mockViewerCtor.firstCall.args[0];
+    it('sets a default permitDelete handler that consults the authorization policy', function () {
+        viewer().configure(mockRegistry);
+        var passedOptions = annotator.ui.Viewer.firstCall.args[0];
         assert(sinon.match.has('permitDelete').test(passedOptions));
         passedOptions.permitDelete({text: 'foo'});
         sinon.assert.calledWith(
-            mockRegistry.authorizer.permits,
+            mockRegistry.authz.permits,
             'delete',
             {text: 'foo'},
             'alice'
@@ -84,8 +83,9 @@ describe('Viewer plugin', function () {
     });
 
     it('destroys the viewer component when destroyed', function () {
-        var plugin = Viewer({}, mockViewerCtor)(mockRegistry);
-        plugin.onDestroy();
+        var plugin = viewer();
+        plugin.configure(mockRegistry);
+        plugin.destroy();
         sinon.assert.calledOnce(mockViewer.destroy);
     });
 });

@@ -1,6 +1,6 @@
 var assert = require('assertive-chai').assert;
 var util = require('../../../src/util');
-var DocumentPlugin = require('../../../src/plugin/document');
+var doc = require('../../../src/plugin/document');
 
 var $ = util.$;
 
@@ -31,18 +31,15 @@ var FIXTURE_METADATA = {
     prism: ['<meta name="prism.title" content="Literary Machines">']
 };
 
-describe('Document plugin', function () {
+describe('document plugin', function () {
     var tags = null,
         metadata = null;
 
-    describe('Document plugin', function () {
-        it('adds document metadata to the annotation onBeforeAnnotationCreated', function () {
-            // Document plugin doesn't use the registry, so we can pass null
-            var plugin = new DocumentPlugin.Document(null);
-            var annotation = {};
-            plugin.onBeforeAnnotationCreated(annotation);
-            assert.property(annotation, 'document');
-        });
+    it('adds document metadata to the annotation onBeforeAnnotationCreated', function () {
+        var plugin = doc.document();
+        var annotation = {};
+        plugin.onBeforeAnnotationCreated(annotation);
+        assert.property(annotation, 'document');
     });
 
     describe('getDocumentMetadata() returned metadata', function () {
@@ -54,7 +51,7 @@ describe('Document plugin', function () {
                 var html = t.join('\n');
                 tags[name] = $(html).appendTo('head');
             }
-            metadata = DocumentPlugin.getDocumentMetadata();
+            metadata = doc.getDocumentMetadata();
         });
 
         afterEach(function () {
@@ -132,19 +129,19 @@ describe('Document plugin', function () {
         it('does not have empty fields for nonexistent metadata', function () {
             tags.highwire.remove();
             tags.facebook.remove();
-            metadata = DocumentPlugin.getDocumentMetadata();
+            metadata = doc.getDocumentMetadata();
             assert.isUndefined(metadata.highwire);
             assert.isUndefined(metadata.facebook);
         });
 
         it('has a title derived from metadata, in preference order', function () {
-            metadata = DocumentPlugin.getDocumentMetadata();
+            metadata = doc.getDocumentMetadata();
             assert.strictEqual(metadata.title, 'Foo');
             tags.highwire.remove();
-            metadata = DocumentPlugin.getDocumentMetadata();
+            metadata = doc.getDocumentMetadata();
             assert.strictEqual(metadata.title, 'Computer Lib / Dream Machines');
             tags.eprints.remove();
-            metadata = DocumentPlugin.getDocumentMetadata();
+            metadata = doc.getDocumentMetadata();
             assert.strictEqual(metadata.title, 'Literary Machines');
         });
 
@@ -152,31 +149,31 @@ describe('Document plugin', function () {
             for (var name in tags) {
                 tags[name].remove();
             }
-            metadata = DocumentPlugin.getDocumentMetadata();
+            metadata = doc.getDocumentMetadata();
             assert.strictEqual(metadata.title, document.title);
         });
     });
 
     describe('absoluteUrl()', function () {
         it('should add the protocol when the url starts with two slashes', function () {
-            var result = DocumentPlugin.absoluteUrl('//example.com/');
+            var result = doc.absoluteUrl('//example.com/');
             assert.equal(result, 'http://example.com/');
         });
 
         it('should add a trailing slash when given an empty path', function () {
-            var result = DocumentPlugin.absoluteUrl('http://example.com');
+            var result = doc.absoluteUrl('http://example.com');
             assert.equal(result, 'http://example.com/');
         });
 
         it('should make a relative path into an absolute url', function () {
-            var result = DocumentPlugin.absoluteUrl('path');
+            var result = doc.absoluteUrl('path');
             var expected = document.location.protocol + '//' + document.location.host + document.location.pathname.replace(/[^\/]+$/, '') + 'path';
             assert.equal(result, expected);
         });
 
         it('should make an absolute path into an absolute url', function () {
             var expected, result;
-            result = DocumentPlugin.absoluteUrl('/path');
+            result = doc.absoluteUrl('/path');
             expected = document.location.protocol + '//' + document.location.host + '/path';
             assert.equal(result, expected);
         });

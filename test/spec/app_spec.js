@@ -5,31 +5,6 @@ var Promise = require('es6-promise').Promise;
 var app = require('../../src/app');
 var storage = require('../../src/storage');
 
-function PluginHelper(reg) {
-    this.registry = reg;
-    this.destroyed = false;
-    this.hookCalls = [];
-    this.hookResult = void 0;
-    MockPlugin.lastInstance = this;
-}
-
-PluginHelper.prototype.onDestroy = function () {
-    this.destroyed = true;
-};
-
-PluginHelper.prototype.onAnnotationCreated = function () {
-    this.hookCalls.push(['onAnnotationCreated', [].slice.call(arguments)]);
-    return this.hookResult;
-};
-
-function MockPlugin(reg) {
-    return new PluginHelper(reg);
-}
-
-function MockEmptyPlugin() {
-    return {};
-}
-
 
 describe('App', function () {
     var sandbox;
@@ -42,33 +17,40 @@ describe('App', function () {
         sandbox.restore();
     });
 
-    describe('#addPlugin', function () {
-        it('should call plugin functions with a registry', function () {
+    describe('#include', function () {
+        it('should call plugin configure functions with the registry', function () {
             var b = new app.App();
-            b.addPlugin(MockPlugin);
-            assert.strictEqual(MockPlugin.lastInstance.registry, b.registry);
+            var config = sandbox.stub();
+            var mod = function () {
+                return {configure: config};
+            };
+            b.include(mod);
+            sinon.assert.calledWith(config, b.registry);
         });
 
-        it('should add the plugin object to its internal list of plugins', function () {
+        it('should call plugin module functions with options if supplied', function () {
             var b = new app.App();
-            b.addPlugin(MockPlugin);
-            assert.deepEqual(b.plugins, [MockPlugin.lastInstance]);
+            var mod = sandbox.stub().returns({});
+            b.include(mod, {foo: 'bar'});
+            sinon.assert.calledWith(mod, {foo: 'bar'});
         });
     });
 
     describe('#destroy', function () {
-        it("should call each plugin's onDestroy function, if it has one", function (done) {
+        it("should call each plugin's destroy function, if it has one", function (done) {
             var b = new app.App();
-            b.addPlugin(MockPlugin);
-            b.addPlugin(MockPlugin);
-            b.addPlugin(MockEmptyPlugin);
+            var destroy1 = sandbox.stub();
+            var destroy2 = sandbox.stub();
+            var mod1 = function () { return {destroy: destroy1}; };
+            var mod2 = function () { return {destroy: destroy2}; };
+            var mod3 = function () { return {}; };
+            b.include(mod1);
+            b.include(mod2);
+            b.include(mod3);
             b.destroy()
                 .then(function () {
-                    var result;
-                    result = b.plugins.map(function (p) {
-                        return p.destroyed;
-                    });
-                    assert.deepEqual([true, true, void 0], result);
+                    sinon.assert.called(destroy1);
+                    sinon.assert.called(destroy2);
                 })
                 .then(done, done);
         });
@@ -77,37 +59,40 @@ describe('App', function () {
     describe('#runHook', function () {
         it('should run the named hook handler on each plugin', function () {
             var b = new app.App();
-            b.addPlugin(MockPlugin);
-            var pluginOne = MockPlugin.lastInstance;
-            b.addPlugin(MockPlugin);
-            var pluginTwo = MockPlugin.lastInstance;
-            b.addPlugin(MockPlugin);
-            var pluginThree = MockPlugin.lastInstance;
-            // Remove the hook handler on this plugin
-            delete pluginThree.onAnnotationCreated;
+            var hook1 = sandbox.stub();
+            var hook2 = sandbox.stub();
+            var mod1 = function () { return {onAnnotationCreated: hook1}; };
+            var mod2 = function () { return {onAnnotationCreated: hook2}; };
+            var mod3 = function () { return {}; };
+            b.include(mod1);
+            b.include(mod2);
+            b.include(mod3);
 
             b.runHook('onAnnotationCreated');
 
-            assert.deepEqual(pluginOne.hookCalls, [['onAnnotationCreated', []]]);
-            assert.deepEqual(pluginTwo.hookCalls, [['onAnnotationCreated', []]]);
+            sinon.assert.calledWithExactly(hook1);
+            sinon.assert.calledWithExactly(hook2);
         });
 
         it('should return a promise that resolves if all the ' + 'handlers resolve', function (done) {
             var b = new app.App();
-            b.addPlugin(MockPlugin);
-            var pluginOne = MockPlugin.lastInstance;
-            b.addPlugin(MockPlugin);
-            var pluginTwo = MockPlugin.lastInstance;
-            b.addPlugin(MockPlugin);
-            var pluginThree = MockPlugin.lastInstance;
+            var plug1 = {};
+            var plug2 = {};
+            var plug3 = {};
+            var mod1 = function () { return plug1; };
+            var mod2 = function () { return plug2; };
+            var mod3 = function () { return plug3; };
+            b.include(mod1);
+            b.include(mod2);
+            b.include(mod3);
 
-            pluginOne.hookResult = 123;
-            pluginTwo.hookResult = Promise.resolve("ok");
+            plug1.onAnnotationCreated = sandbox.stub().returns(123);
+            plug2.onAnnotationCreated = sandbox.stub().returns(Promise.resolve("ok"));
 
             var delayedResolve = null;
-            pluginThree.hookResult = new Promise(function (resolve) {
+            plug3.onAnnotationCreated = sandbox.stub().returns(new Promise(function (resolve) {
                 delayedResolve = resolve;
-            });
+            }));
 
             var ret = b.runHook('onAnnotationCreated');
             ret.then(function () {
@@ -121,16 +106,18 @@ describe('App', function () {
 
         it('should return a promise that rejects if any handler rejects', function (done) {
             var b = new app.App();
-            b.addPlugin(MockPlugin);
-            var pluginOne = MockPlugin.lastInstance;
-            b.addPlugin(MockPlugin);
-            var pluginTwo = MockPlugin.lastInstance;
-            pluginOne.hookResult = Promise.resolve("ok");
+            var plug1 = {};
+            var plug2 = {};
+            var mod1 = function () { return plug1; };
+            var mod2 = function () { return plug2; };
+            b.include(mod1);
+            b.include(mod2);
+            plug1.onAnnotationCreated = sandbox.stub().returns(Promise.resolve("ok"));
 
             var delayedReject = null;
-            pluginTwo.hookResult = new Promise(function (resolve, reject) {
+            plug2.onAnnotationCreated = sandbox.stub().returns(new Promise(function (resolve, reject) {
                 delayedReject = reject;
-            });
+            }));
 
             var ret = b.runHook('onAnnotationCreated');
             ret.then(function () {
@@ -143,10 +130,10 @@ describe('App', function () {
         });
     });
 
-    describe('#finalize', function () {
+    describe('#start', function () {
         it('sets the authz property on the app and registry', function () {
             var b = new app.App();
-            b.finalize();
+            b.start();
 
             assert.ok(b.authz);
             assert.ok(b.registry.authz);
@@ -154,7 +141,7 @@ describe('App', function () {
 
         it('sets the ident property on the app and registry', function () {
             var b = new app.App();
-            b.finalize();
+            b.start();
 
             assert.ok(b.ident);
             assert.ok(b.registry.ident);
@@ -162,7 +149,7 @@ describe('App', function () {
 
         it('sets the notify property on the app and registry', function () {
             var b = new app.App();
-            b.finalize();
+            b.start();
 
             assert.ok(b.notify);
             assert.ok(b.registry.notify);
@@ -175,7 +162,7 @@ describe('App', function () {
             sandbox.stub(storage, 'StorageAdapter').returns(adapter);
             b.registry.registerUtility(s, 'storage');
 
-            b.finalize();
+            b.start();
 
             assert.equal(adapter, b.registry.annotations);
         });
@@ -186,7 +173,7 @@ describe('App', function () {
             sandbox.stub(storage, 'StorageAdapter').returns('adapter');
             b.registry.registerUtility(s, 'storage');
 
-            b.finalize();
+            b.start();
 
             sinon.assert.calledOnce(storage.StorageAdapter);
             sinon.assert.calledWith(storage.StorageAdapter, s);
@@ -199,12 +186,12 @@ describe('App', function () {
             sandbox.stub(storage, 'StorageAdapter').returns('adapter');
             b.registry.registerUtility(s, 'storage');
 
-            b.finalize();
+            b.start();
 
             var hookRunner = storage.StorageAdapter.firstCall.args[1];
-            hookRunner('foo', [1,2,3]);
+            hookRunner('foo', [1, 2, 3]);
 
-            sinon.assert.calledWith(b.runHook, 'foo', [1,2,3]);
+            sinon.assert.calledWith(b.runHook, 'foo', [1, 2, 3]);
         });
     });
 });

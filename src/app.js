@@ -12,8 +12,6 @@ var registry = require('./registry');
 var storage = require('./storage');
 var util = require('./util');
 
-var defaultUI = require('./plugin/defaultui').DefaultUI;
-
 // Gettext
 var _t = util.gettext;
 
@@ -41,7 +39,7 @@ function App(options) {
     instances.push(this);
 
     this.options = options;
-    this._finalized = false;
+    this._started = false;
 
     // Return early if the annotator is not supported.
     if (!supported()) {
@@ -58,84 +56,67 @@ function App(options) {
                                   'identityPolicy');
     this.registry.registerUtility(notification.defaultNotifier,
                                   'notifier');
-    this.registry.registerUtility(storage.nullStorage,
-                                  'storage');
+
+    // And set up a default storage component.
+    this.include(storage.nullStorage);
 }
 
+
 /**
- * function:: App.prototype.finalize()
+ * function:: App.prototype.include(module[, options])
  *
- * Tells the app that configuration is complete, and binds the various
+ * Include a plugin module. If an `options` object is supplied, it will be
+ * passed to the plugin module at initialisation.
+ *
+ * If the returned plugin has a `configure` function, this will be called with
+ * the application registry as its first parameter.
+ *
+ * :param Object module:
+ * :param Object options:
+ * :returns: The Annotator instance, to allow chained method calls.
+ */
+App.prototype.include = function (module, options) {
+    var plugin = module(options);
+    if (typeof plugin.configure === 'function') {
+        plugin.configure(this.registry);
+    }
+    this.plugins.push(plugin);
+    return this;
+};
+
+
+/**
+ * function:: App.prototype.start()
+ *
+ * Tell the app that configuration is complete. This binds the various
  * components passed to the registry to their canonical names so they can be
  * used by the rest of the application.
  *
- * You won't usually need to call this yourself.
+ * Runs the 'start' plugin hook.
+ *
+ * :returns Promise: Resolved when all plugin 'start' hooks have completed.
  */
-App.prototype.finalize = function () {
-    if (this._finalized) {
+App.prototype.start = function () {
+    if (this._started) {
         return;
     }
+    this._started = true;
 
     var self = this;
-
     var reg = this.registry;
 
-    this.authz = this.registry.authz = reg.getUtility('authorizationPolicy');
-    this.ident = this.registry.ident = reg.getUtility('identityPolicy');
-    this.notify = this.registry.notify = reg.getUtility('notifier');
+    this.authz = reg.authz = reg.getUtility('authorizationPolicy');
+    this.ident = reg.ident = reg.getUtility('identityPolicy');
+    this.notify = reg.notify = reg.getUtility('notifier');
 
-    this.annotations = this.registry.annotations = new storage.StorageAdapter(
-        this.registry.getUtility('storage'),
+    this.annotations = reg.annotations = new storage.StorageAdapter(
+        reg.getUtility('storage'),
         function () {
             return self.runHook.apply(self, arguments);
         }
     );
 
-    this._finalized = true;
-};
-
-/**
- * function:: App.prototype.start(element)
- *
- * Start listening for selection events on `element`.
- */
-App.prototype.start = function (element) {
-    this.finalize();
-    this.addPlugin(defaultUI(element, this.options));
-};
-
-
-/**
- * function:: App.prototype.addPlugin(plugin)
- *
- * Register a plugin
- *
- * **Examples**:
- *
- * ::
- *
- *     function creationNotifier(registry) {
- *         return {
- *             onAnnotationCreated: function (ann) {
- *                 console.log("annotationCreated", ann);
- *             }
- *         }
- *     }
- *
- *     annotator
- *       .addPlugin(annotator.plugin.Tags)
- *       .addPlugin(creationNotifier)
- *
- *
- * :param plugin:
- *   A plugin to instantiate. A plugin is a function that accepts a Registry
- *   object for the current App and returns a plugin object. A plugin
- *   object may define function properties wi
- * :returns: The Annotator instance, to allow chained method calls.
- */
-App.prototype.addPlugin = function (plugin) {
-    this.plugins.push(plugin(this.registry));
-    return this;
+    return this.runHook('start');
 };
 
 
@@ -161,14 +142,14 @@ App.prototype.runHook = function (name, args) {
 /**
  * function:: App.prototype.destroy()
  *
- * Destroy the App. Unbinds all event handlers and runs the 'onDestroy' hooks
- * for any plugins.
+ * Destroy the App. Unbinds all event handlers and runs the 'destroy' plugin
+ * hook.
  *
  * :returns Promise: Resolved when destroyed.
  */
 App.prototype.destroy = function () {
     var self = this;
-    return this.runHook('onDestroy')
+    return this.runHook('destroy')
     .then(function () {
         var idx = instances.indexOf(self);
         if (idx !== -1) {

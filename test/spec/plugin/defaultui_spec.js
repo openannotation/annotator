@@ -4,10 +4,10 @@ var h = require('../../helpers');
 
 var $ = require('../../../src/util').$;
 
-var DefaultUI = require('../../../src/plugin/defaultui').DefaultUI,
+var defaultUI = require('../../../src/plugin/defaultui').defaultUI,
     ui = require('../../../src/ui');
 
-describe('DefaultUI plugin', function () {
+describe('defaultUI plugin', function () {
     var sandbox;
 
     beforeEach(function () {
@@ -36,14 +36,16 @@ describe('DefaultUI plugin', function () {
             return assert.operator(adderZ, '>', filterZ);
         }
 
-        var plug = DefaultUI(h.fix())(null);
+        var plug = defaultUI({element: h.fix()});
+        plug.configure(null);
         check(1000);
-        plug.onDestroy();
+        plug.destroy();
 
         $fix.append('<div style="position: relative; z-index: 2000"></div>');
-        plug = DefaultUI(h.fix())(null);
+        plug = defaultUI({element: h.fix()});
+        plug.configure(null);
         check(2000);
-        plug.onDestroy();
+        plug.destroy();
     });
 
     describe("Adder", function () {
@@ -55,11 +57,12 @@ describe('DefaultUI plugin', function () {
             mockRegistry = {annotations: {create: sandbox.stub()}};
             sandbox.stub(ui, 'Adder').returns(mockAdder);
 
-            plug = DefaultUI(el)(mockRegistry);
+            plug = defaultUI({element: el});
+            plug.configure(mockRegistry);
         });
 
         afterEach(function () {
-            plug.onDestroy();
+            plug.destroy();
         });
 
         it("creates an Adder", function () {
@@ -97,11 +100,12 @@ describe('DefaultUI plugin', function () {
             };
             sandbox.stub(ui, 'Editor').returns(mockEditor);
 
-            plug = DefaultUI(el)(mockRegistry);
+            plug = defaultUI({element: el});
+            plug.configure(mockRegistry);
         });
 
         afterEach(function () {
-            plug.onDestroy();
+            plug.destroy();
         });
 
         it("creates an Editor", function () {
@@ -202,8 +206,9 @@ describe('DefaultUI plugin', function () {
         sandbox.stub(ui, 'Highlighter').returns(mockHighlighter);
         sandbox.stub(ui, 'TextSelector').returns(mockTextSelector);
         sandbox.stub(ui, 'Viewer').returns(mockViewer);
-        var plug = DefaultUI(null)(null);
-        plug.onDestroy();
+        var plug = defaultUI({element: null});
+        plug.configure(null);
+        plug.destroy();
         sinon.assert.calledOnce(mockAdder.destroy);
         sinon.assert.calledOnce(mockEditor.destroy);
         sinon.assert.calledOnce(mockHighlighter.destroy);

@@ -47,7 +47,10 @@
               "by running `make pkg` (or `./build/tools -a`).");
       } else {
         var app = new annotator.App();
-        app.start(document.getElementById('airlock'));
+        app.include(annotator.plugin.defaultUI, {
+            element: document.getElementById('airlock')
+        });
+        app.start();
       }
     </script>
   </body>

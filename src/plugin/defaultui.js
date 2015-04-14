@@ -179,36 +179,43 @@ function addPermissionsCheckboxes(editor, registry) {
 //    ann.addPlugin(DefaultUI(document.body, {}))
 //
 // Returns an Annotator plugin.
-function DefaultUI(element) {
+function defaultUI(options) {
+    var element = options.element;
     // FIXME: restore readOnly mode
     //
     // options: # Configuration options
     //   # Start Annotator in read-only mode. No controls will be shown.
     //   readOnly: false
+    // Local helpers
+    var makeAnnotation = annotationFactory(element, '.annotator-hl');
 
-    return function (registry) {
-        // Local helpers
-        var makeAnnotation = annotationFactory(element, '.annotator-hl');
+    var adder;
+    var editor;
+    var highlighter;
+    var tags;
+    var textSelector;
+    var viewer;
 
-        // Shared user interface state
-        var interactionPoint = null;
+    // Shared user interface state
+    var interactionPoint = null;
 
-        var adder = new ui.Adder({
+    function configure(registry) {
+        adder = new ui.Adder({
             onCreate: function (ann) {
                 registry.annotations.create(ann);
             }
         });
         adder.attach();
 
-        var tags = ui.tags({});
-        var editor = new ui.Editor({extensions: [tags.createEditorField]});
+        tags = ui.tags({});
+        editor = new ui.Editor({extensions: [tags.createEditorField]});
         editor.attach();
 
         addPermissionsCheckboxes(editor, registry);
 
-        var highlighter = new ui.Highlighter(element);
+        highlighter = new ui.Highlighter(element);
 
-        var textSelector = new ui.TextSelector(element, {
+        textSelector = new ui.TextSelector(element, {
             onSelection: function (ranges, event) {
                 if (ranges.length > 0) {
                     var annotation = makeAnnotation(ranges);
@@ -249,40 +256,42 @@ function DefaultUI(element) {
             viewerOpts.renderText = ui.markdown().convert;
         }
 
-        var viewer = new ui.Viewer(viewerOpts);
+        viewer = new ui.Viewer(viewerOpts);
         viewer.attach();
 
         injectDynamicStyle();
+    }
 
-        return {
-            onDestroy: function () {
-                adder.destroy();
-                editor.destroy();
-                highlighter.destroy();
-                textSelector.destroy();
-                viewer.destroy();
-                removeDynamicStyle();
-            },
+    return {
+        configure: configure,
 
-            onAnnotationsLoaded: function (anns) { highlighter.drawAll(anns); },
-            onAnnotationCreated: function (ann) { highlighter.draw(ann); },
-            onAnnotationDeleted: function (ann) { highlighter.undraw(ann); },
-            onAnnotationUpdated: function (ann) { highlighter.redraw(ann); },
+        destroy: function () {
+            adder.destroy();
+            editor.destroy();
+            highlighter.destroy();
+            textSelector.destroy();
+            viewer.destroy();
+            removeDynamicStyle();
+        },
 
-            onBeforeAnnotationCreated: function (annotation) {
-                // Editor#load returns a promise that is resolved if editing
-                // completes, and rejected if editing is cancelled. We return it
-                // here to "stall" the annotation process until the editing is
-                // done.
-                return editor.load(annotation, interactionPoint);
-            },
+        onAnnotationsLoaded: function (anns) { highlighter.drawAll(anns); },
+        onAnnotationCreated: function (ann) { highlighter.draw(ann); },
+        onAnnotationDeleted: function (ann) { highlighter.undraw(ann); },
+        onAnnotationUpdated: function (ann) { highlighter.redraw(ann); },
 
-            onBeforeAnnotationUpdated: function (annotation) {
-                return editor.load(annotation, interactionPoint);
-            }
-        };
+        onBeforeAnnotationCreated: function (annotation) {
+            // Editor#load returns a promise that is resolved if editing
+            // completes, and rejected if editing is cancelled. We return it
+            // here to "stall" the annotation process until the editing is
+            // done.
+            return editor.load(annotation, interactionPoint);
+        },
+
+        onBeforeAnnotationUpdated: function (annotation) {
+            return editor.load(annotation, interactionPoint);
+        }
     };
 }
 
 
-exports.DefaultUI = DefaultUI;
+exports.defaultUI = defaultUI;

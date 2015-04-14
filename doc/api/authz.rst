@@ -8,7 +8,9 @@ annotator.authz package
     Default authorization policy.
 
 
-..  function:: annotator.authz.defaultAuthorizationPolicy.permits(action, annotation, identity)
+..  function:: annotator.authz.defaultAuthorizationPolicy.permits(action,
+                                                  annotation,
+                                                  identity)
     
     Determines whether the user identified by `identity` is permitted to
     perform the specified action on the given annotation.

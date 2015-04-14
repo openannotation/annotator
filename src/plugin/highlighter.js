@@ -3,31 +3,22 @@
 var annotator = require('annotator');
 
 
-// Highlighter is a simple plugin that uses the Annotator.UI.Highlighter
+// highlighter is a simple plugin that uses the Annotator.UI.Highlighter
 // component to draw/undraw highlights automatically when annotations are
 // created and removed.
-function Highlighter(element, options, highlighter) {
-    if (typeof highlighter === 'undefined' || highlighter === null) {
-        highlighter = annotator.ui.Highlighter;
-    }
+function highlighter(element, options) {
+    var widget = annotator.ui.Highlighter(element, options);
 
-    // Store the constructor in an uppercased variable
-    var Hl = highlighter;
-
-    return function () {
-        var hl = new Hl(element, options);
-
-        return {
-            onDestroy: function () { hl.destroy(); },
-            onAnnotationsLoaded: function (anns) { hl.drawAll(anns); },
-            onAnnotationCreated: function (ann) { hl.draw(ann); },
-            onAnnotationDeleted: function (ann) { hl.undraw(ann); },
-            onAnnotationUpdated: function (ann) { hl.redraw(ann); }
-        };
+    return {
+        destroy: function () { widget.destroy(); },
+        onAnnotationsLoaded: function (anns) { widget.drawAll(anns); },
+        onAnnotationCreated: function (ann) { widget.draw(ann); },
+        onAnnotationDeleted: function (ann) { widget.undraw(ann); },
+        onAnnotationUpdated: function (ann) { widget.redraw(ann); }
     };
 }
 
 
-annotator.plugin.Highlighter = Highlighter;
+annotator.plugin.highlighter = highlighter;
 
-exports.Highlighter = Highlighter;
+exports.highlighter = highlighter;
