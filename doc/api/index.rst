@@ -6,6 +6,7 @@ API documentation
 
    annotator
    core
+   registry
    storage
    authorizer
    identifier
