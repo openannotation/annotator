@@ -3,18 +3,17 @@
 annotator.storage package
 =========================
 
-..  function:: annotator.storage.DebugStorage()
+..  data:: annotator.storage.debugStorage
     
-    DebugStorage is a storage component that can be used to print details of the
-    annotation persistence processes to the console when developing other parts
-    of Annotator.
+    A storage component that can be used to print details of the annotation
+    persistence processes to the console when developing other parts of
+    Annotator.
 
 
-..  function:: annotator.storage.NullStorage()
+..  data:: annotator.storage.nullStorage
     
-    NullStorage is a no-op storage component. It swallows all calls and does the
-    bare minimum needed. Needless to say, it does not provide any real
-    persistence.
+    A no-op storage component. It swallows all calls and does the bare minimum
+    needed. Needless to say, it does not provide any real persistence.
 
 
 ..  class:: annotator.storage.HTTPStorageImpl([options])
@@ -77,7 +76,8 @@ annotator.storage package
     Searches for annotations matching the specified query.
     
     :param Object queryObj: An object describing the query.
-    :returns Promise: Resolves to an object containing query `results` and `meta`.
+    :returns Promise:
+      Resolves to an object containing query `results` and `meta`.
 
 
 ..  function:: annotator.storage.HTTPStorageImpl.prototype.setHeader(name, value)

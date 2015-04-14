@@ -5,9 +5,9 @@
 var extend = require('backbone-extend-standalone');
 var Promise = require('./util').Promise;
 
-var authorizer = require('./authorizer');
-var identifier = require('./identifier');
-var notifier = require('./notifier');
+var authz = require('./authz');
+var identity = require('./identity');
+var notification = require('./notification');
 var registry = require('./registry');
 var storage = require('./storage');
 var util = require('./util');
@@ -50,10 +50,16 @@ function App(options) {
 
     this.plugins = [];
     this.registry = new registry.Registry();
-    this.registry.registerUtility(authorizer.Default({}), 'authorizer');
-    this.registry.registerUtility(identifier.Default(null), 'identifier');
-    this.registry.registerUtility(notifier.Banner, 'notifier');
-    this.registry.registerUtility(storage.NullStorage, 'storage');
+
+    // Register a bunch of default utilities
+    this.registry.registerUtility(authz.defaultAuthorizationPolicy,
+                                  'authorizationPolicy');
+    this.registry.registerUtility(identity.defaultIdentityPolicy,
+                                  'identityPolicy');
+    this.registry.registerUtility(notification.defaultNotifier,
+                                  'notifier');
+    this.registry.registerUtility(storage.nullStorage,
+                                  'storage');
 }
 
 /**
@@ -72,12 +78,14 @@ App.prototype.finalize = function () {
 
     var self = this;
 
-    this.registry.authorizer = this.registry.getUtility('authorizer')();
-    this.registry.identifier = this.registry.getUtility('identifier')();
-    this.registry.notifier = this.registry.getUtility('notifier')();
+    var reg = this.registry;
+
+    this.authz = this.registry.authz = reg.getUtility('authorizationPolicy');
+    this.ident = this.registry.ident = reg.getUtility('identityPolicy');
+    this.notify = this.registry.notify = reg.getUtility('notifier');
 
     this.annotations = this.registry.annotations = new storage.StorageAdapter(
-        this.registry.getUtility('storage')(),
+        this.registry.getUtility('storage'),
         function () {
             return self.runHook.apply(self, arguments);
         }

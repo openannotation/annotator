@@ -19,73 +19,68 @@ var id = (function () {
 
 
 /**
- * function:: DebugStorage()
+ * data:: debugStorage
  *
- * DebugStorage is a storage component that can be used to print details of the
- * annotation persistence processes to the console when developing other parts
- * of Annotator.
+ * A storage component that can be used to print details of the annotation
+ * persistence processes to the console when developing other parts of
+ * Annotator.
  */
-function DebugStorage () {
-    function trace(action, annotation) {
+exports.debugStorage = {
+    trace: function trace(action, annotation) {
         var copyAnno = JSON.parse(JSON.stringify(annotation));
         console.debug("DebugStore: " + action, copyAnno);
+    },
+
+    create: function (annotation) {
+        annotation.id = id();
+        this.trace('create', annotation);
+        return annotation;
+    },
+
+    update: function (annotation) {
+        this.trace('update', annotation);
+        return annotation;
+    },
+
+    'delete': function (annotation) {
+        this.trace('destroy', annotation);
+        return annotation;
+    },
+
+    query: function (queryObj) {
+        this.trace('query', queryObj);
+        return {results: [], meta: {total: 0}};
     }
-
-    return {
-        'create': function (annotation) {
-            annotation.id = id();
-            trace('create', annotation);
-            return annotation;
-        },
-
-        'update': function (annotation) {
-            trace('update', annotation);
-            return annotation;
-        },
-
-        'delete': function (annotation) {
-            trace('destroy', annotation);
-            return annotation;
-        },
-
-        'query': function (queryObj) {
-            trace('query', queryObj);
-            return {results: [], meta: {total: 0}};
-        }
-    };
-}
+};
 
 
 /**
- * function:: NullStorage()
+ * data:: nullStorage
  *
- * NullStorage is a no-op storage component. It swallows all calls and does the
- * bare minimum needed. Needless to say, it does not provide any real
- * persistence.
+ * A no-op storage component. It swallows all calls and does the bare minimum
+ * needed. Needless to say, it does not provide any real persistence.
  */
-function NullStorage() {
-    return {
-        'create': function (annotation) {
-            if (typeof annotation.id === 'undefined' ||
-                annotation.id === null) {
-                annotation.id = id();
-            }
-            return annotation;
-        },
-
-        'update': function (annotation) {
-            return annotation;
-        },
-
-        'delete': function (annotation) {
-            return annotation;
-        },
-
-        'query': function () {
-            return {results: []};
+exports.nullStorage = {
+    create: function (annotation) {
+        if (typeof annotation.id === 'undefined' ||
+            annotation.id === null) {
+            annotation.id = id();
         }
-    };
-}
+        return annotation;
+    },
+
+    update: function (annotation) {
+        return annotation;
+    },
+
+    'delete': function (annotation) {
+        return annotation;
+    },
+
+    query: function () {
+        return {results: []};
+    }
+};
 
 
 /**
@@ -617,7 +612,5 @@ StorageAdapter.prototype._cycle = function (
 };
 
 
-exports.DebugStorage = DebugStorage;
 exports.HTTPStorage = HTTPStorage;
-exports.NullStorage = NullStorage;
 exports.StorageAdapter = StorageAdapter;

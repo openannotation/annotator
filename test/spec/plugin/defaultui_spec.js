@@ -89,11 +89,11 @@ describe('DefaultUI plugin', function () {
             };
             mockRegistry = {
                 annotations: {create: sandbox.stub()},
-                authorizer: {
+                authz: {
                     permits: sandbox.stub().returns(true),
-                    userId: function (u) { return u; }
+                    authorizedUserId: function (u) { return u; }
                 },
-                identifier: {who: sandbox.stub().returns('alice')}
+                ident: {who: sandbox.stub().returns('alice')}
             };
             sandbox.stub(ui, 'Editor').returns(mockEditor);
 
@@ -124,14 +124,14 @@ describe('DefaultUI plugin', function () {
             });
 
             it("load hides a field if no user is set", function () {
-                mockRegistry.identifier.who.returns(null);
+                mockRegistry.ident.who.returns(null);
                 viewLoad(field, {});
                 assert.equal(field.style.display, 'none');
             });
 
             it("load hides a field if current user is not admin", function () {
                 var ann = {};
-                mockRegistry.authorizer.permits
+                mockRegistry.authz.permits
                     .withArgs('admin', ann, 'alice').returns(false);
                 viewLoad(field, ann);
                 assert.equal(field.style.display, 'none');
@@ -139,14 +139,14 @@ describe('DefaultUI plugin', function () {
 
             it("load hides a field if current user is not admin", function () {
                 var ann = {};
-                mockRegistry.authorizer.permits
+                mockRegistry.authz.permits
                     .withArgs('admin', ann, 'alice').returns(false);
                 viewLoad(field, ann);
                 assert.equal(field.style.display, 'none');
             });
 
             it("load shows a checked field if the action is authorised with a null user", function () {
-                mockRegistry.authorizer.permits.returns(true);
+                mockRegistry.authz.permits.returns(true);
                 viewLoad(field, {});
                 assert.notEqual(field.style.display, 'none');
                 assert.isTrue(field.firstChild.checked);
@@ -154,7 +154,7 @@ describe('DefaultUI plugin', function () {
 
             it("load shows an unchecked field if the action isn't authorised with a null user", function () {
                 var ann = {};
-                mockRegistry.authorizer.permits
+                mockRegistry.authz.permits
                     .withArgs('read', ann, null).returns(false);
                 viewLoad(field, ann);
                 assert.notEqual(field.style.display, 'none');
@@ -178,7 +178,7 @@ describe('DefaultUI plugin', function () {
             });
 
             it("submit doesn't touch the annotation if the current user is null", function () {
-                mockRegistry.identifier.who.returns(null);
+                mockRegistry.ident.who.returns(null);
                 var ann = {permissions: {'read': ['alice']}};
                 field.firstChild.checked = true;
                 viewSubmit(field, ann);

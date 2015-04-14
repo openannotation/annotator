@@ -104,7 +104,7 @@ function addPermissionsCheckboxes(editor, registry) {
         return function loadCallback(field, annotation) {
             field = util.$(field).show();
 
-            var u = registry.identifier.who();
+            var u = registry.ident.who();
             var input = field.find('input');
 
             // Do not show field if no user is set
@@ -113,12 +113,12 @@ function addPermissionsCheckboxes(editor, registry) {
             }
 
             // Do not show field if current user is not admin.
-            if (!(registry.authorizer.permits('admin', annotation, u))) {
+            if (!(registry.authz.permits('admin', annotation, u))) {
                 field.hide();
             }
 
             // See if we can authorise without a user.
-            if (registry.authorizer.permits(action, annotation, null)) {
+            if (registry.authz.permits(action, annotation, null)) {
                 input.attr('checked', 'checked');
             } else {
                 input.removeAttr('checked');
@@ -128,7 +128,7 @@ function addPermissionsCheckboxes(editor, registry) {
 
     function createSubmitCallback(action) {
         return function submitCallback(field, annotation) {
-            var u = registry.identifier.who();
+            var u = registry.ident.who();
 
             // Don't do anything if no user is set
             if (typeof u === 'undefined' || u === null) {
@@ -146,7 +146,7 @@ function addPermissionsCheckboxes(editor, registry) {
                 // interpret "prevent others from viewing" as meaning "allow
                 // only me to view". This may want changing in the future.
                 annotation.permissions[action] = [
-                    registry.authorizer.userId(u)
+                    registry.authz.authorizedUserId(u)
                 ];
             }
         };
@@ -228,17 +228,17 @@ function DefaultUI(element) {
                 registry.annotations['delete'](ann);
             },
             permitEdit: function (ann) {
-                return registry.authorizer.permits(
+                return registry.authz.permits(
                     'update',
                     ann,
-                    registry.identifier.who()
+                    registry.ident.who()
                 );
             },
             permitDelete: function (ann) {
-                return registry.authorizer.permits(
+                return registry.authz.permits(
                     'delete',
                     ann,
-                    registry.identifier.who()
+                    registry.ident.who()
                 );
             },
             autoViewHighlights: element,

@@ -144,40 +144,33 @@ describe('App', function () {
     });
 
     describe('#finalize', function () {
-        it('sets the authorizer property on the registry', function () {
+        it('sets the authz property on the app and registry', function () {
             var b = new app.App();
             b.finalize();
 
-            assert.isNotNull(b.registry.authorizer);
+            assert.ok(b.authz);
+            assert.ok(b.registry.authz);
         });
 
-        it('sets the identifier property on the registry', function () {
+        it('sets the ident property on the app and registry', function () {
             var b = new app.App();
             b.finalize();
 
-            assert.isNotNull(b.registry.identifier);
+            assert.ok(b.ident);
+            assert.ok(b.registry.ident);
         });
 
-        it('sets the notifier property on the registry', function () {
+        it('sets the notify property on the app and registry', function () {
             var b = new app.App();
             b.finalize();
 
-            assert.isNotNull(b.registry.notifier);
+            assert.ok(b.notify);
+            assert.ok(b.registry.notify);
         });
 
-        it('should call the storage function', function () {
+        it('sets the annotations property on app and registry to be a storage adapter', function () {
             var b = new app.App();
             var s = sandbox.stub();
-            b.registry.registerUtility(s, 'storage');
-
-            b.finalize();
-
-            sinon.assert.calledOnce(s);
-        });
-
-        it('should set registry `annotations` to be a storage adapter', function () {
-            var b = new app.App();
-            var s = sandbox.stub().returns('storage');
             var adapter = {};
             sandbox.stub(storage, 'StorageAdapter').returns(adapter);
             b.registry.registerUtility(s, 'storage');
@@ -187,19 +180,19 @@ describe('App', function () {
             assert.equal(adapter, b.registry.annotations);
         });
 
-        it('should pass the adapter the return value of the storage function', function () {
+        it('should pass the adapter the storage component', function () {
             var b = new app.App();
-            var s = sandbox.stub().returns('storage');
+            var s = sandbox.stub();
             sandbox.stub(storage, 'StorageAdapter').returns('adapter');
             b.registry.registerUtility(s, 'storage');
 
             b.finalize();
 
             sinon.assert.calledOnce(storage.StorageAdapter);
-            sinon.assert.calledWith(storage.StorageAdapter, 'storage');
+            sinon.assert.calledWith(storage.StorageAdapter, s);
         });
 
-        it('should pass the adapter a hook runner which calls the runHook method of the annotator', function () {
+        it('should pass the adapter a hook runner which calls the runHook method of the app', function () {
             var b = new app.App();
             var s = sandbox.stub().returns('storage');
             sandbox.stub(b, 'runHook');
