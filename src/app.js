@@ -30,13 +30,13 @@ if (typeof wgxpath !== "undefined" &&
 var instances = [];
 
 /**
- * class:: Annotator([options])
+ * class:: App([options])
  *
- * Annotator is the coordination point for all annotation functionality.
- * Annotator instances manage the configuration of a particular annotation
- * application, and are the starting point for most deployments of Annotator.
+ * App is the coordination point for all annotation functionality. App instances
+ * manage the configuration of a particular annotation application, and are the
+ * starting point for most deployments of Annotator.
  */
-function Annotator(options) {
+function App(options) {
     // Hold a reference to the instance.
     instances.push(this);
 
@@ -67,17 +67,17 @@ function Annotator(options) {
 
 
 /**
- * function:: Annotator.prototype.start(element)
+ * function:: App.prototype.start(element)
  *
  * Start listening for selection events on `element`.
  */
-Annotator.prototype.start = function (element) {
+App.prototype.start = function (element) {
     this.addPlugin(defaultUI(element, this.options));
 };
 
 
 /**
- * function:: Annotator.prototype.addPlugin(plugin)
+ * function:: App.prototype.addPlugin(plugin)
  *
  * Register a plugin
  *
@@ -100,24 +100,24 @@ Annotator.prototype.start = function (element) {
  *
  * :param plugin:
  *   A plugin to instantiate. A plugin is a function that accepts a Registry
- *   object for the current Annotator and returns a plugin object. A plugin
+ *   object for the current App and returns a plugin object. A plugin
  *   object may define function properties wi
  * :returns: The Annotator instance, to allow chained method calls.
  */
-Annotator.prototype.addPlugin = function (plugin) {
+App.prototype.addPlugin = function (plugin) {
     this.plugins.push(plugin(this.registry));
     return this;
 };
 
 
 /**
- * function:: Annotator.prototype.runHook(name[, args])
+ * function:: App.prototype.runHook(name[, args])
  *
  * Run the named hook with the provided arguments
  *
  * :returns Promise: Resolved when all over the hook handlers are complete.
  */
-Annotator.prototype.runHook = function (name, args) {
+App.prototype.runHook = function (name, args) {
     var results = [];
     for (var i = 0, len = this.plugins.length; i < len; i++) {
         var plugin = this.plugins[i];
@@ -130,7 +130,7 @@ Annotator.prototype.runHook = function (name, args) {
 
 
 /**
- * function:: Annotator.prototype.setStorage(storageFunc)
+ * function:: App.prototype.setStorage(storageFunc)
  *
  * Set the storage implementation
  *
@@ -138,9 +138,9 @@ Annotator.prototype.runHook = function (name, args) {
  *   A function returning a storage component. A storage component must
  *   implement the Storage interface.
  *
- * :returns: The Annotator instance, to allow chained method calls.
+ * :returns: The App instance, to allow chained method calls.
  */
-Annotator.prototype.setStorage = function (storageFunc) {
+App.prototype.setStorage = function (storageFunc) {
     var self = this,
         storage = storageFunc(this.registry),
         adapter = new this._storageAdapterType(storage, function () {
@@ -152,14 +152,14 @@ Annotator.prototype.setStorage = function (storageFunc) {
 
 
 /**
- * function:: Annotator.prototype.destroy()
+ * function:: App.prototype.destroy()
  *
- * Destroy the current Annotator instance. Unbinds all event handlers and
- * runs the 'onDestroy' hooks for any plugins.
+ * Destroy the App. Unbinds all event handlers and runs the 'onDestroy' hooks
+ * for any plugins.
  *
  * :returns Promise: Resolved when destroyed.
  */
-Annotator.prototype.destroy = function () {
+App.prototype.destroy = function () {
     var self = this;
     return this.runHook('onDestroy')
     .then(function () {
@@ -172,11 +172,11 @@ Annotator.prototype.destroy = function () {
 
 
 /**
- * function:: Annotator.extend(object)
+ * function:: App.extend(object)
  *
- * Create a new object which inherits from the Annotator class.
+ * Create a new object which inherits from the App class.
  */
-Annotator.extend = extend;
+App.extend = extend;
 
 
 /**
@@ -231,5 +231,5 @@ function supported(details, scope) {
 }
 
 
-exports.Annotator = Annotator;
+exports.App = App;
 exports.supported = supported;

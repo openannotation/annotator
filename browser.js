@@ -5,14 +5,14 @@ var insertCss = require('insert-css');
 var css = require('./css/annotator.css');
 insertCss(css);
 
-var annotator = require('./src/annotator');
+var app = require('./src/app');
 var ui = require('./src/ui');
 var storage = require('./src/storage');
 var util = require('./src/util');
 
 // Core annotator components
-exports.Annotator = annotator.Annotator;
-exports.supported = annotator.supported;
+exports.App = app.App;
+exports.supported = app.supported;
 
 // Access to libraries (for browser installations)
 exports.storage = storage;

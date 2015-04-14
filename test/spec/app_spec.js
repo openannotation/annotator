@@ -2,7 +2,7 @@ var assert = require('assertive-chai').assert;
 
 var Promise = require('es6-promise').Promise;
 
-var annotator = require('../../src/annotator');
+var app = require('../../src/app');
 
 function PluginHelper(reg) {
     this.registry = reg;
@@ -45,16 +45,16 @@ function MockStorageAdapter(storage, hookRunner) {
 }
 
 
-describe('Annotator', function () {
+describe('App', function () {
     describe('#addPlugin', function () {
         it('should call plugin functions with a registry', function () {
-            var b = new annotator.Annotator();
+            var b = new app.App();
             b.addPlugin(MockPlugin);
             assert.strictEqual(MockPlugin.lastInstance.registry, b.registry);
         });
 
         it('should add the plugin object to its internal list of plugins', function () {
-            var b = new annotator.Annotator();
+            var b = new app.App();
             b.addPlugin(MockPlugin);
             assert.deepEqual(b.plugins, [MockPlugin.lastInstance]);
         });
@@ -62,7 +62,7 @@ describe('Annotator', function () {
 
     describe('#destroy', function () {
         it("should call each plugin's onDestroy function, if it has one", function (done) {
-            var b = new annotator.Annotator();
+            var b = new app.App();
             b.addPlugin(MockPlugin);
             b.addPlugin(MockPlugin);
             b.addPlugin(MockEmptyPlugin);
@@ -80,7 +80,7 @@ describe('Annotator', function () {
 
     describe('#runHook', function () {
         it('should run the named hook handler on each plugin', function () {
-            var b = new annotator.Annotator();
+            var b = new app.App();
             b.addPlugin(MockPlugin);
             var pluginOne = MockPlugin.lastInstance;
             b.addPlugin(MockPlugin);
@@ -97,7 +97,7 @@ describe('Annotator', function () {
         });
 
         it('should return a promise that resolves if all the ' + 'handlers resolve', function (done) {
-            var b = new annotator.Annotator();
+            var b = new app.App();
             b.addPlugin(MockPlugin);
             var pluginOne = MockPlugin.lastInstance;
             b.addPlugin(MockPlugin);
@@ -124,7 +124,7 @@ describe('Annotator', function () {
         });
 
         it('should return a promise that rejects if any handler rejects', function (done) {
-            var b = new annotator.Annotator();
+            var b = new app.App();
             b.addPlugin(MockPlugin);
             var pluginOne = MockPlugin.lastInstance;
             b.addPlugin(MockPlugin);
@@ -149,14 +149,14 @@ describe('Annotator', function () {
 
     describe('#setStorage', function () {
         it('should call the storage function with a registry', function () {
-            var b = new annotator.Annotator();
+            var b = new app.App();
             b._storageAdapterType = MockStorageAdapter;
             b.setStorage(MockStorage);
             assert.strictEqual(MockStorage.lastInstance.registry, b.registry);
         });
 
         it('should set registry `annotations` to be a storage adapter', function () {
-            var b = new annotator.Annotator();
+            var b = new app.App();
             b._storageAdapterType = MockStorageAdapter;
             b.setStorage(MockStorage);
 
@@ -164,7 +164,7 @@ describe('Annotator', function () {
         });
 
         it('should pass the adapter the return value of the storage function', function () {
-            var b = new annotator.Annotator();
+            var b = new app.App();
             b._storageAdapterType = MockStorageAdapter;
             b.setStorage(MockStorage);
 
@@ -172,7 +172,7 @@ describe('Annotator', function () {
         });
 
         it('should pass the adapter a hook runner which calls the runHook method of the annotator', function () {
-            var b = new annotator.Annotator();
+            var b = new app.App();
             b._storageAdapterType = MockStorageAdapter;
             sinon.spy(b, 'runHook');
             b.setStorage(MockStorage);
@@ -197,43 +197,43 @@ describe("supported()", function () {
     });
 
     it("returns true if all is well", function () {
-        assert.isTrue(annotator.supported(null, scope));
+        assert.isTrue(app.supported(null, scope));
     });
 
     it("returns false if scope has no getSelection function", function () {
         delete scope.getSelection;
-        assert.isFalse(annotator.supported(null, scope));
+        assert.isFalse(app.supported(null, scope));
     });
 
     it("returns false if scope has no JSON object", function () {
         delete scope.JSON;
-        assert.isFalse(annotator.supported(null, scope));
+        assert.isFalse(app.supported(null, scope));
     });
 
     it("returns false if scope JSON object has no stringify function", function () {
         scope.JSON = {
             parse: function () {}
         };
-        assert.isFalse(annotator.supported(null, scope));
+        assert.isFalse(app.supported(null, scope));
     });
 
     it("returns false if scope JSON object has no parse function", function () {
         scope.JSON = {
             stringify: function () {}
         };
-        assert.isFalse(annotator.supported(null, scope));
+        assert.isFalse(app.supported(null, scope));
     });
 
     it("returns extra details if details is true and all is well", function () {
         var res;
-        res = annotator.supported(true, scope);
+        res = app.supported(true, scope);
         assert.isTrue(res.supported);
         assert.deepEqual(res.errors, []);
     });
 
     it("returns extra details if details is true and everything is broken", function () {
         var res;
-        res = annotator.supported(true, {});
+        res = app.supported(true, {});
         assert.isFalse(res.supported);
         assert.equal(res.errors.length, 2);
     });

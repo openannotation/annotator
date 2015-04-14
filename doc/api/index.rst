@@ -4,7 +4,7 @@ API documentation
 .. toctree::
    :maxdepth: 2
 
-   annotator
+   app
    registry
    storage
    authorizer
