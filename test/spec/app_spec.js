@@ -3,6 +3,7 @@ var assert = require('assertive-chai').assert;
 var Promise = require('es6-promise').Promise;
 
 var app = require('../../src/app');
+var storage = require('../../src/storage');
 
 function PluginHelper(reg) {
     this.registry = reg;
@@ -29,23 +30,18 @@ function MockEmptyPlugin() {
     return {};
 }
 
-function StorageHelper(reg) {
-    this.registry = reg;
-    MockStorage.lastInstance = this;
-}
-
-function MockStorage(reg) {
-    return new StorageHelper(reg);
-}
-
-function MockStorageAdapter(storage, hookRunner) {
-    this.storage = storage;
-    this.hookRunner = hookRunner;
-    MockStorageAdapter.lastInstance = this;
-}
-
 
 describe('App', function () {
+    var sandbox;
+
+    beforeEach(function () {
+        sandbox = sinon.sandbox.create();
+    });
+
+    afterEach(function () {
+        sandbox.restore();
+    });
+
     describe('#addPlugin', function () {
         it('should call plugin functions with a registry', function () {
             var b = new app.App();
@@ -147,40 +143,75 @@ describe('App', function () {
         });
     });
 
-    describe('#setStorage', function () {
-        it('should call the storage function with a registry', function () {
+    describe('#finalize', function () {
+        it('sets the authorizer property on the registry', function () {
             var b = new app.App();
-            b._storageAdapterType = MockStorageAdapter;
-            b.setStorage(MockStorage);
-            assert.strictEqual(MockStorage.lastInstance.registry, b.registry);
+            b.finalize();
+
+            assert.isNotNull(b.registry.authorizer);
+        });
+
+        it('sets the identifier property on the registry', function () {
+            var b = new app.App();
+            b.finalize();
+
+            assert.isNotNull(b.registry.identifier);
+        });
+
+        it('sets the notifier property on the registry', function () {
+            var b = new app.App();
+            b.finalize();
+
+            assert.isNotNull(b.registry.notifier);
+        });
+
+        it('should call the storage function', function () {
+            var b = new app.App();
+            var s = sandbox.stub();
+            b.registry.registerUtility(s, 'storage');
+
+            b.finalize();
+
+            sinon.assert.calledOnce(s);
         });
 
         it('should set registry `annotations` to be a storage adapter', function () {
             var b = new app.App();
-            b._storageAdapterType = MockStorageAdapter;
-            b.setStorage(MockStorage);
+            var s = sandbox.stub().returns('storage');
+            var adapter = {};
+            sandbox.stub(storage, 'StorageAdapter').returns(adapter);
+            b.registry.registerUtility(s, 'storage');
 
-            assert.strictEqual(MockStorageAdapter.lastInstance, b.registry.annotations);
+            b.finalize();
+
+            assert.equal(adapter, b.registry.annotations);
         });
 
         it('should pass the adapter the return value of the storage function', function () {
             var b = new app.App();
-            b._storageAdapterType = MockStorageAdapter;
-            b.setStorage(MockStorage);
+            var s = sandbox.stub().returns('storage');
+            sandbox.stub(storage, 'StorageAdapter').returns('adapter');
+            b.registry.registerUtility(s, 'storage');
 
-            assert.strictEqual(MockStorageAdapter.lastInstance.storage, MockStorage.lastInstance);
+            b.finalize();
+
+            sinon.assert.calledOnce(storage.StorageAdapter);
+            sinon.assert.calledWith(storage.StorageAdapter, 'storage');
         });
 
         it('should pass the adapter a hook runner which calls the runHook method of the annotator', function () {
             var b = new app.App();
-            b._storageAdapterType = MockStorageAdapter;
-            sinon.spy(b, 'runHook');
-            b.setStorage(MockStorage);
+            var s = sandbox.stub().returns('storage');
+            sandbox.stub(b, 'runHook');
+            sandbox.stub(storage, 'StorageAdapter').returns('adapter');
+            b.registry.registerUtility(s, 'storage');
 
-            MockStorageAdapter.lastInstance.hookRunner('foo', [1, 2, 3]);
-            sinon.assert.calledWith(b.runHook, 'foo', [1, 2, 3]);
+            b.finalize();
 
-            b.runHook.restore();
+            var hookRunner = storage.StorageAdapter.firstCall.args[1];
+            hookRunner('foo', [1,2,3]);
+
+            sinon.assert.calledWith(b.runHook, 'foo', [1,2,3]);
         });
     });
 });

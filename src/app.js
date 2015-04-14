@@ -41,30 +41,50 @@ function App(options) {
     instances.push(this);
 
     this.options = options;
+    this._finalized = false;
 
     // Return early if the annotator is not supported.
     if (!supported()) {
         return this;
     }
 
-    // This is here so it can be overridden when testing
-    this._storageAdapterType = storage.StorageAdapter;
-
     this.plugins = [];
     this.registry = new registry.Registry();
     this.registry.registerUtility(authorizer.Default({}), 'authorizer');
     this.registry.registerUtility(identifier.Default(null), 'identifier');
     this.registry.registerUtility(notifier.Banner, 'notifier');
-    this.setStorage(storage.NullStorage);
+    this.registry.registerUtility(storage.NullStorage, 'storage');
+}
 
-    // For now, we set these properties explicitly on the registry. This is
-    // not how (or where) this should be done once we have a separate
-    // configuration stage.
+/**
+ * function:: App.prototype.finalize()
+ *
+ * Tells the app that configuration is complete, and binds the various
+ * components passed to the registry to their canonical names so they can be
+ * used by the rest of the application.
+ *
+ * You won't usually need to call this yourself.
+ */
+App.prototype.finalize = function () {
+    if (this._finalized) {
+        return;
+    }
+
+    var self = this;
+
     this.registry.authorizer = this.registry.getUtility('authorizer')();
     this.registry.identifier = this.registry.getUtility('identifier')();
     this.registry.notifier = this.registry.getUtility('notifier')();
-}
 
+    this.annotations = this.registry.annotations = new storage.StorageAdapter(
+        this.registry.getUtility('storage')(),
+        function () {
+            return self.runHook.apply(self, arguments);
+        }
+    );
+
+    this._finalized = true;
+};
 
 /**
  * function:: App.prototype.start(element)
@@ -72,6 +92,7 @@ function App(options) {
  * Start listening for selection events on `element`.
  */
 App.prototype.start = function (element) {
+    this.finalize();
     this.addPlugin(defaultUI(element, this.options));
 };
 
@@ -126,28 +147,6 @@ App.prototype.runHook = function (name, args) {
         }
     }
     return Promise.all(results);
-};
-
-
-/**
- * function:: App.prototype.setStorage(storageFunc)
- *
- * Set the storage implementation
- *
- * :param Function storageFunc:
- *   A function returning a storage component. A storage component must
- *   implement the Storage interface.
- *
- * :returns: The App instance, to allow chained method calls.
- */
-App.prototype.setStorage = function (storageFunc) {
-    var self = this,
-        storage = storageFunc(this.registry),
-        adapter = new this._storageAdapterType(storage, function () {
-            return self.runHook.apply(self, arguments);
-        });
-    this.registry.annotations = adapter;
-    return this;
 };
 
 

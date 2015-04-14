@@ -113,7 +113,7 @@
       var elem = document.getElementById('airlock');
       var app = new annotator.App();
       app.addPlugin(annotator.plugin.Filter());
-      app.setStorage(annotator.storage.DebugStorage);
+      app.registry.registerUtility(annotator.storage.DebugStorage, 'storage');
       app.start(elem);
     </script>
   </body>

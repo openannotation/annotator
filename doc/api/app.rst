@@ -10,6 +10,15 @@ annotator package
     starting point for most deployments of Annotator.
 
 
+..  function:: annotator.App.prototype.finalize()
+    
+    Tells the app that configuration is complete, and binds the various
+    components passed to the registry to their canonical names so they can be
+    used by the rest of the application.
+    
+    You won't usually need to call this yourself.
+
+
 ..  function:: annotator.App.prototype.start(element)
     
     Start listening for selection events on `element`.
@@ -48,17 +57,6 @@ annotator package
     Run the named hook with the provided arguments
     
     :returns Promise: Resolved when all over the hook handlers are complete.
-
-
-..  function:: annotator.App.prototype.setStorage(storageFunc)
-    
-    Set the storage implementation
-    
-    :param Function storageFunc:
-      A function returning a storage component. A storage component must
-      implement the Storage interface.
-    
-    :returns: The App instance, to allow chained method calls.
 
 
 ..  function:: annotator.App.prototype.destroy()
