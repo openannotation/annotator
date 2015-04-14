@@ -5,7 +5,6 @@ API documentation
    :maxdepth: 2
 
    annotator
-   core
    registry
    storage
    authorizer

@@ -110,11 +110,11 @@
     <script src="bundle/plugin/filter.js"></script>
 
     <script>
-      var elem = document.getElementById('airlock'),
-          anno = new annotator.Annotator(elem);
-
-      anno.addPlugin(annotator.plugin.Filter());
-      anno.setStorage(annotator.storage.DebugStorage);
+      var elem = document.getElementById('airlock');
+      var app = new annotator.Annotator();
+      app.addPlugin(annotator.plugin.Filter());
+      app.setStorage(annotator.storage.DebugStorage);
+      app.start(elem);
     </script>
   </body>
 

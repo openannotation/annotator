@@ -2,10 +2,13 @@
 
 "use strict";
 
+var extend = require('backbone-extend-standalone');
+var Promise = require('./util').Promise;
+
 var authorizer = require('./authorizer');
-var core = require('./core');
 var identifier = require('./identifier');
 var notifier = require('./notifier');
+var registry = require('./registry');
 var storage = require('./storage');
 var util = require('./util');
 
@@ -26,68 +29,154 @@ if (typeof wgxpath !== "undefined" &&
 // Global instance registry
 var instances = [];
 
-var Annotator = core.Annotator.extend({
-    /**
-     * class:: Annotator(element[, options])
-     *
-     * Annotator represents a reasonable default annotator configuration,
-     * providing a default set of plugins and a user interface.
-     *
-     * NOTE: If the Annotator is not supported by the current browser it will
-     * not perform any setup and simply return a basic object. This allows
-     * plugins to still be loaded but will not function as expected. It is
-     * reccomended to call Annotator.supported() before creating the instance or
-     * using the Unsupported plugin which will notify users that the Annotator
-     * will not work.
-     *
-     * **Examples**:
-     *
-     * ::
-     *
-     *     var app = new annotator.Annotator(document.body);
-     *
-     * :param Element element: DOM Element to attach to.
-     * :param Object options: Configuration options.
-     */
-    constructor: function (element, options) {
-        core.Annotator.call(this);
+/**
+ * class:: Annotator([options])
+ *
+ * Annotator is the coordination point for all annotation functionality.
+ * Annotator instances manage the configuration of a particular annotation
+ * application, and are the starting point for most deployments of Annotator.
+ */
+function Annotator(options) {
+    // Hold a reference to the instance.
+    instances.push(this);
 
-        instances.push(this);
+    this.options = options;
 
-        // Return early if the annotator is not supported.
-        if (!supported()) {
-            return this;
+    // Return early if the annotator is not supported.
+    if (!supported()) {
+        return this;
+    }
+
+    // This is here so it can be overridden when testing
+    this._storageAdapterType = storage.StorageAdapter;
+
+    this.plugins = [];
+    this.registry = new registry.Registry();
+    this.registry.registerUtility(authorizer.Default({}), 'authorizer');
+    this.registry.registerUtility(identifier.Default(null), 'identifier');
+    this.registry.registerUtility(notifier.Banner, 'notifier');
+    this.setStorage(storage.NullStorage);
+
+    // For now, we set these properties explicitly on the registry. This is
+    // not how (or where) this should be done once we have a separate
+    // configuration stage.
+    this.registry.authorizer = this.registry.getUtility('authorizer')();
+    this.registry.identifier = this.registry.getUtility('identifier')();
+    this.registry.notifier = this.registry.getUtility('notifier')();
+}
+
+
+/**
+ * function:: Annotator.prototype.start(element)
+ *
+ * Start listening for selection events on `element`.
+ */
+Annotator.prototype.start = function (element) {
+    this.addPlugin(defaultUI(element, this.options));
+};
+
+
+/**
+ * function:: Annotator.prototype.addPlugin(plugin)
+ *
+ * Register a plugin
+ *
+ * **Examples**:
+ *
+ * ::
+ *
+ *     function creationNotifier(registry) {
+ *         return {
+ *             onAnnotationCreated: function (ann) {
+ *                 console.log("annotationCreated", ann);
+ *             }
+ *         }
+ *     }
+ *
+ *     annotator
+ *       .addPlugin(annotator.plugin.Tags)
+ *       .addPlugin(creationNotifier)
+ *
+ *
+ * :param plugin:
+ *   A plugin to instantiate. A plugin is a function that accepts a Registry
+ *   object for the current Annotator and returns a plugin object. A plugin
+ *   object may define function properties wi
+ * :returns: The Annotator instance, to allow chained method calls.
+ */
+Annotator.prototype.addPlugin = function (plugin) {
+    this.plugins.push(plugin(this.registry));
+    return this;
+};
+
+
+/**
+ * function:: Annotator.prototype.runHook(name[, args])
+ *
+ * Run the named hook with the provided arguments
+ *
+ * :returns Promise: Resolved when all over the hook handlers are complete.
+ */
+Annotator.prototype.runHook = function (name, args) {
+    var results = [];
+    for (var i = 0, len = this.plugins.length; i < len; i++) {
+        var plugin = this.plugins[i];
+        if (typeof plugin[name] === 'function') {
+            results.push(plugin[name].apply(plugin, args));
         }
+    }
+    return Promise.all(results);
+};
 
-        this.registry.registerUtility(authorizer.Default({}), 'authorizer');
-        this.registry.registerUtility(identifier.Default(null), 'identifier');
-        this.registry.registerUtility(notifier.Banner, 'notifier');
-        this.setStorage(storage.NullStorage);
-        this.addPlugin(defaultUI(element, options));
 
-        // For now, we set these properties explicitly on the registry. This is
-        // not how (or where) this should be done once we have a separate
-        // configuration stage.
-        this.registry.authorizer = this.registry.getUtility('authorizer')();
-        this.registry.identifier = this.registry.getUtility('identifier')();
-        this.registry.notifier = this.registry.getUtility('notifier')();
-    },
+/**
+ * function:: Annotator.prototype.setStorage(storageFunc)
+ *
+ * Set the storage implementation
+ *
+ * :param Function storageFunc:
+ *   A function returning a storage component. A storage component must
+ *   implement the Storage interface.
+ *
+ * :returns: The Annotator instance, to allow chained method calls.
+ */
+Annotator.prototype.setStorage = function (storageFunc) {
+    var self = this,
+        storage = storageFunc(this.registry),
+        adapter = new this._storageAdapterType(storage, function () {
+            return self.runHook.apply(self, arguments);
+        });
+    this.registry.annotations = adapter;
+    return this;
+};
 
-    /**
-     * function:: Annotator.prototype.destroy()
-     *
-     * Destroy the current Annotator instance, unbinding all events and
-     * disposing of all relevant elements.
-     */
-    destroy: function () {
-        core.Annotator.prototype.destroy.call(this);
 
-        var idx = instances.indexOf(this);
+/**
+ * function:: Annotator.prototype.destroy()
+ *
+ * Destroy the current Annotator instance. Unbinds all event handlers and
+ * runs the 'onDestroy' hooks for any plugins.
+ *
+ * :returns Promise: Resolved when destroyed.
+ */
+Annotator.prototype.destroy = function () {
+    var self = this;
+    return this.runHook('onDestroy')
+    .then(function () {
+        var idx = instances.indexOf(self);
         if (idx !== -1) {
             instances.splice(idx, 1);
         }
-    }
-});
+    });
+};
+
+
+/**
+ * function:: Annotator.extend(object)
+ *
+ * Create a new object which inherits from the Annotator class.
+ */
+Annotator.extend = extend;
 
 
 /**

@@ -46,8 +46,8 @@
               "Either download a tagged release from GitHub, or build the package " +
               "by running `make pkg` (or `./build/tools -a`).");
       } else {
-        var elem = document.getElementById('airlock');
-        var app = new annotator.Annotator(elem);
+        var app = new annotator.Annotator();
+        app.start(document.getElementById('airlock'));
       }
     </script>
   </body>
