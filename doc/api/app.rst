@@ -3,7 +3,7 @@
 annotator package
 =================
 
-..  class:: annotator.App([options])
+..  class:: annotator.App()
     
     App is the coordination point for all annotation functionality. App instances
     manage the configuration of a particular annotation application, and are the
@@ -52,20 +52,5 @@ annotator package
 ..  function:: annotator.App.extend(object)
     
     Create a new object which inherits from the App class.
-
-
-..  function:: annotator.supported([details=false, scope=window])
-    
-    Examines `scope` (by default the global window object) to determine if
-    Annotator can be used in this environment.
-    
-    :returns Boolean:
-      Whether Annotator can be used in `scope`, if `details` is
-      false.
-    :returns Object:
-      If `details` is true. Properties:
-    
-      - `supported`: Boolean, whether Annotator can be used in `scope`.
-      - `details`: Array of String reasons why Annotator cannot be used.
 
 
