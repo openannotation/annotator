@@ -24,9 +24,6 @@ if (typeof wgxpath !== "undefined" &&
     wgxpath.install();
 }
 
-// Global instance registry
-var instances = [];
-
 /**
  * class:: App([options])
  *
@@ -35,9 +32,6 @@ var instances = [];
  * starting point for most deployments of Annotator.
  */
 function App(options) {
-    // Hold a reference to the instance.
-    instances.push(this);
-
     this.options = options;
     this._started = false;
 
@@ -148,14 +142,7 @@ App.prototype.runHook = function (name, args) {
  * :returns Promise: Resolved when destroyed.
  */
 App.prototype.destroy = function () {
-    var self = this;
-    return this.runHook('destroy')
-    .then(function () {
-        var idx = instances.indexOf(self);
-        if (idx !== -1) {
-            instances.splice(idx, 1);
-        }
-    });
+    return this.runHook('destroy');
 };
 
 
