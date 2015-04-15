@@ -647,7 +647,6 @@
 
 .annotator-notice {
 	color: #fff;
-	position: absolute;
 	position: fixed;
 	top: -54px;
 	left: 0;
@@ -662,10 +661,6 @@
 	-moz-transition: top 0.4s ease-out;
 	-o-transition: top 0.4s ease-out;
 	transition: top 0.4s ease-out;
-}
-
-.ie6 .annotator-notice {
-	position: absolute;
 }
 
 .annotator-notice-success {
