@@ -32,8 +32,8 @@ You can start learning about how to install and deploy Annotator below:
    installing
    usage
    storage/index
-   plugins/index
-   hacking/plugin-development
+   modules/index
+   module-development
 
    annotation-format
    authentication
