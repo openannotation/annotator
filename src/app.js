@@ -93,7 +93,7 @@ App.prototype.start = function () {
         }
     );
 
-    return this.runHook('start');
+    return this.runHook('start', [this.registry]);
 };
 
 

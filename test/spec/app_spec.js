@@ -193,5 +193,16 @@ describe('App', function () {
 
             sinon.assert.calledWith(b.runHook, 'foo', [1, 2, 3]);
         });
+
+        it("should run the module 'start' hook", function () {
+            var b = new app.App();
+            var start = sandbox.stub();
+            var mod = function () { return {start: start}; };
+
+            b.include(mod);
+            b.start();
+
+            sinon.assert.calledWith(start, b.registry);
+        });
     });
 });
