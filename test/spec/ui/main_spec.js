@@ -4,10 +4,10 @@ var h = require('../../helpers');
 
 var $ = require('../../../src/util').$;
 
-var defaultUI = require('../../../src/plugin/defaultui').defaultUI,
+var main = require('../../../src/ui/main').main,
     ui = require('../../../src/ui');
 
-describe('defaultUI plugin', function () {
+describe('annotator.ui.main', function () {
     var sandbox;
 
     beforeEach(function () {
@@ -36,13 +36,13 @@ describe('defaultUI plugin', function () {
             return assert.operator(adderZ, '>', filterZ);
         }
 
-        var plug = defaultUI({element: h.fix()});
+        var plug = main({element: h.fix()});
         plug.configure(null);
         check(1000);
         plug.destroy();
 
         $fix.append('<div style="position: relative; z-index: 2000"></div>');
-        plug = defaultUI({element: h.fix()});
+        plug = main({element: h.fix()});
         plug.configure(null);
         check(2000);
         plug.destroy();
@@ -57,7 +57,7 @@ describe('defaultUI plugin', function () {
             mockRegistry = {annotations: {create: sandbox.stub()}};
             sandbox.stub(ui, 'Adder').returns(mockAdder);
 
-            plug = defaultUI({element: el});
+            plug = main({element: el});
             plug.configure(mockRegistry);
         });
 
@@ -100,7 +100,7 @@ describe('defaultUI plugin', function () {
             };
             sandbox.stub(ui, 'Editor').returns(mockEditor);
 
-            plug = defaultUI({element: el});
+            plug = main({element: el});
             plug.configure(mockRegistry);
         });
 
@@ -206,7 +206,7 @@ describe('defaultUI plugin', function () {
         sandbox.stub(ui, 'Highlighter').returns(mockHighlighter);
         sandbox.stub(ui, 'TextSelector').returns(mockTextSelector);
         sandbox.stub(ui, 'Viewer').returns(mockViewer);
-        var plug = defaultUI({element: null});
+        var plug = main({element: null});
         plug.configure(null);
         plug.destroy();
         sinon.assert.calledOnce(mockAdder.destroy);

@@ -7,3 +7,5 @@ exports.tags = require('./ui/tags').createTagsPlugin;
 exports.TextSelector = require('./ui/textselector').TextSelector;
 exports.Viewer = require('./ui/viewer').Viewer;
 exports.Widget = require('./ui/widget').Widget;
+
+exports.main = require('./ui/main').main;

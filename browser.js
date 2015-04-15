@@ -6,10 +6,9 @@ var css = require('./css/annotator.css');
 insertCss(css);
 
 var app = require('./src/app');
-var ui = require('./src/ui');
 var storage = require('./src/storage');
+var ui = require('./src/ui');
 var util = require('./src/util');
-var defaultUI = require('./src/plugin/defaultui');
 
 // Core annotator components
 exports.App = app.App;
@@ -21,7 +20,6 @@ exports.util = util;
 
 // Plugin namespace (for core-provided plugins)
 exports.plugin = {};
-exports.plugin.defaultUI = defaultUI.defaultUI;
 
 var g = util.getGlobal();
 

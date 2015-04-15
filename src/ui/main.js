@@ -6,6 +6,7 @@ var util = require('../util');
 var g = util.getGlobal(),
     _t = util.gettext;
 
+
 // trim strips whitespace from either end of a string.
 //
 // This usually exists in native code, but not in IE8.
@@ -168,18 +169,15 @@ function addPermissionsCheckboxes(editor, registry) {
 }
 
 
-// DefaultUI is a function that can be used to construct a plugin that will
-// provide Annotator's default user interface.
+// main is a plugin module that provides Annotator's default user interface.
 //
 // element - The DOM element which you want to be able to annotate.
 //
-// Examples
+// Examples::
 //
-//    ann = new annotator.core.Annotator()
-//    ann.addPlugin(DefaultUI(document.body, {}))
+//     app.include(annotator.ui.main);
 //
-// Returns an Annotator plugin.
-function defaultUI(options) {
+function main(options) {
     var element = options.element;
     // FIXME: restore readOnly mode
     //
@@ -294,4 +292,4 @@ function defaultUI(options) {
 }
 
 
-exports.defaultUI = defaultUI;
+exports.main = main;
