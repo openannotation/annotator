@@ -178,7 +178,11 @@ function addPermissionsCheckboxes(editor, registry) {
 //     app.include(annotator.ui.main);
 //
 function main(options) {
-    var element = options.element;
+    if (typeof options === 'undefined' || options === null) {
+        options = {};
+    }
+
+    var element = options.element || util.getGlobal().document.body;
     // FIXME: restore readOnly mode
     //
     // options: # Configuration options

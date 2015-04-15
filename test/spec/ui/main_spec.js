@@ -28,6 +28,15 @@ describe('annotator.ui.main', function () {
         h.clearFixtures();
     });
 
+    it('should attach the TextSelector to the document body by default', function () {
+        sandbox.stub(ui, 'TextSelector');
+
+        var plug = main();
+        plug.configure(mockRegistry);
+
+        sinon.assert.calledWith(ui.TextSelector, document.body);
+    });
+
     it('should add CSS to the document that ensures annotator elements have a suitably high z-index', function () {
         h.addFixture('annotator');
         var $fix = $(h.fix());
