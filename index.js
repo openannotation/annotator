@@ -1,1 +1,1 @@
-module.exports = require('./src/annotator');
+module.exports = require('./src/app');

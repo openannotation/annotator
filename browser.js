@@ -5,14 +5,15 @@ var insertCss = require('insert-css');
 var css = require('./css/annotator.css');
 insertCss(css);
 
-var annotator = require('./src/annotator');
+var app = require('./src/app');
 var ui = require('./src/ui');
 var storage = require('./src/storage');
 var util = require('./src/util');
+var defaultUI = require('./src/plugin/defaultui');
 
 // Core annotator components
-exports.Annotator = annotator.Annotator;
-exports.supported = annotator.supported;
+exports.App = app.App;
+exports.supported = app.supported;
 
 // Access to libraries (for browser installations)
 exports.storage = storage;
@@ -21,6 +22,7 @@ exports.util = util;
 
 // Plugin namespace (for core-provided plugins)
 exports.plugin = {};
+exports.plugin.defaultUI = defaultUI.defaultUI;
 
 // Store a reference to the current annotator object, if one exists.
 var g = util.getGlobal();

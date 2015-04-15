@@ -1,6 +1,7 @@
-var Filter = require('../../../src/plugin/filter').Filter;
+var filter = require('../../../src/plugin/filter').filter;
+var annotator = require('annotator');
 
-describe('Filter plugin', function () {
+describe('filter plugin', function () {
     var mockFilter = null,
         plugin = null,
         sandbox = null;
@@ -12,12 +13,9 @@ describe('Filter plugin', function () {
             destroy: sandbox.stub()
         };
 
-        var mockFilterCtor = sandbox.stub();
-        mockFilterCtor.returns(mockFilter);
+        sandbox.stub(annotator.ui, 'Filter').returns(mockFilter);
 
-        // Create a new plugin object. The Filter plugin doesn't use the registry,
-        // so we can just pass null.
-        plugin = Filter({}, mockFilterCtor)(null);
+        plugin = filter();
     });
 
     afterEach(function () {
@@ -46,7 +44,7 @@ describe('Filter plugin', function () {
     }
 
     it('destroys the filter component when destroyed', function () {
-        plugin.onDestroy();
+        plugin.destroy();
         sinon.assert.calledOnce(mockFilter.destroy);
     });
 });

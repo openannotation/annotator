@@ -260,7 +260,7 @@ function getDocumentMetadata() {
 }
 
 
-function Document() {
+var doc = function () {
     var metadata = getDocumentMetadata();
 
     return {
@@ -269,11 +269,10 @@ function Document() {
             ann.document = JSON.parse(JSON.stringify(metadata));
         }
     };
-}
+};
 
+annotator.plugin.document = doc;
 
-annotator.plugin.Document = Document;
-
-exports.Document = Document;
+exports.document = doc;
 exports.absoluteUrl = absoluteUrl;
 exports.getDocumentMetadata = getDocumentMetadata;

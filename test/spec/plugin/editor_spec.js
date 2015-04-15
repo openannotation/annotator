@@ -1,8 +1,9 @@
 var assert = require('assertive-chai').assert;
 
-var Editor = require('../../../src/plugin/editor').Editor;
+var editor = require('../../../src/plugin/editor').editor;
+var annotator = require('annotator');
 
-describe('Editor plugin', function () {
+describe('editor plugin', function () {
     var ann = null,
         mockEditor = null,
         plugin = null,
@@ -19,12 +20,9 @@ describe('Editor plugin', function () {
             destroy: sandbox.stub()
         };
 
-        var mockEditorCtor = sandbox.stub();
-        mockEditorCtor.returns(mockEditor);
+        sandbox.stub(annotator.ui, 'Editor').returns(mockEditor);
 
-        // Create a new plugin object. The editor plugin doesn't use the registry,
-        // so we can just pass null.
-        plugin = Editor({}, mockEditorCtor)(null);
+        plugin = editor();
     });
 
     afterEach(function () {
@@ -44,7 +42,7 @@ describe('Editor plugin', function () {
     });
 
     it('destroys the editor component when destroyed', function () {
-        plugin.onDestroy();
+        plugin.destroy();
         sinon.assert.calledOnce(mockEditor.destroy);
     });
 });

@@ -19,26 +19,31 @@ var id = (function () {
 
 
 /**
- * function:: DebugStorage()
+ * function:: debugStorage()
  *
- * DebugStorage is a storage component that can be used to print details of the
- * annotation persistence processes to the console when developing other parts
- * of Annotator.
+ * A storage component that can be used to print details of the annotation
+ * persistence processes to the console when developing other parts of
+ * Annotator.
+ *
+ * Use as a plugin module::
+ *
+ *     app.include(annotator.storage.debugStorage);
+ *
  */
-function DebugStorage () {
+exports.debugStorage = function () {
     function trace(action, annotation) {
         var copyAnno = JSON.parse(JSON.stringify(annotation));
         console.debug("DebugStore: " + action, copyAnno);
     }
 
     return {
-        'create': function (annotation) {
+        create: function (annotation) {
             annotation.id = id();
             trace('create', annotation);
             return annotation;
         },
 
-        'update': function (annotation) {
+        update: function (annotation) {
             trace('update', annotation);
             return annotation;
         },
@@ -48,24 +53,32 @@ function DebugStorage () {
             return annotation;
         },
 
-        'query': function (queryObj) {
+        query: function (queryObj) {
             trace('query', queryObj);
             return {results: [], meta: {total: 0}};
+        },
+
+        configure: function (registry) {
+            registry.registerUtility(this, 'storage');
         }
     };
-}
+};
 
 
 /**
- * function:: NullStorage()
+ * function:: nullStorage()
  *
- * NullStorage is a no-op storage component. It swallows all calls and does the
- * bare minimum needed. Needless to say, it does not provide any real
- * persistence.
+ * A no-op storage component. It swallows all calls and does the bare minimum
+ * needed. Needless to say, it does not provide any real persistence.
+ *
+ * Use as a plugin module::
+ *
+ *     app.include(annotator.storage.nullStorage);
+ *
  */
-function NullStorage() {
+exports.nullStorage = function () {
     return {
-        'create': function (annotation) {
+        create: function (annotation) {
             if (typeof annotation.id === 'undefined' ||
                 annotation.id === null) {
                 annotation.id = id();
@@ -73,7 +86,7 @@ function NullStorage() {
             return annotation;
         },
 
-        'update': function (annotation) {
+        update: function (annotation) {
             return annotation;
         },
 
@@ -81,11 +94,15 @@ function NullStorage() {
             return annotation;
         },
 
-        'query': function () {
+        query: function () {
             return {results: []};
+        },
+
+        configure: function (registry) {
+            registry.registerUtility(this, 'storage');
         }
     };
-}
+};
 
 
 /**
@@ -617,7 +634,5 @@ StorageAdapter.prototype._cycle = function (
 };
 
 
-exports.DebugStorage = DebugStorage;
 exports.HTTPStorage = HTTPStorage;
-exports.NullStorage = NullStorage;
 exports.StorageAdapter = StorageAdapter;

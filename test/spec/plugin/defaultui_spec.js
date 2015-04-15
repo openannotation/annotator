@@ -4,10 +4,10 @@ var h = require('../../helpers');
 
 var $ = require('../../../src/util').$;
 
-var DefaultUI = require('../../../src/plugin/defaultui').DefaultUI,
+var defaultUI = require('../../../src/plugin/defaultui').defaultUI,
     ui = require('../../../src/ui');
 
-describe('DefaultUI plugin', function () {
+describe('defaultUI plugin', function () {
     var sandbox;
 
     beforeEach(function () {
@@ -36,14 +36,16 @@ describe('DefaultUI plugin', function () {
             return assert.operator(adderZ, '>', filterZ);
         }
 
-        var plug = DefaultUI(h.fix())(null);
+        var plug = defaultUI({element: h.fix()});
+        plug.configure(null);
         check(1000);
-        plug.onDestroy();
+        plug.destroy();
 
         $fix.append('<div style="position: relative; z-index: 2000"></div>');
-        plug = DefaultUI(h.fix())(null);
+        plug = defaultUI({element: h.fix()});
+        plug.configure(null);
         check(2000);
-        plug.onDestroy();
+        plug.destroy();
     });
 
     describe("Adder", function () {
@@ -55,11 +57,12 @@ describe('DefaultUI plugin', function () {
             mockRegistry = {annotations: {create: sandbox.stub()}};
             sandbox.stub(ui, 'Adder').returns(mockAdder);
 
-            plug = DefaultUI(el)(mockRegistry);
+            plug = defaultUI({element: el});
+            plug.configure(mockRegistry);
         });
 
         afterEach(function () {
-            plug.onDestroy();
+            plug.destroy();
         });
 
         it("creates an Adder", function () {
@@ -89,19 +92,20 @@ describe('DefaultUI plugin', function () {
             };
             mockRegistry = {
                 annotations: {create: sandbox.stub()},
-                authorizer: {
+                authz: {
                     permits: sandbox.stub().returns(true),
-                    userId: function (u) { return u; }
+                    authorizedUserId: function (u) { return u; }
                 },
-                identifier: {who: sandbox.stub().returns('alice')}
+                ident: {who: sandbox.stub().returns('alice')}
             };
             sandbox.stub(ui, 'Editor').returns(mockEditor);
 
-            plug = DefaultUI(el)(mockRegistry);
+            plug = defaultUI({element: el});
+            plug.configure(mockRegistry);
         });
 
         afterEach(function () {
-            plug.onDestroy();
+            plug.destroy();
         });
 
         it("creates an Editor", function () {
@@ -124,14 +128,14 @@ describe('DefaultUI plugin', function () {
             });
 
             it("load hides a field if no user is set", function () {
-                mockRegistry.identifier.who.returns(null);
+                mockRegistry.ident.who.returns(null);
                 viewLoad(field, {});
                 assert.equal(field.style.display, 'none');
             });
 
             it("load hides a field if current user is not admin", function () {
                 var ann = {};
-                mockRegistry.authorizer.permits
+                mockRegistry.authz.permits
                     .withArgs('admin', ann, 'alice').returns(false);
                 viewLoad(field, ann);
                 assert.equal(field.style.display, 'none');
@@ -139,14 +143,14 @@ describe('DefaultUI plugin', function () {
 
             it("load hides a field if current user is not admin", function () {
                 var ann = {};
-                mockRegistry.authorizer.permits
+                mockRegistry.authz.permits
                     .withArgs('admin', ann, 'alice').returns(false);
                 viewLoad(field, ann);
                 assert.equal(field.style.display, 'none');
             });
 
             it("load shows a checked field if the action is authorised with a null user", function () {
-                mockRegistry.authorizer.permits.returns(true);
+                mockRegistry.authz.permits.returns(true);
                 viewLoad(field, {});
                 assert.notEqual(field.style.display, 'none');
                 assert.isTrue(field.firstChild.checked);
@@ -154,7 +158,7 @@ describe('DefaultUI plugin', function () {
 
             it("load shows an unchecked field if the action isn't authorised with a null user", function () {
                 var ann = {};
-                mockRegistry.authorizer.permits
+                mockRegistry.authz.permits
                     .withArgs('read', ann, null).returns(false);
                 viewLoad(field, ann);
                 assert.notEqual(field.style.display, 'none');
@@ -178,7 +182,7 @@ describe('DefaultUI plugin', function () {
             });
 
             it("submit doesn't touch the annotation if the current user is null", function () {
-                mockRegistry.identifier.who.returns(null);
+                mockRegistry.ident.who.returns(null);
                 var ann = {permissions: {'read': ['alice']}};
                 field.firstChild.checked = true;
                 viewSubmit(field, ann);
@@ -202,8 +206,9 @@ describe('DefaultUI plugin', function () {
         sandbox.stub(ui, 'Highlighter').returns(mockHighlighter);
         sandbox.stub(ui, 'TextSelector').returns(mockTextSelector);
         sandbox.stub(ui, 'Viewer').returns(mockViewer);
-        var plug = DefaultUI(null)(null);
-        plug.onDestroy();
+        var plug = defaultUI({element: null});
+        plug.configure(null);
+        plug.destroy();
         sinon.assert.calledOnce(mockAdder.destroy);
         sinon.assert.calledOnce(mockEditor.destroy);
         sinon.assert.calledOnce(mockHighlighter.destroy);

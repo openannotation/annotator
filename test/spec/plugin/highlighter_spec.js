@@ -1,6 +1,7 @@
-var Highlighter = require('../../../src/plugin/highlighter').Highlighter;
+var highlighter = require('../../../src/plugin/highlighter').highlighter;
+var annotator = require('annotator');
 
-describe('Highlighter plugin', function () {
+describe('highlighter plugin', function () {
     var ann = null,
         mockElement = null,
         mockHighlighter = null,
@@ -29,12 +30,9 @@ describe('Highlighter plugin', function () {
             destroy: sandbox.stub()
         };
 
-        var mockHighlighterCtor = sandbox.stub();
-        mockHighlighterCtor.returns(mockHighlighter);
+        sandbox.stub(annotator.ui, 'Highlighter').returns(mockHighlighter);
 
-        // Create a new plugin object. The Highlighter plugin doesn't use the
-        // registry, so we can just pass null.
-        plugin = Highlighter(mockElement, {}, mockHighlighterCtor)(null);
+        plugin = highlighter(mockElement);
     });
 
     afterEach(function () {
@@ -73,7 +71,7 @@ describe('Highlighter plugin', function () {
     });
 
     it('destroys the highlighter component when destroyed', function () {
-        plugin.onDestroy();
+        plugin.destroy();
         sinon.assert.calledOnce(mockHighlighter.destroy);
     });
 });

@@ -104,7 +104,7 @@ function addPermissionsCheckboxes(editor, registry) {
         return function loadCallback(field, annotation) {
             field = util.$(field).show();
 
-            var u = registry.identifier.who();
+            var u = registry.ident.who();
             var input = field.find('input');
 
             // Do not show field if no user is set
@@ -113,12 +113,12 @@ function addPermissionsCheckboxes(editor, registry) {
             }
 
             // Do not show field if current user is not admin.
-            if (!(registry.authorizer.permits('admin', annotation, u))) {
+            if (!(registry.authz.permits('admin', annotation, u))) {
                 field.hide();
             }
 
             // See if we can authorise without a user.
-            if (registry.authorizer.permits(action, annotation, null)) {
+            if (registry.authz.permits(action, annotation, null)) {
                 input.attr('checked', 'checked');
             } else {
                 input.removeAttr('checked');
@@ -128,7 +128,7 @@ function addPermissionsCheckboxes(editor, registry) {
 
     function createSubmitCallback(action) {
         return function submitCallback(field, annotation) {
-            var u = registry.identifier.who();
+            var u = registry.ident.who();
 
             // Don't do anything if no user is set
             if (typeof u === 'undefined' || u === null) {
@@ -146,7 +146,7 @@ function addPermissionsCheckboxes(editor, registry) {
                 // interpret "prevent others from viewing" as meaning "allow
                 // only me to view". This may want changing in the future.
                 annotation.permissions[action] = [
-                    registry.authorizer.userId(u)
+                    registry.authz.authorizedUserId(u)
                 ];
             }
         };
@@ -179,36 +179,43 @@ function addPermissionsCheckboxes(editor, registry) {
 //    ann.addPlugin(DefaultUI(document.body, {}))
 //
 // Returns an Annotator plugin.
-function DefaultUI(element) {
+function defaultUI(options) {
+    var element = options.element;
     // FIXME: restore readOnly mode
     //
     // options: # Configuration options
     //   # Start Annotator in read-only mode. No controls will be shown.
     //   readOnly: false
+    // Local helpers
+    var makeAnnotation = annotationFactory(element, '.annotator-hl');
 
-    return function (registry) {
-        // Local helpers
-        var makeAnnotation = annotationFactory(element, '.annotator-hl');
+    var adder;
+    var editor;
+    var highlighter;
+    var tags;
+    var textSelector;
+    var viewer;
 
-        // Shared user interface state
-        var interactionPoint = null;
+    // Shared user interface state
+    var interactionPoint = null;
 
-        var adder = new ui.Adder({
+    function configure(registry) {
+        adder = new ui.Adder({
             onCreate: function (ann) {
                 registry.annotations.create(ann);
             }
         });
         adder.attach();
 
-        var tags = ui.tags({});
-        var editor = new ui.Editor({extensions: [tags.createEditorField]});
+        tags = ui.tags({});
+        editor = new ui.Editor({extensions: [tags.createEditorField]});
         editor.attach();
 
         addPermissionsCheckboxes(editor, registry);
 
-        var highlighter = new ui.Highlighter(element);
+        highlighter = new ui.Highlighter(element);
 
-        var textSelector = new ui.TextSelector(element, {
+        textSelector = new ui.TextSelector(element, {
             onSelection: function (ranges, event) {
                 if (ranges.length > 0) {
                     var annotation = makeAnnotation(ranges);
@@ -228,17 +235,17 @@ function DefaultUI(element) {
                 registry.annotations['delete'](ann);
             },
             permitEdit: function (ann) {
-                return registry.authorizer.permits(
+                return registry.authz.permits(
                     'update',
                     ann,
-                    registry.identifier.who()
+                    registry.ident.who()
                 );
             },
             permitDelete: function (ann) {
-                return registry.authorizer.permits(
+                return registry.authz.permits(
                     'delete',
                     ann,
-                    registry.identifier.who()
+                    registry.ident.who()
                 );
             },
             autoViewHighlights: element,
@@ -249,40 +256,42 @@ function DefaultUI(element) {
             viewerOpts.renderText = ui.markdown().convert;
         }
 
-        var viewer = new ui.Viewer(viewerOpts);
+        viewer = new ui.Viewer(viewerOpts);
         viewer.attach();
 
         injectDynamicStyle();
+    }
 
-        return {
-            onDestroy: function () {
-                adder.destroy();
-                editor.destroy();
-                highlighter.destroy();
-                textSelector.destroy();
-                viewer.destroy();
-                removeDynamicStyle();
-            },
+    return {
+        configure: configure,
 
-            onAnnotationsLoaded: function (anns) { highlighter.drawAll(anns); },
-            onAnnotationCreated: function (ann) { highlighter.draw(ann); },
-            onAnnotationDeleted: function (ann) { highlighter.undraw(ann); },
-            onAnnotationUpdated: function (ann) { highlighter.redraw(ann); },
+        destroy: function () {
+            adder.destroy();
+            editor.destroy();
+            highlighter.destroy();
+            textSelector.destroy();
+            viewer.destroy();
+            removeDynamicStyle();
+        },
 
-            onBeforeAnnotationCreated: function (annotation) {
-                // Editor#load returns a promise that is resolved if editing
-                // completes, and rejected if editing is cancelled. We return it
-                // here to "stall" the annotation process until the editing is
-                // done.
-                return editor.load(annotation, interactionPoint);
-            },
+        onAnnotationsLoaded: function (anns) { highlighter.drawAll(anns); },
+        onAnnotationCreated: function (ann) { highlighter.draw(ann); },
+        onAnnotationDeleted: function (ann) { highlighter.undraw(ann); },
+        onAnnotationUpdated: function (ann) { highlighter.redraw(ann); },
 
-            onBeforeAnnotationUpdated: function (annotation) {
-                return editor.load(annotation, interactionPoint);
-            }
-        };
+        onBeforeAnnotationCreated: function (annotation) {
+            // Editor#load returns a promise that is resolved if editing
+            // completes, and rejected if editing is cancelled. We return it
+            // here to "stall" the annotation process until the editing is
+            // done.
+            return editor.load(annotation, interactionPoint);
+        },
+
+        onBeforeAnnotationUpdated: function (annotation) {
+            return editor.load(annotation, interactionPoint);
+        }
     };
 }
 
 
-exports.DefaultUI = DefaultUI;
+exports.defaultUI = defaultUI;
