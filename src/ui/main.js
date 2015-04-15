@@ -242,6 +242,9 @@ function main(options) {
 
         var viewerOpts = {
             onEdit: function (ann) {
+                // Copy the interaction point from the shown viewer:
+                interactionPoint = util.$(viewer.element).css(['top', 'left']);
+
                 registry.annotations.update(ann);
             },
             onDelete: function (ann) {
