@@ -9,9 +9,18 @@ var main = require('../../../src/ui/main').main,
 
 describe('annotator.ui.main', function () {
     var sandbox;
+    var mockRegistry;
 
     beforeEach(function () {
         sandbox = sinon.sandbox.create();
+        mockRegistry = {
+            annotations: {create: sandbox.stub()},
+            authz: {
+                permits: sandbox.stub().returns(true),
+                authorizedUserId: function (u) { return u; }
+            },
+            ident: {who: sandbox.stub().returns('alice')}
+        };
     });
 
     afterEach(function () {
@@ -37,24 +46,23 @@ describe('annotator.ui.main', function () {
         }
 
         var plug = main({element: h.fix()});
-        plug.configure(null);
+        plug.configure(mockRegistry);
         check(1000);
         plug.destroy();
 
         $fix.append('<div style="position: relative; z-index: 2000"></div>');
         plug = main({element: h.fix()});
-        plug.configure(null);
+        plug.configure(mockRegistry);
         check(2000);
         plug.destroy();
     });
 
     describe("Adder", function () {
-        var el, mockAdder, mockRegistry, plug;
+        var el, mockAdder, plug;
 
         beforeEach(function () {
             el = $('<div></div>')[0];
             mockAdder = {destroy: sandbox.stub(), attach: sandbox.stub()};
-            mockRegistry = {annotations: {create: sandbox.stub()}};
             sandbox.stub(ui, 'Adder').returns(mockAdder);
 
             plug = main({element: el});
@@ -81,7 +89,7 @@ describe('annotator.ui.main', function () {
     });
 
     describe("Editor", function () {
-        var el, mockEditor, mockRegistry, plug;
+        var el, mockEditor, plug;
 
         beforeEach(function () {
             el = $('<div></div>')[0];
@@ -89,14 +97,6 @@ describe('annotator.ui.main', function () {
                 addField: sandbox.stub(),
                 destroy: sandbox.stub(),
                 attach: sandbox.stub()
-            };
-            mockRegistry = {
-                annotations: {create: sandbox.stub()},
-                authz: {
-                    permits: sandbox.stub().returns(true),
-                    authorizedUserId: function (u) { return u; }
-                },
-                ident: {who: sandbox.stub().returns('alice')}
             };
             sandbox.stub(ui, 'Editor').returns(mockEditor);
 
