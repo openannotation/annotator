@@ -1,3 +1,4 @@
+/*package annotator.ui */
 "use strict";
 
 var ui = require('../ui');
@@ -169,14 +170,24 @@ function addPermissionsCheckboxes(editor, registry) {
 }
 
 
-// main is a plugin module that provides Annotator's default user interface.
-//
-// element - The DOM element which you want to be able to annotate.
-//
-// Examples::
-//
-//     app.include(annotator.ui.main);
-//
+/**
+ * function:: main([options])
+ *
+ * A module that provides a default user interface for Annotator that allows
+ * users to create annotations by selecting text within (a part of) the
+ * document.
+ *
+ * Example::
+ *
+ *     app.include(annotator.ui.main);
+ *
+ * :param Object options:
+ *
+ *   .. attribute:: options.element
+ *
+ *      A DOM element to which to bind event listeners. Defaults to
+ *      ``document.body``, allowing annotation of the whole document.
+ */
 function main(options) {
     if (typeof options === 'undefined' || options === null) {
         options = {};

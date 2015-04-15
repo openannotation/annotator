@@ -10,3 +10,4 @@ API documentation
    authorizer
    identifier
    notifier
+   ui
