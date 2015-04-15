@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Usage: doc path/to/filename.js >output.rst
+# Usage: doc path/to/filename.js output.rst
 #
 # doc generates reStructuredText documentation for JavaScript files. It is a
 # thin wrapper over the js2rst tool, which extracts docstrings from the code.
@@ -42,8 +42,9 @@ preamble () {
 
 main () {
     local src=${1:=}
+    local dst=${2:=}
 
-    if [ -z "$src" ]; then
+    if [ -z "$src" -o -z "$dst" ]; then
         usage
         exit 1
     fi
@@ -59,10 +60,12 @@ main () {
     fi
 
 
-    echo ".. default-domain: js"
-    echo
-    preamble $pkgname
-    tools/js2rst $pkgname <$src
+    {
+        echo ".. default-domain: js"
+        echo
+        preamble $pkgname
+        tools/js2rst $pkgname <"$src"
+    } >"$dst"
 }
 
 main "$@"

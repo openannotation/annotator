@@ -39,7 +39,7 @@ apidoc: $(patsubst src/%.js,doc/api/%.rst,$(SRC))
 
 doc/api/%.rst: src/%.js
 	@mkdir -p $(@D)
-	tools/apidoc $< >$@
+	tools/apidoc $< $@
 
 pkg/%.min.js: pkg/%.js
 	@echo Writing $@
