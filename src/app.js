@@ -3,23 +3,13 @@
 "use strict";
 
 var extend = require('backbone-extend-standalone');
-var Promise = require('./util').Promise;
+var Promise = require('es6-promise').Promise;
 
 var authz = require('./authz');
 var identity = require('./identity');
 var notification = require('./notification');
 var registry = require('./registry');
 var storage = require('./storage');
-var util = require('./util');
-
-// If wicked-good-xpath is available, install it. This will not overwrite any
-// native XPath functionality.
-var wgxpath = util.getGlobal().wgxpath;
-if (typeof wgxpath !== "undefined" &&
-    wgxpath !== null &&
-    typeof wgxpath.install === "function") {
-    wgxpath.install();
-}
 
 /**
  * class:: App([options])

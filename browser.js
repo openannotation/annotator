@@ -23,8 +23,18 @@ exports.util = util;
 exports.plugin = {};
 exports.plugin.defaultUI = defaultUI.defaultUI;
 
-// Store a reference to the current annotator object, if one exists.
 var g = util.getGlobal();
+
+// If wicked-good-xpath is available, install it. This will not overwrite any
+// native XPath functionality.
+var wgxpath = g.wgxpath;
+if (typeof wgxpath !== "undefined" &&
+    wgxpath !== null &&
+    typeof wgxpath.install === "function") {
+    wgxpath.install();
+}
+
+// Store a reference to the current annotator object, if one exists.
 var _annotator = g.annotator;
 
 // Restores the Annotator property on the global object to it's
