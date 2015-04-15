@@ -12,9 +12,6 @@ var registry = require('./registry');
 var storage = require('./storage');
 var util = require('./util');
 
-// Gettext
-var _t = util.gettext;
-
 // If wicked-good-xpath is available, install it. This will not overwrite any
 // native XPath functionality.
 var wgxpath = util.getGlobal().wgxpath;
@@ -33,15 +30,10 @@ if (typeof wgxpath !== "undefined" &&
  */
 function App(options) {
     this.options = options;
-    this._started = false;
-
-    // Return early if the annotator is not supported.
-    if (!supported()) {
-        return this;
-    }
-
     this.plugins = [];
     this.registry = new registry.Registry();
+
+    this._started = false;
 
     // Register a bunch of default utilities
     this.registry.registerUtility(authz.defaultAuthorizationPolicy,
@@ -154,57 +146,4 @@ App.prototype.destroy = function () {
 App.extend = extend;
 
 
-/**
- * function:: supported([details=false, scope=window])
- *
- * Examines `scope` (by default the global window object) to determine if
- * Annotator can be used in this environment.
- *
- * :returns Boolean:
- *   Whether Annotator can be used in `scope`, if `details` is
- *   false.
- * :returns Object:
- *   If `details` is true. Properties:
- *
- *   - `supported`: Boolean, whether Annotator can be used in `scope`.
- *   - `details`: Array of String reasons why Annotator cannot be used.
- */
-function supported(details, scope) {
-    if (typeof scope === 'undefined' || scope === null) {
-        scope = util.getGlobal();
-    }
-
-    var errors = [];
-
-    if (typeof scope.getSelection !== 'function') {
-        errors.push(_t("current scope lacks an implementation of the W3C " +
-                       "Range API"));
-    }
-    // We require a working JSON implementation.
-    if (typeof scope.JSON === 'undefined' ||
-        typeof scope.JSON.parse !== 'function' ||
-        typeof scope.JSON.stringify !== 'function') {
-        errors.push(_t("current scope lacks a working JSON implementation"));
-    }
-
-    if (errors.length > 0) {
-        if (details) {
-            return {
-                supported: false,
-                errors: errors
-            };
-        }
-        return false;
-    }
-    if (details) {
-        return {
-            supported: true,
-            errors: []
-        };
-    }
-    return true;
-}
-
-
 exports.App = App;
-exports.supported = supported;

@@ -13,7 +13,6 @@ var defaultUI = require('./src/plugin/defaultui');
 
 // Core annotator components
 exports.App = app.App;
-exports.supported = app.supported;
 
 // Access to libraries (for browser installations)
 exports.storage = storage;

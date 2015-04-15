@@ -1,21 +1,88 @@
-var annotator = require('annotator'),
-    Unsupported = require('../../../src/plugin/unsupported').Unsupported;
+var assert = require('assertive-chai').assert;
 
-describe('Unsupported plugin', function () {
-    it('should notify the user if Annotator does not support the current browser', function () {
-        var mockRegistry = {
-            notifier: {
-                show: sinon.stub()
-            }
+var unsupported = require('../../../src/plugin/unsupported');
+
+
+describe("unsupported.checkSupport()", function () {
+    var scope = null;
+
+    beforeEach(function () {
+        scope = {
+            getSelection: function () {},
+            JSON: window.JSON
         };
-        sinon.stub(annotator, 'supported').returns({
+    });
+
+    it("supported is true if all is well", function () {
+        var res = unsupported.checkSupport(scope);
+        assert.isTrue(res.supported);
+    });
+
+    it("supported is false if scope has no getSelection function", function () {
+        delete scope.getSelection;
+        var res = unsupported.checkSupport(scope);
+        assert.isFalse(res.supported);
+    });
+
+    it("supported is false if scope has no JSON object", function () {
+        delete scope.JSON;
+        var res = unsupported.checkSupport(scope);
+        assert.isFalse(res.supported);
+    });
+
+    it("supported is false if scope JSON object has no stringify function", function () {
+        scope.JSON = {
+            parse: function () {}
+        };
+        var res = unsupported.checkSupport(scope);
+        assert.isFalse(res.supported);
+    });
+
+    it("supported is false if scope JSON object has no parse function", function () {
+        scope.JSON = {
+            stringify: function () {}
+        };
+        var res = unsupported.checkSupport(scope);
+        assert.isFalse(res.supported);
+    });
+
+    it("errors is empty if all is well", function () {
+        var res = unsupported.checkSupport(scope);
+        assert.deepEqual(res.errors, []);
+    });
+
+    it("returns extra details if details is true and everything is broken", function () {
+        var res = unsupported.checkSupport({});
+        assert.equal(res.errors.length, 2);
+    });
+});
+
+
+describe('unsupported plugin', function () {
+    var mockRegistry;
+    var sandbox = sinon.sandbox.create();
+
+    beforeEach(function () {
+        mockRegistry = {
+            notify: sandbox.stub()
+        };
+
+        sandbox.stub(unsupported, 'checkSupport').returns({
             supported: false,
             errors: ['widgets are discombobulated']
         });
+    });
 
-        Unsupported(mockRegistry);
+    afterEach(function () {
+        sandbox.restore();
+    });
+
+    it('should notify the user on start if Annotator does not support the current browser', function () {
+        var plugin = unsupported.unsupported();
+        plugin.start(mockRegistry);
+
         sinon.assert.calledWith(
-            mockRegistry.notifier.show,
+            mockRegistry.notify,
             sinon.match('widgets are discombobulated')
         );
     });
