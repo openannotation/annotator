@@ -12,14 +12,13 @@ var registry = require('./registry');
 var storage = require('./storage');
 
 /**
- * class:: App([options])
+ * class:: App()
  *
  * App is the coordination point for all annotation functionality. App instances
  * manage the configuration of a particular annotation application, and are the
  * starting point for most deployments of Annotator.
  */
-function App(options) {
-    this.options = options;
+function App() {
     this.plugins = [];
     this.registry = new registry.Registry();
 
