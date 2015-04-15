@@ -63,7 +63,7 @@
 }
 
 /* NB: If you change the list of classes for which z-index is set,
-       you should update Annotator._setupDynamicStyle() */
+       you should update setupDynamicStyle() in annotator.ui.main */
 .annotator-adder,
 .annotator-outer,
 .annotator-notice {
