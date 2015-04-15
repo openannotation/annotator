@@ -7,7 +7,7 @@ API documentation
    app
    registry
    storage
-   authorizer
-   identifier
-   notifier
+   authz
+   identity
+   notification
    ui

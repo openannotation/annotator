@@ -44,11 +44,12 @@ function App() {
  * passed to the plugin module at initialisation.
  *
  * If the returned plugin has a `configure` function, this will be called with
- * the application registry as its first parameter.
+ * the application registry as a parameter.
  *
  * :param Object module:
  * :param Object options:
- * :returns: The Annotator instance, to allow chained method calls.
+ * :returns: Itself.
+ * :rtype: App
  */
 App.prototype.include = function (module, options) {
     var plugin = module(options);
@@ -69,7 +70,8 @@ App.prototype.include = function (module, options) {
  *
  * Runs the 'start' plugin hook.
  *
- * :returns Promise: Resolved when all plugin 'start' hooks have completed.
+ * :returns: A promise, resolved when all plugin 'start' hooks have completed.
+ * :rtype: Promise
  */
 App.prototype.start = function () {
     if (this._started) {
@@ -96,11 +98,31 @@ App.prototype.start = function () {
 
 
 /**
+ * function:: App.prototype.destroy()
+ *
+ * Destroy the App. Unbinds all event handlers and runs the 'destroy' plugin
+ * hook.
+ *
+ * :returns: A promise, resolved when destroyed.
+ * :rtype: Promise
+ */
+App.prototype.destroy = function () {
+    return this.runHook('destroy');
+};
+
+
+/**
  * function:: App.prototype.runHook(name[, args])
  *
- * Run the named hook with the provided arguments
+ * Run the named module hook and return a promise of the results of all the hook
+ * functions. You won't usually need to run this yourself unless you are
+ * extending the base functionality of App.
  *
- * :returns Promise: Resolved when all over the hook handlers are complete.
+ * Optionally accepts an array of argument (`args`) to pass to each hook
+ * function.
+ *
+ * :returns: A promise, resolved when all hooks are complete.
+ * :rtype: Promise
  */
 App.prototype.runHook = function (name, args) {
     var results = [];
@@ -115,22 +137,27 @@ App.prototype.runHook = function (name, args) {
 
 
 /**
- * function:: App.prototype.destroy()
- *
- * Destroy the App. Unbinds all event handlers and runs the 'destroy' plugin
- * hook.
- *
- * :returns Promise: Resolved when destroyed.
- */
-App.prototype.destroy = function () {
-    return this.runHook('destroy');
-};
-
-
-/**
  * function:: App.extend(object)
  *
  * Create a new object which inherits from the App class.
+ *
+ * For example, here we create a ``CustomApp`` which will include the
+ * hypothetical ``mymodules.foo.bar`` module depending on the options object
+ * passed into the constructor::
+ *
+ *     var CustomApp = annotator.App.extend({
+ *         constructor: function (options) {
+ *             App.apply(this);
+ *             if (options.foo === 'bar') {
+ *                 this.include(mymodules.foo.bar);
+ *             }
+ *         }
+ *     });
+ *
+ *     var app = new CustomApp({foo: 'bar'});
+ *
+ * :returns: The subclass constructor.
+ * :rtype: Function
  */
 App.extend = extend;
 
