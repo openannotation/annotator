@@ -50,7 +50,7 @@ annotator package
     Run the named module hook and return a promise of the results of all the hook
     functions. You won't usually need to run this yourself unless you are
     extending the base functionality of App.
-
+    
     Optionally accepts an array of argument (`args`) to pass to each hook
     function.
     
@@ -61,11 +61,11 @@ annotator package
 ..  function:: annotator.App.extend(object)
     
     Create a new object which inherits from the App class.
-
+    
     For example, here we create a ``CustomApp`` which will include the
     hypothetical ``mymodules.foo.bar`` module depending on the options object
     passed into the constructor::
-
+    
         var CustomApp = annotator.App.extend({
             constructor: function (options) {
                 App.apply(this);
@@ -74,9 +74,9 @@ annotator package
                 }
             }
         });
-
+    
         var app = new CustomApp({foo: 'bar'});
-
+    
     :returns: The subclass constructor.
     :rtype: Function
 

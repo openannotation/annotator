@@ -19,7 +19,7 @@ var id = (function () {
 
 
 /**
- * function:: debugStorage()
+ * function:: debug()
  *
  * A storage component that can be used to print details of the annotation
  * persistence processes to the console when developing other parts of
@@ -27,13 +27,13 @@ var id = (function () {
  *
  * Use as a plugin module::
  *
- *     app.include(annotator.storage.debugStorage);
+ *     app.include(annotator.storage.debug);
  *
  */
-exports.debugStorage = function () {
+exports.debug = function () {
     function trace(action, annotation) {
         var copyAnno = JSON.parse(JSON.stringify(annotation));
-        console.debug("DebugStore: " + action, copyAnno);
+        console.debug("annotator.storage.debug: " + action, copyAnno);
     }
 
     return {
@@ -66,17 +66,17 @@ exports.debugStorage = function () {
 
 
 /**
- * function:: nullStorage()
+ * function:: noop()
  *
  * A no-op storage component. It swallows all calls and does the bare minimum
  * needed. Needless to say, it does not provide any real persistence.
  *
  * Use as a plugin module::
  *
- *     app.include(annotator.storage.nullStorage);
+ *     app.include(annotator.storage.noop);
  *
  */
-exports.nullStorage = function () {
+exports.noop = function () {
     return {
         create: function (annotation) {
             if (typeof annotation.id === 'undefined' ||

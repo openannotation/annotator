@@ -33,7 +33,7 @@ function App() {
                                   'notifier');
 
     // And set up a default storage component.
-    this.include(storage.nullStorage);
+    this.include(storage.noop);
 }
 
 

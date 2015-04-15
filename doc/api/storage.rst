@@ -3,7 +3,7 @@
 annotator.storage package
 =========================
 
-..  function:: annotator.storage.debugStorage()
+..  function:: annotator.storage.debug()
     
     A storage component that can be used to print details of the annotation
     persistence processes to the console when developing other parts of
@@ -11,17 +11,17 @@ annotator.storage package
     
     Use as a plugin module::
     
-        app.include(annotator.storage.debugStorage);
+        app.include(annotator.storage.debug);
 
 
-..  function:: annotator.storage.nullStorage()
+..  function:: annotator.storage.noop()
     
     A no-op storage component. It swallows all calls and does the bare minimum
     needed. Needless to say, it does not provide any real persistence.
     
     Use as a plugin module::
     
-        app.include(annotator.storage.nullStorage);
+        app.include(annotator.storage.noop);
 
 
 ..  class:: annotator.storage.HTTPStorageImpl([options])
