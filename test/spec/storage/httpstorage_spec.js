@@ -7,7 +7,7 @@ describe("storage.HTTPStorage", function () {
 
     beforeEach(function () {
         lastReq = null;
-        store = storage.HTTPStorage();
+        store = new storage.HTTPStorage();
         xhr = sinon.useFakeXMLHttpRequest();
         xhr.onCreate = function (r) {
             lastReq = r;
@@ -178,6 +178,25 @@ describe("storage.HTTPStorage", function () {
     });
 
     describe("error handling", function () {
-        xit("should be tested");
+        var onError;
+
+        beforeEach(function () {
+            onError = sinon.spy();
+        });
+
+        it("calls the onError handler when an error occurs", function (done) {
+            store = new storage.HTTPStorage({
+                onError: onError
+            });
+            var res = store.create({text: "Donkeys on giraffes"});
+
+            lastReq.respond(400);
+
+            var check = function () {
+                sinon.assert.calledOnce(onError);
+                done();
+            };
+            res.then(check, check);
+        });
     });
 });

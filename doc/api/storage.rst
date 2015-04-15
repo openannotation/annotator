@@ -24,77 +24,84 @@ annotator.storage package
         app.include(annotator.storage.noop);
 
 
-..  class:: annotator.storage.HTTPStorageImpl([options])
+..  function:: annotator.storage.http([options])
     
-    HTTPStorageImpl is a storage component that talks to a simple remote API that
-    can be implemented with any web framework.
+    A module which configures an instance of
+    :class:`annotator.storage.HTTPStorage` as the storage component.
     
-    :param Object options: Configuration options.
+    :param Object options:
+      Configuration options. For available options see
+      :attr:`~annotator.storage.HTTPStorage.options`.
 
 
-..  function:: annotator.storage.HTTPStorageImpl.prototype.create(annotation)
+..  class:: annotator.storage.HTTPStorage([options])
+    
+    HTTPStorage is a storage component that talks to a remote JSON + HTTP API
+    that should be relatively easy to implement with any web application
+    framework.
+    
+    :param Object options: See :attr:`~annotator.storage.HTTPStorage.options`.
+
+
+..  function:: annotator.storage.HTTPStorage.prototype.create(annotation)
     
     Create an annotation.
-    
-    **Examples**:
-    
-    ::
+
+    **Examples**::
     
         store.create({text: "my new annotation comment"})
         // => Results in an HTTP POST request to the server containing the
         //    annotation as serialised JSON.
     
     :param Object annotation: An annotation.
-    :returns jqXHR: The request object.
+    :returns: The request object.
+    :rtype: Promise
 
 
-..  function:: annotator.storage.HTTPStorageImpl.prototype.update(annotation)
+..  function:: annotator.storage.HTTPStorage.prototype.update(annotation)
     
     Update an annotation.
     
-    **Examples**:
-    
-    ::
+    **Examples**::
     
         store.update({id: "blah", text: "updated annotation comment"})
         // => Results in an HTTP PUT request to the server containing the
         //    annotation as serialised JSON.
     
     :param Object annotation: An annotation. Must contain an `id`.
-    :returns jqXHR: The request object.
+    :returns: The request object.
+    :rtype: Promise
 
 
-..  function:: annotator.storage.HTTPStorageImpl.prototype.delete(annotation)
+..  function:: annotator.storage.HTTPStorage.prototype.delete(annotation)
     
     Delete an annotation.
     
-    **Examples**:
-    
-    ::
+    **Examples**::
     
         store.delete({id: "blah"})
         // => Results in an HTTP DELETE request to the server.
     
     :param Object annotation: An annotation. Must contain an `id`.
-    :returns jqXHR: The request object.
+    :returns: The request object.
+    :rtype: Promise
 
 
-..  function:: annotator.storage.HTTPStorageImpl.prototype.query(queryObj)
+..  function:: annotator.storage.HTTPStorage.prototype.query(queryObj)
     
     Searches for annotations matching the specified query.
     
     :param Object queryObj: An object describing the query.
-    :returns Promise:
-      Resolves to an object containing query `results` and `meta`.
+    :returns:
+      A promise, resolves to an object containing query `results` and `meta`.
+    :rtype: Promise
 
 
-..  function:: annotator.storage.HTTPStorageImpl.prototype.setHeader(name, value)
+..  function:: annotator.storage.HTTPStorage.prototype.setHeader(name, value)
     
     Set a custom HTTP header to be sent with every request.
     
-    **Examples**:
-    
-    ::
+    **Examples**::
     
         store.setHeader('X-My-Custom-Header', 'MyCustomValue')
     
@@ -102,12 +109,12 @@ annotator.storage package
     :param string value: The header value.
 
 
-..  attribute:: annotator.storage.HTTPStorageImpl.options
+..  attribute:: annotator.storage.HTTPStorage.options
     
-    Available configuration options for HTTPStorageImpl.
+    Available configuration options for HTTPStorage. See below.
 
 
-..  attribute:: annotator.storage.HTTPStorageImpl.options.emulateHTTP
+..  attribute:: annotator.storage.HTTPStorage.options.emulateHTTP
     
     Should the plugin emulate HTTP methods like PUT and DELETE for
     interaction with legacy web servers? Setting this to `true` will fake
@@ -118,7 +125,7 @@ annotator.storage package
     **Default**: ``false``
 
 
-..  attribute:: annotator.storage.HTTPStorageImpl.options.emulateJSON
+..  attribute:: annotator.storage.HTTPStorage.options.emulateJSON
     
     Should the plugin emulate JSON POST/PUT payloads by sending its requests
     as application/x-www-form-urlencoded with a single key, "json"
@@ -126,7 +133,7 @@ annotator.storage package
     **Default**: ``false``
 
 
-..  attribute:: annotator.storage.HTTPStorageImpl.options.headers
+..  attribute:: annotator.storage.HTTPStorage.options.headers
     
     A set of custom headers that will be sent with every request. See also
     the setHeader method.
@@ -134,12 +141,12 @@ annotator.storage package
     **Default**: ``{}``
 
 
-..  attribute:: annotator.storage.HTTPStorageImpl.options.onError
+..  attribute:: annotator.storage.HTTPStorage.options.onError
     
     Callback, called if a remote request throws an error.
 
 
-..  attribute:: annotator.storage.HTTPStorageImpl.options.prefix
+..  attribute:: annotator.storage.HTTPStorage.options.prefix
     
     This is the API endpoint. If the server supports Cross Origin Resource
     Sharing (CORS) a full URL can be used here.
@@ -147,13 +154,22 @@ annotator.storage package
     **Default**: ``'/store'``
 
 
-..  attribute:: annotator.storage.HTTPStorageImpl.options.urls
+..  attribute:: annotator.storage.HTTPStorage.options.urls
     
     The server URLs for each available action. These URLs can be anything but
     must respond to the appropriate HTTP method. The URLs are Level 1 URI
     Templates as defined in RFC6570:
     
        http://tools.ietf.org/html/rfc6570#section-1.2
+
+     **Default**::
+
+         {
+             create: '/annotations',
+             update: '/annotations/{id}',
+             destroy: '/annotations/{id}',
+             search: '/search'
+         }
 
 
 ..  class:: annotator.storage.StorageAdapter(store, runHook)
