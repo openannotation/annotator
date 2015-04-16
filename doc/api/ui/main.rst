@@ -19,5 +19,23 @@ annotator.ui package
     
          A DOM element to which to bind event listeners. Defaults to
          ``document.body``, allowing annotation of the whole document.
+    
+      .. attribute:: options.editorExtensions
+    
+         An array of editor extensions. See the
+         :class:`~annotator.ui.editor.Editor` documentation for details of editor
+         extensions.
+    
+      .. attribute:: options.viewerExtensions
+    
+         An array of viewer extensions. See the
+         :class:`~annotator.ui.viewer.Viewer` documentation for details of viewer
+         extensions.
+    
+      .. attribute:: options.viewerRenderer
+    
+         An annotation renderer for the viewer. See the
+         :class:`~annotator.ui.viewer.Viewer` documentation for details of
+         renderers.
 
 

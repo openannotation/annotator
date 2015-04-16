@@ -131,6 +131,18 @@ describe('annotator.ui.main', function () {
             sinon.assert.callCount(mockEditor.addField, 2);
         });
 
+        it("passes editorExtensions on to the editor", function () {
+            editor.Editor.reset();
+            plug = main({
+                element: el,
+                editorExtensions: ['foo', 'bar']
+            });
+            plug.start(mockApp);
+
+            sinon.assert.calledWith(editor.Editor,
+                                    sinon.match.has('extensions', ['foo', 'bar']));
+        });
+
         describe("permissions field load/submit functions", function () {
             var field;
             var viewLoad, viewSubmit;
@@ -203,6 +215,55 @@ describe('annotator.ui.main', function () {
                 viewSubmit(field, ann);
                 assert.deepEqual(ann.permissions, {'read': ['alice']});
             });
+        });
+    });
+
+    describe("Viewer", function () {
+        var el, mockViewer, plug;
+
+        beforeEach(function () {
+            el = $('<div></div>')[0];
+            mockViewer = {
+                addField: sandbox.stub(),
+                destroy: sandbox.stub(),
+                attach: sandbox.stub()
+            };
+            sandbox.stub(viewer, 'Viewer').returns(mockViewer);
+
+            plug = main({element: el});
+            plug.start(mockApp);
+        });
+
+        afterEach(function () {
+            plug.destroy();
+        });
+
+        it("creates a Viewer", function () {
+            sinon.assert.calledOnce(viewer.Viewer);
+        });
+
+        it("passes viewerExtensions on to the viewer", function () {
+            viewer.Viewer.reset();
+            plug = main({
+                element: el,
+                viewerExtensions: ['bar', 'baz']
+            });
+            plug.start(mockApp);
+
+            sinon.assert.calledWith(viewer.Viewer,
+                                    sinon.match.has('extensions', ['bar', 'baz']));
+        });
+
+        it("passes viewerRenderer on to the viewer", function () {
+            viewer.Viewer.reset();
+            plug = main({
+                element: el,
+                viewerRenderer: 'wibble'
+            });
+            plug.start(mockApp);
+
+            sinon.assert.calledWith(viewer.Viewer,
+                                    sinon.match.has('renderer', 'wibble'));
         });
     });
 

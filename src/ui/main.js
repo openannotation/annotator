@@ -6,8 +6,6 @@ var util = require('../util');
 var adder = require('./adder');
 var editor = require('./editor');
 var highlighter = require('./highlighter');
-var markdown = require('./markdown');
-var tags = require('./tags');
 var textselector = require('./textselector');
 var viewer = require('./viewer');
 
@@ -194,20 +192,37 @@ function addPermissionsCheckboxes(editor, app) {
  *
  *      A DOM element to which to bind event listeners. Defaults to
  *      ``document.body``, allowing annotation of the whole document.
+ *
+ *   .. attribute:: options.editorExtensions
+ *
+ *      An array of editor extensions. See the
+ *      :class:`~annotator.ui.editor.Editor` documentation for details of editor
+ *      extensions.
+ *
+ *   .. attribute:: options.viewerExtensions
+ *
+ *      An array of viewer extensions. See the
+ *      :class:`~annotator.ui.viewer.Viewer` documentation for details of viewer
+ *      extensions.
+ *
+ *   .. attribute:: options.viewerRenderer
+ *
+ *      An annotation renderer for the viewer. See the
+ *      :class:`~annotator.ui.viewer.Viewer` documentation for details of
+ *      renderers.
+ *
  */
 function main(options) {
     if (typeof options === 'undefined' || options === null) {
         options = {};
     }
 
-    var element = options.element || util.getGlobal().document.body;
-    // FIXME: restore readOnly mode
-    //
-    // options: # Configuration options
-    //   # Start Annotator in read-only mode. No controls will be shown.
-    //   readOnly: false
+    options.element = options.element || util.getGlobal().document.body;
+    options.editorExtensions = options.editorExtensions || [];
+    options.viewerExtensions = options.viewerExtensions || [];
+
     // Local helpers
-    var makeAnnotation = annotationFactory(element, '.annotator-hl');
+    var makeAnnotation = annotationFactory(options.element, '.annotator-hl');
 
     // Object to hold local state
     var s = {
@@ -222,15 +237,16 @@ function main(options) {
         });
         s.adder.attach();
 
-        s.tags = tags.tags({});
-        s.editor = new editor.Editor({extensions: [s.tags.createEditorField]});
+        s.editor = new editor.Editor({
+            extensions: options.editorExtensions
+        });
         s.editor.attach();
 
         addPermissionsCheckboxes(s.editor, app);
 
-        s.highlighter = new highlighter.Highlighter(element);
+        s.highlighter = new highlighter.Highlighter(options.element);
 
-        s.textselector = new textselector.TextSelector(element, {
+        s.textselector = new textselector.TextSelector(options.element, {
             onSelection: function (ranges, event) {
                 if (ranges.length > 0) {
                     var annotation = makeAnnotation(ranges);
@@ -242,7 +258,7 @@ function main(options) {
             }
         });
 
-        var viewerOpts = {
+        s.viewer = new viewer.Viewer({
             onEdit: function (ann) {
                 // Copy the interaction point from the shown viewer:
                 s.interactionPoint = util.$(s.viewer.element)
@@ -254,28 +270,15 @@ function main(options) {
                 app.annotations['delete'](ann);
             },
             permitEdit: function (ann) {
-                return app.authz.permits(
-                    'update',
-                    ann,
-                    app.ident.who()
-                );
+                return app.authz.permits('update', ann, app.ident.who());
             },
             permitDelete: function (ann) {
-                return app.authz.permits(
-                    'delete',
-                    ann,
-                    app.ident.who()
-                );
+                return app.authz.permits('delete', ann, app.ident.who());
             },
-            extensions: [s.tags.createViewerField],
-            autoViewHighlights: element
-        };
-
-        if (g.Showdown && typeof g.Showdown.converter === 'function') {
-            viewerOpts.renderText = markdown.markdown().convert;
-        }
-
-        s.viewer = new viewer.Viewer(viewerOpts);
+            autoViewHighlights: options.element,
+            extensions: options.viewerExtensions,
+            renderer: options.viewerRenderer
+        });
         s.viewer.attach();
 
         injectDynamicStyle();
