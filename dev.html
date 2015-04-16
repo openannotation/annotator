@@ -107,13 +107,12 @@
 
     <script>var annotator = 'noConflictBeforeValue';</script>
     <script src="bundle/annotator.js"></script>
-    <script src="bundle/plugin/filter.js"></script>
 
     <script>
       var elem = document.getElementById('airlock');
       var app = new annotator.App()
       .include(annotator.ui.main, {element: elem})
-      .include(annotator.plugin.filter)
+      .include(annotator.ui.filter.standalone)
       .include(annotator.storage.debug)
       .start()
     </script>
