@@ -67,10 +67,10 @@ function reanchorRange(range, rootElement) {
 // options - An options Object containing configuration options for the plugin.
 //           See `Highlighter.options` for available options.
 //
-function Highlighter(element, options) {
+var Highlighter = exports.Highlighter = function Highlighter(element, options) {
     this.element = element;
     this.options = $.extend(true, {}, Highlighter.options, options);
-}
+};
 
 Highlighter.prototype.destroy = function () {
     $(this.element)
@@ -209,4 +209,16 @@ Highlighter.options = {
 };
 
 
-exports.Highlighter = Highlighter;
+// standalone is a module that uses the Highlighter to draw/undraw highlights
+// automatically when annotations are created and removed.
+exports.standalone = function standalone(element, options) {
+    var widget = exports.Highlighter(element, options);
+
+    return {
+        destroy: function () { widget.destroy(); },
+        annotationsLoaded: function (anns) { widget.drawAll(anns); },
+        annotationCreated: function (ann) { widget.draw(ann); },
+        annotationDeleted: function (ann) { widget.undraw(ann); },
+        annotationUpdated: function (ann) { widget.redraw(ann); }
+    };
+};

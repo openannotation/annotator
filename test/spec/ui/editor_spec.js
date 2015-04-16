@@ -2,17 +2,17 @@ var assert = require('assertive-chai').assert;
 
 var h = require('../../helpers');
 
-var Editor = require('../../../src/ui/editor'),
+var editor = require('../../../src/ui/editor'),
     util = require('../../../src/util');
 
 var $ = util.$;
 
-describe('ui.Editor.Editor', function () {
+describe('ui.editor.Editor', function () {
     var plugin = null;
 
     describe('in default configuration', function () {
         beforeEach(function () {
-            plugin = new Editor.Editor();
+            plugin = new editor.Editor();
         });
 
         afterEach(function () {
@@ -247,7 +247,7 @@ describe('ui.Editor.Editor', function () {
 
     describe('with the defaultFields option set to false', function () {
         beforeEach(function () {
-            plugin = new Editor.Editor({
+            plugin = new editor.Editor({
                 defaultFields: false
             });
         });
@@ -268,7 +268,7 @@ describe('ui.Editor.Editor', function () {
         var ann = null;
 
         beforeEach(function () {
-            plugin = new Editor.Editor();
+            plugin = new editor.Editor();
             ann = {
                 text: 'Turtles with armbands'
             };
@@ -335,7 +335,7 @@ describe('ui.Editor.Editor', function () {
     });
 });
 
-describe('Editor.dragTracker', function () {
+describe('ui.editor.dragTracker', function () {
     var $handle = null,
         callback = null,
         clock = null,
@@ -347,7 +347,7 @@ describe('Editor.dragTracker', function () {
         clock = sinon.useFakeTimers();
         // Needs to be in a document
         $handle.appendTo(h.fix());
-        dt = Editor.dragTracker($handle[0], callback);
+        dt = editor.dragTracker($handle[0], callback);
     });
 
     afterEach(function () {
@@ -462,7 +462,7 @@ describe('Editor.dragTracker', function () {
     });
 });
 
-describe('Editor.mover', function () {
+describe('ui.editor.mover', function () {
     var $element = null,
         $handle = null,
         m = null;
@@ -477,7 +477,7 @@ describe('Editor.mover', function () {
         $element.css({
             position: 'absolute'
         });
-        m = Editor.mover($element[0], $handle[0]);
+        m = editor.mover($element[0], $handle[0]);
     });
 
     afterEach(function () {
@@ -521,7 +521,7 @@ describe('Editor.mover', function () {
     });
 });
 
-describe('Editor.resizer', function () {
+describe('ui.editor.resizer', function () {
     var $element = null,
         $handle = null,
         options = null,
@@ -537,7 +537,7 @@ describe('Editor.resizer', function () {
             invertedX: sinon.stub().returns(false),
             invertedY: sinon.stub().returns(false)
         };
-        r = Editor.resizer($element[0], $handle[0], options);
+        r = editor.resizer($element[0], $handle[0], options);
     });
 
     afterEach(function () {
@@ -595,5 +595,50 @@ describe('Editor.resizer', function () {
             afterWidth = $element.width();
         assert.equal(afterHeight, 42 + 123);
         assert.equal(afterWidth, 123 + 456);
+    });
+});
+
+
+describe('ui.editor.standalone', function () {
+    var ann = null,
+        mockEditor = null,
+        plugin = null,
+        sandbox = null;
+
+    beforeEach(function () {
+        sandbox = sinon.sandbox.create();
+        ann = {
+            id: 'abc123',
+            text: 'hello there'
+        };
+        mockEditor = {
+            load: sandbox.stub().returns("a promise, honest"),
+            destroy: sandbox.stub()
+        };
+
+        sandbox.stub(editor, 'Editor').returns(mockEditor);
+
+        plugin = editor.standalone();
+    });
+
+    afterEach(function () {
+        sandbox.restore();
+    });
+
+    it('loads an annotation into the editor component beforeAnnotationCreated', function () {
+        var result = plugin.beforeAnnotationCreated(ann);
+        sinon.assert.calledWith(mockEditor.load, ann);
+        assert.equal(result, "a promise, honest");
+    });
+
+    it('loads an annotation into the editor component beforeAnnotationUpdated', function () {
+        var result = plugin.beforeAnnotationUpdated(ann);
+        sinon.assert.calledWith(mockEditor.load, ann);
+        assert.equal(result, "a promise, honest");
+    });
+
+    it('destroys the editor component when destroyed', function () {
+        plugin.destroy();
+        sinon.assert.calledOnce(mockEditor.destroy);
     });
 });

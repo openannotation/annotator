@@ -4,8 +4,14 @@ var h = require('../../helpers');
 
 var $ = require('../../../src/util').$;
 
-var main = require('../../../src/ui/main').main,
-    ui = require('../../../src/ui');
+// Import dependent components so we can stub them out
+var adder = require('../../../src/ui/adder');
+var editor = require('../../../src/ui/editor');
+var highlighter = require('../../../src/ui/highlighter');
+var textselector = require('../../../src/ui/textselector');
+var viewer = require('../../../src/ui/viewer');
+
+var main = require('../../../src/ui/main').main;
 
 describe('annotator.ui.main', function () {
     var sandbox;
@@ -29,12 +35,12 @@ describe('annotator.ui.main', function () {
     });
 
     it('should attach the TextSelector to the document body by default', function () {
-        sandbox.stub(ui, 'TextSelector');
+        sandbox.stub(textselector, 'TextSelector');
 
         var plug = main();
         plug.start(mockApp);
 
-        sinon.assert.calledWith(ui.TextSelector, document.body);
+        sinon.assert.calledWith(textselector.TextSelector, document.body);
     });
 
     it('should add CSS to the document that ensures annotator elements have a suitably high z-index', function () {
@@ -72,7 +78,7 @@ describe('annotator.ui.main', function () {
         beforeEach(function () {
             el = $('<div></div>')[0];
             mockAdder = {destroy: sandbox.stub(), attach: sandbox.stub()};
-            sandbox.stub(ui, 'Adder').returns(mockAdder);
+            sandbox.stub(adder, 'Adder').returns(mockAdder);
 
             plug = main({element: el});
             plug.start(mockApp);
@@ -83,11 +89,11 @@ describe('annotator.ui.main', function () {
         });
 
         it("creates an Adder", function () {
-            sinon.assert.calledOnce(ui.Adder);
+            sinon.assert.calledOnce(adder.Adder);
         });
 
         it("passes an onCreate handler which asks the app to create an annotation", function () {
-            var callArgs = ui.Adder.args[0];
+            var callArgs = adder.Adder.args[0];
             assert.property(callArgs[0], 'onCreate');
             callArgs[0].onCreate({text: 'wibble'});
             sinon.assert.calledWith(
@@ -107,7 +113,7 @@ describe('annotator.ui.main', function () {
                 destroy: sandbox.stub(),
                 attach: sandbox.stub()
             };
-            sandbox.stub(ui, 'Editor').returns(mockEditor);
+            sandbox.stub(editor, 'Editor').returns(mockEditor);
 
             plug = main({element: el});
             plug.start(mockApp);
@@ -118,7 +124,7 @@ describe('annotator.ui.main', function () {
         });
 
         it("creates an Editor", function () {
-            sinon.assert.calledOnce(ui.Editor);
+            sinon.assert.calledOnce(editor.Editor);
         });
 
         it("adds permissions-related fields", function () {
@@ -210,11 +216,11 @@ describe('annotator.ui.main', function () {
             mockHighlighter = {destroy: sandbox.stub()},
             mockTextSelector = {destroy: sandbox.stub()},
             mockViewer = {destroy: sandbox.stub(), attach: sandbox.stub()};
-        sandbox.stub(ui, 'Adder').returns(mockAdder);
-        sandbox.stub(ui, 'Editor').returns(mockEditor);
-        sandbox.stub(ui, 'Highlighter').returns(mockHighlighter);
-        sandbox.stub(ui, 'TextSelector').returns(mockTextSelector);
-        sandbox.stub(ui, 'Viewer').returns(mockViewer);
+        sandbox.stub(adder, 'Adder').returns(mockAdder);
+        sandbox.stub(editor, 'Editor').returns(mockEditor);
+        sandbox.stub(highlighter, 'Highlighter').returns(mockHighlighter);
+        sandbox.stub(textselector, 'TextSelector').returns(mockTextSelector);
+        sandbox.stub(viewer, 'Viewer').returns(mockViewer);
         var plug = main();
         plug.start(mockApp);
         plug.destroy();

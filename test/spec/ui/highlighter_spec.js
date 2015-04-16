@@ -2,7 +2,7 @@ var assert = require('assertive-chai').assert;
 
 var Range = require('xpath-range').Range;
 
-var ui = require('../../../src/ui'),
+var highlighter = require('../../../src/ui/highlighter'),
     util = require('../../../src/util');
 
 var $ = util.$;
@@ -65,13 +65,13 @@ var testData = [
     }
 ];
 
-describe('ui.Highlighter', function () {
+describe('ui.highlighter.Highlighter', function () {
     var elem = null,
         hl = null;
 
     beforeEach(function () {
         elem = $(testDocument).get(0);
-        hl = new ui.Highlighter(elem);
+        hl = new highlighter.Highlighter(elem);
     });
 
     afterEach(function () {
@@ -283,4 +283,80 @@ describe('ui.Highlighter', function () {
             testFromData(i)
         );
     }
+});
+
+
+describe('annotator.ui.highlighter.standalone', function () {
+    var ann = null,
+        mockElement = null,
+        mockHighlighter = null,
+        plugin = null,
+        sandbox = null;
+
+    beforeEach(function () {
+        sandbox = sinon.sandbox.create();
+        ann = {
+            id: 'abc123',
+            ranges: [
+                {
+                    start: '/p[1]',
+                    startOffset: 0,
+                    end: '/p[1]',
+                    endOffset: 12
+                }
+            ]
+        };
+        mockElement = {};
+        mockHighlighter = {
+            draw: sandbox.stub(),
+            undraw: sandbox.stub(),
+            redraw: sandbox.stub(),
+            drawAll: sandbox.stub(),
+            destroy: sandbox.stub()
+        };
+
+        sandbox.stub(highlighter, 'Highlighter').returns(mockHighlighter);
+
+        plugin = highlighter.standalone(mockElement);
+    });
+
+    afterEach(function () {
+        sandbox.restore();
+    });
+
+    it('should draw highlights annotationCreated', function () {
+        plugin.annotationCreated(ann);
+        sinon.assert.calledWith(mockHighlighter.draw, ann);
+    });
+
+    it('should redraw highlights annotationUpdated', function () {
+        plugin.annotationUpdated(ann);
+        sinon.assert.calledWith(mockHighlighter.redraw, ann);
+    });
+
+    it('should undraw highlights annotationDeleted', function () {
+        plugin.annotationDeleted(ann);
+        sinon.assert.calledWith(mockHighlighter.undraw, ann);
+    });
+
+    it('should draw all highlights annotationsLoaded', function () {
+        var ann2 = {
+            id: 'def456',
+            ranges: [
+                {
+                    start: '/p[2]',
+                    startOffset: 0,
+                    end: '/p[2]',
+                    endOffset: 20
+                }
+            ]
+        };
+        plugin.annotationsLoaded([ann, ann2]);
+        sinon.assert.calledWith(mockHighlighter.drawAll, [ann, ann2]);
+    });
+
+    it('destroys the highlighter component when destroyed', function () {
+        plugin.destroy();
+        sinon.assert.calledOnce(mockHighlighter.destroy);
+    });
 });

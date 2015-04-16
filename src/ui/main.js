@@ -1,8 +1,15 @@
 /*package annotator.ui */
 "use strict";
 
-var ui = require('../ui');
 var util = require('../util');
+
+var adder = require('./adder');
+var editor = require('./editor');
+var highlighter = require('./highlighter');
+var markdown = require('./markdown');
+var tags = require('./tags');
+var textselector = require('./textselector');
+var viewer = require('./viewer');
 
 var g = util.getGlobal(),
     _t = util.gettext;
@@ -202,40 +209,35 @@ function main(options) {
     // Local helpers
     var makeAnnotation = annotationFactory(element, '.annotator-hl');
 
-    var adder;
-    var editor;
-    var highlighter;
-    var tags;
-    var textSelector;
-    var viewer;
-
-    // Shared user interface state
-    var interactionPoint = null;
+    // Object to hold local state
+    var s = {
+        interactionPoint: null
+    };
 
     function start(app) {
-        adder = new ui.Adder({
+        s.adder = new adder.Adder({
             onCreate: function (ann) {
                 app.annotations.create(ann);
             }
         });
-        adder.attach();
+        s.adder.attach();
 
-        tags = ui.tags({});
-        editor = new ui.Editor({extensions: [tags.createEditorField]});
-        editor.attach();
+        s.tags = tags.tags({});
+        s.editor = new editor.Editor({extensions: [s.tags.createEditorField]});
+        s.editor.attach();
 
-        addPermissionsCheckboxes(editor, app);
+        addPermissionsCheckboxes(s.editor, app);
 
-        highlighter = new ui.Highlighter(element);
+        s.highlighter = new highlighter.Highlighter(element);
 
-        textSelector = new ui.TextSelector(element, {
+        s.textselector = new textselector.TextSelector(element, {
             onSelection: function (ranges, event) {
                 if (ranges.length > 0) {
                     var annotation = makeAnnotation(ranges);
-                    interactionPoint = util.mousePosition(event);
-                    adder.load(annotation, interactionPoint);
+                    s.interactionPoint = util.mousePosition(event);
+                    s.adder.load(annotation, s.interactionPoint);
                 } else {
-                    adder.hide();
+                    s.adder.hide();
                 }
             }
         });
@@ -243,7 +245,8 @@ function main(options) {
         var viewerOpts = {
             onEdit: function (ann) {
                 // Copy the interaction point from the shown viewer:
-                interactionPoint = util.$(viewer.element).css(['top', 'left']);
+                s.interactionPoint = util.$(s.viewer.element)
+                                         .css(['top', 'left']);
 
                 app.annotations.update(ann);
             },
@@ -264,16 +267,16 @@ function main(options) {
                     app.ident.who()
                 );
             },
-            autoViewHighlights: element,
-            extensions: [tags.createViewerField]
+            extensions: [s.tags.createViewerField],
+            autoViewHighlights: element
         };
 
         if (g.Showdown && typeof g.Showdown.converter === 'function') {
-            viewerOpts.renderText = ui.markdown().convert;
+            viewerOpts.renderText = markdown.markdown().convert;
         }
 
-        viewer = new ui.Viewer(viewerOpts);
-        viewer.attach();
+        s.viewer = new viewer.Viewer(viewerOpts);
+        s.viewer.attach();
 
         injectDynamicStyle();
     }
@@ -282,29 +285,29 @@ function main(options) {
         start: start,
 
         destroy: function () {
-            adder.destroy();
-            editor.destroy();
-            highlighter.destroy();
-            textSelector.destroy();
-            viewer.destroy();
+            s.adder.destroy();
+            s.editor.destroy();
+            s.highlighter.destroy();
+            s.textselector.destroy();
+            s.viewer.destroy();
             removeDynamicStyle();
         },
 
-        annotationsLoaded: function (anns) { highlighter.drawAll(anns); },
-        annotationCreated: function (ann) { highlighter.draw(ann); },
-        annotationDeleted: function (ann) { highlighter.undraw(ann); },
-        annotationUpdated: function (ann) { highlighter.redraw(ann); },
+        annotationsLoaded: function (anns) { s.highlighter.drawAll(anns); },
+        annotationCreated: function (ann) { s.highlighter.draw(ann); },
+        annotationDeleted: function (ann) { s.highlighter.undraw(ann); },
+        annotationUpdated: function (ann) { s.highlighter.redraw(ann); },
 
         beforeAnnotationCreated: function (annotation) {
             // Editor#load returns a promise that is resolved if editing
             // completes, and rejected if editing is cancelled. We return it
             // here to "stall" the annotation process until the editing is
             // done.
-            return editor.load(annotation, interactionPoint);
+            return s.editor.load(annotation, s.interactionPoint);
         },
 
         beforeAnnotationUpdated: function (annotation) {
-            return editor.load(annotation, interactionPoint);
+            return s.editor.load(annotation, s.interactionPoint);
         }
     };
 }

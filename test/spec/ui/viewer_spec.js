@@ -2,12 +2,12 @@ var assert = require('assertive-chai').assert;
 
 var h = require('../../helpers');
 
-var ui = require('../../../src/ui'),
+var viewer = require('../../../src/ui/viewer'),
     util = require('../../../src/util');
 
 var $ = util.$;
 
-describe('ui.Viewer', function () {
+describe('ui.viewer.Viewer', function () {
     var v = null;
 
     beforeEach(function () {
@@ -20,7 +20,7 @@ describe('ui.Viewer', function () {
 
     describe('in default configuration', function () {
         beforeEach(function () {
-            v = new ui.Viewer();
+            v = new viewer.Viewer();
             v.attach();
         });
 
@@ -158,7 +158,7 @@ describe('ui.Viewer', function () {
 
         beforeEach(function () {
             onEdit = sinon.stub();
-            v = new ui.Viewer({
+            v = new viewer.Viewer({
                 permitEdit: function () { return true; },
                 onEdit: onEdit
             });
@@ -200,7 +200,7 @@ describe('ui.Viewer', function () {
 
         beforeEach(function () {
             onDelete = sinon.stub();
-            v = new ui.Viewer({
+            v = new viewer.Viewer({
                 permitDelete: function () { return true; },
                 onDelete: onDelete
             });
@@ -239,7 +239,7 @@ describe('ui.Viewer', function () {
 
     describe('with the defaultFields option set to false', function () {
         beforeEach(function () {
-            v = new ui.Viewer({
+            v = new viewer.Viewer({
                 defaultFields: false
             });
             v.attach();
@@ -261,7 +261,7 @@ describe('ui.Viewer', function () {
         beforeEach(function () {
             renderText = sinon.stub().returns("Wolves with sheep");
 
-            v = new ui.Viewer({
+            v = new viewer.Viewer({
                 defaultFields: true,
                 renderText: renderText
             });
@@ -283,7 +283,7 @@ describe('ui.Viewer', function () {
             clock = null;
 
         beforeEach(function () {
-            v = new ui.Viewer({
+            v = new viewer.Viewer({
                 activityDelay: 50,
                 inactivityDelay: 200,
                 autoViewHighlights: h.fix()
@@ -371,5 +371,93 @@ describe('ui.Viewer', function () {
             });
             assert.isTrue(called, 'event should have propagated to the document');
         });
+    });
+});
+
+
+describe('ui.viewer.standalone', function () {
+    var mockApp = null,
+        mockViewer = null,
+        sandbox = null;
+
+    beforeEach(function () {
+        sandbox = sinon.sandbox.create();
+        mockApp = {
+            annotations: {
+                update: sandbox.stub(),
+                "delete": sandbox.stub()
+            },
+            authz: {
+                permits: sandbox.stub()
+            },
+            ident: {
+                who: sandbox.stub().returns('alice')
+            }
+        };
+        mockViewer = {
+            destroy: sandbox.stub()
+        };
+        sandbox.stub(viewer, 'Viewer').returns(mockViewer);
+    });
+
+    afterEach(function () {
+        sandbox.restore();
+    });
+
+    it('sets a default onEdit handler that calls the storage update function', function () {
+        viewer.standalone().start(mockApp);
+        var passedOptions = viewer.Viewer.firstCall.args[0];
+        assert(sinon.match.has('onEdit').test(passedOptions));
+        passedOptions.onEdit({
+            text: 'foo'
+        });
+        sinon.assert.calledWith(mockApp.annotations.update, {
+            text: 'foo'
+        });
+    });
+
+    it('sets a default onDelete handler that calls the storage delete function', function () {
+        viewer.standalone().start(mockApp);
+        var passedOptions = viewer.Viewer.firstCall.args[0];
+        assert(sinon.match.has('onDelete').test(passedOptions));
+        passedOptions.onDelete({
+            text: 'foo'
+        });
+        sinon.assert.calledWith(mockApp.annotations["delete"], {
+            text: 'foo'
+        });
+    });
+
+    it('sets a default permitEdit handler that consults the authorization policy', function () {
+        viewer.standalone().start(mockApp);
+        var passedOptions = viewer.Viewer.firstCall.args[0];
+        assert(sinon.match.has('permitEdit').test(passedOptions));
+        passedOptions.permitEdit({text: 'foo'});
+        sinon.assert.calledWith(
+            mockApp.authz.permits,
+            'update',
+            {text: 'foo'},
+            'alice'
+        );
+    });
+
+    it('sets a default permitDelete handler that consults the authorization policy', function () {
+        viewer.standalone().start(mockApp);
+        var passedOptions = viewer.Viewer.firstCall.args[0];
+        assert(sinon.match.has('permitDelete').test(passedOptions));
+        passedOptions.permitDelete({text: 'foo'});
+        sinon.assert.calledWith(
+            mockApp.authz.permits,
+            'delete',
+            {text: 'foo'},
+            'alice'
+        );
+    });
+
+    it('destroys the viewer component when destroyed', function () {
+        var plugin = viewer.standalone();
+        plugin.start(mockApp);
+        plugin.destroy();
+        sinon.assert.calledOnce(mockViewer.destroy);
     });
 });

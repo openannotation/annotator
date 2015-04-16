@@ -46,7 +46,7 @@ function preventEventDefault(event) {
 // the movement is not tracked, then the amount the mouse has moved will be
 // accumulated and passed to the next mousemove event.
 //
-function dragTracker(handle, callback) {
+var dragTracker = exports.dragTracker = function dragTracker(handle, callback) {
     var lastPos = null,
         throttled = false;
 
@@ -115,7 +115,7 @@ function dragTracker(handle, callback) {
     $(handle).on('mousedown', mouseDown);
 
     return {destroy: destroy};
-}
+};
 
 
 // resizer is a component that uses a dragTracker under the hood to track the
@@ -135,7 +135,7 @@ function dragTracker(handle, callback) {
 //             returns a truthy value, the vertical sense of the drag will be
 //             inverted. Useful if the drag handle is at the bottom of the
 //             element, and so dragging down means "grow the element"
-function resizer(element, handle, options) {
+var resizer = exports.resizer = function resizer(element, handle, options) {
     var $el = $(element);
     if (typeof options === 'undefined' || options === null) {
         options = {};
@@ -181,7 +181,7 @@ function resizer(element, handle, options) {
 
     // We return the dragTracker object in order to expose its methods.
     return dragTracker(handle, resize);
-}
+};
 
 
 // mover is a component that uses a dragTracker under the hood to track the
@@ -190,7 +190,7 @@ function resizer(element, handle, options) {
 // element - DOM Element to move
 // handle - DOM Element to use as a move handle
 //
-function mover(element, handle) {
+var mover = exports.mover = function mover(element, handle) {
     function move(delta) {
         $(element).css({
             top: parseInt($(element).css('top'), 10) + delta.y,
@@ -200,11 +200,11 @@ function mover(element, handle) {
 
     // We return the dragTracker object in order to expose its methods.
     return dragTracker(handle, move);
-}
+};
 
 
 // Public: Creates an element for editing annotations.
-var Editor = Widget.extend({
+var Editor = exports.Editor = Widget.extend({
     // Public: Creates an instance of the Editor object.
     //
     // options - An Object literal containing options.
@@ -584,8 +584,19 @@ Editor.options = {
     defaultFields: true
 };
 
+// standalone is a module that uses the Editor to display an editor widget
+// allowing the user to provide a note (and other data) before an annotation is
+// created or updated.
+exports.standalone = function standalone(options) {
+    var widget = new exports.Editor(options);
 
-exports.Editor = Editor;
-exports.dragTracker = dragTracker;
-exports.mover = mover;
-exports.resizer = resizer;
+    return {
+        destroy: function () { widget.destroy(); },
+        beforeAnnotationCreated: function (annotation) {
+            return widget.load(annotation);
+        },
+        beforeAnnotationUpdated: function (annotation) {
+            return widget.load(annotation);
+        }
+    };
+};

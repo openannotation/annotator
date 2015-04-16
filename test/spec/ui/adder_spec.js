@@ -2,19 +2,19 @@ var assert = require('assertive-chai').assert;
 
 var h = require('../../helpers');
 
-var ui = require('../../../src/ui'),
+var adder = require('../../../src/ui/adder'),
     util = require('../../../src/util');
 
 var $ = util.$;
 
-describe('ui.Adder', function () {
+describe('ui.adder.Adder', function () {
     var a = null,
         onCreate = null;
 
     beforeEach(function () {
         h.addFixture('adder');
         onCreate = sinon.stub();
-        a = new ui.Adder({
+        a = new adder.Adder({
             onCreate: onCreate
         });
     });

@@ -1,18 +1,18 @@
 var assert = require('assertive-chai').assert;
 
-var ui = require('../../../src/ui'),
+var filter = require('../../../src/ui/filter'),
     util = require('../../../src/util');
 
 var $ = util.$;
 
-describe('ui.Filter', function () {
+describe('ui.filter.Filter', function () {
     var plugin = null,
         element = null,
         sandbox = null;
 
     beforeEach(function () {
         element = $('<div />')[0];
-        plugin = new ui.Filter({
+        plugin = new filter.Filter({
             filterElement: element
         });
         sandbox = sinon.sandbox.create();
@@ -36,15 +36,15 @@ describe('ui.Filter', function () {
     });
 
     describe("addFilter", function () {
-        var filter = null;
+        var testFilter = null;
 
         beforeEach(function () {
             plugin.filters = [];
-            filter = {
+            testFilter = {
                 label: 'Tag',
                 property: 'tags'
             };
-            plugin.addFilter(filter);
+            plugin.addFilter(testFilter);
         });
 
         it("should add a filter object to Filter#plugins", function () {
@@ -52,13 +52,13 @@ describe('ui.Filter', function () {
         });
 
         it("should append the html to Filter#toolbar", function () {
-            filter = plugin.filters[0];
-            assert.equal(filter.element[0], plugin.element.find('#annotator-filter-tags').parent()[0]);
+            testFilter = plugin.filters[0];
+            assert.equal(testFilter.element[0], plugin.element.find('#annotator-filter-tags').parent()[0]);
         });
 
         it("should store the filter in the elements data store under 'filter'", function () {
-            filter = plugin.filters[0];
-            assert.equal(filter.element.data('filter'), filter);
+            testFilter = plugin.filters[0];
+            assert.equal(testFilter.element.data('filter'), plugin.filters[0]);
         });
 
         it("should not add a filter for a property that has already been loaded", function () {
@@ -71,11 +71,11 @@ describe('ui.Filter', function () {
     });
 
     describe("updateFilter", function () {
-        var filter = null,
+        var testFilter = null,
             annotations = null;
 
         beforeEach(function () {
-            filter = {
+            testFilter = {
                 id: 'text',
                 label: 'Annotation',
                 property: 'text',
@@ -86,7 +86,7 @@ describe('ui.Filter', function () {
                 }
             };
             annotations = [{text: 'cat'}, {text: 'dog'}, {text: 'car'}];
-            plugin.filters = {'text': filter};
+            plugin.filters = {'text': testFilter};
             plugin.highlights = {
                 map: function () { return annotations; }
             };
@@ -96,28 +96,28 @@ describe('ui.Filter', function () {
         });
 
         it("should call Filter#updateHighlights()", function () {
-            plugin.updateFilter(filter);
+            plugin.updateFilter(testFilter);
             assert(plugin.updateHighlights.calledOnce);
         });
 
         it("should call Filter#resetHighlights()", function () {
-            plugin.updateFilter(filter);
+            plugin.updateFilter(testFilter);
             assert(plugin.resetHighlights.calledOnce);
         });
 
         it("should filter the cat and car annotations", function () {
-            plugin.updateFilter(filter);
-            assert.deepEqual(filter.annotations, [annotations[0], annotations[2]]);
+            plugin.updateFilter(testFilter);
+            assert.deepEqual(testFilter.annotations, [annotations[0], annotations[2]]);
         });
 
         it("should call Filter#filterHighlights()", function () {
-            plugin.updateFilter(filter);
+            plugin.updateFilter(testFilter);
             assert(plugin.filterHighlights.calledOnce);
         });
 
         it("should NOT call Filter#filterHighlights() if there is no input", function () {
-            filter.element.find('input').val('');
-            plugin.updateFilter(filter);
+            testFilter.element.find('input').val('');
+            plugin.updateFilter(testFilter);
             assert.isFalse(plugin.filterHighlights.called);
         });
     });
@@ -400,5 +400,54 @@ describe('ui.Filter', function () {
                 assert(mockjQuery.keyup.calledOnce);
             });
         });
+    });
+});
+
+
+describe('ui.filter.standalone', function () {
+    var mockFilter = null,
+        plugin = null,
+        sandbox = null;
+
+    beforeEach(function () {
+        sandbox = sinon.sandbox.create();
+        mockFilter = {
+            updateHighlights: sandbox.stub(),
+            destroy: sandbox.stub()
+        };
+
+        sandbox.stub(filter, 'Filter').returns(mockFilter);
+
+        plugin = filter.standalone();
+    });
+
+    afterEach(function () {
+        sandbox.restore();
+    });
+
+    var hooks = [
+        'annotationsLoaded',
+        'annotationCreated',
+        'annotationUpdated',
+        'annotationDeleted'
+    ];
+
+    function testHook(h) {
+        return function () {
+            plugin[h]({text: 123});
+            sinon.assert.calledWith(mockFilter.updateHighlights);
+        };
+    }
+
+    for (var i = 0, len = hooks.length; i < len; i++) {
+        it(
+            "calls updateHighlights on the filter component " + hooks[i],
+            testHook(hooks[i])
+        );
+    }
+
+    it('destroys the filter component when destroyed', function () {
+        plugin.destroy();
+        sinon.assert.calledOnce(mockFilter.destroy);
     });
 });

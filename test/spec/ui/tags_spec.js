@@ -1,17 +1,19 @@
 var assert = require('assertive-chai').assert;
 
-var ui = require('../../../src/ui'),
-    util = require('../../../src/util');
+var tags = require('../../../src/ui/tags');
+var editor = require('../../../src/ui/editor');
+var viewer = require('../../../src/ui/viewer');
+var util = require('../../../src/util');
 
 var $ = util.$;
 
-describe('ui.Tags', function () {
-    var tags = null,
-        sandbox = null;
+describe('ui.tags.tags', function () {
+    var t = null;
+    var sandbox = null;
 
     beforeEach(function () {
         sandbox = sinon.sandbox.create();
-        tags = ui.tags({});
+        t = tags.tags({});
     });
 
     afterEach(function () {
@@ -21,34 +23,34 @@ describe('ui.Tags', function () {
 
     describe("extensions", function () {
         it("offers a createEditorField function ", function () {
-            assert.isFunction(tags.createEditorField);
+            assert.isFunction(t.createEditorField);
         });
 
         it("offers a createViewerField function ", function () {
-            assert.isFunction(tags.createViewerField);
+            assert.isFunction(t.createViewerField);
         });
     });
 
     describe("Editor", function () {
         var elem = null,
-            editor = null,
+            widget = null,
             spy = null,
             input = null;
 
         beforeEach(function () {
             elem = $("<div><div class='annotator-editor-controls'></div></div>")[0];
-            spy = sandbox.spy(ui.Editor.prototype, 'addField');
-            editor = new ui.Editor({
+            spy = sandbox.spy(editor.Editor.prototype, 'addField');
+            widget = new editor.Editor({
                 defaultFields: false,
-                extensions: [tags.createEditorField]
+                extensions: [t.createEditorField]
             });
-            editor.attach();
-            input = $(editor.fields[0].element).find(':input');
+            widget.attach();
+            input = $(widget.fields[0].element).find(':input');
         });
 
         afterEach(function () {
             $(elem).remove();
-            editor.destroy();
+            widget.destroy();
         });
 
         it("should stringify a tags array into a space-delimited string", function () {
@@ -103,20 +105,20 @@ describe('ui.Tags', function () {
     });
 
     describe("Viewer", function () {
-        var viewer = null,
+        var widget = null,
             spy = null;
 
         beforeEach(function () {
-            spy = sandbox.spy(ui.Viewer.prototype, 'addField');
-            viewer = new ui.Viewer({
+            spy = sandbox.spy(viewer.Viewer.prototype, 'addField');
+            widget = new viewer.Viewer({
                 defaultFields: false,
-                extensions: [tags.createViewerField]
+                extensions: [t.createViewerField]
             });
-            viewer.attach();
+            widget.attach();
         });
 
         afterEach(function () {
-            viewer.destroy();
+            widget.destroy();
         });
 
         describe("updateViewer", function () {

@@ -13,7 +13,7 @@ var NS = 'annotator-filter';
 // options - An Object literal of options.
 //
 // Returns a new instance of the Filter plugin.
-function Filter(options) {
+var Filter = exports.Filter = function Filter(options) {
     this.options = $.extend(true, {}, Filter.options, options);
     this.classes = $.extend(true, {}, Filter.classes);
     this.element = $(Filter.html.element).appendTo(this.options.appendTo);
@@ -56,7 +56,7 @@ function Filter(options) {
     if (this.options.addAnnotationFilter) {
         this.addFilter({label: _t('Annotation'), property: 'text'});
     }
-}
+};
 
 // Public: remove the filter plugin instance and unbind events.
 //
@@ -448,4 +448,17 @@ Filter.options = {
 };
 
 
-exports.Filter = Filter;
+// standalone is a module that uses the Filter component to display a filter bar
+// to allow browsing and searching of annotations on the current page.
+exports.standalone = function (options) {
+    var widget = new exports.Filter(options);
+
+    return {
+        destroy: function () { widget.destroy(); },
+
+        annotationsLoaded: function () { widget.updateHighlights(); },
+        annotationCreated: function () { widget.updateHighlights(); },
+        annotationUpdated: function () { widget.updateHighlights(); },
+        annotationDeleted: function () { widget.updateHighlights(); }
+    };
+};

@@ -2,12 +2,12 @@ var assert = require('assertive-chai').assert;
 
 var h = require('../../helpers');
 
-var ui = require('../../../src/ui'),
+var textselector = require('../../../src/ui/textselector'),
     util = require('../../../src/util');
 
 var $ = util.$;
 
-describe('ui.TextSelector', function () {
+describe('ui.textselector.TextSelector', function () {
     var elem = null,
         ts = null,
         selections = null;
@@ -24,7 +24,7 @@ describe('ui.TextSelector', function () {
         h.addFixture('adder');
         elem = h.fix();
         selections = [];
-        ts = new ui.TextSelector(elem, {
+        ts = new textselector.TextSelector(elem, {
             onSelection: onSelection
         });
     });
