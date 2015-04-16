@@ -30,7 +30,7 @@ describe('highlighter plugin', function () {
             destroy: sandbox.stub()
         };
 
-        sandbox.stub(annotator.ui, 'Highlighter').returns(mockHighlighter);
+        sandbox.stub(annotator.ui.highlighter, 'Highlighter').returns(mockHighlighter);
 
         plugin = highlighter(mockElement);
     });

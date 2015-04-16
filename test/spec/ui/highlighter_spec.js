@@ -2,7 +2,7 @@ var assert = require('assertive-chai').assert;
 
 var Range = require('xpath-range').Range;
 
-var ui = require('../../../src/ui'),
+var highlighter = require('../../../src/ui/highlighter'),
     util = require('../../../src/util');
 
 var $ = util.$;
@@ -65,13 +65,13 @@ var testData = [
     }
 ];
 
-describe('ui.Highlighter', function () {
+describe('ui.highlighter.Highlighter', function () {
     var elem = null,
         hl = null;
 
     beforeEach(function () {
         elem = $(testDocument).get(0);
-        hl = new ui.Highlighter(elem);
+        hl = new highlighter.Highlighter(elem);
     });
 
     afterEach(function () {

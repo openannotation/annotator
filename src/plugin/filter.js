@@ -6,7 +6,7 @@ var annotator = require('annotator');
 // display a filter bar to allow browsing and searching of annotations on the
 // current page.
 var filter = function (options) {
-    var widget = new annotator.ui.Filter(options);
+    var widget = new annotator.ui.filter.Filter(options);
 
     return {
         destroy: function () { widget.destroy(); },

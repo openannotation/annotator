@@ -6,7 +6,7 @@ var annotator = require('annotator');
 // editor widget allowing the user to provide a note (and other data) before an
 // annotation is created or updated.
 function editor(options) {
-    var widget = new annotator.ui.Editor(options);
+    var widget = new annotator.ui.editor.Editor(options);
 
     return {
         destroy: function () { widget.destroy(); },

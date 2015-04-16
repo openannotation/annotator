@@ -2,18 +2,18 @@ var assert = require('assertive-chai').assert;
 
 var $ = require('../../../src/util').$;
 
-var ui = require('../../../src/ui');
+var widget = require('../../../src/ui/widget');
 
-describe("ui.Widget", function () {
-    var widget = null;
+describe("ui.widget.Widget", function () {
+    var w = null;
 
     beforeEach(function () {
-        widget = new ui.Widget();
+        w = new widget.Widget();
     });
 
     describe("constructor", function () {
         it("should extend the Widget#classes object with child classes", function () {
-            var ChildWidget = ui.Widget.extend({});
+            var ChildWidget = widget.Widget.extend({});
             ChildWidget.classes = {
                 customClass: 'my-custom-class',
                 anotherClass: 'another-class'
@@ -34,43 +34,43 @@ describe("ui.Widget", function () {
     });
 
     describe("invertX", function () {
-        it("should add the Widget#classes.invert.x class to the Widget#widget", function () {
-            widget.element.removeClass(widget.classes.invert.x);
-            widget.invertX();
-            assert.isTrue(widget.element.hasClass(widget.classes.invert.x));
+        it("should add the Widget#classes.invert.x class to the widget element", function () {
+            w.element.removeClass(w.classes.invert.x);
+            w.invertX();
+            assert.isTrue(w.element.hasClass(w.classes.invert.x));
         });
     });
 
     describe("invertY", function () {
-        it("should add the Widget#classes.invert.y class to the Widget#widget", function () {
-            widget.element.removeClass(widget.classes.invert.y);
-            widget.invertY();
-            assert.isTrue(widget.element.hasClass(widget.classes.invert.y));
+        it("should add the Widget#classes.invert.y class to the widget element", function () {
+            w.element.removeClass(w.classes.invert.y);
+            w.invertY();
+            assert.isTrue(w.element.hasClass(w.classes.invert.y));
         });
     });
 
     describe("isInvertedY", function () {
-        it("should return the vertical inverted status of the Widget", function () {
-            assert.isFalse(widget.isInvertedY());
-            widget.invertY();
-            assert.isTrue(widget.isInvertedY());
+        it("should return the vertical inverted status of the widget", function () {
+            assert.isFalse(w.isInvertedY());
+            w.invertY();
+            assert.isTrue(w.isInvertedY());
         });
     });
 
     describe("isInvertedX", function () {
-        it("should return the horizontal inverted status of the Widget", function () {
-            assert.isFalse(widget.isInvertedX());
-            widget.invertX();
-            assert.isTrue(widget.isInvertedX());
+        it("should return the horizontal inverted status of the widget", function () {
+            assert.isFalse(w.isInvertedX());
+            w.invertX();
+            assert.isTrue(w.isInvertedX());
         });
     });
 
     describe("resetOrientation", function () {
-        it("should remove the Widget#classes.invert classes from the Widget#widget", function () {
-            widget.element.addClass(widget.classes.invert.x).addClass(widget.classes.invert.y);
-            widget.resetOrientation();
-            assert.isFalse(widget.element.hasClass(widget.classes.invert.x));
-            assert.isFalse(widget.element.hasClass(widget.classes.invert.y));
+        it("should remove the Widget#classes.invert classes from the widget element", function () {
+            w.element.addClass(w.classes.invert.x).addClass(w.classes.invert.y);
+            w.resetOrientation();
+            assert.isFalse(w.element.hasClass(w.classes.invert.x));
+            assert.isFalse(w.element.hasClass(w.classes.invert.y));
         });
     });
 
@@ -117,52 +117,52 @@ describe("ui.Widget", function () {
                 scrollLeft: sinon.stub().returns(mock.window.scrollLeft)
             });
 
-            sinon.stub(widget.element, 'children').returns({
+            sinon.stub(w.element, 'children').returns({
                 offset: sinon.stub().returns(mock.element.offset),
                 width: sinon.stub().returns(mock.element.width)
             });
 
-            sinon.stub(widget, 'invertX');
-            sinon.stub(widget, 'invertY');
-            sinon.stub(widget, 'resetOrientation');
+            sinon.stub(w, 'invertX');
+            sinon.stub(w, 'invertY');
+            sinon.stub(w, 'resetOrientation');
 
-            widget.checkOrientation();
+            w.checkOrientation();
         });
 
         afterEach(function () {
-            widget.element.children.restore();
+            w.element.children.restore();
             $.fn.init.restore();
         });
 
         it("should reset the widget each time", function () {
-            assert(widget.resetOrientation.calledOnce);
-            assert.isFalse(widget.invertX.called);
-            assert.isFalse(widget.invertY.called);
+            assert(w.resetOrientation.calledOnce);
+            assert.isFalse(w.invertX.called);
+            assert.isFalse(w.invertY.called);
         });
 
         it("should invert the widget if it does not fit horizontally", function () {
-            assert(widget.invertX.calledOnce);
-            assert.isFalse(widget.invertY.called);
+            assert(w.invertX.calledOnce);
+            assert.isFalse(w.invertY.called);
         });
 
         it("should invert the widget if it does not fit vertically", function () {
-            assert.isFalse(widget.invertX.called);
-            assert(widget.invertY.calledOnce);
+            assert.isFalse(w.invertX.called);
+            assert(w.invertY.calledOnce);
         });
 
         it("should invert the widget if it does not fit horizontally or vertically", function () {
-            assert(widget.invertX.calledOnce);
-            assert(widget.invertY.calledOnce);
+            assert(w.invertX.calledOnce);
+            assert(w.invertY.calledOnce);
         });
 
         it("should invert the widget if it does not fit vertically and the window is scrolled", function () {
-            assert.isFalse(widget.invertX.called);
-            assert(widget.invertY.calledOnce);
+            assert.isFalse(w.invertX.called);
+            assert(w.invertY.calledOnce);
         });
 
         it("should invert the widget if it fits horizontally due to the window scrolled", function () {
-            assert.isFalse(widget.invertX.called);
-            assert.isFalse(widget.invertY.called);
+            assert.isFalse(w.invertX.called);
+            assert.isFalse(w.invertY.called);
         });
     });
 });

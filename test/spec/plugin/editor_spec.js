@@ -20,7 +20,7 @@ describe('editor plugin', function () {
             destroy: sandbox.stub()
         };
 
-        sandbox.stub(annotator.ui, 'Editor').returns(mockEditor);
+        sandbox.stub(annotator.ui.editor, 'Editor').returns(mockEditor);
 
         plugin = editor();
     });

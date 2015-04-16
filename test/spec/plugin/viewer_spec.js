@@ -25,7 +25,7 @@ describe('viewer plugin', function () {
         mockViewer = {
             destroy: sandbox.stub()
         };
-        sandbox.stub(annotator.ui, 'Viewer').returns(mockViewer);
+        sandbox.stub(annotator.ui.viewer, 'Viewer').returns(mockViewer);
     });
 
     afterEach(function () {
@@ -34,7 +34,7 @@ describe('viewer plugin', function () {
 
     it('sets a default onEdit handler that calls the storage update function', function () {
         viewer().start(mockApp);
-        var passedOptions = annotator.ui.Viewer.firstCall.args[0];
+        var passedOptions = annotator.ui.viewer.Viewer.firstCall.args[0];
         assert(sinon.match.has('onEdit').test(passedOptions));
         passedOptions.onEdit({
             text: 'foo'
@@ -46,7 +46,7 @@ describe('viewer plugin', function () {
 
     it('sets a default onDelete handler that calls the storage delete function', function () {
         viewer().start(mockApp);
-        var passedOptions = annotator.ui.Viewer.firstCall.args[0];
+        var passedOptions = annotator.ui.viewer.Viewer.firstCall.args[0];
         assert(sinon.match.has('onDelete').test(passedOptions));
         passedOptions.onDelete({
             text: 'foo'
@@ -58,7 +58,7 @@ describe('viewer plugin', function () {
 
     it('sets a default permitEdit handler that consults the authorization policy', function () {
         viewer().start(mockApp);
-        var passedOptions = annotator.ui.Viewer.firstCall.args[0];
+        var passedOptions = annotator.ui.viewer.Viewer.firstCall.args[0];
         assert(sinon.match.has('permitEdit').test(passedOptions));
         passedOptions.permitEdit({text: 'foo'});
         sinon.assert.calledWith(
@@ -71,7 +71,7 @@ describe('viewer plugin', function () {
 
     it('sets a default permitDelete handler that consults the authorization policy', function () {
         viewer().start(mockApp);
-        var passedOptions = annotator.ui.Viewer.firstCall.args[0];
+        var passedOptions = annotator.ui.viewer.Viewer.firstCall.args[0];
         assert(sinon.match.has('permitDelete').test(passedOptions));
         passedOptions.permitDelete({text: 'foo'});
         sinon.assert.calledWith(

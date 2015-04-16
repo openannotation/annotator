@@ -49,7 +49,7 @@ function viewer(options) {
                 };
             }
 
-            widget = new annotator.ui.Viewer(options);
+            widget = new annotator.ui.viewer.Viewer(options);
         },
 
         destroy: function () { widget.destroy(); }

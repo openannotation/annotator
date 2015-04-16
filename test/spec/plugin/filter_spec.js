@@ -13,7 +13,7 @@ describe('filter plugin', function () {
             destroy: sandbox.stub()
         };
 
-        sandbox.stub(annotator.ui, 'Filter').returns(mockFilter);
+        sandbox.stub(annotator.ui.filter, 'Filter').returns(mockFilter);
 
         plugin = filter();
     });

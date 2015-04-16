@@ -7,7 +7,7 @@ var annotator = require('annotator');
 // component to draw/undraw highlights automatically when annotations are
 // created and removed.
 function highlighter(element, options) {
-    var widget = annotator.ui.Highlighter(element, options);
+    var widget = annotator.ui.highlighter.Highlighter(element, options);
 
     return {
         destroy: function () { widget.destroy(); },
