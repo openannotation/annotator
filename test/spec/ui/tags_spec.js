@@ -1,155 +1,141 @@
 var assert = require('assertive-chai').assert;
 
 var tags = require('../../../src/ui/tags');
-var editor = require('../../../src/ui/editor');
-var viewer = require('../../../src/ui/viewer');
 var util = require('../../../src/util');
 
 var $ = util.$;
 
-describe('ui.tags.tags', function () {
-    var t = null;
-    var sandbox = null;
+
+describe('ui.tags.viewerExtension', function () {
+    var mockViewer;
+
+    beforeEach(function () {
+        mockViewer = {
+            addField: sinon.stub()
+        };
+    });
+
+    it("calls addField with a load callback", function () {
+        tags.viewerExtension(mockViewer);
+
+        sinon.assert.calledWith(mockViewer.addField,
+                                sinon.match.has('load', sinon.match.func));
+    });
+
+    it("field load callback inserts the tags into the field", function () {
+        tags.viewerExtension(mockViewer);
+        var load = mockViewer.addField.firstCall.args[0].load;
+
+        var annotation = {
+            tags: ['foo', 'bar', 'baz']
+        };
+        var field = $('<div />')[0];
+
+        load(field, annotation);
+
+        assert.deepEqual($(field).html(), [
+            '<span class="annotator-tag">foo</span>',
+            '<span class="annotator-tag">bar</span>',
+            '<span class="annotator-tag">baz</span>'
+        ].join(' '));
+    });
+
+    it("field load callback removes the field if there are no tags", function () {
+        tags.viewerExtension(mockViewer);
+        var load = mockViewer.addField.firstCall.args[0].load;
+
+        var annotation = {
+            tags: []
+        };
+        var field = $('<div />')[0];
+
+        load(field, annotation);
+
+        assert.lengthOf($(field).parent(), 0);
+        annotation = {};
+        field = $('<div />')[0];
+        load(field, annotation);
+        assert.lengthOf($(field).parent(), 0);
+    });
+});
+
+
+describe('ui.tags.editorExtension', function () {
+    var sandbox;
+    var mockField;
+    var mockInput;
+    var mockEditor;
 
     beforeEach(function () {
         sandbox = sinon.sandbox.create();
-        t = tags.tags({});
+        mockField = {};
+        mockInput = {
+            val: sandbox.stub()
+        };
+        mockEditor = {
+            addField: sandbox.stub().returns(mockField)
+        };
+        sandbox.stub($.fn, 'init');
+        $.fn.init.withArgs(mockField).returns({
+            find: sandbox.stub().returns(mockInput)
+        });
     });
 
     afterEach(function () {
         sandbox.restore();
     });
 
+    it("calls addField with a load callback", function () {
+        tags.editorExtension(mockEditor);
 
-    describe("extensions", function () {
-        it("offers a createEditorField function ", function () {
-            assert.isFunction(t.createEditorField);
-        });
-
-        it("offers a createViewerField function ", function () {
-            assert.isFunction(t.createViewerField);
-        });
+        sinon.assert.calledWith(mockEditor.addField,
+                                sinon.match.has('load', sinon.match.func));
     });
 
-    describe("Editor", function () {
-        var elem = null,
-            widget = null,
-            spy = null,
-            input = null;
+    it("calls addField with a submit callback", function () {
+        tags.editorExtension(mockEditor);
 
-        beforeEach(function () {
-            elem = $("<div><div class='annotator-editor-controls'></div></div>")[0];
-            spy = sandbox.spy(editor.Editor.prototype, 'addField');
-            widget = new editor.Editor({
-                defaultFields: false,
-                extensions: [t.createEditorField]
-            });
-            widget.attach();
-            input = $(widget.fields[0].element).find(':input');
-        });
-
-        afterEach(function () {
-            $(elem).remove();
-            widget.destroy();
-        });
-
-        it("should stringify a tags array into a space-delimited string", function () {
-            var annotation = {
-                tags: ['one', 'two', 'three']
-            };
-
-            var updateField = spy.getCall(0).args[0].load;
-            updateField({}, annotation);
-            assert.equal(input.val(), "one two three");
-        });
-
-        it("should parse whitespace-delimited tags into an array", function () {
-            var str = 'one two  three\tfourFive';
-            input.val(str);
-            var setAnnotationTags = spy.getCall(0).args[0].submit;
-            var annotation = {};
-            setAnnotationTags({}, annotation);
-            assert.deepEqual(annotation.tags, ['one', 'two', 'three', 'fourFive']);
-        });
-
-        describe("updateField", function () {
-            it("should set the value of the input", function () {
-                var annotation = {
-                    tags: ['apples', 'oranges', 'pears']
-                };
-
-                var updateField = spy.getCall(0).args[0].load;
-                updateField({}, annotation);
-                assert.equal(input.val(), 'apples oranges pears');
-            });
-
-            it("should set the clear the value of the input if there are no tags", function () {
-                var annotation = {};
-                input.val('apples pears oranges');
-                var updateField = spy.getCall(0).args[0].load;
-                updateField({}, annotation);
-                assert.equal(input.val(), '');
-            });
-        });
-
-        describe("setAnnotationTags", function () {
-            it("should set the annotation's tags", function () {
-                var annotation = {};
-                input.val('apples oranges pears');
-                var setAnnotationTags = spy.getCall(0).args[0].submit;
-
-                setAnnotationTags({}, annotation);
-                assert.deepEqual(annotation.tags, ['apples', 'oranges', 'pears']);
-            });
-        });
+        sinon.assert.calledWith(mockEditor.addField,
+                                sinon.match.has('submit', sinon.match.func));
     });
 
-    describe("Viewer", function () {
-        var widget = null,
-            spy = null;
+    it("calls addField with a label", function () {
+        tags.editorExtension(mockEditor);
 
-        beforeEach(function () {
-            spy = sandbox.spy(viewer.Viewer.prototype, 'addField');
-            widget = new viewer.Viewer({
-                defaultFields: false,
-                extensions: [t.createViewerField]
-            });
-            widget.attach();
-        });
+        sinon.assert.calledWith(mockEditor.addField,
+                                sinon.match.has('label', sinon.match.string));
+    });
 
-        afterEach(function () {
-            widget.destroy();
-        });
+    it("field load callback should set the input field value", function () {
+        tags.editorExtension(mockEditor);
+        var load = mockEditor.addField.firstCall.args[0].load;
 
-        describe("updateViewer", function () {
-            it("should insert the tags into the field", function () {
-                var annotation = {
-                    tags: ['foo', 'bar', 'baz']
-                };
-                var field = $('<div />')[0];
-                var updateViewer = spy.getCall(0).args[0].load;
-                updateViewer(field, annotation);
-                assert.deepEqual($(field).html(), [
-                    '<span class="annotator-tag">foo</span>',
-                    '<span class="annotator-tag">bar</span>',
-                    '<span class="annotator-tag">baz</span>'
-                ].join(' '));
-            });
+        var annotation = {
+            tags: ['one', 'two', 'three']
+        };
 
-            it("should remove the field if there are no tags", function () {
-                var annotation = {
-                    tags: []
-                };
-                var field = $('<div />')[0];
+        load({}, annotation);
+        sinon.assert.calledWith(mockInput.val, "one two three");
+    });
 
-                var updateViewer = spy.getCall(0).args[0].load;
-                updateViewer(field, annotation);
-                assert.lengthOf($(field).parent(), 0);
-                annotation = {};
-                field = $('<div />')[0];
-                updateViewer(field, annotation);
-                assert.lengthOf($(field).parent(), 0);
-            });
-        });
+    it("field load callback should clear input field if there are no tags", function () {
+        tags.editorExtension(mockEditor);
+        var load = mockEditor.addField.firstCall.args[0].load;
+
+        var annotation = {};
+
+        load({}, annotation);
+        sinon.assert.calledWith(mockInput.val, "");
+    });
+
+    it("field submit callback should set the annotation tags property", function () {
+        tags.editorExtension(mockEditor);
+        var submit = mockEditor.addField.firstCall.args[0].submit;
+
+        mockInput.val.returns('one two  three\tfourFive');
+
+        var annotation = {};
+        submit({}, annotation);
+        assert.deepEqual(annotation.tags, ['one', 'two', 'three', 'fourFive']);
     });
 });

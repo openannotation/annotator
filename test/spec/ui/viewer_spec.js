@@ -255,15 +255,10 @@ describe('ui.viewer.Viewer', function () {
         });
     });
 
-    describe('renderText', function () {
-        var renderText = null;
-
+    describe('renderer', function () {
         beforeEach(function () {
-            renderText = sinon.stub().returns("Wolves with sheep");
-
             v = new viewer.Viewer({
-                defaultFields: true,
-                renderText: renderText
+                renderer: sinon.stub().returns("Wolves with sheep")
             });
         });
 
@@ -271,7 +266,7 @@ describe('ui.viewer.Viewer', function () {
             v.destroy();
         });
 
-        it('calls the defaultRenderer to render the text field.', function () {
+        it('uses the renderer to render the annotation', function () {
             v.load([{text: "Tigers with cameras"}]);
             var html = v.element.html();
             assert.isTrue(html.indexOf("Wolves with sheep") >= 0);
