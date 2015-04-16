@@ -5,7 +5,7 @@ var util = require('../util');
 var g = util.getGlobal();
 var _t = util.gettext;
 
-function createMarkdownPlugin () {
+function markdown() {
     var converter = null;
 
     if (g.Showdown && typeof g.Showdown.converter === 'function') {
@@ -35,4 +35,4 @@ function createMarkdownPlugin () {
     };
 }
 
-exports.createMarkdownPlugin = createMarkdownPlugin;
+exports.markdown = markdown;
