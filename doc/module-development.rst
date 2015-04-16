@@ -35,13 +35,13 @@ Unless you are replacing core functionality of Annotator (writing a storage
 component, for example) you probably want to use module hooks. Module hooks are
 functions which you can expose from your module which will be run by the
 :class:`~annotator.App` when important things happen. For example, here's a
-module which will log ``Hello, world!`` to the console when the application
+module which will say ``Hello, world!`` to the user when the application
 starts::
 
     function helloWorld() {
         return {
-            start: function (registry) {
-                console.log("Hello, world!");
+            start: function (app) {
+                app.notify("Hello, world!");
             }
         };
     }
@@ -51,8 +51,8 @@ Just as before, we can include it in an application using
 
     app.include(helloWorld);
 
-Now, when you run ``app.start();``, this module will log ``Hello, world!`` to
-the console.
+Now, when you run ``app.start();``, this module will send a notification with
+the words ``Hello, world!``.
 
 Or, here's another example that uses the `HTML5 Audio API`_ to play a sound
 every time a new annotation is made [#1]_::
@@ -62,7 +62,7 @@ every time a new annotation is made [#1]_::
         options.url = options.url || 'trumpets.mp3';
 
         return {
-            onAnnotationCreated: function (annotation) {
+            annotationCreated: function (annotation) {
                 var audio = new Audio(options.url);
                 audio.play();
             }
@@ -76,9 +76,9 @@ configure the module when it's included in our application::
         url: "brass_band.wav"
     });
 
-You might have noticed that the ``onAnnotationCreated`` module hook function
-here receives one argument, ``annotation``. Similarly, the ``start`` module hook
-function in the previous example received a ``registry`` argument. You can find
+You might have noticed that the :func:`annotationCreated` module hook function
+here receives one argument, ``annotation``. Similarly, the :func:`start` module
+hook function in the previous example received an ``app`` argument. You can find
 out which arguments are passed to which module hooks in :ref:`module-hooks`,
 below.
 
@@ -127,31 +127,72 @@ This is a list of module hooks, when they are called, and what arguments they
 receive.
 
 
-+----------------------------------+---------------------------------------------------------------------------------+-------------------------------------------------------------------+
-| Name                             | Arguments                                                                       | Description                                                       |
-+==================================+=================================================================================+===================================================================+
-| ``configure(registry)``          | - ``registry``: the :class:`application registry <annotator.registry.Registry>` | Called when the plugin is included. If you are going to register  |
-|                                  |                                                                                 | components with the registry, you should do so in the             |
-|                                  |                                                                                 | ``configure`` module hook.                                        |
-+----------------------------------+---------------------------------------------------------------------------------+-------------------------------------------------------------------+
-| ``start(registry)``              | - ``registry``: the :class:`application registry <annotator.registry.Registry>` | Called when :func:`~annotator.App.prototype.start` is called.     |
-+----------------------------------+---------------------------------------------------------------------------------+-------------------------------------------------------------------+
+.. function:: configure(registry)
 
-.. todo:: Put the rest of these in the table.
+   Called when the plugin is included. If you are going to register components
+   with the registry, you should do so in the `configure` module hook.
 
-``beforeAnnotationCreated(annotation)``
-    called immediately before an annotation is created. If you need to modify
-    the annotation before it is saved use this event.
-``annotationCreated(annotation)``
-    called when the annotation is created use this to store the annotations.
-``beforeAnnotationUpdated(annotation)``
-    as above, but just before an existing annotation is saved.
-``annotationUpdated(annotation)``
-    as above, but for an existing annotation which has just been edited.
-``beforeAnnotationDeleted(annotation)``
-    as above, but just before an existing annotation is deleted.
-``annotationDeleted(annotation)``
-    called when the user deletes an annotation.
+   :param Registry registry: The application registry.
+
+
+.. function:: start(app)
+
+   Called when :func:`~annotator.App.prototype.start` is called.
+
+   :param App app: The configured application.
+
+
+.. function:: destroy()
+
+   Called when :func:`~annotator.App.prototype.destroy` is called. If your
+   module needs to do any cleanup, such as unbind events or disposing of
+   elements injected into the DOM, it should do so in the `destroy` hook.
+
+
+.. function:: beforeAnnotationCreated(annotation)
+
+   Called immediately before an annotation is created. Use if you need to modify
+   the annotation before it is saved.
+
+   :param Object annotation: The annotation object.
+
+
+.. function:: annotationCreated(annotation)
+
+   Called when a new annotation has been created.
+
+   :param Object annotation: The annotation object.
+
+
+.. function:: beforeAnnotationUpdated(annotation)
+
+   Called immediately before an annotation is updated. Use if you need to modify
+   the annotation before it is saved.
+
+   :param Object annotation: The annotation object.
+
+
+.. function:: annotationUpdated(annotation)
+
+   Called when an annotation has been updated.
+
+   :param Object annotation: The annotation object.
+
+
+.. function:: beforeAnnotationDeleted(annotation)
+
+   Called immediately before an annotation is deleted. Use if you need to
+   conditionally cancel deletion, for example.
+
+   :param Object annotation: The annotation object.
+
+
+.. function:: annotationDeleted(annotation)
+
+   Called when an annotation has been deleted.
+
+   :param Object annotation: The annotation object.
+
 
 .. rubric:: Footnotes
 
