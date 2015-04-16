@@ -597,3 +597,48 @@ describe('ui.editor.resizer', function () {
         assert.equal(afterWidth, 123 + 456);
     });
 });
+
+
+describe('ui.editor.standalone', function () {
+    var ann = null,
+        mockEditor = null,
+        plugin = null,
+        sandbox = null;
+
+    beforeEach(function () {
+        sandbox = sinon.sandbox.create();
+        ann = {
+            id: 'abc123',
+            text: 'hello there'
+        };
+        mockEditor = {
+            load: sandbox.stub().returns("a promise, honest"),
+            destroy: sandbox.stub()
+        };
+
+        sandbox.stub(editor, 'Editor').returns(mockEditor);
+
+        plugin = editor.standalone();
+    });
+
+    afterEach(function () {
+        sandbox.restore();
+    });
+
+    it('loads an annotation into the editor component beforeAnnotationCreated', function () {
+        var result = plugin.beforeAnnotationCreated(ann);
+        sinon.assert.calledWith(mockEditor.load, ann);
+        assert.equal(result, "a promise, honest");
+    });
+
+    it('loads an annotation into the editor component beforeAnnotationUpdated', function () {
+        var result = plugin.beforeAnnotationUpdated(ann);
+        sinon.assert.calledWith(mockEditor.load, ann);
+        assert.equal(result, "a promise, honest");
+    });
+
+    it('destroys the editor component when destroyed', function () {
+        plugin.destroy();
+        sinon.assert.calledOnce(mockEditor.destroy);
+    });
+});
