@@ -149,6 +149,14 @@ receive.
    elements injected into the DOM, it should do so in the `destroy` hook.
 
 
+.. function:: annotationsLoaded(annotations)
+
+   Called with annotations retrieved from storage using
+   :func:`~annotator.storage.StorageAdapter.load`.
+
+   :param Array[Object] annotations: The annotation objects loaded.
+
+
 .. function:: beforeAnnotationCreated(annotation)
 
    Called immediately before an annotation is created. Use if you need to modify
