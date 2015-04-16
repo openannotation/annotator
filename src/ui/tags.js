@@ -27,14 +27,14 @@ var defaultOptions = {
     }
 };
 
-function createTagsPlugin(opts) {
+exports.tags = function tags(opts) {
     var options = $.extend(true, {}, defaultOptions, opts);
 
     return {
         createViewerField: configureViewer(options),
         createEditorField: configureEditor(options)
     };
-}
+};
 
 function configureViewer() {
     // Annotator.Viewer callback function. Updates the annotation display
@@ -137,7 +137,3 @@ function configureEditor(options) {
 
     return createEditorField;
 }
-
-
-exports.createTagsPlugin = createTagsPlugin;
-
