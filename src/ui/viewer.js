@@ -82,20 +82,12 @@ var Viewer = exports.Viewer = Widget.extend({
         this.hideTimerActivity = null;
         this.mouseDown = false;
 
-        function defaultTextRenderer(text) {
-            return util.escapeHtml(text);
-        }
-        var renderText = this.options.renderText || defaultTextRenderer;
-
         var self = this;
+
         if (this.options.defaultFields) {
             this.addField({
                 load: function (field, annotation) {
-                    if (annotation.text) {
-                        $(field).html(renderText(annotation.text));
-                    } else {
-                        $(field).html("<i>" + _t('No Comment') + "</i>");
-                    }
+                    $(field).html(self.options.renderer(annotation));
                 }
             });
         }
@@ -488,7 +480,17 @@ Viewer.options = {
 
     // Callback, called when the user clicks the delete button for an
     // annotation.
-    onDelete: function () {}
+    onDelete: function () {},
+
+    // A function that returns the default displayed HTML that represents an
+    // annotation in the viewer.
+    renderer: function (annotation) {
+        if (annotation.text) {
+            return util.escapeHtml(annotation.text);
+        } else {
+            return "<i>" + _t('No comment') + "</i>";
+        }
+    }
 };
 
 
