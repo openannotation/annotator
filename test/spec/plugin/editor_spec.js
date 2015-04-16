@@ -29,14 +29,14 @@ describe('editor plugin', function () {
         sandbox.restore();
     });
 
-    it('loads an annotation into the editor component onBeforeAnnotationCreated', function () {
-        var result = plugin.onBeforeAnnotationCreated(ann);
+    it('loads an annotation into the editor component beforeAnnotationCreated', function () {
+        var result = plugin.beforeAnnotationCreated(ann);
         sinon.assert.calledWith(mockEditor.load, ann);
         assert.equal(result, "a promise, honest");
     });
 
-    it('loads an annotation into the editor component onBeforeAnnotationUpdated', function () {
-        var result = plugin.onBeforeAnnotationUpdated(ann);
+    it('loads an annotation into the editor component beforeAnnotationUpdated', function () {
+        var result = plugin.beforeAnnotationUpdated(ann);
         sinon.assert.calledWith(mockEditor.load, ann);
         assert.equal(result, "a promise, honest");
     });

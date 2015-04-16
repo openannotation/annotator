@@ -174,7 +174,7 @@ describe('storage.StorageAdapter', function () {
             );
         });
 
-        it("should run the onBeforeAnnotationCreated/onAnnotationCreated hooks before/after calling the store", function (done) {
+        it("should run the beforeAnnotationCreated/annotationCreated hooks before/after calling the store", function (done) {
             var hr = MockHookRunner();
             s = new MockStorage();
             s._callRecorder = hr.runHook;
@@ -184,10 +184,10 @@ describe('storage.StorageAdapter', function () {
             };
             a.create(ann)
                 .then(function () {
-                    assert.deepEqual(hr.calls[0].name, 'onBeforeAnnotationCreated');
+                    assert.deepEqual(hr.calls[0].name, 'beforeAnnotationCreated');
                     assert.strictEqual(hr.calls[0].args[0], ann);
                     assert.deepEqual(hr.calls[1].name, 'create');
-                    assert.deepEqual(hr.calls[2].name, 'onAnnotationCreated');
+                    assert.deepEqual(hr.calls[2].name, 'annotationCreated');
                     assert.strictEqual(hr.calls[2].args[0], ann);
                 })
                 .then(done, done);
@@ -238,7 +238,7 @@ describe('storage.StorageAdapter', function () {
             }, TypeError, ' id ');
         });
 
-        it("should run the onBeforeAnnotationUpdated/onAnnotationUpdated hooks before/after calling the store", function (done) {
+        it("should run the beforeAnnotationUpdated/annotationUpdated hooks before/after calling the store", function (done) {
             var hr = MockHookRunner();
             s = new MockStorage();
             s._callRecorder = hr.runHook;
@@ -249,10 +249,10 @@ describe('storage.StorageAdapter', function () {
             };
             a.update(ann)
                 .then(function () {
-                    assert.deepEqual(hr.calls[0].name, 'onBeforeAnnotationUpdated');
+                    assert.deepEqual(hr.calls[0].name, 'beforeAnnotationUpdated');
                     assert.strictEqual(hr.calls[0].args[0], ann);
                     assert.deepEqual(hr.calls[1].name, 'update');
-                    assert.deepEqual(hr.calls[2].name, 'onAnnotationUpdated');
+                    assert.deepEqual(hr.calls[2].name, 'annotationUpdated');
                     assert.strictEqual(hr.calls[2].args[0], ann);
                 })
                 .then(done, done);
@@ -304,7 +304,7 @@ describe('storage.StorageAdapter', function () {
             }, TypeError, ' id ');
         });
 
-        it("should run the onBeforeAnnotationDeleted/onAnnotationDeleted hooks before/after calling the store", function (done) {
+        it("should run the beforeAnnotationDeleted/annotationDeleted hooks before/after calling the store", function (done) {
             var hr = MockHookRunner();
             s = new MockStorage();
             s._callRecorder = hr.runHook;
@@ -315,10 +315,10 @@ describe('storage.StorageAdapter', function () {
             };
             a["delete"](ann)
                 .then(function () {
-                    assert.deepEqual(hr.calls[0].name, 'onBeforeAnnotationDeleted');
+                    assert.deepEqual(hr.calls[0].name, 'beforeAnnotationDeleted');
                     assert.strictEqual(hr.calls[0].args[0], ann);
                     assert.deepEqual(hr.calls[1].name, 'delete');
-                    assert.deepEqual(hr.calls[2].name, 'onAnnotationDeleted');
+                    assert.deepEqual(hr.calls[2].name, 'annotationDeleted');
                     return assert.strictEqual(hr.calls[2].args[0], ann);
                 })
                 .then(done, done);
@@ -371,7 +371,7 @@ describe('storage.StorageAdapter', function () {
             sinon.assert.calledWith(s.query, query);
         });
 
-        it("should run the onAnnotationsLoaded hook after calling the store", function (done) {
+        it("should run the annotationsLoaded hook after calling the store", function (done) {
             var hr = MockHookRunner();
             s = new MockStorage();
             s._callRecorder = hr.runHook;
@@ -382,7 +382,7 @@ describe('storage.StorageAdapter', function () {
             a.load(query)
                 .then(function () {
                     assert.deepEqual(hr.calls[0].name, 'query');
-                    assert.deepEqual(hr.calls[1].name, 'onAnnotationsLoaded');
+                    assert.deepEqual(hr.calls[1].name, 'annotationsLoaded');
                     assert.deepEqual(hr.calls[1].args, [[{id: 'foo'}]]);
                 })
                 .then(done, done);

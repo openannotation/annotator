@@ -61,14 +61,14 @@ describe('App', function () {
             var b = new app.App();
             var hook1 = sandbox.stub();
             var hook2 = sandbox.stub();
-            var mod1 = function () { return {onAnnotationCreated: hook1}; };
-            var mod2 = function () { return {onAnnotationCreated: hook2}; };
+            var mod1 = function () { return {annotationCreated: hook1}; };
+            var mod2 = function () { return {annotationCreated: hook2}; };
             var mod3 = function () { return {}; };
             b.include(mod1);
             b.include(mod2);
             b.include(mod3);
 
-            b.runHook('onAnnotationCreated');
+            b.runHook('annotationCreated');
 
             sinon.assert.calledWithExactly(hook1);
             sinon.assert.calledWithExactly(hook2);
@@ -86,15 +86,15 @@ describe('App', function () {
             b.include(mod2);
             b.include(mod3);
 
-            plug1.onAnnotationCreated = sandbox.stub().returns(123);
-            plug2.onAnnotationCreated = sandbox.stub().returns(Promise.resolve("ok"));
+            plug1.annotationCreated = sandbox.stub().returns(123);
+            plug2.annotationCreated = sandbox.stub().returns(Promise.resolve("ok"));
 
             var delayedResolve = null;
-            plug3.onAnnotationCreated = sandbox.stub().returns(new Promise(function (resolve) {
+            plug3.annotationCreated = sandbox.stub().returns(new Promise(function (resolve) {
                 delayedResolve = resolve;
             }));
 
-            var ret = b.runHook('onAnnotationCreated');
+            var ret = b.runHook('annotationCreated');
             ret.then(function () {
                 done();
             }, function () {
@@ -112,14 +112,14 @@ describe('App', function () {
             var mod2 = function () { return plug2; };
             b.include(mod1);
             b.include(mod2);
-            plug1.onAnnotationCreated = sandbox.stub().returns(Promise.resolve("ok"));
+            plug1.annotationCreated = sandbox.stub().returns(Promise.resolve("ok"));
 
             var delayedReject = null;
-            plug2.onAnnotationCreated = sandbox.stub().returns(new Promise(function (resolve, reject) {
+            plug2.annotationCreated = sandbox.stub().returns(new Promise(function (resolve, reject) {
                 delayedReject = reject;
             }));
 
-            var ret = b.runHook('onAnnotationCreated');
+            var ret = b.runHook('annotationCreated');
             ret.then(function () {
                 done(new Error("Promise should not have been resolved!"));
             }, function () {

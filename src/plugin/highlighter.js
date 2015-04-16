@@ -11,10 +11,10 @@ function highlighter(element, options) {
 
     return {
         destroy: function () { widget.destroy(); },
-        onAnnotationsLoaded: function (anns) { widget.drawAll(anns); },
-        onAnnotationCreated: function (ann) { widget.draw(ann); },
-        onAnnotationDeleted: function (ann) { widget.undraw(ann); },
-        onAnnotationUpdated: function (ann) { widget.redraw(ann); }
+        annotationsLoaded: function (anns) { widget.drawAll(anns); },
+        annotationCreated: function (ann) { widget.draw(ann); },
+        annotationDeleted: function (ann) { widget.undraw(ann); },
+        annotationUpdated: function (ann) { widget.redraw(ann); }
     };
 }
 

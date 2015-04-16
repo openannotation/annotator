@@ -290,12 +290,12 @@ function main(options) {
             removeDynamicStyle();
         },
 
-        onAnnotationsLoaded: function (anns) { highlighter.drawAll(anns); },
-        onAnnotationCreated: function (ann) { highlighter.draw(ann); },
-        onAnnotationDeleted: function (ann) { highlighter.undraw(ann); },
-        onAnnotationUpdated: function (ann) { highlighter.redraw(ann); },
+        annotationsLoaded: function (anns) { highlighter.drawAll(anns); },
+        annotationCreated: function (ann) { highlighter.draw(ann); },
+        annotationDeleted: function (ann) { highlighter.undraw(ann); },
+        annotationUpdated: function (ann) { highlighter.redraw(ann); },
 
-        onBeforeAnnotationCreated: function (annotation) {
+        beforeAnnotationCreated: function (annotation) {
             // Editor#load returns a promise that is resolved if editing
             // completes, and rejected if editing is cancelled. We return it
             // here to "stall" the annotation process until the editing is
@@ -303,7 +303,7 @@ function main(options) {
             return editor.load(annotation, interactionPoint);
         },
 
-        onBeforeAnnotationUpdated: function (annotation) {
+        beforeAnnotationUpdated: function (annotation) {
             return editor.load(annotation, interactionPoint);
         }
     };

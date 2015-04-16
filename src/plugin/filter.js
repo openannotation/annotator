@@ -11,10 +11,10 @@ var filter = function (options) {
     return {
         destroy: function () { widget.destroy(); },
 
-        onAnnotationsLoaded: function () { widget.updateHighlights(); },
-        onAnnotationCreated: function () { widget.updateHighlights(); },
-        onAnnotationUpdated: function () { widget.updateHighlights(); },
-        onAnnotationDeleted: function () { widget.updateHighlights(); }
+        annotationsLoaded: function () { widget.updateHighlights(); },
+        annotationCreated: function () { widget.updateHighlights(); },
+        annotationUpdated: function () { widget.updateHighlights(); },
+        annotationDeleted: function () { widget.updateHighlights(); }
     };
 };
 

@@ -39,22 +39,22 @@ describe('highlighter plugin', function () {
         sandbox.restore();
     });
 
-    it('should draw highlights onAnnotationCreated', function () {
-        plugin.onAnnotationCreated(ann);
+    it('should draw highlights annotationCreated', function () {
+        plugin.annotationCreated(ann);
         sinon.assert.calledWith(mockHighlighter.draw, ann);
     });
 
-    it('should redraw highlights onAnnotationUpdated', function () {
-        plugin.onAnnotationUpdated(ann);
+    it('should redraw highlights annotationUpdated', function () {
+        plugin.annotationUpdated(ann);
         sinon.assert.calledWith(mockHighlighter.redraw, ann);
     });
 
-    it('should undraw highlights onAnnotationDeleted', function () {
-        plugin.onAnnotationDeleted(ann);
+    it('should undraw highlights annotationDeleted', function () {
+        plugin.annotationDeleted(ann);
         sinon.assert.calledWith(mockHighlighter.undraw, ann);
     });
 
-    it('should draw all highlights onAnnotationsLoaded', function () {
+    it('should draw all highlights annotationsLoaded', function () {
         var ann2 = {
             id: 'def456',
             ranges: [
@@ -66,7 +66,7 @@ describe('highlighter plugin', function () {
                 }
             ]
         };
-        plugin.onAnnotationsLoaded([ann, ann2]);
+        plugin.annotationsLoaded([ann, ann2]);
         sinon.assert.calledWith(mockHighlighter.drawAll, [ann, ann2]);
     });
 

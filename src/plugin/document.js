@@ -264,7 +264,7 @@ var doc = function () {
     var metadata = getDocumentMetadata();
 
     return {
-        onBeforeAnnotationCreated: function (ann) {
+        beforeAnnotationCreated: function (ann) {
             // Assign a copy of the document metadata to the annotation
             ann.document = JSON.parse(JSON.stringify(metadata));
         }

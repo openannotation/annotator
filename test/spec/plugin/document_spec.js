@@ -35,10 +35,10 @@ describe('document plugin', function () {
     var tags = null,
         metadata = null;
 
-    it('adds document metadata to the annotation onBeforeAnnotationCreated', function () {
+    it('adds document metadata to the annotation beforeAnnotationCreated', function () {
         var plugin = doc.document();
         var annotation = {};
-        plugin.onBeforeAnnotationCreated(annotation);
+        plugin.beforeAnnotationCreated(annotation);
         assert.property(annotation, 'document');
     });
 

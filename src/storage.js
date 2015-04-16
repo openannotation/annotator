@@ -536,8 +536,8 @@ StorageAdapter.prototype.create = function (obj) {
     return this._cycle(
         obj,
         'create',
-        'onBeforeAnnotationCreated',
-        'onAnnotationCreated'
+        'beforeAnnotationCreated',
+        'annotationCreated'
     );
 };
 
@@ -574,8 +574,8 @@ StorageAdapter.prototype.update = function (obj) {
     return this._cycle(
         obj,
         'update',
-        'onBeforeAnnotationUpdated',
-        'onAnnotationUpdated'
+        'beforeAnnotationUpdated',
+        'annotationUpdated'
     );
 };
 
@@ -601,8 +601,8 @@ StorageAdapter.prototype['delete'] = function (obj) {
     return this._cycle(
         obj,
         'delete',
-        'onBeforeAnnotationDeleted',
-        'onAnnotationDeleted'
+        'beforeAnnotationDeleted',
+        'annotationDeleted'
     );
 };
 
@@ -636,7 +636,7 @@ StorageAdapter.prototype.load = function (query) {
     var self = this;
     return this.query(query)
         .then(function (data) {
-            self.runHook('onAnnotationsLoaded', [data.results]);
+            self.runHook('annotationsLoaded', [data.results]);
         });
 };
 

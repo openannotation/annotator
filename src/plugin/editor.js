@@ -10,10 +10,10 @@ function editor(options) {
 
     return {
         destroy: function () { widget.destroy(); },
-        onBeforeAnnotationCreated: function (annotation) {
+        beforeAnnotationCreated: function (annotation) {
             return widget.load(annotation);
         },
-        onBeforeAnnotationUpdated: function (annotation) {
+        beforeAnnotationUpdated: function (annotation) {
             return widget.load(annotation);
         }
     };

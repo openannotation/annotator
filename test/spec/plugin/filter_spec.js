@@ -23,10 +23,10 @@ describe('filter plugin', function () {
     });
 
     var hooks = [
-        'onAnnotationsLoaded',
-        'onAnnotationCreated',
-        'onAnnotationUpdated',
-        'onAnnotationDeleted'
+        'annotationsLoaded',
+        'annotationCreated',
+        'annotationUpdated',
+        'annotationDeleted'
     ];
 
     function testHook(h) {
