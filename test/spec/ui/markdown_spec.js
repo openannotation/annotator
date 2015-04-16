@@ -5,59 +5,50 @@ var markdown = require('../../../src/ui/markdown'),
 
 var g = util.getGlobal();
 
-describe('ui.markdown.markdown', function () {
-    var plugin = null;
+describe('ui.markdown.renderer', function () {
+    var sandbox;
+    var makeHtml;
 
-    describe("constructor", function () {
-        it("should log warning if Showdown is not loaded", function () {
-            sinon.stub(console, 'warn');
-            var showdown = g.Showdown;
-            g.Showdown = null;
-            plugin = markdown.markdown();
-            assert(console.warn.calledOnce);
-            console.warn.restore();
-            g.Showdown = showdown;
-        });
+    beforeEach(function () {
+        sandbox = sinon.sandbox.create();
+        sandbox.stub(util, 'escapeHtml').returns('escaped');
+        makeHtml = sandbox.stub().returns('converted');
+
+        g.Showdown = {
+            converter: function () {
+                return {makeHtml: makeHtml};
+            }
+        };
     });
 
-    describe("convert", function () {
-        var showdown = null;
-        var escapeHtml = null;
-        var makeHtml = null;
+    afterEach(function () {
+        sandbox.restore();
+    });
 
-        beforeEach(function () {
-            escapeHtml = sinon.stub(util, 'escapeHtml').returns('escaped');
-            makeHtml = sinon.stub().returns('converted');
+    it("should log a warning if Showdown is not present in the page", function () {
+        sandbox.stub(console, 'warn');
+        g.Showdown = null;
 
-            var fakeShowDown = {
-                converter: function () {
-                    return {
-                        makeHtml: makeHtml
-                    };
-                }
-            };
+        markdown.renderer({});
 
-            showdown = g.Showdown;
-            g.Showdown = fakeShowDown;
-        });
+        assert(console.warn.calledOnce);
+    });
 
-        afterEach(function () {
-            util.escapeHtml.restore();
-            g.Showdown = showdown;
-        });
+    it("returned function should convert annotation text", function () {
+        assert.equal('converted', markdown.renderer({text: 'wibble'}));
 
-        it("should escape and convert the provided text into markdown", function () {
-            plugin = markdown.markdown();
-            assert.equal(plugin.convert('foo'), 'converted');
-            assert.isTrue(escapeHtml.calledWith('foo'));
-            assert.isTrue(makeHtml.calledWith('escaped'));
-        });
+        sinon.assert.calledWith(makeHtml, 'wibble');
+    });
 
-        it("should escape even if showdown is not loaded", function () {
-            sinon.stub(console, 'warn');
-            g.Showdown = null;
-            plugin = markdown.markdown();
-            assert.equal(plugin.convert('foo'), 'escaped');
-        });
+    it("returned function should handle annotations without text", function () {
+        assert.equal('<i>No comment</i>', markdown.renderer({}));
+    });
+
+    it("returned function should HTML escape text if Showdown is not available", function () {
+        sinon.stub(console, 'warn');
+        g.Showdown = null;
+
+        assert.equal('escaped', markdown.renderer({text: 'foo'}));
+        sinon.assert.calledWith(util.escapeHtml, 'foo');
     });
 });
