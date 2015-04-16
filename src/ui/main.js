@@ -101,12 +101,12 @@ function removeDynamicStyle() {
 
 
 // Helper function to add permissions checkboxes to the editor
-function addPermissionsCheckboxes(editor, registry) {
+function addPermissionsCheckboxes(editor, app) {
     function createLoadCallback(action) {
         return function loadCallback(field, annotation) {
             field = util.$(field).show();
 
-            var u = registry.ident.who();
+            var u = app.ident.who();
             var input = field.find('input');
 
             // Do not show field if no user is set
@@ -115,12 +115,12 @@ function addPermissionsCheckboxes(editor, registry) {
             }
 
             // Do not show field if current user is not admin.
-            if (!(registry.authz.permits('admin', annotation, u))) {
+            if (!(app.authz.permits('admin', annotation, u))) {
                 field.hide();
             }
 
             // See if we can authorise without a user.
-            if (registry.authz.permits(action, annotation, null)) {
+            if (app.authz.permits(action, annotation, null)) {
                 input.attr('checked', 'checked');
             } else {
                 input.removeAttr('checked');
@@ -130,7 +130,7 @@ function addPermissionsCheckboxes(editor, registry) {
 
     function createSubmitCallback(action) {
         return function submitCallback(field, annotation) {
-            var u = registry.ident.who();
+            var u = app.ident.who();
 
             // Don't do anything if no user is set
             if (typeof u === 'undefined' || u === null) {
@@ -148,7 +148,7 @@ function addPermissionsCheckboxes(editor, registry) {
                 // interpret "prevent others from viewing" as meaning "allow
                 // only me to view". This may want changing in the future.
                 annotation.permissions[action] = [
-                    registry.authz.authorizedUserId(u)
+                    app.authz.authorizedUserId(u)
                 ];
             }
         };
@@ -212,10 +212,10 @@ function main(options) {
     // Shared user interface state
     var interactionPoint = null;
 
-    function configure(registry) {
+    function start(app) {
         adder = new ui.Adder({
             onCreate: function (ann) {
-                registry.annotations.create(ann);
+                app.annotations.create(ann);
             }
         });
         adder.attach();
@@ -224,7 +224,7 @@ function main(options) {
         editor = new ui.Editor({extensions: [tags.createEditorField]});
         editor.attach();
 
-        addPermissionsCheckboxes(editor, registry);
+        addPermissionsCheckboxes(editor, app);
 
         highlighter = new ui.Highlighter(element);
 
@@ -245,23 +245,23 @@ function main(options) {
                 // Copy the interaction point from the shown viewer:
                 interactionPoint = util.$(viewer.element).css(['top', 'left']);
 
-                registry.annotations.update(ann);
+                app.annotations.update(ann);
             },
             onDelete: function (ann) {
-                registry.annotations['delete'](ann);
+                app.annotations['delete'](ann);
             },
             permitEdit: function (ann) {
-                return registry.authz.permits(
+                return app.authz.permits(
                     'update',
                     ann,
-                    registry.ident.who()
+                    app.ident.who()
                 );
             },
             permitDelete: function (ann) {
-                return registry.authz.permits(
+                return app.authz.permits(
                     'delete',
                     ann,
-                    registry.ident.who()
+                    app.ident.who()
                 );
             },
             autoViewHighlights: element,
@@ -279,7 +279,7 @@ function main(options) {
     }
 
     return {
-        configure: configure,
+        start: start,
 
         destroy: function () {
             adder.destroy();

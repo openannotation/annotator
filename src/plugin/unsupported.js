@@ -45,7 +45,7 @@ function unsupported() {
     // Reference as exports.checkSupport so that we can stub it for testing.
     var result = exports.checkSupport();
 
-    function notifyUser(registry) {
+    function notifyUser(app) {
         if (result.supported) {
             return;
         }
@@ -53,7 +53,7 @@ function unsupported() {
         msg = _t("Sorry, Annotator does not currently support your browser! ");
         msg += _t("Errors: ");
         msg += result.errors.join(", ");
-        registry.notify(msg);
+        app.notify(msg);
     }
 
     return {

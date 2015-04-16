@@ -131,31 +131,28 @@ describe('App', function () {
     });
 
     describe('#start', function () {
-        it('sets the authz property on the app and registry', function () {
+        it('sets the authz property on the app', function () {
             var b = new app.App();
             b.start();
 
             assert.ok(b.authz);
-            assert.ok(b.registry.authz);
         });
 
-        it('sets the ident property on the app and registry', function () {
+        it('sets the ident property on the app', function () {
             var b = new app.App();
             b.start();
 
             assert.ok(b.ident);
-            assert.ok(b.registry.ident);
         });
 
-        it('sets the notify property on the app and registry', function () {
+        it('sets the notify property on the app', function () {
             var b = new app.App();
             b.start();
 
             assert.ok(b.notify);
-            assert.ok(b.registry.notify);
         });
 
-        it('sets the annotations property on app and registry to be a storage adapter', function () {
+        it('sets the annotations property on app to be a storage adapter', function () {
             var b = new app.App();
             var s = sandbox.stub();
             var adapter = {};
@@ -164,7 +161,7 @@ describe('App', function () {
 
             b.start();
 
-            assert.equal(adapter, b.registry.annotations);
+            assert.equal(adapter, b.annotations);
         });
 
         it('should pass the adapter the storage component', function () {
@@ -202,7 +199,7 @@ describe('App', function () {
             b.include(mod);
             b.start();
 
-            sinon.assert.calledWith(start, b.registry);
+            sinon.assert.calledWith(start, b);
         });
     });
 });

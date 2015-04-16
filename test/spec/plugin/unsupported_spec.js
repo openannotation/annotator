@@ -59,11 +59,11 @@ describe("unsupported.checkSupport()", function () {
 
 
 describe('unsupported plugin', function () {
-    var mockRegistry;
+    var mockApp;
     var sandbox = sinon.sandbox.create();
 
     beforeEach(function () {
-        mockRegistry = {
+        mockApp = {
             notify: sandbox.stub()
         };
 
@@ -79,10 +79,10 @@ describe('unsupported plugin', function () {
 
     it('should notify the user on start if Annotator does not support the current browser', function () {
         var plugin = unsupported.unsupported();
-        plugin.start(mockRegistry);
+        plugin.start(mockApp);
 
         sinon.assert.calledWith(
-            mockRegistry.notify,
+            mockApp.notify,
             sinon.match('widgets are discombobulated')
         );
     });

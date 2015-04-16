@@ -119,7 +119,8 @@ var HTTPStorage;
  *   :attr:`~annotator.storage.HTTPStorage.options`.
  */
 exports.http = function http(options) {
-    var notify;
+    // This gets overridden on app start
+    var notify = function () {};
 
     if (typeof options === 'undefined' || options === null) {
         options = {};
@@ -138,8 +139,8 @@ exports.http = function http(options) {
             registry.registerUtility(storage, 'storage');
         },
 
-        start: function (registry) {
-            notify = registry.notify;
+        start: function (app) {
+            notify = app.notify;
         }
     };
 };

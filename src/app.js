@@ -82,18 +82,18 @@ App.prototype.start = function () {
     var self = this;
     var reg = this.registry;
 
-    this.authz = reg.authz = reg.getUtility('authorizationPolicy');
-    this.ident = reg.ident = reg.getUtility('identityPolicy');
-    this.notify = reg.notify = reg.getUtility('notifier');
+    this.authz = reg.getUtility('authorizationPolicy');
+    this.ident = reg.getUtility('identityPolicy');
+    this.notify = reg.getUtility('notifier');
 
-    this.annotations = reg.annotations = new storage.StorageAdapter(
+    this.annotations = new storage.StorageAdapter(
         reg.getUtility('storage'),
         function () {
             return self.runHook.apply(self, arguments);
         }
     );
 
-    return this.runHook('start', [this.registry]);
+    return this.runHook('start', [this]);
 };
 
 

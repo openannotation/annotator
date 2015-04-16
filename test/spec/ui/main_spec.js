@@ -9,11 +9,11 @@ var main = require('../../../src/ui/main').main,
 
 describe('annotator.ui.main', function () {
     var sandbox;
-    var mockRegistry;
+    var mockApp;
 
     beforeEach(function () {
         sandbox = sinon.sandbox.create();
-        mockRegistry = {
+        mockApp = {
             annotations: {create: sandbox.stub()},
             authz: {
                 permits: sandbox.stub().returns(true),
@@ -32,7 +32,7 @@ describe('annotator.ui.main', function () {
         sandbox.stub(ui, 'TextSelector');
 
         var plug = main();
-        plug.configure(mockRegistry);
+        plug.start(mockApp);
 
         sinon.assert.calledWith(ui.TextSelector, document.body);
     });
@@ -55,13 +55,13 @@ describe('annotator.ui.main', function () {
         }
 
         var plug = main({element: h.fix()});
-        plug.configure(mockRegistry);
+        plug.start(mockApp);
         check(1000);
         plug.destroy();
 
         $fix.append('<div style="position: relative; z-index: 2000"></div>');
         plug = main({element: h.fix()});
-        plug.configure(mockRegistry);
+        plug.start(mockApp);
         check(2000);
         plug.destroy();
     });
@@ -75,7 +75,7 @@ describe('annotator.ui.main', function () {
             sandbox.stub(ui, 'Adder').returns(mockAdder);
 
             plug = main({element: el});
-            plug.configure(mockRegistry);
+            plug.start(mockApp);
         });
 
         afterEach(function () {
@@ -86,12 +86,12 @@ describe('annotator.ui.main', function () {
             sinon.assert.calledOnce(ui.Adder);
         });
 
-        it("passes an onCreate handler which asks the registry to create an annotation", function () {
+        it("passes an onCreate handler which asks the app to create an annotation", function () {
             var callArgs = ui.Adder.args[0];
             assert.property(callArgs[0], 'onCreate');
             callArgs[0].onCreate({text: 'wibble'});
             sinon.assert.calledWith(
-                mockRegistry.annotations.create,
+                mockApp.annotations.create,
                 {text: 'wibble'}
             );
         });
@@ -110,7 +110,7 @@ describe('annotator.ui.main', function () {
             sandbox.stub(ui, 'Editor').returns(mockEditor);
 
             plug = main({element: el});
-            plug.configure(mockRegistry);
+            plug.start(mockApp);
         });
 
         afterEach(function () {
@@ -137,14 +137,14 @@ describe('annotator.ui.main', function () {
             });
 
             it("load hides a field if no user is set", function () {
-                mockRegistry.ident.who.returns(null);
+                mockApp.ident.who.returns(null);
                 viewLoad(field, {});
                 assert.equal(field.style.display, 'none');
             });
 
             it("load hides a field if current user is not admin", function () {
                 var ann = {};
-                mockRegistry.authz.permits
+                mockApp.authz.permits
                     .withArgs('admin', ann, 'alice').returns(false);
                 viewLoad(field, ann);
                 assert.equal(field.style.display, 'none');
@@ -152,14 +152,14 @@ describe('annotator.ui.main', function () {
 
             it("load hides a field if current user is not admin", function () {
                 var ann = {};
-                mockRegistry.authz.permits
+                mockApp.authz.permits
                     .withArgs('admin', ann, 'alice').returns(false);
                 viewLoad(field, ann);
                 assert.equal(field.style.display, 'none');
             });
 
             it("load shows a checked field if the action is authorised with a null user", function () {
-                mockRegistry.authz.permits.returns(true);
+                mockApp.authz.permits.returns(true);
                 viewLoad(field, {});
                 assert.notEqual(field.style.display, 'none');
                 assert.isTrue(field.firstChild.checked);
@@ -167,7 +167,7 @@ describe('annotator.ui.main', function () {
 
             it("load shows an unchecked field if the action isn't authorised with a null user", function () {
                 var ann = {};
-                mockRegistry.authz.permits
+                mockApp.authz.permits
                     .withArgs('read', ann, null).returns(false);
                 viewLoad(field, ann);
                 assert.notEqual(field.style.display, 'none');
@@ -191,7 +191,7 @@ describe('annotator.ui.main', function () {
             });
 
             it("submit doesn't touch the annotation if the current user is null", function () {
-                mockRegistry.ident.who.returns(null);
+                mockApp.ident.who.returns(null);
                 var ann = {permissions: {'read': ['alice']}};
                 field.firstChild.checked = true;
                 viewSubmit(field, ann);
@@ -215,8 +215,8 @@ describe('annotator.ui.main', function () {
         sandbox.stub(ui, 'Highlighter').returns(mockHighlighter);
         sandbox.stub(ui, 'TextSelector').returns(mockTextSelector);
         sandbox.stub(ui, 'Viewer').returns(mockViewer);
-        var plug = main({element: null});
-        plug.configure(null);
+        var plug = main();
+        plug.start(mockApp);
         plug.destroy();
         sinon.assert.calledOnce(mockAdder.destroy);
         sinon.assert.calledOnce(mockEditor.destroy);
