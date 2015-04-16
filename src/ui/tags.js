@@ -1,3 +1,4 @@
+/*package annotator.ui.tags */
 "use strict";
 
 var util = require('../util');
@@ -5,54 +6,40 @@ var util = require('../util');
 var $ = util.$;
 var _t = util.gettext;
 
-// Configuration options
-var defaultOptions = {
-    // Configurable function which accepts an array of tags and
-    // returns a string which will be used to fill the tags input.
-    stringifyTags: function (array) {
-        return array.join(" ");
-    },
-    // Configurable function which accepts a string (the contents)
-    // of the tags input as an argument, and returns an array of
-    // tags.
-    parseTags: function (string) {
-        string = $.trim(string);
-        var tags = [];
+// Take an array of tags and turn it into a string suitable for display in the
+// viewer.
+function stringifyTags(array) {
+    return array.join(" ");
+}
 
-        if (string) {
-            tags = string.split(/\s+/);
-        }
+// Take a string from the tags input as an argument, and return an array of
+// tags.
+function parseTags(string) {
+    string = $.trim(string);
+    var tags = [];
 
-        return tags;
+    if (string) {
+        tags = string.split(/\s+/);
     }
-};
 
-exports.tags = function tags(opts) {
-    var options = $.extend(true, {}, defaultOptions, opts);
+    return tags;
+}
 
-    return {
-        createViewerField: configureViewer(options),
-        createEditorField: configureEditor(options)
-    };
-};
 
-function configureViewer() {
-    // Annotator.Viewer callback function. Updates the annotation display
-    // with tags
-    // removes the field from the Viewer if there are no tags to display.
-    //
-    // field      - The Element to populate with tags.
-    // annotation - An annotation object to be display.
-    //
-    // Examples
-    //
-    //   field = $('<div />')[0]
-    //   plugin.updateField(field, {tags: ['apples']})
-    //   field.innerHTML # => Returns
-    //      '<span class="annotator-tag">apples</span>'
-    //
-    // Returns nothing.
-    function updateViewer (field, annotation) {
+/**
+ * function:: viewerExtension(viewer)
+ *
+ * An extension for the :class:`~annotator.ui.viewer.Viewer` which displays any
+ * tags stored as an array of strings in the annotation's ``tags`` property.
+ *
+ * **Usage**::
+ *
+ *     app.include(annotator.ui.main, {
+ *         viewerExtensions: [annotator.ui.tags.viewerExtension]
+ *     })
+ */
+exports.viewerExtension = function viewerExtension(v) {
+    function updateViewer(field, annotation) {
         field = $(field);
         if (annotation.tags &&
             $.isArray(annotation.tags) &&
@@ -69,71 +56,48 @@ function configureViewer() {
         }
     }
 
-    function createViewerField (v) {
-        v.addField({
-            load: updateViewer
-        });
-    }
-
-    return createViewerField;
-}
+    v.addField({
+        load: updateViewer
+    });
+};
 
 
-function configureEditor(options) {
+/**
+ * function:: editorExtension(editor)
+ *
+ * An extension for the :class:`~annotator.ui.editor.Editor` which allows
+ * editing a set of space-delimited tags, retrieved from and saved to the
+ * annotation's ``tags`` property.
+ *
+ * **Usage**::
+ *
+ *     app.include(annotator.ui.main, {
+ *         viewerExtensions: [annotator.ui.tags.viewerExtension]
+ *     })
+ */
+exports.editorExtension = function editorExtension(e) {
     // The input element added to the Annotator.Editor wrapped in jQuery.
     // Cached to save having to recreate it everytime the editor is displayed.
     var field = null;
     var input = null;
 
-    // Annotator.Editor callback function. Updates the @input field with the
-    // tags attached to the provided annotation.
-    //
-    // field      - The tags field Element containing the input Element.
-    // annotation - An annotation object to be edited.
-    //
-    // Examples
-    //
-    //   field = $('<li><input /></li>')[0]
-    //   plugin.updateField(field, {tags: ['apples', 'oranges', 'cake']})
-    //   field.value # => Returns 'apples oranges cake'
-    //
-    // Returns nothing.
-    function updateField (field, annotation) {
+    function updateField(field, annotation) {
         var value = '';
         if (annotation.tags) {
-            value = options.stringifyTags(annotation.tags);
+            value = stringifyTags(annotation.tags);
         }
         input.val(value);
     }
 
-    // Annotator.Editor callback function. Updates the annotation field with the
-    // data retrieved from the @input property.
-    //
-    // field      - The tags field Element containing the input Element.
-    // annotation - An annotation object to be updated.
-    //
-    // Examples
-    //
-    //   annotation = {}
-    //   field = $('<li><input value="cake chocolate cabbage" /></li>')[0]
-    //
-    //   plugin.setAnnotationTags(field, annotation)
-    //   annotation.tags # => Returns ['cake', 'chocolate', 'cabbage']
-    //
-    // Returns nothing.
-    function setAnnotationTags (field, annotation) {
-        annotation.tags = options.parseTags(input.val());
+    function setAnnotationTags(field, annotation) {
+        annotation.tags = parseTags(input.val());
     }
 
-    function createEditorField (e) {
-        field = e.addField({
-            label: _t('Add some tags here') + '\u2026',
-            load: updateField,
-            submit: setAnnotationTags
-        });
+    field = e.addField({
+        label: _t('Add some tags here') + '\u2026',
+        load: updateField,
+        submit: setAnnotationTags
+    });
 
-        input = $(field).find(':input');
-    }
-
-    return createEditorField;
-}
+    input = $(field).find(':input');
+};
