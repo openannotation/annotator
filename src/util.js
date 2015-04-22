@@ -48,7 +48,13 @@ var gettext = (function () {
 // corner of the page (taking into account padding/margin/border on the body
 // element as necessary).
 function mousePosition(event) {
-    var offset = $(getGlobal().document.body).offset();
+    var body = getGlobal().document.body;
+    var offset = {top: 0, left: 0};
+
+    if ($(body).css('position') !== "static") {
+        offset = $(body).offset();
+    }
+
     return {
         top: event.pageY - offset.top,
         left: event.pageX - offset.left
