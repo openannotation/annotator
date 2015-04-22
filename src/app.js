@@ -27,12 +27,11 @@ function App() {
     // Register a bunch of default utilities
     this.registry.registerUtility(authz.defaultAuthorizationPolicy,
                                   'authorizationPolicy');
-    this.registry.registerUtility(identity.defaultIdentityPolicy,
-                                  'identityPolicy');
     this.registry.registerUtility(notification.defaultNotifier,
                                   'notifier');
 
-    // And set up a default storage component.
+    // And set up default components.
+    this.include(identity.simple);
     this.include(storage.noop);
 }
 

@@ -3,14 +3,34 @@
 "use strict";
 
 
+var SimpleIdentityPolicy;
+
+
 /**
- * data:: defaultIdentityPolicy
- *
- * Default identity policy.
+ * function:: simple()
+ * A module that configures and registers an instance of
+ * :class:`annotator.identity.SimpleIdentityPolicy`.
  */
-exports.defaultIdentityPolicy = {
+exports.simple = function simple() {
+    var identity = new SimpleIdentityPolicy();
+
+    return {
+        configure: function (registry) {
+            registry.registerUtility(identity, 'identityPolicy');
+        }
+    };
+};
+
+
+/**
+ * class:: SimpleIdentityPolicy
+ *
+ * A simple identity policy that considers the identity to be an opaque
+ * identifier.
+ */
+SimpleIdentityPolicy = function SimpleIdentityPolicy() {
     /**
-     * data:: defaultIdentityPolicy.identity
+     * data:: SimpleIdentityPolicy.identity
      *
      * Default identity. Defaults to `null`, which disables identity-related
      * functionality.
@@ -20,12 +40,16 @@ exports.defaultIdentityPolicy = {
      *
      *     app.ident.identity = 'bob';
      */
-    identity: null,
+    this.identity = null;
+};
+exports.SimpleIdentityPolicy = SimpleIdentityPolicy;
 
-    /**
-     * function:: defaultIdentityPolicy.who()
-     *
-     * Returns the current user identity.
-     */
-    who: function () { return this.identity; }
+
+/**
+ * function:: SimpleIdentityPolicy.prototype.who()
+ *
+ * Returns the current user identity.
+ */
+SimpleIdentityPolicy.prototype.who = function () {
+    return this.identity;
 };
