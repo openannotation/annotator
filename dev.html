@@ -2,14 +2,25 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>JS annotation test</title>
+    <title>Annotator development</title>
     <style>
-      /* This is evil but people do it. This checks that we correctly
-         calculate the position of the adder and other UI elements in any
-         situation. */
       body {
+        font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+        letter-spacing: 0.01rem;
+        font-size: 22px;
+        line-height: 1.5;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+
+        /* This is evil but people do it. This checks that we correctly
+           calculate the position of the adder and other UI elements in any
+           situation. */
         position: relative;
         margin-top: 3em;
+      }
+      article {
+        width: 80%;
+        margin: 2em auto;
       }
       #absolute {
         border: 1px solid #eee;
@@ -37,11 +48,7 @@
   </head>
 
   <body>
-    <header>
-      <h1>Javascript annotation service test</h1>
-    </header>
-
-    <div id="airlock">
+    <article>
       <p><strong>Pellentesque habitant morbi tristique</strong> senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. <em>Aenean ultricies mi vitae est.</em> Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, <code>commodo vitae</code>, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. <a href="#">Donec non enim</a> in turpis pulvinar facilisis. Ut felis.</p>
 
       <h2>Header Level 2</h2>
@@ -103,13 +110,13 @@
           </tr>
         </tbody>
       </table>
-    </div>
+    </article>
 
     <script>var annotator = 'noConflictBeforeValue';</script>
     <script src="bundle/annotator.js"></script>
 
     <script>
-      var elem = document.getElementById('airlock');
+      var elem = document.querySelector('article');
       var app = new annotator.App()
       .include(annotator.ui.main, {element: elem})
       .include(annotator.ui.filter.standalone)
