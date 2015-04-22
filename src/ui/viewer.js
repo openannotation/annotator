@@ -349,12 +349,7 @@ var Viewer = exports.Viewer = Widget.extend({
                     .toArray();
 
                 // Now show the viewer with the wanted annotations
-                var offset = self.element.parent().offset(),
-                    position = {
-                        top: event.pageY - offset.top,
-                        left: event.pageX - offset.left
-                    };
-                self.load(annotations, position);
+                self.load(annotations, util.mousePosition(event));
             });
     },
 
