@@ -253,18 +253,6 @@ describe('annotator.ui.main', function () {
             sinon.assert.calledWith(viewer.Viewer,
                                     sinon.match.has('extensions', ['bar', 'baz']));
         });
-
-        it("passes viewerRenderer on to the viewer", function () {
-            viewer.Viewer.reset();
-            plug = main({
-                element: el,
-                viewerRenderer: 'wibble'
-            });
-            plug.start(mockApp);
-
-            sinon.assert.calledWith(viewer.Viewer,
-                                    sinon.match.has('renderer', 'wibble'));
-        });
     });
 
     it("should destroy the UI components when it is destroyed", function () {

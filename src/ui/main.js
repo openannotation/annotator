@@ -205,12 +205,6 @@ function addPermissionsCheckboxes(editor, app) {
  *      :class:`~annotator.ui.viewer.Viewer` documentation for details of viewer
  *      extensions.
  *
- *   .. attribute:: options.viewerRenderer
- *
- *      An annotation renderer for the viewer. See the
- *      :class:`~annotator.ui.viewer.Viewer` documentation for details of
- *      renderers.
- *
  */
 function main(options) {
     if (typeof options === 'undefined' || options === null) {
@@ -276,8 +270,7 @@ function main(options) {
                 return app.authz.permits('delete', ann, app.ident.who());
             },
             autoViewHighlights: options.element,
-            extensions: options.viewerExtensions,
-            renderer: options.viewerRenderer
+            extensions: options.viewerExtensions
         });
         s.viewer.attach();
 

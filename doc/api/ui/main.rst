@@ -31,11 +31,5 @@ annotator.ui package
          An array of viewer extensions. See the
          :class:`~annotator.ui.viewer.Viewer` documentation for details of viewer
          extensions.
-    
-      .. attribute:: options.viewerRenderer
-    
-         An annotation renderer for the viewer. See the
-         :class:`~annotator.ui.viewer.Viewer` documentation for details of
-         renderers.
 
 
