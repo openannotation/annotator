@@ -5,7 +5,7 @@ var markdown = require('../../../src/ui/markdown'),
 
 var g = util.getGlobal();
 
-describe('ui.markdown.renderer', function () {
+describe('ui.markdown.render', function () {
     var sandbox;
     var makeHtml;
 
@@ -25,30 +25,58 @@ describe('ui.markdown.renderer', function () {
         sandbox.restore();
     });
 
-    it("should log a warning if Showdown is not present in the page", function () {
-        sandbox.stub(console, 'warn');
-        g.Showdown = null;
-
-        markdown.renderer({});
-
-        assert(console.warn.calledOnce);
-    });
-
-    it("returned function should convert annotation text", function () {
-        assert.equal('converted', markdown.renderer({text: 'wibble'}));
+    it("should convert annotation text", function () {
+        assert.equal('converted', markdown.render({text: 'wibble'}));
 
         sinon.assert.calledWith(makeHtml, 'wibble');
     });
 
-    it("returned function should handle annotations without text", function () {
-        assert.equal('<i>No comment</i>', markdown.renderer({}));
+    it("should handle annotations without text", function () {
+        assert.equal('<i>No comment</i>', markdown.render({}));
+
+        sinon.assert.calledWith(util.escapeHtml, 'foo');
     });
 
-    it("returned function should HTML escape text if Showdown is not available", function () {
-        sinon.stub(console, 'warn');
+    it("should HTML escape text if Showdown is not available", function () {
         g.Showdown = null;
 
-        assert.equal('escaped', markdown.renderer({text: 'foo'}));
-        sinon.assert.calledWith(util.escapeHtml, 'foo');
+        assert.equal('escaped', markdown.render({text: 'foo'}));
+    });
+});
+
+
+describe('ui.markdown.viewerExtension', function () {
+    var sandbox;
+    var mockViewer;
+
+    beforeEach(function () {
+        sandbox = sinon.sandbox.create();
+        mockViewer = {
+            setRenderer: sandbox.stub()
+        };
+        g.Showdown = {
+            converter: function () {
+                return {makeHtml: sandbox.stub()};
+            }
+        };
+    });
+
+    afterEach(function () {
+        sandbox.restore();
+    });
+
+    it("should log a warning if Showdown is not present in the page", function () {
+        sandbox.stub(console, 'warn');
+        g.Showdown = null;
+
+        markdown.viewerExtension(mockViewer);
+
+        assert(console.warn.calledOnce);
+    });
+
+    it("sets the viewer renderer to the markdown render function", function () {
+        markdown.viewerExtension(mockViewer);
+
+        sinon.assert.calledWith(mockViewer.setRenderer, markdown.render);
     });
 });
