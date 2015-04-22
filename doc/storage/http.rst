@@ -1,4 +1,4 @@
-``Annotator.Storage.HTTPStorage`` component
+``Annotator.Storage.HttpStorage`` component
 ===========================================
 
 This storage component sends annotations (serialised as JSON) to a server that

@@ -69,7 +69,7 @@ customize it. Many modules can be configured, and you can find out what
 configuration options they accept in the relevant :doc:`api/index`.
 
 For example, here are the options accepted by the :func:`annotator.storage.http`
-module: :data:`annotator.storage.HTTPStorage.options`. Let's say we have an
+module: :data:`annotator.storage.HttpStorage.options`. Let's say we have an
 `annotator-store server`_ running at ``http://example.com/api``. We can
 configure the :func:`~annotator.storage.http` module to address it like so::
 

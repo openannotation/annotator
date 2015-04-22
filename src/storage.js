@@ -105,18 +105,18 @@ exports.noop = function () {
 };
 
 
-var HTTPStorage;
+var HttpStorage;
 
 
 /**
  * function:: http([options])
  *
  * A module which configures an instance of
- * :class:`annotator.storage.HTTPStorage` as the storage component.
+ * :class:`annotator.storage.HttpStorage` as the storage component.
  *
  * :param Object options:
  *   Configuration options. For available options see
- *   :attr:`~annotator.storage.HTTPStorage.options`.
+ *   :attr:`~annotator.storage.HttpStorage.options`.
  */
 exports.http = function http(options) {
     // This gets overridden on app start
@@ -132,7 +132,7 @@ exports.http = function http(options) {
         notify(msg, 'error');
     };
 
-    var storage = new HTTPStorage(options);
+    var storage = new HttpStorage(options);
 
     return {
         configure: function (registry) {
@@ -147,21 +147,21 @@ exports.http = function http(options) {
 
 
 /**
- * class:: HTTPStorage([options])
+ * class:: HttpStorage([options])
  *
- * HTTPStorage is a storage component that talks to a remote JSON + HTTP API
+ * HttpStorage is a storage component that talks to a remote JSON + HTTP API
  * that should be relatively easy to implement with any web application
  * framework.
  *
- * :param Object options: See :attr:`~annotator.storage.HTTPStorage.options`.
+ * :param Object options: See :attr:`~annotator.storage.HttpStorage.options`.
  */
-HTTPStorage = exports.HTTPStorage = function HTTPStorage(options) {
-    this.options = $.extend(true, {}, HTTPStorage.options, options);
+HttpStorage = exports.HttpStorage = function HttpStorage(options) {
+    this.options = $.extend(true, {}, HttpStorage.options, options);
     this.onError = this.options.onError;
 };
 
 /**
- * function:: HTTPStorage.prototype.create(annotation)
+ * function:: HttpStorage.prototype.create(annotation)
  *
  * Create an annotation.
  *
@@ -175,12 +175,12 @@ HTTPStorage = exports.HTTPStorage = function HTTPStorage(options) {
  * :returns: The request object.
  * :rtype: Promise
  */
-HTTPStorage.prototype.create = function (annotation) {
+HttpStorage.prototype.create = function (annotation) {
     return this._apiRequest('create', annotation);
 };
 
 /**
- * function:: HTTPStorage.prototype.update(annotation)
+ * function:: HttpStorage.prototype.update(annotation)
  *
  * Update an annotation.
  *
@@ -194,12 +194,12 @@ HTTPStorage.prototype.create = function (annotation) {
  * :returns: The request object.
  * :rtype: Promise
  */
-HTTPStorage.prototype.update = function (annotation) {
+HttpStorage.prototype.update = function (annotation) {
     return this._apiRequest('update', annotation);
 };
 
 /**
- * function:: HTTPStorage.prototype.delete(annotation)
+ * function:: HttpStorage.prototype.delete(annotation)
  *
  * Delete an annotation.
  *
@@ -212,12 +212,12 @@ HTTPStorage.prototype.update = function (annotation) {
  * :returns: The request object.
  * :rtype: Promise
  */
-HTTPStorage.prototype['delete'] = function (annotation) {
+HttpStorage.prototype['delete'] = function (annotation) {
     return this._apiRequest('destroy', annotation);
 };
 
 /**
- * function:: HTTPStorage.prototype.query(queryObj)
+ * function:: HttpStorage.prototype.query(queryObj)
  *
  * Searches for annotations matching the specified query.
  *
@@ -226,7 +226,7 @@ HTTPStorage.prototype['delete'] = function (annotation) {
  *   A promise, resolves to an object containing query `results` and `meta`.
  * :rtype: Promise
  */
-HTTPStorage.prototype.query = function (queryObj) {
+HttpStorage.prototype.query = function (queryObj) {
     return this._apiRequest('search', queryObj)
     .then(function (obj) {
         var rows = obj.rows;
@@ -236,7 +236,7 @@ HTTPStorage.prototype.query = function (queryObj) {
 };
 
 /**
- * function:: HTTPStorage.prototype.setHeader(name, value)
+ * function:: HttpStorage.prototype.setHeader(name, value)
  *
  * Set a custom HTTP header to be sent with every request.
  *
@@ -247,7 +247,7 @@ HTTPStorage.prototype.query = function (queryObj) {
  * :param string name: The header name.
  * :param string value: The header value.
  */
-HTTPStorage.prototype.setHeader = function (key, value) {
+HttpStorage.prototype.setHeader = function (key, value) {
     this.options.headers[key] = value;
 };
 
@@ -261,7 +261,7 @@ HTTPStorage.prototype.setHeader = function (key, value) {
  * :returns: The request object.
  * :rtype: jqXHR
  */
-HTTPStorage.prototype._apiRequest = function (action, obj) {
+HttpStorage.prototype._apiRequest = function (action, obj) {
     var id = obj && obj.id;
     var url = this._urlFor(action, id);
     var options = this._apiRequestOptions(action, obj);
@@ -284,7 +284,7 @@ HTTPStorage.prototype._apiRequest = function (action, obj) {
  * :returns: $.ajax() options.
  * :rtype: Object
  */
-HTTPStorage.prototype._apiRequestOptions = function (action, obj) {
+HttpStorage.prototype._apiRequestOptions = function (action, obj) {
     var method = this._methodFor(action);
     var self = this;
 
@@ -338,7 +338,7 @@ HTTPStorage.prototype._apiRequestOptions = function (action, obj) {
  *
  * :returns String: URL for the request.
  */
-HTTPStorage.prototype._urlFor = function (action, id) {
+HttpStorage.prototype._urlFor = function (action, id) {
     if (typeof id === 'undefined' || id === null) {
         id = '';
     }
@@ -361,7 +361,7 @@ HTTPStorage.prototype._urlFor = function (action, id) {
  * :param String action:
  * :returns String: Method for the request.
  */
-HTTPStorage.prototype._methodFor = function (action) {
+HttpStorage.prototype._methodFor = function (action) {
     var table = {
         create: 'POST',
         update: 'PUT',
@@ -378,7 +378,7 @@ HTTPStorage.prototype._methodFor = function (action) {
  *
  * :param jqXHR: The jqXMLHttpRequest object.
  */
-HTTPStorage.prototype._onError = function (xhr) {
+HttpStorage.prototype._onError = function (xhr) {
     if (typeof this.onError !== 'function') {
         return;
     }
@@ -406,13 +406,13 @@ HTTPStorage.prototype._onError = function (xhr) {
 };
 
 /**
- * attribute:: HTTPStorage.options
+ * attribute:: HttpStorage.options
  *
- * Available configuration options for HTTPStorage. See below.
+ * Available configuration options for HttpStorage. See below.
  */
-HTTPStorage.options = {
+HttpStorage.options = {
     /**
-     * attribute:: HTTPStorage.options.emulateHTTP
+     * attribute:: HttpStorage.options.emulateHTTP
      *
      * Should the plugin emulate HTTP methods like PUT and DELETE for
      * interaction with legacy web servers? Setting this to `true` will fake
@@ -425,7 +425,7 @@ HTTPStorage.options = {
     emulateHTTP: false,
 
     /**
-     * attribute:: HTTPStorage.options.emulateJSON
+     * attribute:: HttpStorage.options.emulateJSON
      *
      * Should the plugin emulate JSON POST/PUT payloads by sending its requests
      * as application/x-www-form-urlencoded with a single key, "json"
@@ -435,7 +435,7 @@ HTTPStorage.options = {
     emulateJSON: false,
 
     /**
-     * attribute:: HTTPStorage.options.headers
+     * attribute:: HttpStorage.options.headers
      *
      * A set of custom headers that will be sent with every request. See also
      * the setHeader method.
@@ -445,7 +445,7 @@ HTTPStorage.options = {
     headers: {},
 
     /**
-     * attribute:: HTTPStorage.options.onError
+     * attribute:: HttpStorage.options.onError
      *
      * Callback, called if a remote request throws an error.
      */
@@ -454,7 +454,7 @@ HTTPStorage.options = {
     },
 
     /**
-     * attribute:: HTTPStorage.options.prefix
+     * attribute:: HttpStorage.options.prefix
      *
      * This is the API endpoint. If the server supports Cross Origin Resource
      * Sharing (CORS) a full URL can be used here.
@@ -464,7 +464,7 @@ HTTPStorage.options = {
     prefix: '/store',
 
     /**
-     * attribute:: HTTPStorage.options.urls
+     * attribute:: HttpStorage.options.urls
      *
      * The server URLs for each available action. These URLs can be anything but
      * must respond to the appropriate HTTP method. The URLs are Level 1 URI
