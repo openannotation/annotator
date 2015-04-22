@@ -2,12 +2,12 @@ var assert = require('assertive-chai').assert;
 
 var storage = require('../../../src/storage');
 
-describe("storage.HTTPStorage", function () {
+describe("storage.HttpStorage", function () {
     var store, xhr, lastReq;
 
     beforeEach(function () {
         lastReq = null;
-        store = new storage.HTTPStorage();
+        store = new storage.HttpStorage();
         xhr = sinon.useFakeXMLHttpRequest();
         xhr.onCreate = function (r) {
             lastReq = r;
@@ -185,7 +185,7 @@ describe("storage.HTTPStorage", function () {
         });
 
         it("calls the onError handler when an error occurs", function (done) {
-            store = new storage.HTTPStorage({
+            store = new storage.HttpStorage({
                 onError: onError
             });
             var res = store.create({text: "Donkeys on giraffes"});

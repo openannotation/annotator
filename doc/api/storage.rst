@@ -27,23 +27,23 @@ annotator.storage package
 ..  function:: annotator.storage.http([options])
     
     A module which configures an instance of
-    :class:`annotator.storage.HTTPStorage` as the storage component.
+    :class:`annotator.storage.HttpStorage` as the storage component.
     
     :param Object options:
       Configuration options. For available options see
-      :attr:`~annotator.storage.HTTPStorage.options`.
+      :attr:`~annotator.storage.HttpStorage.options`.
 
 
-..  class:: annotator.storage.HTTPStorage([options])
+..  class:: annotator.storage.HttpStorage([options])
     
-    HTTPStorage is a storage component that talks to a remote JSON + HTTP API
+    HttpStorage is a storage component that talks to a remote JSON + HTTP API
     that should be relatively easy to implement with any web application
     framework.
     
-    :param Object options: See :attr:`~annotator.storage.HTTPStorage.options`.
+    :param Object options: See :attr:`~annotator.storage.HttpStorage.options`.
 
 
-..  function:: annotator.storage.HTTPStorage.prototype.create(annotation)
+..  function:: annotator.storage.HttpStorage.prototype.create(annotation)
     
     Create an annotation.
 
@@ -58,7 +58,7 @@ annotator.storage package
     :rtype: Promise
 
 
-..  function:: annotator.storage.HTTPStorage.prototype.update(annotation)
+..  function:: annotator.storage.HttpStorage.prototype.update(annotation)
     
     Update an annotation.
     
@@ -73,7 +73,7 @@ annotator.storage package
     :rtype: Promise
 
 
-..  function:: annotator.storage.HTTPStorage.prototype.delete(annotation)
+..  function:: annotator.storage.HttpStorage.prototype.delete(annotation)
     
     Delete an annotation.
     
@@ -87,7 +87,7 @@ annotator.storage package
     :rtype: Promise
 
 
-..  function:: annotator.storage.HTTPStorage.prototype.query(queryObj)
+..  function:: annotator.storage.HttpStorage.prototype.query(queryObj)
     
     Searches for annotations matching the specified query.
     
@@ -97,7 +97,7 @@ annotator.storage package
     :rtype: Promise
 
 
-..  function:: annotator.storage.HTTPStorage.prototype.setHeader(name, value)
+..  function:: annotator.storage.HttpStorage.prototype.setHeader(name, value)
     
     Set a custom HTTP header to be sent with every request.
     
@@ -109,12 +109,12 @@ annotator.storage package
     :param string value: The header value.
 
 
-..  attribute:: annotator.storage.HTTPStorage.options
+..  attribute:: annotator.storage.HttpStorage.options
     
-    Available configuration options for HTTPStorage. See below.
+    Available configuration options for HttpStorage. See below.
 
 
-..  attribute:: annotator.storage.HTTPStorage.options.emulateHTTP
+..  attribute:: annotator.storage.HttpStorage.options.emulateHTTP
     
     Should the plugin emulate HTTP methods like PUT and DELETE for
     interaction with legacy web servers? Setting this to `true` will fake
@@ -125,7 +125,7 @@ annotator.storage package
     **Default**: ``false``
 
 
-..  attribute:: annotator.storage.HTTPStorage.options.emulateJSON
+..  attribute:: annotator.storage.HttpStorage.options.emulateJSON
     
     Should the plugin emulate JSON POST/PUT payloads by sending its requests
     as application/x-www-form-urlencoded with a single key, "json"
@@ -133,7 +133,7 @@ annotator.storage package
     **Default**: ``false``
 
 
-..  attribute:: annotator.storage.HTTPStorage.options.headers
+..  attribute:: annotator.storage.HttpStorage.options.headers
     
     A set of custom headers that will be sent with every request. See also
     the setHeader method.
@@ -141,12 +141,12 @@ annotator.storage package
     **Default**: ``{}``
 
 
-..  attribute:: annotator.storage.HTTPStorage.options.onError
+..  attribute:: annotator.storage.HttpStorage.options.onError
     
     Callback, called if a remote request throws an error.
 
 
-..  attribute:: annotator.storage.HTTPStorage.options.prefix
+..  attribute:: annotator.storage.HttpStorage.options.prefix
     
     This is the API endpoint. If the server supports Cross Origin Resource
     Sharing (CORS) a full URL can be used here.
@@ -154,7 +154,7 @@ annotator.storage package
     **Default**: ``'/store'``
 
 
-..  attribute:: annotator.storage.HTTPStorage.options.urls
+..  attribute:: annotator.storage.HttpStorage.options.urls
     
     The server URLs for each available action. These URLs can be anything but
     must respond to the appropriate HTTP method. The URLs are Level 1 URI

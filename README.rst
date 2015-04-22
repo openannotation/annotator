@@ -35,7 +35,7 @@ annotations of text in the browser, but it can also be extended in order to
 provide:
 
 -  persistence: storage components help you save your annotations to a remote
-   server. One notable example is the |HTTPStorageComponent|_ which ships with
+   server. One notable example is the |HttpStorageComponent|_ which ships with
    Annotator and talks to the |AnnotatorStore|_.
 -  rich metadata: the |DocumentPlugin|_ sniffs the page on which annotations are
    being made for document metadata (such as that provided by `Dublin Core
@@ -46,8 +46,8 @@ provide:
    |PermissionsComponent|_ allow you fine-grained control over who has
    permission to create and update annotations.
 
-.. |HTTPStorageComponent| replace:: ``HTTPStorage`` component
-.. _HTTPStorageComponent: http://docs.annotatorjs.org/en/latest/storage/http.html
+.. |HttpStorageComponent| replace:: ``HttpStorage`` component
+.. _HttpStorageComponent: http://docs.annotatorjs.org/en/latest/storage/http.html
 .. |AnnotatorStore| replace:: ``annotator-store`` API
 .. _AnnotatorStore: https://github.com/openannotation/annotator-store/
 .. _Dublin Core tags: http://dublincore.org/
