@@ -257,9 +257,8 @@ describe('ui.viewer.Viewer', function () {
 
     describe('renderer', function () {
         beforeEach(function () {
-            v = new viewer.Viewer({
-                renderer: sinon.stub().returns("Wolves with sheep")
-            });
+            v = new viewer.Viewer();
+            v.setRenderer(sinon.stub().returns("Wolves with sheep"));
         });
 
         afterEach(function () {

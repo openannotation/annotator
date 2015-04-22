@@ -81,13 +81,20 @@ var Viewer = exports.Viewer = Widget.extend({
         this.hideTimerDfd = null;
         this.hideTimerActivity = null;
         this.mouseDown = false;
+        this.render = function (annotation) {
+            if (annotation.text) {
+                return util.escapeHtml(annotation.text);
+            } else {
+                return "<i>" + _t('No comment') + "</i>";
+            }
+        };
 
         var self = this;
 
         if (this.options.defaultFields) {
             this.addField({
                 load: function (field, annotation) {
-                    $(field).html(self.options.renderer(annotation));
+                    $(field).html(self.render(annotation));
                 }
             });
         }
@@ -207,6 +214,15 @@ var Viewer = exports.Viewer = Widget.extend({
         }
 
         this.show(position);
+    },
+
+    // Public: Set the annotation renderer.
+    //
+    // renderer - A function that accepts an annotation and returns HTML.
+    //
+    // Returns nothing.
+    setRenderer: function (renderer) {
+        this.render = renderer;
     },
 
     // Private: create the list item for a single annotation
@@ -475,17 +491,7 @@ Viewer.options = {
 
     // Callback, called when the user clicks the delete button for an
     // annotation.
-    onDelete: function () {},
-
-    // A function that returns the default displayed HTML that represents an
-    // annotation in the viewer.
-    renderer: function (annotation) {
-        if (annotation.text) {
-            return util.escapeHtml(annotation.text);
-        } else {
-            return "<i>" + _t('No comment') + "</i>";
-        }
-    }
+    onDelete: function () {}
 };
 
 
