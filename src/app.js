@@ -25,12 +25,11 @@ function App() {
     this._started = false;
 
     // Register a bunch of default utilities
-    this.registry.registerUtility(authz.defaultAuthorizationPolicy,
-                                  'authorizationPolicy');
     this.registry.registerUtility(notification.defaultNotifier,
                                   'notifier');
 
     // And set up default components.
+    this.include(authz.acl);
     this.include(identity.simple);
     this.include(storage.noop);
 }
