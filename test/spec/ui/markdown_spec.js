@@ -33,14 +33,13 @@ describe('ui.markdown.render', function () {
 
     it("should handle annotations without text", function () {
         assert.equal('<i>No comment</i>', markdown.render({}));
-
-        sinon.assert.calledWith(util.escapeHtml, 'foo');
     });
 
     it("should HTML escape text if Showdown is not available", function () {
         g.Showdown = null;
 
         assert.equal('escaped', markdown.render({text: 'foo'}));
+        sinon.assert.calledWith(util.escapeHtml, 'foo');
     });
 });
 
