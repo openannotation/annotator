@@ -1,0 +1,10 @@
+What is Annotator?
+==================
+Annotator is a JavaScript library, and there are two main approaches to using
+it. You can either use the standalone packaged files, or you can install it from
+the npm_ package repository and integrate the source code into your own
+browserify_ or webpack_ toolchain.
+
+.. _npm: https://www.npmjs.com/
+.. _browserify: http://browserify.org/
+.. _webpack: https://webpack.github.io/
