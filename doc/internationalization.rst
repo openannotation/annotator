@@ -1,7 +1,7 @@
 Internationalisation and localisation (I18N, L10N)
 ==================================================
 
-Annotator now has rudimentary support for localisation of its interface.
+Annotator has rudimentary support for localisation of its interface.
 
 For users
 ---------
