@@ -1,10 +1,10 @@
 {
   "name": "annotator",
   "version": "2.0.0-dev.2",
-  "description": "Inline annotation for the web. Select text, images, or (nearly) anything else, and add your notes.",
+  "description": "Annotation for the web. Select text, images, or (nearly) anything else, and add your notes.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/okfn/annotator.git"
+    "url": "https://github.com/openannotation/annotator.git"
   },
   "dependencies": {
     "backbone-extend-standalone": "~0.1.2",
@@ -48,7 +48,7 @@
     "annotator": "global:annotator"
   },
   "engines": {
-    "node": ">=0.8 <0.12"
+    "node": ">=0.10 <0.12"
   },
   "scripts": {
     "start": "./tools/serve",
