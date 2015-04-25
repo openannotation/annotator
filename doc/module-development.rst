@@ -130,7 +130,7 @@ receive.
 .. function:: destroy()
 
    Called when :func:`~annotator.App.prototype.destroy` is called. If your
-   module needs to do any cleanup, such as unbind events or disposing of
+   module needs to do any cleanup, such as unbinding events or disposing of
    elements injected into the DOM, it should do so in the `destroy` hook.
 
 
