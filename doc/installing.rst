@@ -25,13 +25,7 @@ To load Annotator with the default set of components, place the following
 
    <script src="annotator.min.js"></script>
 
-To load additional plugins, append the relevant ``<script>`` tags:
-
-.. code:: html
-
-   <script src="annotator-document.min.js"></script>
-
-Now you can continue to :doc:`usage`.
+Continue to :doc:`usage` to learn about creating your first :term:`application`.
 
 
 npm package
