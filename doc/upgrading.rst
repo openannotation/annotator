@@ -61,35 +61,25 @@ identify which parts of Annotator 1.2 you use. Review the list below, which
 attempts to catalogue Annotator 1.2 patterns and demonstrate the new patterns.
 
 
-jQuery integration
-~~~~~~~~~~~~~~~~~~
+Basic usage
+~~~~~~~~~~~
 
-Annotator 1.2 ships with a jQuery integration, allowing you to write code such
+Annotator 1.2 shipped with a jQuery integration, allowing you to write code such
 as::
 
     $('body').annotator();
 
 This has been removed in 2.0. Here's what you'd write now::
 
-    new annotator.App()
-        .include(annotator.ui.main, {element: document.body})
-        .start();
+    var app = new annotator.App()
+    app.include(annotator.ui.main, {element: document.body})
+    app.start();
 
-
-Core annotator
-~~~~~~~~~~~~~~
-
-The default construction of Annotator in 1.2 looked like this::
-
-    new Annotator(document.body);
-
-This sets up an Annotator with a user interface. The default construction of
-Annotator in 2.0 doesn't set up a user interface so you need to include the
-``annotator.ui.main`` module if you want similar behaviour::
-
-    new annotator.App()
-        .include(annotator.ui.main, {element: document.body})
-        .start();
+This sets up an Annotator with a user interface. If you decide not to include
+the ``annotator.ui.main`` module then your application will not have any of
+the familiar user interface components. Instead, you can begin to construct
+your own annotation application from those components assembled in a way that
+best serves your needs.
 
 
 Store plugin
