@@ -130,8 +130,8 @@ in Annotator 2.0::
            app.annotations.load({uri: window.location.href});
        });
 
-We first create an Annotator extension module (once known as a plugin) that sets
-the ``uri`` property on new annotations. Then we create and configure an
+We first create an Annotator extension module that sets the ``uri`` property
+property on new annotations. Then we create and configure an
 :class:`~annotator.App` that includes the :func:`annotator.storage.http` module.
 Lastly, we start the application and load the annotations using the same query
 as in the 1.2 example.
