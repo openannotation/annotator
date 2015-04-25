@@ -150,14 +150,14 @@ Upgrading a plugin
 ------------------
 
 The first thing to know about Annotator 2.0 is that we are retiring the use of
-the word "plugin". Our documentation and code refers to reusable pieces of code
-such as :func:`annotator.storage.http` as "modules". Modules are included into
-an :class:`~annotator.App`, and are able to register providers of named
+the word "plugin". Our documentation and code refers to a reusable piece of code
+such as :func:`annotator.storage.http` as a :term:`module`. Modules are included
+into an :class:`~annotator.App`, and are able to register providers of named
 interfaces (such as "storage" or "notifier"), as well as providing runnable
-"hook functions" that the app calls at important moments. Annotator 1.2's
-lifecycle events (``beforeAnnotationCreated``, ``annotationCreated``, etc.) are
-still available as hooks, and it should be reasonably straightforward to migrate
-plugins that simply respond to lifecycle events.
+:term:`hook` functions that are called at important moments. The lifecycle
+events in Annotator 1.2 (``beforeAnnotationCreated``, ``annotationCreated``,
+etc.) are still available as hooks, and it should be reasonably straightforward
+to migrate plugins that simply respond to lifecycle events.
 
 The second important observation is that Annotator 2.0 is written in JavaScript,
 not CoffeeScript. You may continue to write modules in any dialect you like,
