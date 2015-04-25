@@ -33,10 +33,34 @@ app.use('/api/token', function(request, response) {
 });
 
 app.use('/bundle/annotator.js', browserify('index.js', {standalone: 'annotator'}));
+
+// Serve files locally from src/ext/
 app.use('/bundle/ext', function (req, res, next) {
   // browserify-middleware expects req.path to be set
   req.path = req.url;
   browserify('src/ext/')(req, res, next);
+});
+
+// Serve any browserifiable module. Useful when developing external modules. If
+// you are developing the "annotator-widgets" module you can run
+//
+//     npm link
+//
+// in the annotator-widgets repository, followed by
+//
+//     npm link annotator-widgets
+//
+// in the annotator repository, and then you can load
+//
+//     /bundle/ext/annotator-widgets.js
+//
+// from this server.
+app.use('/bundle/ext', function (req, res, next) {
+  if (req.url.slice(0, 1) !== '/' || req.url.slice(-3) !== '.js') {
+    next();
+  }
+  var moduleName = req.url.slice(1, -3);
+  browserify([moduleName])(req, res, next);
 });
 
 // Static files
