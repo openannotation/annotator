@@ -25,10 +25,9 @@ functionality. There are two ways of doing this:
 2. component registration
 
 Use module hooks Unless you are replacing core functionality of Annotator.
-Module hooks are functions which you can expose from your module which will be
-run by the :class:`~annotator.App` when important things happen. For example,
-here's a module which will say ``Hello, world!`` to the user when the
-application starts::
+Module hooks are functions that will be run by the :class:`~annotator.App` when
+important things happen. For example, here's a module that will say
+``Hello, world!`` to the user when the application starts::
 
     function helloWorld() {
         return {
