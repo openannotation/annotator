@@ -106,10 +106,10 @@ This code is doing three distinct things:
    window.location.href}``.
 
 In Annotator 2.0 the configuration of the storage component
-(:func:`annotator.storage.http`) is logically separate from both a) the
-loading of annotations from storage, and b) the extension of annotations with
-additional data. An example which replicates the above behaviour would look like
-this in Annotator 2.0::
+(:func:`annotator.storage.http`) is logically separate from a) the loading
+of annotations from storage, and b) the extension of annotations with additional
+data. An example which replicates the above behavior would look like this
+in Annotator 2.0::
 
 
     var pageUri = function () {
