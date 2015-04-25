@@ -19,8 +19,8 @@ Annotator application was developed to enable annotation in a project called
 "Open Shakespeare". At the time, Annotator was designed primarily as a drop-in
 annotation application, with only limited support for customisation.
 
-Over several years, Annotator gained primitive support for plugins, which
-allowed developers to customise and extend the behaviour of the application.
+Over several years, Annotator gained support for plugins that allowed
+developers to customize and extend the behavior of the application.
 
 In order to ensure a stable platform for future development, we have made some
 substantial changes to Annotator's plugin architecture. This unfortunately means
