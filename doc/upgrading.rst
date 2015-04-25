@@ -85,18 +85,17 @@ best serves your needs.
 Store plugin
 ~~~~~~~~~~~~
 
-In Annotator 1.2 configuring storage looked something like the following::
+In Annotator 1.2, configuring storage looked like this::
 
-    new Annotator(elem)
-        .addPlugin('Store', {
-            prefix: 'http://example.com/api',
-            loadFromSearch: {
-                uri: window.location.href,
-            },
-            annotationData: {
-                uri: window.location.href,
-            }
-        });
+    annotator.addPlugin('Store', {
+        prefix: 'http://example.com/api',
+        loadFromSearch: {
+            uri: window.location.href,
+        },
+        annotationData: {
+            uri: window.location.href,
+        }
+    });
 
 This code is doing three distinct things:
 
