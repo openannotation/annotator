@@ -19,7 +19,7 @@ This clearly won't do very much, but we can include it in an application::
     app.include(myModule);
 
 If we want to do something more interesting, we have to provide some module
-functionality. There are essentially two primary ways of doing this:
+functionality. There are two ways of doing this:
 
 1. module hooks
 2. component registration
