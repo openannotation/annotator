@@ -78,7 +78,7 @@ reference of arguments and hooks is covered in the :ref:`module-hooks` section.
 Loading custom modules
 ----------------------
 
-When you write a custom module, you'll end up with a JavaScript function which
+When you write a custom module, you'll end up with a JavaScript function that
 you need to reference when you build your application. In the examples above
 we've just defined a function and then used it straight away. This is probably
 fine for small examples, but when things get a bit more complicated you might
