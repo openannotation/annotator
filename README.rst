@@ -5,80 +5,50 @@ Annotator
 
 |Build Matrix|
 
-::
-
-  ┌──────────────────────────────────────────────────────┐
-  │ WARNING! Unstable code in this branch!               │
-  ├──────────────────────────────────────────────────────┤
-  │ Please be aware that the current stable release of   │
-  │ Annotator is v1.2.9 and can be found on the releases │
-  │ page (see below) or the v1.2.x branch.               │
-  │                                                      │
-  │ The code in the master branch is what will become    │
-  │ v2.0 in due course, but is likely to have a highly   │
-  │ unstable API. You are advised NOT to build on the    │
-  │ contents of the master branch at this stage unless   │
-  │ you are happy dealing with APIs breaking frequently! │
-  └──────────────────────────────────────────────────────┘
-
-Annotator is a JavaScript library for building annotation systems on the web. It
-provides a set of tools to annotate text (and other content) in webpages, and to
-save those annotations to a remote storage system. For a simple demonstration,
-visit the `Annotator home page`_ or download a tagged release of Annotator from
-`the releases page`_ and open ``demo.html``.
+Annotator is a JavaScript library for building annotation applications in
+browsers. It provides a set of interoperable tools for annotating content in
+webpages. For a simple demonstration, visit the `Annotator home page`_ or
+download a tagged release of Annotator from `the releases page`_ and open
+``demo.html``.
 
 .. _Annotator home page: http://annotatorjs.org/
 .. _the releases page: https://github.com/openannotation/annotator/releases
 
-Annotator aims to provide a sensible default configuration which allows for
-annotations of text in the browser, but it can also be extended in order to
-provide:
+Components within Annotator provide:
 
+-  user interface: components to create, edit, and display annotations in a
+   browser.
 -  persistence: storage components help you save your annotations to a remote
-   server. One notable example is the |HttpStorageComponent|_ which ships with
-   Annotator and talks to the |AnnotatorStore|_.
--  rich metadata: the |DocumentPlugin|_ sniffs the page on which annotations are
-   being made for document metadata (such as that provided by `Dublin Core
+   server.
+-  authorization and identity: integrate Annotator with your application's login
+   and permissions systems.
+-  rich metadata: the |documentmodule|_ sniffs the page on which annotations
+   are being made for document metadata (such as that provided by `Dublin Core
    tags`_ or the `Facebook Open Graph`_) that allows you to enrich the
    presentation of these annotations.
--  authentication and authorization: the |AuthComponent|_ allows you to restrict
-   the creation of annotations to logged in users, while the
-   |PermissionsComponent|_ allow you fine-grained control over who has
-   permission to create and update annotations.
 
-.. |HttpStorageComponent| replace:: ``HttpStorage`` component
-.. _HttpStorageComponent: http://docs.annotatorjs.org/en/latest/storage/http.html
-.. |AnnotatorStore| replace:: ``annotator-store`` API
-.. _AnnotatorStore: https://github.com/openannotation/annotator-store/
 .. _Dublin Core tags: http://dublincore.org/
 .. _Facebook Open Graph: https://developers.facebook.com/docs/opengraph
-.. |AuthComponent| replace:: ``Auth`` component
-.. _AuthComponent: http://docs.annotatorjs.org/en/latest/storage/auth.html
-.. |PermissionsComponent| replace:: ``Permissions`` component
-.. _PermissionsComponent: http://docs.annotatorjs.org/en/latest/permissions.html
-
-For a list of plugins that ship with Annotator, see the `plugin pages`_ of
-the Annotator documentation. For a list of 3rd party plugins, or to add your
-plugin, see the `list of 3rd party plugins`_ on the wiki.
-
-.. _plugin pages: http://docs.annotatorjs.org/en/latest/plugins/index.html
-.. _list of 3rd party plugins: https://github.com/openannotation/annotator/wiki#plugins-3rd-party
+.. |documentmodule| replace:: ``annotator.ext.document`` module
+.. _documentmodule: http://docs.annotatorjs.org/en/latest/modules/document.html
 
 
 Usage
 -----
 
-See `Getting started with Annotator`_.
+See Installing_ and `Configuring and using Annotator`_ from the documentation_.
 
-.. _Getting started with Annotator: http://docs.annotatorjs.org/en/latest/getting-started.html
+.. _Installing: http://docs.annotatorjs.org/en/latest/installing.html
+.. _Configuring and using Annotator: http://docs.annotatorjs.org/en/latest/usage.html
+.. _documentation: http://docs.annotatorjs.org/en/latest/
 
 
-Writing a plugin
+Writing a module
 ----------------
 
-See `Plugin development`_.
+See `Module development`_.
 
-.. _Plugin development: http://docs.annotatorjs.org/en/latest/hacking/plugin-development.html
+.. _Module development: http://docs.annotatorjs.org/en/latest/module-development.html
 
 
 Development
