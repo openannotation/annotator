@@ -67,11 +67,10 @@ configure the module when it's included in our application::
         url: "brass_band.wav"
     });
 
-You might have noticed that the :func:`annotationCreated` module hook function
+You may have noticed that the :func:`annotationCreated` module hook function
 here receives one argument, ``annotation``. Similarly, the :func:`start` module
-hook function in the previous example received an ``app`` argument. You can find
-out which arguments are passed to which module hooks in :ref:`module-hooks`,
-below.
+hook function in the previous example receives an ``app`` argument. A complete
+reference of arguments and hooks is covered in the :ref:`module-hooks` section.
 
 .. _HTML5 Audio API: https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API
 
