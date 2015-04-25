@@ -171,7 +171,7 @@ object containing hook functions. It is through these hook functions that
 modules provide the bulk of their functionality.
 
 Upgrading a trivial plugin
-~~~~~~~~~~~~~~~~----------
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Here's an Annotator 1.2 plugin that logs to the console when started::
 
