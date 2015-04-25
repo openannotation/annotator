@@ -31,9 +31,8 @@ continue using it until such time as the features added to the 2.x series
 attract your interest. We'll continue to answer questions about 1.2.
 
 The target audience for Annotator 2.0 is those who have been frustrated by the
-coupling and architecture of 1.2.
-
-If any of the following apply to you, Annotator 2.0 should make you happier:
+coupling and architecture of 1.2. If any of the following apply to you,
+Annotator 2.0 should make you happier:
 
 - You work on an Annotator application that overrides part or all of the
   default user interface.
