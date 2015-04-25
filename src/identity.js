@@ -8,6 +8,7 @@ var SimpleIdentityPolicy;
 
 /**
  * function:: simple()
+ *
  * A module that configures and registers an instance of
  * :class:`annotator.identity.SimpleIdentityPolicy`.
  */

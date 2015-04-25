@@ -4,6 +4,7 @@ annotator.identity package
 ==========================
 
 ..  function:: annotator.identity.simple()
+    
     A module that configures and registers an instance of
     :class:`annotator.identity.SimpleIdentityPolicy`.
 
