@@ -34,8 +34,6 @@ Continue reading to learn about installing and deploying Annotator:
    modules/index
    module-development
 
-   annotation-format
-   authentication
    internationalization
 
    roadmap
