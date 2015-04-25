@@ -19,11 +19,11 @@ start an |App|. At its simplest, that looks like this::
 
 You probably want to keep reading if you want your Annotator installation to be
 useful straight away, as by default an |App| is extremely minimal. You can can
-easily add functionality from Annotator "modules": independent components that
-you can load into your application. For example, here we create an |App| that
-uses the default Annotator user interface (:func:`annotator.ui.main`), and
-the :func:`annotator.storage.http` storage component in order to save
-annotations to a remote server::
+easily add functionality from an Annotator :term:`module`, an independent
+components that you can load into your :term:`application`. For example, here
+we create an |App| that uses the default Annotator user interface
+(:func:`annotator.ui.main`), and the :func:`annotator.storage.http` storage
+component in order to save annotations to a remote server::
 
    var app = new annotator.App();
    app.include(annotator.ui.main);
