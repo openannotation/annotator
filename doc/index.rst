@@ -46,9 +46,14 @@ You can start learning about how to install and deploy Annotator below:
 .. todolist::
 
 
-Indices and tables
+Index and Glossary
 ==================
 
+* :ref:`glossary`
 * :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+
+
+.. toctree::
+   :hidden:
+
+   glossary
