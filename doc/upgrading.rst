@@ -140,8 +140,10 @@ as in the 1.2 example.
 Auth plugin
 ~~~~~~~~~~~
 
-The auth plugin, which in 1.2 retrieves an authentication token from an API
-endpoint and sets up the Store plugin, is not yet available in 2.0.
+The auth plugin, which in 1.2 retrieved an authentication token from an API
+endpoint and set up the Store plugin, is not available for 2.0. See the
+documentation for the :func:`annotator.storage.http` module for configuring
+the request headers directly according to your needs.
 
 
 
