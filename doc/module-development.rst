@@ -103,11 +103,6 @@ modules directly from the namespace::
     });
     app.include(shakespeare.addSceneData);
 
-All the modules that ship with Annotator are placed within the ``annotator``
-namespace. If you write and publish your own modules, be aware that you don't
-need to put your modules in the ``annotator`` namespace for them to work.
-
-
 .. _module-hooks:
 
 Module hooks
