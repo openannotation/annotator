@@ -3,12 +3,18 @@
 annotator.identity package
 ==========================
 
-..  data:: annotator.identity.defaultIdentityPolicy
+..  function:: annotator.identity.simple()
+    A module that configures and registers an instance of
+    :class:`annotator.identity.SimpleIdentityPolicy`.
+
+
+..  class:: annotator.identity.SimpleIdentityPolicy
     
-    Default identity policy.
+    A simple identity policy that considers the identity to be an opaque
+    identifier.
 
 
-..  data:: annotator.identity.defaultIdentityPolicy.identity
+..  data:: annotator.identity.SimpleIdentityPolicy.identity
     
     Default identity. Defaults to `null`, which disables identity-related
     functionality.
@@ -19,7 +25,7 @@ annotator.identity package
         app.ident.identity = 'bob';
 
 
-..  function:: annotator.identity.defaultIdentityPolicy.who()
+..  function:: annotator.identity.SimpleIdentityPolicy.prototype.who()
     
     Returns the current user identity.
 

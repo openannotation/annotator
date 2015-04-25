@@ -3,23 +3,31 @@
 annotator.authz package
 =======================
 
-..  data:: annotator.authz.defaultAuthorizationPolicy
+..  function:: annotator.authz.acl()
     
-    Default authorization policy.
+    A module that configures and registers an instance of
+    :class:`annotator.identity.AclAuthzPolicy`.
 
 
-..  function:: annotator.authz.defaultAuthorizationPolicy.permits(action,
-                                                  annotation,
-                                                  identity)
+..  class:: annotator.authz.AclAuthzPolicy()
+
+    An authorization policy that permits actions based on access control lists.
+
+
+..  function:: annotator.authz.AclAuthzPolicy.prototype.permits(action, context, identity)
     
     Determines whether the user identified by `identity` is permitted to
-    perform the specified action on the given annotation.
+    perform the specified action in the given context.
     
-    If the annotation has a "permissions" object property, then actions will
+    If the context has a "permissions" object property, then actions will
     be permitted if either of the following are true:
     
-      a) annotation.permissions[action] is undefined or null,
-      b) annotation.permissions[action] is an Array containing `identity`.
+      a) permissions[action] is undefined or null,
+      b) permissions[action] is an Array containing the authorized userid
+         for the given identity.
+
+    If the context has no permissions associated with it then all actions
+    will be permitted.
     
     If the annotation has a "user" property, then actions will be permitted
     only if `identity` matches this "user" property.
@@ -27,14 +35,15 @@ annotator.authz package
     If the annotation has neither a "permissions" property nor a "user"
     property, then all actions will be permitted.
     
-    :param String action: The action the user wishes to perform.
-    :param annotation:
-    :param identity: The identity of the user.
+    :param String action: The action to perform.
+    :param context: The permissions context for the authorization check.
+    :param identity: The identity whose authorization is being checked.
     
-    :returns Boolean: Whether the action is permitted.
+    :returns Boolean: Whether the action is permitted in this context for this
+    identity.
 
 
-..  function:: annotator.authz.defaultAuthorizationPolicy.authorizedUserId(identity)
+..  function:: annotator.authz.AclAuthzPolicy.prototype.authorizedUserId(identity)
     
     Returns the authorized userid for the user identified by `identity`.
 
