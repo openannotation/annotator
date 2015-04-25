@@ -18,10 +18,6 @@ module.exports = function (karma) {
             'test/spec/**/*_spec.js'
         ],
 
-        exclude: [
-            'test/spec/plugin/auth_spec.js'
-        ],
-
         preprocessors: {
             'node_modules/wgxpath/wgxpath.install.js': 'browserify',
             'test/**/*.js': 'browserify'
