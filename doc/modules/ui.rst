@@ -1,5 +1,5 @@
-``annotator.ui.main`` module
-============================
+``annotator.ui.main``
+=====================
 
 This module provides a user interface for the application, allowing users to
 make annotations on a document or an element within the document. It can be used

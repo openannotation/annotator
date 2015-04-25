@@ -1,6 +1,6 @@
-=================================
-``annotator.storage.http`` module
-=================================
+==========================
+``annotator.storage.http``
+==========================
 
 This module provides the ability to send annotations for storage in a remote
 server that implements the storage-api_.

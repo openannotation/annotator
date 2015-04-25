@@ -1,5 +1,5 @@
-``annotator.identity.simple`` module
-=====================================
+``annotator.identity.simple``
+=============================
 
 This module configures an identity policy that considers the identity of the
 current user to be an opaque identifier. By default the identity is
