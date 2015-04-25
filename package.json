@@ -8,20 +8,21 @@
   },
   "dependencies": {
     "backbone-extend-standalone": "~0.1.2",
+    "browserify-shim": "^3.8.3",
+    "clean-css": "^3.1.9",
+    "enhance-css": "^1.1.0",
     "es6-promise": "~0.1.1",
     "insert-css": "^0.2.0",
     "jquery": "~1.11.0",
+    "through": "^2.3.7",
     "xpath-range": "0.0.5"
   },
   "devDependencies": {
     "assertive-chai": "^1.0.0",
     "browserify": "^9.0.8",
     "browserify-middleware": "^5.0.2",
-    "browserify-shim": "^3.8.3",
-    "clean-css": "^3.1.9",
     "concat-stream": "^1.4.8",
     "connect": "~2.10.1",
-    "enhance-css": "^1.1.0",
     "esprima": "^2.1.0",
     "jscs": "~1.6.0",
     "jshint": "~2.5.0",
@@ -33,7 +34,6 @@
     "karma-sauce-launcher": "^0.2.10",
     "mocha": "^2.2.4",
     "sinon": "^1.14.1",
-    "through": "^2.3.7",
     "uglify-js": "~2.4.12",
     "wgxpath": "^0.23.0"
   },
