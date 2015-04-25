@@ -1,8 +1,8 @@
 Configuring and using Annotator
 ===============================
 
-This document assumes you have already downloaded and installed Annotator into
-your web page. If you have not, please read :doc:`installing` before continuing.
+This document assumes you have already downloaded and installed Annotator.
+If you have not done so, please read :doc:`installing` before continuing.
 
 The basics
 ----------
