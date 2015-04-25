@@ -10,7 +10,7 @@ Glossary
       An application is an instance of :class:`annotator.App`. It is the primary
       object that coordinates annotation activities. It can be extended by
       passing a :term:`module` reference to its
-      :func:`~annotator.App.prototype.include` method. Typically, You will
+      :func:`~annotator.App.prototype.include` method. Typically, you will
       create at least one application when using Annotator. See the API
       documentation for :class:`annotator.App` for details on construction and
       methods.
