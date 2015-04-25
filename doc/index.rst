@@ -43,7 +43,7 @@ Continue reading to learn about installing and deploying Annotator:
 .. todolist::
 
 
-Index and Glossary
+Glossary and Index
 ==================
 
 * :ref:`glossary`
