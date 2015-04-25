@@ -3,15 +3,21 @@ var assert = require('assertive-chai').assert;
 var identity = require('../../src/identity');
 
 
-describe('identity.defaultIdentityPolicy', function () {
+describe('identity.SimpleIdentityPolicy', function () {
+    var ident;
+
+    beforeEach(function () {
+        ident = new identity.SimpleIdentityPolicy();
+    });
+
     describe('.who()', function () {
         it('returns null', function () {
-            assert.isNull(identity.defaultIdentityPolicy.who());
+            assert.isNull(ident.who());
         });
 
         it('returns .identity if set', function () {
-            identity.defaultIdentityPolicy.identity = 'alice';
-            assert.equal('alice', identity.defaultIdentityPolicy.who());
+            ident.identity = 'alice';
+            assert.equal('alice', ident.who());
         });
     });
 });
