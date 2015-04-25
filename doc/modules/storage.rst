@@ -1,7 +1,36 @@
+=================================
+``annotator.storage.http`` module
+=================================
+
+This module provides the ability to send annotations for storage in a remote
+server that implements the storage-api_.
+
+Usage
+=====
+
+To use the ``annotator.storage.http`` module, you should include it in an
+instance of :class:`annotator.App`::
+
+    app.include(annotator.storage.http);
+
+You can provide options to the module by passing an additional argument to
+:func:`annotator.App.prototype.include`::
+
+    app.include(annotator.storage.http, {
+        prefix: 'http://example.com/api'
+    });
+
+See :data:`annotator.storage.HttpStorage.options` for the full list of options
+to the ``annotator.storage.http`` module.
+
+
+.. _storage-api:
+
 Storage API
 ===========
 
-This document details the HTTP API used by the :doc:`http`. It is targeted at
+The :func:`annotator.storage.http` module talks to a remote server that serves
+an HTTP API. This section documents the expected API. It is targeted at
 developers interested in developing their own backend servers that integrate
 with Annotator, or developing tools that integrate with existing instances of
 the API.
@@ -11,6 +40,7 @@ The storage API attempts to follow the principles of `REST
 as its primary interchange format.
 
 .. contents::
+   :local:
 
 Endpoints
 ---------
@@ -290,17 +320,10 @@ search
    :statuscode 200: no error
    :statuscode 400: could not search the database with your request (invalid query)
 
-Storage Implementations
+Storage implementations
 -----------------------
 
--  Reference backend, a Python Flask app:
-   https://github.com/okfn/annotator-store (in particular, see
-   `store.py <https://github.com/okfn/annotator-store/blob/master/annotator/store.py>`__,
-   although be aware that this file also deals with authentication and
-   authorization, making the code a good deal more complex than would be
-   required to implement what is described above).
--  PHP (Silex) and MongoDB-based basic implementation:
-   https://github.com/julien-c/annotator-php (in particular, see
-   `index.php <https://github.com/julien-c/annotator-php/blob/master/index.php>`__).
--  eXanore an eXist-db library implementing the Annotator Storage API (currently under development)
-   https://github.com/bwbohl/eXanore
+You can find a list of compatible backends implementing the above API `on the
+GitHub wiki`_.
+
+.. _on the GitHub Wiki: https://github.com/openannotation/annotator/wiki#backend-stores

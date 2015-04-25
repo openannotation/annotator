@@ -32,7 +32,6 @@ You can start learning about how to install and deploy Annotator below:
    installing
    usage
    upgrading
-   storage/index
    modules/index
    module-development
 
