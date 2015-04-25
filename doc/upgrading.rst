@@ -23,13 +23,14 @@ Over several years, Annotator gained support for plugins that allowed
 developers to customize and extend the behavior of the application.
 
 In order to ensure a stable platform for future development, we have made some
-substantial changes to Annotator's plugin architecture. This unfortunately means
-that the upgrade from 1.2 to 2.0 is not always going to be painless.
+substantial changes to Annotator's architecture. Unfortunately, this means that
+the upgrade from 1.2 to 2.0 will not always be painless.
 
-Specifically, if you're very happy with Annotator 1.2 as it is now, you may wish
-to continue using it until such time as the features added to the 2.x series
-attract your interest -- we'll continue to answer your questions about 1.2. The
-main target audience for Annotator 2.0 is people who have been frustrated by the
+If you're very happy with Annotator 1.2 as it is now, you may wish to continue
+continue using it until such time as the features added to the 2.x series
+attract your interest. We'll continue to answer questions about 1.2.
+
+The target audience for Annotator 2.0 is those who have been frustrated by the
 coupling and architecture of 1.2.
 
 If any of the following apply to you, Annotator 2.0 should make you happier:
