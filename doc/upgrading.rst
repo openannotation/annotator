@@ -168,22 +168,20 @@ lifecycle events (``beforeAnnotationCreated``, ``annotationCreated``, etc.) are
 still available as hooks, and it should be reasonably straightforward to migrate
 plugins which simply respond to lifecycle events.
 
-The second important observation is that Annotator 2.0 is written in plain old
-JavaScript, not CoffeeScript. This may not make much difference to you, and you
-can continue to write plugins in either dialect as you see fit. That said, it
-should now be clearer and simpler to write modules in JavaScript.
+The second important observation is that Annotator 2.0 is written in JavaScript,
+not CoffeeScript. You may continue to write modules in any dialect you like,
+but we hope that this change makes Annotator more accessible to the broader
+JavaScript community and encourage you to consider doing the same in order to
+promote collaboration.
 
 Lastly, writing an extension module is simpler and more idiomatic than writing a
 plugin. Whereas Annotator 1.2 assumed that plugins were "subclasses" of
-``Annotator.Plugin``, in Annotator 2.0 a module is simply a function which
-returns an object containing hook functions. It is through these hook
-functions that plugins provide the bulk of their functionality.
+``Annotator.Plugin``, in Annotator 2.0 a module is a function that returns an
+object containing hook functions. It is through these hook functions that
+modules provide the bulk of their functionality.
 
-For full documentation on writing modules, please see :doc:`module-development`.
-Below you'll find a few examples on how to translate some simple plugins.
-
-A trivial plugin
-~~~~~~~~~~~~~~~~
+Upgrading a trivial plugin
+~~~~~~~~~~~~~~~~----------
 
 Here's an Annotator 1.2 plugin that logs to the console when started::
 
@@ -201,7 +199,7 @@ Or, in JavaScript::
         console.log("Hello, world!");
     };
 
-Here's the equivalent for Annotator 2.0::
+Here's the equivalent module for Annotator 2.0::
 
     function hello() {
         return {
@@ -210,3 +208,5 @@ Here's the equivalent for Annotator 2.0::
             }
         };
     }
+
+For full documentation on writing modules, please see :doc:`module-development`.
