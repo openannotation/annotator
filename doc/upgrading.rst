@@ -17,7 +17,7 @@ Motivation
 The architecture of the first version of Annotator dates back to 2009, when the
 Annotator application was developed to enable annotation in a project called
 "Open Shakespeare". At the time, Annotator was designed primarily as a drop-in
-annotation application, with only limited support for customisation.
+annotation application, with only limited support for customization.
 
 Over several years, Annotator gained support for plugins that allowed
 developers to customize and extend the behavior of the application.
