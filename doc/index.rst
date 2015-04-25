@@ -13,17 +13,16 @@ Annotator documentation
 .. highlight:: js
 
 Welcome to the documentation for Annotator, an open-source JavaScript library
-for building annotation systems on the web. At its simplest, Annotator is an
-application that allows users to make textual annotations on any web page. You
-can deploy it using just a few lines of integration code.
+for building annotation systems on the web. At its simplest, Annotator
+enables textual annotations of any web page. You can deploy it using just a
+few lines of code.
 
-Annotator is also a library of composable tools for annotation applications.
-It includes tools for capturing and manipulating DOM selections, tools for
-storage and persistence of annotations, and a variety of user interface
-components. You can use a few or many of these components together to build your
-own custom annotation-based application.
+Annotator is also a library of composable tools for capturing and manipulating
+DOM selections; storing, persisting and retrieving annotations; and creating
+user interfaces for annotation. You may use few or many of these components
+together to build your own custom annotation-based :term:`application`.
 
-You can start learning about how to install and deploy Annotator below:
+Continue reading to learn about installing and deploying Annotator:
 
 
 .. toctree::
