@@ -36,8 +36,8 @@ with :func:`~annotator.App.prototype.include`, and then run it using
 
 If you want to do something (for example, load annotations from storage) when
 the |App| has started, you can take advantage of the fact that
-:func:`~annotator.App.prototype.start` returns a Promise_. Extending our example
-above::
+:func:`~annotator.App.prototype.start` returns a :term:`Promise`. Extending our
+example above::
 
    var app = new annotator.App();
    app.include(annotator.ui.main);
@@ -57,8 +57,6 @@ Most functionality in Annotator comes from these modules, so you should
 familiarise yourself with what's available to you in order to make the most of
 Annotator. Next we talk about how to configure modules when you add them to your
 |App|.
-
-.. _Promise: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise
 
 
 Configuring modules
