@@ -163,7 +163,7 @@ the word "plugin". Our documentation and code refers to reusable pieces of code
 such as :func:`annotator.storage.http` as "modules". Modules are included into
 an :class:`~annotator.App`, and are able to register providers of named
 interfaces (such as "storage" or "notifier"), as well as providing runnable
-"hook functions" that the app may call at important moments. Annotator 1.2's
+"hook functions" that the app calls at important moments. Annotator 1.2's
 lifecycle events (``beforeAnnotationCreated``, ``annotationCreated``, etc.) are
 still available as hooks, and it should be reasonably straightforward to migrate
 plugins which simply respond to lifecycle events.
