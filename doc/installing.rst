@@ -25,9 +25,6 @@ To load Annotator with the default set of components, place the following
 
    <script src="annotator.min.js"></script>
 
-Continue to :doc:`usage` to learn about creating your first :term:`application`.
-
-
 npm package
 -----------
 
