@@ -6,14 +6,7 @@ The basics
 
 An Annotator module is a function which can be passed to
 :func:`~annotator.App.prototype.include` in order to extend the functionality of
-an Annotator application. Modules can:
-
-- be notified and make changes to annotations as they are created or modified
-- provide alternative user interfaces
-- provide alternative storage backends for annotations
-- change how Annotator decides what permissions an annotating user has
-
-and plenty more.
+an Annotator application.
 
 The simplest possible Annotator module looks like this::
 
