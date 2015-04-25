@@ -144,30 +144,30 @@ receive.
 
 .. function:: beforeAnnotationCreated(annotation)
 
-   Called immediately before an annotation is created. Use if you need to modify
-   the annotation before it is saved.
+   Called immediately before an annotation is created. Modules may use this
+   hook to modify the annotation before it is saved.
 
    :param Object annotation: The annotation object.
 
 
 .. function:: annotationCreated(annotation)
 
-   Called when a new annotation has been created.
+   Called when a new annotation is created.
 
    :param Object annotation: The annotation object.
 
 
 .. function:: beforeAnnotationUpdated(annotation)
 
-   Called immediately before an annotation is updated. Use if you need to modify
-   the annotation before it is saved.
+   Called immediately before an annotation is updated. Modules may use this
+   hook to modify the annotation before it is saved.
 
    :param Object annotation: The annotation object.
 
 
 .. function:: annotationUpdated(annotation)
 
-   Called when an annotation has been updated.
+   Called when an annotation is updated.
 
    :param Object annotation: The annotation object.
 
@@ -182,7 +182,7 @@ receive.
 
 .. function:: annotationDeleted(annotation)
 
-   Called when an annotation has been deleted.
+   Called when an annotation is deleted.
 
    :param Object annotation: The annotation object.
 
