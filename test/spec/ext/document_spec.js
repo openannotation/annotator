@@ -1,6 +1,6 @@
 var assert = require('assertive-chai').assert;
 var util = require('../../../src/util');
-var doc = require('../../../src/plugin/document');
+var doc = require('../../../src/ext/document');
 
 var $ = util.$;
 
@@ -31,7 +31,7 @@ var FIXTURE_METADATA = {
     prism: ['<meta name="prism.title" content="Literary Machines">']
 };
 
-describe('document plugin', function () {
+describe('annotator.ext.document module', function () {
     var tags = null,
         metadata = null;
 

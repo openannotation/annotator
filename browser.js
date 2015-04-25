@@ -18,8 +18,8 @@ exports.storage = storage;
 exports.ui = ui;
 exports.util = util;
 
-// Plugin namespace (for core-provided plugins)
-exports.plugin = {};
+// Ext namespace (for core-provided extension modules)
+exports.ext = {};
 
 var g = util.getGlobal();
 

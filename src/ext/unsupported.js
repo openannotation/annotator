@@ -62,7 +62,7 @@ function unsupported() {
 }
 
 
-annotator.plugin.unsupported = unsupported;
+annotator.ext.unsupported = unsupported;
 
 exports.checkSupport = checkSupport;
 exports.unsupported = unsupported;

@@ -271,7 +271,7 @@ var doc = function () {
     };
 };
 
-annotator.plugin.document = doc;
+annotator.ext.document = doc;
 
 exports.document = doc;
 exports.absoluteUrl = absoluteUrl;

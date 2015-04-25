@@ -33,10 +33,10 @@ app.use('/api/token', function(request, response) {
 });
 
 app.use('/bundle/annotator.js', browserify('index.js', {standalone: 'annotator'}));
-app.use('/bundle/plugin', function (req, res, next) {
+app.use('/bundle/ext', function (req, res, next) {
   // browserify-middleware expects req.path to be set
   req.path = req.url;
-  browserify('src/plugin/')(req, res, next);
+  browserify('src/ext/')(req, res, next);
 });
 
 // Static files

@@ -1,6 +1,6 @@
 var assert = require('assertive-chai').assert;
 
-var unsupported = require('../../../src/plugin/unsupported');
+var unsupported = require('../../../src/ext/unsupported');
 
 
 describe("unsupported.checkSupport()", function () {
@@ -58,7 +58,7 @@ describe("unsupported.checkSupport()", function () {
 });
 
 
-describe('unsupported plugin', function () {
+describe('annotator.ext.unsupported module', function () {
     var mockApp;
     var sandbox = sinon.sandbox.create();
 
