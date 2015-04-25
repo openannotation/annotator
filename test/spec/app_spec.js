@@ -18,7 +18,7 @@ describe('App', function () {
     });
 
     describe('#include', function () {
-        it('should call plugin configure functions with the registry', function () {
+        it('should call module configure functions with the registry', function () {
             var b = new app.App();
             var config = sandbox.stub();
             var mod = function () {
@@ -28,7 +28,7 @@ describe('App', function () {
             sinon.assert.calledWith(config, b.registry);
         });
 
-        it('should call plugin module functions with options if supplied', function () {
+        it('should call module functions with options if supplied', function () {
             var b = new app.App();
             var mod = sandbox.stub().returns({});
             b.include(mod, {foo: 'bar'});
@@ -37,7 +37,7 @@ describe('App', function () {
     });
 
     describe('#destroy', function () {
-        it("should call each plugin's destroy function, if it has one", function (done) {
+        it("should call each module's destroy function, if it has one", function (done) {
             var b = new app.App();
             var destroy1 = sandbox.stub();
             var destroy2 = sandbox.stub();
@@ -57,7 +57,7 @@ describe('App', function () {
     });
 
     describe('#runHook', function () {
-        it('should run the named hook handler on each plugin', function () {
+        it('should run the named hook handler on each module', function () {
             var b = new app.App();
             var hook1 = sandbox.stub();
             var hook2 = sandbox.stub();

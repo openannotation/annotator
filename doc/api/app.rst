@@ -12,11 +12,11 @@ annotator package
 
 ..  function:: annotator.App.prototype.include(module[, options])
     
-    Include a plugin module. If an `options` object is supplied, it will be
-    passed to the plugin module at initialisation.
+    Include an extension module. If an `options` object is supplied, it will be
+    passed to the module at initialisation.
     
-    If the returned plugin has a `configure` function, this will be called with
-    the application registry as a parameter.
+    If the returned module instance has a `configure` function, this will be
+    called with the application registry as a parameter.
     
     :param Object module:
     :param Object options:
@@ -30,15 +30,15 @@ annotator package
     components passed to the registry to their canonical names so they can be
     used by the rest of the application.
     
-    Runs the 'start' plugin hook.
+    Runs the 'start' module hook.
     
-    :returns: A promise, resolved when all plugin 'start' hooks have completed.
+    :returns: A promise, resolved when all module 'start' hooks have completed.
     :rtype: Promise
 
 
 ..  function:: annotator.App.prototype.destroy()
     
-    Destroy the App. Unbinds all event handlers and runs the 'destroy' plugin
+    Destroy the App. Unbinds all event handlers and runs the 'destroy' module
     hook.
     
     :returns: A promise, resolved when destroyed.

@@ -12,7 +12,7 @@ var NS = 'annotator-filter';
 //
 // options - An Object literal of options.
 //
-// Returns a new instance of the Filter plugin.
+// Returns a new instance of the Filter.
 var Filter = exports.Filter = function Filter(options) {
     this.options = $.extend(true, {}, Filter.options, options);
     this.classes = $.extend(true, {}, Filter.classes);
@@ -58,7 +58,7 @@ var Filter = exports.Filter = function Filter(options) {
     }
 };
 
-// Public: remove the filter plugin instance and unbind events.
+// Public: remove the filter instance and unbind events.
 //
 // Returns nothing.
 Filter.prototype.destroy = function () {
@@ -364,7 +364,7 @@ Filter.prototype._onClearClick = function (event) {
     $(event.target).prev('input').val('').keyup().blur();
 };
 
-// Common classes used to change plugin state.
+// Common classes used to change filter state.
 Filter.classes = {
     active: 'annotator-filter-active',
     hl: {
@@ -373,7 +373,7 @@ Filter.classes = {
     }
 };
 
-// HTML templates for the plugin UI.
+// HTML templates for the filter UI.
 Filter.html = {
     element: [
         '<div class="annotator-filter">',
@@ -400,9 +400,9 @@ Filter.html = {
     ].join('\n')
 };
 
-// Default options for the plugin.
+// Default options for Filter.
 Filter.options = {
-    // A CSS selector or Element to append the plugin toolbar to.
+    // A CSS selector or Element to append the filter toolbar to.
     appendTo: 'body',
 
     // A CSS selector or Element to find and filter highlights in.
@@ -417,14 +417,14 @@ Filter.options = {
     // Public: Determines if the property is contained within the provided
     // annotation property. Default is to split the string on spaces and only
     // return true if all keywords are contained in the string. This method
-    // can be overridden by the user when initialising the plugin.
+    // can be overridden by the user when initialising the filter.
     //
     // string   - An input String from the fitler.
     // property - The annotation propery to query.
     //
     // Examples
     //
-    //   plugin.option.getKeywords('hello', 'hello world how are you?')
+    //   filter.option.getKeywords('hello', 'hello world how are you?')
     //   # => Returns true
     //
     //   plugin.option.getKeywords('hello bill', 'hello world how are you?')

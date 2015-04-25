@@ -19,7 +19,7 @@ var storage = require('./storage');
  * starting point for most deployments of Annotator.
  */
 function App() {
-    this.plugins = [];
+    this.modules = [];
     this.registry = new registry.Registry();
 
     this._started = false;
@@ -38,11 +38,11 @@ function App() {
 /**
  * function:: App.prototype.include(module[, options])
  *
- * Include a plugin module. If an `options` object is supplied, it will be
- * passed to the plugin module at initialisation.
+ * Include an extension module. If an `options` object is supplied, it will be
+ * passed to the module at initialisation.
  *
- * If the returned plugin has a `configure` function, this will be called with
- * the application registry as a parameter.
+ * If the returned module instance has a `configure` function, this will be
+ * called with the application registry as a parameter.
  *
  * :param Object module:
  * :param Object options:
@@ -50,11 +50,11 @@ function App() {
  * :rtype: App
  */
 App.prototype.include = function (module, options) {
-    var plugin = module(options);
-    if (typeof plugin.configure === 'function') {
-        plugin.configure(this.registry);
+    var mod = module(options);
+    if (typeof mod.configure === 'function') {
+        mod.configure(this.registry);
     }
-    this.plugins.push(plugin);
+    this.modules.push(mod);
     return this;
 };
 
@@ -66,9 +66,9 @@ App.prototype.include = function (module, options) {
  * components passed to the registry to their canonical names so they can be
  * used by the rest of the application.
  *
- * Runs the 'start' plugin hook.
+ * Runs the 'start' module hook.
  *
- * :returns: A promise, resolved when all plugin 'start' hooks have completed.
+ * :returns: A promise, resolved when all module 'start' hooks have completed.
  * :rtype: Promise
  */
 App.prototype.start = function () {
@@ -98,7 +98,7 @@ App.prototype.start = function () {
 /**
  * function:: App.prototype.destroy()
  *
- * Destroy the App. Unbinds all event handlers and runs the 'destroy' plugin
+ * Destroy the App. Unbinds all event handlers and runs the 'destroy' module
  * hook.
  *
  * :returns: A promise, resolved when destroyed.
@@ -124,10 +124,10 @@ App.prototype.destroy = function () {
  */
 App.prototype.runHook = function (name, args) {
     var results = [];
-    for (var i = 0, len = this.plugins.length; i < len; i++) {
-        var plugin = this.plugins[i];
-        if (typeof plugin[name] === 'function') {
-            results.push(plugin[name].apply(plugin, args));
+    for (var i = 0, len = this.modules.length; i < len; i++) {
+        var mod = this.modules[i];
+        if (typeof mod[name] === 'function') {
+            results.push(mod[name].apply(mod, args));
         }
     }
     return Promise.all(results);

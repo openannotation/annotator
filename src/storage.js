@@ -25,7 +25,7 @@ var id = (function () {
  * persistence processes to the console when developing other parts of
  * Annotator.
  *
- * Use as a plugin module::
+ * Use as an extension module::
  *
  *     app.include(annotator.storage.debug);
  *
@@ -71,7 +71,7 @@ exports.debug = function () {
  * A no-op storage component. It swallows all calls and does the bare minimum
  * needed. Needless to say, it does not provide any real persistence.
  *
- * Use as a plugin module::
+ * Use as a extension module::
  *
  *     app.include(annotator.storage.noop);
  *
@@ -414,7 +414,7 @@ HttpStorage.options = {
     /**
      * attribute:: HttpStorage.options.emulateHTTP
      *
-     * Should the plugin emulate HTTP methods like PUT and DELETE for
+     * Should the storage emulate HTTP methods like PUT and DELETE for
      * interaction with legacy web servers? Setting this to `true` will fake
      * HTTP `PUT` and `DELETE` requests with an HTTP `POST`, and will set the
      * request header `X-HTTP-Method-Override` with the name of the desired
@@ -427,7 +427,7 @@ HttpStorage.options = {
     /**
      * attribute:: HttpStorage.options.emulateJSON
      *
-     * Should the plugin emulate JSON POST/PUT payloads by sending its requests
+     * Should the storage emulate JSON POST/PUT payloads by sending its requests
      * as application/x-www-form-urlencoded with a single key, "json"
      *
      * **Default**: ``false``
@@ -625,7 +625,7 @@ StorageAdapter.prototype.query = function (query) {
  *
  * Load and draw annotations from a given query.
  *
- * Runs the 'load' hook to allow plugins to respond to annotations being loaded.
+ * Runs the 'load' hook to allow modules to respond to annotations being loaded.
  *
  * :param Object query:
  *   A query. This may be interpreted differently by different stores.
