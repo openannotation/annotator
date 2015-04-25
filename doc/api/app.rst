@@ -60,9 +60,9 @@ annotator package
 
 ..  function:: annotator.App.extend(object)
     
-    Create a new object which inherits from the App class.
+    Create a new object that inherits from the App class.
     
-    For example, here we create a ``CustomApp`` which will include the
+    For example, here we create a ``CustomApp`` that will include the
     hypothetical ``mymodules.foo.bar`` module depending on the options object
     passed into the constructor::
     

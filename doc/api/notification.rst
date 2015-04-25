@@ -14,6 +14,6 @@ annotator.notifier package
        `notification.SUCCESS`, or `notification.ERROR`)
     
     :returns:
-      An object with a `close` method which can be used to close the banner.
+      An object with a `close` method that can be used to close the banner.
 
 

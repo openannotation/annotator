@@ -19,7 +19,7 @@ annotations within a specific element on the page::
 
 The module provides just one possible configuration of the various components in
 the `annotator.ui` package, and users with more advanced needs may wish to
-create their own modules which use those components (which include
+create their own modules that use those components (which include
 :class:`~annotator.ui.textselector.TextSelector`,
 :class:`~annotator.ui.adder.Adder`,
 :class:`~annotator.ui.highlighter.Highlighter`,
@@ -32,13 +32,13 @@ The `annotator.ui` package contains a number of extensions for the
 :class:`~annotator.ui.viewer.Viewer` and :class:`~annotator.ui.editor.Editor`,
 which extend the functionality. These include:
 
--  :func:`annotator.ui.tags.viewerExtension`: A viewer extension which displays
+-  :func:`annotator.ui.tags.viewerExtension`: A viewer extension that displays
    any tags stored on annotations.
 
--  :func:`annotator.ui.tags.editorExtension`: An editor extension which provides
+-  :func:`annotator.ui.tags.editorExtension`: An editor extension that provides
    a field for editing annotation tags.
 
--  :func:`annotator.ui.markdown.viewerExtension`: A viewer extension which
+-  :func:`annotator.ui.markdown.viewerExtension`: A viewer extension that
    depends on Showdown_, and makes the viewer render Markdown_ annotation
    bodies.
 

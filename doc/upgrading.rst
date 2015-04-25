@@ -35,7 +35,7 @@ coupling and architecture of 1.2.
 
 If any of the following apply to you, Annotator 2.0 should make you happier:
 
-- You work on an Annotator application which overrides part or all of the
+- You work on an Annotator application that overrides part or all of the
   default user interface.
 
 - You have made substantial modifications to the annotation viewer or editor
@@ -108,7 +108,7 @@ This code is doing three distinct things:
 In Annotator 2.0 the configuration of the storage component
 (:func:`annotator.storage.http`) is logically separate from a) the loading
 of annotations from storage, and b) the extension of annotations with additional
-data. An example which replicates the above behavior would look like this
+data. An example that replicates the above behavior would look like this
 in Annotator 2.0::
 
 
@@ -158,7 +158,7 @@ interfaces (such as "storage" or "notifier"), as well as providing runnable
 "hook functions" that the app calls at important moments. Annotator 1.2's
 lifecycle events (``beforeAnnotationCreated``, ``annotationCreated``, etc.) are
 still available as hooks, and it should be reasonably straightforward to migrate
-plugins which simply respond to lifecycle events.
+plugins that simply respond to lifecycle events.
 
 The second important observation is that Annotator 2.0 is written in JavaScript,
 not CoffeeScript. You may continue to write modules in any dialect you like,

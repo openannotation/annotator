@@ -13,7 +13,7 @@
  * can use the registry to provide or override a component of the Annotator
  * application.
  *
- * For example, if you are writing a module which override the "storage"
+ * For example, if you are writing a module that overrides the "storage"
  * component, you will use the registry in your module's `configure` function to
  * register your component::
  *

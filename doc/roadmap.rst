@@ -54,7 +54,7 @@ major feature freeze on Mar 15):
 -  Support for selections made using the keyboard
 -  Support in the core for annotation on touch devices
 -  Support for multiple typed selectors in annotations
--  Support for components which resolve ('reanchor') an annotation's selectors
+-  Support for components that resolve ('reanchor') an annotation's selectors
    into a form suitable for display in the page
 
 

@@ -4,7 +4,7 @@ Module development
 The basics
 ----------
 
-An Annotator module is a function which can be passed to
+An Annotator module is a function that can be passed to
 :func:`~annotator.App.prototype.include` in order to extend the functionality of
 an Annotator application.
 

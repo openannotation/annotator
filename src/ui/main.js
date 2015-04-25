@@ -190,7 +190,7 @@ function addPermissionsCheckboxes(editor, app) {
  *
  *   .. attribute:: options.element
  *
- *      A DOM element to which to bind event listeners. Defaults to
+ *      A DOM element to which event listeners are bound. Defaults to
  *      ``document.body``, allowing annotation of the whole document.
  *
  *   .. attribute:: options.editorExtensions

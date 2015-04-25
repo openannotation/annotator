@@ -3,7 +3,7 @@ Annotator documentation
 
 .. warning:: Beware: rapidly changing documentation!
 
-   This is the bleeding-edge documentation for Annotator which will be changing
+   This is the bleeding-edge documentation for Annotator that will be changing
    rapidly as we home in on Annotator v2.0. Information here may be inaccurate,
    prone to change, and otherwise unreliable. You may well want to consult `the
    stable documentation`_ instead.

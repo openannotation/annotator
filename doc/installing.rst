@@ -15,7 +15,7 @@ Built packages
 --------------
 
 :gh:`Releases <releases>` are published on :gh:`our GitHub repository <>`. The
-released zip file will contain minified, production-ready JavaScript files which
+released zip file will contain minified, production-ready JavaScript files that
 you can include in your application.
 
 To load Annotator with the default set of components, place the following
