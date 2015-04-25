@@ -108,8 +108,20 @@ modules directly from the namespace::
 Module hooks
 ------------
 
-This is a list of module hooks, when they are called, and what arguments they
-receive.
+Hooks are called by the application in order to delegate work to registered
+modules. This is a list of module hooks, when they are called, and what
+arguments they receive.
+
+It is possible to add your own hooks to your application by invoking the
+:func:`~annotator.App.prototype.runHook` method on the application instance.
+The return value is a :term:`Promise` that resolves to an ``Array`` of the
+results of the functions registered for that hook (the order of which is
+undefined).
+
+Hook functions may return a value or a :term:`Promise`. The latter is sometimes
+useful for delaying actions. For example, you may wish to return a
+:term:`Promise` from the ``beforeAnnotationCreated`` hook when an asynchronous
+task must complete before the annotation data can be saved.
 
 
 .. function:: configure(registry)
