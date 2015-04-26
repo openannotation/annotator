@@ -59,12 +59,16 @@ describe("unsupported.checkSupport()", function () {
 
 
 describe('annotator.ext.unsupported module', function () {
+    var mockNotify;
     var mockApp;
     var sandbox = sinon.sandbox.create();
 
     beforeEach(function () {
+        mockNotify = sandbox.stub();
         mockApp = {
-            notify: sandbox.stub()
+            registry: {
+                queryUtility: sandbox.stub().withArgs('notifier').returns(mockNotify)
+            }
         };
 
         sandbox.stub(unsupported, 'checkSupport').returns({
@@ -82,7 +86,7 @@ describe('annotator.ext.unsupported module', function () {
         plugin.start(mockApp);
 
         sinon.assert.calledWith(
-            mockApp.notify,
+            mockNotify,
             sinon.match('widgets are discombobulated')
         );
     });

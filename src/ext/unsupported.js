@@ -45,15 +45,24 @@ function unsupported() {
     // Reference as exports.checkSupport so that we can stub it for testing.
     var result = exports.checkSupport();
 
+    function fallback(message, severity) {
+        if (severity === annotator.notification.ERROR) {
+            console.error(message);
+            return;
+        }
+        console.log(message);
+    }
+
     function notifyUser(app) {
         if (result.supported) {
             return;
         }
+        var notify = app.registry.queryUtility('notifier') || fallback;
         var msg;
         msg = _t("Sorry, Annotator does not currently support your browser! ");
         msg += _t("Errors: ");
         msg += result.errors.join(", ");
-        app.notify(msg);
+        notify(msg);
     }
 
     return {
