@@ -6,16 +6,17 @@ var css = require('./css/annotator.css');
 insertCss(css);
 
 var app = require('./src/app');
-var storage = require('./src/storage');
-var ui = require('./src/ui');
 var util = require('./src/util');
 
 // Core annotator components
 exports.App = app.App;
 
 // Access to libraries (for browser installations)
-exports.storage = storage;
-exports.ui = ui;
+exports.authz = require('./src/authz');
+exports.identity = require('./src/identity');
+exports.notification = require('./src/notification');
+exports.storage = require('./src/storage');
+exports.ui = require('./src/ui');
 exports.util = util;
 
 // Ext namespace (for core-provided extension modules)
