@@ -9,7 +9,7 @@ var AclAuthzPolicy;
  * function:: acl()
  *
  * A module that configures and registers an instance of
- * :class:`annotator.identity.AclAuthzPolicy`.
+ * :class:`annotator.authz.AclAuthzPolicy`.
  *
  */
 exports.acl = function acl() {
