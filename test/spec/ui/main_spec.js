@@ -15,18 +15,25 @@ var main = require('../../../src/ui/main').main;
 
 describe('annotator.ui.main', function () {
     var sandbox;
+    var mockAuthz;
+    var mockIdent;
     var mockApp;
 
     beforeEach(function () {
         sandbox = sinon.sandbox.create();
+        mockAuthz = {
+            permits: sandbox.stub().returns(true),
+            authorizedUserId: function (u) { return u; }
+        };
+        mockIdent = {who: sandbox.stub().returns('alice')};
         mockApp = {
             annotations: {create: sandbox.stub()},
-            authz: {
-                permits: sandbox.stub().returns(true),
-                authorizedUserId: function (u) { return u; }
-            },
-            ident: {who: sandbox.stub().returns('alice')}
+            registry: {
+                getUtility: sandbox.stub()
+            }
         };
+        mockApp.registry.getUtility.withArgs('authorizationPolicy').returns(mockAuthz);
+        mockApp.registry.getUtility.withArgs('identityPolicy').returns(mockIdent);
     });
 
     afterEach(function () {
@@ -155,14 +162,14 @@ describe('annotator.ui.main', function () {
             });
 
             it("load hides a field if no user is set", function () {
-                mockApp.ident.who.returns(null);
+                mockIdent.who.returns(null);
                 viewLoad(field, {});
                 assert.equal(field.style.display, 'none');
             });
 
             it("load hides a field if current user is not admin", function () {
                 var ann = {};
-                mockApp.authz.permits
+                mockAuthz.permits
                     .withArgs('admin', ann, 'alice').returns(false);
                 viewLoad(field, ann);
                 assert.equal(field.style.display, 'none');
@@ -170,14 +177,14 @@ describe('annotator.ui.main', function () {
 
             it("load hides a field if current user is not admin", function () {
                 var ann = {};
-                mockApp.authz.permits
+                mockAuthz.permits
                     .withArgs('admin', ann, 'alice').returns(false);
                 viewLoad(field, ann);
                 assert.equal(field.style.display, 'none');
             });
 
             it("load shows a checked field if the action is authorised with a null user", function () {
-                mockApp.authz.permits.returns(true);
+                mockAuthz.permits.returns(true);
                 viewLoad(field, {});
                 assert.notEqual(field.style.display, 'none');
                 assert.isTrue(field.firstChild.checked);
@@ -185,7 +192,7 @@ describe('annotator.ui.main', function () {
 
             it("load shows an unchecked field if the action isn't authorised with a null user", function () {
                 var ann = {};
-                mockApp.authz.permits
+                mockAuthz.permits
                     .withArgs('read', ann, null).returns(false);
                 viewLoad(field, ann);
                 assert.notEqual(field.style.display, 'none');
@@ -209,7 +216,7 @@ describe('annotator.ui.main', function () {
             });
 
             it("submit doesn't touch the annotation if the current user is null", function () {
-                mockApp.ident.who.returns(null);
+                mockIdent.who.returns(null);
                 var ann = {permissions: {'read': ['alice']}};
                 field.firstChild.checked = true;
                 viewSubmit(field, ann);

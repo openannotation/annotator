@@ -507,6 +507,9 @@ exports.standalone = function standalone(options) {
 
     return {
         start: function (app) {
+            var ident = app.registry.getUtility('identityPolicy');
+            var authz = app.registry.getUtility('authorizationPolicy');
+
             // Set default handlers for what happens when the user clicks the
             // edit and delete buttons:
             if (typeof options.onEdit === 'undefined') {
@@ -524,20 +527,12 @@ exports.standalone = function standalone(options) {
             // buttons are shown in the viewer:
             if (typeof options.permitEdit === 'undefined') {
                 options.permitEdit = function (annotation) {
-                    return app.authz.permits(
-                        'update',
-                        annotation,
-                        app.ident.who()
-                    );
+                    return authz.permits('update', annotation, ident.who());
                 };
             }
             if (typeof options.permitDelete === 'undefined') {
                 options.permitDelete = function (annotation) {
-                    return app.authz.permits(
-                        'delete',
-                        annotation,
-                        app.ident.who()
-                    );
+                    return authz.permits('delete', annotation, ident.who());
                 };
             }
 

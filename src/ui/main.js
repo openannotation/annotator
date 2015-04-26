@@ -106,12 +106,12 @@ function removeDynamicStyle() {
 
 
 // Helper function to add permissions checkboxes to the editor
-function addPermissionsCheckboxes(editor, app) {
+function addPermissionsCheckboxes(editor, ident, authz) {
     function createLoadCallback(action) {
         return function loadCallback(field, annotation) {
             field = util.$(field).show();
 
-            var u = app.ident.who();
+            var u = ident.who();
             var input = field.find('input');
 
             // Do not show field if no user is set
@@ -120,12 +120,12 @@ function addPermissionsCheckboxes(editor, app) {
             }
 
             // Do not show field if current user is not admin.
-            if (!(app.authz.permits('admin', annotation, u))) {
+            if (!(authz.permits('admin', annotation, u))) {
                 field.hide();
             }
 
             // See if we can authorise without a user.
-            if (app.authz.permits(action, annotation, null)) {
+            if (authz.permits(action, annotation, null)) {
                 input.attr('checked', 'checked');
             } else {
                 input.removeAttr('checked');
@@ -135,7 +135,7 @@ function addPermissionsCheckboxes(editor, app) {
 
     function createSubmitCallback(action) {
         return function submitCallback(field, annotation) {
-            var u = app.ident.who();
+            var u = ident.who();
 
             // Don't do anything if no user is set
             if (typeof u === 'undefined' || u === null) {
@@ -153,7 +153,7 @@ function addPermissionsCheckboxes(editor, app) {
                 // interpret "prevent others from viewing" as meaning "allow
                 // only me to view". This may want changing in the future.
                 annotation.permissions[action] = [
-                    app.authz.authorizedUserId(u)
+                    authz.authorizedUserId(u)
                 ];
             }
         };
@@ -224,6 +224,9 @@ function main(options) {
     };
 
     function start(app) {
+        var ident = app.registry.getUtility('identityPolicy');
+        var authz = app.registry.getUtility('authorizationPolicy');
+
         s.adder = new adder.Adder({
             onCreate: function (ann) {
                 app.annotations.create(ann);
@@ -236,7 +239,7 @@ function main(options) {
         });
         s.editor.attach();
 
-        addPermissionsCheckboxes(s.editor, app);
+        addPermissionsCheckboxes(s.editor, ident, authz);
 
         s.highlighter = new highlighter.Highlighter(options.element);
 
@@ -264,10 +267,10 @@ function main(options) {
                 app.annotations['delete'](ann);
             },
             permitEdit: function (ann) {
-                return app.authz.permits('update', ann, app.ident.who());
+                return authz.permits('update', ann, ident.who());
             },
             permitDelete: function (ann) {
-                return app.authz.permits('delete', ann, app.ident.who());
+                return authz.permits('delete', ann, ident.who());
             },
             autoViewHighlights: options.element,
             extensions: options.viewerExtensions

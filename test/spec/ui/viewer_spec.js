@@ -370,24 +370,31 @@ describe('ui.viewer.Viewer', function () {
 
 
 describe('ui.viewer.standalone', function () {
-    var mockApp = null,
-        mockViewer = null,
-        sandbox = null;
+    var sandbox;
+    var mockAuthz;
+    var mockIdent;
+    var mockApp;
+    var mockViewer;
 
     beforeEach(function () {
         sandbox = sinon.sandbox.create();
+        mockAuthz = {
+            permits: sandbox.stub()
+        };
+        mockIdent = {
+            who: sandbox.stub().returns('alice')
+        };
         mockApp = {
             annotations: {
                 update: sandbox.stub(),
                 "delete": sandbox.stub()
             },
-            authz: {
-                permits: sandbox.stub()
-            },
-            ident: {
-                who: sandbox.stub().returns('alice')
+            registry: {
+                getUtility: sandbox.stub()
             }
         };
+        mockApp.registry.getUtility.withArgs('authorizationPolicy').returns(mockAuthz);
+        mockApp.registry.getUtility.withArgs('identityPolicy').returns(mockIdent);
         mockViewer = {
             destroy: sandbox.stub()
         };
@@ -428,7 +435,7 @@ describe('ui.viewer.standalone', function () {
         assert(sinon.match.has('permitEdit').test(passedOptions));
         passedOptions.permitEdit({text: 'foo'});
         sinon.assert.calledWith(
-            mockApp.authz.permits,
+            mockAuthz.permits,
             'update',
             {text: 'foo'},
             'alice'
@@ -441,7 +448,7 @@ describe('ui.viewer.standalone', function () {
         assert(sinon.match.has('permitDelete').test(passedOptions));
         passedOptions.permitDelete({text: 'foo'});
         sinon.assert.calledWith(
-            mockApp.authz.permits,
+            mockAuthz.permits,
             'delete',
             {text: 'foo'},
             'alice'
