@@ -13,7 +13,7 @@ annotation. It is also possible to ask the module to only allow creation of
 annotations within a specific element on the page::
 
     app.include(annotator.ui.main, {
-        element: document.querySelector('#main');
+        element: document.querySelector('#main')
     });
 
 
