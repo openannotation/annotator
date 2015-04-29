@@ -22,7 +22,7 @@ var Filter = exports.Filter = function Filter(options) {
     this.filters = [];
     this.current  = 0;
 
-    for (var i = 0, len = this.options.filters; i < len; i++) {
+    for (var i = 0, len = this.options.filters.length; i < len; i++) {
         var filter = this.options.filters[i];
         this.addFilter(filter);
     }
