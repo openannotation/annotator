@@ -22,4 +22,5 @@ matrix:
   - env: BROWSER=SL_IE_8
   include:
   - env: COMMAND='npm run lint'
-script: $COMMAND
+script:
+- '[ "${TRAVIS_PULL_REQUEST}" = "false" -o "${BROWSER}" = "PhantomJS" ] && ${COMMAND} || false'
