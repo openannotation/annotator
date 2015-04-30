@@ -21,8 +21,6 @@ function highlightRange(normedRange, cssClass) {
     }
     var white = /^\s*$/;
 
-    var hl = $("<span class='" + cssClass + "'></span>");
-
     // Ignore text nodes that contain only whitespace characters. This prevents
     // spans being injected between elements that can only contain a restricted
     // subset of nodes such as table rows and lists. This does mean that there
@@ -33,9 +31,11 @@ function highlightRange(normedRange, cssClass) {
     for (var i = 0, len = nodes.length; i < len; i++) {
         var node = nodes[i];
         if (!white.test(node.nodeValue)) {
-            results.push(
-                $(node).wrapAll(hl).parent()[0]
-            );
+            var hl = document.createElement('span');
+            hl.className = cssClass;
+            node.parentNode.replaceChild(hl, node);
+            hl.appendChild(node);
+            results.push(hl);
         }
     }
     return results;
