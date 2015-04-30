@@ -34,7 +34,7 @@ function highlightRange(normedRange, cssClass) {
         var node = nodes[i];
         if (!white.test(node.nodeValue)) {
             results.push(
-                $(node).wrapAll(hl).parent().show()[0]
+                $(node).wrapAll(hl).parent()[0]
             );
         }
     }
