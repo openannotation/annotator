@@ -140,7 +140,7 @@ Highlighter.prototype.draw = function (annotation) {
         annotation._local = {};
     }
     var hasHighlights = (typeof annotation._local.highlights !== 'undefined' &&
-                         annotation._local.highlights === null);
+                         annotation._local.highlights !== null);
     if (!hasHighlights) {
         annotation._local.highlights = [];
     }
