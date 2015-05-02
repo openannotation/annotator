@@ -124,13 +124,21 @@ describe('ui.filter.Filter', function () {
                 }
             };
             annotations = [{text: 'cat'}, {text: 'dog'}, {text: 'car'}];
+            $.each(annotations, function(i, annotation) {
+                $('<span class="annotator-hl">')
+                    .text(annotation)
+                    .data('annotation', annotation)
+                    .appendTo(element);
+            });
             plugin.filters = {'text': testFilter};
-            plugin.highlights = {
-                map: function () { return annotations; }
-            };
+            plugin.highlights = $(element).find('.annotator-hl');
             sandbox.stub(plugin, 'updateHighlights');
             sandbox.stub(plugin, 'resetHighlights');
             sandbox.stub(plugin, 'filterHighlights');
+        });
+
+        afterEach(function () {
+            $(element).empty();
         });
 
         it("should call Filter#updateHighlights()", function () {
