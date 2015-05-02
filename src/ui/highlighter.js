@@ -119,6 +119,15 @@ Highlighter.prototype.drawAll = function (annotations) {
     return p;
 };
 
+// local unique IDs for annotations, used to deduplicate when recovering them
+// from highlights.
+var id = (function () {
+    var counter = 0;
+    return function() {
+        return '_local_id_' + (++counter);
+    }
+}());
+
 // Public: Draw highlights for the annotation.
 //
 // annotation - An annotation Object for which to draw highlights.
@@ -143,6 +152,11 @@ Highlighter.prototype.draw = function (annotation) {
                          annotation._local.highlights !== null);
     if (!hasHighlights) {
         annotation._local.highlights = [];
+    }
+    var hasLocalId = (typeof annotation._local.id !== 'undefined' &&
+                      annotation._local.id === null);
+    if (!hasLocalId) {
+        annotation._local.id = id();
     }
 
     for (var j = 0, jlen = normedRanges.length; j < jlen; j++) {

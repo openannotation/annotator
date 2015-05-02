@@ -125,10 +125,14 @@ describe('ui.filter.Filter', function () {
             };
             annotations = [{text: 'cat'}, {text: 'dog'}, {text: 'car'}];
             $.each(annotations, function(i, annotation) {
-                $('<span class="annotator-hl">')
-                    .text(annotation)
-                    .data('annotation', annotation)
-                    .appendTo(element);
+                this._local = {id: this.text};
+                for (var j = 0; j < annotation.text.length; j++) {
+                    var ch = annotation.text[j]
+                    $('<span class="annotator-hl">')
+                        .text(ch)
+                        .data('annotation', annotation)
+                        .appendTo(element);
+                }
             });
             plugin.filters = {'text': testFilter};
             plugin.highlights = $(element).find('.annotator-hl');
