@@ -23,4 +23,4 @@ matrix:
   include:
   - env: COMMAND='npm run lint'
 script:
-- '[ "${TRAVIS_PULL_REQUEST}" = "false" -o "${BROWSER}" = "PhantomJS" ] && ${COMMAND} || false'
+- '[ "${TRAVIS_PULL_REQUEST}" != "false" -a "${BROWSER}" != "PhantomJS" ] && true || ${COMMAND}'
