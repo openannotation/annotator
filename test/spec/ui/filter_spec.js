@@ -70,6 +70,44 @@ describe('ui.filter.Filter', function () {
         });
     });
 
+    describe("passing filters to constructor", function () {
+        var testFilter = null;
+
+        beforeEach(function () {
+            testFilter = {
+                label: 'Tag',
+                property: 'tags'
+            };
+            plugin = new filter.Filter({
+                filterElement: element,
+                filters: [testFilter],
+                addAnnotationFilter: false
+            });
+        });
+
+        it("should add a filter object to Filter#plugins", function () {
+            assert.ok(plugin.filters[0]);
+        });
+
+        it("should append the html to Filter#toolbar", function () {
+            testFilter = plugin.filters[0];
+            assert.equal(testFilter.element[0], plugin.element.find('#annotator-filter-tags').parent()[0]);
+        });
+
+        it("should store the filter in the elements data store under 'filter'", function () {
+            testFilter = plugin.filters[0];
+            assert.equal(testFilter.element.data('filter'), plugin.filters[0]);
+        });
+
+        it("should not add a filter for a property that has already been loaded", function () {
+            plugin.addFilter({
+                label: 'Tag',
+                property: 'tags'
+            });
+            assert.lengthOf(plugin.filters, 1);
+        });
+    });
+
     describe("updateFilter", function () {
         var testFilter = null,
             annotations = null;
