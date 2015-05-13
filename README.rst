@@ -1,7 +1,7 @@
 Annotator
 =========
 
-|Build Status| |Version on NPM|
+|Build Status| |Version on NPM| |IRC Channel|
 
 |Build Matrix|
 
