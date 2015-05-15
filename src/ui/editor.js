@@ -451,7 +451,7 @@ var Editor = exports.Editor = Widget.extend({
     checkOrientation: function () {
         Widget.prototype.checkOrientation.call(this);
 
-        var list = this.element.find('ul'),
+        var list = this.element.find('ul').first(),
             controls = this.element.find('.annotator-controls');
 
         if (this.element.hasClass(this.classes.invert.y)) {
