@@ -160,7 +160,11 @@ class Range.BrowserRange
 
       unless r.end?  
         # We need to find a text node in the previous node.
-        node = @endContainer.childNodes[@endOffset - 1]
+        # Nothing selected in last node
+        if @endOffset == 0
+          node = @endContainer.previousSibling
+        else
+          node = @endContainer.childNodes[@endOffset - 1]
         r.end = Util.getLastTextNodeUpTo node
         r.endOffset = r.end.nodeValue.length
 
