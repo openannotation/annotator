@@ -95,6 +95,6 @@ browsing and search at `gmane.comp.web.annotator`_. We can also be found in
    :target: https://www.npmjs.org/package/annotator
 .. |Build Matrix| image:: https://saucelabs.com/browser-matrix/hypothesisannotator.svg
    :target: https://saucelabs.com/u/hypothesisannotator
-.. |IRC Channel| image:: https://www.irccloud.com/invite-svg?channel=%23annotator&amp;hostname=irc.freenode.net&amp;port=6697&amp;ssl=1
+.. |IRC Channel| image:: https://img.shields.io/badge/IRC-%23annotator-blue.svg
    :target: https://www.irccloud.com/invite?channel=%23annotator&amp;hostname=irc.freenode.net&amp;port=6697&amp;ssl=1
    :alt: #hypothes.is IRC channel
