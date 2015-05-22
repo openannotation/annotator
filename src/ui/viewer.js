@@ -126,12 +126,12 @@ var Viewer = exports.Viewer = Widget.extend({
             $(this.document.body)
                 .on("mousedown." + NS, function (e) {
                     if (e.which > 1) {
-                        this.mouseDown = true;
+                        self.mouseDown = true;
                     }
                 })
                 .on("mouseup." + NS, function (e) {
                     if (e.which > 1) {
-                        this.mouseDown = false;
+                        self.mouseDown = false;
                     }
                 });
         }
