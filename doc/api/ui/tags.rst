@@ -24,7 +24,7 @@ annotator.ui.tags package
     **Usage**::
     
         app.include(annotator.ui.main, {
-            viewerExtensions: [annotator.ui.tags.viewerExtension]
+            editorExtensions: [annotator.ui.tags.editorExtension]
         })
 
 
