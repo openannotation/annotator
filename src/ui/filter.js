@@ -160,10 +160,14 @@ Filter.prototype.updateFilter = function (filter) {
         return;
     }
 
-    var annotations = this.highlights.map(function () {
-        return $(this).data('annotation');
-    });
-    annotations = $.makeArray(annotations);
+    var annotations = (function (highlights) {
+        var annotationsById = {};
+        highlights.each(function () {
+            var a = $(this).data('annotation');
+            annotationsById[a._local.id] = a;
+        });
+        return $.map(annotationsById, function(a) { return a; });
+    }(this.highlights));
 
     for (var i = 0, len = annotations.length; i < len; i++) {
         var annotation = annotations[i],
