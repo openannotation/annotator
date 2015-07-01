@@ -9,8 +9,7 @@ var highlighter = require('./highlighter');
 var textselector = require('./textselector');
 var viewer = require('./viewer');
 
-var g = util.getGlobal(),
-    _t = util.gettext;
+var _t = util.gettext;
 
 
 // trim strips whitespace from either end of a string.
@@ -76,7 +75,7 @@ function injectDynamicStyle() {
               ':not(annotator-filter)';
 
     // use the maximum z-index in the page
-    var max = maxZIndex(util.$(g.document.body).find(sel).get());
+    var max = maxZIndex(util.$(global.document.body).find(sel).get());
 
     // but don't go smaller than 1010, because this isn't bulletproof --
     // dynamic elements in the page (notifications, dialogs, etc.) may well
@@ -211,7 +210,7 @@ function main(options) {
         options = {};
     }
 
-    options.element = options.element || util.getGlobal().document.body;
+    options.element = options.element || global.document.body;
     options.editorExtensions = options.editorExtensions || [];
     options.viewerExtensions = options.viewerExtensions || [];
 

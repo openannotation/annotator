@@ -86,7 +86,7 @@ Widget.prototype.isShown = function () {
 Widget.prototype.checkOrientation = function () {
     this.resetOrientation();
 
-    var $win = $(util.getGlobal()),
+    var $win = $(global),
         $widget = this.element.children(":first"),
         offset = $widget.offset(),
         viewport = {

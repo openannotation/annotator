@@ -3,8 +3,6 @@ var assert = require('assertive-chai').assert;
 var markdown = require('../../../src/ui/markdown'),
     util = require('../../../src/util');
 
-var g = util.getGlobal();
-
 describe('ui.markdown.render', function () {
     var sandbox;
     var makeHtml;
@@ -14,7 +12,7 @@ describe('ui.markdown.render', function () {
         sandbox.stub(util, 'escapeHtml').returns('escaped');
         makeHtml = sandbox.stub().returns('converted');
 
-        g.Showdown = {
+        global.Showdown = {
             converter: function () {
                 return {makeHtml: makeHtml};
             }
@@ -36,7 +34,7 @@ describe('ui.markdown.render', function () {
     });
 
     it("should HTML escape text if Showdown is not available", function () {
-        g.Showdown = null;
+        global.Showdown = null;
 
         assert.equal('escaped', markdown.render({text: 'foo'}));
         sinon.assert.calledWith(util.escapeHtml, 'foo');
@@ -53,7 +51,7 @@ describe('ui.markdown.viewerExtension', function () {
         mockViewer = {
             setRenderer: sandbox.stub()
         };
-        g.Showdown = {
+        global.Showdown = {
             converter: function () {
                 return {makeHtml: sandbox.stub()};
             }
@@ -66,7 +64,7 @@ describe('ui.markdown.viewerExtension', function () {
 
     it("should log a warning if Showdown is not present in the page", function () {
         sandbox.stub(console, 'warn');
-        g.Showdown = null;
+        global.Showdown = null;
 
         markdown.viewerExtension(mockViewer);
 

@@ -22,11 +22,9 @@ exports.util = util;
 // Ext namespace (for core-provided extension modules)
 exports.ext = {};
 
-var g = util.getGlobal();
-
 // If wicked-good-xpath is available, install it. This will not overwrite any
 // native XPath functionality.
-var wgxpath = g.wgxpath;
+var wgxpath = global.wgxpath;
 if (typeof wgxpath !== "undefined" &&
     wgxpath !== null &&
     typeof wgxpath.install === "function") {
@@ -34,11 +32,11 @@ if (typeof wgxpath !== "undefined" &&
 }
 
 // Store a reference to the current annotator object, if one exists.
-var _annotator = g.annotator;
+var _annotator = global.annotator;
 
 // Restores the Annotator property on the global object to it's
 // previous value and returns the Annotator.
 exports.noConflict = function noConflict() {
-    g.annotator = _annotator;
+    global.annotator = _annotator;
     return this;
 };

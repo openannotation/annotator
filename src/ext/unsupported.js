@@ -15,7 +15,7 @@ var _t = annotator.util.gettext;
  */
 function checkSupport(scope) {
     if (typeof scope === 'undefined' || scope === null) {
-        scope = annotator.util.getGlobal();
+        scope = annotator.global;
     }
 
     var errors = [];

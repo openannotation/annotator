@@ -132,7 +132,7 @@ describe('ui.adder.Adder', function () {
         });
 
         it("hides the adder when the button is left-clicked", function () {
-            $(util.getGlobal().document.body).trigger('mouseup');
+            $(global.document.body).trigger('mouseup');
             a.element.find('button').trigger({
                 type: 'click',
                 which: 1

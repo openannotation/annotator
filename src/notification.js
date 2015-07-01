@@ -61,7 +61,7 @@ function banner(message, severity) {
         .addClass(bannerClasses.show)
         .addClass(bannerClasses[severity])
         .html(util.escapeHtml(message || ""))
-        .appendTo(util.getGlobal().document.body);
+        .appendTo(global.document.body);
 
     $(element).on('click', close);
 

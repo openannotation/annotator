@@ -59,7 +59,7 @@ TextSelector.prototype.captureDocumentSelection = function () {
         len,
         ranges = [],
         rangesToIgnore = [],
-        selection = util.getGlobal().getSelection();
+        selection = global.getSelection();
 
     if (selection.isCollapsed) {
         return [];

@@ -24,7 +24,7 @@ function isEmpty(obj) {
 
 // absoluteUrl turns a possibly relative URL into an absolute one
 function absoluteUrl(url) {
-    var d = util.getGlobal().document.createElement('a');
+    var d = global.document.createElement('a');
     d.href = url;
     return d.href;
 }
@@ -112,13 +112,13 @@ function getTitle(d, keys) {
     }
 
     // Fall back to document title
-    return util.getGlobal().document.title;
+    return global.document.title;
 }
 
 
 function getLinks() {
     // we know our current location is a link for the document
-    var results = [{href: util.getGlobal().document.location.href}];
+    var results = [{href: global.document.location.href}];
 
     // look for some relevant link relations
     $("link").each(function (_, link) {

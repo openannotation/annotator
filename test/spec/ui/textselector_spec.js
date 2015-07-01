@@ -38,11 +38,11 @@ describe('ui.textselector.TextSelector', function () {
         beforeEach(function () {
             var mockSelection;
             mockSelection = new h.MockSelection(h.fix(), ['/div/p', 0, '/div/p', 1, 'Hello world!', '--']);
-            sinon.stub(util.getGlobal(), 'getSelection').returns(mockSelection);
+            sinon.stub(global, 'getSelection').returns(mockSelection);
         });
 
         afterEach(function () {
-            util.getGlobal().getSelection.restore();
+            global.getSelection.restore();
         });
 
         it("should capture and normalise the current document selections", function () {
@@ -64,23 +64,23 @@ describe('ui.textselector.TextSelector', function () {
             };
             mockSelection = new h.MockSelection(h.fix(), ['/div/p', 0, '/div/p', 1, 'Hello world!', '--']);
             sinon.stub(util, 'mousePosition').returns(mockOffset);
-            sinon.stub(util.getGlobal(), 'getSelection').returns(mockSelection);
+            sinon.stub(global, 'getSelection').returns(mockSelection);
         });
 
         afterEach(function () {
             util.mousePosition.restore();
-            util.getGlobal().getSelection.restore();
+            global.getSelection.restore();
         });
 
         it("should receive the selected ranges when a selection is made", function () {
-            $(util.getGlobal().document.body).trigger('mouseup');
+            $(global.document.body).trigger('mouseup');
             assert.equal(selections.length, 1);
             var s = selections[0];
             assert.equal(s.ranges[0].text(), 'Hello world!');
         });
 
         it("should receive the triggering event object when a selection is made", function () {
-            $(util.getGlobal().document.body).trigger('mouseup');
+            $(global.document.body).trigger('mouseup');
             assert.equal(selections.length, 1);
             var s = selections[0];
             assert.equal(s.event.type, 'mouseup');
@@ -88,17 +88,17 @@ describe('ui.textselector.TextSelector', function () {
 
         it("should be called with empty ranges if an empty selection is made", function () {
             mockSelection.removeAllRanges();
-            $(util.getGlobal().document.body).trigger('mouseup');
+            $(global.document.body).trigger('mouseup');
             assert.equal(selections.length, 1);
             assert.deepEqual(selections[0].ranges, []);
         });
 
         it("should be called with empty ranges if the selection is of an Annotator element", function () {
             // Set the selection to a div which has the 'annotator-adder' class set
-            util.getGlobal().getSelection.restore();
+            global.getSelection.restore();
             mockSelection = new h.MockSelection(h.fix(), ['/div/div/p', 0, '/div/div/p', 1, 'Part of the Annotator UI.', '--']);
-            sinon.stub(util.getGlobal(), 'getSelection').returns(mockSelection);
-            $(util.getGlobal().document.body).trigger('mouseup');
+            sinon.stub(global, 'getSelection').returns(mockSelection);
+            $(global.document.body).trigger('mouseup');
             assert.equal(selections.length, 1);
             assert.deepEqual(selections[0].ranges, []);
         });

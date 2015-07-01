@@ -22,21 +22,10 @@ function escapeHtml(string) {
 }
 
 
-// getGlobal returns the global object (window in a browser, the global
-// namespace object in Node, etc.)
-function getGlobal() {
-    // jshint -W054
-    return new Function('return this')();
-    // jshint +W054
-}
-
-
 // I18N
 var gettext = (function () {
-    var g = getGlobal();
-
-    if (typeof g.Gettext === 'function') {
-        var _gettext = new g.Gettext({domain: "annotator"});
+    if (typeof global.Gettext === 'function') {
+        var _gettext = new global.Gettext({domain: "annotator"});
         return function (msgid) { return _gettext.gettext(msgid); };
     }
 
@@ -48,7 +37,7 @@ var gettext = (function () {
 // corner of the page (taking into account padding/margin/border on the body
 // element as necessary).
 function mousePosition(event) {
-    var body = getGlobal().document.body;
+    var body = global.document.body;
     var offset = {top: 0, left: 0};
 
     if ($(body).css('position') !== "static") {
@@ -66,5 +55,4 @@ exports.$ = $;
 exports.Promise = Promise;
 exports.gettext = gettext;
 exports.escapeHtml = escapeHtml;
-exports.getGlobal = getGlobal;
 exports.mousePosition = mousePosition;
