@@ -24,3 +24,6 @@ matrix:
   - env: COMMAND='npm run lint'
 script:
 - '[ "${TRAVIS_PULL_REQUEST}" != "false" -a "${BROWSER}" != "PhantomJS" ] && true || ${COMMAND}'
+cache:
+  directories:
+  - node_modules
