@@ -24,7 +24,7 @@ functionality. There are two ways of doing this:
 1. module hooks
 2. component registration
 
-Use module hooks Unless you are replacing core functionality of Annotator.
+Use module hooks unless you are replacing core functionality of Annotator.
 Module hooks are functions that will be run by the :class:`~annotator.App` when
 important things happen. For example, here's a module that will say
 ``Hello, world!`` to the user when the application starts::
