@@ -274,7 +274,8 @@ describe('ui.viewer.Viewer', function () {
 
     describe('event handlers', function () {
         var hl = null,
-            clock = null;
+            clock = null,
+            sandbox = null;
 
         beforeEach(function () {
             v = new viewer.Viewer({
@@ -288,9 +289,11 @@ describe('ui.viewer.Viewer', function () {
                 text: "Cats with mats"
             });
             clock = sinon.useFakeTimers();
+            sandbox = sinon.sandbox.create();
         });
 
         afterEach(function () {
+            sandbox.restore();
             clock.restore();
             v.destroy();
         });
@@ -364,6 +367,33 @@ describe('ui.viewer.Viewer', function () {
                 which: 2
             });
             assert.isTrue(called, 'event should have propagated to the document');
+        });
+
+        // Regression test: Issue #520. Repeatedly showing the dialog is
+        // surprisingly slow when many annotations overlap.
+        it('should only show the viewer once when mousing over overlapping annotations', function() {
+            var hl3 = $(h.fix()).find('.annotator-hl.three');
+            hl3.data('annotation', {
+                text: "Time flies like arrows."
+            });
+
+            var hl4 = $(h.fix()).find('.annotator-hl.four');
+            hl4.data('annotation', {
+                text: "(Is that right?)"
+            });
+
+            sandbox.spy(v, 'load');
+            sandbox.spy(v, 'show');
+
+            hl4.mouseover();
+            clock.tick(200);
+
+            assert.isTrue(v.isShown());
+            assert.isTrue(v.element.html().indexOf("Time flies like arrows.") >= 0);
+            assert.isTrue(v.element.html().indexOf("(Is that right?)") >= 0);
+
+            assert.equal(v.load.callCount, 1);
+            assert.equal(v.show.callCount, 1);
         });
     });
 });

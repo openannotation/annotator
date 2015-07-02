@@ -117,7 +117,11 @@ var Viewer = exports.Viewer = Widget.extend({
 
             $(this.options.autoViewHighlights)
                 .on("mouseover." + NS, '.annotator-hl', function (event) {
-                    self._onHighlightMouseover(event);
+                    // If there are many overlapping highlights, still only
+                    // call _onHighlightMouseover once.
+                    if (event.target === this) {
+                        self._onHighlightMouseover(event);
+                    }
                 })
                 .on("mouseleave." + NS, '.annotator-hl', function () {
                     self._startHideTimer();
@@ -125,13 +129,13 @@ var Viewer = exports.Viewer = Widget.extend({
 
             $(this.document.body)
                 .on("mousedown." + NS, function (e) {
-                    if (e.which > 1) {
-                        this.mouseDown = true;
+                    if (e.which == 1) {
+                        self.mouseDown = true;
                     }
                 })
                 .on("mouseup." + NS, function (e) {
-                    if (e.which > 1) {
-                        this.mouseDown = false;
+                    if (e.which == 1) {
+                        self.mouseDown = false;
                     }
                 });
         }
