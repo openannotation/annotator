@@ -12,8 +12,8 @@ describe('ui.markdown.render', function () {
         sandbox.stub(util, 'escapeHtml').returns('escaped');
         makeHtml = sandbox.stub().returns('converted');
 
-        global.Showdown = {
-            converter: function () {
+        global.showdown = {
+            Converter: function () {
                 return {makeHtml: makeHtml};
             }
         };
@@ -34,7 +34,7 @@ describe('ui.markdown.render', function () {
     });
 
     it("should HTML escape text if Showdown is not available", function () {
-        global.Showdown = null;
+        global.showdown = null;
 
         assert.equal('escaped', markdown.render({text: 'foo'}));
         sinon.assert.calledWith(util.escapeHtml, 'foo');
@@ -51,8 +51,8 @@ describe('ui.markdown.viewerExtension', function () {
         mockViewer = {
             setRenderer: sandbox.stub()
         };
-        global.Showdown = {
-            converter: function () {
+        global.showdown = {
+            Converter: function () {
                 return {makeHtml: sandbox.stub()};
             }
         };
@@ -64,7 +64,7 @@ describe('ui.markdown.viewerExtension', function () {
 
     it("should log a warning if Showdown is not present in the page", function () {
         sandbox.stub(console, 'warn');
-        global.Showdown = null;
+        global.showdown = null;
 
         markdown.viewerExtension(mockViewer);
 

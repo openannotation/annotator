@@ -18,8 +18,8 @@ var _t = util.gettext;
 var render = exports.render = function render(annotation) {
     var convert = util.escapeHtml;
 
-    if (global.Showdown && typeof global.Showdown.converter === 'function') {
-        convert = new global.Showdown.converter().makeHtml;
+    if (global.showdown && typeof global.showdown.Converter === 'function') {
+        convert = new global.showdown.Converter().makeHtml;
     }
 
     if (annotation.text) {
@@ -47,7 +47,7 @@ var render = exports.render = function render(annotation) {
  *     });
  */
 exports.viewerExtension = function viewerExtension(viewer) {
-    if (!global.Showdown || typeof global.Showdown.converter !== 'function') {
+    if (!global.showdown || typeof global.showdown.Converter !== 'function') {
         console.warn(_t("To use the Markdown plugin, you must " +
                         "include Showdown into the page first."));
     }
