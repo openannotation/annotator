@@ -1,4 +1,4 @@
-Annotator documentation
+Annotator Documentation
 =======================
 
 .. warning:: Beware: rapidly changing documentation!
