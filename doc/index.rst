@@ -42,6 +42,13 @@ Continue reading to learn about installing and deploying Annotator:
 
 .. todolist::
 
+Change History
+==============
+
+.. toctree::
+   :maxdepth: 1
+
+   changes
 
 Glossary and Index
 ==================
