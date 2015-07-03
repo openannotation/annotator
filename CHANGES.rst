@@ -1,5 +1,5 @@
-Next release
-============
+2.0.0-alpha.3
+=============
 
 Features
 --------
@@ -48,8 +48,6 @@ Documentation
 - Fix some example syntax.
 
 - Add example markup in the documentation for the ``document`` extension.
-
-
 
 2.0.0-alpha.2 (2015-04-24)
 ==========================
