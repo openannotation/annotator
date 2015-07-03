@@ -371,7 +371,7 @@ describe('ui.viewer.Viewer', function () {
 
         // Regression test: Issue #520. Repeatedly showing the dialog is
         // surprisingly slow when many annotations overlap.
-        it('should only show the viewer once when mousing over overlapping annotations', function() {
+        it('should only show the viewer once when mousing over overlapping annotations', function () {
             var hl3 = $(h.fix()).find('.annotator-hl.three');
             hl3.data('annotation', {
                 text: "Time flies like arrows."

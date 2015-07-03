@@ -126,7 +126,7 @@ describe('ui.filter.Filter', function () {
             annotations = [{text: 'cat'}, {text: 'dog'}, {text: 'car'}];
             plugin.filters = {'text': testFilter};
             plugin.highlights = $('<span>cat</span><span>dog</span><span>car</span>');
-            plugin.highlights.each(function(i) {
+            plugin.highlights.each(function (i) {
                 $(this).data('annotation', annotations[i]);
             });
             sandbox.stub(plugin, 'updateHighlights');
