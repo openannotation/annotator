@@ -9,7 +9,7 @@ env:
   - secure: nJzTL/VeaVaqWg+qOrDOVzOq/zr0KcVli2AmL6JYpNfSLDMk5ZFR8Qs2ZUXkerJY36KEzrZnYQ9SDMkhYtTUf6SpH3MoMDcs79wOMVBWKHdYX5jf1aIuE+75pNU15HK0vwtT1wV5uZurrkx46K/EKobjspIOy0Qs/jAQ8AVKuoE=
   - COMMAND='npm run test'
   matrix:
-  - BROWSER=PhantomJS
+  - BROWSER=PhantomJS PULL_REQUEST_SAFE=true
   - BROWSER=SL_Chrome
   - BROWSER=SL_Firefox
   - BROWSER=SL_Safari
@@ -21,9 +21,9 @@ matrix:
   allow_failures:
   - env: BROWSER=SL_IE_8
   include:
-  - env: COMMAND='npm run lint'
+  - env: COMMAND='npm run lint' PULL_REQUEST_SAFE=true
 script:
-- '[ "${TRAVIS_PULL_REQUEST}" != "false" -a "${BROWSER}" != "PhantomJS" ] && true || ${COMMAND}'
+- '[ "${TRAVIS_PULL_REQUEST}" != "false" -a "${PULL_REQUEST_SAFE}" != "true" ] && true || ${COMMAND}'
 cache:
   directories:
   - node_modules
