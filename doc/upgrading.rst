@@ -70,8 +70,8 @@ as::
 
 This has been removed in 2.0. Here's what you'd write now::
 
-    var app = new annotator.App()
-    app.include(annotator.ui.main, {element: document.body})
+    var app = new annotator.App();
+    app.include(annotator.ui.main, {element: document.body});
     app.start();
 
 This sets up an Annotator with a user interface. If you decide not to include
@@ -122,7 +122,7 @@ in Annotator 2.0::
     var app = new annotator.App()
         .include(annotator.ui.main, {element: elem})
         .include(annotator.storage.http, {prefix: 'http://example.com/api'})
-        .include(pageUri)
+        .include(pageUri);
 
     app.start()
        .then(function () {
