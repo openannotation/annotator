@@ -19,12 +19,12 @@
 }
 
 @mixin icon-sprite{
-  background-image: url(img/annotator-icon-sprite.png?embed);
+  background-image: url(../img/annotator-icon-sprite.png?embed);
   background-repeat: no-repeat;
 }
 
 @mixin glyph-sprite{
-  background-image: url(img/annotator-glyph-sprite.png?embed);
+  background-image: url(../img/annotator-glyph-sprite.png?embed);
   background-repeat: no-repeat;
 }
 
