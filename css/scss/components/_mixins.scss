@@ -1,0 +1,36 @@
+// Mixins
+
+@mixin reset{
+  font-family: $base-font;
+  font-weight: normal;
+  text-align: left;
+  margin: 0;
+  padding: 0;
+  background: none;
+  -webkit-transition: none;
+  -moz-transition: none;
+  -o-transition: none;
+  transition: none;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  -o-box-shadow: none;
+  box-shadow: none;
+  color: $base-font-color;
+}
+
+@mixin icon-sprite{
+  background-image: url(img/annotator-icon-sprite.png?embed);
+  background-repeat: no-repeat;
+}
+
+@mixin glyph-sprite{
+  background-image: url(img/annotator-glyph-sprite.png?embed);
+  background-repeat: no-repeat;
+}
+
+@mixin border-radius($radius){
+  -webkit-border-radius: $radius;
+  -moz-border-radius: $radius;
+  -o-border-radius: $radius;
+  border-radius: $radius;
+}

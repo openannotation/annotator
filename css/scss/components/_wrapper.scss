@@ -1,0 +1,31 @@
+// Annotator Wrapper
+
+.annotator-wrapper {
+  position: relative;
+}
+
+/* NB: If you change the list of classes for which z-index is set,
+       you should update setupDynamicStyle() in annotator.ui.main */
+.annotator-adder,
+.annotator-outer,
+.annotator-notice {
+  z-index: 1020;
+}
+
+.annotator-filter {
+  z-index: 1010;
+}
+
+.annotator-adder,
+.annotator-outer,
+.annotator-widget,
+.annotator-notice {
+  position: absolute;
+  font-size: 10px;
+  line-height: 1;
+}
+
+.annotator-hide {
+  display: none;
+  visibility: hidden;
+}

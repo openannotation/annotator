@@ -1,0 +1,153 @@
+// Filter
+
+.annotator-filter {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  text-align: left;
+  line-height: 0;
+  border: none;
+  border-bottom: 1px solid #878787;
+  padding-left: 10px;
+  padding-right: 10px;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
+  -webkit-box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.3);
+  -moz-box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.3);
+  -o-box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.3);
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.3);
+  strong {
+    font-size: 12px;
+    font-weight: bold;
+    color: #3c3c3c;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+    position: relative;
+    top: -9px;
+  }
+  .annotator-filter-property, .annotator-filter-navigation {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    line-height: 10px;
+    padding: 2px 0;
+    margin-right: 8px;
+  }
+  .annotator-filter-property label, .annotator-filter-navigation button {
+    text-align: left;
+    display: block;
+    float: left;
+    line-height: 20px;
+    -webkit-border-radius: 10px 0 0 10px;
+    -moz-border-radius: 10px 0 0 10px;
+    -o-border-radius: 10px 0 0 10px;
+    border-radius: 10px 0 0 10px;
+  }
+  .annotator-filter-property {
+    label {
+      padding-left: 8px;
+    }
+    input {
+      display: block;
+      float: right;
+      -webkit-appearance: none;
+      background-color: #fff;
+      border: 1px solid #878787;
+      border-left: none;
+      padding: 2px 4px;
+      line-height: 16px;
+      min-height: 16px;
+      font-size: 12px;
+      width: 150px;
+      color: #333;
+      background-color: #f8f8f8;
+      -webkit-border-radius: 0 10px 10px 0;
+      -moz-border-radius: 0 10px 10px 0;
+      -o-border-radius: 0 10px 10px 0;
+      border-radius: 0 10px 10px 0;
+      -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.2);
+      -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.2);
+      -o-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.2);
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.2);
+      &:focus {
+        outline: none;
+        background-color: #fff;
+      }
+    }
+  }
+  .annotator-filter-clear {
+    position: absolute;
+    right: 3px;
+    top: 6px;
+    border: none;
+    text-indent: -900em;
+    width: 15px;
+    height: 15px;
+    background-position: 0 -90px;
+    opacity: 0.4;
+    &:hover, &:focus {
+      opacity: 0.8;
+    }
+    &:active {
+      opacity: 1;
+    }
+  }
+  .annotator-filter-navigation {
+    button {
+      border: 1px solid rgb(162, 162, 162);
+      padding: 0;
+      text-indent: -900px;
+      width: 20px;
+      min-height: 22px;
+      -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2), inset 0 0 1px rgba(255, 255, 255, 0.8);
+      -moz-box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2), inset 0 0 1px rgba(255, 255, 255, 0.8);
+      -o-box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2), inset 0 0 1px rgba(255, 255, 255, 0.8);
+      box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2), inset 0 0 1px rgba(255, 255, 255, 0.8);
+      color: transparent;
+      &:hover, &:focus {
+        color: transparent;
+      }
+      &:after {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        content: "";
+        display: block;
+        width: 9px;
+        height: 9px;
+        background-position: 0 -210px;
+      }
+      &:hover:after {
+        background-position: 0 -225px;
+      }
+    }
+    .annotator-filter-next {
+      -webkit-border-radius: 0 10px 10px 0;
+      -moz-border-radius: 0 10px 10px 0;
+      -o-border-radius: 0 10px 10px 0;
+      border-radius: 0 10px 10px 0;
+      border-left: none;
+      &:after {
+        left: auto;
+        right: 7px;
+        background-position: 0 -240px;
+      }
+      &:hover:after {
+        background-position: 0 -255px;
+      }
+    }
+  }
+}
+
+.annotator-hl-active {
+  background: #FFFF0A;
+  background: rgba(255, 255, 10, 0.8);
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#CCFFFF0A, endColorstr=#CCFFFF0A)";
+  /* 0.8 == CC in MS filters */
+}
+
+.annotator-hl-filtered {
+  background-color: transparent;
+}
