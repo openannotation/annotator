@@ -284,7 +284,7 @@ var Viewer = exports.Viewer = Widget.extend({
         return item;
     },
 
-    // Public: Adds an addional field to an annotation view. A callback can be
+    // Public: Adds an additional field to an annotation view. A callback can be
     // provided to update the view on load.
     //
     // options - An options Object. Options are as follows:
