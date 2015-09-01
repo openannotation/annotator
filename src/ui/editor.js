@@ -352,7 +352,7 @@ var Editor = exports.Editor = Widget.extend({
     //
     // options - An options Object. Options are as follows:
     //           id     - A unique id for the form element will also be set as
-    //                    the "for" attrubute of a label if there is one.
+    //                    the "for" attribute of a label if there is one.
     //                    (default: "annotator-field-{number}")
     //           type   - Input type String. One of "input", "textarea",
     //                    "checkbox", "select" (default: "input")
