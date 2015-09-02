@@ -347,7 +347,7 @@ var Editor = exports.Editor = Widget.extend({
         this.hide();
     },
 
-    // Public: Adds an addional form field to the editor. Callbacks can be
+    // Public: Adds an additional form field to the editor. Callbacks can be
     // provided to update the view and anotations on load and submission.
     //
     // options - An options Object. Options are as follows:
