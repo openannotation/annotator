@@ -39,8 +39,7 @@ annotator.authz package
     :param context: The permissions context for the authorization check.
     :param identity: The identity whose authorization is being checked.
     
-    :returns Boolean: Whether the action is permitted in this context for this
-    identity.
+    :returns Boolean: Whether the action is permitted in this context for this identity.
 
 
 ..  function:: annotator.authz.AclAuthzPolicy.prototype.authorizedUserId(identity)
