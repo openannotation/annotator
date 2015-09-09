@@ -9,7 +9,6 @@
   "dependencies": {
     "backbone-extend-standalone": "~0.1.2",
     "browserify-shim": "^3.8.3",
-    "clean-css": "^3.1.9",
     "enhance-css": "^1.1.0",
     "es6-promise": "~0.1.1",
     "insert-css": "^0.2.0",
@@ -21,6 +20,7 @@
     "assertive-chai": "^1.0.0",
     "browserify": "^9.0.8",
     "browserify-middleware": "^5.0.2",
+    "clean-css": "^3.1.9",
     "concat-stream": "^1.4.8",
     "connect": "~2.10.1",
     "esprima": "^2.1.0",
@@ -33,6 +33,7 @@
     "karma-phantomjs-launcher": "^0.1.4",
     "karma-sauce-launcher": "^0.2.10",
     "mocha": "^2.2.4",
+    "node-sass": "^3.3.2",
     "sinon": "^1.14.1",
     "uglify-js": "~2.4.12",
     "wgxpath": "^0.23.0"
