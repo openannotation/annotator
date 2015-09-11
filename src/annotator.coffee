@@ -601,7 +601,7 @@ class Annotator extends Delegator
       .parents()
       .addBack()
       .filter('[class^=annotator-]')
-      .not('[class=annotator-hl]')
+      .not('[class^=annotator-hl]')
       .not(@wrapper)
       .length
 

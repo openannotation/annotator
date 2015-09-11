@@ -819,8 +819,12 @@ describe 'Annotator', ->
       for element in elements
         assert.isFalse(annotator.isAnnotator(element))
 
-    it "should ignore the annotator highlight elements", ->
+    it "should ignore the default annotator highlight elements", ->
       element = $('<span class="annotator-hl"></span>')[0]
+      assert.isFalse(annotator.isAnnotator(element))
+
+    it "should ignore the special annotator highlight elements", ->
+      element = $('<span class="annotator-hl-filtered"></span>')[0]
       assert.isFalse(annotator.isAnnotator(element))
 
   describe "onHighlightMouseover", ->
