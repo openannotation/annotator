@@ -400,7 +400,7 @@ HttpStorage.prototype._onError = function (xhr) {
         message = _t("Internal error in annotation store! " +
                      "(Error 500)");
     } else {
-        message = _t("Unknown error while speaking to annotation store!");
+        message = _t("Unknown error while speaking to annotation store - test!");
     }
     this.onError(message, xhr);
 };

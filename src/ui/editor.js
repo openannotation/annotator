@@ -234,12 +234,51 @@ var Editor = exports.Editor = Widget.extend({
                 type: 'textarea',
                 label: _t('Comments') + '\u2026',
                 load: function (field, annotation) {
-                    $(field).find('textarea').val(annotation.text || '');
+                    $(field).find('#annotator-field-0').val(annotation.text || '');
                 },
                 submit: function (field, annotation) {
-                    annotation.text = $(field).find('textarea').val();
+                    annotation.text = $(field).find('#annotator-field-0').val();
+		    if (annotation.text == '') {
+			annotation.text = $(field).find('textarea').val()
+		    }
                 }
             });
+
+	    // add new field as part of default - drug name
+	    this.addField({
+		label: _t('Drug name') + '\u2026',
+		type:  'textarea',
+		load: function (field, annotation) {
+		    $(field).find('#annotator-field-1').val(annotation.drug || '');
+		},
+		submit: function (field, annotation){
+		    annotation.drug = $(field).find('#annotator-field-1').val();
+		} 
+	    });
+
+	    // this.addField({
+	    // 	type: 'checkbox',
+	    // 	id: 'annotator-field-my-checkbox',
+	    // 	label: 'isClinicalDrug',
+	    // 	load: function (field, annotation) {		    
+	    // 	    checked = $(field).find('input').is(':checked');
+	    // 	    if (checked == true){
+	    // 		$(field).find('input').attr('checked', 'checked');
+	    // 	    }
+	    // 	    else {
+	    // 		$(field).find('input').removeAttr('checked');
+	    // 	    }
+	    // 	}, 
+		
+	    // 	submit: function (field, annotation){
+	    // 	    checked = $(field).find('input').is(':checked');
+            //         annotation.text = $(field).find('input').val();
+	    // 	}
+	    // });
+
+
+	// test end
+
         }
 
         var self = this;

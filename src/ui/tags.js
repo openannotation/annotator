@@ -94,7 +94,7 @@ exports.editorExtension = function editorExtension(e) {
     }
 
     field = e.addField({
-        label: _t('Add some tags here') + '\u2026',
+        label: _t('Add some tags here - test') + '\u2026',
         load: updateField,
         submit: setAnnotationTags
     });

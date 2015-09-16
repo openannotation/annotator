@@ -22,10 +22,21 @@ var Filter = exports.Filter = function Filter(options) {
     this.filters = [];
     this.current  = 0;
 
+    // test
+    // if (annotation.text && annotation.drug){
+    // 	alert('cmt: ' + annotation.text + " | drug: " + annotation.drug)
+    // }
+    
+    //var fieldsCol = ""
+
     for (var i = 0, len = this.options.filters.length; i < len; i++) {
         var filter = this.options.filters[i];
         this.addFilter(filter);
+
+	//fieldsCol = fieldsCol + filter + " | ";
     }
+
+    //alert('fieldsCol: ' + fieldsCol);
 
     this.updateHighlights();
 
@@ -55,6 +66,7 @@ var Filter = exports.Filter = function Filter(options) {
 
     if (this.options.addAnnotationFilter) {
         this.addFilter({label: _t('Annotation'), property: 'text'});
+        //this.addFilter({label: _t('Annotation'), property: 'drug'});
     }
 };
 
