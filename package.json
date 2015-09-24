@@ -8,7 +8,6 @@
   },
   "dependencies": {
     "backbone-extend-standalone": "~0.1.2",
-    "browserify-shim": "^3.8.3",
     "clean-css": "^3.1.9",
     "enhance-css": "^1.1.0",
     "es6-promise": "~0.1.1",
@@ -40,12 +39,8 @@
   "browser": "browser.js",
   "browserify": {
     "transform": [
-      "./tools/cssify",
-      "browserify-shim"
+      "./tools/cssify"
     ]
-  },
-  "browserify-shim": {
-    "annotator": "global:annotator"
   },
   "engines": {
     "node": ">=0.10 <0.12"
