@@ -14,7 +14,8 @@ annotator.authz package
     An authorization policy that permits actions based on access control lists.
 
 
-..  function:: annotator.authz.AclAuthzPolicy.prototype.permits(action, context, identity)
+..  function:: annotator.authz.AclAuthzPolicy.prototype.permits(action, \
+    context, identity)
     
     Determines whether the user identified by `identity` is permitted to
     perform the specified action in the given context.
@@ -40,10 +41,11 @@ annotator.authz package
     :param identity: The identity whose authorization is being checked.
     
     :returns Boolean: Whether the action is permitted in this context for this
-    identity.
+        identity.
 
 
-..  function:: annotator.authz.AclAuthzPolicy.prototype.authorizedUserId(identity)
+..  function:: annotator.authz.AclAuthzPolicy.prototype.authorizedUserId( \
+    identity)
     
     Returns the authorized userid for the user identified by `identity`.
 
