@@ -3,3 +3,4 @@
 doc/_build/
 node_modules/
 pkg/
+.sass-cache/

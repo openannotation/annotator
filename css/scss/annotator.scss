@@ -1,0 +1,90 @@
+// Annotator Styles
+
+@import 'components/mixins';
+
+$base-font:"Helvetica Neue", Arial, Helvetica, sans-serif;
+$base-font-color: rgb(144, 144, 144);
+
+
+// Base Reset
+//--------------------------------------------------------------------
+.annotator-notice,
+.meltdown_preview,
+.annotator-filter{
+  @include reset;
+}
+
+
+// Images
+//--------------------------------------------------------------------
+
+.annotator-adder {
+  @include icon-sprite;
+}
+
+.annotator-resize,
+.annotator-widget:after,
+.annotator-editor a:after,
+.annotator-viewer .annotator-controls button,
+.annotator-viewer .annotator-controls a,
+.annotator-filter .annotator-filter-navigation button:after,
+.annotator-filter .annotator-filter-property .annotator-filter-clear {
+  @include glyph-sprite;
+}
+
+
+/* Annotator Highlight
+-------------------------------------------------------------------- */
+
+.annotator-hl {
+  background: #FFFF0A;
+  background: rgba(255, 255, 10, 0.3);
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#4DFFFF0A, endColorstr=#4DFFFF0A)";  /* 0.3 == 4D in MS filters */
+}
+
+.annotator-hl-temporary {
+  background: #007CFF;
+  background: rgba(0, 124, 255, 0.3);
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#4D007CFF, endColorstr=#4D007CFF)";  /* 0.3 == 4D in MS filters */
+}
+
+
+/* Annotator Wrapper
+-------------------------------------------------------------------- */
+@import 'components/wrapper';
+
+
+/* Annotator Adder
+-------------------------------------------------------------------- */
+@import 'components/adder';
+
+
+/* Annotator Widget
+
+   This applies to both the Viewer and the Editor
+-------------------------------------------------------------------- */
+@import 'components/widget';
+
+
+/* Annotator Viewer
+-------------------------------------------------------------------- */
+@import 'components/viewer';
+
+
+/* Annotator Editor
+-------------------------------------------------------------------- */
+@import 'components/editor';
+
+/* Annotator Notification
+-------------------------------------------------------------------- */
+@import 'components/notifications';
+
+
+/* Annotator Tags
+-------------------------------------------------------------------- */
+@import 'components/tags';
+
+
+/* Annotator Filter
+-------------------------------------------------------------------- */
+@import 'components/filter';

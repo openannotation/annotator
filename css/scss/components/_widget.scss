@@ -1,0 +1,93 @@
+// Widget
+
+.annotator-outer {
+  width: 0;
+  height: 0;
+}
+
+.annotator-widget {
+  margin: 0;
+  padding: 0;
+  bottom: 15px;
+  left: -18px;
+  min-width: 265px;
+  background-color: #FBFBFB;
+  background-color: rgba(251, 251, 251, 0.98);
+  border: 1px solid #7A7A7A;
+  border: 1px solid rgba(122, 122, 122, 0.6);
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  -o-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.annotator-invert-x .annotator-widget {
+  left: auto;
+  right: -18px;
+}
+
+.annotator-invert-y .annotator-widget {
+  bottom: auto;
+  top: 8px;
+}
+
+.annotator-widget {
+  strong {
+    font-weight: bold;
+  }
+  .annotator-listing, .annotator-item {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+  &:after {
+    content: "";
+    display: block;
+    width: 18px;
+    height: 10px;
+    background-position: 0 0;
+    position: absolute;
+    bottom: -10px;
+    left: 8px;
+  }
+}
+
+.annotator-invert-x .annotator-widget:after {
+  left: auto;
+  right: 8px;
+}
+
+.annotator-invert-y .annotator-widget:after {
+  background-position: 0 -15px;
+  bottom: auto;
+  top: -9px;
+}
+
+.annotator-widget .annotator-item {
+  position: relative;
+  font-size: 12px;
+}
+
+.annotator-editor .annotator-item {
+  input, textarea {
+    position: relative;
+    font-size: 12px;
+  }
+}
+
+.annotator-viewer .annotator-item {
+  border-top: 2px solid #7A7A7A;
+  border-top: 2px solid rgba(122, 122, 122, 0.2);
+}
+
+.annotator-widget .annotator-item:first-child {
+  border-top: none;
+}
+
+.annotator-editor .annotator-item, .annotator-viewer div {
+  border-top: 1px solid #858585;
+  border-top: 1px solid rgba(133, 133, 133, 0.11);
+}

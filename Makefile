@@ -1,5 +1,7 @@
 BROWSERIFY := node_modules/.bin/browserify
 UGLIFYJS := node_modules/.bin/uglifyjs
+CLEANCSS := node_modules/.bin/cleancss
+SASSC = node_modules/.bin/node-sass
 
 # Check that the user has run 'npm install'
 ifeq ($(shell which $(BROWSERIFY) >/dev/null 2>&1; echo $$?), 1)
@@ -13,7 +15,7 @@ EXT := \
 
 SRC := $(shell find src -type f -name '*.js')
 
-all: annotator exts
+all: annotator exts sass minifyCss
 
 annotator: pkg/annotator.min.js
 exts: $(patsubst %,pkg/annotator.%.min.js,$(EXT))
@@ -21,6 +23,16 @@ exts: $(patsubst %,pkg/annotator.%.min.js,$(EXT))
 pkg/%.min.js: pkg/%.js
 	@echo Writing $@
 	@$(UGLIFYJS) --preamble "$$(tools/preamble)" $< >$@
+
+# compile Sass
+sass:
+	@echo Compiling Styles
+	mkdir -p css
+	@$(SASSC) css/scss/annotator.scss > css/annotator.css
+
+minifyCss:
+	@echo Minfying Styles
+	@$(CLEANCSS) --source-map --output css/annotator.min.css css/annotator.css
 
 pkg/annotator.js: browser.js
 	@mkdir -p pkg/ .deps/
@@ -54,4 +66,4 @@ doc/api/%.rst: src/%.js
 
 -include .deps/*.d
 
-.PHONY: all annotator exts clean test develop doc
+.PHONY: all annotator exts sass minifyCss clean test develop doc

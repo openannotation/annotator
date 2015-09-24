@@ -1,0 +1,40 @@
+// Notifications
+
+.annotator-notice {
+  color: #fff;
+  position: fixed;
+  top: -54px;
+  left: 0;
+  width: 100%;
+  font-size: 14px;
+  line-height: 50px;
+  text-align: center;
+  background: black;
+  background: rgba(0, 0, 0, 0.9);
+  border-bottom: 4px solid #d4d4d4;
+  -webkit-transition: top 0.4s ease-out;
+  -moz-transition: top 0.4s ease-out;
+  -o-transition: top 0.4s ease-out;
+  transition: top 0.4s ease-out;
+}
+
+.annotator-notice-success {
+  border-color: #3665f9;
+}
+
+.annotator-notice-error {
+  border-color: #ff7e00;
+}
+
+.annotator-notice {
+  p {
+    margin: 0;
+  }
+  a {
+    color: #fff;
+  }
+}
+
+.annotator-notice-show {
+  top: 0;
+}

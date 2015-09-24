@@ -1,0 +1,39 @@
+// Tags
+
+.annotator-tags {
+  margin-bottom: -2px;
+  position: relative;
+  padding: 0.5em 1.5em;
+  color:#B9B9BA;
+  border-top: 1px solid rgb(228, 228, 228);
+  cursor: text;
+
+  &::before{
+    content: "\f02c";
+    display: inline-block;
+    width: 1.5em;
+    margin-left: -1em;
+    opacity: 0.9;
+
+    font-family: 'FontAwesome';
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .annotator-tag {
+    display: inline-block;
+    padding: 0;
+    margin-bottom: 2px;
+    margin-left: 2px;
+    line-height: 1.6;
+    font-weight: normal;
+    font-size: 90%;
+
+    &:first-child{
+      margin-left: 0;
+    }
+  }
+}

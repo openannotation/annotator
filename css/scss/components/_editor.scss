@@ -1,0 +1,316 @@
+// Editor Viewer
+.annotator-editor {
+  .annotator-item {
+    position: relative;
+    label {
+      top: 0;
+      display: inline;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    input {
+      display: block;
+      min-width: 100%;
+      padding: 10px 8px;
+      border: none;
+      margin: 0;
+      color: rgb(60, 60, 60);
+      background: none;
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      -o-box-sizing: border-box;
+      box-sizing: border-box;
+      resize: none;
+    }
+    textarea {
+      display: block;
+      min-width: 100%;
+      padding: 10px 8px;
+      border: none;
+      margin: 0;
+      color: rgb(60, 60, 60);
+      background: none;
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      -o-box-sizing: border-box;
+      box-sizing: border-box;
+      resize: none;
+      &::-webkit-scrollbar {
+        height: 8px;
+        width: 8px;
+      }
+      &::-webkit-scrollbar-track-piece {
+        margin: 13px 0 3px;
+        background-color: #e5e5e5;
+        -webkit-border-radius: 4px;
+      }
+      &::-webkit-scrollbar-thumb {
+        &:vertical {
+          height: 25px;
+          background-color: #ccc;
+          -webkit-border-radius: 4px;
+          -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+        }
+        &:horizontal {
+          width: 25px;
+          background-color: #ccc;
+          -webkit-border-radius: 4px;
+        }
+      }
+    }
+    &:first-child textarea {
+      min-height: 5.5em;
+      -webkit-border-radius: 5px 5px 0 0;
+      -moz-border-radius: 5px 5px 0 0;
+      -o-border-radius: 5px 5px 0 0;
+      border-radius: 5px 5px 0 0;
+    }
+    input:focus, textarea:focus {
+      background-color: rgb(243, 243, 243);
+      outline: none;
+    }
+    input {
+      &[type=radio], &[type=checkbox] {
+        width: auto;
+        min-width: 0;
+        padding: 0;
+        display: inline;
+        margin: 0 4px 0 0;
+        cursor: pointer;
+      }
+    }
+  }
+  .annotator-checkbox {
+    padding: 8px 6px;
+  }
+}
+
+.annotator-filter {
+  text-align: right;
+  padding: 3px;
+  border-top: 1px solid rgb(212, 212, 212);
+  background-color: rgb(212, 212, 212);
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(245, 245, 245)), color-stop(0.6, rgb(220, 220, 220)), to(rgb(210, 210, 210)));
+  background-image: -moz-linear-gradient(to bottom, rgb(245, 245, 245), rgb(220, 220, 220) 60%, rgb(210, 210, 210));
+  background-image: -webkit-linear-gradient(to bottom, rgb(245, 245, 245), rgb(220, 220, 220) 60%, rgb(210, 210, 210));
+  background-image: linear-gradient(to bottom, rgb(245, 245, 245), rgb(220, 220, 220) 60%, rgb(210, 210, 210));
+  -webkit-box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.7), inset -1px 0 0 rgba(255, 255, 255, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  -moz-box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.7), inset -1px 0 0 rgba(255, 255, 255, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  -o-box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.7), inset -1px 0 0 rgba(255, 255, 255, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.7), inset -1px 0 0 rgba(255, 255, 255, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  -webkit-border-radius: 0 0 5px 5px;
+  -moz-border-radius: 0 0 5px 5px;
+  -o-border-radius: 0 0 5px 5px;
+  border-radius: 0 0 5px 5px;
+  .annotator-filter-navigation button {
+    text-align: right;
+    padding: 3px;
+    border-top: 1px solid rgb(212, 212, 212);
+    background-color: rgb(212, 212, 212);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(245, 245, 245)), color-stop(0.6, rgb(220, 220, 220)), to(rgb(210, 210, 210)));
+    background-image: -moz-linear-gradient(to bottom, rgb(245, 245, 245), rgb(220, 220, 220) 60%, rgb(210, 210, 210));
+    background-image: -webkit-linear-gradient(to bottom, rgb(245, 245, 245), rgb(220, 220, 220) 60%, rgb(210, 210, 210));
+    background-image: linear-gradient(to bottom, rgb(245, 245, 245), rgb(220, 220, 220) 60%, rgb(210, 210, 210));
+    -webkit-box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.7), inset -1px 0 0 rgba(255, 255, 255, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    -moz-box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.7), inset -1px 0 0 rgba(255, 255, 255, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    -o-box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.7), inset -1px 0 0 rgba(255, 255, 255, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.7), inset -1px 0 0 rgba(255, 255, 255, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    -webkit-border-radius: 0 0 5px 5px;
+    -moz-border-radius: 0 0 5px 5px;
+    -o-border-radius: 0 0 5px 5px;
+    border-radius: 0 0 5px 5px;
+  }
+}
+
+.annotator-editor {
+  .annotator-controls {
+    text-align: right;
+    padding: 3px;
+    border-top: 1px solid rgb(212, 212, 212);
+    background-color: rgb(212, 212, 212);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(245, 245, 245)), color-stop(0.6, rgb(220, 220, 220)), to(rgb(210, 210, 210)));
+    background-image: -moz-linear-gradient(to bottom, rgb(245, 245, 245), rgb(220, 220, 220) 60%, rgb(210, 210, 210));
+    background-image: -webkit-linear-gradient(to bottom, rgb(245, 245, 245), rgb(220, 220, 220) 60%, rgb(210, 210, 210));
+    background-image: linear-gradient(to bottom, rgb(245, 245, 245), rgb(220, 220, 220) 60%, rgb(210, 210, 210));
+    -webkit-box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.7), inset -1px 0 0 rgba(255, 255, 255, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    -moz-box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.7), inset -1px 0 0 rgba(255, 255, 255, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    -o-box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.7), inset -1px 0 0 rgba(255, 255, 255, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.7), inset -1px 0 0 rgba(255, 255, 255, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    -webkit-border-radius: 0 0 5px 5px;
+    -moz-border-radius: 0 0 5px 5px;
+    -o-border-radius: 0 0 5px 5px;
+    border-radius: 0 0 5px 5px;
+  }
+  &.annotator-invert-y .annotator-controls {
+    border-top: none;
+    border-bottom: 1px solid rgb(180, 180, 180);
+    -webkit-border-radius: 5px 5px 0 0;
+    -moz-border-radius: 5px 5px 0 0;
+    -o-border-radius: 5px 5px 0 0;
+    border-radius: 5px 5px 0 0;
+  }
+  a {
+    position: relative;
+    display: inline-block;
+    padding: 0 6px 0 22px;
+    color: rgb(54, 54, 54);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    line-height: 24px;
+    font-size: 12px;
+    font-weight: bold;
+    border: 1px solid rgb(162, 162, 162);
+    background-color: rgb(212, 212, 212);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(245, 245, 245)), color-stop(0.5, rgb(210, 210, 210)), color-stop(0.5, rgb(190, 190, 190)), to(rgb(210, 210, 210)));
+    background-image: -moz-linear-gradient(to bottom, rgb(245, 245, 245), rgb(210, 210, 210) 50%, rgb(190, 190, 190) 50%, rgb(210, 210, 210));
+    background-image: -webkit-linear-gradient(to bottom, rgb(245, 245, 245), rgb(210, 210, 210) 50%, rgb(190, 190, 190) 50%, rgb(210, 210, 210));
+    background-image: linear-gradient(to bottom, rgb(245, 245, 245), rgb(210, 210, 210) 50%, rgb(190, 190, 190) 50%, rgb(210, 210, 210));
+    -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2), inset 0 0 1px rgba(255, 255, 255, 0.8);
+    -moz-box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2), inset 0 0 1px rgba(255, 255, 255, 0.8);
+    -o-box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2), inset 0 0 1px rgba(255, 255, 255, 0.8);
+    box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2), inset 0 0 1px rgba(255, 255, 255, 0.8);
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -o-border-radius: 5px;
+    border-radius: 5px;
+  }
+}
+
+.annotator-filter .annotator-filter-property label {
+  position: relative;
+  display: inline-block;
+  padding: 0 6px 0 22px;
+  color: rgb(54, 54, 54);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  line-height: 24px;
+  font-size: 12px;
+  font-weight: bold;
+  border: 1px solid rgb(162, 162, 162);
+  background-color: rgb(212, 212, 212);
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(245, 245, 245)), color-stop(0.5, rgb(210, 210, 210)), color-stop(0.5, rgb(190, 190, 190)), to(rgb(210, 210, 210)));
+  background-image: -moz-linear-gradient(to bottom, rgb(245, 245, 245), rgb(210, 210, 210) 50%, rgb(190, 190, 190) 50%, rgb(210, 210, 210));
+  background-image: -webkit-linear-gradient(to bottom, rgb(245, 245, 245), rgb(210, 210, 210) 50%, rgb(190, 190, 190) 50%, rgb(210, 210, 210));
+  background-image: linear-gradient(to bottom, rgb(245, 245, 245), rgb(210, 210, 210) 50%, rgb(190, 190, 190) 50%, rgb(210, 210, 210));
+  -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2), inset 0 0 1px rgba(255, 255, 255, 0.8);
+  -moz-box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2), inset 0 0 1px rgba(255, 255, 255, 0.8);
+  -o-box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2), inset 0 0 1px rgba(255, 255, 255, 0.8);
+  box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2), inset 0 0 1px rgba(255, 255, 255, 0.8);
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
+}
+
+.annotator-editor a {
+  &:after {
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    display: block;
+    content: "";
+    width: 15px;
+    height: 15px;
+    margin-top: -7px;
+    background-position: 0 -90px;
+  }
+  &:hover, &:focus, &.annotator-focus {
+    outline: none;
+    border-color: rgb(67, 90, 160);
+    background-color: rgb(56, 101, 249);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(118, 145, 251)), color-stop(0.5, rgb(80, 117, 251)), color-stop(0.5, rgb(56, 101, 249)), to(rgb(54, 101, 250)));
+    background-image: -moz-linear-gradient(to bottom, rgb(118, 145, 251), rgb(80, 117, 251) 50%, rgb(56, 101, 249) 50%, rgb(54, 101, 250));
+    background-image: -webkit-linear-gradient(to bottom, rgb(118, 145, 251), rgb(80, 117, 251) 50%, rgb(56, 101, 249) 50%, rgb(54, 101, 250));
+    background-image: linear-gradient(to bottom, rgb(118, 145, 251), rgb(80, 117, 251) 50%, rgb(56, 101, 249) 50%, rgb(54, 101, 250));
+    color: rgb(255, 255, 255);
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.42);
+  }
+}
+
+.annotator-filter {
+  .annotator-filter-active label, .annotator-filter-navigation button:hover {
+    outline: none;
+    border-color: rgb(67, 90, 160);
+    background-color: rgb(56, 101, 249);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(118, 145, 251)), color-stop(0.5, rgb(80, 117, 251)), color-stop(0.5, rgb(56, 101, 249)), to(rgb(54, 101, 250)));
+    background-image: -moz-linear-gradient(to bottom, rgb(118, 145, 251), rgb(80, 117, 251) 50%, rgb(56, 101, 249) 50%, rgb(54, 101, 250));
+    background-image: -webkit-linear-gradient(to bottom, rgb(118, 145, 251), rgb(80, 117, 251) 50%, rgb(56, 101, 249) 50%, rgb(54, 101, 250));
+    background-image: linear-gradient(to bottom, rgb(118, 145, 251), rgb(80, 117, 251) 50%, rgb(56, 101, 249) 50%, rgb(54, 101, 250));
+    color: rgb(255, 255, 255);
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.42);
+  }
+}
+
+.annotator-editor a {
+  &:hover:after, &:focus:after {
+    margin-top: -8px;
+    background-position: 0 -105px;
+  }
+  &:active {
+    border-color: rgb(112, 12, 73);
+    background-color: rgb(209, 46, 142);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(252, 124, 202)), color-stop(0.5, rgb(232, 93, 178)), color-stop(0.5, rgb(209, 46, 142)), to(rgb(255, 0, 156)));
+    background-image: -moz-linear-gradient(to bottom, rgb(252, 124, 202), rgb(232, 93, 178) 50%, rgb(209, 46, 142) 50%, rgb(255, 0, 156));
+    background-image: -webkit-linear-gradient(to bottom, rgb(252, 124, 202), rgb(232, 93, 178) 50%, rgb(209, 46, 142) 50%, rgb(255, 0, 156));
+    background-image: linear-gradient(to bottom, rgb(252, 124, 202), rgb(232, 93, 178) 50%, rgb(209, 46, 142) 50%, rgb(255, 0, 156));
+  }
+}
+
+.annotator-filter .annotator-filter-navigation button:active {
+  border-color: rgb(112, 12, 73);
+  background-color: rgb(209, 46, 142);
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(252, 124, 202)), color-stop(0.5, rgb(232, 93, 178)), color-stop(0.5, rgb(209, 46, 142)), to(rgb(255, 0, 156)));
+  background-image: -moz-linear-gradient(to bottom, rgb(252, 124, 202), rgb(232, 93, 178) 50%, rgb(209, 46, 142) 50%, rgb(255, 0, 156));
+  background-image: -webkit-linear-gradient(to bottom, rgb(252, 124, 202), rgb(232, 93, 178) 50%, rgb(209, 46, 142) 50%, rgb(255, 0, 156));
+  background-image: linear-gradient(to bottom, rgb(252, 124, 202), rgb(232, 93, 178) 50%, rgb(209, 46, 142) 50%, rgb(255, 0, 156));
+}
+
+.annotator-editor {
+  a.annotator-save {
+    &:after {
+      background-position: 0 -120px;
+    }
+    &:hover:after, &:focus:after, &.annotator-focus:after {
+      margin-top: -8px;
+      background-position: 0 -135px;
+    }
+  }
+  .annotator-widget:after {
+    background-position: 0 -30px;
+  }
+  &.annotator-invert-y .annotator-widget {
+    .annotator-controls {
+      background-color: #f2f2f2;
+    }
+    &:after {
+      background-position: 0 -45px;
+      height: 11px;
+    }
+  }
+}
+
+.annotator-resize {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  background-position: 2px -150px;
+}
+
+.annotator-invert-x .annotator-resize {
+  right: auto;
+  left: 0;
+  background-position: 0 -195px;
+}
+
+.annotator-invert-y {
+  .annotator-resize {
+    top: auto;
+    bottom: 0;
+    background-position: 2px -165px;
+  }
+  &.annotator-invert-x .annotator-resize {
+    background-position: 0 -180px;
+  }
+}

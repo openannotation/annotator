@@ -1,0 +1,25 @@
+// Adder
+
+.annotator-adder {
+  margin-top: -48px;
+  margin-left: -24px;
+  width: 48px;
+  height: 48px;
+  background-position: left top;
+  &:hover {
+    background-position: center top;
+  }
+  &:active {
+    background-position: center right;
+  }
+  button {
+    display: block;
+    width: 36px;
+    height: 41px;
+    margin: 0 auto;
+    border: none;
+    background: none;
+    text-indent: -999em;
+    cursor: pointer;
+  }
+}
