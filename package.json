@@ -33,6 +33,7 @@
     "karma-sauce-launcher": "^0.2.14",
     "mocha": "^2.3.3",
     "phantomjs": "^1.9.18",
+    "serve-static": "^1.10.0",
     "sinon": "^1.17.0",
     "uglify-js": "^2.4.24",
     "wgxpath": "^1.1.0"

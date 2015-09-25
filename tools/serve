@@ -2,6 +2,7 @@
 var browserify = require('browserify-middleware');
 var connect = require('connect');
 var jwt = require('jwt-simple');
+var serveStatic = require('serve-static');
 
 var CONSUMER_KEY = 'mockconsumer';
 var CONSUMER_SECRET = 'mockconsumersecret';
@@ -57,7 +58,7 @@ app.use('/bundle/ext', function (req, res, next) {
 });
 
 // Static files
-app.use(connect.static(process.cwd()));
+app.use(serveStatic(process.cwd()));
 
 // Go
 if (require.main === module) {
