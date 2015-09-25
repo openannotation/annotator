@@ -55,3 +55,4 @@ doc/api/%.rst: src/%.js
 -include .deps/*.d
 
 .PHONY: all annotator exts clean test develop doc
+.PRECIOUS: pkg/annotator.%.js
