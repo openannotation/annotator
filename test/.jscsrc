@@ -1,4 +1,5 @@
 {
+    "es3": true,
     "requireCurlyBraces": true,
     "requireSpaceAfterKeywords": true,
     "requireSpaceBeforeBlockStatements": true,

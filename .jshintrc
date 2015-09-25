@@ -8,6 +8,6 @@
     "strict": true,
     "undef": true,
     "unused": true,
-    "predef": ["-Promise"]
+    "predef": ["-Promise", "JSON"]
 }
 
