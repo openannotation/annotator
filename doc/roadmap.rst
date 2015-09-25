@@ -34,22 +34,22 @@ Schedule
 
 The following dates are subject to change as needed.
 
-=================  ============================================
-November 15, 2014  Annotator 2.0 alpha; major feature freeze
-December 1, 2014   Annotator 2.0 beta; complete feature freeze
-January  15, 2015  Annotator 2.0 RC1; translation string freeze
-2 weeks after RC1  Annotator 2.0 final (or RC2 if needed)
-=================  ============================================
+==================  ============================================
+April     25, 2015  Annotator 2.0 alpha; major feature freeze
+August     1, 2015  Annotator 2.0 beta; complete feature freeze
+September 15, 2015  Annotator 2.0 RC1; translation string freeze
+2 weeks  after RC1  Annotator 2.0 final (or RC2 if needed)
+==================  ============================================
 
-The long period between a beta release and RC1 takes account of a) Christmas and
-the holiday season and b) time for other developers to test and report bugs.
+The long period between a beta release and RC1 takes account of time for other
+developers to test and report bugs.
 
 
 2.1
 +++
 
-The main goals for this release, which we aim to ship by May 1, 2015 (with a
-major feature freeze on Mar 15):
+The main goals for this release, which we aim to ship by Jan 1, 2016 (with a
+major feature freeze on Nov 15):
 
 -  Support for selections made using the keyboard
 -  Support in the core for annotation on touch devices
@@ -61,8 +61,8 @@ major feature freeze on Mar 15):
 2.2
 +++
 
-The main goals for this release, which we aim to ship by Aug 1, 2015 (with a
-major feature freeze on Jun 15):
+The main goals for this release, which we aim to ship by Apr 1, 2016 (with a
+major feature freeze on Feb 15):
 
 -  Support for annotation of additional media types (images, possibly video) in
    the core
@@ -70,8 +70,8 @@ major feature freeze on Jun 15):
 2.3
 +++
 
-The main goals for this release, which we aim to ship by Nov 1, 2015 (with a
-major feature freeze on Sep 15):
+The main goals for this release, which we aim to ship by Jul 1, 2016 (with a
+major feature freeze on May 15):
 
 -  Improved highlight rendering (faster, doesn't modify underlying DOM)
 -  Replace existing XPath-based selector code with Rangy_
