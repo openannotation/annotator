@@ -32,8 +32,8 @@ pkg/annotator.js: browser.js
 pkg/annotator.%.js: src/ext/%.js
 	@echo Writing $@
 	@mkdir -p pkg/ .deps/
-	@$(BROWSERIFY) $< >$@
-	@$(BROWSERIFY) --list $< | \
+	@$(BROWSERIFY) -x annotator $< >$@
+	@$(BROWSERIFY) -x annotator --list $< | \
 	sed 's#^#$@: #' >.deps/annotator.$*.d
 
 clean:
