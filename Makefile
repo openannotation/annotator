@@ -23,12 +23,14 @@ pkg/%.min.js: pkg/%.js
 	@$(UGLIFYJS) --preamble "$$(tools/preamble)" $< >$@
 
 pkg/annotator.js: browser.js
+	@echo Writing $@
 	@mkdir -p pkg/ .deps/
 	@$(BROWSERIFY) -s annotator $< >$@
 	@$(BROWSERIFY) --list $< | \
 	sed 's#^#$@: #' >.deps/annotator.d
 
 pkg/annotator.%.js: src/ext/%.js
+	@echo Writing $@
 	@mkdir -p pkg/ .deps/
 	@$(BROWSERIFY) $< >$@
 	@$(BROWSERIFY) --list $< | \
