@@ -132,7 +132,7 @@ describe('ui.editor.Editor', function () {
                 ann = {
                     text: "Blue whales are large."
                 };
-                plugin.load(ann);
+                plugin.load(ann)['catch'](function () {});
             });
 
             it('should hide the widget', function () {
@@ -295,7 +295,7 @@ describe('ui.editor.Editor', function () {
         });
 
         it('should cancel editing when the editor cancel button is clicked', function () {
-            plugin.load(ann);
+            plugin.load(ann)['catch'](function () {});
             plugin.element.find('textarea').val('Turtles with bandanas');
             plugin.element.find('.annotator-cancel').click();
             assert.equal(ann.text, 'Turtles with armbands');
@@ -324,7 +324,7 @@ describe('ui.editor.Editor', function () {
         });
 
         it('should cancel editing when the user hits <Esc> in the main textarea', function () {
-            plugin.load(ann);
+            plugin.load(ann)['catch'](function () {});
             plugin.element.find('textarea').val('Turtles with bandanas').trigger({
                 type: 'keydown',
                 which: 27
