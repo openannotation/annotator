@@ -1,7 +1,7 @@
 "use strict";
 
 var $ = require('jquery');
-var Promise = require('core-js/library/es6/promise');
+var Promise = require('es6-promise').Promise;
 
 var ESCAPE_MAP = {
     "&": "&amp;",

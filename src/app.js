@@ -3,7 +3,7 @@
 "use strict";
 
 var extend = require('backbone-extend-standalone');
-var Promise = require('core-js/library/es6/promise');
+var Promise = require('es6-promise').Promise;
 
 var authz = require('./authz');
 var identity = require('./identity');
