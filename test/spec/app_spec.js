@@ -1,6 +1,6 @@
 var assert = require('assertive-chai').assert;
 
-var Promise = require('es6-promise').Promise;
+var Promise = require('core-js/library/es6/promise');
 
 var app = require('../../src/app');
 var storage = require('../../src/storage');

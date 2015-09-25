@@ -26,6 +26,7 @@ module.exports = function (karma) {
         browserify: {
             debug: true,
             configure: function (bundle) {
+              bundle.require('core-js/client/core');  // PhantomJS < 2
               bundle.require('.', {expose: 'annotator'});
             }
         },
