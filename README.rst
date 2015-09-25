@@ -22,15 +22,9 @@ Components within Annotator provide:
    server.
 -  authorization and identity: integrate Annotator with your application's login
    and permissions systems.
--  rich metadata: the |documentmodule|_ sniffs the page on which annotations
-   are being made for document metadata (such as that provided by `Dublin Core
-   tags`_ or the `Facebook Open Graph`_) that allows you to enrich the
-   presentation of these annotations.
 
 .. _Dublin Core tags: http://dublincore.org/
 .. _Facebook Open Graph: https://developers.facebook.com/docs/opengraph
-.. |documentmodule| replace:: ``annotator.ext.document`` module
-.. _documentmodule: http://docs.annotatorjs.org/en/latest/modules/document.html
 
 
 Usage

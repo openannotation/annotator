@@ -34,13 +34,6 @@ app.use('/api/token', function(request, response) {
 
 app.use('/bundle/annotator.js', browserify('index.js', {standalone: 'annotator'}));
 
-// Serve files locally from src/ext/
-app.use('/bundle/ext', function (req, res, next) {
-  // browserify-middleware expects req.path to be set
-  req.path = req.url;
-  browserify('src/ext/')(req, res, next);
-});
-
 // Serve any browserifiable module. Useful when developing external modules. If
 // you are developing the "annotator-widgets" module you can run
 //
