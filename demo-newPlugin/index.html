@@ -4,7 +4,7 @@
 
 
 <script src="js/annotator-drug.js"></script>
-<script src="js/jquery-1.11.1.min.js"></script>
+<script src="js/ddi-module.js"></script>
 
     <header>
       <h1>Annotator demonstration</h1>
@@ -77,36 +77,19 @@
 
 	  var app = new annotator.App();
 	  app.include(annotator.ui.main, {element: document.querySelector('#content'), editorExtensions: [annotator.ui.tags.editorExtension], viewerExtensions: [annotator.ui.tags.viewerExtension]})
+
 	  app.include(annotator.storage.http, {
 	      prefix: 'http://127.0.0.1:5000'
 	  });
+
+
+          app.include(helloWorld, {message: 'ddi plugin'
+	  			      });
+	  app.include(addFieldsToEditor, {editor: annotator.ui.editor});
+
 	  app.start().then(function () 
 			   {app.annotations.load();
 			   });
-
-
-
-
-	  // var drugname = "warfarin";
-
-          // var drugUri = function () {
-          //     return {
-          //         beforeAnnotationCreated: function (ann) {
-          //             ann.uri = drugname;
-          //         }
-          //     };
-          // };
-
-          
-          // var app = new annotator.App().include(annotator.ui.main, {element: document.querySelector('#content'),editorExtensions: [annotator.ui.tags.editorExtension],viewerExtensions: [annotator.ui.tags.viewerExtension]}).include(annotator.storage.http, {prefix: 'http://127.0.0.1:5000'}).include(drugUri)
-
-          // app.start()
-          //     .then(function () {
-	  // 	  app.annotations.load({uri: drugname});
-          //     });
-        
-
-
       }
     </script>
 
