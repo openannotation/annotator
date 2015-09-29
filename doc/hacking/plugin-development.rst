@@ -200,7 +200,7 @@ follows:
     called immediately before an annotation is created. If you need to modify
     the annotation before it is saved use this event.
 ``annotationCreated(annotation)``
-    called when the annotation is created use this to store the annotations.
+    called when the annotation is created. Use this to store the annotations.
 ``beforeAnnotationUpdated(annotation)``
     as above, but just before an existing annotation is saved.
 ``annotationUpdated(annotation)``
