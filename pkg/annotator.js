@@ -44,7 +44,7 @@ exports.noConflict = function noConflict() {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./css/annotator.css":2,"./src/app":22,"./src/authz":23,"./src/identity":24,"./src/notification":25,"./src/storage":27,"./src/ui":28,"./src/util":39,"insert-css":16}],2:[function(require,module,exports){
+},{"./css/annotator.css":2,"./src/app":22,"./src/authz":23,"./src/identity":24,"./src/notification":25,"./src/storage":27,"./src/ui":28,"./src/util":41,"insert-css":16}],2:[function(require,module,exports){
 module.exports = ".annotator-filter *,.annotator-notice,.annotator-widget *{font-family:\"Helvetica Neue\",Arial,Helvetica,sans-serif;font-weight:400;text-align:left;margin:0;padding:0;background:0 0;-webkit-transition:none;-moz-transition:none;-o-transition:none;transition:none;-moz-box-shadow:none;-webkit-box-shadow:none;-o-box-shadow:none;box-shadow:none;color:#909090}.annotator-adder{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJAAAAAwCAYAAAD+WvNWAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowMzgwMTE3NDA3MjA2ODExODRCQUU5RDY0RTkyQTJDNiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDowOUY5RUFERDYwOEIxMUUxOTQ1RDkyQzU2OTNEMDZENCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowOUY5RUFEQzYwOEIxMUUxOTQ1RDkyQzU2OTNEMDZENCIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjA1ODAxMTc0MDcyMDY4MTE5MTA5OUIyNDhFRUQ1QkM4IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjAzODAxMTc0MDcyMDY4MTE4NEJBRTlENjRFOTJBMkM2Ii8+IDwvcmRmOkRlc2NyaXB0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);background-repeat:no-repeat}.annotator-editor a:after,.annotator-filter .annotator-filter-navigation button:after,.annotator-filter .annotator-filter-property .annotator-filter-clear,.annotator-resize,.annotator-viewer .annotator-controls a,.annotator-viewer .annotator-controls button,.annotator-widget:after{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAEiCAYAAAD0w4JOAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RDY0MTMzNTM2QUQzMTFFMUE2REJERDgwQTM3Njg5NTUiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RDY0MTMzNTQ2QUQzMTFFMUE2REJERDgwQTM3Njg5NTUiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo2ODkwQjlFQzZBRDExMUUxQTZEQkREODBBMzc2ODk1NSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpENjQxMzM1MjZBRDMxMUUxQTZEQkREODBBMzc2ODk1NSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PkijPpwAABBRSURBVHja7JsJVBRX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);background-repeat:no-repeat}.annotator-hl{background:#FFFF0A;background:rgba(255,255,10,.3);-ms-filter:\"progid:DXImageTransform.Microsoft.gradient(startColorstr=#4DFFFF0A, endColorstr=#4DFFFF0A)\"}.annotator-hl-temporary{background:#007CFF;background:rgba(0,124,255,.3);-ms-filter:\"progid:DXImageTransform.Microsoft.gradient(startColorstr=#4D007CFF, endColorstr=#4D007CFF)\"}.annotator-wrapper{position:relative}.annotator-adder,.annotator-notice,.annotator-outer{z-index:1020}.annotator-adder,.annotator-notice,.annotator-outer,.annotator-widget{position:absolute;font-size:10px;line-height:1}.annotator-hide{display:none;visibility:hidden}.annotator-adder{margin-top:-48px;margin-left:-24px;width:48px;height:48px;background-position:left top}.annotator-adder:hover{background-position:center top}.annotator-adder:active{background-position:center right}.annotator-adder button{display:block;width:36px;height:41px;margin:0 auto;border:none;background:0 0;text-indent:-999em;cursor:pointer}.annotator-outer{width:0;height:0}.annotator-widget{margin:0;padding:0;bottom:15px;left:-18px;min-width:265px;background-color:#FBFBFB;background-color:rgba(251,251,251,.98);border:1px solid #7A7A7A;border:1px solid rgba(122,122,122,.6);-webkit-border-radius:5px;-moz-border-radius:5px;border-radius:5px;-webkit-box-shadow:0 5px 15px rgba(0,0,0,.2);-moz-box-shadow:0 5px 15px rgba(0,0,0,.2);-o-box-shadow:0 5px 15px rgba(0,0,0,.2);box-shadow:0 5px 15px rgba(0,0,0,.2)}.annotator-invert-x .annotator-widget{left:auto;right:-18px}.annotator-invert-y .annotator-widget{bottom:auto;top:8px}.annotator-widget strong{font-weight:700}.annotator-widget .annotator-item,.annotator-widget .annotator-listing{padding:0;margin:0;list-style:none}.annotator-widget:after{content:\"\";display:block;width:18px;height:10px;background-position:0 0;position:absolute;bottom:-10px;left:8px}.annotator-invert-x .annotator-widget:after{left:auto;right:8px}.annotator-invert-y .annotator-widget:after{background-position:0 -15px;bottom:auto;top:-9px}.annotator-editor .annotator-item input,.annotator-editor .annotator-item textarea,.annotator-widget .annotator-item{position:relative;font-size:12px}.annotator-viewer .annotator-item{border-top:2px solid #7A7A7A;border-top:2px solid rgba(122,122,122,.2)}.annotator-widget .annotator-item:first-child{border-top:none}.annotator-editor .annotator-item,.annotator-viewer div{border-top:1px solid #858585;border-top:1px solid rgba(133,133,133,.11)}.annotator-viewer div{padding:6px}.annotator-viewer .annotator-item ol,.annotator-viewer .annotator-item ul{padding:4px 16px}.annotator-editor .annotator-item:first-child textarea,.annotator-viewer div:first-of-type{padding-top:12px;padding-bottom:12px;color:#3c3c3c;font-size:13px;font-style:italic;line-height:1.3;border-top:none}.annotator-viewer .annotator-controls{position:relative;top:5px;right:5px;padding-left:5px;opacity:0;-webkit-transition:opacity .2s ease-in;-moz-transition:opacity .2s ease-in;-o-transition:opacity .2s ease-in;transition:opacity .2s ease-in;float:right}.annotator-viewer li .annotator-controls.annotator-visible,.annotator-viewer li:hover .annotator-controls{opacity:1}.annotator-viewer .annotator-controls a,.annotator-viewer .annotator-controls button{cursor:pointer;display:inline-block;width:13px;height:13px;margin-left:2px;border:none;opacity:.2;text-indent:-900em;background-color:transparent;outline:0}.annotator-viewer .annotator-controls a:focus,.annotator-viewer .annotator-controls a:hover,.annotator-viewer .annotator-controls button:focus,.annotator-viewer .annotator-controls button:hover{opacity:.9}.annotator-viewer .annotator-controls a:active,.annotator-viewer .annotator-controls button:active{opacity:1}.annotator-viewer .annotator-controls button[disabled]{display:none}.annotator-viewer .annotator-controls .annotator-edit{background-position:0 -60px}.annotator-viewer .annotator-controls .annotator-delete{background-position:0 -75px}.annotator-viewer .annotator-controls .annotator-link{background-position:0 -270px}.annotator-editor .annotator-item{position:relative}.annotator-editor .annotator-item label{top:0;display:inline;cursor:pointer;font-size:12px}.annotator-editor .annotator-item input,.annotator-editor .annotator-item textarea{display:block;min-width:100%;padding:10px 8px;border:none;margin:0;color:#3c3c3c;background:0 0;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;-o-box-sizing:border-box;box-sizing:border-box;resize:none}.annotator-editor .annotator-item textarea::-webkit-scrollbar{height:8px;width:8px}.annotator-editor .annotator-item textarea::-webkit-scrollbar-track-piece{margin:13px 0 3px;background-color:#e5e5e5;-webkit-border-radius:4px}.annotator-editor .annotator-item textarea::-webkit-scrollbar-thumb:vertical{height:25px;background-color:#ccc;-webkit-border-radius:4px;-webkit-box-shadow:0 1px 1px rgba(0,0,0,.1)}.annotator-editor .annotator-item textarea::-webkit-scrollbar-thumb:horizontal{width:25px;background-color:#ccc;-webkit-border-radius:4px}.annotator-editor .annotator-item:first-child textarea{min-height:5.5em;-webkit-border-radius:5px 5px 0 0;-moz-border-radius:5px 5px 0 0;-o-border-radius:5px 5px 0 0;border-radius:5px 5px 0 0}.annotator-editor .annotator-item input:focus,.annotator-editor .annotator-item textarea:focus{background-color:#f3f3f3;outline:0}.annotator-editor .annotator-item input[type=checkbox],.annotator-editor .annotator-item input[type=radio]{width:auto;min-width:0;padding:0;display:inline;margin:0 4px 0 0;cursor:pointer}.annotator-editor .annotator-checkbox{padding:8px 6px}.annotator-editor .annotator-controls,.annotator-filter,.annotator-filter .annotator-filter-navigation button{text-align:right;padding:3px;border-top:1px solid #d4d4d4;background-color:#d4d4d4;background-image:-webkit-gradient(linear,left top,left bottom,from(#f5f5f5),color-stop(.6,#dcdcdc),to(#d2d2d2));background-image:-moz-linear-gradient(to bottom,#f5f5f5,#dcdcdc 60%,#d2d2d2);background-image:-webkit-linear-gradient(to bottom,#f5f5f5,#dcdcdc 60%,#d2d2d2);background-image:linear-gradient(to bottom,#f5f5f5,#dcdcdc 60%,#d2d2d2);-webkit-box-shadow:inset 1px 0 0 rgba(255,255,255,.7),inset -1px 0 0 rgba(255,255,255,.7),inset 0 1px 0 rgba(255,255,255,.7);-moz-box-shadow:inset 1px 0 0 rgba(255,255,255,.7),inset -1px 0 0 rgba(255,255,255,.7),inset 0 1px 0 rgba(255,255,255,.7);-o-box-shadow:inset 1px 0 0 rgba(255,255,255,.7),inset -1px 0 0 rgba(255,255,255,.7),inset 0 1px 0 rgba(255,255,255,.7);box-shadow:inset 1px 0 0 rgba(255,255,255,.7),inset -1px 0 0 rgba(255,255,255,.7),inset 0 1px 0 rgba(255,255,255,.7);-webkit-border-radius:0 0 5px 5px;-moz-border-radius:0 0 5px 5px;-o-border-radius:0 0 5px 5px;border-radius:0 0 5px 5px}.annotator-editor.annotator-invert-y .annotator-controls{border-top:none;border-bottom:1px solid #b4b4b4;-webkit-border-radius:5px 5px 0 0;-moz-border-radius:5px 5px 0 0;-o-border-radius:5px 5px 0 0;border-radius:5px 5px 0 0}.annotator-editor a,.annotator-filter .annotator-filter-property label{position:relative;display:inline-block;padding:0 6px 0 22px;color:#363636;text-shadow:0 1px 0 rgba(255,255,255,.75);text-decoration:none;line-height:24px;font-size:12px;font-weight:700;border:1px solid #a2a2a2;background-color:#d4d4d4;background-image:-webkit-gradient(linear,left top,left bottom,from(#f5f5f5),color-stop(.5,#d2d2d2),color-stop(.5,#bebebe),to(#d2d2d2));background-image:-moz-linear-gradient(to bottom,#f5f5f5,#d2d2d2 50%,#bebebe 50%,#d2d2d2);background-image:-webkit-linear-gradient(to bottom,#f5f5f5,#d2d2d2 50%,#bebebe 50%,#d2d2d2);background-image:linear-gradient(to bottom,#f5f5f5,#d2d2d2 50%,#bebebe 50%,#d2d2d2);-webkit-box-shadow:inset 0 0 5px rgba(255,255,255,.2),inset 0 0 1px rgba(255,255,255,.8);-moz-box-shadow:inset 0 0 5px rgba(255,255,255,.2),inset 0 0 1px rgba(255,255,255,.8);-o-box-shadow:inset 0 0 5px rgba(255,255,255,.2),inset 0 0 1px rgba(255,255,255,.8);box-shadow:inset 0 0 5px rgba(255,255,255,.2),inset 0 0 1px rgba(255,255,255,.8);-webkit-border-radius:5px;-moz-border-radius:5px;-o-border-radius:5px;border-radius:5px}.annotator-editor a:after{position:absolute;top:50%;left:5px;display:block;content:\"\";width:15px;height:15px;margin-top:-7px;background-position:0 -90px}.annotator-editor a.annotator-focus,.annotator-editor a:focus,.annotator-editor a:hover,.annotator-filter .annotator-filter-active label,.annotator-filter .annotator-filter-navigation button:hover{outline:0;border-color:#435aa0;background-color:#3865f9;background-image:-webkit-gradient(linear,left top,left bottom,from(#7691fb),color-stop(.5,#5075fb),color-stop(.5,#3865f9),to(#3665fa));background-image:-moz-linear-gradient(to bottom,#7691fb,#5075fb 50%,#3865f9 50%,#3665fa);background-image:-webkit-linear-gradient(to bottom,#7691fb,#5075fb 50%,#3865f9 50%,#3665fa);background-image:linear-gradient(to bottom,#7691fb,#5075fb 50%,#3865f9 50%,#3665fa);color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.42)}.annotator-editor a:focus:after,.annotator-editor a:hover:after{margin-top:-8px;background-position:0 -105px}.annotator-editor a:active,.annotator-filter .annotator-filter-navigation button:active{border-color:#700c49;background-color:#d12e8e;background-image:-webkit-gradient(linear,left top,left bottom,from(#fc7cca),color-stop(.5,#e85db2),color-stop(.5,#d12e8e),to(#ff009c));background-image:-moz-linear-gradient(to bottom,#fc7cca,#e85db2 50%,#d12e8e 50%,#ff009c);background-image:-webkit-linear-gradient(to bottom,#fc7cca,#e85db2 50%,#d12e8e 50%,#ff009c);background-image:linear-gradient(to bottom,#fc7cca,#e85db2 50%,#d12e8e 50%,#ff009c)}.annotator-editor a.annotator-save:after{background-position:0 -120px}.annotator-editor a.annotator-save.annotator-focus:after,.annotator-editor a.annotator-save:focus:after,.annotator-editor a.annotator-save:hover:after{margin-top:-8px;background-position:0 -135px}.annotator-editor .annotator-widget:after{background-position:0 -30px}.annotator-editor.annotator-invert-y .annotator-widget .annotator-controls{background-color:#f2f2f2}.annotator-editor.annotator-invert-y .annotator-widget:after{background-position:0 -45px;height:11px}.annotator-resize{position:absolute;top:0;right:0;width:12px;height:12px;background-position:2px -150px}.annotator-invert-x .annotator-resize{right:auto;left:0;background-position:0 -195px}.annotator-invert-y .annotator-resize{top:auto;bottom:0;background-position:2px -165px}.annotator-invert-y.annotator-invert-x .annotator-resize{background-position:0 -180px}.annotator-notice{color:#fff;position:fixed;top:-54px;left:0;width:100%;font-size:14px;line-height:50px;text-align:center;background:#000;background:rgba(0,0,0,.9);border-bottom:4px solid #d4d4d4;-webkit-transition:top .4s ease-out;-moz-transition:top .4s ease-out;-o-transition:top .4s ease-out;transition:top .4s ease-out}.annotator-notice-success{border-color:#3665f9}.annotator-notice-error{border-color:#ff7e00}.annotator-notice p{margin:0}.annotator-notice a{color:#fff}.annotator-notice-show{top:0}.annotator-tags{margin-bottom:-2px}.annotator-tags .annotator-tag{display:inline-block;padding:0 8px;margin-bottom:2px;line-height:1.6;font-weight:700;background-color:#e6e6e6;-webkit-border-radius:8px;-moz-border-radius:8px;-o-border-radius:8px;border-radius:8px}.annotator-filter{z-index:1010;position:fixed;top:0;right:0;left:0;text-align:left;line-height:0;border:none;border-bottom:1px solid #878787;padding-left:10px;padding-right:10px;-webkit-border-radius:0;-moz-border-radius:0;-o-border-radius:0;border-radius:0;-webkit-box-shadow:inset 0 -1px 0 rgba(255,255,255,.3);-moz-box-shadow:inset 0 -1px 0 rgba(255,255,255,.3);-o-box-shadow:inset 0 -1px 0 rgba(255,255,255,.3);box-shadow:inset 0 -1px 0 rgba(255,255,255,.3)}.annotator-filter strong{font-size:12px;font-weight:700;color:#3c3c3c;text-shadow:0 1px 0 rgba(255,255,255,.7);position:relative;top:-9px}.annotator-filter .annotator-filter-navigation,.annotator-filter .annotator-filter-property{position:relative;display:inline-block;overflow:hidden;line-height:10px;padding:2px 0;margin-right:8px}.annotator-filter .annotator-filter-navigation button,.annotator-filter .annotator-filter-property label{text-align:left;display:block;float:left;line-height:20px;-webkit-border-radius:10px 0 0 10px;-moz-border-radius:10px 0 0 10px;-o-border-radius:10px 0 0 10px;border-radius:10px 0 0 10px}.annotator-filter .annotator-filter-property label{padding-left:8px}.annotator-filter .annotator-filter-property input{display:block;float:right;-webkit-appearance:none;border:1px solid #878787;border-left:none;padding:2px 4px;line-height:16px;min-height:16px;font-size:12px;width:150px;color:#333;background-color:#f8f8f8;-webkit-border-radius:0 10px 10px 0;-moz-border-radius:0 10px 10px 0;-o-border-radius:0 10px 10px 0;border-radius:0 10px 10px 0;-webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,.2);-moz-box-shadow:inset 0 1px 1px rgba(0,0,0,.2);-o-box-shadow:inset 0 1px 1px rgba(0,0,0,.2);box-shadow:inset 0 1px 1px rgba(0,0,0,.2)}.annotator-filter .annotator-filter-property input:focus{outline:0;background-color:#fff}.annotator-filter .annotator-filter-clear{position:absolute;right:3px;top:6px;border:none;text-indent:-900em;width:15px;height:15px;background-position:0 -90px;opacity:.4}.annotator-filter .annotator-filter-clear:focus,.annotator-filter .annotator-filter-clear:hover{opacity:.8}.annotator-filter .annotator-filter-clear:active{opacity:1}.annotator-filter .annotator-filter-navigation button{border:1px solid #a2a2a2;padding:0;text-indent:-900px;width:20px;min-height:22px;-webkit-box-shadow:inset 0 0 5px rgba(255,255,255,.2),inset 0 0 1px rgba(255,255,255,.8);-moz-box-shadow:inset 0 0 5px rgba(255,255,255,.2),inset 0 0 1px rgba(255,255,255,.8);-o-box-shadow:inset 0 0 5px rgba(255,255,255,.2),inset 0 0 1px rgba(255,255,255,.8);box-shadow:inset 0 0 5px rgba(255,255,255,.2),inset 0 0 1px rgba(255,255,255,.8)}.annotator-filter .annotator-filter-navigation button,.annotator-filter .annotator-filter-navigation button:focus,.annotator-filter .annotator-filter-navigation button:hover{color:transparent}.annotator-filter .annotator-filter-navigation button:after{position:absolute;top:8px;left:8px;content:\"\";display:block;width:9px;height:9px;background-position:0 -210px}.annotator-filter .annotator-filter-navigation button:hover:after{background-position:0 -225px}.annotator-filter .annotator-filter-navigation .annotator-filter-next{-webkit-border-radius:0 10px 10px 0;-moz-border-radius:0 10px 10px 0;-o-border-radius:0 10px 10px 0;border-radius:0 10px 10px 0;border-left:none}.annotator-filter .annotator-filter-navigation .annotator-filter-next:after{left:auto;right:7px;background-position:0 -240px}.annotator-filter .annotator-filter-navigation .annotator-filter-next:hover:after{background-position:0 -255px}.annotator-hl-active{background:#FFFF0A;background:rgba(255,255,10,.8);-ms-filter:\"progid:DXImageTransform.Microsoft.gradient(startColorstr=#CCFFFF0A, endColorstr=#CCFFFF0A)\"}.annotator-hl-filtered{background-color:transparent}"
 },{}],3:[function(require,module,exports){
 (function (definition) {
@@ -12320,7 +12320,7 @@ exports.SUCCESS = SUCCESS;
 exports.ERROR = ERROR;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./util":39}],26:[function(require,module,exports){
+},{"./util":41}],26:[function(require,module,exports){
 /*package annotator.registry */
 
 "use strict";
@@ -13096,22 +13096,27 @@ StorageAdapter.prototype._cycle = function (
 
 exports.StorageAdapter = StorageAdapter;
 
-},{"./util":39}],28:[function(require,module,exports){
+},{"./util":41}],28:[function(require,module,exports){
 // Main module: default UI
-exports.main = require('./ui/main').main;
+//exports.main = require('./ui/main').main;
 
 // Export submodules for browser environments
 exports.adder = require('./ui/adder');
-exports.editor = require('./ui/editor');
+//exports.editor = require('./ui/editor');
 exports.filter = require('./ui/filter');
 exports.highlighter = require('./ui/highlighter');
 exports.markdown = require('./ui/markdown');
 exports.tags = require('./ui/tags');
 exports.textselector = require('./ui/textselector');
-exports.viewer = require('./ui/viewer');
+//exports.viewer = require('./ui/viewer');
 exports.widget = require('./ui/widget');
 
-},{"./ui/adder":29,"./ui/editor":30,"./ui/filter":31,"./ui/highlighter":32,"./ui/main":33,"./ui/markdown":34,"./ui/tags":35,"./ui/textselector":36,"./ui/viewer":37,"./ui/widget":38}],29:[function(require,module,exports){
+//ddiPlugin
+exports.main = require('./ui/ddiPlugin/ddimain').main;
+exports.ddieditor = require('./ui/ddiPlugin/ddieditor');
+exports.ddiviewer = require('./ui/ddiPlugin/ddiviewer');
+
+},{"./ui/adder":29,"./ui/ddiPlugin/ddieditor":30,"./ui/ddiPlugin/ddimain":31,"./ui/ddiPlugin/ddiviewer":32,"./ui/filter":34,"./ui/highlighter":35,"./ui/markdown":36,"./ui/tags":37,"./ui/textselector":38,"./ui/widget":40}],29:[function(require,module,exports){
 "use strict";
 
 var Widget = require('./widget').Widget,
@@ -13271,7 +13276,1454 @@ Adder.options = {
 
 exports.Adder = Adder;
 
-},{"../util":39,"./widget":38}],30:[function(require,module,exports){
+},{"../util":41,"./widget":40}],30:[function(require,module,exports){
+var Widget = require('../widget').Widget,
+    util = require('../../util');
+
+var Editor = require('../editor').Editor
+
+var $ = util.$;
+var _t = util.gettext;
+var Promise = util.Promise;
+var NS = "annotator-editor";
+
+// id returns an identifier unique within this session
+var id = (function () {
+    var counter;
+    counter = -1;
+    return function () {
+        return counter += 1;
+    };
+}());
+
+
+
+// preventEventDefault prevents an event's default, but handles the condition
+// that the event is null or doesn't have a preventDefault function.
+function preventEventDefault(event) {
+    if (typeof event !== 'undefined' &&
+        event !== null &&
+        typeof event.preventDefault === 'function') {
+        event.preventDefault();
+    }
+}
+
+
+// Public: Creates an element for editing annotations.
+var ddiEditor = exports.ddiEditor = Editor.extend({
+    // Public: Creates an instance of the Editor object.
+
+    constructor: function (options) {
+        Widget.call(this, options);
+
+        this.fields = [];
+        this.annotation = {};
+
+        if (this.options.defaultFields) {
+            this.addField({
+                type: 'textarea',
+                label: _t('Comments') + '\u2026',
+                load: function (field, annotation) {
+                    $(field).find('#annotator-field-0').val(annotation.text || '');
+                },
+                submit: function (field, annotation) {
+                    annotation.text = $(field).find('#annotator-field-0').val();
+		    if (annotation.text == '') {
+			annotation.text = $(field).find('textarea').val()
+		    }
+                }
+            });
+
+	    //add new field as part of default - drug name
+	    this.addField({
+	    	label: _t('ddi Drug name') + '\u2026',
+	    	type:  'textarea',
+	    	load: function (field, annotation) {
+	    	    $(field).find('#annotator-field-1').val(annotation.drug || '');
+	    	},
+	    	submit: function (field, annotation){
+	    	    annotation.drug = $(field).find('#annotator-field-1').val();
+	    	} 
+	    });
+
+
+	// test end
+
+        }
+
+        var self = this;
+
+        this.element
+            .on("submit." + NS, 'form', function (e) {
+                self._onFormSubmit(e);
+            })
+            .on("click." + NS, '.annotator-save', function (e) {
+                self._onSaveClick(e);
+            })
+            .on("click." + NS, '.annotator-cancel', function (e) {
+                self._onCancelClick(e);
+            })
+            .on("mouseover." + NS, '.annotator-cancel', function (e) {
+                self._onCancelMouseover(e);
+            })
+            .on("keydown." + NS, 'textarea', function (e) {
+                self._onTextareaKeydown(e);
+            });
+    },
+
+    destroy: function () {
+        this.element.off("." + NS);
+        Widget.prototype.destroy.call(this);
+    },
+
+    // Public: Show the editor.
+    //
+    // position - An Object specifying the position in which to show the editor
+    //            (optional).
+    //
+    // Examples
+    //
+    //   editor.show()
+    //   editor.hide()
+    //   editor.show({top: '100px', left: '80px'})
+    //
+    // Returns nothing.
+    show: function (position) {
+        if (typeof position !== 'undefined' && position !== null) {
+            this.element.css({
+                top: position.top,
+                left: position.left
+            });
+        }
+
+        this.element
+            .find('.annotator-save')
+            .addClass(this.classes.focus);
+
+        Widget.prototype.show.call(this);
+
+        // give main textarea focus
+        this.element.find(":input:first").focus();
+
+        this._setupDraggables();
+    },
+
+    // Public: Load an annotation into the editor and display it.
+    //
+    // annotation - An annotation Object to display for editing.
+    // position - An Object specifying the position in which to show the editor
+    //            (optional).
+    //
+    // Returns a Promise that is resolved when the editor is submitted, or
+    // rejected if editing is cancelled.
+    load: function (annotation, position) {
+        this.annotation = annotation;
+
+        for (var i = 0, len = this.fields.length; i < len; i++) {
+            var field = this.fields[i];
+            field.load(field.element, this.annotation);
+        }
+
+        var self = this;
+        return new Promise(function (resolve, reject) {
+            self.dfd = {resolve: resolve, reject: reject};
+            self.show(position);
+        });
+    },
+
+    // Public: Submits the editor and saves any changes made to the annotation.
+    //
+    // Returns nothing.
+    submit: function () {
+        for (var i = 0, len = this.fields.length; i < len; i++) {
+            var field = this.fields[i];
+            field.submit(field.element, this.annotation);
+        }
+        if (typeof this.dfd !== 'undefined' && this.dfd !== null) {
+            this.dfd.resolve();
+        }
+        this.hide();
+    },
+
+    // Public: Cancels the editing process, discarding any edits made to the
+    // annotation.
+    //
+    // Returns itself.
+    cancel: function () {
+        if (typeof this.dfd !== 'undefined' && this.dfd !== null) {
+            this.dfd.reject('editing cancelled');
+        }
+        this.hide();
+    },
+
+    // Public: Adds an additional form field to the editor. Callbacks can be
+    // provided to update the view and anotations on load and submission.
+    //
+    // options - An options Object. Options are as follows:
+    //           id     - A unique id for the form element will also be set as
+    //                    the "for" attribute of a label if there is one.
+    //                    (default: "annotator-field-{number}")
+    //           type   - Input type String. One of "input", "textarea",
+    //                    "checkbox", "select" (default: "input")
+    //           label  - Label to display either in a label Element or as
+    //                    placeholder text depending on the type. (default: "")
+    //           load   - Callback Function called when the editor is loaded
+    //                    with a new annotation. Receives the field <li> element
+    //                    and the annotation to be loaded.
+    //           submit - Callback Function called when the editor is submitted.
+    //                    Receives the field <li> element and the annotation to
+    //                    be updated.
+    //
+    // Examples
+    //
+    //   # Add a new input element.
+    //   editor.addField({
+    //     label: "Tags",
+    //
+    //     # This is called when the editor is loaded use it to update your
+    //     # input.
+    //     load: (field, annotation) ->
+    //       # Do something with the annotation.
+    //       value = getTagString(annotation.tags)
+    //       $(field).find('input').val(value)
+    //
+    //     # This is called when the editor is submitted use it to retrieve data
+    //     # from your input and save it to the annotation.
+    //     submit: (field, annotation) ->
+    //       value = $(field).find('input').val()
+    //       annotation.tags = getTagsFromString(value)
+    //   })
+    //
+    //   # Add a new checkbox element.
+    //   editor.addField({
+    //     type: 'checkbox',
+    //     id: 'annotator-field-my-checkbox',
+    //     label: 'Allow anyone to see this annotation',
+    //     load: (field, annotation) ->
+    //       # Check what state of input should be.
+    //       if checked
+    //         $(field).find('input').attr('checked', 'checked')
+    //       else
+    //         $(field).find('input').removeAttr('checked')
+
+    //     submit: (field, annotation) ->
+    //       checked = $(field).find('input').is(':checked')
+    //       # Do something.
+    //   })
+    //
+    // Returns the created <li> Element.
+    addField: function (options) {
+        var field = $.extend({
+            id: 'annotator-field-' + id(),
+            type: 'input',
+            label: '',
+            load: function () {},
+            submit: function () {}
+        }, options);
+
+        var input = null,
+            element = $('<li class="annotator-item" />');
+
+        field.element = element[0];
+
+        if (field.type === 'textarea') {
+            input = $('<textarea />');
+        } else if (field.type === 'checkbox') {
+            input = $('<input type="checkbox" />');
+        } else if (field.type === 'input') {
+            input = $('<input />');
+        } else if (field.type === 'select') {
+            input = $('<select />');
+        }
+
+        element.append(input);
+
+        input.attr({
+            id: field.id,
+            placeholder: field.label
+        });
+
+        if (field.type === 'checkbox') {
+            element.addClass('annotator-checkbox');
+            element.append($('<label />', {
+                'for': field.id,
+                'html': field.label
+            }));
+        }
+
+        this.element.find('ul:first').append(element);
+        this.fields.push(field);
+
+        return field.element;
+    },
+
+    checkOrientation: function () {
+        Widget.prototype.checkOrientation.call(this);
+
+        var list = this.element.find('ul').first(),
+            controls = this.element.find('.annotator-controls');
+
+        if (this.element.hasClass(this.classes.invert.y)) {
+            controls.insertBefore(list);
+        } else if (controls.is(':first-child')) {
+            controls.insertAfter(list);
+        }
+
+        return this;
+    },
+
+    // Event callback: called when a user clicks the editor form (by pressing
+    // return, for example).
+    //
+    // Returns nothing
+    _onFormSubmit: function (event) {
+        preventEventDefault(event);
+        this.submit();
+    },
+
+    // Event callback: called when a user clicks the editor's save button.
+    //
+    // Returns nothing
+    _onSaveClick: function (event) {
+        preventEventDefault(event);
+        this.submit();
+    },
+
+    // Event callback: called when a user clicks the editor's cancel button.
+    //
+    // Returns nothing
+    _onCancelClick: function (event) {
+        preventEventDefault(event);
+        this.cancel();
+    },
+
+    // Event callback: called when a user mouses over the editor's cancel
+    // button.
+    //
+    // Returns nothing
+    _onCancelMouseover: function () {
+        this.element
+            .find('.' + this.classes.focus)
+            .removeClass(this.classes.focus);
+    },
+
+    // Event callback: listens for the following special keypresses.
+    // - escape: Hides the editor
+    // - enter:  Submits the editor
+    //
+    // event - A keydown Event object.
+    //
+    // Returns nothing
+    _onTextareaKeydown: function (event) {
+        if (event.which === 27) {
+            // "Escape" key => abort.
+            this.cancel();
+        } else if (event.which === 13 && !event.shiftKey) {
+            // If "return" was pressed without the shift key, we're done.
+            this.submit();
+        }
+    },
+
+    // Sets up mouse events for resizing and dragging the editor window.
+    //
+    // Returns nothing.
+    _setupDraggables: function () {
+        if (typeof this._resizer !== 'undefined' && this._resizer !== null) {
+            this._resizer.destroy();
+        }
+        if (typeof this._mover !== 'undefined' && this._mover !== null) {
+            this._mover.destroy();
+        }
+
+        this.element.find('.annotator-resize').remove();
+
+        // Find the first/last item element depending on orientation
+        var cornerItem;
+        if (this.element.hasClass(this.classes.invert.y)) {
+            cornerItem = this.element.find('.annotator-item:last');
+        } else {
+            cornerItem = this.element.find('.annotator-item:first');
+        }
+
+        if (cornerItem) {
+            $('<span class="annotator-resize"></span>').appendTo(cornerItem);
+        }
+
+        var controls = this.element.find('.annotator-controls')[0],
+            textarea = this.element.find('textarea:first')[0],
+            resizeHandle = this.element.find('.annotator-resize')[0],
+            self = this;
+
+        this._resizer = resizer(textarea, resizeHandle, {
+            invertedX: function () {
+                return self.element.hasClass(self.classes.invert.x);
+            },
+            invertedY: function () {
+                return self.element.hasClass(self.classes.invert.y);
+            }
+        });
+
+        this._mover = mover(this.element[0], controls);
+    }
+});
+
+
+
+// dragTracker is a function which allows a callback to track changes made to
+// the position of a draggable "handle" element.
+//
+// handle - A DOM element to make draggable
+// callback - Callback function
+//
+// Callback arguments:
+//
+// delta - An Object with two properties, "x" and "y", denoting the amount the
+//         mouse has moved since the last (tracked) call.
+//
+// Callback returns: Boolean indicating whether to track the last movement. If
+// the movement is not tracked, then the amount the mouse has moved will be
+// accumulated and passed to the next mousemove event.
+//
+var dragTracker = exports.dragTracker = function dragTracker(handle, callback) {
+    var lastPos = null,
+        throttled = false;
+
+    // Event handler for mousemove
+    function mouseMove(e) {
+        if (throttled || lastPos === null) {
+            return;
+        }
+
+        var delta = {
+            y: e.pageY - lastPos.top,
+            x: e.pageX - lastPos.left
+        };
+
+        var trackLastMove = true;
+        // The callback function can return false to indicate that the tracker
+        // shouldn't keep updating the last position. This can be used to
+        // implement "walls" beyond which (for example) resizing has no effect.
+        if (typeof callback === 'function') {
+            trackLastMove = callback(delta);
+        }
+
+        if (trackLastMove !== false) {
+            lastPos = {
+                top: e.pageY,
+                left: e.pageX
+            };
+        }
+
+        // Throttle repeated mousemove events
+        throttled = true;
+        setTimeout(function () { throttled = false; }, 1000 / 60);
+    }
+
+    // Event handler for mouseup
+    function mouseUp() {
+        lastPos = null;
+        $(handle.ownerDocument)
+            .off('mouseup', mouseUp)
+            .off('mousemove', mouseMove);
+    }
+
+    // Event handler for mousedown -- starts drag tracking
+    function mouseDown(e) {
+        if (e.target !== handle) {
+            return;
+        }
+
+        lastPos = {
+            top: e.pageY,
+            left: e.pageX
+        };
+
+        $(handle.ownerDocument)
+            .on('mouseup', mouseUp)
+            .on('mousemove', mouseMove);
+
+        e.preventDefault();
+    }
+
+    // Public: turn off drag tracking for this dragTracker object.
+    function destroy() {
+        $(handle).off('mousedown', mouseDown);
+    }
+
+    $(handle).on('mousedown', mouseDown);
+
+    return {destroy: destroy};
+};
+
+
+// resizer is a component that uses a dragTracker under the hood to track the
+// dragging of a handle element, using that motion to resize another element.
+//
+// element - DOM Element to resize
+// handle - DOM Element to use as a resize handle
+// options - Object of options.
+//
+// Available options:
+//
+// invertedX - If this option is defined as a function, and that function
+//             returns a truthy value, the horizontal sense of the drag will be
+//             inverted. Useful if the drag handle is at the left of the
+//             element, and so dragging left means "grow the element"
+// invertedY - If this option is defined as a function, and that function
+//             returns a truthy value, the vertical sense of the drag will be
+//             inverted. Useful if the drag handle is at the bottom of the
+//             element, and so dragging down means "grow the element"
+var resizer = exports.resizer = function resizer(element, handle, options) {
+    var $el = $(element);
+    if (typeof options === 'undefined' || options === null) {
+        options = {};
+    }
+
+    // Translate the delta supplied by dragTracker into a delta that takes
+    // account of the invertedX and invertedY callbacks if defined.
+    function translate(delta) {
+        var directionX = 1,
+            directionY = -1;
+
+        if (typeof options.invertedX === 'function' && options.invertedX()) {
+            directionX = -1;
+        }
+        if (typeof options.invertedY === 'function' && options.invertedY()) {
+            directionY = 1;
+        }
+
+        return {
+            x: delta.x * directionX,
+            y: delta.y * directionY
+        };
+    }
+
+    // Callback for dragTracker
+    function resize(delta) {
+        var height = $el.height(),
+            width = $el.width(),
+            translated = translate(delta);
+
+        if (Math.abs(translated.x) > 0) {
+            $el.width(width + translated.x);
+        }
+        if (Math.abs(translated.y) > 0) {
+            $el.height(height + translated.y);
+        }
+
+        // Did the element dimensions actually change? If not, then we've
+        // reached the minimum size, and we shouldn't track
+        var didChange = ($el.height() !== height || $el.width() !== width);
+        return didChange;
+    }
+
+    // We return the dragTracker object in order to expose its methods.
+    return dragTracker(handle, resize);
+};
+
+
+// mover is a component that uses a dragTracker under the hood to track the
+// dragging of a handle element, using that motion to move another element.
+//
+// element - DOM Element to move
+// handle - DOM Element to use as a move handle
+//
+var mover = exports.mover = function mover(element, handle) {
+    function move(delta) {
+        $(element).css({
+            top: parseInt($(element).css('top'), 10) + delta.y,
+            left: parseInt($(element).css('left'), 10) + delta.x
+        });
+    }
+
+    // We return the dragTracker object in order to expose its methods.
+    return dragTracker(handle, move);
+};
+
+},{"../../util":41,"../editor":33,"../widget":40}],31:[function(require,module,exports){
+(function (global){
+/*package annotator.ui */
+"use strict";
+
+var util = require('../../util');
+
+var adder = require('./../adder');
+
+//var editor = require('./../editor');
+//var viewer = require('./../viewer');
+
+var highlighter = require('./../highlighter');
+var textselector = require('./../textselector');
+
+var ddieditor = require('./ddieditor');
+var ddiviewer = require('./ddiviewer');
+
+
+var _t = util.gettext;
+
+
+// trim strips whitespace from either end of a string.
+//
+// This usually exists in native code, but not in IE8.
+function trim(s) {
+    if (typeof String.prototype.trim === 'function') {
+        return String.prototype.trim.call(s);
+    } else {
+        return s.replace(/^[\s\xA0]+|[\s\xA0]+$/g, '');
+    }
+}
+
+
+// annotationFactory returns a function that can be used to construct an
+// annotation from a list of selected ranges.
+function annotationFactory(contextEl, ignoreSelector) {
+    return function (ranges) {
+        var text = [],
+            serializedRanges = [];
+
+        for (var i = 0, len = ranges.length; i < len; i++) {
+            var r = ranges[i];
+            text.push(trim(r.text()));
+            serializedRanges.push(r.serialize(contextEl, ignoreSelector));
+        }
+
+        return {
+            quote: text.join(' / '),
+            ranges: serializedRanges
+        };
+    };
+}
+
+
+// maxZIndex returns the maximum z-index of all elements in the provided set.
+function maxZIndex(elements) {
+    var max = -1;
+    for (var i = 0, len = elements.length; i < len; i++) {
+        var $el = util.$(elements[i]);
+        if ($el.css('position') !== 'static') {
+            // Use parseFloat since we may get scientific notation for large
+            // values.
+            var zIndex = parseFloat($el.css('z-index'));
+            if (zIndex > max) {
+                max = zIndex;
+            }
+        }
+    }
+    return max;
+}
+
+
+// Helper function to inject CSS into the page that ensures Annotator elements
+// are displayed with the highest z-index.
+function injectDynamicStyle() {
+    util.$('#annotator-dynamic-style').remove();
+
+    var sel = '*' +
+              ':not(annotator-adder)' +
+              ':not(annotator-outer)' +
+              ':not(annotator-notice)' +
+              ':not(annotator-filter)';
+
+    // use the maximum z-index in the page
+    var max = maxZIndex(util.$(global.document.body).find(sel).get());
+
+    // but don't go smaller than 1010, because this isn't bulletproof --
+    // dynamic elements in the page (notifications, dialogs, etc.) may well
+    // have high z-indices that we can't catch using the above method.
+    max = Math.max(max, 1000);
+
+    var rules = [
+        ".annotator-adder, .annotator-outer, .annotator-notice {",
+        "  z-index: " + (max + 20) + ";",
+        "}",
+        ".annotator-filter {",
+        "  z-index: " + (max + 10) + ";",
+        "}"
+    ].join("\n");
+
+    util.$('<style>' + rules + '</style>')
+        .attr('id', 'annotator-dynamic-style')
+        .attr('type', 'text/css')
+        .appendTo('head');
+}
+
+
+// Helper function to remove dynamic stylesheets
+function removeDynamicStyle() {
+    util.$('#annotator-dynamic-style').remove();
+}
+
+
+// Helper function to add permissions checkboxes to the editor
+function addPermissionsCheckboxes(editor, ident, authz) {
+    function createLoadCallback(action) {
+        return function loadCallback(field, annotation) {
+            field = util.$(field).show();
+
+            var u = ident.who();
+            var input = field.find('input');
+
+            // Do not show field if no user is set
+            if (typeof u === 'undefined' || u === null) {
+                field.hide();
+            }
+
+            // Do not show field if current user is not admin.
+            if (!(authz.permits('admin', annotation, u))) {
+                field.hide();
+            }
+
+            // See if we can authorise without a user.
+            if (authz.permits(action, annotation, null)) {
+                input.attr('checked', 'checked');
+            } else {
+                input.removeAttr('checked');
+            }
+        };
+    }
+
+    function createSubmitCallback(action) {
+        return function submitCallback(field, annotation) {
+            var u = ident.who();
+
+            // Don't do anything if no user is set
+            if (typeof u === 'undefined' || u === null) {
+                return;
+            }
+
+            if (!annotation.permissions) {
+                annotation.permissions = {};
+            }
+            if (util.$(field).find('input').is(':checked')) {
+                delete annotation.permissions[action];
+            } else {
+                // While the permissions model allows for more complex entries
+                // than this, our UI presents a checkbox, so we can only
+                // interpret "prevent others from viewing" as meaning "allow
+                // only me to view". This may want changing in the future.
+                annotation.permissions[action] = [
+                    authz.authorizedUserId(u)
+                ];
+            }
+        };
+    }
+
+    editor.addField({
+        type: 'checkbox',
+        label: _t('Allow anyone to <strong>view</strong> this annotation'),
+        load: createLoadCallback('read'),
+        submit: createSubmitCallback('read')
+    });
+
+    editor.addField({
+        type: 'checkbox',
+        label: _t('Allow anyone to <strong>edit</strong> this annotation'),
+        load: createLoadCallback('update'),
+        submit: createSubmitCallback('update')
+    });
+}
+
+
+/**
+ * function:: main([options])
+ *
+ * A module that provides a default user interface for Annotator that allows
+ * users to create annotations by selecting text within (a part of) the
+ * document.
+ *
+ * Example::
+ *
+ *     app.include(annotator.ui.main);
+ *
+ * :param Object options:
+ *
+ *   .. attribute:: options.element
+ *
+ *      A DOM element to which event listeners are bound. Defaults to
+ *      ``document.body``, allowing annotation of the whole document.
+ *
+ *   .. attribute:: options.editorExtensions
+ *
+ *      An array of editor extensions. See the
+ *      :class:`~annotator.ui.editor.Editor` documentation for details of editor
+ *      extensions.
+ *
+ *   .. attribute:: options.viewerExtensions
+ *
+ *      An array of viewer extensions. See the
+ *      :class:`~annotator.ui.viewer.Viewer` documentation for details of viewer
+ *      extensions.
+ *
+ */
+function main(options) {
+    if (typeof options === 'undefined' || options === null) {
+        options = {};
+    }
+
+    options.element = options.element || global.document.body;
+    options.editorExtensions = options.editorExtensions || [];
+    options.viewerExtensions = options.viewerExtensions || [];
+
+    // Local helpers
+    var makeAnnotation = annotationFactory(options.element, '.annotator-hl');
+
+    // Object to hold local state
+    var s = {
+        interactionPoint: null
+    };
+
+    function start(app) {
+        var ident = app.registry.getUtility('identityPolicy');
+        var authz = app.registry.getUtility('authorizationPolicy');
+
+        s.adder = new adder.Adder({
+            onCreate: function (ann) {
+                app.annotations.create(ann);
+            }
+        });
+        s.adder.attach();
+
+        s.editor = new ddieditor.ddiEditor({
+            extensions: options.editorExtensions
+        });
+        s.editor.attach();
+
+        addPermissionsCheckboxes(s.editor, ident, authz);
+
+        s.highlighter = new highlighter.Highlighter(options.element);
+
+        s.textselector = new textselector.TextSelector(options.element, {
+            onSelection: function (ranges, event) {
+                if (ranges.length > 0) {
+                    var annotation = makeAnnotation(ranges);
+                    s.interactionPoint = util.mousePosition(event);
+                    s.adder.load(annotation, s.interactionPoint);
+                } else {
+                    s.adder.hide();
+                }
+            }
+        });
+
+        s.viewer = new ddiviewer.ddiViewer({
+            onEdit: function (ann) {
+                // Copy the interaction point from the shown viewer:
+                s.interactionPoint = util.$(s.viewer.element)
+                                         .css(['top', 'left']);
+
+                app.annotations.update(ann);
+            },
+            onDelete: function (ann) {
+                app.annotations['delete'](ann);
+            },
+            permitEdit: function (ann) {
+                return authz.permits('update', ann, ident.who());
+            },
+            permitDelete: function (ann) {
+                return authz.permits('delete', ann, ident.who());
+            },
+            autoViewHighlights: options.element,
+            extensions: options.viewerExtensions
+        });
+        s.viewer.attach();
+
+        injectDynamicStyle();
+    }
+
+    return {
+        start: start,
+
+        destroy: function () {
+            s.adder.destroy();
+            s.editor.destroy();
+            s.highlighter.destroy();
+            s.textselector.destroy();
+            s.viewer.destroy();
+            removeDynamicStyle();
+        },
+
+        annotationsLoaded: function (anns) { s.highlighter.drawAll(anns); },
+        annotationCreated: function (ann) { s.highlighter.draw(ann); },
+        annotationDeleted: function (ann) { s.highlighter.undraw(ann); },
+        annotationUpdated: function (ann) { s.highlighter.redraw(ann); },
+
+        beforeAnnotationCreated: function (annotation) {
+            // Editor#load returns a promise that is resolved if editing
+            // completes, and rejected if editing is cancelled. We return it
+            // here to "stall" the annotation process until the editing is
+            // done.
+            return s.editor.load(annotation, s.interactionPoint);
+        },
+
+        beforeAnnotationUpdated: function (annotation) {
+            return s.editor.load(annotation, s.interactionPoint);
+        }
+    };
+}
+
+
+exports.main = main;
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"../../util":41,"./../adder":29,"./../highlighter":35,"./../textselector":38,"./ddieditor":30,"./ddiviewer":32}],32:[function(require,module,exports){
+"use strict";
+
+var Widget = require('../widget').Widget,
+    util = require('../../util');
+
+var Viewer = require('../viewer').Viewer
+
+var $ = util.$,
+    _t = util.gettext;
+
+var NS = 'annotator-viewer';
+
+
+// Private: simple parser for hypermedia link structure
+//
+// Examples:
+//
+//   links = [
+//     {
+//       rel: 'alternate',
+//       href: 'http://example.com/pages/14.json',
+//       type: 'application/json'
+//     },
+//     {
+//       rel: 'prev':
+//       href: 'http://example.com/pages/13'
+//     }
+//   ]
+//
+//   parseLinks(links, 'alternate')
+//   # => [{rel: 'alternate', href: 'http://...', ... }]
+//   parseLinks(links, 'alternate', {type: 'text/html'})
+//   # => []
+//
+function parseLinks(data, rel, cond) {
+    cond = $.extend({}, cond, {rel: rel});
+
+    var results = [];
+    for (var i = 0, len = data.length; i < len; i++) {
+        var d = data[i],
+            match = true;
+
+        for (var k in cond) {
+            if (cond.hasOwnProperty(k) && d[k] !== cond[k]) {
+                match = false;
+                break;
+            }
+        }
+
+        if (match) {
+            results.push(d);
+        }
+    }
+
+    return results;
+}
+
+
+// Public: Creates an element for viewing annotations.
+var ddiViewer = exports.ddiViewer = Viewer.extend({
+
+    // Public: Creates an instance of the Viewer object.
+    //
+    // options - An Object containing options.
+    //
+    // Examples
+    //
+    //   # Creates a new viewer, adds a custom field and displays an annotation.
+    //   viewer = new Viewer()
+    //   viewer.addField({
+    //     load: someLoadCallback
+    //   })
+    //   viewer.load(annotation)
+    //
+    // Returns a new Viewer instance.
+    constructor: function (options) {
+        Widget.call(this, options);
+
+        this.itemTemplate = ddiViewer.itemTemplate;
+        this.fields = [];
+        this.annotations = [];
+        this.hideTimer = null;
+        this.hideTimerDfd = null;
+        this.hideTimerActivity = null;
+        this.mouseDown = false;
+        this.render = function (annotation) {
+
+	    if (annotation.text && annotation.drug) {
+                return "Comment: " + annotation.text + "<br> Drug: " + annotation.drug;
+            }
+	    else if (annotation.text && (annotation.drug == "")) {
+                return util.escapeHtml(annotation.text);
+            }
+	    else if (annotation.drug && (annotation.text == "")) {
+                return util.escapeHtml(annotation.drug);
+            } else {
+                return "<i>" + _t('No drug & comment') + "</i>";
+            }
+        };
+
+        var self = this;
+
+        if (this.options.defaultFields) {
+            this.addField({
+                load: function (field, annotation) {
+                    $(field).html(self.render(annotation));
+                }
+            });
+        }
+
+        if (typeof this.options.onEdit !== 'function') {
+            throw new TypeError("onEdit callback must be a function");
+        }
+        if (typeof this.options.onDelete !== 'function') {
+            throw new TypeError("onDelete callback must be a function");
+        }
+        if (typeof this.options.permitEdit !== 'function') {
+            throw new TypeError("permitEdit callback must be a function");
+        }
+        if (typeof this.options.permitDelete !== 'function') {
+            throw new TypeError("permitDelete callback must be a function");
+        }
+
+        if (this.options.autoViewHighlights) {
+            this.document = this.options.autoViewHighlights.ownerDocument;
+
+            $(this.options.autoViewHighlights)
+                .on("mouseover." + NS, '.annotator-hl', function (event) {
+                    // If there are many overlapping highlights, still only
+                    // call _onHighlightMouseover once.
+                    if (event.target === this) {
+                        self._onHighlightMouseover(event);
+                    }
+                })
+                .on("mouseleave." + NS, '.annotator-hl', function () {
+                    self._startHideTimer();
+                });
+
+            $(this.document.body)
+                .on("mousedown." + NS, function (e) {
+                    if (e.which === 1) {
+                        self.mouseDown = true;
+                    }
+                })
+                .on("mouseup." + NS, function (e) {
+                    if (e.which === 1) {
+                        self.mouseDown = false;
+                    }
+                });
+        }
+
+        this.element
+            .on("click." + NS, '.annotator-edit', function (e) {
+                self._onEditClick(e);
+            })
+            .on("click." + NS, '.annotator-delete', function (e) {
+                self._onDeleteClick(e);
+            })
+            .on("mouseenter." + NS, function () {
+                self._clearHideTimer();
+            })
+            .on("mouseleave." + NS, function () {
+                self._startHideTimer();
+            });
+    },
+
+    destroy: function () {
+        if (this.options.autoViewHighlights) {
+            $(this.options.autoViewHighlights).off("." + NS);
+            $(this.document.body).off("." + NS);
+        }
+        this.element.off("." + NS);
+        Widget.prototype.destroy.call(this);
+    },
+
+    // Public: Show the viewer.
+    //
+    // position - An Object specifying the position in which to show the editor
+    //            (optional).
+    //
+    // Examples
+    //
+    //   viewer.show()
+    //   viewer.hide()
+    //   viewer.show({top: '100px', left: '80px'})
+    //
+    // Returns nothing.
+    show: function (position) {
+        if (typeof position !== 'undefined' && position !== null) {
+            this.element.css({
+                top: position.top,
+                left: position.left
+            });
+        }
+
+        var controls = this.element
+            .find('.annotator-controls')
+            .addClass(this.classes.showControls);
+
+        var self = this;
+        setTimeout(function () {
+            controls.removeClass(self.classes.showControls);
+        }, 500);
+
+        Widget.prototype.show.call(this);
+    },
+
+    // Public: Load annotations into the viewer and show it.
+    //
+    // annotation - An Array of annotations.
+    //
+    // Examples
+    //
+    //   viewer.load([annotation1, annotation2, annotation3])
+    //
+    // Returns nothing.
+    load: function (annotations, position) {
+        this.annotations = annotations || [];
+
+        var list = this.element.find('ul:first').empty();
+
+        for (var i = 0, len = this.annotations.length; i < len; i++) {
+            var annotation = this.annotations[i];
+            this._annotationItem(annotation)
+              .appendTo(list)
+              .data('annotation', annotation);
+        }
+
+        this.show(position);
+    },
+
+    // Public: Set the annotation renderer.
+    //
+    // renderer - A function that accepts an annotation and returns HTML.
+    //
+    // Returns nothing.
+    setRenderer: function (renderer) {
+        this.render = renderer;
+    },
+
+    // Private: create the list item for a single annotation
+    _annotationItem: function (annotation) {
+        var item = $(this.itemTemplate).clone();
+
+        var controls = item.find('.annotator-controls'),
+            link = controls.find('.annotator-link'),
+            edit = controls.find('.annotator-edit'),
+            del  = controls.find('.annotator-delete');
+
+        var links = parseLinks(
+            annotation.links || [],
+            'alternate',
+            {'type': 'text/html'}
+        );
+        var hasValidLink = (links.length > 0 &&
+                            typeof links[0].href !== 'undefined' &&
+                            links[0].href !== null);
+
+        if (hasValidLink) {
+            link.attr('href', links[0].href);
+        } else {
+            link.remove();
+        }
+
+        var controller = {};
+        if (this.options.permitEdit(annotation)) {
+            controller.showEdit = function () {
+                edit.removeAttr('disabled');
+            };
+            controller.hideEdit = function () {
+                edit.attr('disabled', 'disabled');
+            };
+        } else {
+            edit.remove();
+        }
+        if (this.options.permitDelete(annotation)) {
+            controller.showDelete = function () {
+                del.removeAttr('disabled');
+            };
+            controller.hideDelete = function () {
+                del.attr('disabled', 'disabled');
+            };
+        } else {
+            del.remove();
+        }
+
+        for (var i = 0, len = this.fields.length; i < len; i++) {
+            var field = this.fields[i];
+            var element = $(field.element).clone().appendTo(item)[0];
+            field.load(element, annotation, controller);
+        }
+
+        return item;
+    },
+
+    // Public: Adds an additional field to an annotation view. A callback can be
+    // provided to update the view on load.
+    //
+    // options - An options Object. Options are as follows:
+    //           load - Callback Function called when the view is loaded with an
+    //                  annotation. Recieves a newly created clone of an item
+    //                  and the annotation to be displayed (it will be called
+    //                  once for each annotation being loaded).
+    //
+    // Examples
+    //
+    //   # Display a user name.
+    //   viewer.addField({
+    //     # This is called when the viewer is loaded.
+    //     load: (field, annotation) ->
+    //       field = $(field)
+    //
+    //       if annotation.user
+    //         field.text(annotation.user) # Display the user
+    //       else
+    //         field.remove()              # Do not display the field.
+    //   })
+    //
+    // Returns itself.
+    addField: function (options) {
+        var field = $.extend({
+            load: function () {}
+        }, options);
+
+        field.element = $('<div />')[0];
+        this.fields.push(field);
+        return this;
+    },
+
+    // Event callback: called when the edit button is clicked.
+    //
+    // event - An Event object.
+    //
+    // Returns nothing.
+    _onEditClick: function (event) {
+        var item = $(event.target)
+            .parents('.annotator-annotation')
+            .data('annotation');
+        this.hide();
+        this.options.onEdit(item);
+    },
+
+    // Event callback: called when the delete button is clicked.
+    //
+    // event - An Event object.
+    //
+    // Returns nothing.
+    _onDeleteClick: function (event) {
+        var item = $(event.target)
+            .parents('.annotator-annotation')
+            .data('annotation');
+        this.hide();
+        this.options.onDelete(item);
+    },
+
+    // Event callback: called when a user triggers `mouseover` on a highlight
+    // element.
+    //
+    // event - An Event object.
+    //
+    // Returns nothing.
+    _onHighlightMouseover: function (event) {
+        // If the mouse button is currently depressed, we're probably trying to
+        // make a selection, so we shouldn't show the viewer.
+        if (this.mouseDown) {
+            return;
+        }
+
+        var self = this;
+        this._startHideTimer(true)
+            .done(function () {
+                var annotations = $(event.target)
+                    .parents('.annotator-hl')
+                    .addBack()
+                    .map(function (_, elem) {
+                        return $(elem).data("annotation");
+                    })
+                    .toArray();
+
+                // Now show the viewer with the wanted annotations
+                self.load(annotations, util.mousePosition(event));
+            });
+    },
+
+    // Starts the hide timer. This returns a promise that is resolved when the
+    // viewer has been hidden. If the viewer is already hidden, the promise will
+    // be resolved instantly.
+    //
+    // activity - A boolean indicating whether the need to hide is due to a user
+    //            actively indicating a desire to view another annotation (as
+    //            opposed to merely mousing off the current one). Default: false
+    //
+    // Returns a Promise.
+    _startHideTimer: function (activity) {
+        if (typeof activity === 'undefined' || activity === null) {
+            activity = false;
+        }
+
+        // If timer has already been set, use that one.
+        if (this.hideTimer) {
+            if (activity === false || this.hideTimerActivity === activity) {
+                return this.hideTimerDfd;
+            } else {
+                // The pending timeout is an inactivity timeout, so likely to be
+                // too slow. Clear the pending timeout and start a new (shorter)
+                // one!
+                this._clearHideTimer();
+            }
+        }
+
+        var timeout;
+        if (activity) {
+            timeout = this.options.activityDelay;
+        } else {
+            timeout = this.options.inactivityDelay;
+        }
+
+        this.hideTimerDfd = $.Deferred();
+
+        if (!this.isShown()) {
+            this.hideTimer = null;
+            this.hideTimerDfd.resolve();
+            this.hideTimerActivity = null;
+        } else {
+            var self = this;
+            this.hideTimer = setTimeout(function () {
+                self.hide();
+                self.hideTimerDfd.resolve();
+                self.hideTimer = null;
+            }, timeout);
+            this.hideTimerActivity = Boolean(activity);
+        }
+
+        return this.hideTimerDfd.promise();
+    },
+
+    // Clears the hide timer. Also rejects any promise returned by a previous
+    // call to _startHideTimer.
+    //
+    // Returns nothing.
+    _clearHideTimer: function () {
+        clearTimeout(this.hideTimer);
+        this.hideTimer = null;
+        this.hideTimerDfd.reject();
+        this.hideTimerActivity = null;
+    }
+});
+
+// Classes for toggling annotator state.
+ddiViewer.classes = {
+    showControls: 'annotator-visible'
+};
+
+// HTML templates for this.widget and this.item properties.
+ddiViewer.template = [
+    '<div class="annotator-outer annotator-viewer annotator-hide">',
+    '  <ul class="annotator-widget annotator-listing"></ul>',
+    '</div>'
+].join('\n');
+
+ddiViewer.itemTemplate = [
+    '<li class="annotator-annotation annotator-item">',
+    '  <span class="annotator-controls">',
+    '    <a href="#"',
+    '       title="' + _t('View as webpage') + '"',
+    '       class="annotator-link">' + _t('View as webpage') + '</a>',
+    '    <button type="button"',
+    '            title="' + _t('Edit') + '"',
+    '            class="annotator-edit">' + _t('Edit') + '</button>',
+    '    <button type="button"',
+    '            title="' + _t('Delete') + '"',
+    '            class="annotator-delete">' + _t('Delete') + '</button>',
+    '  </span>',
+    '</li>'
+].join('\n');
+
+// Configuration options
+ddiViewer.options = {
+    // Add the default field(s) to the viewer.
+    defaultFields: true,
+
+    // Time, in milliseconds, before the viewer is hidden when a user mouses off
+    // the viewer.
+    inactivityDelay: 500,
+
+    // Time, in milliseconds, before the viewer is updated when a user mouses
+    // over another annotation.
+    activityDelay: 100,
+
+    // Hook, passed an annotation, which determines if the viewer's "edit"
+    // button is shown. If it is not a function, the button will not be shown.
+    permitEdit: function () { return false; },
+
+    // Hook, passed an annotation, which determines if the viewer's "delete"
+    // button is shown. If it is not a function, the button will not be shown.
+    permitDelete: function () { return false; },
+
+    // If set to a DOM Element, will set up the viewer to automatically display
+    // when the user hovers over Annotator highlights within that element.
+    autoViewHighlights: null,
+
+    // Callback, called when the user clicks the edit button for an annotation.
+    onEdit: function () {},
+
+    // Callback, called when the user clicks the delete button for an
+    // annotation.
+    onDelete: function () {}
+};
+
+
+// standalone is a module that uses the Viewer to display an viewer widget in
+// response to some viewer action (such as mousing over an annotator highlight
+// element).
+exports.standalone = function standalone(options) {
+    var widget;
+
+    if (typeof options === 'undefined' || options === null) {
+        options = {};
+    }
+
+    return {
+        start: function (app) {
+            var ident = app.registry.getUtility('identityPolicy');
+            var authz = app.registry.getUtility('authorizationPolicy');
+
+            // Set default handlers for what happens when the user clicks the
+            // edit and delete buttons:
+            if (typeof options.onEdit === 'undefined') {
+                options.onEdit = function (annotation) {
+                    app.annotations.update(annotation);
+                };
+            }
+            if (typeof options.onDelete === 'undefined') {
+                options.onDelete = function (annotation) {
+                    app.annotations['delete'](annotation);
+                };
+            }
+
+            // Set default handlers that determine whether the edit and delete
+            // buttons are shown in the viewer:
+            if (typeof options.permitEdit === 'undefined') {
+                options.permitEdit = function (annotation) {
+                    return authz.permits('update', annotation, ident.who());
+                };
+            }
+            if (typeof options.permitDelete === 'undefined') {
+                options.permitDelete = function (annotation) {
+                    return authz.permits('delete', annotation, ident.who());
+                };
+            }
+
+            widget = new exports.ddiViewer(options);
+        },
+
+        destroy: function () { widget.destroy(); }
+    };
+};
+
+},{"../../util":41,"../viewer":39,"../widget":40}],33:[function(require,module,exports){
 "use strict";
 
 var Widget = require('./widget').Widget,
@@ -13519,16 +14971,16 @@ var Editor = exports.Editor = Widget.extend({
             });
 
 	    // add new field as part of default - drug name
-	    this.addField({
-		label: _t('Drug name') + '\u2026',
-		type:  'textarea',
-		load: function (field, annotation) {
-		    $(field).find('#annotator-field-1').val(annotation.drug || '');
-		},
-		submit: function (field, annotation){
-		    annotation.drug = $(field).find('#annotator-field-1').val();
-		} 
-	    });
+	    // this.addField({
+	    // 	label: _t('Drug name') + '\u2026',
+	    // 	type:  'textarea',
+	    // 	load: function (field, annotation) {
+	    // 	    $(field).find('#annotator-field-1').val(annotation.drug || '');
+	    // 	},
+	    // 	submit: function (field, annotation){
+	    // 	    annotation.drug = $(field).find('#annotator-field-1').val();
+	    // 	} 
+	    // });
 
 	    // this.addField({
 	    // 	type: 'checkbox',
@@ -13914,7 +15366,7 @@ exports.standalone = function standalone(options) {
     };
 };
 
-},{"../util":39,"./widget":38}],31:[function(require,module,exports){
+},{"../util":41,"./widget":40}],34:[function(require,module,exports){
 "use strict";
 
 var util = require('../util');
@@ -14392,7 +15844,7 @@ exports.standalone = function (options) {
     };
 };
 
-},{"../util":39}],32:[function(require,module,exports){
+},{"../util":41}],35:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -14620,325 +16072,7 @@ exports.standalone = function standalone(element, options) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../util":39,"xpath-range":18}],33:[function(require,module,exports){
-(function (global){
-/*package annotator.ui */
-"use strict";
-
-var util = require('../util');
-
-var adder = require('./adder');
-var editor = require('./editor');
-var highlighter = require('./highlighter');
-var textselector = require('./textselector');
-var viewer = require('./viewer');
-
-var _t = util.gettext;
-
-
-// trim strips whitespace from either end of a string.
-//
-// This usually exists in native code, but not in IE8.
-function trim(s) {
-    if (typeof String.prototype.trim === 'function') {
-        return String.prototype.trim.call(s);
-    } else {
-        return s.replace(/^[\s\xA0]+|[\s\xA0]+$/g, '');
-    }
-}
-
-
-// annotationFactory returns a function that can be used to construct an
-// annotation from a list of selected ranges.
-function annotationFactory(contextEl, ignoreSelector) {
-    return function (ranges) {
-        var text = [],
-            serializedRanges = [];
-
-        for (var i = 0, len = ranges.length; i < len; i++) {
-            var r = ranges[i];
-            text.push(trim(r.text()));
-            serializedRanges.push(r.serialize(contextEl, ignoreSelector));
-        }
-
-        return {
-            quote: text.join(' / '),
-            ranges: serializedRanges
-        };
-    };
-}
-
-
-// maxZIndex returns the maximum z-index of all elements in the provided set.
-function maxZIndex(elements) {
-    var max = -1;
-    for (var i = 0, len = elements.length; i < len; i++) {
-        var $el = util.$(elements[i]);
-        if ($el.css('position') !== 'static') {
-            // Use parseFloat since we may get scientific notation for large
-            // values.
-            var zIndex = parseFloat($el.css('z-index'));
-            if (zIndex > max) {
-                max = zIndex;
-            }
-        }
-    }
-    return max;
-}
-
-
-// Helper function to inject CSS into the page that ensures Annotator elements
-// are displayed with the highest z-index.
-function injectDynamicStyle() {
-    util.$('#annotator-dynamic-style').remove();
-
-    var sel = '*' +
-              ':not(annotator-adder)' +
-              ':not(annotator-outer)' +
-              ':not(annotator-notice)' +
-              ':not(annotator-filter)';
-
-    // use the maximum z-index in the page
-    var max = maxZIndex(util.$(global.document.body).find(sel).get());
-
-    // but don't go smaller than 1010, because this isn't bulletproof --
-    // dynamic elements in the page (notifications, dialogs, etc.) may well
-    // have high z-indices that we can't catch using the above method.
-    max = Math.max(max, 1000);
-
-    var rules = [
-        ".annotator-adder, .annotator-outer, .annotator-notice {",
-        "  z-index: " + (max + 20) + ";",
-        "}",
-        ".annotator-filter {",
-        "  z-index: " + (max + 10) + ";",
-        "}"
-    ].join("\n");
-
-    util.$('<style>' + rules + '</style>')
-        .attr('id', 'annotator-dynamic-style')
-        .attr('type', 'text/css')
-        .appendTo('head');
-}
-
-
-// Helper function to remove dynamic stylesheets
-function removeDynamicStyle() {
-    util.$('#annotator-dynamic-style').remove();
-}
-
-
-// Helper function to add permissions checkboxes to the editor
-function addPermissionsCheckboxes(editor, ident, authz) {
-    function createLoadCallback(action) {
-        return function loadCallback(field, annotation) {
-            field = util.$(field).show();
-
-            var u = ident.who();
-            var input = field.find('input');
-
-            // Do not show field if no user is set
-            if (typeof u === 'undefined' || u === null) {
-                field.hide();
-            }
-
-            // Do not show field if current user is not admin.
-            if (!(authz.permits('admin', annotation, u))) {
-                field.hide();
-            }
-
-            // See if we can authorise without a user.
-            if (authz.permits(action, annotation, null)) {
-                input.attr('checked', 'checked');
-            } else {
-                input.removeAttr('checked');
-            }
-        };
-    }
-
-    function createSubmitCallback(action) {
-        return function submitCallback(field, annotation) {
-            var u = ident.who();
-
-            // Don't do anything if no user is set
-            if (typeof u === 'undefined' || u === null) {
-                return;
-            }
-
-            if (!annotation.permissions) {
-                annotation.permissions = {};
-            }
-            if (util.$(field).find('input').is(':checked')) {
-                delete annotation.permissions[action];
-            } else {
-                // While the permissions model allows for more complex entries
-                // than this, our UI presents a checkbox, so we can only
-                // interpret "prevent others from viewing" as meaning "allow
-                // only me to view". This may want changing in the future.
-                annotation.permissions[action] = [
-                    authz.authorizedUserId(u)
-                ];
-            }
-        };
-    }
-
-    editor.addField({
-        type: 'checkbox',
-        label: _t('Allow anyone to <strong>view</strong> this annotation'),
-        load: createLoadCallback('read'),
-        submit: createSubmitCallback('read')
-    });
-
-    editor.addField({
-        type: 'checkbox',
-        label: _t('Allow anyone to <strong>edit</strong> this annotation'),
-        load: createLoadCallback('update'),
-        submit: createSubmitCallback('update')
-    });
-}
-
-
-/**
- * function:: main([options])
- *
- * A module that provides a default user interface for Annotator that allows
- * users to create annotations by selecting text within (a part of) the
- * document.
- *
- * Example::
- *
- *     app.include(annotator.ui.main);
- *
- * :param Object options:
- *
- *   .. attribute:: options.element
- *
- *      A DOM element to which event listeners are bound. Defaults to
- *      ``document.body``, allowing annotation of the whole document.
- *
- *   .. attribute:: options.editorExtensions
- *
- *      An array of editor extensions. See the
- *      :class:`~annotator.ui.editor.Editor` documentation for details of editor
- *      extensions.
- *
- *   .. attribute:: options.viewerExtensions
- *
- *      An array of viewer extensions. See the
- *      :class:`~annotator.ui.viewer.Viewer` documentation for details of viewer
- *      extensions.
- *
- */
-function main(options) {
-    if (typeof options === 'undefined' || options === null) {
-        options = {};
-    }
-
-    options.element = options.element || global.document.body;
-    options.editorExtensions = options.editorExtensions || [];
-    options.viewerExtensions = options.viewerExtensions || [];
-
-    // Local helpers
-    var makeAnnotation = annotationFactory(options.element, '.annotator-hl');
-
-    // Object to hold local state
-    var s = {
-        interactionPoint: null
-    };
-
-    function start(app) {
-        var ident = app.registry.getUtility('identityPolicy');
-        var authz = app.registry.getUtility('authorizationPolicy');
-
-        s.adder = new adder.Adder({
-            onCreate: function (ann) {
-                app.annotations.create(ann);
-            }
-        });
-        s.adder.attach();
-
-        s.editor = new editor.Editor({
-            extensions: options.editorExtensions
-        });
-        s.editor.attach();
-
-        addPermissionsCheckboxes(s.editor, ident, authz);
-
-        s.highlighter = new highlighter.Highlighter(options.element);
-
-        s.textselector = new textselector.TextSelector(options.element, {
-            onSelection: function (ranges, event) {
-                if (ranges.length > 0) {
-                    var annotation = makeAnnotation(ranges);
-                    s.interactionPoint = util.mousePosition(event);
-                    s.adder.load(annotation, s.interactionPoint);
-                } else {
-                    s.adder.hide();
-                }
-            }
-        });
-
-        s.viewer = new viewer.Viewer({
-            onEdit: function (ann) {
-                // Copy the interaction point from the shown viewer:
-                s.interactionPoint = util.$(s.viewer.element)
-                                         .css(['top', 'left']);
-
-                app.annotations.update(ann);
-            },
-            onDelete: function (ann) {
-                app.annotations['delete'](ann);
-            },
-            permitEdit: function (ann) {
-                return authz.permits('update', ann, ident.who());
-            },
-            permitDelete: function (ann) {
-                return authz.permits('delete', ann, ident.who());
-            },
-            autoViewHighlights: options.element,
-            extensions: options.viewerExtensions
-        });
-        s.viewer.attach();
-
-        injectDynamicStyle();
-    }
-
-    return {
-        start: start,
-
-        destroy: function () {
-            s.adder.destroy();
-            s.editor.destroy();
-            s.highlighter.destroy();
-            s.textselector.destroy();
-            s.viewer.destroy();
-            removeDynamicStyle();
-        },
-
-        annotationsLoaded: function (anns) { s.highlighter.drawAll(anns); },
-        annotationCreated: function (ann) { s.highlighter.draw(ann); },
-        annotationDeleted: function (ann) { s.highlighter.undraw(ann); },
-        annotationUpdated: function (ann) { s.highlighter.redraw(ann); },
-
-        beforeAnnotationCreated: function (annotation) {
-            // Editor#load returns a promise that is resolved if editing
-            // completes, and rejected if editing is cancelled. We return it
-            // here to "stall" the annotation process until the editing is
-            // done.
-            return s.editor.load(annotation, s.interactionPoint);
-        },
-
-        beforeAnnotationUpdated: function (annotation) {
-            return s.editor.load(annotation, s.interactionPoint);
-        }
-    };
-}
-
-
-exports.main = main;
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../util":39,"./adder":29,"./editor":30,"./highlighter":32,"./textselector":36,"./viewer":37}],34:[function(require,module,exports){
+},{"../util":41,"xpath-range":18}],36:[function(require,module,exports){
 (function (global){
 /*package annotator.ui.markdown */
 "use strict";
@@ -14998,7 +16132,7 @@ exports.viewerExtension = function viewerExtension(viewer) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../util":39}],35:[function(require,module,exports){
+},{"../util":41}],37:[function(require,module,exports){
 /*package annotator.ui.tags */
 "use strict";
 
@@ -15103,7 +16237,7 @@ exports.editorExtension = function editorExtension(e) {
     input = $(field).find(':input');
 };
 
-},{"../util":39}],36:[function(require,module,exports){
+},{"../util":41}],38:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -15261,7 +16395,7 @@ TextSelector.options = {
 exports.TextSelector = TextSelector;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../util":39,"xpath-range":18}],37:[function(require,module,exports){
+},{"../util":41,"xpath-range":18}],39:[function(require,module,exports){
 "use strict";
 
 var Widget = require('./widget').Widget,
@@ -15818,7 +16952,7 @@ exports.standalone = function standalone(options) {
     };
 };
 
-},{"../util":39,"./widget":38}],38:[function(require,module,exports){
+},{"../util":41,"./widget":40}],40:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -16006,7 +17140,7 @@ Widget.extend = extend;
 exports.Widget = Widget;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../util":39,"backbone-extend-standalone":3}],39:[function(require,module,exports){
+},{"../util":41,"backbone-extend-standalone":3}],41:[function(require,module,exports){
 (function (global){
 "use strict";
 

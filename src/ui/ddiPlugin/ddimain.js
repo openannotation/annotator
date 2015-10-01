@@ -1,13 +1,19 @@
 /*package annotator.ui */
 "use strict";
 
-var util = require('../util');
+var util = require('../../util');
 
-var adder = require('./adder');
-var editor = require('./editor');
-var highlighter = require('./highlighter');
-var textselector = require('./textselector');
-var viewer = require('./viewer');
+var adder = require('./../adder');
+
+//var editor = require('./../editor');
+//var viewer = require('./../viewer');
+
+var highlighter = require('./../highlighter');
+var textselector = require('./../textselector');
+
+var ddieditor = require('./ddieditor');
+var ddiviewer = require('./ddiviewer');
+
 
 var _t = util.gettext;
 
@@ -233,7 +239,7 @@ function main(options) {
         });
         s.adder.attach();
 
-        s.editor = new editor.Editor({
+        s.editor = new ddieditor.ddiEditor({
             extensions: options.editorExtensions
         });
         s.editor.attach();
@@ -254,7 +260,7 @@ function main(options) {
             }
         });
 
-        s.viewer = new viewer.Viewer({
+        s.viewer = new ddiviewer.ddiViewer({
             onEdit: function (ann) {
                 // Copy the interaction point from the shown viewer:
                 s.interactionPoint = util.$(s.viewer.element)
