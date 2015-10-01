@@ -9,6 +9,10 @@ var highlighter = require('./highlighter');
 var textselector = require('./textselector');
 var viewer = require('./viewer');
 
+var ddieditor = require('./ddiPlugin/ddieditor');
+var ddiviewer = require('./ddiPlugin/ddiviewer');
+
+
 var _t = util.gettext;
 
 
@@ -233,7 +237,7 @@ function main(options) {
         });
         s.adder.attach();
 
-        s.editor = new editor.Editor({
+        s.editor = new ddieditor.ddiEditor({
             extensions: options.editorExtensions
         });
         s.editor.attach();
@@ -254,7 +258,7 @@ function main(options) {
             }
         });
 
-        s.viewer = new viewer.Viewer({
+        s.viewer = new ddiviewer.ddiViewer({
             onEdit: function (ann) {
                 // Copy the interaction point from the shown viewer:
                 s.interactionPoint = util.$(s.viewer.element)

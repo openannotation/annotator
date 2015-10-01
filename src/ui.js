@@ -11,3 +11,7 @@ exports.tags = require('./ui/tags');
 exports.textselector = require('./ui/textselector');
 exports.viewer = require('./ui/viewer');
 exports.widget = require('./ui/widget');
+
+//ddiPlugin
+exports.ddieditor = require('./ui/ddiPlugin/ddieditor');
+exports.ddiviewer = require('./ui/ddiPlugin/ddiviewer');
