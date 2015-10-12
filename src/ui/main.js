@@ -292,7 +292,8 @@ function main(options) {
         },
 
         annotationsLoaded: function (anns) { s.highlighter.drawAll(anns); },
-        annotationCreated: function (ann) { s.highlighter.draw(ann); },
+        // update to highlight during annotation
+        annotationCreated: function (ann) { /* s.highlighter.draw(ann);*/ },
         annotationDeleted: function (ann) { s.highlighter.undraw(ann); },
         annotationUpdated: function (ann) { s.highlighter.redraw(ann); },
 
@@ -301,7 +302,17 @@ function main(options) {
             // completes, and rejected if editing is cancelled. We return it
             // here to "stall" the annotation process until the editing is
             // done.
-            return s.editor.load(annotation, s.interactionPoint);
+
+        	// highlight during annotaiton
+	        s.highlighter.draw(annotation);
+	        
+	        return s.editor.load(annotation, s.interactionPoint)
+	        .catch( function (object) {
+	        	// remove highlighting for cancelled annotation
+	        	s.highlighter.undraw(annotation);
+	        	throw object;
+	        });
+            
         },
 
         beforeAnnotationUpdated: function (annotation) {
