@@ -83,6 +83,7 @@ Widget.prototype.isShown = function () {
     return !$(this.element).hasClass(this.classes.hide);
 };
 
+/*
 Widget.prototype.checkOrientation = function () {
     this.resetOrientation();
 
@@ -108,6 +109,51 @@ Widget.prototype.checkOrientation = function () {
 
     return this;
 };
+*/
+
+Widget.prototype.checkOrientation = function () {
+    this.resetOrientation();
+
+    var $win = $(global),
+        $widget = this.element.children(":first"),
+        offset = $widget.offset(),
+        viewport = {
+            top: $win.scrollTop(),
+            right: $win.width() + $win.scrollLeft(),
+            left:$win.scrollLeft(),
+            width: $win.width(),
+    		centre: $win.scrollLeft() + ($win.width()/2)
+        },
+        current = {
+            top: offset.top,
+            right: offset.left + $widget.width(),
+            left: offset.left,
+            width: $widget.width()
+        };
+
+    if (viewport.top > current.top) {
+        this.invertY();
+    }
+
+    // does widget right bound go beyond right edge of viewport?
+    if (current.right > viewport.right) {
+    	// is widget left offset > widget width 
+    	if (current.left > current.width) {
+    		this.invertX();
+    	} else {
+    		// no room to invert, so centre
+    		$widget.offset({top: $widget.offset.top, left: (viewport.centre - (current.width/2))});
+    		console.log('no room to invert, so centring');
+    	}
+    }
+    
+    if (current.left < window.left) {
+    	console.log('truncated before inversion?');
+    }
+
+    return this;
+};
+
 
 // Public: Resets orientation of widget on the X & Y axis.
 //
