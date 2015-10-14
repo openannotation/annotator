@@ -12,6 +12,7 @@
     </header>
 
     <article>
+      <div id="content">
       <p>
         He was an old man who fished alone in a skiff in the Gulf Stream and he
         had gone eighty-four days now without taking a fish. In the first forty
@@ -43,7 +44,7 @@
         made some money.&quot;
       </p>
 
-      <div id="content">
+      
       <p>
         They sat on the Terrace and many of the fishermen made fun of the old
         man and he was not angry. Others, of the older fishermen, looked at him
@@ -60,13 +61,14 @@
         salting.
       </p>
 
-      </div>
+      
       <p>
         When the wind was in the east a smell came across the harbour from the
         shark factory; but today there was only the faint edge of the odour
         because the wind had backed into the north and then dropped off and it
         was pleasant and sunny on the Terrace.
       </p>
+      </div>
     </article>
 
     <script>
@@ -77,20 +79,28 @@
       } else {
 
 	  var app = new annotator.App();
-	  app.include(annotator.ui.main, {element: document.querySelector('#content'), editorExtensions: [annotator.ui.tags.editorExtension], viewerExtensions: [annotator.ui.tags.viewerExtension]})
+	  app.include(annotator.ui.main, {
+      element: document.querySelector('#content'), 
+      editorExtensions: [annotator.ui.tags.editorExtension], 
+      viewerExtensions: [annotator.ui.tags.viewerExtension]
+    });
 
-	  app.include(annotator.storage.http, {
+	  app.include(
+              annotator.storage.http, {
 	      prefix: 'http://127.0.0.1:5000'
-	  });
+	  }
+              //annotator.Registry.prototype.getUtility(iface)
+      );
 
+          //app.include(helloWorld, {message: 'ddi plugin'
+          //});
 
-          <!-- app.include(helloWorld, {message: 'ddi plugin' -->
-	  <!-- 			      }); -->
-
-	  <!-- app.include(addFieldsToEditor, {editor: annotator.ui.editor}); -->
+	  // app.include(addFieldsToEditor, {editor: annotator.ui.editor});
 
 	  app.start().then(function () 
 			   {app.annotations.load();
+
+                 app.ident.identity = 'bob';
 			   });
       }
     </script>

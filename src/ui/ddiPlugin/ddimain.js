@@ -17,7 +17,6 @@ var ddiviewer = require('./ddiviewer');
 
 var _t = util.gettext;
 
-
 // trim strips whitespace from either end of a string.
 //
 // This usually exists in native code, but not in IE8.
@@ -42,7 +41,6 @@ function annotationFactory(contextEl, ignoreSelector) {
             text.push(trim(r.text()));
             serializedRanges.push(r.serialize(contextEl, ignoreSelector));
         }
-
         return {
             quote: text.join(' / '),
             ranges: serializedRanges
@@ -142,7 +140,7 @@ function addPermissionsCheckboxes(editor, ident, authz) {
         return function submitCallback(field, annotation) {
             var u = ident.who();
 
-            // Don't do anything if no user is set
+            // Don'tdo anything if no user is set
             if (typeof u === 'undefined' || u === null) {
                 return;
             }
@@ -150,6 +148,8 @@ function addPermissionsCheckboxes(editor, ident, authz) {
             if (!annotation.permissions) {
                 annotation.permissions = {};
             }
+
+
             if (util.$(field).find('input').is(':checked')) {
                 delete annotation.permissions[action];
             } else {
