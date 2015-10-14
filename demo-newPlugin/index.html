@@ -3,8 +3,9 @@
   <body>
 
 
-<script src="js/annotator-drug.js"></script>
-<script src="js/ddi-module.js"></script>
+<!-- <script src="js/annotator-drug.js"></script> -->
+<!-- <script src="js/annotator-drug-ddiEditor.js"></script> -->
+<script src="js/annotator-drug-ddiV-ddiE.js"></script>
 
     <header>
       <h1>Annotator demonstration</h1>
@@ -83,9 +84,10 @@
 	  });
 
 
-          app.include(helloWorld, {message: 'ddi plugin'
-	  			      });
-	  app.include(addFieldsToEditor, {editor: annotator.ui.editor});
+          <!-- app.include(helloWorld, {message: 'ddi plugin' -->
+	  <!-- 			      }); -->
+
+	  <!-- app.include(addFieldsToEditor, {editor: annotator.ui.editor}); -->
 
 	  app.start().then(function () 
 			   {app.annotations.load();
