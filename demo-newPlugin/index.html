@@ -77,17 +77,13 @@
       } else {
 
 	  var app = new annotator.App();
-	  app.include(annotator.ui.main, {element: document.querySelector('#content'), editorExtensions: [annotator.ui.tags.editorExtension], viewerExtensions: [annotator.ui.tags.viewerExtension]})
+	  app.include(annotator.ui.main, {element: document.querySelector('#content'), editorExtensions: [annotator.ui.tags.editorExtension], viewerExtensions: [annotator.ui.tags.viewerExtension]});
+
+          app.include(annotator.storage.debug);
 
 	  app.include(annotator.storage.http, {
 	      prefix: 'http://127.0.0.1:5000'
 	  });
-
-
-          <!-- app.include(helloWorld, {message: 'ddi plugin' -->
-	  <!-- 			      }); -->
-
-	  <!-- app.include(addFieldsToEditor, {editor: annotator.ui.editor}); -->
 
 	  app.start().then(function () 
 			   {app.annotations.load();

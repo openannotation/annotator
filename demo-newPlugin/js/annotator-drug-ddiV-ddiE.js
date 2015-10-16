@@ -11999,6 +11999,7 @@ App.prototype.start = function () {
         }
     );
 
+
     return this.runHook('start', [this]);
 };
 
@@ -12423,6 +12424,7 @@ exports.Registry = Registry;
 var util = require('./util');
 var $ = util.$;
 var _t = util.gettext;
+var _attris = util.getkeys;
 var Promise = util.Promise;
 
 
@@ -12434,6 +12436,37 @@ var id = (function () {
         return counter += 1;
     };
 }());
+
+// check if it's basical fields that don't need encoding to json 
+function isDefaultFields(field) {
+
+    var defaultFields = ["id", "updated", "created", "ranges", "user", "consumer", "permissions", "quote", "tags", "text"]
+
+    return defaultFields.indexOf(field.toLowerCase()) > -1;
+}
+
+function jsonEncoding(annotation){
+
+    var anntJson = '{';
+
+    for(var item in annotation){
+
+	if(isDefaultFields(item)){
+	    continue;
+	}
+
+	if (anntJson == '{'){
+	    anntJson += '"' + item + '":"' + annotation[item] + '"';
+	} else {
+	    anntJson += ', "' + item + '":"' + annotation[item] + '"';
+	}
+    }
+    anntJson += '}';
+
+    return anntJson;
+
+}
+
 
 
 /**
@@ -12594,8 +12627,18 @@ HttpStorage = exports.HttpStorage = function HttpStorage(options) {
  * :rtype: Promise
  */
 HttpStorage.prototype.create = function (annotation) {
+
+    // converts annotation in js object to JSON string
+    // in order to save to text field in original mapping
+
+    var anntJson = jsonEncoding(annotation);
+    annotation.text = anntJson;
+    
+    alert('storage.js save text: ' + annotation.text);
+
     return this._apiRequest('create', annotation);
 };
+
 
 /**
  * function:: HttpStorage.prototype.update(annotation)
@@ -12613,6 +12656,34 @@ HttpStorage.prototype.create = function (annotation) {
  * :rtype: Promise
  */
 HttpStorage.prototype.update = function (annotation) {
+
+
+    // converts annotation in js object to JSON string
+    // in order to save to text field in original mapping
+
+    var anntJson = jsonEncoding(annotation);
+
+    // var anntJson = '{';
+
+    // for(var item in annotation){
+
+    // 	if(isDefaultFields(item)){
+    // 	    continue;
+    // 	} 
+
+    // 	if (anntJson == '{'){
+    // 	    anntJson += '"' + item + '":"' + annotation[item] + '"';
+    // 	} else {
+    // 	    anntJson += ', "' + item + '":"' + annotation[item] + '"';
+    // 	}
+    // }
+    // anntJson += '}';
+
+    annotation.text = anntJson;
+    
+    alert('storage.js update text: ' + annotation.text);
+
+
     return this._apiRequest('update', annotation);
 };
 
@@ -13054,6 +13125,23 @@ StorageAdapter.prototype.load = function (query) {
     var self = this;
     return this.query(query)
         .then(function (data) {
+
+	    // parse json string in text and converts to JS obj
+	    // iterate through all items in obj and assign to annot as attribute
+
+	    for (var i = 0, len = data.results.length; i < len; i++){
+		var annotJs = JSON.parse(data.results[i].text);
+		alert('storage-load-annotJs:' + annotJs);
+
+		for(var item in annotJs){
+
+		    if(item != "quote" && item != "ranges"){
+			data.results[i][item] = annotJs[item];
+			alert('item:' + item + " | " + annotJs[item]);
+		    }
+		}
+	    }
+
             self.runHook('annotationsLoaded', [data.results]);
         });
 };
@@ -13102,13 +13190,15 @@ exports.StorageAdapter = StorageAdapter;
 
 // Export submodules for browser environments
 exports.adder = require('./ui/adder');
+
 //exports.editor = require('./ui/editor');
+//exports.viewer = require('./ui/viewer');
+
 exports.filter = require('./ui/filter');
 exports.highlighter = require('./ui/highlighter');
 exports.markdown = require('./ui/markdown');
 exports.tags = require('./ui/tags');
 exports.textselector = require('./ui/textselector');
-//exports.viewer = require('./ui/viewer');
 exports.widget = require('./ui/widget');
 
 //ddiPlugin
@@ -13283,6 +13373,7 @@ var Widget = require('../widget').Widget,
 var Editor = require('../editor').Editor
 
 var $ = util.$;
+var _attris = util.getkeys;
 var _t = util.gettext;
 var Promise = util.Promise;
 var NS = "annotator-editor";
@@ -13320,31 +13411,76 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
         this.annotation = {};
 
         if (this.options.defaultFields) {
+
+	    // drug 1
+	    this.addField({
+	    	label: _t('Drug Preciptitant') + '\u2026',
+	    	type:  'textarea',
+	    	load: function (field, annotation) {
+	    	    $(field).find('#annotator-field-0').val(annotation.drugPrecipt || '');
+	    	},
+	    	submit: function (field, annotation){
+	    	    annotation.drugPrecipt = $(field).find('#annotator-field-0').val();
+		    //annotation.text = annotation.text + ', precipitant:' + $(field).find('#annotator-field-0').val();
+	    	} 
+	    });
+
+	    // drug 2
+	    this.addField({
+	    	label: _t('Drug Object') + '\u2026',
+	    	type:  'textarea',
+	    	load: function (field, annotation) {
+	    	    $(field).find('#annotator-field-1').val(annotation.drugObject || '');
+	    	},
+	    	submit: function (field, annotation){
+	    	    annotation.drugObject = $(field).find('#annotator-field-1').val();
+	    	} 
+	    });
+
+	    // DDI type - PK DDI
+	    this.addField({
+	    	label: _t('PK DDI'),
+	    	type:  'radio',
+		name: 'DDIType',
+	    	load: function (field, annotation) {
+	    	    $(field).find('radio').val(annotation.DDIType || '');
+	    	},
+	    	submit: function (field, annotation){
+	    	    //annotation.DDIType = $(field).find('radio').val();
+		    annotation.DDIType = _t('PK_DDI');
+	    	} 
+	    });
+
+	    // DDI type - Clinical trial
+	    this.addField({
+	    	label: _t('Clinical Trial'),
+	    	type:  'radio',
+		name: 'DDIType',
+	    	load: function (field, annotation) {
+	    	    $(field).find('radio').val(annotation.DDIType || '');
+	    	},
+	    	submit: function (field, annotation){
+	    	    //annotation.DDIType = $(field).find('radio').val();
+		    annotation.DDIType = _t('Clinical_Trial');
+	    	} 
+	    });
+
+	    // comment
             this.addField({
                 type: 'textarea',
                 label: _t('Comments') + '\u2026',
                 load: function (field, annotation) {
-                    $(field).find('#annotator-field-0').val(annotation.text || '');
+                    $(field).find('#annotator-field-4').val(annotation.text || '');
                 },
                 submit: function (field, annotation) {
-                    annotation.text = $(field).find('#annotator-field-0').val();
+                    annotation.text = $(field).find('#annotator-field-4').val();
 		    if (annotation.text == '') {
 			annotation.text = $(field).find('textarea').val()
 		    }
                 }
             });
-
-	    //add new field as part of default - drug name
-	    this.addField({
-	    	label: _t('ddi Drug name') + '\u2026',
-	    	type:  'textarea',
-	    	load: function (field, annotation) {
-	    	    $(field).find('#annotator-field-1').val(annotation.drug || '');
-	    	},
-	    	submit: function (field, annotation){
-	    	    annotation.drug = $(field).find('#annotator-field-1').val();
-	    	} 
-	    });
+	    
+	
 
 
 	// test end
@@ -13435,8 +13571,20 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
     //
     // Returns nothing.
     submit: function () {
+
+
+	//alert('ddieditor.js - submit: ' + _attris(this.fields))
+	
+
         for (var i = 0, len = this.fields.length; i < len; i++) {
             var field = this.fields[i];
+
+	    //if (i<2){
+		//alert('ddieditor.js - submit: ' + _attris(field.element));
+
+		//alert('ddieditor.js - submit: [id:' +field.id+',name:' + field.name +',label:' + field.label + ',type:' + field.type + ',element:' + field.element.value + ']');
+	    //}
+	    
             field.submit(field.element, this.annotation);
         }
         if (typeof this.dfd !== 'undefined' && this.dfd !== null) {
@@ -13515,6 +13663,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
     addField: function (options) {
         var field = $.extend({
             id: 'annotator-field-' + id(),
+	    name: '',
             type: 'input',
             label: '',
             load: function () {},
@@ -13526,6 +13675,8 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
 
         field.element = element[0];
 
+	// add type radio button
+
         if (field.type === 'textarea') {
             input = $('<textarea />');
         } else if (field.type === 'checkbox') {
@@ -13534,7 +13685,9 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
             input = $('<input />');
         } else if (field.type === 'select') {
             input = $('<select />');
-        }
+        } else if (field.type === 'radio') {
+	    input = $('<input type="radio" name="'+field.name+'"/>');
+	}
 
         element.append(input);
 
@@ -13545,6 +13698,18 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
 
         if (field.type === 'checkbox') {
             element.addClass('annotator-checkbox');
+            element.append($('<label />', {
+                'for': field.id,
+                'html': field.label
+            }));
+        }
+
+        if (field.name === 'DDIType') {
+            // element.addClass('annotator-radio');
+	    //if (field.label == 'PK DDI' || field.label == 'Clinical Trial')
+	    //alert('radio name:' + field.name);
+	    //field.name = 'DDIType';
+	    
             element.append($('<label />', {
                 'for': field.id,
                 'html': field.label
@@ -14252,16 +14417,13 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
         this.mouseDown = false;
         this.render = function (annotation) {
 
-	    if (annotation.text && annotation.drug) {
-                return "Comment: " + annotation.text + "<br> Drug: " + annotation.drug;
-            }
-	    else if (annotation.text && (annotation.drug == "")) {
-                return util.escapeHtml(annotation.text);
-            }
-	    else if (annotation.drug && (annotation.text == "")) {
-                return util.escapeHtml(annotation.drug);
+	    if (annotation.drugPrecipt || annotation.drugObject || annotation.text || annotation.DDIType) {
+                return "Drug Precipitant: " + annotation.drugPrecipt + 
+		    "<br> Drug Object: " + annotation.drugObject +
+		    "<br> DDI type: " + annotation.DDIType +
+		    "<br><br> Comment: " + annotation.text;
             } else {
-                return "<i>" + _t('No drug & comment') + "</i>";
+                return "<i>" + _t('No DDI Information & comment') + "</i>";
             }
         };
 
@@ -17157,12 +17319,25 @@ var ESCAPE_MAP = {
 };
 
 
+
 // escapeHtml sanitizes special characters in text that could be interpreted as
 // HTML.
 function escapeHtml(string) {
     return String(string).replace(/[&<>"'\/]/g, function (c) {
         return ESCAPE_MAP[c];
     });
+}
+
+
+
+// return all properties of object
+// helps on debugging
+var getKeys = function(obj){
+   var keys = [];
+   for(var key in obj){
+      keys.push(key);
+   }
+   return keys;
 }
 
 
@@ -17200,6 +17375,7 @@ exports.Promise = Promise;
 exports.gettext = gettext;
 exports.escapeHtml = escapeHtml;
 exports.mousePosition = mousePosition;
+exports.getkeys = getKeys;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"es6-promise":5,"jquery":17}]},{},[1])(1)

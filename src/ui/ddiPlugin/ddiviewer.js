@@ -85,16 +85,13 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
         this.mouseDown = false;
         this.render = function (annotation) {
 
-	    if (annotation.text && annotation.drug) {
-                return "Comment: " + annotation.text + "<br> Drug: " + annotation.drug;
-            }
-	    else if (annotation.text && (annotation.drug == "")) {
-                return util.escapeHtml(annotation.text);
-            }
-	    else if (annotation.drug && (annotation.text == "")) {
-                return util.escapeHtml(annotation.drug);
+	    if (annotation.drugPrecipt || annotation.drugObject || annotation.text || annotation.DDIType) {
+                return "Drug Precipitant: " + annotation.drugPrecipt + 
+		    "<br> Drug Object: " + annotation.drugObject +
+		    "<br> DDI type: " + annotation.DDIType +
+		    "<br><br> Comment: " + annotation.text;
             } else {
-                return "<i>" + _t('No drug & comment') + "</i>";
+                return "<i>" + _t('No DDI Information & comment') + "</i>";
             }
         };
 
