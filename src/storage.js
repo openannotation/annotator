@@ -5,6 +5,7 @@
 var util = require('./util');
 var $ = util.$;
 var _t = util.gettext;
+var _attris = util.getkeys;
 var Promise = util.Promise;
 
 
@@ -16,6 +17,37 @@ var id = (function () {
         return counter += 1;
     };
 }());
+
+// check if it's basical fields that don't need encoding to json 
+function isDefaultFields(field) {
+
+    var defaultFields = ["id", "updated", "created", "ranges", "user", "consumer", "permissions", "quote", "tags", "text"]
+
+    return defaultFields.indexOf(field.toLowerCase()) > -1;
+}
+
+function jsonEncoding(annotation){
+
+    var anntJson = '{';
+
+    for(var item in annotation){
+
+	if(isDefaultFields(item)){
+	    continue;
+	}
+
+	if (anntJson == '{'){
+	    anntJson += '"' + item + '":"' + annotation[item] + '"';
+	} else {
+	    anntJson += ', "' + item + '":"' + annotation[item] + '"';
+	}
+    }
+    anntJson += '}';
+
+    return anntJson;
+
+}
+
 
 
 /**
@@ -176,8 +208,18 @@ HttpStorage = exports.HttpStorage = function HttpStorage(options) {
  * :rtype: Promise
  */
 HttpStorage.prototype.create = function (annotation) {
+
+    // converts annotation in js object to JSON string
+    // in order to save to text field in original mapping
+
+    var anntJson = jsonEncoding(annotation);
+    annotation.text = anntJson;
+    
+    alert('storage.js save text: ' + annotation.text);
+
     return this._apiRequest('create', annotation);
 };
+
 
 /**
  * function:: HttpStorage.prototype.update(annotation)
@@ -195,6 +237,34 @@ HttpStorage.prototype.create = function (annotation) {
  * :rtype: Promise
  */
 HttpStorage.prototype.update = function (annotation) {
+
+
+    // converts annotation in js object to JSON string
+    // in order to save to text field in original mapping
+
+    var anntJson = jsonEncoding(annotation);
+
+    // var anntJson = '{';
+
+    // for(var item in annotation){
+
+    // 	if(isDefaultFields(item)){
+    // 	    continue;
+    // 	} 
+
+    // 	if (anntJson == '{'){
+    // 	    anntJson += '"' + item + '":"' + annotation[item] + '"';
+    // 	} else {
+    // 	    anntJson += ', "' + item + '":"' + annotation[item] + '"';
+    // 	}
+    // }
+    // anntJson += '}';
+
+    annotation.text = anntJson;
+    
+    alert('storage.js update text: ' + annotation.text);
+
+
     return this._apiRequest('update', annotation);
 };
 
@@ -636,6 +706,23 @@ StorageAdapter.prototype.load = function (query) {
     var self = this;
     return this.query(query)
         .then(function (data) {
+
+	    // parse json string in text and converts to JS obj
+	    // iterate through all items in obj and assign to annot as attribute
+
+	    for (var i = 0, len = data.results.length; i < len; i++){
+		var annotJs = JSON.parse(data.results[i].text);
+		alert('storage-load-annotJs:' + annotJs);
+
+		for(var item in annotJs){
+
+		    if(item != "quote" && item != "ranges"){
+			data.results[i][item] = annotJs[item];
+			alert('item:' + item + " | " + annotJs[item]);
+		    }
+		}
+	    }
+
             self.runHook('annotationsLoaded', [data.results]);
         });
 };

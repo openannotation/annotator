@@ -4,6 +4,7 @@ var Widget = require('../widget').Widget,
 var Editor = require('../editor').Editor
 
 var $ = util.$;
+var _attris = util.getkeys;
 var _t = util.gettext;
 var Promise = util.Promise;
 var NS = "annotator-editor";
@@ -77,11 +78,44 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                 }
             });
 
+
+	    /*// DDI type - PK DDI
+	    this.addField({
+	    	label: _t('PK DDI'),
+	    	type:  'radio',
+		name: 'DDIType',
+	    	load: function (field, annotation) {
+	    	    $(field).find('radio').val(annotation.DDIType || '');
+	    	},
+	    	submit: function (field, annotation){
+	    	    //annotation.DDIType = $(field).find('radio').val();
+		    annotation.DDIType = _t('PK_DDI');
+	    	} 
+	    });
+
+	    // DDI type - Clinical trial
+	    this.addField({
+	    	label: _t('Clinical Trial'),
+	    	type:  'radio',
+		name: 'DDIType',
+	    	load: function (field, annotation) {
+	    	    $(field).find('radio').val(annotation.DDIType || '');
+	    	},
+	    	submit: function (field, annotation){
+	    	    //annotation.DDIType = $(field).find('radio').val();
+		    annotation.DDIType = _t('Clinical_Trial');
+	    	} 
+	    });*/
+
+	    // comment
+
             this.addField({
                 type: 'textarea',
                 label: _t('Comments') + '\u2026',
                 id:'comment1',
                 load: function (field, annotation) {
+
+
                     $(field).find('#comment1').val(annotation.text || '');
 
                 },
@@ -105,6 +139,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
 	    	    annotation.drug = $(field).find('#drugName').val();
 	    	}
 	    });
+
 
             this.addField({
                 label:'Drug Role: ',
@@ -351,8 +386,20 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
     //
     // Returns nothing.
     submit: function () {
+
+
+	//alert('ddieditor.js - submit: ' + _attris(this.fields))
+	
+
         for (var i = 0, len = this.fields.length; i < len; i++) {
             var field = this.fields[i];
+
+	    //if (i<2){
+		//alert('ddieditor.js - submit: ' + _attris(field.element));
+
+		//alert('ddieditor.js - submit: [id:' +field.id+',name:' + field.name +',label:' + field.label + ',type:' + field.type + ',element:' + field.element.value + ']');
+	    //}
+	    
             field.submit(field.element, this.annotation);
         }
         if (typeof this.dfd !== 'undefined' && this.dfd !== null) {
@@ -431,6 +478,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
     addField: function (options) {
         var field = $.extend({
             id: 'annotator-field-' + id(),
+	    name: '',
             type: 'input',
             label: '',
             load: function () {},
@@ -443,6 +491,8 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
 
         field.element = element[0];
 
+	// add type radio button
+
         if (field.type === 'textarea') {
             input = $('<textarea />');
         } else if (field.type === 'checkbox') {
@@ -453,7 +503,9 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
             input = $('<select />');
         } else if (field.type === 'div') {
             input = $('<div value="source" />');
-        }
+        } else if (field.type === 'radio') {
+	    input = $('<input type="radio" name="'+field.name+'"/>');
+	}
 
         element.append(input);
 
@@ -472,6 +524,18 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
 
         if (field.type === 'checkbox') {
             element.addClass('annotator-checkbox');
+            element.append($('<label />', {
+                'for': field.id,
+                'html': field.label
+            }));
+        }
+
+        if (field.name === 'DDIType') {
+            // element.addClass('annotator-radio');
+	    //if (field.label == 'PK DDI' || field.label == 'Clinical Trial')
+	    //alert('radio name:' + field.name);
+	    //field.name = 'DDIType';
+	    
             element.append($('<label />', {
                 'for': field.id,
                 'html': field.label

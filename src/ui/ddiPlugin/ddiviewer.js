@@ -84,7 +84,7 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
         this.hideTimerActivity = null;
         this.mouseDown = false;
         this.render = function (annotation) {
-
+            
 	    if (annotation.text && annotation.drug) {
             var returnText = "Comment: " + annotation.text +
                 "<br> Drug: " + annotation.drug +
@@ -103,8 +103,9 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
             }
 	    else if (annotation.drug && (annotation.text == "")) {
                 return util.escapeHtml(annotation.drug);
+
             } else {
-                return "<i>" + _t('No drug & comment') + "</i>";
+                return "<i>" + _t('No DDI Information & comment') + "</i>";
             }
         };
 

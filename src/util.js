@@ -13,12 +13,25 @@ var ESCAPE_MAP = {
 };
 
 
+
 // escapeHtml sanitizes special characters in text that could be interpreted as
 // HTML.
 function escapeHtml(string) {
     return String(string).replace(/[&<>"'\/]/g, function (c) {
         return ESCAPE_MAP[c];
     });
+}
+
+
+
+// return all properties of object
+// helps on debugging
+var getKeys = function(obj){
+   var keys = [];
+   for(var key in obj){
+      keys.push(key);
+   }
+   return keys;
 }
 
 
@@ -56,3 +69,4 @@ exports.Promise = Promise;
 exports.gettext = gettext;
 exports.escapeHtml = escapeHtml;
 exports.mousePosition = mousePosition;
+exports.getkeys = getKeys;
