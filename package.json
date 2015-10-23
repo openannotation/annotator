@@ -13,7 +13,6 @@
     "es6-promise": "^3.0.2",
     "insert-css": "^0.2.0",
     "jquery": "^1.11.3",
-    "through": "^2.3.8",
     "xpath-range": "0.0.5"
   },
   "devDependencies": {
@@ -35,6 +34,7 @@
     "phantomjs": "^1.9.18",
     "serve-static": "^1.10.0",
     "sinon": "^1.17.0",
+    "through": "^2.3.8",
     "uglify-js": "^2.4.24",
     "wgxpath": "^1.1.0"
   },
