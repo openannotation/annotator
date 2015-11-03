@@ -12424,7 +12424,6 @@ exports.Registry = Registry;
 var util = require('./util');
 var $ = util.$;
 var _t = util.gettext;
-var _attris = util.getkeys;
 var Promise = util.Promise;
 
 
@@ -12436,37 +12435,6 @@ var id = (function () {
         return counter += 1;
     };
 }());
-
-// check if it's basical fields that don't need encoding to json 
-function isDefaultFields(field) {
-
-    var defaultFields = ["id", "updated", "created", "ranges", "user", "consumer", "permissions", "quote", "tags", "text"]
-
-    return defaultFields.indexOf(field.toLowerCase()) > -1;
-}
-
-function jsonEncoding(annotation){
-
-    var anntJson = '{';
-
-    for(var item in annotation){
-
-	if(isDefaultFields(item)){
-	    continue;
-	}
-
-	if (anntJson == '{'){
-	    anntJson += '"' + item + '":"' + annotation[item] + '"';
-	} else {
-	    anntJson += ', "' + item + '":"' + annotation[item] + '"';
-	}
-    }
-    anntJson += '}';
-
-    return anntJson;
-
-}
-
 
 
 /**
@@ -12627,18 +12595,8 @@ HttpStorage = exports.HttpStorage = function HttpStorage(options) {
  * :rtype: Promise
  */
 HttpStorage.prototype.create = function (annotation) {
-
-    // converts annotation in js object to JSON string
-    // in order to save to text field in original mapping
-
-    var anntJson = jsonEncoding(annotation);
-    annotation.text = anntJson;
-    
-    alert('storage.js save text: ' + annotation.text);
-
     return this._apiRequest('create', annotation);
 };
-
 
 /**
  * function:: HttpStorage.prototype.update(annotation)
@@ -12656,34 +12614,6 @@ HttpStorage.prototype.create = function (annotation) {
  * :rtype: Promise
  */
 HttpStorage.prototype.update = function (annotation) {
-
-
-    // converts annotation in js object to JSON string
-    // in order to save to text field in original mapping
-
-    var anntJson = jsonEncoding(annotation);
-
-    // var anntJson = '{';
-
-    // for(var item in annotation){
-
-    // 	if(isDefaultFields(item)){
-    // 	    continue;
-    // 	} 
-
-    // 	if (anntJson == '{'){
-    // 	    anntJson += '"' + item + '":"' + annotation[item] + '"';
-    // 	} else {
-    // 	    anntJson += ', "' + item + '":"' + annotation[item] + '"';
-    // 	}
-    // }
-    // anntJson += '}';
-
-    annotation.text = anntJson;
-    
-    alert('storage.js update text: ' + annotation.text);
-
-
     return this._apiRequest('update', annotation);
 };
 
@@ -12889,7 +12819,7 @@ HttpStorage.prototype._onError = function (xhr) {
         message = _t("Internal error in annotation store! " +
                      "(Error 500)");
     } else {
-        message = _t("Unknown error while speaking to annotation store - test!");
+        message = _t("Unknown error while speaking to annotation store!");
     }
     this.onError(message, xhr);
 };
@@ -13125,23 +13055,6 @@ StorageAdapter.prototype.load = function (query) {
     var self = this;
     return this.query(query)
         .then(function (data) {
-
-	    // parse json string in text and converts to JS obj
-	    // iterate through all items in obj and assign to annot as attribute
-
-	    for (var i = 0, len = data.results.length; i < len; i++){
-		var annotJs = JSON.parse(data.results[i].text);
-		alert('storage-load-annotJs:' + annotJs);
-
-		for(var item in annotJs){
-
-		    if(item != "quote" && item != "ranges"){
-			data.results[i][item] = annotJs[item];
-			alert('item:' + item + " | " + annotJs[item]);
-		    }
-		}
-	    }
-
             self.runHook('annotationsLoaded', [data.results]);
         });
 };
@@ -13410,6 +13323,17 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
         this.fields = [];
         this.annotation = {};
 
+        // assign user email as annotation creator
+        // var ident = app.registry.getUtility('identityPolicy');
+        // var u = ident.who();
+
+        // if (u != null || u != "") {
+        //     this.annotation.user = u;
+        // } else {
+        //     this.annotation.user = "anonymous@gmail.com"
+        // }
+
+
         if (this.options.defaultFields) {
 
 	    // drug 1
@@ -13421,7 +13345,6 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
 	    	},
 	    	submit: function (field, annotation){
 	    	    annotation.drugPrecipt = $(field).find('#annotator-field-0').val();
-		    //annotation.text = annotation.text + ', precipitant:' + $(field).find('#annotator-field-0').val();
 	    	} 
 	    });
 
@@ -13465,7 +13388,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
 	    	} 
 	    });
 
-	    // comment
+	        // comment
             this.addField({
                 type: 'textarea',
                 label: _t('Comments') + '\u2026',
@@ -13479,11 +13402,18 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
 		    }
                 }
             });
-	    
-	
 
-
-	// test end
+          this.addField({
+                label: _t('Annotation type') + '\u2026' + _t('DDI'),
+                type: 'div',
+                id: 'annotationType',
+                load: function (field, annotation) {
+                    $(field).find('#annotationType').val(annotation.annotationType || '');
+                },
+                submit: function (field, annotation){
+		    annotation.annotationType = _t('DDI')
+                }
+            });
 
         }
 
@@ -13572,18 +13502,8 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
     // Returns nothing.
     submit: function () {
 
-
-	//alert('ddieditor.js - submit: ' + _attris(this.fields))
-	
-
         for (var i = 0, len = this.fields.length; i < len; i++) {
             var field = this.fields[i];
-
-	    //if (i<2){
-		//alert('ddieditor.js - submit: ' + _attris(field.element));
-
-		//alert('ddieditor.js - submit: [id:' +field.id+',name:' + field.name +',label:' + field.label + ',type:' + field.type + ',element:' + field.element.value + ']');
-	    //}
 	    
             field.submit(field.element, this.annotation);
         }
@@ -13685,6 +13605,8 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
             input = $('<input />');
         } else if (field.type === 'select') {
             input = $('<select />');
+        } else if (field.type === 'div') {
+            input = $('<div />');
         } else if (field.type === 'radio') {
 	    input = $('<input type="radio" name="'+field.name+'"/>');
 	}
@@ -13705,10 +13627,6 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
         }
 
         if (field.name === 'DDIType') {
-            // element.addClass('annotator-radio');
-	    //if (field.label == 'PK DDI' || field.label == 'Clinical Trial')
-	    //alert('radio name:' + field.name);
-	    //field.name = 'DDIType';
 	    
             element.append($('<label />', {
                 'for': field.id,
@@ -14014,9 +13932,6 @@ var util = require('../../util');
 
 var adder = require('./../adder');
 
-//var editor = require('./../editor');
-//var viewer = require('./../viewer');
-
 var highlighter = require('./../highlighter');
 var textselector = require('./../textselector');
 
@@ -14121,6 +14036,7 @@ function removeDynamicStyle() {
 
 // Helper function to add permissions checkboxes to the editor
 function addPermissionsCheckboxes(editor, ident, authz) {
+
     function createLoadCallback(action) {
         return function loadCallback(field, annotation) {
             field = util.$(field).show();
@@ -14128,8 +14044,10 @@ function addPermissionsCheckboxes(editor, ident, authz) {
             var u = ident.who();
             var input = field.find('input');
 
+            //alert('ddi main - load - user ident:' + u)
+
             // Do not show field if no user is set
-            if (typeof u === 'undefined' || u === null) {
+            if (typeof u === 'undefined' || u === null || u == "") {
                 field.hide();
             }
 
@@ -14152,7 +14070,7 @@ function addPermissionsCheckboxes(editor, ident, authz) {
             var u = ident.who();
 
             // Don't do anything if no user is set
-            if (typeof u === 'undefined' || u === null) {
+            if (typeof u === 'undefined' || u === null || u == "") {
                 return;
             }
 
@@ -14185,6 +14103,14 @@ function addPermissionsCheckboxes(editor, ident, authz) {
         label: _t('Allow anyone to <strong>edit</strong> this annotation'),
         load: createLoadCallback('update'),
         submit: createSubmitCallback('update')
+    });
+
+    // add checkbox for set delete permission 
+    editor.addField({
+        type: 'checkbox',
+        label: _t('Allow anyone to <strong>delete</strong> this annotation'),
+        load: createLoadCallback('delete'),
+        submit: createSubmitCallback('delete')
     });
 }
 

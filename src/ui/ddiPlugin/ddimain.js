@@ -5,9 +5,6 @@ var util = require('../../util');
 
 var adder = require('./../adder');
 
-//var editor = require('./../editor');
-//var viewer = require('./../viewer');
-
 var highlighter = require('./../highlighter');
 var textselector = require('./../textselector');
 
@@ -112,6 +109,7 @@ function removeDynamicStyle() {
 
 // Helper function to add permissions checkboxes to the editor
 function addPermissionsCheckboxes(editor, ident, authz) {
+
     function createLoadCallback(action) {
         return function loadCallback(field, annotation) {
             field = util.$(field).show();
@@ -119,8 +117,10 @@ function addPermissionsCheckboxes(editor, ident, authz) {
             var u = ident.who();
             var input = field.find('input');
 
+            //alert('ddi main - load - user ident:' + u)
+
             // Do not show field if no user is set
-            if (typeof u === 'undefined' || u === null) {
+            if (typeof u === 'undefined' || u === null || u == "") {
                 field.hide();
             }
 
@@ -143,7 +143,7 @@ function addPermissionsCheckboxes(editor, ident, authz) {
             var u = ident.who();
 
             // Don't do anything if no user is set
-            if (typeof u === 'undefined' || u === null) {
+            if (typeof u === 'undefined' || u === null || u == "") {
                 return;
             }
 
@@ -176,6 +176,14 @@ function addPermissionsCheckboxes(editor, ident, authz) {
         label: _t('Allow anyone to <strong>edit</strong> this annotation'),
         load: createLoadCallback('update'),
         submit: createSubmitCallback('update')
+    });
+
+    // add checkbox for set delete permission 
+    editor.addField({
+        type: 'checkbox',
+        label: _t('Allow anyone to <strong>delete</strong> this annotation'),
+        load: createLoadCallback('delete'),
+        submit: createSubmitCallback('delete')
     });
 }
 

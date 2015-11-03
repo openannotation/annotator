@@ -41,6 +41,17 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
         this.fields = [];
         this.annotation = {};
 
+        // assign user email as annotation creator
+        // var ident = app.registry.getUtility('identityPolicy');
+        // var u = ident.who();
+
+        // if (u != null || u != "") {
+        //     this.annotation.user = u;
+        // } else {
+        //     this.annotation.user = "anonymous@gmail.com"
+        // }
+
+
         if (this.options.defaultFields) {
 
 	    // drug 1
@@ -52,7 +63,6 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
 	    	},
 	    	submit: function (field, annotation){
 	    	    annotation.drugPrecipt = $(field).find('#annotator-field-0').val();
-		    //annotation.text = annotation.text + ', precipitant:' + $(field).find('#annotator-field-0').val();
 	    	} 
 	    });
 
@@ -96,7 +106,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
 	    	} 
 	    });
 
-	    // comment
+	        // comment
             this.addField({
                 type: 'textarea',
                 label: _t('Comments') + '\u2026',
@@ -110,11 +120,18 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
 		    }
                 }
             });
-	    
-	
 
-
-	// test end
+          this.addField({
+                label: _t('Annotation type') + '\u2026' + _t('DDI'),
+                type: 'div',
+                id: 'annotationType',
+                load: function (field, annotation) {
+                    $(field).find('#annotationType').val(annotation.annotationType || '');
+                },
+                submit: function (field, annotation){
+		    annotation.annotationType = _t('DDI')
+                }
+            });
 
         }
 
@@ -203,18 +220,8 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
     // Returns nothing.
     submit: function () {
 
-
-	//alert('ddieditor.js - submit: ' + _attris(this.fields))
-	
-
         for (var i = 0, len = this.fields.length; i < len; i++) {
             var field = this.fields[i];
-
-	    //if (i<2){
-		//alert('ddieditor.js - submit: ' + _attris(field.element));
-
-		//alert('ddieditor.js - submit: [id:' +field.id+',name:' + field.name +',label:' + field.label + ',type:' + field.type + ',element:' + field.element.value + ']');
-	    //}
 	    
             field.submit(field.element, this.annotation);
         }
@@ -316,6 +323,8 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
             input = $('<input />');
         } else if (field.type === 'select') {
             input = $('<select />');
+        } else if (field.type === 'div') {
+            input = $('<div />');
         } else if (field.type === 'radio') {
 	    input = $('<input type="radio" name="'+field.name+'"/>');
 	}
@@ -336,10 +345,6 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
         }
 
         if (field.name === 'DDIType') {
-            // element.addClass('annotator-radio');
-	    //if (field.label == 'PK DDI' || field.label == 'Clinical Trial')
-	    //alert('radio name:' + field.name);
-	    //field.name = 'DDIType';
 	    
             element.append($('<label />', {
                 'for': field.id,
