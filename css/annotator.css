@@ -49,7 +49,19 @@
 	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#4DFFFF0A, endColorstr=#4DFFFF0A)";  /* 0.3 == 4D in MS filters */
 }
 
+.annotator-hlddi {
+	background: #55dd43;
+	background: rgba(92, 222, 74, 0.3);
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#4DFFFF0A, endColorstr=#4DFFFF0A)";  /* 0.3 == 4D in MS filters */
+}
+
 .annotator-hl-temporary {
+	background: #007CFF;
+	background: rgba(0, 124, 255, 0.3);
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#4D007CFF, endColorstr=#4D007CFF)";  /* 0.3 == 4D in MS filters */
+}
+
+.annotator-hlddi-temporary {
 	background: #007CFF;
 	background: rgba(0, 124, 255, 0.3);
 	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#4D007CFF, endColorstr=#4D007CFF)";  /* 0.3 == 4D in MS filters */
@@ -882,6 +894,12 @@
 }
 
 .annotator-hl-active {
+	background: #FFFF0A;
+	background: rgba(255, 255, 10, 0.8);
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#CCFFFF0A, endColorstr=#CCFFFF0A)";  /* 0.8 == CC in MS filters */
+}
+
+.annotator-hlddi-active {
 	background: #FFFF0A;
 	background: rgba(255, 255, 10, 0.8);
 	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#CCFFFF0A, endColorstr=#CCFFFF0A)";  /* 0.8 == CC in MS filters */

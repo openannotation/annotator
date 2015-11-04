@@ -215,7 +215,7 @@ HttpStorage.prototype.create = function (annotation) {
     var anntJson = jsonEncoding(annotation);
     annotation.text = anntJson;
     
-    alert('storage.js save text: ' + annotation.text);
+    //alert('storage.js save text: ' + annotation.text);
 
     return this._apiRequest('create', annotation);
 };
@@ -262,7 +262,7 @@ HttpStorage.prototype.update = function (annotation) {
 
     annotation.text = anntJson;
     
-    alert('storage.js update text: ' + annotation.text);
+    //alert('storage.js update text: ' + annotation.text);
 
 
     return this._apiRequest('update', annotation);
@@ -712,13 +712,13 @@ StorageAdapter.prototype.load = function (query) {
 
 	    for (var i = 0, len = data.results.length; i < len; i++){
 		var annotJs = JSON.parse(data.results[i].text);
-		alert('storage-load-annotJs:' + annotJs);
+		//alert('storage-load-annotJs:' + annotJs);
 
 		for(var item in annotJs){
 
 		    if(item != "quote" && item != "ranges"){
 			data.results[i][item] = annotJs[item];
-			alert('item:' + item + " | " + annotJs[item]);
+			//alert('item:' + item + " | " + annotJs[item]);
 		    }
 		}
 	    }

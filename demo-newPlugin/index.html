@@ -79,12 +79,17 @@
       } else {
 
 	  var app = new annotator.App();
+        var app1 = new annotator.App();
 	  app.include(annotator.ui.main, {
-      element: document.querySelector('#content'), 
-      editorExtensions: [annotator.ui.tags.editorExtension], 
-      viewerExtensions: [annotator.ui.tags.viewerExtension]
+      element: document.querySelector('#content'),
+
     });
           //app.include(annotator.storage.debug);
+          app1.include(annotator.ui.ddimain, {
+              element: document.querySelector('#content'),
+              editorExtensions: [annotator.ui.tags.editorExtension],
+              viewerExtensions: [annotator.ui.tags.viewerExtension]
+          });
 
 	  app.include(
               annotator.storage.http, {
@@ -98,12 +103,34 @@
 
 	  // app.include(addFieldsToEditor, {editor: annotator.ui.editor});
 
+
+        //app.include(annotator.storage.debug);
+
+        app1.include(
+                annotator.storage.http, {
+                  prefix: 'http://127.0.0.1:5000'
+                }
+                //annotator.Registry.prototype.getUtility(iface)
+        );
+
+        //app.include(helloWorld, {message: 'ddi plugin'
+        //});
+
+        // app.include(addFieldsToEditor, {editor: annotator.ui.editor});
+
+        app1.start().then(function ()
+        {app1.annotations.load();
+
+          app1.ident.identity = 'bob';
+        });
+
 	  app.start().then(function () 
 			   {app.annotations.load();
-
-                 app.ident.identity = 'bob';
 			   });
       }
+
+
+
     </script>
 
   </body>

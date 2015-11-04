@@ -3,12 +3,12 @@
 
 var util = require('../../util');
 
-var adder = require('./../adder');
+var ddiadder = require('./ddiadder');
 
 //var editor = require('./../editor');
 //var viewer = require('./../viewer');
 
-var highlighter = require('./../highlighter');
+var ddihighlighter = require('./ddihighlighter');
 var textselector = require('./../textselector');
 
 var ddieditor = require('./ddieditor');
@@ -232,7 +232,7 @@ function main(options) {
         var ident = app.registry.getUtility('identityPolicy');
         var authz = app.registry.getUtility('authorizationPolicy');
 
-        s.adder = new adder.Adder({
+        s.adder = new ddiadder.ddiAdder({
             onCreate: function (ann) {
                 app.annotations.create(ann);
             }
@@ -240,13 +240,13 @@ function main(options) {
         s.adder.attach();
 
         s.editor = new ddieditor.ddiEditor({
-            extensions: options.editorExtensions
+            extensions: options.editorExtensions //test ddiExtension
         });
         s.editor.attach();
 
         addPermissionsCheckboxes(s.editor, ident, authz);
 
-        s.highlighter = new highlighter.Highlighter(options.element);
+        s.highlighter = new ddihighlighter.ddiHighlighter(options.element);
 
         s.textselector = new textselector.TextSelector(options.element, {
             onSelection: function (ranges, event) {

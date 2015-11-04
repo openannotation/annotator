@@ -84,12 +84,13 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
         this.hideTimerActivity = null;
         this.mouseDown = false;
         this.render = function (annotation) {
-            
-	    if (annotation.text && annotation.drug) {
+
+	    if (annotation.text && annotation.drug && annotation.text=="") {
             var returnText = "Comment: " + annotation.text +
                 "<br> Drug: " + annotation.drug +
                 "<br> DrugRole: " + annotation.drugrole +
                 "<br> SourceType: " + annotation.sourceType;
+
 
             if(annotation.objectoptions)
                 returnText += "<br> ObjectOptions: " + annotation.objectoptions;

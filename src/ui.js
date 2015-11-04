@@ -15,6 +15,7 @@ exports.textselector = require('./ui/textselector');
 exports.widget = require('./ui/widget');
 
 //ddiPlugin
-exports.main = require('./ui/ddiPlugin/ddimain').main;
+exports.main = require('./ui/main').main;  //original UI
+exports.ddimain = require('./ui/ddiPlugin/ddimain').main; //ddi UI
 exports.ddieditor = require('./ui/ddiPlugin/ddieditor');
 exports.ddiviewer = require('./ui/ddiPlugin/ddiviewer');
