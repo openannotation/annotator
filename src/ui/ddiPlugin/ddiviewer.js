@@ -84,12 +84,26 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
         this.hideTimerActivity = null;
         this.mouseDown = false;
         this.render = function (annotation) {
+            
+	    if (annotation.text && annotation.drug) {
+            var returnText = "Comment: " + annotation.text +
+                "<br> Drug: " + annotation.drug +
+                "<br> DrugRole: " + annotation.drugrole +
+                "<br> SourceType: " + annotation.sourceType;
 
-	    if (annotation.drugPrecipt || annotation.drugObject || annotation.text || annotation.DDIType) {
-                return "Drug Precipitant: " + annotation.drugPrecipt + 
-		    "<br> Drug Object: " + annotation.drugObject +
-		    "<br> DDI type: " + annotation.DDIType +
-		    "<br><br> Comment: " + annotation.text;
+            if(annotation.objectoptions)
+                returnText += "<br> ObjectOptions: " + annotation.objectoptions;
+            if(annotation.precipitantoptions)
+                returnText += "<br> PrecipitantOptions: " + annotation.precipitantoptions;
+
+            return returnText;
+        }
+	    else if (annotation.text && (annotation.drug == "")) {
+                return util.escapeHtml(annotation.text);
+            }
+	    else if (annotation.drug && (annotation.text == "")) {
+                return util.escapeHtml(annotation.drug);
+
             } else {
                 return "<i>" + _t('No DDI Information & comment') + "</i>";
             }
@@ -532,7 +546,6 @@ exports.standalone = function standalone(options) {
                     app.annotations['delete'](annotation);
                 };
             }
-
             // Set default handlers that determine whether the edit and delete
             // buttons are shown in the viewer:
             if (typeof options.permitEdit === 'undefined') {
