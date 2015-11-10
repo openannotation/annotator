@@ -18,6 +18,9 @@ exports.simple = function simple() {
     return {
         configure: function (registry) {
             registry.registerUtility(identity, 'identityPolicy');
+        },
+        beforeAnnotationCreated: function (annotation) {
+            annotation.user = identity.who();
         }
     };
 };
