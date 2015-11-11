@@ -1,0 +1,13 @@
+
+
+-------------------------------------------
+design/
+-------------------------------------------
+diagram-workspaces/
+keep source code of diagram
+
+pencil prototyping tool: *.ep
+dia: *.dia
+
+images/
+exported images for software design

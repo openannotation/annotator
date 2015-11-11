@@ -2,7 +2,8 @@ from flask import Flask, render_template, request, json, session, flash, redirec
 from forms import SignUpForm, SignInForm
 from models import db
 from demoAnnotator import app
-from models import User
+from models import User, Activation
+import time, uuid, datetime
 
 
 # define root and corresponding request handler
@@ -28,31 +29,37 @@ def signUp():
 
     if form.validate() == False:
         return render_template('signup.html', form=form)
-    else:   
-        newuser = User(form.name.data, form.email.data, form.password.data)
-        db.session.add(newuser)
-        db.session.commit()
+    else:
+		# get current date and time
+		# create uuid for user
+		currentDate = datetime.datetime.utcnow()
+		uid = uuid.uuid4()
 
-        response = make_response(redirect(url_for('main')))
-        response.set_cookie('email', form.email.data)
+		## add activation
+		expireTime = datetime.datetime.utcnow() + datetime.timedelta(days=10)
+		newact = Activation("XTcAfQ33",uid, expireTime)
+		db.session.add(newact)
+		db.session.commit()
 
-        session['email'] = form.email.data
+		## add new user
+		newuser = User(uid, form.username.data, 0, 0, form.email.data, 0, currentDate, currentDate, newact.id, form.password.data)
+		db.session.add(newuser)
+		db.session.commit()
+
+		response = make_response(redirect(url_for('main')))
+		response.set_cookie('email', form.email.data)
+
+		session['email'] = form.email.data
         
-        return response
-        #return redirect(url_for('main'))
+		return response
 
 
 @app.route('/signIn', methods=['POST','GET'])
 def signIn():
     form = SignInForm()
-
-    if 'email' in request.cookies:
-        print 'DEBUG - signIn 1:' + str(request.cookies['email'])
     
-
     if 'email' in session:
         return redirect(url_for('main'))
-   
 
     if form.validate() == False:
         return render_template('signin.html', form=form)
@@ -63,11 +70,7 @@ def signIn():
         response = make_response(redirect(url_for('main')))  
         response.set_cookie('email',form.email.data)
 
-        if 'email' in request.cookies:
-            print 'DEBUG - signIn 2:' + str(request.cookies['email'])
-
         return response
-        #return redirect(url_for('main'))
 
 
 @app.route('/signOut')

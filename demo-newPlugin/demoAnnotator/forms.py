@@ -5,10 +5,11 @@ from wtforms.validators import Required, Email
 from models import User
     
 class SignUpForm(Form):
-    name = TextField("Name",  [validators.Required("Please enter your first name.")])
+    username = TextField("Username",  [validators.Required("Please enter your user name.")])
     email = TextField("Email",  [validators.Required("Please enter your email address."), validators.Email("Please enter your email address.")])
     password = PasswordField('Password', [validators.Required("Please enter a password.")])
     submit = SubmitField("Sign Up")
+
  
     def __init__(self, *args, **kwargs):
         Form.__init__(self, *args, **kwargs)
