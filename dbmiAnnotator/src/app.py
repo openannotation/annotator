@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, json, session, flash, redirect, url_for, make_response
 from forms import SignUpForm, SignInForm
 from models import db
-from demoAnnotator import app
+from src import app
 from models import User, Activation
 import time, uuid, datetime
 
