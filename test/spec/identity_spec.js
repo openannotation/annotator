@@ -22,6 +22,27 @@ describe('identity.simple', function () {
             sinon.assert.calledWithMatch(register, policy, 'identityPolicy');
         });
     });
+
+    describe('beforeAnnotationCreatedHook', function () {
+        var sandbox;
+
+        beforeEach(function () {
+            sandbox = sinon.sandbox.create();
+        });
+
+        afterEach(function () {
+            sandbox.restore();
+        });
+
+        it('sets the user property of the annotation', function () {
+            var policyProto = identity.SimpleIdentityPolicy.prototype;
+            sandbox.stub(policyProto, 'who').returns('alice');
+
+            var annotation = {};
+            ext.beforeAnnotationCreated(annotation);
+            assert.equal(annotation.user, 'alice');
+        });
+    });
 });
 
 describe('identity.SimpleIdentityPolicy', function () {
