@@ -44,8 +44,8 @@ exports.noConflict = function noConflict() {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./css/annotator.css":2,"./src/app":22,"./src/authz":23,"./src/identity":24,"./src/notification":25,"./src/storage":27,"./src/ui":28,"./src/util":41,"insert-css":16}],2:[function(require,module,exports){
-module.exports = ".annotator-filter *,.annotator-notice,.annotator-widget *{font-family:\"Helvetica Neue\",Arial,Helvetica,sans-serif;font-weight:400;text-align:left;margin:0;padding:0;background:0 0;-webkit-transition:none;-moz-transition:none;-o-transition:none;transition:none;-moz-box-shadow:none;-webkit-box-shadow:none;-o-box-shadow:none;box-shadow:none;color:#909090}.annotator-adder{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJAAAAAwCAYAAAD+WvNWAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowMzgwMTE3NDA3MjA2ODExODRCQUU5RDY0RTkyQTJDNiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDowOUY5RUFERDYwOEIxMUUxOTQ1RDkyQzU2OTNEMDZENCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowOUY5RUFEQzYwOEIxMUUxOTQ1RDkyQzU2OTNEMDZENCIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjA1ODAxMTc0MDcyMDY4MTE5MTA5OUIyNDhFRUQ1QkM4IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjAzODAxMTc0MDcyMDY4MTE4NEJBRTlENjRFOTJBMkM2Ii8+IDwvcmRmOkRlc2NyaXB0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);background-repeat:no-repeat}.annotator-editor a:after,.annotator-filter .annotator-filter-navigation button:after,.annotator-filter .annotator-filter-property .annotator-filter-clear,.annotator-resize,.annotator-viewer .annotator-controls a,.annotator-viewer .annotator-controls button,.annotator-widget:after{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAEiCAYAAAD0w4JOAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RDY0MTMzNTM2QUQzMTFFMUE2REJERDgwQTM3Njg5NTUiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RDY0MTMzNTQ2QUQzMTFFMUE2REJERDgwQTM3Njg5NTUiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo2ODkwQjlFQzZBRDExMUUxQTZEQkREODBBMzc2ODk1NSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpENjQxMzM1MjZBRDMxMUUxQTZEQkREODBBMzc2ODk1NSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PkijPpwAABBRSURBVHja7JsJVBRX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);background-repeat:no-repeat}.annotator-hl{background:#FFFF0A;background:rgba(255,255,10,.3);-ms-filter:\"progid:DXImageTransform.Microsoft.gradient(startColorstr=#4DFFFF0A, endColorstr=#4DFFFF0A)\"}.annotator-hl-temporary{background:#007CFF;background:rgba(0,124,255,.3);-ms-filter:\"progid:DXImageTransform.Microsoft.gradient(startColorstr=#4D007CFF, endColorstr=#4D007CFF)\"}.annotator-wrapper{position:relative}.annotator-adder,.annotator-notice,.annotator-outer{z-index:1020}.annotator-adder,.annotator-notice,.annotator-outer,.annotator-widget{position:absolute;font-size:10px;line-height:1}.annotator-hide{display:none;visibility:hidden}.annotator-adder{margin-top:-48px;margin-left:-24px;width:48px;height:48px;background-position:left top}.annotator-adder:hover{background-position:center top}.annotator-adder:active{background-position:center right}.annotator-adder button{display:block;width:36px;height:41px;margin:0 auto;border:none;background:0 0;text-indent:-999em;cursor:pointer}.annotator-outer{width:0;height:0}.annotator-widget{margin:0;padding:0;bottom:15px;left:-18px;min-width:400px;background-color:#FBFBFB;background-color:rgba(251,251,251,.98);border:1px solid #7A7A7A;border:1px solid rgba(122,122,122,.6);-webkit-border-radius:5px;-moz-border-radius:5px;border-radius:5px;-webkit-box-shadow:0 5px 15px rgba(0,0,0,.2);-moz-box-shadow:0 5px 15px rgba(0,0,0,.2);-o-box-shadow:0 5px 15px rgba(0,0,0,.2);box-shadow:0 5px 15px rgba(0,0,0,.2)}.annotator-invert-x .annotator-widget{left:auto;right:-18px}.annotator-invert-y .annotator-widget{bottom:auto;top:8px}.annotator-widget strong{font-weight:700}.annotator-widget .annotator-item,.annotator-widget .annotator-listing{padding:0;margin:0;list-style:none}.annotator-widget:after{content:\"\";display:block;width:18px;height:10px;background-position:0 0;position:absolute;bottom:-10px;left:8px}.annotator-invert-x .annotator-widget:after{left:auto;right:8px}.annotator-invert-y .annotator-widget:after{background-position:0 -15px;bottom:auto;top:-9px}.annotator-editor .annotator-item input,.annotator-editor .annotator-item textarea,.annotator-widget .annotator-item{position:relative;font-size:12px}.annotator-viewer .annotator-item{border-top:2px solid #7A7A7A;border-top:2px solid rgba(122,122,122,.2)}.annotator-widget .annotator-item:first-child{border-top:none}.annotator-editor .annotator-item,.annotator-viewer div{border-top:1px solid #858585;border-top:1px solid rgba(133,133,133,.11)}.annotator-viewer div{padding:6px}.annotator-viewer .annotator-item ol,.annotator-viewer .annotator-item ul{padding:4px 16px}.annotator-editor .annotator-item:first-child textarea,.annotator-viewer div:first-of-type{padding-top:12px;padding-bottom:12px;color:#3c3c3c;font-size:13px;font-style:italic;line-height:1.3;border-top:none}.annotator-viewer .annotator-controls{position:relative;top:5px;right:5px;padding-left:5px;opacity:0;-webkit-transition:opacity .2s ease-in;-moz-transition:opacity .2s ease-in;-o-transition:opacity .2s ease-in;transition:opacity .2s ease-in;float:right}.annotator-viewer li .annotator-controls.annotator-visible,.annotator-viewer li:hover .annotator-controls{opacity:1}.annotator-viewer .annotator-controls a,.annotator-viewer .annotator-controls button{cursor:pointer;display:inline-block;width:13px;height:13px;margin-left:2px;border:none;opacity:.2;text-indent:-900em;background-color:transparent;outline:0}.annotator-viewer .annotator-controls a:focus,.annotator-viewer .annotator-controls a:hover,.annotator-viewer .annotator-controls button:focus,.annotator-viewer .annotator-controls button:hover{opacity:.9}.annotator-viewer .annotator-controls a:active,.annotator-viewer .annotator-controls button:active{opacity:1}.annotator-viewer .annotator-controls button[disabled]{display:none}.annotator-viewer .annotator-controls .annotator-edit{background-position:0 -60px}.annotator-viewer .annotator-controls .annotator-delete{background-position:0 -75px}.annotator-viewer .annotator-controls .annotator-link{background-position:0 -270px}.annotator-editor .annotator-item{position:relative}.annotator-editor .annotator-item label{top:0;display:inline;cursor:pointer;font-size:12px}.annotator-editor .annotator-item input,.annotator-editor .annotator-item textarea{display:block;min-width:100%;padding:10px 8px;border:none;margin:0;color:#3c3c3c;background:0 0;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;-o-box-sizing:border-box;box-sizing:border-box;resize:none}.annotator-editor .annotator-item textarea::-webkit-scrollbar{height:8px;width:8px}.annotator-editor .annotator-item textarea::-webkit-scrollbar-track-piece{margin:13px 0 3px;background-color:#e5e5e5;-webkit-border-radius:4px}.annotator-editor .annotator-item textarea::-webkit-scrollbar-thumb:vertical{height:25px;background-color:#ccc;-webkit-border-radius:4px;-webkit-box-shadow:0 1px 1px rgba(0,0,0,.1)}.annotator-editor .annotator-item textarea::-webkit-scrollbar-thumb:horizontal{width:25px;background-color:#ccc;-webkit-border-radius:4px}.annotator-editor .annotator-item:first-child textarea{min-height:5.5em;-webkit-border-radius:5px 5px 0 0;-moz-border-radius:5px 5px 0 0;-o-border-radius:5px 5px 0 0;border-radius:5px 5px 0 0}.annotator-editor .annotator-item input:focus,.annotator-editor .annotator-item textarea:focus{background-color:#f3f3f3;outline:0}.annotator-editor .annotator-item input[type=checkbox],.annotator-editor .annotator-item input[type=radio]{width:auto;min-width:0;padding:0;display:inline;margin:0 4px 0 0;cursor:pointer}.annotator-editor .annotator-checkbox{padding:8px 6px}.annotator-editor .annotator-controls,.annotator-filter,.annotator-filter .annotator-filter-navigation button{text-align:right;padding:3px;border-top:1px solid #d4d4d4;background-color:#d4d4d4;background-image:-webkit-gradient(linear,left top,left bottom,from(#f5f5f5),color-stop(.6,#dcdcdc),to(#d2d2d2));background-image:-moz-linear-gradient(to bottom,#f5f5f5,#dcdcdc 60%,#d2d2d2);background-image:-webkit-linear-gradient(to bottom,#f5f5f5,#dcdcdc 60%,#d2d2d2);background-image:linear-gradient(to bottom,#f5f5f5,#dcdcdc 60%,#d2d2d2);-webkit-box-shadow:inset 1px 0 0 rgba(255,255,255,.7),inset -1px 0 0 rgba(255,255,255,.7),inset 0 1px 0 rgba(255,255,255,.7);-moz-box-shadow:inset 1px 0 0 rgba(255,255,255,.7),inset -1px 0 0 rgba(255,255,255,.7),inset 0 1px 0 rgba(255,255,255,.7);-o-box-shadow:inset 1px 0 0 rgba(255,255,255,.7),inset -1px 0 0 rgba(255,255,255,.7),inset 0 1px 0 rgba(255,255,255,.7);box-shadow:inset 1px 0 0 rgba(255,255,255,.7),inset -1px 0 0 rgba(255,255,255,.7),inset 0 1px 0 rgba(255,255,255,.7);-webkit-border-radius:0 0 5px 5px;-moz-border-radius:0 0 5px 5px;-o-border-radius:0 0 5px 5px;border-radius:0 0 5px 5px}.annotator-editor.annotator-invert-y .annotator-controls{border-top:none;border-bottom:1px solid #b4b4b4;-webkit-border-radius:5px 5px 0 0;-moz-border-radius:5px 5px 0 0;-o-border-radius:5px 5px 0 0;border-radius:5px 5px 0 0}.annotator-editor a,.annotator-filter .annotator-filter-property label{position:relative;display:inline-block;padding:0 6px 0 22px;color:#363636;text-shadow:0 1px 0 rgba(255,255,255,.75);text-decoration:none;line-height:24px;font-size:12px;font-weight:700;border:1px solid #a2a2a2;background-color:#d4d4d4;background-image:-webkit-gradient(linear,left top,left bottom,from(#f5f5f5),color-stop(.5,#d2d2d2),color-stop(.5,#bebebe),to(#d2d2d2));background-image:-moz-linear-gradient(to bottom,#f5f5f5,#d2d2d2 50%,#bebebe 50%,#d2d2d2);background-image:-webkit-linear-gradient(to bottom,#f5f5f5,#d2d2d2 50%,#bebebe 50%,#d2d2d2);background-image:linear-gradient(to bottom,#f5f5f5,#d2d2d2 50%,#bebebe 50%,#d2d2d2);-webkit-box-shadow:inset 0 0 5px rgba(255,255,255,.2),inset 0 0 1px rgba(255,255,255,.8);-moz-box-shadow:inset 0 0 5px rgba(255,255,255,.2),inset 0 0 1px rgba(255,255,255,.8);-o-box-shadow:inset 0 0 5px rgba(255,255,255,.2),inset 0 0 1px rgba(255,255,255,.8);box-shadow:inset 0 0 5px rgba(255,255,255,.2),inset 0 0 1px rgba(255,255,255,.8);-webkit-border-radius:5px;-moz-border-radius:5px;-o-border-radius:5px;border-radius:5px}.annotator-editor a:after{position:absolute;top:50%;left:5px;display:block;content:\"\";width:15px;height:15px;margin-top:-7px;background-position:0 -90px}.annotator-editor a.annotator-focus,.annotator-editor a:focus,.annotator-editor a:hover,.annotator-filter .annotator-filter-active label,.annotator-filter .annotator-filter-navigation button:hover{outline:0;border-color:#435aa0;background-color:#3865f9;background-image:-webkit-gradient(linear,left top,left bottom,from(#7691fb),color-stop(.5,#5075fb),color-stop(.5,#3865f9),to(#3665fa));background-image:-moz-linear-gradient(to bottom,#7691fb,#5075fb 50%,#3865f9 50%,#3665fa);background-image:-webkit-linear-gradient(to bottom,#7691fb,#5075fb 50%,#3865f9 50%,#3665fa);background-image:linear-gradient(to bottom,#7691fb,#5075fb 50%,#3865f9 50%,#3665fa);color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.42)}.annotator-editor a:focus:after,.annotator-editor a:hover:after{margin-top:-8px;background-position:0 -105px}.annotator-editor a:active,.annotator-filter .annotator-filter-navigation button:active{border-color:#700c49;background-color:#d12e8e;background-image:-webkit-gradient(linear,left top,left bottom,from(#fc7cca),color-stop(.5,#e85db2),color-stop(.5,#d12e8e),to(#ff009c));background-image:-moz-linear-gradient(to bottom,#fc7cca,#e85db2 50%,#d12e8e 50%,#ff009c);background-image:-webkit-linear-gradient(to bottom,#fc7cca,#e85db2 50%,#d12e8e 50%,#ff009c);background-image:linear-gradient(to bottom,#fc7cca,#e85db2 50%,#d12e8e 50%,#ff009c)}.annotator-editor a.annotator-save:after{background-position:0 -120px}.annotator-editor a.annotator-save.annotator-focus:after,.annotator-editor a.annotator-save:focus:after,.annotator-editor a.annotator-save:hover:after{margin-top:-8px;background-position:0 -135px}.annotator-editor .annotator-widget:after{background-position:0 -30px}.annotator-editor.annotator-invert-y .annotator-widget .annotator-controls{background-color:#f2f2f2}.annotator-editor.annotator-invert-y .annotator-widget:after{background-position:0 -45px;height:11px}.annotator-resize{position:absolute;top:0;right:0;width:12px;height:12px;background-position:2px -150px}.annotator-invert-x .annotator-resize{right:auto;left:0;background-position:0 -195px}.annotator-invert-y .annotator-resize{top:auto;bottom:0;background-position:2px -165px}.annotator-invert-y.annotator-invert-x .annotator-resize{background-position:0 -180px}.annotator-notice{color:#fff;position:fixed;top:-54px;left:0;width:100%;font-size:14px;line-height:50px;text-align:center;background:#000;background:rgba(0,0,0,.9);border-bottom:4px solid #d4d4d4;-webkit-transition:top .4s ease-out;-moz-transition:top .4s ease-out;-o-transition:top .4s ease-out;transition:top .4s ease-out}.annotator-notice-success{border-color:#3665f9}.annotator-notice-error{border-color:#ff7e00}.annotator-notice p{margin:0}.annotator-notice a{color:#fff}.annotator-notice-show{top:0}.annotator-tags{margin-bottom:-2px}.annotator-tags .annotator-tag{display:inline-block;padding:0 8px;margin-bottom:2px;line-height:1.6;font-weight:700;background-color:#e6e6e6;-webkit-border-radius:8px;-moz-border-radius:8px;-o-border-radius:8px;border-radius:8px}.annotator-filter{z-index:1010;position:fixed;top:0;right:0;left:0;text-align:left;line-height:0;border:none;border-bottom:1px solid #878787;padding-left:10px;padding-right:10px;-webkit-border-radius:0;-moz-border-radius:0;-o-border-radius:0;border-radius:0;-webkit-box-shadow:inset 0 -1px 0 rgba(255,255,255,.3);-moz-box-shadow:inset 0 -1px 0 rgba(255,255,255,.3);-o-box-shadow:inset 0 -1px 0 rgba(255,255,255,.3);box-shadow:inset 0 -1px 0 rgba(255,255,255,.3)}.annotator-filter strong{font-size:12px;font-weight:700;color:#3c3c3c;text-shadow:0 1px 0 rgba(255,255,255,.7);position:relative;top:-9px}.annotator-filter .annotator-filter-navigation,.annotator-filter .annotator-filter-property{position:relative;display:inline-block;overflow:hidden;line-height:10px;padding:2px 0;margin-right:8px}.annotator-filter .annotator-filter-navigation button,.annotator-filter .annotator-filter-property label{text-align:left;display:block;float:left;line-height:20px;-webkit-border-radius:10px 0 0 10px;-moz-border-radius:10px 0 0 10px;-o-border-radius:10px 0 0 10px;border-radius:10px 0 0 10px}.annotator-filter .annotator-filter-property label{padding-left:8px}.annotator-filter .annotator-filter-property input{display:block;float:right;-webkit-appearance:none;border:1px solid #878787;border-left:none;padding:2px 4px;line-height:16px;min-height:16px;font-size:12px;width:150px;color:#333;background-color:#f8f8f8;-webkit-border-radius:0 10px 10px 0;-moz-border-radius:0 10px 10px 0;-o-border-radius:0 10px 10px 0;border-radius:0 10px 10px 0;-webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,.2);-moz-box-shadow:inset 0 1px 1px rgba(0,0,0,.2);-o-box-shadow:inset 0 1px 1px rgba(0,0,0,.2);box-shadow:inset 0 1px 1px rgba(0,0,0,.2)}.annotator-filter .annotator-filter-property input:focus{outline:0;background-color:#fff}.annotator-filter .annotator-filter-clear{position:absolute;right:3px;top:6px;border:none;text-indent:-900em;width:15px;height:15px;background-position:0 -90px;opacity:.4}.annotator-filter .annotator-filter-clear:focus,.annotator-filter .annotator-filter-clear:hover{opacity:.8}.annotator-filter .annotator-filter-clear:active{opacity:1}.annotator-filter .annotator-filter-navigation button{border:1px solid #a2a2a2;padding:0;text-indent:-900px;width:20px;min-height:22px;-webkit-box-shadow:inset 0 0 5px rgba(255,255,255,.2),inset 0 0 1px rgba(255,255,255,.8);-moz-box-shadow:inset 0 0 5px rgba(255,255,255,.2),inset 0 0 1px rgba(255,255,255,.8);-o-box-shadow:inset 0 0 5px rgba(255,255,255,.2),inset 0 0 1px rgba(255,255,255,.8);box-shadow:inset 0 0 5px rgba(255,255,255,.2),inset 0 0 1px rgba(255,255,255,.8)}.annotator-filter .annotator-filter-navigation button,.annotator-filter .annotator-filter-navigation button:focus,.annotator-filter .annotator-filter-navigation button:hover{color:transparent}.annotator-filter .annotator-filter-navigation button:after{position:absolute;top:8px;left:8px;content:\"\";display:block;width:9px;height:9px;background-position:0 -210px}.annotator-filter .annotator-filter-navigation button:hover:after{background-position:0 -225px}.annotator-filter .annotator-filter-navigation .annotator-filter-next{-webkit-border-radius:0 10px 10px 0;-moz-border-radius:0 10px 10px 0;-o-border-radius:0 10px 10px 0;border-radius:0 10px 10px 0;border-left:none}.annotator-filter .annotator-filter-navigation .annotator-filter-next:after{left:auto;right:7px;background-position:0 -240px}.annotator-filter .annotator-filter-navigation .annotator-filter-next:hover:after{background-position:0 -255px}.annotator-hl-active{background:#FFFF0A;background:rgba(255,255,10,.8);-ms-filter:\"progid:DXImageTransform.Microsoft.gradient(startColorstr=#CCFFFF0A, endColorstr=#CCFFFF0A)\"}.annotator-hl-filtered{background-color:transparent}"
+},{"./css/annotator.css":2,"./src/app":22,"./src/authz":23,"./src/identity":24,"./src/notification":25,"./src/storage":27,"./src/ui":28,"./src/util":43,"insert-css":16}],2:[function(require,module,exports){
+module.exports = ".annotator-filter *,.annotator-notice,.annotator-widget *{font-family:\"Helvetica Neue\",Arial,Helvetica,sans-serif;font-weight:400;text-align:left;margin:0;padding:0;background:0 0;-webkit-transition:none;-moz-transition:none;-o-transition:none;transition:none;-moz-box-shadow:none;-webkit-box-shadow:none;-o-box-shadow:none;box-shadow:none;color:#909090}.annotator-adder{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJAAAAAwCAYAAAD+WvNWAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowMzgwMTE3NDA3MjA2ODExODRCQUU5RDY0RTkyQTJDNiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDowOUY5RUFERDYwOEIxMUUxOTQ1RDkyQzU2OTNEMDZENCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowOUY5RUFEQzYwOEIxMUUxOTQ1RDkyQzU2OTNEMDZENCIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjA1ODAxMTc0MDcyMDY4MTE5MTA5OUIyNDhFRUQ1QkM4IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjAzODAxMTc0MDcyMDY4MTE4NEJBRTlENjRFOTJBMkM2Ii8+IDwvcmRmOkRlc2NyaXB0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);background-repeat:no-repeat}.annotator-editor a:after,.annotator-filter .annotator-filter-navigation button:after,.annotator-filter .annotator-filter-property .annotator-filter-clear,.annotator-resize,.annotator-viewer .annotator-controls a,.annotator-viewer .annotator-controls button,.annotator-widget:after{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAEiCAYAAAD0w4JOAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RDY0MTMzNTM2QUQzMTFFMUE2REJERDgwQTM3Njg5NTUiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RDY0MTMzNTQ2QUQzMTFFMUE2REJERDgwQTM3Njg5NTUiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo2ODkwQjlFQzZBRDExMUUxQTZEQkREODBBMzc2ODk1NSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpENjQxMzM1MjZBRDMxMUUxQTZEQkREODBBMzc2ODk1NSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PkijPpwAABBRSURBVHja7JsJVBRX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);background-repeat:no-repeat}.annotator-hl{background:#FFFF0A;background:rgba(255,255,10,.3);-ms-filter:\"progid:DXImageTransform.Microsoft.gradient(startColorstr=#4DFFFF0A, endColorstr=#4DFFFF0A)\"}.annotator-hl-temporary{background:#007CFF;background:rgba(0,124,255,.3);-ms-filter:\"progid:DXImageTransform.Microsoft.gradient(startColorstr=#4D007CFF, endColorstr=#4D007CFF)\"}.annotator-hlddi{background:#B0C4DE;background:rgba(176,196,222,.4);-ms-filter:\"progid:DXImageTransform.Microsoft.gradient(startColorstr=#4DFFFF0A, endColorstr=#4DFFFF0A)\"}.annotator-hlddi-temporary{background:#007CFF;background:rgba(0,124,255,.3);-ms-filter:\"progid:DXImageTransform.Microsoft.gradient(startColorstr=#4D007CFF, endColorstr=#4D007CFF)\"}.annotator-wrapper{position:relative}.annotator-adder,.annotator-notice,.annotator-outer{z-index:1020}.annotator-adder,.annotator-notice,.annotator-outer,.annotator-widget{position:absolute;font-size:10px;line-height:1}.annotator-hide{display:none;visibility:hidden}.annotator-adder{margin-top:-48px;margin-left:-24px;width:48px;height:48px;background-position:left top}.annotator-adder:hover{background-position:center top}.annotator-adder:active{background-position:center right}.annotator-adder button{display:block;width:36px;height:41px;margin:0 auto;border:none;background:0 0;text-indent:-999em;cursor:pointer}.annotator-outer{width:0;height:0}.annotator-widget{margin:0;padding:0;bottom:15px;left:-18px;min-width:400px;background-color:#FBFBFB;background-color:rgba(251,251,251,.98);border:1px solid #7A7A7A;border:1px solid rgba(122,122,122,.6);-webkit-border-radius:5px;-moz-border-radius:5px;border-radius:5px;-webkit-box-shadow:0 5px 15px rgba(0,0,0,.2);-moz-box-shadow:0 5px 15px rgba(0,0,0,.2);-o-box-shadow:0 5px 15px rgba(0,0,0,.2);box-shadow:0 5px 15px rgba(0,0,0,.2)}.annotator-invert-x .annotator-widget{left:auto;right:-18px}.annotator-invert-y .annotator-widget{bottom:auto;top:8px}.annotator-widget strong{font-weight:700}.annotator-widget .annotator-item,.annotator-widget .annotator-listing{padding:0;margin:0;list-style:none}.annotator-widget:after{content:\"\";display:block;width:18px;height:10px;background-position:0 0;position:absolute;bottom:-10px;left:8px}.annotator-invert-x .annotator-widget:after{left:auto;right:8px}.annotator-invert-y .annotator-widget:after{background-position:0 -15px;bottom:auto;top:-9px}.annotator-editor .annotator-item input,.annotator-editor .annotator-item textarea,.annotator-widget .annotator-item{position:relative;font-size:12px}.annotator-viewer .annotator-item{border-top:2px solid #7A7A7A;border-top:2px solid rgba(122,122,122,.2)}.annotator-widget .annotator-item:first-child{border-top:none}.annotator-editor .annotator-item,.annotator-viewer div{border-top:1px solid #858585;border-top:1px solid rgba(133,133,133,.11)}.annotator-viewer div{padding:6px}.annotator-viewer .annotator-item ol,.annotator-viewer .annotator-item ul{padding:4px 16px}.annotator-editor .annotator-item:first-child textarea,.annotator-viewer div:first-of-type{padding-top:12px;padding-bottom:12px;color:#3c3c3c;font-size:13px;font-style:italic;line-height:1.3;border-top:none}.annotator-viewer .annotator-controls{position:relative;top:5px;right:5px;padding-left:5px;opacity:0;-webkit-transition:opacity .2s ease-in;-moz-transition:opacity .2s ease-in;-o-transition:opacity .2s ease-in;transition:opacity .2s ease-in;float:right}.annotator-viewer li .annotator-controls.annotator-visible,.annotator-viewer li:hover .annotator-controls{opacity:1}.annotator-viewer .annotator-controls a,.annotator-viewer .annotator-controls button{cursor:pointer;display:inline-block;width:13px;height:13px;margin-left:2px;border:none;opacity:.2;text-indent:-900em;background-color:transparent;outline:0}.annotator-viewer .annotator-controls a:focus,.annotator-viewer .annotator-controls a:hover,.annotator-viewer .annotator-controls button:focus,.annotator-viewer .annotator-controls button:hover{opacity:.9}.annotator-viewer .annotator-controls a:active,.annotator-viewer .annotator-controls button:active{opacity:1}.annotator-viewer .annotator-controls button[disabled]{display:none}.annotator-viewer .annotator-controls .annotator-edit{background-position:0 -60px}.annotator-viewer .annotator-controls .annotator-delete{background-position:0 -75px}.annotator-viewer .annotator-controls .annotator-link{background-position:0 -270px}.annotator-editor .annotator-item{position:relative}.annotator-editor .annotator-item label{top:0;display:inline;cursor:pointer;font-size:12px}.annotator-editor .annotator-item input,.annotator-editor .annotator-item textarea{display:block;min-width:100%;padding:10px 8px;border:none;margin:0;color:#3c3c3c;background:0 0;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;-o-box-sizing:border-box;box-sizing:border-box;resize:none}.annotator-editor .annotator-item textarea::-webkit-scrollbar{height:8px;width:8px}.annotator-editor .annotator-item textarea::-webkit-scrollbar-track-piece{margin:13px 0 3px;background-color:#e5e5e5;-webkit-border-radius:4px}.annotator-editor .annotator-item textarea::-webkit-scrollbar-thumb:vertical{height:25px;background-color:#ccc;-webkit-border-radius:4px;-webkit-box-shadow:0 1px 1px rgba(0,0,0,.1)}.annotator-editor .annotator-item textarea::-webkit-scrollbar-thumb:horizontal{width:25px;background-color:#ccc;-webkit-border-radius:4px}.annotator-editor .annotator-item:first-child textarea{min-height:5.5em;-webkit-border-radius:5px 5px 0 0;-moz-border-radius:5px 5px 0 0;-o-border-radius:5px 5px 0 0;border-radius:5px 5px 0 0}.annotator-editor .annotator-item input:focus,.annotator-editor .annotator-item textarea:focus{background-color:#f3f3f3;outline:0}.annotator-editor .annotator-item input[type=checkbox],.annotator-editor .annotator-item input[type=radio]{width:auto;min-width:0;padding:0;display:inline;margin:0 4px 0 0;cursor:pointer}.annotator-editor .annotator-checkbox{padding:8px 6px}.annotator-editor .annotator-controls,.annotator-filter,.annotator-filter .annotator-filter-navigation button{text-align:right;padding:3px;border-top:1px solid #d4d4d4;background-color:#d4d4d4;background-image:-webkit-gradient(linear,left top,left bottom,from(#f5f5f5),color-stop(.6,#dcdcdc),to(#d2d2d2));background-image:-moz-linear-gradient(to bottom,#f5f5f5,#dcdcdc 60%,#d2d2d2);background-image:-webkit-linear-gradient(to bottom,#f5f5f5,#dcdcdc 60%,#d2d2d2);background-image:linear-gradient(to bottom,#f5f5f5,#dcdcdc 60%,#d2d2d2);-webkit-box-shadow:inset 1px 0 0 rgba(255,255,255,.7),inset -1px 0 0 rgba(255,255,255,.7),inset 0 1px 0 rgba(255,255,255,.7);-moz-box-shadow:inset 1px 0 0 rgba(255,255,255,.7),inset -1px 0 0 rgba(255,255,255,.7),inset 0 1px 0 rgba(255,255,255,.7);-o-box-shadow:inset 1px 0 0 rgba(255,255,255,.7),inset -1px 0 0 rgba(255,255,255,.7),inset 0 1px 0 rgba(255,255,255,.7);box-shadow:inset 1px 0 0 rgba(255,255,255,.7),inset -1px 0 0 rgba(255,255,255,.7),inset 0 1px 0 rgba(255,255,255,.7);-webkit-border-radius:0 0 5px 5px;-moz-border-radius:0 0 5px 5px;-o-border-radius:0 0 5px 5px;border-radius:0 0 5px 5px}.annotator-editor.annotator-invert-y .annotator-controls{border-top:none;border-bottom:1px solid #b4b4b4;-webkit-border-radius:5px 5px 0 0;-moz-border-radius:5px 5px 0 0;-o-border-radius:5px 5px 0 0;border-radius:5px 5px 0 0}.annotator-editor a,.annotator-filter .annotator-filter-property label{position:relative;display:inline-block;padding:0 6px 0 22px;color:#363636;text-shadow:0 1px 0 rgba(255,255,255,.75);text-decoration:none;line-height:24px;font-size:12px;font-weight:700;border:1px solid #a2a2a2;background-color:#d4d4d4;background-image:-webkit-gradient(linear,left top,left bottom,from(#f5f5f5),color-stop(.5,#d2d2d2),color-stop(.5,#bebebe),to(#d2d2d2));background-image:-moz-linear-gradient(to bottom,#f5f5f5,#d2d2d2 50%,#bebebe 50%,#d2d2d2);background-image:-webkit-linear-gradient(to bottom,#f5f5f5,#d2d2d2 50%,#bebebe 50%,#d2d2d2);background-image:linear-gradient(to bottom,#f5f5f5,#d2d2d2 50%,#bebebe 50%,#d2d2d2);-webkit-box-shadow:inset 0 0 5px rgba(255,255,255,.2),inset 0 0 1px rgba(255,255,255,.8);-moz-box-shadow:inset 0 0 5px rgba(255,255,255,.2),inset 0 0 1px rgba(255,255,255,.8);-o-box-shadow:inset 0 0 5px rgba(255,255,255,.2),inset 0 0 1px rgba(255,255,255,.8);box-shadow:inset 0 0 5px rgba(255,255,255,.2),inset 0 0 1px rgba(255,255,255,.8);-webkit-border-radius:5px;-moz-border-radius:5px;-o-border-radius:5px;border-radius:5px}.annotator-editor a:after{position:absolute;top:50%;left:5px;display:block;content:\"\";width:15px;height:15px;margin-top:-7px;background-position:0 -90px}.annotator-editor a.annotator-focus,.annotator-editor a:focus,.annotator-editor a:hover,.annotator-filter .annotator-filter-active label,.annotator-filter .annotator-filter-navigation button:hover{outline:0;border-color:#435aa0;background-color:#3865f9;background-image:-webkit-gradient(linear,left top,left bottom,from(#7691fb),color-stop(.5,#5075fb),color-stop(.5,#3865f9),to(#3665fa));background-image:-moz-linear-gradient(to bottom,#7691fb,#5075fb 50%,#3865f9 50%,#3665fa);background-image:-webkit-linear-gradient(to bottom,#7691fb,#5075fb 50%,#3865f9 50%,#3665fa);background-image:linear-gradient(to bottom,#7691fb,#5075fb 50%,#3865f9 50%,#3665fa);color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.42)}.annotator-editor a:focus:after,.annotator-editor a:hover:after{margin-top:-8px;background-position:0 -105px}.annotator-editor a:active,.annotator-filter .annotator-filter-navigation button:active{border-color:#700c49;background-color:#d12e8e;background-image:-webkit-gradient(linear,left top,left bottom,from(#fc7cca),color-stop(.5,#e85db2),color-stop(.5,#d12e8e),to(#ff009c));background-image:-moz-linear-gradient(to bottom,#fc7cca,#e85db2 50%,#d12e8e 50%,#ff009c);background-image:-webkit-linear-gradient(to bottom,#fc7cca,#e85db2 50%,#d12e8e 50%,#ff009c);background-image:linear-gradient(to bottom,#fc7cca,#e85db2 50%,#d12e8e 50%,#ff009c)}.annotator-editor a.annotator-save:after{background-position:0 -120px}.annotator-editor a.annotator-save.annotator-focus:after,.annotator-editor a.annotator-save:focus:after,.annotator-editor a.annotator-save:hover:after{margin-top:-8px;background-position:0 -135px}.annotator-editor .annotator-widget:after{background-position:0 -30px}.annotator-editor.annotator-invert-y .annotator-widget .annotator-controls{background-color:#f2f2f2}.annotator-editor.annotator-invert-y .annotator-widget:after{background-position:0 -45px;height:11px}.annotator-resize{position:absolute;top:0;right:0;width:12px;height:12px;background-position:2px -150px}.annotator-invert-x .annotator-resize{right:auto;left:0;background-position:0 -195px}.annotator-invert-y .annotator-resize{top:auto;bottom:0;background-position:2px -165px}.annotator-invert-y.annotator-invert-x .annotator-resize{background-position:0 -180px}.annotator-notice{color:#fff;position:fixed;top:-54px;left:0;width:100%;font-size:14px;line-height:50px;text-align:center;background:#000;background:rgba(0,0,0,.9);border-bottom:4px solid #d4d4d4;-webkit-transition:top .4s ease-out;-moz-transition:top .4s ease-out;-o-transition:top .4s ease-out;transition:top .4s ease-out}.annotator-notice-success{border-color:#3665f9}.annotator-notice-error{border-color:#ff7e00}.annotator-notice p{margin:0}.annotator-notice a{color:#fff}.annotator-notice-show{top:0}.annotator-tags{margin-bottom:-2px}.annotator-tags .annotator-tag{display:inline-block;padding:0 8px;margin-bottom:2px;line-height:1.6;font-weight:700;background-color:#e6e6e6;-webkit-border-radius:8px;-moz-border-radius:8px;-o-border-radius:8px;border-radius:8px}.annotator-filter{z-index:1010;position:fixed;top:0;right:0;left:0;text-align:left;line-height:0;border:none;border-bottom:1px solid #878787;padding-left:10px;padding-right:10px;-webkit-border-radius:0;-moz-border-radius:0;-o-border-radius:0;border-radius:0;-webkit-box-shadow:inset 0 -1px 0 rgba(255,255,255,.3);-moz-box-shadow:inset 0 -1px 0 rgba(255,255,255,.3);-o-box-shadow:inset 0 -1px 0 rgba(255,255,255,.3);box-shadow:inset 0 -1px 0 rgba(255,255,255,.3)}.annotator-filter strong{font-size:12px;font-weight:700;color:#3c3c3c;text-shadow:0 1px 0 rgba(255,255,255,.7);position:relative;top:-9px}.annotator-filter .annotator-filter-navigation,.annotator-filter .annotator-filter-property{position:relative;display:inline-block;overflow:hidden;line-height:10px;padding:2px 0;margin-right:8px}.annotator-filter .annotator-filter-navigation button,.annotator-filter .annotator-filter-property label{text-align:left;display:block;float:left;line-height:20px;-webkit-border-radius:10px 0 0 10px;-moz-border-radius:10px 0 0 10px;-o-border-radius:10px 0 0 10px;border-radius:10px 0 0 10px}.annotator-filter .annotator-filter-property label{padding-left:8px}.annotator-filter .annotator-filter-property input{display:block;float:right;-webkit-appearance:none;border:1px solid #878787;border-left:none;padding:2px 4px;line-height:16px;min-height:16px;font-size:12px;width:150px;color:#333;background-color:#f8f8f8;-webkit-border-radius:0 10px 10px 0;-moz-border-radius:0 10px 10px 0;-o-border-radius:0 10px 10px 0;border-radius:0 10px 10px 0;-webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,.2);-moz-box-shadow:inset 0 1px 1px rgba(0,0,0,.2);-o-box-shadow:inset 0 1px 1px rgba(0,0,0,.2);box-shadow:inset 0 1px 1px rgba(0,0,0,.2)}.annotator-filter .annotator-filter-property input:focus{outline:0;background-color:#fff}.annotator-filter .annotator-filter-clear{position:absolute;right:3px;top:6px;border:none;text-indent:-900em;width:15px;height:15px;background-position:0 -90px;opacity:.4}.annotator-filter .annotator-filter-clear:focus,.annotator-filter .annotator-filter-clear:hover{opacity:.8}.annotator-filter .annotator-filter-clear:active{opacity:1}.annotator-filter .annotator-filter-navigation button{border:1px solid #a2a2a2;padding:0;text-indent:-900px;width:20px;min-height:22px;-webkit-box-shadow:inset 0 0 5px rgba(255,255,255,.2),inset 0 0 1px rgba(255,255,255,.8);-moz-box-shadow:inset 0 0 5px rgba(255,255,255,.2),inset 0 0 1px rgba(255,255,255,.8);-o-box-shadow:inset 0 0 5px rgba(255,255,255,.2),inset 0 0 1px rgba(255,255,255,.8);box-shadow:inset 0 0 5px rgba(255,255,255,.2),inset 0 0 1px rgba(255,255,255,.8)}.annotator-filter .annotator-filter-navigation button,.annotator-filter .annotator-filter-navigation button:focus,.annotator-filter .annotator-filter-navigation button:hover{color:transparent}.annotator-filter .annotator-filter-navigation button:after{position:absolute;top:8px;left:8px;content:\"\";display:block;width:9px;height:9px;background-position:0 -210px}.annotator-filter .annotator-filter-navigation button:hover:after{background-position:0 -225px}.annotator-filter .annotator-filter-navigation .annotator-filter-next{-webkit-border-radius:0 10px 10px 0;-moz-border-radius:0 10px 10px 0;-o-border-radius:0 10px 10px 0;border-radius:0 10px 10px 0;border-left:none}.annotator-filter .annotator-filter-navigation .annotator-filter-next:after{left:auto;right:7px;background-position:0 -240px}.annotator-filter .annotator-filter-navigation .annotator-filter-next:hover:after{background-position:0 -255px}.annotator-hl-active{background:#FFFF0A;background:rgba(255,255,10,.8);-ms-filter:\"progid:DXImageTransform.Microsoft.gradient(startColorstr=#CCFFFF0A, endColorstr=#CCFFFF0A)\"}.annotator-hl-filtered{background-color:transparent}"
 },{}],3:[function(require,module,exports){
 (function (definition) {
   if (typeof exports === "object") {
@@ -12321,7 +12321,7 @@ exports.SUCCESS = SUCCESS;
 exports.ERROR = ERROR;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./util":41}],26:[function(require,module,exports){
+},{"./util":43}],26:[function(require,module,exports){
 /*package annotator.registry */
 
 "use strict";
@@ -13097,29 +13097,32 @@ StorageAdapter.prototype._cycle = function (
 
 exports.StorageAdapter = StorageAdapter;
 
-},{"./util":41}],28:[function(require,module,exports){
+},{"./util":43}],28:[function(require,module,exports){
 // Main module: default UI
-//exports.main = require('./ui/main').main;
 
 // Export submodules for browser environments
-exports.adder = require('./ui/adder');
-
-//exports.editor = require('./ui/editor');
-//exports.viewer = require('./ui/viewer');
-
 exports.filter = require('./ui/filter');
-exports.highlighter = require('./ui/highlighter');
 exports.markdown = require('./ui/markdown');
 exports.tags = require('./ui/tags');
 exports.textselector = require('./ui/textselector');
 exports.widget = require('./ui/widget');
 
-//ddiPlugin
-exports.main = require('./ui/ddiPlugin/ddimain').main;
+// drug mention 
+exports.editor = require('./ui/editor');
+exports.viewer = require('./ui/viewer');
+exports.adder = require('./ui/adder');
+exports.highlighter = require('./ui/highlighter');
+
+// ddiPlugin
 exports.ddieditor = require('./ui/ddiPlugin/ddieditor');
 exports.ddiviewer = require('./ui/ddiPlugin/ddiviewer');
+exports.ddiadder = require('./ui/ddiPlugin/ddiadder');
+exports.ddihighlighter = require('./ui/ddiPlugin/ddihighlighter');
 
-},{"./ui/adder":29,"./ui/ddiPlugin/ddieditor":30,"./ui/ddiPlugin/ddimain":31,"./ui/ddiPlugin/ddiviewer":32,"./ui/filter":34,"./ui/highlighter":35,"./ui/markdown":36,"./ui/tags":37,"./ui/textselector":38,"./ui/widget":40}],29:[function(require,module,exports){
+// dbmi main
+exports.dbmimain = require('./ui/dbmimain').main;
+
+},{"./ui/adder":29,"./ui/dbmimain":30,"./ui/ddiPlugin/ddiadder":31,"./ui/ddiPlugin/ddieditor":32,"./ui/ddiPlugin/ddihighlighter":33,"./ui/ddiPlugin/ddiviewer":34,"./ui/editor":35,"./ui/filter":36,"./ui/highlighter":37,"./ui/markdown":38,"./ui/tags":39,"./ui/textselector":40,"./ui/viewer":41,"./ui/widget":42}],29:[function(require,module,exports){
 "use strict";
 
 var Widget = require('./widget').Widget,
@@ -13258,6 +13261,7 @@ var Adder = Widget.extend({
 
         // Create a new annotation
         if (this.annotation !== null && typeof this.onCreate === 'function') {
+            this.annotation.annotationType = "DrugMention";
             this.onCreate(this.annotation, event);
         }
     }
@@ -13265,7 +13269,7 @@ var Adder = Widget.extend({
 
 Adder.template = [
     '<div class="annotator-adder annotator-hide">',
-    '  <button type="button">' + _t('Annotate') + '</button>',
+    '  <button type="button" title="Highlight">' + _t('Annotate') + '</button>',
     '</div>'
 ].join('\n');
 
@@ -13279,7 +13283,585 @@ Adder.options = {
 
 exports.Adder = Adder;
 
-},{"../util":41,"./widget":40}],30:[function(require,module,exports){
+},{"../util":43,"./widget":42}],30:[function(require,module,exports){
+(function (global){
+/*package annotator.ui */
+"use strict";
+
+var util = require('../util');
+var textselector = require('./textselector');
+
+// ddi
+var ddiadder = require('./ddiPlugin/ddiadder');
+var ddihighlighter = require('./ddiPlugin/ddihighlighter');
+var ddieditor = require('./ddiPlugin/ddieditor');
+var ddiviewer = require('./ddiPlugin/ddiviewer');
+
+// highlight
+var hladder = require('./adder');
+var hleditor = require('./editor');
+var hlhighlighter = require('./highlighter');
+var hlviewer = require('./viewer');
+
+var _t = util.gettext;
+
+// trim strips whitespace from either end of a string.
+//
+// This usually exists in native code, but not in IE8.
+function trim(s) {
+    if (typeof String.prototype.trim === 'function') {
+        return String.prototype.trim.call(s);
+    } else {
+        return s.replace(/^[\s\xA0]+|[\s\xA0]+$/g, '');
+    }
+}
+
+
+// annotationFactory returns a function that can be used to construct an
+// annotation from a list of selected ranges.
+function annotationFactory(contextEl, ignoreSelector) {
+    return function (ranges) {
+        var text = [],
+            serializedRanges = [];
+
+        for (var i = 0, len = ranges.length; i < len; i++) {
+            var r = ranges[i];
+            text.push(trim(r.text()));
+            serializedRanges.push(r.serialize(contextEl, ignoreSelector));
+        }
+        return {
+            quote: text.join(' / '),
+            ranges: serializedRanges
+        };
+    };
+}
+
+
+// maxZIndex returns the maximum z-index of all elements in the provided set.
+function maxZIndex(elements) {
+    var max = -1;
+    for (var i = 0, len = elements.length; i < len; i++) {
+        var $el = util.$(elements[i]);
+        if ($el.css('position') !== 'static') {
+            // Use parseFloat since we may get scientific notation for large
+            // values.
+            var zIndex = parseFloat($el.css('z-index'));
+            if (zIndex > max) {
+                max = zIndex;
+            }
+        }
+    }
+    return max;
+}
+
+
+// Helper function to inject CSS into the page that ensures Annotator elements
+// are displayed with the highest z-index.
+function injectDynamicStyle() {
+    util.$('#annotator-dynamic-style').remove();
+
+    var sel = '*' +
+              ':not(annotator-adder)' +
+              ':not(annotator-outer)' +
+              ':not(annotator-notice)' +
+              ':not(annotator-filter)';
+
+    // use the maximum z-index in the page
+    var max = maxZIndex(util.$(global.document.body).find(sel).get());
+
+    // but don't go smaller than 1010, because this isn't bulletproof --
+    // dynamic elements in the page (notifications, dialogs, etc.) may well
+    // have high z-indices that we can't catch using the above method.
+    max = Math.max(max, 1000);
+
+    var rules = [
+        ".annotator-adder, .annotator-outer, .annotator-notice {",
+        "  z-index: " + (max + 20) + ";",
+        "}",
+        ".annotator-filter {",
+        "  z-index: " + (max + 10) + ";",
+        "}"
+    ].join("\n");
+
+    util.$('<style>' + rules + '</style>')
+        .attr('id', 'annotator-dynamic-style')
+        .attr('type', 'text/css')
+        .appendTo('head');
+}
+
+
+// Helper function to remove dynamic stylesheets
+function removeDynamicStyle() {
+    util.$('#annotator-dynamic-style').remove();
+}
+
+
+// Helper function to add permissions checkboxes to the editor
+function addPermissionsCheckboxes(editor, ident, authz) {
+
+    function createLoadCallback(action) {
+        return function loadCallback(field, annotation) {
+            field = util.$(field).show();
+
+            var u = ident.who();
+            var input = field.find('input');
+
+            //alert('ddi main - load - user ident:' + u)
+
+            // Do not show field if no user is set
+            if (typeof u === 'undefined' || u === null || u == "") {
+                field.hide();
+            }
+
+            // Do not show field if current user is not admin.
+            if (!(authz.permits('admin', annotation, u))) {
+                field.hide();
+            }
+
+            // See if we can authorise without a user.
+            if (authz.permits(action, annotation, null)) {
+                input.attr('checked', 'checked');
+            } else {
+                input.removeAttr('checked');
+            }
+        };
+    }
+
+    function createSubmitCallback(action) {
+        return function submitCallback(field, annotation) {
+            var u = ident.who();
+
+            // Don't do anything if no user is set
+            if (typeof u === 'undefined' || u === null || u == "") {
+                return;
+            }
+
+            if (!annotation.permissions) {
+                annotation.permissions = {};
+            }
+
+
+            if (util.$(field).find('input').is(':checked')) {
+                delete annotation.permissions[action];
+            } else {
+                // While the permissions model allows for more complex entries
+                // than this, our UI presents a checkbox, so we can only
+                // interpret "prevent others from viewing" as meaning "allow
+                // only me to view". This may want changing in the future.
+                annotation.permissions[action] = [
+                    authz.authorizedUserId(u)
+                ];
+            }
+        };
+    }
+
+    editor.addField({
+        type: 'checkbox',
+        label: _t('Allow anyone to <strong>view</strong> this annotation'),
+        load: createLoadCallback('read'),
+        submit: createSubmitCallback('read')
+    });
+
+    editor.addField({
+        type: 'checkbox',
+        label: _t('Allow anyone to <strong>edit</strong> this annotation'),
+        load: createLoadCallback('update'),
+        submit: createSubmitCallback('update')
+    });
+
+    // add checkbox for set delete permission 
+    editor.addField({
+        type: 'checkbox',
+        label: _t('Allow anyone to <strong>delete</strong> this annotation'),
+        load: createLoadCallback('delete'),
+        submit: createSubmitCallback('delete')
+    });
+}
+
+
+/**
+   
+ */
+function main(options) {
+    if (typeof options === 'undefined' || options === null) {
+        options = {};
+    }
+
+    options.element = options.element || global.document.body;
+    options.editorExtensions = options.editorExtensions || [];
+    options.viewerExtensions = options.viewerExtensions || [];
+
+    // Local helpers
+    var makeDDIAnnotation = annotationFactory(options.element, '.annotator-hlddi');
+    var makeHLAnnotation = annotationFactory(options.element, '.annotator-hl');
+
+    // Object to hold local state
+    var s = {
+        interactionPoint: null
+    };
+
+    function start(app) {
+        var ident = app.registry.getUtility('identityPolicy');
+        var authz = app.registry.getUtility('authorizationPolicy');
+
+        // ddi adder
+        s.ddiadder = new ddiadder.ddiAdder({
+            onCreate: function (ann) {
+                app.annotations.create(ann);
+            }
+        });
+        s.ddiadder.attach();
+
+        // highlight adder
+        s.hladder = new hladder.Adder({
+            onCreate: function (ann) {
+                app.annotations.create(ann);
+            }
+        });
+        s.hladder.attach();
+
+        // highlight ddi editor
+        s.ddieditor = new ddieditor.ddiEditor({
+            extensions: options.editorExtensions
+        });
+        s.ddieditor.attach();
+
+        s.hleditor = new hleditor.Editor({
+            extensions: options.editorExtensions
+        });
+        s.hleditor.attach();
+
+        addPermissionsCheckboxes(s.ddieditor, ident, authz);
+        //addPermissionsCheckboxes(s.hleditor, ident, authz);
+        
+        //highlighter
+        s.ddihighlighter = new ddihighlighter.ddiHighlighter(options.element);
+        s.hlhighlighter = new hlhighlighter.Highlighter(options.element);
+
+        s.textselector = new textselector.TextSelector(options.element, {
+            onSelection: function (ranges, event) {
+                if (ranges.length > 0) {
+                    var ddiAnnotation = makeDDIAnnotation(ranges);
+                    var hlAnnotation = makeHLAnnotation(ranges);
+
+                    s.interactionPoint = util.mousePosition(event);
+
+                    s.ddiadder.load(ddiAnnotation, s.interactionPoint);
+                    s.hladder.load(hlAnnotation, s.interactionPoint);
+                } else {
+                    s.ddiadder.hide();
+                    s.hladder.hide();
+                }
+            }
+        });
+
+        // ddi viewer
+        s.ddiviewer = new ddiviewer.ddiViewer({
+            onEdit: function (ann) {
+                // Copy the interaction point from the shown viewer:
+                s.interactionPoint = util.$(s.ddiviewer.element)
+                                         .css(['top', 'left']);
+
+                app.annotations.update(ann);
+            },
+            onDelete: function (ann) {
+                app.annotations['delete'](ann);
+            },
+            permitEdit: function (ann) {
+                return authz.permits('update', ann, ident.who());
+            },
+            permitDelete: function (ann) {
+                return authz.permits('delete', ann, ident.who());
+            },
+            autoViewHighlights: options.element,
+            extensions: options.viewerExtensions
+        });
+        
+        s.ddiviewer.attach();
+
+        // highlight viewer
+
+        s.hlviewer = new hlviewer.Viewer({
+            onEdit: function (ann) {
+                // Copy the interaction point from the shown viewer:
+                s.interactionPoint = util.$(s.hlviewer.element)
+                    .css(['top', 'left']);
+
+                app.annotations.update(ann);
+            },
+            onDelete: function (ann) {
+                app.annotations['delete'](ann);
+            },
+            permitEdit: function (ann) {
+                return authz.permits('update', ann, ident.who());
+            },
+            permitDelete: function (ann) {
+                return authz.permits('delete', ann, ident.who());
+            },
+            autoViewHighlights: options.element,
+            extensions: options.viewerExtensions
+        });
+        s.hlviewer.attach();
+
+        
+        injectDynamicStyle();
+    }
+
+    return {
+        start: start,
+
+        destroy: function () {
+            s.adder.destroy();
+            s.editor.destroy();
+            s.highlighter.destroy();
+            s.textselector.destroy();
+            s.viewer.destroy();
+            removeDynamicStyle();
+        },
+
+        annotationsLoaded: function (anns) { 
+            s.ddihighlighter.drawAll(anns); 
+            s.hlhighlighter.drawAll(anns);
+        },
+        annotationCreated: function (ann) { 
+            // yifan draw annotation on text 
+            if (ann.annotationType == "DDI"){
+                s.ddihighlighter.draw(ann); 
+            } else if (ann.annotationType == "DrugMention"){
+                s.hlhighlighter.draw(ann);
+            } else {
+                alert('[WARNING] main.js - annotationCreated - annot type not defined: ' + ann.annotationType);               
+            }
+        },
+        annotationDeleted: function (ann) {
+            s.ddihighlighter.undraw(ann); 
+            s.hlhighlighter.undraw(ann);
+        },
+        annotationUpdated: function (ann) { 
+ 
+            if (ann.annotationType == "DDI"){
+                s.ddihighlighter.redraw(ann); 
+            } else if (ann.annotationType == "DrugMention"){
+                s.hlhighlighter.redraw(ann);
+            } else {
+                alert('[WARNING] main.js - annotationUpdated - annot type not defined: ' + ann.annotationType);               
+            }
+            
+        },
+
+        beforeAnnotationCreated: function (annotation) {
+            // Editor#load returns a promise that is resolved if editing
+            // completes, and rejected if editing is cancelled. We return it
+            // here to "stall" the annotation process until the editing is
+            // done.
+
+            // yifan: call different editor based on annotation type
+
+            if (annotation.annotationType == "DDI"){
+                return s.ddieditor.load(annotation, s.interactionPoint);
+            } else if (annotation.annotationType == "DrugMention") {
+                // return s.hleditor.load(annotation, s.interactionPoint);
+                // yifan: not show editor when typed as Drug mention
+                return null;
+            } else {
+                //return s.ddieditor.load(annotation, s.interactionPoint);
+                return null;
+            }
+
+
+        },
+
+        beforeAnnotationUpdated: function (annotation) {
+
+            //alert('testmain.js - beforeAnnotationUpdated - annotation type defined: ' + annotation.annotationType);
+
+            if (annotation.annotationType == "DDI"){
+                return s.ddieditor.load(annotation, s.interactionPoint);
+            } else if (annotation.annotationType == "DrugMention") {
+                // return s.hleditor.load(annotation, s.interactionPoint);
+                return null;
+            } else {
+                //return s.ddieditor.load(annotation, s.interactionPoint);
+                return null;
+            }
+        }
+    };
+}
+
+
+exports.main = main;
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"../util":43,"./adder":29,"./ddiPlugin/ddiadder":31,"./ddiPlugin/ddieditor":32,"./ddiPlugin/ddihighlighter":33,"./ddiPlugin/ddiviewer":34,"./editor":35,"./highlighter":37,"./textselector":40,"./viewer":41}],31:[function(require,module,exports){
+"use strict";
+
+var Widget = require('../widget').Widget,
+    util = require('../../util');
+
+var $ = util.$;
+var _t = util.gettext;
+
+var NS = 'annotator-adder';
+
+
+// Adder shows and hides an annotation adder button that can be clicked on to
+// create an annotation.
+var ddiAdder = Widget.extend({
+
+    constructor: function (options) {
+        Widget.call(this, options);
+
+        this.ignoreMouseup = false;
+        this.annotation = null;
+
+        this.onCreate = this.options.onCreate;
+
+        var self = this;
+        this.element
+            .on("click." + NS, 'button', function (e) {
+                self._onClick(e);
+            })
+            .on("mousedown." + NS, 'button', function (e) {
+                self._onMousedown(e);
+            });
+
+        this.document = this.element[0].ownerDocument;
+        $(this.document.body).on("mouseup." + NS, function (e) {
+            self._onMouseup(e);
+        });
+    },
+
+    destroy: function () {
+        this.element.off("." + NS);
+        $(this.document.body).off("." + NS);
+        Widget.prototype.destroy.call(this);
+    },
+
+    // Public: Load an annotation and show the adder.
+    //
+    // annotation - An annotation Object to load.
+    // position - An Object specifying the position in which to show the editor
+    //            (optional).
+    //
+    // If the user clicks on the adder with an annotation loaded, the onCreate
+    // handler will be called. In this way, the adder can serve as an
+    // intermediary step between making a selection and creating an annotation.
+    //
+    // Returns nothing.
+    load: function (annotation, position) {
+        this.annotation = annotation;
+        this.show(position);
+    },
+
+    // Public: Show the adder.
+    //
+    // position - An Object specifying the position in which to show the editor
+    //            (optional).
+    //
+    // Examples
+    //
+    //   adder.show()
+    //   adder.hide()
+    //   adder.show({top: '100px', left: '80px'})
+    //
+    // Returns nothing.
+    show: function (position) {
+        if (typeof position !== 'undefined' && position !== null) {
+            this.element.css({
+                top: position.top,
+
+                // avoid overlapping with drug mention editor
+                left: position.left + 35
+            });
+        }
+        Widget.prototype.show.call(this);
+    },
+
+    // Event callback: called when the mouse button is depressed on the adder.
+    //
+    // event - A mousedown Event object
+    //
+    // Returns nothing.
+    _onMousedown: function (event) {
+        // Do nothing for right-clicks, middle-clicks, etc.
+        if (event.which > 1) {
+            return;
+        }
+
+        event.preventDefault();
+        // Prevent the selection code from firing when the mouse button is
+        // released
+        this.ignoreMouseup = true;
+    },
+
+    // Event callback: called when the mouse button is released
+    //
+    // event - A mouseup Event object
+    //
+    // Returns nothing.
+    _onMouseup: function (event) {
+        // Do nothing for right-clicks, middle-clicks, etc.
+        if (event.which > 1) {
+            return;
+        }
+
+        // Prevent the selection code from firing when the ignoreMouseup flag is
+        // set
+        if (this.ignoreMouseup) {
+            event.stopImmediatePropagation();
+        }
+    },
+
+    // Event callback: called when the adder is clicked. The click event is used
+    // as well as the mousedown so that we get the :active state on the adder
+    // when clicked.
+    //
+    // event - A mousedown Event object
+    //
+    // Returns nothing.
+    _onClick: function (event) {
+        // Do nothing for right-clicks, middle-clicks, etc.
+        if (event.which > 1) {
+            return;
+        }
+
+        event.preventDefault();
+
+        // Hide the adder
+        this.hide();
+        this.ignoreMouseup = false;
+
+        // Create a new annotation
+     
+        if (this.annotation !== null && typeof this.onCreate === 'function') {
+            this.annotation.annotationType = "DDI";
+            this.onCreate(this.annotation, event);
+        }
+    }
+});
+
+// from hypothesis
+  // Guest.prototype.html = jQuery.extend({}, Annotator.prototype.html, {
+  //   adder: '<div class="annotator-adder">\n  <button class="h-icon-insert-comment" data-action="comment" title="New Note"></button>\n  <button class="h-icon-border-color" data-action="highlight" title="Highlight"></button>\n</div>'
+  // });
+
+ddiAdder.template = [
+    '<div class="annotator-adder annotator-hide">',
+    '  <button type="button" title="DDI">' + _t('Annotate') + '</button>',
+    '</div>'
+].join('\n');
+
+// Configuration options
+ddiAdder.options = {
+    // Callback, called when the user clicks the adder when an
+    // annotation is loaded.
+    onCreate: null
+};
+
+
+exports.ddiAdder = ddiAdder;
+
+},{"../../util":43,"../widget":42}],32:[function(require,module,exports){
 var Widget = require('../widget').Widget,
     util = require('../../util');
 
@@ -13393,172 +13975,31 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
             });
 
 
-	        //add new fields: drug name, source type
+            
 	        this.addField({
-	    	label: _t('ddi Drug name') + '\u2026',
+	    	label: _t('Drug preciptant') + '\u2026',
 	    	    type:  'textarea',
-                id:'drugName',
+                id:'drugprecipt',
 	    	    load: function (field, annotation) {
-	    	        $(field).find('#drugName').val(annotation.drug || '');
+	    	        $(field).find('#drugprecipt').val(annotation.drugPrecipt || '');
 	    	    },
 	    	    submit: function (field, annotation){
-	    	        annotation.drug = $(field).find('#drugName').val();
+	    	        annotation.drugPrecipt = $(field).find('#drugprecipt').val();
 	    	    }
 	        });
 
 
-            this.addField({
-                label:'Drug Role: ',
-                type:  'div',
-                id: 'qrole',
-                load: function (field, annotation) {
-                    if($(field).find('#qrole div').length === 0){
-                    $(field).find('#qrole')
-                        .append('<div /> ' + _t('Drug Role'));
-                }}
-
-            });
-
-
-            unknowitem.addField({
-                label: 'Drug Role',
-                type:  'div',
-                id: 'annotator-field-my-checkbox',
-                load: function (field, annotation) {
-                    if($(field).find('#annotator-field-my-checkbox input').length === 0) {
-                        $(field).find('#annotator-field-my-checkbox')
-                            .append('<input type="checkbox" class="checkvalue" id="Object" value="Object" /> ' + 'Object' + '&nbsp');
-                        $(field).find('#annotator-field-my-checkbox')
-                            .append('<input type="checkbox" class="checkvalue" id="Precipitant" value="Precipitant" /> ' + 'Precipitant' + '<br />');
-
-                    }
-                    $('#annotator-field-my-checkbox input').each(function(){ this.checked = false; });
-                    $('#annotator-field-my-checkbox input').each(function(){ if(this.value === annotation.drugrole) this.checked = true; });
-                    $(field).find('#annotator-field-my-checkbox #Object').on('change',function() {
-
-                        $('#testtext2').hide();
-                        $('#testtext1').show("slow");
-                    });
-
-                    $(field).find('#annotator-field-my-checkbox #Precipitant').on('change',function() {
-
-                        $('#testtext1').hide();
-                        $('#testtext2').show("slow");
-                    });
-                    $('input[type="checkbox"]').on('change', function () {
-
-                            //alert($('.checkvalue').val());
-                            // uncheck sibling checkboxes (checkboxes on the same row)
-                            $(this).siblings().prop('checked', false);
-
-                            // uncheck checkboxes in the same column
-                            $('div').find('input[type="checkbox"]:eq(' + $(this).index() + ')').not(this).prop('checked', false);
-
-                        });
-
-                    //$(field).find('#annotator-field-1').val(annotation.drug || '');
-                },
-                submit: function (field, annotation){
-                    $.each($("input[class='checkvalue']:checked"), function(){
-                        annotation.drugrole = $(this).val();
-                    });
-                    //annotation.drug = $(field).find('#annotator-field-1').val();
-                }
-            });
-
-            this.addField({
-                type: 'textarea',
-                label: _t('Object Options') + '\u2026',
-                id: 'testtext1',
-                load: function (field, annotation) {
-                    //$(field).find('#testtext').val("' " + annotation.quote + " '" || '');
-                    //alert(annotation.quote);
-                    $(field).find('#testtext1').css('background','#DEDEDE');
-                    //if(annotation.objectoptions=="")
-                    $(field).find('#testtext1').hide();
-                },
-                submit: function (field, annotation){
-                    if($('#annotator-field-my-checkbox #Object').is(':checked')) {
-                        alert($(field).find('#testtext1').val());
-                        annotation.objectoptions = $(field).find('#testtext1').val();
-                    }
-                }
-            });
-
-
-            this.addField({
-                type: 'textarea',
-                label: _t('Precipitant Options') + '\u2026',
-                id: 'testtext2',
-                load: function (field, annotation) {
-                    //$(field).find('#testtext').val("' " + annotation.quote + " '" || '');
-                    //alert(annotation.quote);
-                    $(field).find('#testtext2').css('background','#DEDEDE');
-                    $(field).find('#testtext2').hide();
-                },
-                submit: function (field, annotation){
-                    if($('#annotator-field-my-checkbox #Precipitant').is(':checked')) {
-                        annotation.precipitantoptions = $(field).find('#testtext2').val();
-                    }
-                }
-            });
-
-            this.addField({
-                label:'Source Type: ',
-                type:  'div',
-                id: 'qtype',
-                load: function (field, annotation) {
-                    if($(field).find('#qtype div').length === 0){
-                    $(field).find('#qtype')
-                        .append('<div /> ' + _t('Source Type'));
-                }}
-
-            });
-
-
-            this.addField({
-                label: _t('Source Type') + '\u2026',
-                //values:['Clinical Trial', 'Other'],
-                type: 'select',
-                id: 'annotator-field-my-selector',
-                load: function (field, annotation) {
-
-                    if($(field).find('#annotator-field-my-selector option').length === 0){
-                        //$(field).find('#annotator-field-my-selector option').onclick("showobject()");
-                        $(field).find('#annotator-field-my-selector')
-                            .append($("<option></option>")
-                                .attr("value", "Clinical Trial")
-                                .text('Clinical Trial'));
-                        $(field).find('#annotator-field-my-selector')
-                            .append($("<option></option>")
-                                .attr("value", "Other")
-                                .text('Other'));
-                    }
-                    $(field).find('#annotator-field-my-selector').val(annotation.sourceType!=null?annotation.sourceType:'Other');
-                },
-                submit: function (field, annotation){
-                    annotation.sourceType = $(field).find('#annotator-field-my-selector').val();
-                }
-            });
-
-
-
-            //   Add a new checkbox element.
-            //   editor.addField({
-            //     type: 'checkbox',
-            //     id: 'annotator-field-my-checkbox',
-            //     label: 'Allow anyone to see this annotation',
-            //     load: (field, annotation) ->
-            //       # Check what state of input should be.
-            //       if checked
-            //         $(field).find('input').attr('checked', 'checked')
-            //       else
-            //         $(field).find('input').removeAttr('checked')
-
-            //     submit: (field, annotation) ->
-            //       checked = $(field).find('input').is(':checked')
-            //       # Do something.
-            //   })
+	        this.addField({
+	    	label: _t('Drug object') + '\u2026',
+	    	    type:  'textarea',
+                id:'drugobject',
+	    	    load: function (field, annotation) {
+	    	        $(field).find('#drugobject').val(annotation.drugObject || '');
+	    	    },
+	    	    submit: function (field, annotation){
+	    	        annotation.drugObject = $(field).find('#drugobject').val();
+	    	    }
+	        });
 
 
           this.addField({
@@ -13644,24 +14085,25 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
     // rejected if editing is cancelled.
     load: function (annotation, position) {
         this.annotation = annotation;
-
+            
         for (var i = 0, len = this.fields.length; i < len; i++) {
             var field = this.fields[i];
             field.load(field.element, this.annotation);
         }
-
+            
         var self = this;
         return new Promise(function (resolve, reject) {
             self.dfd = {resolve: resolve, reject: reject};
             self.show(position);
         });
+     
     },
 
     // Public: Submits the editor and saves any changes made to the annotation.
     //
     // Returns nothing.
     submit: function () {
-
+       
         for (var i = 0, len = this.fields.length; i < len; i++) {
             var field = this.fields[i];
 	    
@@ -13770,7 +14212,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
             input = $('<div value="source" />');
         } else if (field.type === 'radio') {
 	    input = $('<input type="radio" name="'+field.name+'"/>');
-	}
+	    }
 
         element.append(input);
 
@@ -14093,339 +14535,241 @@ var mover = exports.mover = function mover(element, handle) {
     return dragTracker(handle, move);
 };
 
-},{"../../util":41,"../editor":33,"../widget":40}],31:[function(require,module,exports){
+},{"../../util":43,"../editor":35,"../widget":42}],33:[function(require,module,exports){
 (function (global){
-/*package annotator.ui */
 "use strict";
+
+var Range = require('xpath-range').Range;
 
 var util = require('../../util');
 
-var adder = require('./../adder');
-
-var highlighter = require('./../highlighter');
-var textselector = require('./../textselector');
-
-var ddieditor = require('./ddieditor');
-var ddiviewer = require('./ddiviewer');
+var $ = util.$;
+var Promise = util.Promise;
 
 
-var _t = util.gettext;
-
-// trim strips whitespace from either end of a string.
+// highlightRange wraps the DOM Nodes within the provided range with a highlight
+// element of the specified class and returns the highlight Elements.
 //
-// This usually exists in native code, but not in IE8.
-function trim(s) {
-    if (typeof String.prototype.trim === 'function') {
-        return String.prototype.trim.call(s);
-    } else {
-        return s.replace(/^[\s\xA0]+|[\s\xA0]+$/g, '');
+// normedRange - A NormalizedRange to be highlighted.
+// cssClass - A CSS class to use for the highlight (default: 'annotator-hl')
+//
+// Returns an array of highlight Elements.
+function highlightRange(normedRange, cssClass) {
+    if (typeof cssClass === 'undefined' || cssClass === null) {
+        cssClass = 'annotator-hlddi';
     }
-}
+    var white = /^\s*$/;
 
-
-// annotationFactory returns a function that can be used to construct an
-// annotation from a list of selected ranges.
-function annotationFactory(contextEl, ignoreSelector) {
-    return function (ranges) {
-        var text = [],
-            serializedRanges = [];
-
-        for (var i = 0, len = ranges.length; i < len; i++) {
-            var r = ranges[i];
-            text.push(trim(r.text()));
-            serializedRanges.push(r.serialize(contextEl, ignoreSelector));
-        }
-        return {
-            quote: text.join(' / '),
-            ranges: serializedRanges
-        };
-    };
-}
-
-
-// maxZIndex returns the maximum z-index of all elements in the provided set.
-function maxZIndex(elements) {
-    var max = -1;
-    for (var i = 0, len = elements.length; i < len; i++) {
-        var $el = util.$(elements[i]);
-        if ($el.css('position') !== 'static') {
-            // Use parseFloat since we may get scientific notation for large
-            // values.
-            var zIndex = parseFloat($el.css('z-index'));
-            if (zIndex > max) {
-                max = zIndex;
-            }
+    // Ignore text nodes that contain only whitespace characters. This prevents
+    // spans being injected between elements that can only contain a restricted
+    // subset of nodes such as table rows and lists. This does mean that there
+    // may be the odd abandoned whitespace node in a paragraph that is skipped
+    // but better than breaking table layouts.
+    var nodes = normedRange.textNodes(),
+        results = [];
+    for (var i = 0, len = nodes.length; i < len; i++) {
+        var node = nodes[i];
+        if (!white.test(node.nodeValue)) {
+            var hl = global.document.createElement('span');
+            hl.className = cssClass;
+            node.parentNode.replaceChild(hl, node);
+            hl.appendChild(node);
+            results.push(hl);
         }
     }
-    return max;
+    return results;
 }
 
 
-// Helper function to inject CSS into the page that ensures Annotator elements
-// are displayed with the highest z-index.
-function injectDynamicStyle() {
-    util.$('#annotator-dynamic-style').remove();
-
-    var sel = '*' +
-              ':not(annotator-adder)' +
-              ':not(annotator-outer)' +
-              ':not(annotator-notice)' +
-              ':not(annotator-filter)';
-
-    // use the maximum z-index in the page
-    var max = maxZIndex(util.$(global.document.body).find(sel).get());
-
-    // but don't go smaller than 1010, because this isn't bulletproof --
-    // dynamic elements in the page (notifications, dialogs, etc.) may well
-    // have high z-indices that we can't catch using the above method.
-    max = Math.max(max, 1000);
-
-    var rules = [
-        ".annotator-adder, .annotator-outer, .annotator-notice {",
-        "  z-index: " + (max + 20) + ";",
-        "}",
-        ".annotator-filter {",
-        "  z-index: " + (max + 10) + ";",
-        "}"
-    ].join("\n");
-
-    util.$('<style>' + rules + '</style>')
-        .attr('id', 'annotator-dynamic-style')
-        .attr('type', 'text/css')
-        .appendTo('head');
+// reanchorRange will attempt to normalize a range, swallowing Range.RangeErrors
+// for those ranges which are not reanchorable in the current document.
+function reanchorRange(range, rootElement) {
+    try {
+        return Range.sniff(range).normalize(rootElement);
+    } catch (e) {
+        if (!(e instanceof Range.RangeError)) {
+            // Oh Javascript, why you so crap? This will lose the traceback.
+            throw(e);
+        }
+        // Otherwise, we simply swallow the error. Callers are responsible
+        // for only trying to draw valid annotations.
+    }
+    return null;
 }
 
 
-// Helper function to remove dynamic stylesheets
-function removeDynamicStyle() {
-    util.$('#annotator-dynamic-style').remove();
-}
+// Highlighter provides a simple way to draw highlighted <span> tags over
+// annotated ranges within a document.
+//
+// element - The root Element on which to dereference annotation ranges and
+//           draw highlights.
+// options - An options Object containing configuration options for the plugin.
+//           See `Highlighter.options` for available options.
+//
+var ddiHighlighter = exports.ddiHighlighter = function Highlighter(element, options) {
+    this.element = element;
+    this.options = $.extend(true, {}, Highlighter.options, options);
+};
 
+ddiHighlighter.prototype.destroy = function () {
+    $(this.element)
+        .find("." + this.options.highlightClass)
+        .each(function (_, el) {
+            $(el).contents().insertBefore(el);
+            $(el).remove();
+        });
+};
 
-// Helper function to add permissions checkboxes to the editor
-function addPermissionsCheckboxes(editor, ident, authz) {
+// Public: Draw highlights for all the given annotations
+//
+// annotations - An Array of annotation Objects for which to draw highlights.
+//
+// Returns nothing.
+ddiHighlighter.prototype.drawAll = function (annotations) {
+    var self = this;
 
-    function createLoadCallback(action) {
-        return function loadCallback(field, annotation) {
-            field = util.$(field).show();
+    var p = new Promise(function (resolve) {
+        var highlights = [];
 
-            var u = ident.who();
-            var input = field.find('input');
-
-            //alert('ddi main - load - user ident:' + u)
-
-            // Do not show field if no user is set
-            if (typeof u === 'undefined' || u === null || u == "") {
-                field.hide();
+        function loader(annList) {
+            if (typeof annList === 'undefined' || annList === null) {
+                annList = [];
             }
 
-            // Do not show field if current user is not admin.
-            if (!(authz.permits('admin', annotation, u))) {
-                field.hide();
+            var now = annList.splice(0, self.options.chunkSize);
+            for (var i = 0, len = now.length; i < len; i++) {
+                highlights = highlights.concat(self.draw(now[i]));
             }
 
-            // See if we can authorise without a user.
-            if (authz.permits(action, annotation, null)) {
-                input.attr('checked', 'checked');
+            // If there are more to do, do them after a delay
+            if (annList.length > 0) {
+                setTimeout(function () {
+                    loader(annList);
+                }, self.options.chunkDelay);
             } else {
-                input.removeAttr('checked');
+                resolve(highlights);
             }
-        };
-    }
+        }
 
-    function createSubmitCallback(action) {
-        return function submitCallback(field, annotation) {
-            var u = ident.who();
-
-            // Don't do anything if no user is set
-            if (typeof u === 'undefined' || u === null || u == "") {
-                return;
-            }
-
-            if (!annotation.permissions) {
-                annotation.permissions = {};
-            }
-
-
-            if (util.$(field).find('input').is(':checked')) {
-                delete annotation.permissions[action];
-            } else {
-                // While the permissions model allows for more complex entries
-                // than this, our UI presents a checkbox, so we can only
-                // interpret "prevent others from viewing" as meaning "allow
-                // only me to view". This may want changing in the future.
-                annotation.permissions[action] = [
-                    authz.authorizedUserId(u)
-                ];
-            }
-        };
-    }
-
-    editor.addField({
-        type: 'checkbox',
-        label: _t('Allow anyone to <strong>view</strong> this annotation'),
-        load: createLoadCallback('read'),
-        submit: createSubmitCallback('read')
+        var clone = annotations.slice();
+        loader(clone);
     });
 
-    editor.addField({
-        type: 'checkbox',
-        label: _t('Allow anyone to <strong>edit</strong> this annotation'),
-        load: createLoadCallback('update'),
-        submit: createSubmitCallback('update')
-    });
+    return p;
+};
 
-    // add checkbox for set delete permission 
-    editor.addField({
-        type: 'checkbox',
-        label: _t('Allow anyone to <strong>delete</strong> this annotation'),
-        load: createLoadCallback('delete'),
-        submit: createSubmitCallback('delete')
-    });
-}
+// Public: Draw highlights for the annotation.
+//
+// annotation - An annotation Object for which to draw highlights.
+//
+// Returns an Array of drawn highlight elements.
+ddiHighlighter.prototype.draw = function (annotation) {
 
+    // alert('ddihighlighter - draw anntype: ' + annotation.annotationType);
 
-/**
- * function:: main([options])
- *
- * A module that provides a default user interface for Annotator that allows
- * users to create annotations by selecting text within (a part of) the
- * document.
- *
- * Example::
- *
- *     app.include(annotator.ui.main);
- *
- * :param Object options:
- *
- *   .. attribute:: options.element
- *
- *      A DOM element to which event listeners are bound. Defaults to
- *      ``document.body``, allowing annotation of the whole document.
- *
- *   .. attribute:: options.editorExtensions
- *
- *      An array of editor extensions. See the
- *      :class:`~annotator.ui.editor.Editor` documentation for details of editor
- *      extensions.
- *
- *   .. attribute:: options.viewerExtensions
- *
- *      An array of viewer extensions. See the
- *      :class:`~annotator.ui.viewer.Viewer` documentation for details of viewer
- *      extensions.
- *
- */
-function main(options) {
-    if (typeof options === 'undefined' || options === null) {
-        options = {};
+    if (annotation.annotationType != "DDI")
+        return null;
+
+    var normedRanges = [];
+
+    for (var i = 0, ilen = annotation.ranges.length; i < ilen; i++) {
+        var r = reanchorRange(annotation.ranges[i], this.element);
+        if (r !== null) {
+            normedRanges.push(r);
+        }
     }
 
-    options.element = options.element || global.document.body;
-    options.editorExtensions = options.editorExtensions || [];
-    options.viewerExtensions = options.viewerExtensions || [];
-
-    // Local helpers
-    var makeAnnotation = annotationFactory(options.element, '.annotator-hl');
-
-    // Object to hold local state
-    var s = {
-        interactionPoint: null
-    };
-
-    function start(app) {
-        var ident = app.registry.getUtility('identityPolicy');
-        var authz = app.registry.getUtility('authorizationPolicy');
-
-        s.adder = new adder.Adder({
-            onCreate: function (ann) {
-                app.annotations.create(ann);
-            }
-        });
-        s.adder.attach();
-
-        s.editor = new ddieditor.ddiEditor({
-            extensions: options.editorExtensions
-        });
-        s.editor.attach();
-
-        addPermissionsCheckboxes(s.editor, ident, authz);
-
-        s.highlighter = new highlighter.Highlighter(options.element);
-
-        s.textselector = new textselector.TextSelector(options.element, {
-            onSelection: function (ranges, event) {
-                if (ranges.length > 0) {
-                    var annotation = makeAnnotation(ranges);
-                    s.interactionPoint = util.mousePosition(event);
-                    s.adder.load(annotation, s.interactionPoint);
-                } else {
-                    s.adder.hide();
-                }
-            }
-        });
-
-        s.viewer = new ddiviewer.ddiViewer({
-            onEdit: function (ann) {
-                // Copy the interaction point from the shown viewer:
-                s.interactionPoint = util.$(s.viewer.element)
-                                         .css(['top', 'left']);
-
-                app.annotations.update(ann);
-            },
-            onDelete: function (ann) {
-                app.annotations['delete'](ann);
-            },
-            permitEdit: function (ann) {
-                return authz.permits('update', ann, ident.who());
-            },
-            permitDelete: function (ann) {
-                return authz.permits('delete', ann, ident.who());
-            },
-            autoViewHighlights: options.element,
-            extensions: options.viewerExtensions
-        });
-        s.viewer.attach();
-
-        injectDynamicStyle();
+    var hasLocal = (typeof annotation._local !== 'undefined' &&
+                    annotation._local !== null);
+    if (!hasLocal) {
+        annotation._local = {};
     }
+    var hasHighlights = (typeof annotation._local.highlights !== 'undefined' &&
+                         annotation._local.highlights === null);
+    if (!hasHighlights) {
+        annotation._local.highlights = [];
+    }
+
+    for (var j = 0, jlen = normedRanges.length; j < jlen; j++) {
+        var normed = normedRanges[j];
+        $.merge(
+            annotation._local.highlights,
+            highlightRange(normed, this.options.highlightClass)
+        );
+    }
+
+    // Save the annotation data on each highlighter element.
+    $(annotation._local.highlights).data('annotation', annotation);
+
+    // Add a data attribute for annotation id if the annotation has one
+    if (typeof annotation.id !== 'undefined' && annotation.id !== null) {
+        $(annotation._local.highlights)
+            .attr('data-annotation-id', annotation.id);
+    }
+
+    return annotation._local.highlights;
+};
+
+// Public: Remove the drawn highlights for the given annotation.
+//
+// annotation - An annotation Object for which to purge highlights.
+//
+// Returns nothing.
+ddiHighlighter.prototype.undraw = function (annotation) {
+    var hasHighlights = (typeof annotation._local !== 'undefined' &&
+                         annotation._local !== null &&
+                         typeof annotation._local.highlights !== 'undefined' &&
+                         annotation._local.highlights !== null);
+
+    if (!hasHighlights) {
+        return;
+    }
+
+    for (var i = 0, len = annotation._local.highlights.length; i < len; i++) {
+        var h = annotation._local.highlights[i];
+        if (h.parentNode !== null) {
+            $(h).replaceWith(h.childNodes);
+        }
+    }
+    delete annotation._local.highlights;
+};
+
+// Public: Redraw the highlights for the given annotation.
+//
+// annotation - An annotation Object for which to redraw highlights.
+//
+// Returns the list of newly-drawn highlights.
+ddiHighlighter.prototype.redraw = function (annotation) {
+    this.undraw(annotation);
+    return this.draw(annotation);
+};
+
+ddiHighlighter.options = {
+    // The CSS class to apply to drawn ddi
+    highlightClass: 'annotator-hlddi',
+    // Number of annotations to draw at once
+    chunkSize: 10,
+    // Time (in ms) to pause between drawing chunks of annotations
+    chunkDelay: 10
+};
+
+
+// standalone is a module that uses the Highlighter to draw/undraw highlights
+// automatically when annotations are created and removed.
+exports.standalone = function standalone(element, options) {
+    var widget = exports.Highlighter(element, options);
 
     return {
-        start: start,
-
-        destroy: function () {
-            s.adder.destroy();
-            s.editor.destroy();
-            s.highlighter.destroy();
-            s.textselector.destroy();
-            s.viewer.destroy();
-            removeDynamicStyle();
-        },
-
-        annotationsLoaded: function (anns) { s.highlighter.drawAll(anns); },
-        annotationCreated: function (ann) { s.highlighter.draw(ann); },
-        annotationDeleted: function (ann) { s.highlighter.undraw(ann); },
-        annotationUpdated: function (ann) { s.highlighter.redraw(ann); },
-
-        beforeAnnotationCreated: function (annotation) {
-            // Editor#load returns a promise that is resolved if editing
-            // completes, and rejected if editing is cancelled. We return it
-            // here to "stall" the annotation process until the editing is
-            // done.
-            return s.editor.load(annotation, s.interactionPoint);
-        },
-
-        beforeAnnotationUpdated: function (annotation) {
-            return s.editor.load(annotation, s.interactionPoint);
-        }
+        destroy: function () { widget.destroy(); },
+        annotationsLoaded: function (anns) { widget.drawAll(anns); },
+        annotationCreated: function (ann) { widget.draw(ann); },
+        annotationDeleted: function (ann) { widget.undraw(ann); },
+        annotationUpdated: function (ann) { widget.redraw(ann); }
     };
-}
-
-
-exports.main = main;
+};
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../util":41,"./../adder":29,"./../highlighter":35,"./../textselector":38,"./ddieditor":30,"./ddiviewer":32}],32:[function(require,module,exports){
+},{"../../util":43,"xpath-range":18}],34:[function(require,module,exports){
 "use strict";
 
 var Widget = require('../widget').Widget,
@@ -14513,30 +14857,20 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
         this.mouseDown = false;
         this.render = function (annotation) {
             
-	    if (annotation.text && annotation.drug) {
-            var returnText = "Comment: " + annotation.text +
-                "<br> Drug: " + annotation.drug +
-                "<br> DrugRole: " + annotation.drugrole +
-                "<br> SourceType: " + annotation.sourceType;
-
-            if(annotation.objectoptions)
-                returnText += "<br> ObjectOptions: " + annotation.objectoptions;
-            if(annotation.precipitantoptions)
-                returnText += "<br> PrecipitantOptions: " + annotation.precipitantoptions;
+	    if (annotation.text && annotation.annotationType) {
+            var returnText = " Comment: " + annotation.text +
+                "<br> Precipt: " + annotation.drugPrecipt +
+                "<br> Object: " + annotation.drugObject +
+                "<br> Created: " + annotation.created + 
+                "<br> Creator: " + annotation.user + 
+                "<br> Annotation: " + annotation.annotationType;
 
             return returnText;
+        } else {
+            return "<i>" + _t('No DDI Information') + "</i>";
         }
-	    else if (annotation.text && (annotation.drug == "")) {
-                return util.escapeHtml(annotation.text);
-            }
-	    else if (annotation.drug && (annotation.text == "")) {
-                return util.escapeHtml(annotation.drug);
-
-            } else {
-                return "<i>" + _t('No DDI Information & comment') + "</i>";
-            }
         };
-
+        
         var self = this;
 
         if (this.options.defaultFields) {
@@ -14564,14 +14898,14 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
             this.document = this.options.autoViewHighlights.ownerDocument;
 
             $(this.options.autoViewHighlights)
-                .on("mouseover." + NS, '.annotator-hl', function (event) {
+                .on("mouseover." + NS, '.annotator-hlddi', function (event) {
                     // If there are many overlapping highlights, still only
                     // call _onHighlightMouseover once.
                     if (event.target === this) {
                         self._onHighlightMouseover(event);
                     }
                 })
-                .on("mouseleave." + NS, '.annotator-hl', function () {
+                .on("mouseleave." + NS, '.annotator-hlddi', function () {
                     self._startHideTimer();
                 });
 
@@ -14809,7 +15143,7 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
         this._startHideTimer(true)
             .done(function () {
                 var annotations = $(event.target)
-                    .parents('.annotator-hl')
+                    .parents('.annotator-hlddi')
                     .addBack()
                     .map(function (_, elem) {
                         return $(elem).data("annotation");
@@ -14994,7 +15328,7 @@ exports.standalone = function standalone(options) {
     };
 };
 
-},{"../../util":41,"../viewer":39,"../widget":40}],33:[function(require,module,exports){
+},{"../../util":43,"../viewer":41,"../widget":42}],35:[function(require,module,exports){
 "use strict";
 
 var Widget = require('./widget').Widget,
@@ -15226,57 +15560,34 @@ var Editor = exports.Editor = Widget.extend({
         this.fields = [];
         this.annotation = {};
 
-        if (this.options.defaultFields) {
-            this.addField({
-                type: 'textarea',
-                label: _t('Comments') + '\u2026',
-                load: function (field, annotation) {
-                    $(field).find('#annotator-field-0').val(annotation.text || '');
-                },
-                submit: function (field, annotation) {
-                    annotation.text = $(field).find('#annotator-field-0').val();
-		    if (annotation.text == '') {
-			annotation.text = $(field).find('textarea').val()
-		    }
-                }
-            });
+        // if (this.options.defaultFields) {
+        //     this.addField({
+        //         type: 'textarea',
+        //         label: _t('Comments') + '\u2026',
+        //         load: function (field, annotation) {
+        //             $(field).find('#annotator-field-0').val(annotation.text || '');
+        //         },
+        //         submit: function (field, annotation) {
+        //             annotation.text = $(field).find('#annotator-field-0').val();
+		//     if (annotation.text == '') {
+		// 	annotation.text = $(field).find('textarea').val()
+		//     }
+        //         }
+        //     });
 
-	    // add new field as part of default - drug name
-	    // this.addField({
-	    // 	label: _t('Drug name') + '\u2026',
-	    // 	type:  'textarea',
-	    // 	load: function (field, annotation) {
-	    // 	    $(field).find('#annotator-field-1').val(annotation.drug || '');
-	    // 	},
-	    // 	submit: function (field, annotation){
-	    // 	    annotation.drug = $(field).find('#annotator-field-1').val();
-	    // 	} 
-	    // });
+       // }
 
-	    // this.addField({
-	    // 	type: 'checkbox',
-	    // 	id: 'annotator-field-my-checkbox',
-	    // 	label: 'isClinicalDrug',
-	    // 	load: function (field, annotation) {		    
-	    // 	    checked = $(field).find('input').is(':checked');
-	    // 	    if (checked == true){
-	    // 		$(field).find('input').attr('checked', 'checked');
-	    // 	    }
-	    // 	    else {
-	    // 		$(field).find('input').removeAttr('checked');
-	    // 	    }
-	    // 	}, 
-		
-	    // 	submit: function (field, annotation){
-	    // 	    checked = $(field).find('input').is(':checked');
-            //         annotation.text = $(field).find('input').val();
-	    // 	}
-	    // });
-
-
-	// test end
-
-        }
+        this.addField({
+            label: _t('Annotation type') + '\u2026' + _t('DrugMention'),
+            type: 'div',
+            id: 'annotationType',
+            load: function (field, annotation) {
+                $(field).find('#annotationType').val(annotation.annotationType || '');
+            },
+            submit: function (field, annotation){
+		        annotation.annotationType = _t('DrugMention')
+            }
+        });
 
         var self = this;
 
@@ -15461,7 +15772,11 @@ var Editor = exports.Editor = Widget.extend({
             input = $('<input />');
         } else if (field.type === 'select') {
             input = $('<select />');
-        }
+        } else if (field.type === 'div') {
+            input = $('<div value="source" />');
+        } else if (field.type === 'radio') {
+	    input = $('<input type="radio" name="'+field.name+'"/>');
+	    }
 
         element.append(input);
 
@@ -15470,12 +15785,19 @@ var Editor = exports.Editor = Widget.extend({
             placeholder: field.label
         });
 
-        if (field.type === 'checkbox') {
-            element.addClass('annotator-checkbox');
-            element.append($('<label />', {
-                'for': field.id,
-                'html': field.label
-            }));
+        // if (field.type === 'checkbox') {
+        //     element.addClass('annotator-checkbox');
+        //     element.append($('<label />', {
+        //         'for': field.id,
+        //         'html': field.label
+        //     }));
+        // }
+
+        if (field.type === 'div') {
+            input.attr({
+
+                html: field.label
+            });
         }
 
         this.element.find('ul:first').append(element);
@@ -15637,7 +15959,7 @@ exports.standalone = function standalone(options) {
     };
 };
 
-},{"../util":41,"./widget":40}],34:[function(require,module,exports){
+},{"../util":43,"./widget":42}],36:[function(require,module,exports){
 "use strict";
 
 var util = require('../util');
@@ -16115,7 +16437,7 @@ exports.standalone = function (options) {
     };
 };
 
-},{"../util":41}],35:[function(require,module,exports){
+},{"../util":43}],37:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -16244,6 +16566,12 @@ Highlighter.prototype.drawAll = function (annotations) {
 //
 // Returns an Array of drawn highlight elements.
 Highlighter.prototype.draw = function (annotation) {
+
+    //alert('drug mention highlighter - draw anntype: ' + annotation.annotationType);
+
+    if (annotation.annotationType != "DrugMention")
+        return null;
+
     var normedRanges = [];
 
     for (var i = 0, ilen = annotation.ranges.length; i < ilen; i++) {
@@ -16343,7 +16671,7 @@ exports.standalone = function standalone(element, options) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../util":41,"xpath-range":18}],36:[function(require,module,exports){
+},{"../util":43,"xpath-range":18}],38:[function(require,module,exports){
 (function (global){
 /*package annotator.ui.markdown */
 "use strict";
@@ -16403,7 +16731,7 @@ exports.viewerExtension = function viewerExtension(viewer) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../util":41}],37:[function(require,module,exports){
+},{"../util":43}],39:[function(require,module,exports){
 /*package annotator.ui.tags */
 "use strict";
 
@@ -16508,7 +16836,7 @@ exports.editorExtension = function editorExtension(e) {
     input = $(field).find(':input');
 };
 
-},{"../util":41}],38:[function(require,module,exports){
+},{"../util":43}],40:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -16666,7 +16994,7 @@ TextSelector.options = {
 exports.TextSelector = TextSelector;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../util":41,"xpath-range":18}],39:[function(require,module,exports){
+},{"../util":43,"xpath-range":18}],41:[function(require,module,exports){
 "use strict";
 
 var Widget = require('./widget').Widget,
@@ -16752,16 +17080,14 @@ var Viewer = exports.Viewer = Widget.extend({
         this.mouseDown = false;
         this.render = function (annotation) {
 
-	    if (annotation.text && annotation.drug) {
-                return "Comment: " + annotation.text + "<br> Drug: " + annotation.drug;
-            }
-	    else if (annotation.text && (annotation.drug == "")) {
-                return util.escapeHtml(annotation.text);
-            }
-	    else if (annotation.drug && (annotation.text == "")) {
-                return util.escapeHtml(annotation.drug);
+	    if (annotation.quote && annotation.user && annotation.created) {
+            var returnText = " Name: " + annotation.quote + 
+                "<br> Created: " + annotation.created + 
+                "<br> Creator: " + annotation.user + 
+                "<br> Annotation: " + annotation.annotationType
+                return returnText;
             } else {
-                return "<i>" + _t('No drug & comment') + "</i>";
+                return "<i>" + _t('No drug mention') + "</i>";
             }
         };
 
@@ -17223,7 +17549,7 @@ exports.standalone = function standalone(options) {
     };
 };
 
-},{"../util":41,"./widget":40}],40:[function(require,module,exports){
+},{"../util":43,"./widget":42}],42:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -17411,7 +17737,7 @@ Widget.extend = extend;
 exports.Widget = Widget;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../util":41,"backbone-extend-standalone":3}],41:[function(require,module,exports){
+},{"../util":43,"backbone-extend-standalone":3}],43:[function(require,module,exports){
 (function (global){
 "use strict";
 

@@ -85,30 +85,20 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
         this.mouseDown = false;
         this.render = function (annotation) {
             
-	    if (annotation.text && annotation.drug) {
-            var returnText = "Comment: " + annotation.text +
-                "<br> Drug: " + annotation.drug +
-                "<br> DrugRole: " + annotation.drugrole +
-                "<br> SourceType: " + annotation.sourceType;
-
-            if(annotation.objectoptions)
-                returnText += "<br> ObjectOptions: " + annotation.objectoptions;
-            if(annotation.precipitantoptions)
-                returnText += "<br> PrecipitantOptions: " + annotation.precipitantoptions;
+	    if (annotation.text && annotation.annotationType) {
+            var returnText = " Comment: " + annotation.text +
+                "<br> Precipt: " + annotation.drugPrecipt +
+                "<br> Object: " + annotation.drugObject +
+                "<br> Created: " + annotation.created + 
+                "<br> Creator: " + annotation.user + 
+                "<br> Annotation: " + annotation.annotationType;
 
             return returnText;
+        } else {
+            return "<i>" + _t('No DDI Information') + "</i>";
         }
-	    else if (annotation.text && (annotation.drug == "")) {
-                return util.escapeHtml(annotation.text);
-            }
-	    else if (annotation.drug && (annotation.text == "")) {
-                return util.escapeHtml(annotation.drug);
-
-            } else {
-                return "<i>" + _t('No DDI Information & comment') + "</i>";
-            }
         };
-
+        
         var self = this;
 
         if (this.options.defaultFields) {
@@ -136,14 +126,14 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
             this.document = this.options.autoViewHighlights.ownerDocument;
 
             $(this.options.autoViewHighlights)
-                .on("mouseover." + NS, '.annotator-hl', function (event) {
+                .on("mouseover." + NS, '.annotator-hlddi', function (event) {
                     // If there are many overlapping highlights, still only
                     // call _onHighlightMouseover once.
                     if (event.target === this) {
                         self._onHighlightMouseover(event);
                     }
                 })
-                .on("mouseleave." + NS, '.annotator-hl', function () {
+                .on("mouseleave." + NS, '.annotator-hlddi', function () {
                     self._startHideTimer();
                 });
 
@@ -381,7 +371,7 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
         this._startHideTimer(true)
             .done(function () {
                 var annotations = $(event.target)
-                    .parents('.annotator-hl')
+                    .parents('.annotator-hlddi')
                     .addBack()
                     .map(function (_, elem) {
                         return $(elem).data("annotation");

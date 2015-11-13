@@ -4,28 +4,22 @@ if (typeof annotator === 'undefined') {
           "package by running `make`");
 } else {
     
+    // DBMIAnnotator with highlight and DDI plugin
     var app = new annotator.App();
-    app.include(annotator.ui.main, {element: document.querySelector('#content'), editorExtensions: [annotator.ui.tags.editorExtension], viewerExtensions: [annotator.ui.tags.viewerExtension]});
-    
+
+    app.include(annotator.ui.dbmimain);
+
     app.include(annotator.storage.debug);
     app.include(annotator.identity.simple);
-
     app.include(annotator.authz.acl);
-
-    //app.include(annotator.authz.AclAuthzPolicy);
-    //app.include(annotator.authz.AclAuthzPolicy.prototype.permits);
 
     app.include(annotator.storage.http, {
 	prefix: 'http://127.0.0.1:5000'
     });
 
-
     app.start().then(function () 
 		     {   
-                 //app.ident.identity = "yifan";
-
                  var currUser = getCookie('email');
-
                  if (currUser != null){
                      app.ident.identity = currUser;
                  } else{

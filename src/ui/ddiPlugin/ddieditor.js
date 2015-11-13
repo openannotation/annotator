@@ -111,172 +111,31 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
             });
 
 
-	        //add new fields: drug name, source type
+            
 	        this.addField({
-	    	label: _t('ddi Drug name') + '\u2026',
+	    	label: _t('Drug preciptant') + '\u2026',
 	    	    type:  'textarea',
-                id:'drugName',
+                id:'drugprecipt',
 	    	    load: function (field, annotation) {
-	    	        $(field).find('#drugName').val(annotation.drug || '');
+	    	        $(field).find('#drugprecipt').val(annotation.drugPrecipt || '');
 	    	    },
 	    	    submit: function (field, annotation){
-	    	        annotation.drug = $(field).find('#drugName').val();
+	    	        annotation.drugPrecipt = $(field).find('#drugprecipt').val();
 	    	    }
 	        });
 
 
-            this.addField({
-                label:'Drug Role: ',
-                type:  'div',
-                id: 'qrole',
-                load: function (field, annotation) {
-                    if($(field).find('#qrole div').length === 0){
-                    $(field).find('#qrole')
-                        .append('<div /> ' + _t('Drug Role'));
-                }}
-
-            });
-
-
-            unknowitem.addField({
-                label: 'Drug Role',
-                type:  'div',
-                id: 'annotator-field-my-checkbox',
-                load: function (field, annotation) {
-                    if($(field).find('#annotator-field-my-checkbox input').length === 0) {
-                        $(field).find('#annotator-field-my-checkbox')
-                            .append('<input type="checkbox" class="checkvalue" id="Object" value="Object" /> ' + 'Object' + '&nbsp');
-                        $(field).find('#annotator-field-my-checkbox')
-                            .append('<input type="checkbox" class="checkvalue" id="Precipitant" value="Precipitant" /> ' + 'Precipitant' + '<br />');
-
-                    }
-                    $('#annotator-field-my-checkbox input').each(function(){ this.checked = false; });
-                    $('#annotator-field-my-checkbox input').each(function(){ if(this.value === annotation.drugrole) this.checked = true; });
-                    $(field).find('#annotator-field-my-checkbox #Object').on('change',function() {
-
-                        $('#testtext2').hide();
-                        $('#testtext1').show("slow");
-                    });
-
-                    $(field).find('#annotator-field-my-checkbox #Precipitant').on('change',function() {
-
-                        $('#testtext1').hide();
-                        $('#testtext2').show("slow");
-                    });
-                    $('input[type="checkbox"]').on('change', function () {
-
-                            //alert($('.checkvalue').val());
-                            // uncheck sibling checkboxes (checkboxes on the same row)
-                            $(this).siblings().prop('checked', false);
-
-                            // uncheck checkboxes in the same column
-                            $('div').find('input[type="checkbox"]:eq(' + $(this).index() + ')').not(this).prop('checked', false);
-
-                        });
-
-                    //$(field).find('#annotator-field-1').val(annotation.drug || '');
-                },
-                submit: function (field, annotation){
-                    $.each($("input[class='checkvalue']:checked"), function(){
-                        annotation.drugrole = $(this).val();
-                    });
-                    //annotation.drug = $(field).find('#annotator-field-1').val();
-                }
-            });
-
-            this.addField({
-                type: 'textarea',
-                label: _t('Object Options') + '\u2026',
-                id: 'testtext1',
-                load: function (field, annotation) {
-                    //$(field).find('#testtext').val("' " + annotation.quote + " '" || '');
-                    //alert(annotation.quote);
-                    $(field).find('#testtext1').css('background','#DEDEDE');
-                    //if(annotation.objectoptions=="")
-                    $(field).find('#testtext1').hide();
-                },
-                submit: function (field, annotation){
-                    if($('#annotator-field-my-checkbox #Object').is(':checked')) {
-                        alert($(field).find('#testtext1').val());
-                        annotation.objectoptions = $(field).find('#testtext1').val();
-                    }
-                }
-            });
-
-
-            this.addField({
-                type: 'textarea',
-                label: _t('Precipitant Options') + '\u2026',
-                id: 'testtext2',
-                load: function (field, annotation) {
-                    //$(field).find('#testtext').val("' " + annotation.quote + " '" || '');
-                    //alert(annotation.quote);
-                    $(field).find('#testtext2').css('background','#DEDEDE');
-                    $(field).find('#testtext2').hide();
-                },
-                submit: function (field, annotation){
-                    if($('#annotator-field-my-checkbox #Precipitant').is(':checked')) {
-                        annotation.precipitantoptions = $(field).find('#testtext2').val();
-                    }
-                }
-            });
-
-            this.addField({
-                label:'Source Type: ',
-                type:  'div',
-                id: 'qtype',
-                load: function (field, annotation) {
-                    if($(field).find('#qtype div').length === 0){
-                    $(field).find('#qtype')
-                        .append('<div /> ' + _t('Source Type'));
-                }}
-
-            });
-
-
-            this.addField({
-                label: _t('Source Type') + '\u2026',
-                //values:['Clinical Trial', 'Other'],
-                type: 'select',
-                id: 'annotator-field-my-selector',
-                load: function (field, annotation) {
-
-                    if($(field).find('#annotator-field-my-selector option').length === 0){
-                        //$(field).find('#annotator-field-my-selector option').onclick("showobject()");
-                        $(field).find('#annotator-field-my-selector')
-                            .append($("<option></option>")
-                                .attr("value", "Clinical Trial")
-                                .text('Clinical Trial'));
-                        $(field).find('#annotator-field-my-selector')
-                            .append($("<option></option>")
-                                .attr("value", "Other")
-                                .text('Other'));
-                    }
-                    $(field).find('#annotator-field-my-selector').val(annotation.sourceType!=null?annotation.sourceType:'Other');
-                },
-                submit: function (field, annotation){
-                    annotation.sourceType = $(field).find('#annotator-field-my-selector').val();
-                }
-            });
-
-
-
-            //   Add a new checkbox element.
-            //   editor.addField({
-            //     type: 'checkbox',
-            //     id: 'annotator-field-my-checkbox',
-            //     label: 'Allow anyone to see this annotation',
-            //     load: (field, annotation) ->
-            //       # Check what state of input should be.
-            //       if checked
-            //         $(field).find('input').attr('checked', 'checked')
-            //       else
-            //         $(field).find('input').removeAttr('checked')
-
-            //     submit: (field, annotation) ->
-            //       checked = $(field).find('input').is(':checked')
-            //       # Do something.
-            //   })
+	        this.addField({
+	    	label: _t('Drug object') + '\u2026',
+	    	    type:  'textarea',
+                id:'drugobject',
+	    	    load: function (field, annotation) {
+	    	        $(field).find('#drugobject').val(annotation.drugObject || '');
+	    	    },
+	    	    submit: function (field, annotation){
+	    	        annotation.drugObject = $(field).find('#drugobject').val();
+	    	    }
+	        });
 
 
           this.addField({
@@ -362,24 +221,25 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
     // rejected if editing is cancelled.
     load: function (annotation, position) {
         this.annotation = annotation;
-
+            
         for (var i = 0, len = this.fields.length; i < len; i++) {
             var field = this.fields[i];
             field.load(field.element, this.annotation);
         }
-
+            
         var self = this;
         return new Promise(function (resolve, reject) {
             self.dfd = {resolve: resolve, reject: reject};
             self.show(position);
         });
+     
     },
 
     // Public: Submits the editor and saves any changes made to the annotation.
     //
     // Returns nothing.
     submit: function () {
-
+       
         for (var i = 0, len = this.fields.length; i < len; i++) {
             var field = this.fields[i];
 	    
@@ -488,7 +348,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
             input = $('<div value="source" />');
         } else if (field.type === 'radio') {
 	    input = $('<input type="radio" name="'+field.name+'"/>');
-	}
+	    }
 
         element.append(input);
 

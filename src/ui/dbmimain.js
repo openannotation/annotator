@@ -1,16 +1,20 @@
 /*package annotator.ui */
 "use strict";
 
-var util = require('../../util');
+var util = require('../util');
+var textselector = require('./textselector');
 
-var adder = require('./../adder');
+// ddi
+var ddiadder = require('./ddiPlugin/ddiadder');
+var ddihighlighter = require('./ddiPlugin/ddihighlighter');
+var ddieditor = require('./ddiPlugin/ddieditor');
+var ddiviewer = require('./ddiPlugin/ddiviewer');
 
-var highlighter = require('./../highlighter');
-var textselector = require('./../textselector');
-
-var ddieditor = require('./ddieditor');
-var ddiviewer = require('./ddiviewer');
-
+// highlight
+var hladder = require('./adder');
+var hleditor = require('./editor');
+var hlhighlighter = require('./highlighter');
+var hlviewer = require('./viewer');
 
 var _t = util.gettext;
 
@@ -189,35 +193,7 @@ function addPermissionsCheckboxes(editor, ident, authz) {
 
 
 /**
- * function:: main([options])
- *
- * A module that provides a default user interface for Annotator that allows
- * users to create annotations by selecting text within (a part of) the
- * document.
- *
- * Example::
- *
- *     app.include(annotator.ui.main);
- *
- * :param Object options:
- *
- *   .. attribute:: options.element
- *
- *      A DOM element to which event listeners are bound. Defaults to
- *      ``document.body``, allowing annotation of the whole document.
- *
- *   .. attribute:: options.editorExtensions
- *
- *      An array of editor extensions. See the
- *      :class:`~annotator.ui.editor.Editor` documentation for details of editor
- *      extensions.
- *
- *   .. attribute:: options.viewerExtensions
- *
- *      An array of viewer extensions. See the
- *      :class:`~annotator.ui.viewer.Viewer` documentation for details of viewer
- *      extensions.
- *
+   
  */
 function main(options) {
     if (typeof options === 'undefined' || options === null) {
@@ -229,7 +205,8 @@ function main(options) {
     options.viewerExtensions = options.viewerExtensions || [];
 
     // Local helpers
-    var makeAnnotation = annotationFactory(options.element, '.annotator-hl');
+    var makeDDIAnnotation = annotationFactory(options.element, '.annotator-hlddi');
+    var makeHLAnnotation = annotationFactory(options.element, '.annotator-hl');
 
     // Object to hold local state
     var s = {
@@ -240,38 +217,62 @@ function main(options) {
         var ident = app.registry.getUtility('identityPolicy');
         var authz = app.registry.getUtility('authorizationPolicy');
 
-        s.adder = new adder.Adder({
+        // ddi adder
+        s.ddiadder = new ddiadder.ddiAdder({
             onCreate: function (ann) {
                 app.annotations.create(ann);
             }
         });
-        s.adder.attach();
+        s.ddiadder.attach();
 
-        s.editor = new ddieditor.ddiEditor({
+        // highlight adder
+        s.hladder = new hladder.Adder({
+            onCreate: function (ann) {
+                app.annotations.create(ann);
+            }
+        });
+        s.hladder.attach();
+
+        // highlight ddi editor
+        s.ddieditor = new ddieditor.ddiEditor({
             extensions: options.editorExtensions
         });
-        s.editor.attach();
+        s.ddieditor.attach();
 
-        addPermissionsCheckboxes(s.editor, ident, authz);
+        s.hleditor = new hleditor.Editor({
+            extensions: options.editorExtensions
+        });
+        s.hleditor.attach();
 
-        s.highlighter = new highlighter.Highlighter(options.element);
+        addPermissionsCheckboxes(s.ddieditor, ident, authz);
+        //addPermissionsCheckboxes(s.hleditor, ident, authz);
+        
+        //highlighter
+        s.ddihighlighter = new ddihighlighter.ddiHighlighter(options.element);
+        s.hlhighlighter = new hlhighlighter.Highlighter(options.element);
 
         s.textselector = new textselector.TextSelector(options.element, {
             onSelection: function (ranges, event) {
                 if (ranges.length > 0) {
-                    var annotation = makeAnnotation(ranges);
+                    var ddiAnnotation = makeDDIAnnotation(ranges);
+                    var hlAnnotation = makeHLAnnotation(ranges);
+
                     s.interactionPoint = util.mousePosition(event);
-                    s.adder.load(annotation, s.interactionPoint);
+
+                    s.ddiadder.load(ddiAnnotation, s.interactionPoint);
+                    s.hladder.load(hlAnnotation, s.interactionPoint);
                 } else {
-                    s.adder.hide();
+                    s.ddiadder.hide();
+                    s.hladder.hide();
                 }
             }
         });
 
-        s.viewer = new ddiviewer.ddiViewer({
+        // ddi viewer
+        s.ddiviewer = new ddiviewer.ddiViewer({
             onEdit: function (ann) {
                 // Copy the interaction point from the shown viewer:
-                s.interactionPoint = util.$(s.viewer.element)
+                s.interactionPoint = util.$(s.ddiviewer.element)
                                          .css(['top', 'left']);
 
                 app.annotations.update(ann);
@@ -288,8 +289,34 @@ function main(options) {
             autoViewHighlights: options.element,
             extensions: options.viewerExtensions
         });
-        s.viewer.attach();
+        
+        s.ddiviewer.attach();
 
+        // highlight viewer
+
+        s.hlviewer = new hlviewer.Viewer({
+            onEdit: function (ann) {
+                // Copy the interaction point from the shown viewer:
+                s.interactionPoint = util.$(s.hlviewer.element)
+                    .css(['top', 'left']);
+
+                app.annotations.update(ann);
+            },
+            onDelete: function (ann) {
+                app.annotations['delete'](ann);
+            },
+            permitEdit: function (ann) {
+                return authz.permits('update', ann, ident.who());
+            },
+            permitDelete: function (ann) {
+                return authz.permits('delete', ann, ident.who());
+            },
+            autoViewHighlights: options.element,
+            extensions: options.viewerExtensions
+        });
+        s.hlviewer.attach();
+
+        
         injectDynamicStyle();
     }
 
@@ -305,21 +332,71 @@ function main(options) {
             removeDynamicStyle();
         },
 
-        annotationsLoaded: function (anns) { s.highlighter.drawAll(anns); },
-        annotationCreated: function (ann) { s.highlighter.draw(ann); },
-        annotationDeleted: function (ann) { s.highlighter.undraw(ann); },
-        annotationUpdated: function (ann) { s.highlighter.redraw(ann); },
+        annotationsLoaded: function (anns) { 
+            s.ddihighlighter.drawAll(anns); 
+            s.hlhighlighter.drawAll(anns);
+        },
+        annotationCreated: function (ann) { 
+            // yifan draw annotation on text 
+            if (ann.annotationType == "DDI"){
+                s.ddihighlighter.draw(ann); 
+            } else if (ann.annotationType == "DrugMention"){
+                s.hlhighlighter.draw(ann);
+            } else {
+                alert('[WARNING] main.js - annotationCreated - annot type not defined: ' + ann.annotationType);               
+            }
+        },
+        annotationDeleted: function (ann) {
+            s.ddihighlighter.undraw(ann); 
+            s.hlhighlighter.undraw(ann);
+        },
+        annotationUpdated: function (ann) { 
+ 
+            if (ann.annotationType == "DDI"){
+                s.ddihighlighter.redraw(ann); 
+            } else if (ann.annotationType == "DrugMention"){
+                s.hlhighlighter.redraw(ann);
+            } else {
+                alert('[WARNING] main.js - annotationUpdated - annot type not defined: ' + ann.annotationType);               
+            }
+            
+        },
 
         beforeAnnotationCreated: function (annotation) {
             // Editor#load returns a promise that is resolved if editing
             // completes, and rejected if editing is cancelled. We return it
             // here to "stall" the annotation process until the editing is
             // done.
-            return s.editor.load(annotation, s.interactionPoint);
+
+            // yifan: call different editor based on annotation type
+
+            if (annotation.annotationType == "DDI"){
+                return s.ddieditor.load(annotation, s.interactionPoint);
+            } else if (annotation.annotationType == "DrugMention") {
+                // return s.hleditor.load(annotation, s.interactionPoint);
+                // yifan: not show editor when typed as Drug mention
+                return null;
+            } else {
+                //return s.ddieditor.load(annotation, s.interactionPoint);
+                return null;
+            }
+
+
         },
 
         beforeAnnotationUpdated: function (annotation) {
-            return s.editor.load(annotation, s.interactionPoint);
+
+            //alert('testmain.js - beforeAnnotationUpdated - annotation type defined: ' + annotation.annotationType);
+
+            if (annotation.annotationType == "DDI"){
+                return s.ddieditor.load(annotation, s.interactionPoint);
+            } else if (annotation.annotationType == "DrugMention") {
+                // return s.hleditor.load(annotation, s.interactionPoint);
+                return null;
+            } else {
+                //return s.ddieditor.load(annotation, s.interactionPoint);
+                return null;
+            }
         }
     };
 }

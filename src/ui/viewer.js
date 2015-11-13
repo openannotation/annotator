@@ -83,16 +83,14 @@ var Viewer = exports.Viewer = Widget.extend({
         this.mouseDown = false;
         this.render = function (annotation) {
 
-	    if (annotation.text && annotation.drug) {
-                return "Comment: " + annotation.text + "<br> Drug: " + annotation.drug;
-            }
-	    else if (annotation.text && (annotation.drug == "")) {
-                return util.escapeHtml(annotation.text);
-            }
-	    else if (annotation.drug && (annotation.text == "")) {
-                return util.escapeHtml(annotation.drug);
+	    if (annotation.quote && annotation.user && annotation.created) {
+            var returnText = " Name: " + annotation.quote + 
+                "<br> Created: " + annotation.created + 
+                "<br> Creator: " + annotation.user + 
+                "<br> Annotation: " + annotation.annotationType
+                return returnText;
             } else {
-                return "<i>" + _t('No drug & comment') + "</i>";
+                return "<i>" + _t('No drug mention') + "</i>";
             }
         };
 
