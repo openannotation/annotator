@@ -3,6 +3,27 @@ var assert = require('assertive-chai').assert;
 var identity = require('../../src/identity');
 
 
+describe('identity.simple', function () {
+    var ext;
+
+    beforeEach(function () {
+        ext = new identity.simple();
+    });
+
+    describe('configure hook', function () {
+        it('registers an identity policy', function () {
+            var policy = {
+                identity: sinon.match.any,
+                who: sinon.match.func
+            };
+            var register = sinon.stub();
+            ext.configure({registerUtility: register});
+            sinon.assert.calledOnce(register);
+            sinon.assert.calledWithMatch(register, policy, 'identityPolicy');
+        });
+    });
+});
+
 describe('identity.SimpleIdentityPolicy', function () {
     var ident;
 
