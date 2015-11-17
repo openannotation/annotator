@@ -252,13 +252,22 @@ class Range.NormalizedRange
   #
   # Returns updated self or null.
   limit: (bounds) ->
-    nodes = $.grep this.textNodes(), (node) ->
-      node.parentNode == bounds or $.contains(bounds, node.parentNode)
+    if @commonAncestor == bounds or $.contains(bounds, @commonAncestor)
+      return this
 
-    return null unless nodes.length
+    if not $.contains(@commonAncestor, bounds)
+      return null
+    document = bounds.ownerDocument
 
-    @start = nodes[0]
-    @end   = nodes[nodes.length - 1]
+    if not $.contains(bounds, @start)
+      walker = document.createTreeWalker(bounds, NodeFilter.SHOW_TEXT)
+      @start = walker.firstChild()
+
+    if not $.contains(bounds, @end)
+      walker = document.createTreeWalker(bounds, NodeFilter.SHOW_TEXT)
+      @end = walker.lastChild()
+
+    return null unless @start and @end
 
     startParents = $(@start).parents()
     for parent in $(@end).parents()
