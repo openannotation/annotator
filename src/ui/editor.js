@@ -229,57 +229,34 @@ var Editor = exports.Editor = Widget.extend({
         this.fields = [];
         this.annotation = {};
 
-        if (this.options.defaultFields) {
-            this.addField({
-                type: 'textarea',
-                label: _t('Comments') + '\u2026',
-                load: function (field, annotation) {
-                    $(field).find('#annotator-field-0').val(annotation.text || '');
-                },
-                submit: function (field, annotation) {
-                    annotation.text = $(field).find('#annotator-field-0').val();
-		    if (annotation.text == '') {
-			annotation.text = $(field).find('textarea').val()
-		    }
-                }
-            });
+        // if (this.options.defaultFields) {
+        //     this.addField({
+        //         type: 'textarea',
+        //         label: _t('Comments') + '\u2026',
+        //         load: function (field, annotation) {
+        //             $(field).find('#annotator-field-0').val(annotation.text || '');
+        //         },
+        //         submit: function (field, annotation) {
+        //             annotation.text = $(field).find('#annotator-field-0').val();
+        //     if (annotation.text == '') {
+        // 	annotation.text = $(field).find('textarea').val()
+        //     }
+        //         }
+        //     });
 
-	    // add new field as part of default - drug name
-	    // this.addField({
-	    // 	label: _t('Drug name') + '\u2026',
-	    // 	type:  'textarea',
-	    // 	load: function (field, annotation) {
-	    // 	    $(field).find('#annotator-field-1').val(annotation.drug || '');
-	    // 	},
-	    // 	submit: function (field, annotation){
-	    // 	    annotation.drug = $(field).find('#annotator-field-1').val();
-	    // 	} 
-	    // });
+        // }
 
-	    // this.addField({
-	    // 	type: 'checkbox',
-	    // 	id: 'annotator-field-my-checkbox',
-	    // 	label: 'isClinicalDrug',
-	    // 	load: function (field, annotation) {		    
-	    // 	    checked = $(field).find('input').is(':checked');
-	    // 	    if (checked == true){
-	    // 		$(field).find('input').attr('checked', 'checked');
-	    // 	    }
-	    // 	    else {
-	    // 		$(field).find('input').removeAttr('checked');
-	    // 	    }
-	    // 	}, 
-		
-	    // 	submit: function (field, annotation){
-	    // 	    checked = $(field).find('input').is(':checked');
-            //         annotation.text = $(field).find('input').val();
-	    // 	}
-	    // });
-
-
-	// test end
-
-        }
+        this.addField({
+            label: _t('Annotation type') + '\u2026' + _t('DrugMention'),
+            type: 'div',
+            id: 'annotationType',
+            load: function (field, annotation) {
+                //$(field).find('#annotationType').val(annotation.annotationType || '');
+            },
+            submit: function (field, annotation){
+                annotation.annotationType = _t('DrugMention');
+            }
+        });
 
         var self = this;
 
@@ -464,6 +441,10 @@ var Editor = exports.Editor = Widget.extend({
             input = $('<input />');
         } else if (field.type === 'select') {
             input = $('<select />');
+        } else if (field.type === 'div') {
+            input = $('<div value="source" />');
+        } else if (field.type === 'radio') {
+            input = $('<input type="radio" name="'+field.name+'"/>');
         }
 
         element.append(input);
@@ -473,12 +454,19 @@ var Editor = exports.Editor = Widget.extend({
             placeholder: field.label
         });
 
-        if (field.type === 'checkbox') {
-            element.addClass('annotator-checkbox');
-            element.append($('<label />', {
-                'for': field.id,
-                'html': field.label
-            }));
+        // if (field.type === 'checkbox') {
+        //     element.addClass('annotator-checkbox');
+        //     element.append($('<label />', {
+        //         'for': field.id,
+        //         'html': field.label
+        //     }));
+        // }
+
+        if (field.type === 'div') {
+            input.attr({
+
+                html: field.label
+            });
         }
 
         this.element.find('ul:first').append(element);

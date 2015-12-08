@@ -67,12 +67,12 @@ function reanchorRange(range, rootElement) {
 // options - An options Object containing configuration options for the plugin.
 //           See `Highlighter.options` for available options.
 //
-var Highlighter = exports.ddiHighlighter = function Highlighter(element, options) {
+var ddiHighlighter = exports.ddiHighlighter = function Highlighter(element, options) {
     this.element = element;
     this.options = $.extend(true, {}, Highlighter.options, options);
 };
 
-Highlighter.prototype.destroy = function () {
+ddiHighlighter.prototype.destroy = function () {
     $(this.element)
         .find("." + this.options.highlightClass)
         .each(function (_, el) {
@@ -86,7 +86,7 @@ Highlighter.prototype.destroy = function () {
 // annotations - An Array of annotation Objects for which to draw highlights.
 //
 // Returns nothing.
-Highlighter.prototype.drawAll = function (annotations) {
+ddiHighlighter.prototype.drawAll = function (annotations) {
     var self = this;
 
     var p = new Promise(function (resolve) {
@@ -124,7 +124,13 @@ Highlighter.prototype.drawAll = function (annotations) {
 // annotation - An annotation Object for which to draw highlights.
 //
 // Returns an Array of drawn highlight elements.
-Highlighter.prototype.draw = function (annotation) {
+ddiHighlighter.prototype.draw = function (annotation) {
+
+    // alert('ddihighlighter - draw anntype: ' + annotation.annotationType);
+
+    if (annotation.annotationType != "DDI")
+        return null;
+
     var normedRanges = [];
 
     for (var i = 0, ilen = annotation.ranges.length; i < ilen; i++) {
@@ -135,12 +141,12 @@ Highlighter.prototype.draw = function (annotation) {
     }
 
     var hasLocal = (typeof annotation._local !== 'undefined' &&
-                    annotation._local !== null);
+    annotation._local !== null);
     if (!hasLocal) {
         annotation._local = {};
     }
     var hasHighlights = (typeof annotation._local.highlights !== 'undefined' &&
-                         annotation._local.highlights === null);
+    annotation._local.highlights === null);
     if (!hasHighlights) {
         annotation._local.highlights = [];
     }
@@ -170,11 +176,11 @@ Highlighter.prototype.draw = function (annotation) {
 // annotation - An annotation Object for which to purge highlights.
 //
 // Returns nothing.
-Highlighter.prototype.undraw = function (annotation) {
+ddiHighlighter.prototype.undraw = function (annotation) {
     var hasHighlights = (typeof annotation._local !== 'undefined' &&
-                         annotation._local !== null &&
-                         typeof annotation._local.highlights !== 'undefined' &&
-                         annotation._local.highlights !== null);
+    annotation._local !== null &&
+    typeof annotation._local.highlights !== 'undefined' &&
+    annotation._local.highlights !== null);
 
     if (!hasHighlights) {
         return;
@@ -194,13 +200,13 @@ Highlighter.prototype.undraw = function (annotation) {
 // annotation - An annotation Object for which to redraw highlights.
 //
 // Returns the list of newly-drawn highlights.
-Highlighter.prototype.redraw = function (annotation) {
+ddiHighlighter.prototype.redraw = function (annotation) {
     this.undraw(annotation);
     return this.draw(annotation);
 };
 
-Highlighter.options = {
-    // The CSS class to apply to drawn highlights
+ddiHighlighter.options = {
+    // The CSS class to apply to drawn ddi
     highlightClass: 'annotator-hlddi',
     // Number of annotations to draw at once
     chunkSize: 10,

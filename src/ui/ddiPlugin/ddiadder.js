@@ -74,7 +74,9 @@ var ddiAdder = Widget.extend({
         if (typeof position !== 'undefined' && position !== null) {
             this.element.css({
                 top: position.top,
-                left: position.left + 30
+
+                // avoid overlapping with drug mention editor
+                left: position.left + 35
             });
         }
         Widget.prototype.show.call(this);
@@ -135,15 +137,22 @@ var ddiAdder = Widget.extend({
         this.ignoreMouseup = false;
 
         // Create a new annotation
+
         if (this.annotation !== null && typeof this.onCreate === 'function') {
+            this.annotation.annotationType = "DDI";
             this.onCreate(this.annotation, event);
         }
     }
 });
 
+// from hypothesis
+// Guest.prototype.html = jQuery.extend({}, Annotator.prototype.html, {
+//   adder: '<div class="annotator-adder">\n  <button class="h-icon-insert-comment" data-action="comment" title="New Note"></button>\n  <button class="h-icon-border-color" data-action="highlight" title="Highlight"></button>\n</div>'
+// });
+
 ddiAdder.template = [
     '<div class="annotator-adder annotator-hide">',
-    '  <button type="button">' + _t('Annotate') + '</button>',
+    '  <button type="button" title="DDI">' + _t('Annotate') + '</button>',
     '</div>'
 ].join('\n');
 

@@ -1,10 +1,12 @@
+"use strict";
+
 var Widget = require('../widget').Widget,
     util = require('../../util');
 
-var Editor = require('../editor').Editor
+var Editor = require('../editor').Editor;
+var Template = require('./template').Template;
 
 var $ = util.$;
-var _attris = util.getkeys;
 var _t = util.gettext;
 var Promise = util.Promise;
 var NS = "annotator-editor";
@@ -65,57 +67,103 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
         this.annotation = {};
         var unknowitem = this;
 
+
         if (this.options.defaultFields) {
 
+            //quote content + load and submit all content
             this.addField({
                 type: 'textarea',
                 label: _t('Comments') + '\u2026',
                 id: 'quote',
                 load: function (field, annotation) {
                     $(field).find('#quote').val("' " + annotation.quote + " '" || '');
-                    //alert(annotation.quote);
+                    $('#Drug1 option').remove();
+                    $('#Drug2 option').remove();
+                    var flag = 0;
+                    $('.annotator-hl').each(function(index){
+                        //alert(annotation.quote);
+                        if(annotation.quote.indexOf($('.annotator-hl:eq('+index+')').html())>=0) {
+
+                            $('#Drug1').append($('<option>', {
+                                value: $('.annotator-hl:eq(' + index + ')').html(),
+                                text: $('.annotator-hl:eq(' + index + ')').html()
+                            }));
+                            $('#Drug2').append($('<option>', {
+                                value: $('.annotator-hl:eq(' + index + ')').html(),
+                                text: $('.annotator-hl:eq(' + index + ')').html()
+                            }));
+                            flag = flag + 1;
+                        }
+                            //alert($('.annotator-hl:eq('+index+')').html());
+                    });
+                    if(flag<2){
+                        //if(flag){
+                        alert("Should highlight at least two drugs.");
+                        this.cancel();
+                    }
+
                     $(field).find('#quote').css('background','#DEDEDE');
+
+                    /*$(field).find('#DDI').on('selected',function() {
+                        $('#ddisection').show("slow");
+                    });
+                    $(field).find('#clinical').on('selected',function() {
+                        $('#ddisection').hide();
+                    });*/
+                    if(annotation.assertion_type=="DDI clinical trial")
+                    {
+                        $('#altersection').show();
+                        $('#Number_participants').val(annotation.Number_participants);
+                        $('#Duration_object').val(annotation.Duration_object);
+                        $('#Duration_precipitant').val(annotation.Duration_precipitant);
+                        $('#DoseMG_object').val(annotation.DoseMG_object);
+                        $('#DoseMG_precipitant').val(annotation.DoseMG_precipitant);
+                    }
+                    //load all content
+                    $("#Drug1 > option").each(function(){ if(this.value === annotation.Drug1) $(this).attr('selected',true);});
+                    $('#Drug2 > option').each(function(){ if(this.value === annotation.Drug2) $(this).attr('selected',true);});
+                    $('#assertion_type option').each(function(){ if(this.value === annotation.assertion_type) $(this).attr('selected',true);});
+                    $('.Type1').each(function(){ if(this.value === annotation.Type1) this.checked = true; else this.checked = false;});
+                    $('.Role1').each(function(){ if(this.value === annotation.Role1) this.checked = true; else this.checked = false;});
+                    $('.Type2').each(function(){ if(this.value === annotation.Type2) this.checked = true; else this.checked = false;});
+                    $('.Role2').each(function(){ if(this.value === annotation.Role2) this.checked = true; else this.checked = false;});
+                    $('.Modality').each(function(){ if(this.value === annotation.Modality) this.checked = true; else this.checked = false;});
+                    $('.Evidence_modality').each(function(){ if(this.value === annotation.Evidence_modality) this.checked = true; else this.checked = false;});
+                    $('#Comment').each(function(){ this.value = annotation.Comment;});
+                },
+                submit:function (field, annotation) {
+                    annotation.Drug1 = $('#Drug1 option:selected').text();
+                    annotation.Drug2 = $('#Drug2 option:selected').text();
+                    annotation.Type1 = $('#Type1:checked').val();
+                    annotation.Type2 = $('#Type2:checked').val();
+                    annotation.Role1 = $('#Role1:checked').val();
+                    annotation.Role2 = $('#Role2:checked').val();
+                    annotation.assertion_type = $('#assertion_type option:selected').text();
+                    annotation.Modality = $('#Modality:checked').val();
+                    annotation.Evidence_modality = $('#Evidence_modality:checked').val();
+                    annotation.Comment = $('#Comment:checked').val();
+                    annotation.annotationType = "DDI";
+                    if(annotation.assertion_type=="DDI clinical trial")
+                    {
+                        annotation.Number_participants = $('#Number_participants').val();
+                        annotation.FormulationP = $('#FormulationP option:selected').text();
+                        annotation.FormulationO = $('#FormulationO option:selected').text();
+                        annotation.DoseMG_precipitant = $('#DoseMG_precipitant').val();
+                        annotation.DoseMG_object = $('#DoseMG_object').val();
+                        annotation.Duration_precipitant = $('#Duration_precipitant').val();
+                        annotation.Duration_object = $('#Duration_object').val();
+                    }else{
+                        annotation.Number_participants="";
+
+                    }
                 }
             });
-
-
-	    /*// DDI type - PK DDI
-	    this.addField({
-	    	label: _t('PK DDI'),
-	    	type:  'radio',
-		name: 'DDIType',
-	    	load: function (field, annotation) {
-	    	    $(field).find('radio').val(annotation.DDIType || '');
-	    	},
-	    	submit: function (field, annotation){
-	    	    //annotation.DDIType = $(field).find('radio').val();
-		    annotation.DDIType = _t('PK_DDI');
-	    	} 
-	    });
-
-	    // DDI type - Clinical trial
-	    this.addField({
-	    	label: _t('Clinical Trial'),
-	    	type:  'radio',
-		name: 'DDIType',
-	    	load: function (field, annotation) {
-	    	    $(field).find('radio').val(annotation.DDIType || '');
-	    	},
-	    	submit: function (field, annotation){
-	    	    //annotation.DDIType = $(field).find('radio').val();
-		    annotation.DDIType = _t('Clinical_Trial');
-	    	} 
-	    });*/
-
-	    // comment
-
+            /*
             this.addField({
                 type: 'textarea',
                 label: _t('Comments') + '\u2026',
                 id:'comment1',
                 load: function (field, annotation) {
-
-
                     $(field).find('#comment1').val(annotation.text || '');
 
                 },
@@ -138,9 +186,10 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
 	    	submit: function (field, annotation){
 	    	    annotation.drug = $(field).find('#drugName').val();
 	    	}
-	    });
+	    });*/
 
 
+/*
             this.addField({
                 label:'Drug Role: ',
                 type:  'div',
@@ -179,8 +228,8 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
 
                         $('#testtext1').hide();
                         $('#testtext2').show("slow");
-                    });
-                    $('input[type="checkbox"]').on('change', function () {
+                    });*/
+                    /*$('input[type="checkbox"]').on('change', function () {
 
                             //alert($('.checkvalue').val());
                             // uncheck sibling checkboxes (checkboxes on the same row)
@@ -189,14 +238,15 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                             // uncheck checkboxes in the same column
                             $('div').find('input[type="checkbox"]:eq(' + $(this).index() + ')').not(this).prop('checked', false);
 
-                        });
+                        });*/
 
                     //$(field).find('#annotator-field-1').val(annotation.drug || '');
-                },
+                /*},
                 submit: function (field, annotation){
                     $.each($("input[class='checkvalue']:checked"), function(){
                         annotation.drugrole = $(this).val();
                     });
+
                     //annotation.drug = $(field).find('#annotator-field-1').val();
                 }
             });
@@ -217,6 +267,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                         alert($(field).find('#testtext1').val());
                         annotation.objectoptions = $(field).find('#testtext1').val();
                     }
+
                 }
             });
 
@@ -277,7 +328,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
             });
 
 
-
+*/
             //   Add a new checkbox element.
             //   editor.addField({
             //     type: 'checkbox',
@@ -386,20 +437,8 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
     //
     // Returns nothing.
     submit: function () {
-
-
-	//alert('ddieditor.js - submit: ' + _attris(this.fields))
-	
-
         for (var i = 0, len = this.fields.length; i < len; i++) {
             var field = this.fields[i];
-
-	    //if (i<2){
-		//alert('ddieditor.js - submit: ' + _attris(field.element));
-
-		//alert('ddieditor.js - submit: [id:' +field.id+',name:' + field.name +',label:' + field.label + ',type:' + field.type + ',element:' + field.element.value + ']');
-	    //}
-	    
             field.submit(field.element, this.annotation);
         }
         if (typeof this.dfd !== 'undefined' && this.dfd !== null) {
@@ -478,7 +517,6 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
     addField: function (options) {
         var field = $.extend({
             id: 'annotator-field-' + id(),
-	    name: '',
             type: 'input',
             label: '',
             load: function () {},
@@ -491,8 +529,6 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
 
         field.element = element[0];
 
-	// add type radio button
-
         if (field.type === 'textarea') {
             input = $('<textarea />');
         } else if (field.type === 'checkbox') {
@@ -503,9 +539,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
             input = $('<select />');
         } else if (field.type === 'div') {
             input = $('<div value="source" />');
-        } else if (field.type === 'radio') {
-	    input = $('<input type="radio" name="'+field.name+'"/>');
-	}
+        }
 
         element.append(input);
 
@@ -524,18 +558,6 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
 
         if (field.type === 'checkbox') {
             element.addClass('annotator-checkbox');
-            element.append($('<label />', {
-                'for': field.id,
-                'html': field.label
-            }));
-        }
-
-        if (field.name === 'DDIType') {
-            // element.addClass('annotator-radio');
-	    //if (field.label == 'PK DDI' || field.label == 'Clinical Trial')
-	    //alert('radio name:' + field.name);
-	    //field.name = 'DDIType';
-	    
             element.append($('<label />', {
                 'for': field.id,
                 'html': field.label
@@ -657,6 +679,147 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
         this._mover = mover(this.element[0], controls);
     }
 });
+/*
+//handlebars test
+var handlebars = require('handlebars');
+var fs = require('fs');
+
+var fooJson = {
+    tags: ['express', 'node', 'javascript']
+}
+
+// get your data into a variable
+//var fooJson = require('path/to/foo.json');
+
+// read the file and use the callback to render
+fs.readFile('handlebars-example.hbs', function(err, data){
+    if (!err) {
+        // make the buffer into a string
+        var source = data.toString();
+        // call the render function
+        renderToString(source, fooJson);
+        //alert(testhandle);
+    } else {
+        // handle file read error
+    }
+});
+
+// this will be called after the file is read
+function renderToString(source, data) {
+    var template = handlebars.compile(source);
+    var outputString = template(data);
+    //alert(outputString);
+    return outputString;
+}
+*/
+/*$.ajax({
+    url: "template.html", dataType: "html"
+}).done(function( responseHtml ) {
+    $("#mydiv").html(responseHtml);
+    console.log(responseHtml);
+});*/
+
+//var Handlebars = require("handlebars");
+//var source   = $("#entry-template").html();
+//var template = Handlebars.compile(source);
+ddiEditor.template = Template.content;
+console.log(Template.content);
+        //console.log(html); // here you'll store the html in a string if you want
+        /*ddiEditor.template = [
+            '<style>.question {background: rgba(211, 211, 211, 0.3);}</style>',
+            '<div class="annotator-outer annotator-editor annotator-hide">',
+            '  <form class="annotator-widget">',
+            '    <ul class="annotator-listing"></ul>',
+            '<div style="margin-left: 10px;margin-right: 10px;margin-bottom: 10px">',
+            '<div  style="float:left">',
+                '<div class="question">Drug 1 in DDI:</div>',
+                '<div>Drug mentions:',
+                    '<select name="Drug1">',
+                        '<option value="volvo">simvastatin</option>',
+                        '<option value="saab">ketoconazole</option>',
+                    '</select>',
+                '</div>',
+
+                '<div class="question">Type</div>',
+                '<div>',
+                    '<input type="checkbox" name="vehicle" value="Bike">active ingredient',
+                        '<input type="checkbox" name="vehicle" value="Car">metabolite',
+                            '<input type="checkbox" name="vehicle" value="Bike">drug product',
+                                '<input type="checkbox" name="vehicle" value="Car">drug group',
+                                '</div>',
+
+                                '<div class="question">Role</div>',
+                                '<div>',
+                                    '<input type="checkbox" name="vehicle" value="Bike">Precipitant',
+                                        '<input type="checkbox" name="vehicle" value="Car">Object',
+                                        '</div>',
+
+                                        '<div class="question">Drug 2 in DDI:</div>',
+                                        '<div>Drug mentions:',
+                                            '<select name="Drug1">',
+                                                '<option value="volvo">simvastatin</option>',
+                                                '<option value="saab">ketoconazole</option>',
+                                            '</select>',
+                                        '</div>',
+
+                                        '<div class="question">Type</div>',
+                                        '<div>',
+                                            '<input type="checkbox" name="vehicle" value="Bike">active ingredient',
+                                                '<input type="checkbox" name="vehicle" value="Car">metabolite',
+                                                    '<input type="checkbox" name="vehicle" value="Bike">drug product',
+                                                        '<input type="checkbox" name="vehicle" value="Car">drug group',
+                                                        '</div>',
+
+                                                        '<div class="question">Role</div>',
+                                                        '<div>',
+                                                            '<input type="checkbox" name="vehicle" value="Bike">Precipitant',
+                                                                '<input type="checkbox" name="vehicle" value="Car">Object',
+                                                                '</div>',
+
+                                                            '</div>',
+
+
+                                                            '<div style="margin-left: 300px">',
+
+                                                                '<div class="question">DIKB Assertion type:</div>',
+                                                                '<div>',
+                                                                    '<select name="Drug1">',
+                                                                        '<option value="volvo">DDI clinical trial</option>',
+                                                                        '<option value="saab">test</option>',
+                                                                    '</select>',
+
+                                                                    '<div class="question">Modality</div>',
+                                                                    '<div>',
+                                                                        '<input checked type="checkbox" name="vehicle" value="Bike">Positive',
+                                                                            '<input type="checkbox" name="vehicle" value="Car">Negative',
+                                                                            '</div>',
+
+                                                                            '<div class="question">Evidence modality</div>',
+                                                                            '<div>',
+                                                                                '<input type="checkbox" name="vehicle" value="Bike">Evidence for',
+                                                                                    '<input type="checkbox" name="vehicle" value="Car">Evidence Against',
+                                                                                    '</div>',
+
+                                                                                    '<div class="question">Comment</div>',
+                                                                                    '<div>',
+                                                                                        '<textarea></textarea>',
+                                                                                    '</div>',
+
+                                                                                '</div>',
+                                                                                '</div>',
+
+                                                                            '</div>',
+            '    <div class="annotator-controls">',
+            '     <a href="#cancel" class="annotator-cancel">' + _t('Cancel') + '</a>',
+            '      <a href="#save"',
+            '         class="annotator-save annotator-focus">' + _t('Save') + '</a>',
+            '    </div>',
+            '  </form>',
+            '</div>'
+        ].join('\n');*/
+        //ddiEditor.template += html;
+
+
 
 
 

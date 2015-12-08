@@ -6,7 +6,7 @@ var Widget = require('./widget').Widget,
 var $ = util.$;
 var _t = util.gettext;
 
-var NS = 'annotator-adder';
+var NS = 'annotator-adderhl';
 
 
 // Adder shows and hides an annotation adder button that can be clicked on to
@@ -136,14 +136,15 @@ var Adder = Widget.extend({
 
         // Create a new annotation
         if (this.annotation !== null && typeof this.onCreate === 'function') {
+            this.annotation.annotationType = "DrugMention";
             this.onCreate(this.annotation, event);
         }
     }
 });
 
 Adder.template = [
-    '<div class="annotator-adder annotator-hide">',
-    '  <button type="button">' + _t('Annotate') + '</button>',
+    '<div class="annotator-adderhl annotator-hide">',
+    '  <button type="button" title="Highlight">' + _t('Annotate') + '</button>',
     '</div>'
 ].join('\n');
 

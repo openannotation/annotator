@@ -84,19 +84,24 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
         this.hideTimerActivity = null;
         this.mouseDown = false;
         this.render = function (annotation) {
+            //alert("success2");
+	    if (annotation.Drug1) {
 
-	    if (annotation.text && annotation.drug && annotation.text=="") {
-            var returnText = "Comment: " + annotation.text +
-                "<br> Drug: " + annotation.drug +
-                "<br> DrugRole: " + annotation.drugrole +
-                "<br> SourceType: " + annotation.sourceType;
-
-
-            if(annotation.objectoptions)
-                returnText += "<br> ObjectOptions: " + annotation.objectoptions;
-            if(annotation.precipitantoptions)
-                returnText += "<br> PrecipitantOptions: " + annotation.precipitantoptions;
-
+            var returnText =
+                "Drug1: " + annotation.Drug1 +
+                "<br> Type1: " + annotation.Type1 +
+                "<br> Role1: " + annotation.Role1 +
+                "<br> Drug2: " + annotation.Drug2 +
+                "<br> Type2: " + annotation.Type2 +
+                "<br> Role2: " + annotation.Role2 +
+                "<br> Assertion Type: " + annotation.assertion_type +
+                "<br> Modality: " + annotation.Modality +
+                "<br> Evidence modality: " + annotation.Evidence_modality +
+                "<br> Comment: " + annotation.Comment;
+            if(annotation.assertion_type=="DDI clinical trial")
+            {
+                returnText += "<br> Number_participants: " + annotation.Number_participants;
+            }
             return returnText;
         }
 	    else if (annotation.text && (annotation.drug == "")) {
@@ -104,9 +109,8 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
             }
 	    else if (annotation.drug && (annotation.text == "")) {
                 return util.escapeHtml(annotation.drug);
-
             } else {
-                return "<i>" + _t('No DDI Information & comment') + "</i>";
+                return "<i>" + _t('No drug & comment') + "</i>";
             }
         };
 
@@ -137,14 +141,14 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
             this.document = this.options.autoViewHighlights.ownerDocument;
 
             $(this.options.autoViewHighlights)
-                .on("mouseover." + NS, '.annotator-hl', function (event) {
+                .on("mouseover." + NS, '.annotator-hlddi', function (event) {
                     // If there are many overlapping highlights, still only
                     // call _onHighlightMouseover once.
                     if (event.target === this) {
                         self._onHighlightMouseover(event);
                     }
                 })
-                .on("mouseleave." + NS, '.annotator-hl', function () {
+                .on("mouseleave." + NS, '.annotator-hlddi', function () {
                     self._startHideTimer();
                 });
 
@@ -382,7 +386,7 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
         this._startHideTimer(true)
             .done(function () {
                 var annotations = $(event.target)
-                    .parents('.annotator-hl')
+                    .parents('.annotator-hlddi')
                     .addBack()
                     .map(function (_, elem) {
                         return $(elem).data("annotation");

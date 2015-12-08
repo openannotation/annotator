@@ -125,6 +125,12 @@ Highlighter.prototype.drawAll = function (annotations) {
 //
 // Returns an Array of drawn highlight elements.
 Highlighter.prototype.draw = function (annotation) {
+
+    //alert('drug mention highlighter - draw anntype: ' + annotation.annotationType);
+
+    if (annotation.annotationType != "DrugMention")
+        return null;
+
     var normedRanges = [];
 
     for (var i = 0, ilen = annotation.ranges.length; i < ilen; i++) {
@@ -135,12 +141,12 @@ Highlighter.prototype.draw = function (annotation) {
     }
 
     var hasLocal = (typeof annotation._local !== 'undefined' &&
-                    annotation._local !== null);
+    annotation._local !== null);
     if (!hasLocal) {
         annotation._local = {};
     }
     var hasHighlights = (typeof annotation._local.highlights !== 'undefined' &&
-                         annotation._local.highlights === null);
+    annotation._local.highlights === null);
     if (!hasHighlights) {
         annotation._local.highlights = [];
     }
@@ -172,9 +178,9 @@ Highlighter.prototype.draw = function (annotation) {
 // Returns nothing.
 Highlighter.prototype.undraw = function (annotation) {
     var hasHighlights = (typeof annotation._local !== 'undefined' &&
-                         annotation._local !== null &&
-                         typeof annotation._local.highlights !== 'undefined' &&
-                         annotation._local.highlights !== null);
+    annotation._local !== null &&
+    typeof annotation._local.highlights !== 'undefined' &&
+    annotation._local.highlights !== null);
 
     if (!hasHighlights) {
         return;

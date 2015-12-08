@@ -5,8 +5,8 @@
 
 <!-- <script src="js/annotator-drug.js"></script> -->
 <!-- <script src="js/annotator-drug-ddiEditor.js"></script> -->
-<script src="js/annotator-drug-ddiV-ddiE.js"></script>
-
+<script src="js/annotator.min.js"></script>
+<script src="js/backups/jquery-1.11.1.min.js"></script>
     <header>
       <h1>Annotator demonstration</h1>
     </header>
@@ -79,17 +79,9 @@
       } else {
 
 	  var app = new annotator.App();
-        var app1 = new annotator.App();
-	  app.include(annotator.ui.main, {
+	  app.include(annotator.ui.dbmimain, {
       element: document.querySelector('#content'),
-
     });
-          //app.include(annotator.storage.debug);
-          app1.include(annotator.ui.ddimain, {
-              element: document.querySelector('#content'),
-              editorExtensions: [annotator.ui.tags.editorExtension],
-              viewerExtensions: [annotator.ui.tags.viewerExtension]
-          });
 
 	  app.include(
               annotator.storage.http, {
@@ -103,34 +95,12 @@
 
 	  // app.include(addFieldsToEditor, {editor: annotator.ui.editor});
 
-
-        //app.include(annotator.storage.debug);
-
-        app1.include(
-                annotator.storage.http, {
-                  prefix: 'http://127.0.0.1:5000'
-                }
-                //annotator.Registry.prototype.getUtility(iface)
-        );
-
-        //app.include(helloWorld, {message: 'ddi plugin'
-        //});
-
-        // app.include(addFieldsToEditor, {editor: annotator.ui.editor});
-
-        app1.start().then(function ()
-        {app1.annotations.load();
-
-          app1.ident.identity = 'bob';
-        });
-
 	  app.start().then(function () 
 			   {app.annotations.load();
+
+
 			   });
       }
-
-
-
     </script>
 
   </body>
