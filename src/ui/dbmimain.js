@@ -278,8 +278,9 @@ function main(options) {
                 // Copy the interaction point from the shown viewer:
                 s.interactionPoint = util.$(s.ddiviewer.element)
                     .css(['top', 'left']);
-
-                app.annotations.update(ann);
+                if (ann.annotationType == "DDI"){
+                    app.annotations.update(ann);
+                }
             },
             onDelete: function (ann) {
                 app.annotations['delete'](ann);
@@ -303,8 +304,9 @@ function main(options) {
                 // Copy the interaction point from the shown viewer:
                 s.interactionPoint = util.$(s.hlviewer.element)
                     .css(['top', 'left']);
-
-                app.annotations.update(ann);
+                if (ann.annotationType == "DrugMention"){
+                    app.annotations.update(ann);
+                }
             },
             onDelete: function (ann) {
                 app.annotations['delete'](ann);
