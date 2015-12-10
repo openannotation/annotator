@@ -83,11 +83,12 @@ var Viewer = exports.Viewer = Widget.extend({
         this.mouseDown = false;
         this.render = function (annotation) {
 
-	    if (annotation.quote && annotation.user && annotation.created) {
-            var returnText = " Name: " + annotation.quote + 
-                "<br> Created: " + annotation.created + 
-                "<br> Creator: " + annotation.user + 
-                "<br> Annotation: " + annotation.annotationType
+            if (annotation.quote && annotation.user && annotation.created) {
+                var returnText = " Name: " + annotation.quote +
+                    "<br> Created: " + annotation.created +
+                    "<br> Creator: " + annotation.user +
+                    "<br> Annotation: " + annotation.annotationType
+
                 return returnText;
             } else {
                 return "<i>" + _t('No drug mention') + "</i>";
@@ -218,8 +219,8 @@ var Viewer = exports.Viewer = Widget.extend({
         for (var i = 0, len = this.annotations.length; i < len; i++) {
             var annotation = this.annotations[i];
             this._annotationItem(annotation)
-              .appendTo(list)
-              .data('annotation', annotation);
+                .appendTo(list)
+                .data('annotation', annotation);
         }
 
         this.show(position);
@@ -249,8 +250,8 @@ var Viewer = exports.Viewer = Widget.extend({
             {'type': 'text/html'}
         );
         var hasValidLink = (links.length > 0 &&
-                            typeof links[0].href !== 'undefined' &&
-                            links[0].href !== null);
+        typeof links[0].href !== 'undefined' &&
+        links[0].href !== null);
 
         if (hasValidLink) {
             link.attr('href', links[0].href);
@@ -460,7 +461,7 @@ Viewer.itemTemplate = [
     '    <a href="#"',
     '       title="' + _t('View as webpage') + '"',
     '       class="annotator-link">' + _t('View as webpage') + '</a>',
-    '    <button type="button"',
+    '    <button style="display:none" type="button"',
     '            title="' + _t('Edit') + '"',
     '            class="annotator-edit">' + _t('Edit') + '</button>',
     '    <button type="button"',

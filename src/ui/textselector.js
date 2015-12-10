@@ -69,6 +69,7 @@ TextSelector.prototype.captureDocumentSelection = function () {
         var r = selection.getRangeAt(i),
             browserRange = new Range.BrowserRange(r),
             normedRange = browserRange.normalize().limit(this.element);
+     
 
         // If the new range falls fully outside our this.element, we should
         // add it back to the document but not return it from this method.
@@ -129,6 +130,9 @@ TextSelector.prototype._checkForEndSelection = function (event) {
         var container = selectedRanges[i].commonAncestor;
         if ($(container).hasClass('annotator-hl')) {
             container = $(container).parents('[class!=annotator-hl]')[0];
+        }
+        if ($(container).hasClass('annotator-ddi')) {
+            container = $(container).parents('[class!=annotator-ddi]')[0];
         }
         if (isAnnotator(container)) {
             _nullSelection();

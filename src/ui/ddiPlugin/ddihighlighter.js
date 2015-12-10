@@ -17,7 +17,7 @@ var Promise = util.Promise;
 // Returns an array of highlight Elements.
 function highlightRange(normedRange, cssClass) {
     if (typeof cssClass === 'undefined' || cssClass === null) {
-        cssClass = 'annotator-hlddi';
+        cssClass = 'annotator-ddi';
     }
     var white = /^\s*$/;
 
@@ -88,6 +88,7 @@ ddiHighlighter.prototype.destroy = function () {
 // Returns nothing.
 ddiHighlighter.prototype.drawAll = function (annotations) {
     var self = this;
+    //alert("[INFO] ddihighlighter drawAll called")
 
     var p = new Promise(function (resolve) {
         var highlights = [];
@@ -141,12 +142,16 @@ ddiHighlighter.prototype.draw = function (annotation) {
     }
 
     var hasLocal = (typeof annotation._local !== 'undefined' &&
-                    annotation._local !== null);
+
+    annotation._local !== null);
+
     if (!hasLocal) {
         annotation._local = {};
     }
     var hasHighlights = (typeof annotation._local.highlights !== 'undefined' &&
-                         annotation._local.highlights === null);
+
+    annotation._local.highlights === null);
+
     if (!hasHighlights) {
         annotation._local.highlights = [];
     }
@@ -178,9 +183,10 @@ ddiHighlighter.prototype.draw = function (annotation) {
 // Returns nothing.
 ddiHighlighter.prototype.undraw = function (annotation) {
     var hasHighlights = (typeof annotation._local !== 'undefined' &&
-                         annotation._local !== null &&
-                         typeof annotation._local.highlights !== 'undefined' &&
-                         annotation._local.highlights !== null);
+
+    annotation._local !== null &&
+    typeof annotation._local.highlights !== 'undefined' &&
+    annotation._local.highlights !== null);
 
     if (!hasHighlights) {
         return;
@@ -207,11 +213,11 @@ ddiHighlighter.prototype.redraw = function (annotation) {
 
 ddiHighlighter.options = {
     // The CSS class to apply to drawn ddi
-    highlightClass: 'annotator-hlddi',
+    highlightClass: 'annotator-ddi',
     // Number of annotations to draw at once
-    chunkSize: 10,
+    chunkSize: 200,
     // Time (in ms) to pause between drawing chunks of annotations
-    chunkDelay: 10
+    chunkDelay: 1
 };
 
 
@@ -227,4 +233,6 @@ exports.standalone = function standalone(element, options) {
         annotationDeleted: function (ann) { widget.undraw(ann); },
         annotationUpdated: function (ann) { widget.redraw(ann); }
     };
+
 };
+

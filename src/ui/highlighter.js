@@ -89,6 +89,8 @@ Highlighter.prototype.destroy = function () {
 Highlighter.prototype.drawAll = function (annotations) {
     var self = this;
 
+    //alert("[INFO] hlhighlighter drawAll called")
+
     var p = new Promise(function (resolve) {
         var highlights = [];
 
@@ -141,12 +143,12 @@ Highlighter.prototype.draw = function (annotation) {
     }
 
     var hasLocal = (typeof annotation._local !== 'undefined' &&
-                    annotation._local !== null);
+    annotation._local !== null);
     if (!hasLocal) {
         annotation._local = {};
     }
     var hasHighlights = (typeof annotation._local.highlights !== 'undefined' &&
-                         annotation._local.highlights === null);
+    annotation._local.highlights === null);
     if (!hasHighlights) {
         annotation._local.highlights = [];
     }
@@ -178,9 +180,9 @@ Highlighter.prototype.draw = function (annotation) {
 // Returns nothing.
 Highlighter.prototype.undraw = function (annotation) {
     var hasHighlights = (typeof annotation._local !== 'undefined' &&
-                         annotation._local !== null &&
-                         typeof annotation._local.highlights !== 'undefined' &&
-                         annotation._local.highlights !== null);
+    annotation._local !== null &&
+    typeof annotation._local.highlights !== 'undefined' &&
+    annotation._local.highlights !== null);
 
     if (!hasHighlights) {
         return;
@@ -209,9 +211,9 @@ Highlighter.options = {
     // The CSS class to apply to drawn highlights
     highlightClass: 'annotator-hl',
     // Number of annotations to draw at once
-    chunkSize: 10,
+    chunkSize: 200,
     // Time (in ms) to pause between drawing chunks of annotations
-    chunkDelay: 10
+    chunkDelay: 1
 };
 
 

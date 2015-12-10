@@ -137,7 +137,7 @@ var ddiAdder = Widget.extend({
         this.ignoreMouseup = false;
 
         // Create a new annotation
-     
+
         if (this.annotation !== null && typeof this.onCreate === 'function') {
             this.annotation.annotationType = "DDI";
             this.onCreate(this.annotation, event);
@@ -146,9 +146,9 @@ var ddiAdder = Widget.extend({
 });
 
 // from hypothesis
-  // Guest.prototype.html = jQuery.extend({}, Annotator.prototype.html, {
-  //   adder: '<div class="annotator-adder">\n  <button class="h-icon-insert-comment" data-action="comment" title="New Note"></button>\n  <button class="h-icon-border-color" data-action="highlight" title="Highlight"></button>\n</div>'
-  // });
+// Guest.prototype.html = jQuery.extend({}, Annotator.prototype.html, {
+//   adder: '<div class="annotator-adder">\n  <button class="h-icon-insert-comment" data-action="comment" title="New Note"></button>\n  <button class="h-icon-border-color" data-action="highlight" title="Highlight"></button>\n</div>'
+// });
 
 ddiAdder.template = [
     '<div class="annotator-adder annotator-hide">',
@@ -163,5 +163,5 @@ ddiAdder.options = {
     onCreate: null
 };
 
-
 exports.ddiAdder = ddiAdder;
+

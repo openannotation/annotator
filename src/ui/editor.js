@@ -238,23 +238,24 @@ var Editor = exports.Editor = Widget.extend({
         //         },
         //         submit: function (field, annotation) {
         //             annotation.text = $(field).find('#annotator-field-0').val();
-		//     if (annotation.text == '') {
-		// 	annotation.text = $(field).find('textarea').val()
-		//     }
+
+        //     if (annotation.text == '') {
+        // 	annotation.text = $(field).find('textarea').val()
+        //     }
         //         }
         //     });
 
-       // }
+        // }
 
         this.addField({
             label: _t('Annotation type') + '\u2026' + _t('DrugMention'),
             type: 'div',
             id: 'annotationType',
             load: function (field, annotation) {
-                $(field).find('#annotationType').val(annotation.annotationType || '');
+                //$(field).find('#annotationType').val(annotation.annotationType || '');
             },
             submit: function (field, annotation){
-		        annotation.annotationType = _t('DrugMention')
+                annotation.annotationType = _t('DrugMention');
             }
         });
 
@@ -444,8 +445,9 @@ var Editor = exports.Editor = Widget.extend({
         } else if (field.type === 'div') {
             input = $('<div value="source" />');
         } else if (field.type === 'radio') {
-	    input = $('<input type="radio" name="'+field.name+'"/>');
-	    }
+            input = $('<input type="radio" name="'+field.name+'"/>');
+        }
+
 
         element.append(input);
 

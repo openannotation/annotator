@@ -84,19 +84,37 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
         this.hideTimerActivity = null;
         this.mouseDown = false;
         this.render = function (annotation) {
-            
-	    if (annotation.text && annotation.annotationType) {
-            var returnText = " Comment: " + annotation.text +
-                "<br> Precipt: " + annotation.drugPrecipt +
-                "<br> Object: " + annotation.drugObject +
-                "<br> Created: " + annotation.created + 
-                "<br> Creator: " + annotation.user + 
-                "<br> Annotation: " + annotation.annotationType;
+
+            //alert("success2");
+	    if (annotation.Drug1) {
+
+            var returnText =
+                "Drug1: " + annotation.Drug1 +
+                "<br> Type1: " + annotation.Type1 +
+                "<br> Role1: " + annotation.Role1 +
+                "<br> Drug2: " + annotation.Drug2 +
+                "<br> Type2: " + annotation.Type2 +
+                "<br> Role2: " + annotation.Role2 +
+                "<br> Assertion Type: " + annotation.assertion_type +
+                "<br> Modality: " + annotation.Modality +
+                "<br> Evidence modality: " + annotation.Evidence_modality +
+                "<br> Comment: " + annotation.Comment;
+            if(annotation.assertion_type=="DDI clinical trial")
+            {
+                returnText += "<br> Number_participants: " + annotation.Number_participants;
+            }
 
             return returnText;
-        } else {
-            return "<i>" + _t('No DDI Information') + "</i>";
-        }
+        } 
+	    else if (annotation.text && (annotation.drug == "")) {
+                return util.escapeHtml(annotation.text);
+            }
+	    else if (annotation.drug && (annotation.text == "")) {
+                return util.escapeHtml(annotation.drug);
+            } else {
+                return "<i>" + _t('No drug & comment') + "</i>";
+            }
+
         };
         
         var self = this;
@@ -126,14 +144,14 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
             this.document = this.options.autoViewHighlights.ownerDocument;
 
             $(this.options.autoViewHighlights)
-                .on("mouseover." + NS, '.annotator-hlddi', function (event) {
+                .on("mouseover." + NS, '.annotator-ddi', function (event) {
                     // If there are many overlapping highlights, still only
                     // call _onHighlightMouseover once.
                     if (event.target === this) {
                         self._onHighlightMouseover(event);
                     }
                 })
-                .on("mouseleave." + NS, '.annotator-hlddi', function () {
+                .on("mouseleave." + NS, '.annotator-ddi', function () {
                     self._startHideTimer();
                 });
 
@@ -371,7 +389,7 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
         this._startHideTimer(true)
             .done(function () {
                 var annotations = $(event.target)
-                    .parents('.annotator-hlddi')
+                    .parents('.annotator-ddi')
                     .addBack()
                     .map(function (_, elem) {
                         return $(elem).data("annotation");

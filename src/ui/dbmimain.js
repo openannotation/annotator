@@ -74,10 +74,10 @@ function injectDynamicStyle() {
     util.$('#annotator-dynamic-style').remove();
 
     var sel = '*' +
-              ':not(annotator-adder)' +
-              ':not(annotator-outer)' +
-              ':not(annotator-notice)' +
-              ':not(annotator-filter)';
+        ':not(annotator-adder)' +
+        ':not(annotator-outer)' +
+        ':not(annotator-notice)' +
+        ':not(annotator-filter)';
 
     // use the maximum z-index in the page
     var max = maxZIndex(util.$(global.document.body).find(sel).get());
@@ -193,7 +193,7 @@ function addPermissionsCheckboxes(editor, ident, authz) {
 
 
 /**
-   
+
  */
 function main(options) {
     if (typeof options === 'undefined' || options === null) {
@@ -205,8 +205,9 @@ function main(options) {
     options.viewerExtensions = options.viewerExtensions || [];
 
     // Local helpers
-    var makeDDIAnnotation = annotationFactory(options.element, '.annotator-hlddi');
     var makeHLAnnotation = annotationFactory(options.element, '.annotator-hl');
+    var makeDDIAnnotation = annotationFactory(options.element, '.annotator-ddi');
+
 
     // Object to hold local state
     var s = {
@@ -246,10 +247,11 @@ function main(options) {
 
         addPermissionsCheckboxes(s.ddieditor, ident, authz);
         //addPermissionsCheckboxes(s.hleditor, ident, authz);
-        
+
         //highlighter
-        s.ddihighlighter = new ddihighlighter.ddiHighlighter(options.element);
         s.hlhighlighter = new hlhighlighter.Highlighter(options.element);
+        s.ddihighlighter = new ddihighlighter.ddiHighlighter(options.element);
+
 
         s.textselector = new textselector.TextSelector(options.element, {
             onSelection: function (ranges, event) {
@@ -258,12 +260,13 @@ function main(options) {
                     var hlAnnotation = makeHLAnnotation(ranges);
 
                     s.interactionPoint = util.mousePosition(event);
-
-                    s.ddiadder.load(ddiAnnotation, s.interactionPoint);
                     s.hladder.load(hlAnnotation, s.interactionPoint);
+                    s.ddiadder.load(ddiAnnotation, s.interactionPoint);
+
                 } else {
-                    s.ddiadder.hide();
                     s.hladder.hide();
+                    s.ddiadder.hide();
+
                 }
             }
         });
@@ -273,7 +276,7 @@ function main(options) {
             onEdit: function (ann) {
                 // Copy the interaction point from the shown viewer:
                 s.interactionPoint = util.$(s.ddiviewer.element)
-                                         .css(['top', 'left']);
+                    .css(['top', 'left']);
 
                 app.annotations.update(ann);
             },
@@ -289,7 +292,7 @@ function main(options) {
             autoViewHighlights: options.element,
             extensions: options.viewerExtensions
         });
-        
+
         s.ddiviewer.attach();
 
         // highlight viewer
@@ -316,7 +319,7 @@ function main(options) {
         });
         s.hlviewer.attach();
 
-        
+
         injectDynamicStyle();
     }
 
@@ -324,42 +327,54 @@ function main(options) {
         start: start,
 
         destroy: function () {
-            s.adder.destroy();
+            /*s.adder.destroy();
             s.editor.destroy();
             s.highlighter.destroy();
             s.textselector.destroy();
-            s.viewer.destroy();
+            s.viewer.destroy();*/
+            s.hleditor.destroy();
+            s.hlhighlighter.destroy();
+            s.hladder.destroy();
+            s.textselector.destroy();
+            s.hlviewer.destroy();
+            s.ddiadder.destroy();
+            s.ddieditor.destroy();
+            s.ddihighlighter.destroy();
+            s.ddiviewer.destroy();
             removeDynamicStyle();
         },
 
-        annotationsLoaded: function (anns) { 
-            s.ddihighlighter.drawAll(anns); 
+        annotationsLoaded: function (anns) {
             s.hlhighlighter.drawAll(anns);
+            s.ddihighlighter.drawAll(anns);
+
         },
-        annotationCreated: function (ann) { 
+        annotationCreated: function (ann) {
             // yifan draw annotation on text 
             if (ann.annotationType == "DDI"){
-                s.ddihighlighter.draw(ann); 
+                s.ddihighlighter.draw(ann);
+
             } else if (ann.annotationType == "DrugMention"){
                 s.hlhighlighter.draw(ann);
             } else {
-                alert('[WARNING] main.js - annotationCreated - annot type not defined: ' + ann.annotationType);               
+                alert('[WARNING] main.js - annotationCreated - annot type not defined: ' + ann.annotationType);
             }
         },
         annotationDeleted: function (ann) {
-            s.ddihighlighter.undraw(ann); 
             s.hlhighlighter.undraw(ann);
+            s.ddihighlighter.undraw(ann);
+
         },
-        annotationUpdated: function (ann) { 
- 
+        annotationUpdated: function (ann) {
+
             if (ann.annotationType == "DDI"){
-                s.ddihighlighter.redraw(ann); 
+                s.ddihighlighter.redraw(ann);
             } else if (ann.annotationType == "DrugMention"){
                 s.hlhighlighter.redraw(ann);
             } else {
-                alert('[WARNING] main.js - annotationUpdated - annot type not defined: ' + ann.annotationType);               
+                alert('[WARNING] main.js - annotationUpdated - annot type not defined: ' + ann.annotationType);
             }
-            
+
         },
 
         beforeAnnotationCreated: function (annotation) {
