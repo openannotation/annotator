@@ -131,9 +131,9 @@ TextSelector.prototype._checkForEndSelection = function (event) {
         if ($(container).hasClass('annotator-hl')) {
             container = $(container).parents('[class!=annotator-hl]')[0];
         }
-        if ($(container).hasClass('annotator-ddi')) {
-            container = $(container).parents('[class!=annotator-ddi]')[0];
-        }
+        // if ($(container).hasClass('annotator-ddi')) {
+        //     container = $(container).parents('[class!=annotator-ddi]')[0];
+        // }
         if (isAnnotator(container)) {
             _nullSelection();
             return;

@@ -17,7 +17,7 @@ var Promise = util.Promise;
 // Returns an array of highlight Elements.
 function highlightRange(normedRange, cssClass) {
     if (typeof cssClass === 'undefined' || cssClass === null) {
-        cssClass = 'annotator-ddi';
+        cssClass = 'annotator-hl';
     }
     var white = /^\s*$/;
 
@@ -182,6 +182,8 @@ ddiHighlighter.prototype.draw = function (annotation) {
 //
 // Returns nothing.
 ddiHighlighter.prototype.undraw = function (annotation) {
+
+    if (annotation.annotationType == "DDI"){
     var hasHighlights = (typeof annotation._local !== 'undefined' &&
 
     annotation._local !== null &&
@@ -199,6 +201,7 @@ ddiHighlighter.prototype.undraw = function (annotation) {
         }
     }
     delete annotation._local.highlights;
+    }
 };
 
 // Public: Redraw the highlights for the given annotation.
@@ -207,13 +210,15 @@ ddiHighlighter.prototype.undraw = function (annotation) {
 //
 // Returns the list of newly-drawn highlights.
 ddiHighlighter.prototype.redraw = function (annotation) {
+    if (annotation.annotationType == "DDI"){
     this.undraw(annotation);
     return this.draw(annotation);
+    }
 };
 
 ddiHighlighter.options = {
     // The CSS class to apply to drawn ddi
-    highlightClass: 'annotator-ddi',
+    highlightClass: 'annotator-hl',
     // Number of annotations to draw at once
     chunkSize: 200,
     // Time (in ms) to pause between drawing chunks of annotations

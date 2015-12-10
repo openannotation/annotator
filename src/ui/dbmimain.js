@@ -206,7 +206,7 @@ function main(options) {
 
     // Local helpers
     var makeHLAnnotation = annotationFactory(options.element, '.annotator-hl');
-    var makeDDIAnnotation = annotationFactory(options.element, '.annotator-ddi');
+    //var makeDDIAnnotation = annotationFactory(options.element, '.annotator-ddi');
 
 
     // Object to hold local state
@@ -256,12 +256,13 @@ function main(options) {
         s.textselector = new textselector.TextSelector(options.element, {
             onSelection: function (ranges, event) {
                 if (ranges.length > 0) {
-                    var ddiAnnotation = makeDDIAnnotation(ranges);
+                    //var ddiAnnotation = makeDDIAnnotation(ranges);
                     var hlAnnotation = makeHLAnnotation(ranges);
 
                     s.interactionPoint = util.mousePosition(event);
                     s.hladder.load(hlAnnotation, s.interactionPoint);
-                    s.ddiadder.load(ddiAnnotation, s.interactionPoint);
+                    s.ddiadder.load(hlAnnotation, s.interactionPoint);
+                    //s.ddiadder.load(ddiAnnotation, s.interactionPoint);
 
                 } else {
                     s.hladder.hide();

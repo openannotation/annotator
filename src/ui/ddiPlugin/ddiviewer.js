@@ -86,7 +86,7 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
         this.render = function (annotation) {
 
             //alert("success2");
-	    if (annotation.Drug1) {
+	    if (annotation.annotationType == "DDI" && annotation.Drug1 && annotation.Drug2) {
 
             var returnText =
                 "Drug1: " + annotation.Drug1 +
@@ -105,16 +105,10 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
             }
 
             return returnText;
-        } 
-	    else if (annotation.text && (annotation.drug == "")) {
-                return util.escapeHtml(annotation.text);
-            }
-	    else if (annotation.drug && (annotation.text == "")) {
-                return util.escapeHtml(annotation.drug);
-            } else {
-                return "<i>" + _t('No drug & comment') + "</i>";
-            }
-
+        } else {
+            return null;
+        }
+	    
         };
         
         var self = this;
@@ -144,14 +138,14 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
             this.document = this.options.autoViewHighlights.ownerDocument;
 
             $(this.options.autoViewHighlights)
-                .on("mouseover." + NS, '.annotator-ddi', function (event) {
+                .on("mouseover." + NS, '.annotator-hl', function (event) {
                     // If there are many overlapping highlights, still only
                     // call _onHighlightMouseover once.
                     if (event.target === this) {
                         self._onHighlightMouseover(event);
                     }
                 })
-                .on("mouseleave." + NS, '.annotator-ddi', function () {
+                .on("mouseleave." + NS, '.annotator-hl', function () {
                     self._startHideTimer();
                 });
 
@@ -240,9 +234,12 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
 
         for (var i = 0, len = this.annotations.length; i < len; i++) {
             var annotation = this.annotations[i];
+
+            if (annotation.annotationType == "DDI"){
             this._annotationItem(annotation)
               .appendTo(list)
               .data('annotation', annotation);
+            }
         }
 
         this.show(position);
@@ -389,7 +386,7 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
         this._startHideTimer(true)
             .done(function () {
                 var annotations = $(event.target)
-                    .parents('.annotator-ddi')
+                    .parents('.annotator-hl')
                     .addBack()
                     .map(function (_, elem) {
                         return $(elem).data("annotation");

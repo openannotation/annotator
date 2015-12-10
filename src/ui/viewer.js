@@ -83,7 +83,7 @@ var Viewer = exports.Viewer = Widget.extend({
         this.mouseDown = false;
         this.render = function (annotation) {
 
-            if (annotation.quote && annotation.user && annotation.created) {
+            if (annotation.quote && annotation.annotationType == "DrugMention" && annotation.created) {
                 var returnText = " Name: " + annotation.quote +
                     "<br> Created: " + annotation.created +
                     "<br> Creator: " + annotation.user +
@@ -91,7 +91,7 @@ var Viewer = exports.Viewer = Widget.extend({
 
                 return returnText;
             } else {
-                return "<i>" + _t('No drug mention') + "</i>";
+                return null;
             }
         };
 
@@ -218,9 +218,13 @@ var Viewer = exports.Viewer = Widget.extend({
 
         for (var i = 0, len = this.annotations.length; i < len; i++) {
             var annotation = this.annotations[i];
-            this._annotationItem(annotation)
-                .appendTo(list)
-                .data('annotation', annotation);
+
+            // skip load ddi annotation
+            if (annotation.annotationType == "DrugMention"){
+                this._annotationItem(annotation)
+                    .appendTo(list)
+                    .data('annotation', annotation);
+            }
         }
 
         this.show(position);
