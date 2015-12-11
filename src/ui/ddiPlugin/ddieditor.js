@@ -80,17 +80,17 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                     $('#Drug1 option').remove();
                     $('#Drug2 option').remove();
                     var flag = 0;
-                    $('.annotator-hl').each(function(index){
+                    $('[name="annotator-hl"]').each(function(index){
                         //alert(annotation.quote);
-                        if(annotation.quote.indexOf($('.annotator-hl:eq('+index+')').html())>=0) {
-
+                        if(annotation.quote.indexOf($('[name="annotator-hl"]:eq('+index+')').text())>=0) {
+                            console.log($('[name="annotator-hl"]:eq('+index+')').text());
                             $('#Drug1').append($('<option>', {
-                                value: $('.annotator-hl:eq(' + index + ')').html(),
-                                text: $('.annotator-hl:eq(' + index + ')').html()
+                                value: $('[name="annotator-hl"]:eq(' + index + ')').text(),
+                                text: $('[name="annotator-hl"]:eq(' + index + ')').text()
                             }));
                             $('#Drug2').append($('<option>', {
-                                value: $('.annotator-hl:eq(' + index + ')').html(),
-                                text: $('.annotator-hl:eq(' + index + ')').html()
+                                value: $('[name="annotator-hl"]:eq(' + index + ')').text(),
+                                text: $('[name="annotator-hl"]:eq(' + index + ')').text()
                             }));
                             flag = flag + 1;
                         }

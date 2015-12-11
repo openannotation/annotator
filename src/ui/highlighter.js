@@ -33,6 +33,9 @@ function highlightRange(normedRange, cssClass) {
         if (!white.test(node.nodeValue)) {
             var hl = global.document.createElement('span');
             hl.className = cssClass;
+
+            // add attribute name for css
+            hl.setAttribute("name", "annotator-hl");
             node.parentNode.replaceChild(hl, node);
             hl.appendChild(node);
             results.push(hl);
