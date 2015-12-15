@@ -185,8 +185,11 @@ var Viewer = exports.Viewer = Widget.extend({
     show: function (position) {
         if (typeof position !== 'undefined' && position !== null) {
             this.element.css({
-                top: position.top,
-                left: position.left
+                //top: position.top,
+                left: position.left,
+                top:position.top
+                //left:200,
+                //width:200px
             });
         }
 
@@ -455,7 +458,7 @@ Viewer.classes = {
 // HTML templates for this.widget and this.item properties.
 Viewer.template = [
     '<div class="annotator-outer annotator-viewer annotator-hide">',
-    '  <ul class="annotator-widget annotator-listing"></ul>',
+    '  <ul class="annotator-widgetview annotator-listing"></ul>',
     '</div>'
 ].join('\n');
 

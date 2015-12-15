@@ -49,17 +49,40 @@
 -------------------------------------------------------------------- */
 
 .annotator-hl {
-	/* background: #FFFF0A; */
+	background: #FFFF0A;
 	background: rgba(255, 255, 10, 0.3);
 	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#4DFFFF0A, endColorstr=#4DFFFF0A)";  /* 0.3 == 4D in MS filters */
 }
 
-/* for pdf annotation */
-/* .annotator-hl { */
-/* 	background: #FFFF0A; */
-/* 	background: rgba(255, 255, 0, 1.0); */
-/* 	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#4DFFFF0A, endColorstr=#4DFFFF0A)";  /\* 0.3 == 4D in MS filters *\/ */
-/* } */
+.quoteborder {
+	height: 60px;
+	overflow-y: scroll;
+}
+
+#quotearea {
+	margin-right: 30px;
+	margin-left: 30px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	color: #303030;
+}
+
+.highlightdrug {
+	background-color:#9ebdff;
+	color: #000000;
+}
+
+.selecteddrug {
+	background-color:#FFFF0A;
+	color: #000000;
+	text-decoration: underline;
+}
+
+.annotator-drug {
+	background: #FFFF0A;
+	background: rgba(255, 255, 10, 0.3);
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#4DFFFF0A, endColorstr=#4DFFFF0A)";  /* 0.3 == 4D in MS filters */
+}
 
 .annotator-hl-temporary {
 	background: #007CFF;
@@ -69,19 +92,29 @@
 
 /* Annotator DDI
 -------------------------------------------------------------------- */
-#annotator-ddi {
-	/* background: #B0C4DE; */
+.annotator-ddi {
+	background: #B0C4DE;
 	background: rgba(176, 196, 222, 0.4);
 	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#4DFFFF0A, endColorstr=#4DFFFF0A)";  /* 0.3 == 4D in MS filters */
 }
 
-/* for pdf annotation */
-/* #annotator-ddi { */
-/* 	background: #B0C4DE; */
-/* 	background: rgba(0, 0, 255, 0.6); */
-/* 	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#4DFFFF0A, endColorstr=#4DFFFF0A)";  /\* 0.3 == 4D in MS filters *\/ */
-/* } */
+.annotator-ddi-temporary {
+	background: #007CFF;
+	background: rgba(0, 124, 255, 0.3);
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#4D007CFF, endColorstr=#4D007CFF)";  /* 0.3 == 4D in MS filters */
+}
 
+#annotator-ddi {
+	background: #B0C4DE;
+	background: rgba(176, 196, 222, 0.4);
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#4DFFFF0A, endColorstr=#4DFFFF0A)";  /* 0.3 == 4D in MS filters */
+}
+
+#annotator-ddi-temporary {
+	background: #007CFF;
+	background: rgba(0, 124, 255, 0.3);
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#4D007CFF, endColorstr=#4D007CFF)";  /* 0.3 == 4D in MS filters */
+}
 
 /* Annotator Wrapper
 -------------------------------------------------------------------- */
@@ -174,13 +207,13 @@
 	width: 0;
 	height: 0;
 }
-
-.annotator-widget {
+/*ddi customize*/
+.annotator-widgetview {
 	margin: 0;
 	padding: 0;
 	bottom: 15px;
 	left: -18px;
-	min-width: 650px;
+	min-width: 200px;
 	background-color: #FBFBFB;
 	background-color: rgba(251, 251, 251, 0.98);
 	border: 1px solid #7A7A7A;
@@ -192,7 +225,36 @@
 	-moz-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 	-o-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+	overflow:hidden;
 }
+
+.annotator-controls {
+	clear: both;
+}
+
+
+
+.annotator-widget {
+	margin: 0;
+	padding: 0;
+	bottom: 15px;
+	left: -18px;
+	min-width: 1100px;
+	background-color: #FBFBFB;
+	background-color: rgba(251, 251, 251, 0.98);
+	border: 1px solid #7A7A7A;
+	border: 1px solid rgba(122, 122, 122, 0.6);
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	-webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+	-moz-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+	-o-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+	color:#000000;
+}
+
+
 
 .annotator-invert-x .annotator-widget {
 	left: auto;
