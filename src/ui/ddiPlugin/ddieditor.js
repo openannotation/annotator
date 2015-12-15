@@ -72,25 +72,37 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
             //quote content + load and submit all content
 
             this.addField({
-                type: 'textarea',
+                type: 'div',
                 label: _t('Comments') + '\u2026',
                 id: 'quote',
                 load: function (field, annotation) {
-                    $(field).find('#quote').val("' " + annotation.quote + " '" || '');
+                    $('#quote').empty();
+                    var quoteobject = $( "<div id='quotearea'/>" );
+                    $('#quote').append(quoteobject);
+                    $('#quotearea').html(annotation.quote || '');
                     $('#Drug1 option').remove();
                     $('#Drug2 option').remove();
                     var flag = 0;
+
                     $('[name="annotator-hl"]').each(function(index){
                         //alert(annotation.quote);
                         if(annotation.quote.indexOf($('[name="annotator-hl"]:eq('+index+')').text())>=0) {
-                            console.log($('[name="annotator-hl"]:eq('+index+')').text());
+
+                            //console.log($('[name="annotator-hl"]:eq('+index+')').text());
+                            var tempdrug = $('[name="annotator-hl"]:eq(' + index + ')').text();
+                            //var quoteobject = document.getElementById('quote');
+                            var quotecontent = quoteobject.html();
+                            //console.log( "1"+$('#quotearea').val());
+                            //console.log( "2"+quoteobject.html());
+                            quotecontent = quotecontent.replace(tempdrug,"<span class='highlightdrug'>"+tempdrug+"</span>");
+                            quoteobject.html(quotecontent);
                             $('#Drug1').append($('<option>', {
-                                value: $('[name="annotator-hl"]:eq(' + index + ')').text(),
-                                text: $('[name="annotator-hl"]:eq(' + index + ')').text()
+                                value: tempdrug,
+                                text: tempdrug
                             }));
                             $('#Drug2').append($('<option>', {
-                                value: $('[name="annotator-hl"]:eq(' + index + ')').text(),
-                                text: $('[name="annotator-hl"]:eq(' + index + ')').text()
+                                value: tempdrug,
+                                text: tempdrug
                             }));
                             flag = flag + 1;
                         }
@@ -101,8 +113,22 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                         alert("Should highlight at least two drugs.");
                         this.cancel();
                     }
+                    if(annotation.Drug1!="")
+                    {
+                        var quotestring = quoteobject.html();
+                        quotestring = quotestring.replace(annotation.Drug1,"<span class='selecteddrug'>"+annotation.Drug1+"</span>");
+                        quoteobject.html(quotestring);
+                        //console.log(quotestring);
+                    }
+                    if(annotation.Drug2!="")
+                    {
+                        var quotestring = quoteobject.html();
+                        quotestring = quotestring.replace(annotation.Drug2,"<span class='selecteddrug'>"+annotation.Drug2+"</span>");
+                        quoteobject.html(quotestring);
+                        //console.log(quotestring);
+                    }
 
-                    $(field).find('#quote').css('background','#DEDEDE');
+                    $(field).find('#quote').css('background','#EDEDED');
 
                     /*$(field).find('#DDI').on('selected',function() {
                         $('#ddisection').show("slow");
@@ -118,6 +144,13 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                         $('#Duration_precipitant').val(annotation.Duration_precipitant);
                         $('#DoseMG_object').val(annotation.DoseMG_object);
                         $('#DoseMG_precipitant').val(annotation.DoseMG_precipitant);
+                        $('#Auc').val(annotation.Auc);
+                        $("#FormulationP > option").each(function(){ if(this.value === annotation.FormulationP) $(this).attr('selected',true);});
+                        $("#FormulationO > option").each(function(){ if(this.value === annotation.FormulationO) $(this).attr('selected',true);});
+                        $("#RegimentsP > option").each(function(){ if(this.value === annotation.RegimentsP) $(this).attr('selected',true);});
+                        $("#RegimentsO > option").each(function(){ if(this.value === annotation.RegimentsO) $(this).attr('selected',true);});
+                        $("#AucType > option").each(function(){ if(this.value === annotation.AucType) $(this).attr('selected',true);});
+                        $("#AucDirection > option").each(function(){ if(this.value === annotation.AucDirection) $(this).attr('selected',true);});
                     }
                     //load all content
                     $("#Drug1 > option").each(function(){ if(this.value === annotation.Drug1) $(this).attr('selected',true);});
@@ -153,7 +186,18 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                         annotation.Duration_precipitant = $('#Duration_precipitant').val();
                         annotation.Duration_object = $('#Duration_object').val();
                     }else{
-                        annotation.Number_participants="";
+                        annotation.Number_participants = $('#Number_participants').val();
+                        annotation.DoseMG_precipitant = $('#DoseMG_precipitant').val();
+                        annotation.FormulationP = $('#FormulationP option:selected').text();
+                        annotation.Duration_precipitant = $('#Duration_precipitant').val();
+                        annotation.RegimentsP = $('#RegimentsP option:selected').text();
+                        annotation.DoseMG_object = $('#DoseMG_object').val();
+                        annotation.FormulationO = $('#FormulationO option:selected').text();
+                        annotation.Duration_object = $('#Duration_object').val();
+                        annotation.RegimentsO = $('#RegimentsO option:selected').text();
+                        annotation.Aucval = $('#Auc').val();
+                        annotation.AucType = $('#AucType option:selected').text();
+                        annotation.AucDirection = $('#AucDirection option:selected').text();
 
                     }
                 }
@@ -392,9 +436,17 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
     show: function (position) {
         if (typeof position !== 'undefined' && position !== null) {
             this.element.css({
-                top: position.top,
-                left: position.left
+                //top: position.top,
+                //left: position.left
+                bottom:0,
+                left:100,
+                position: 'fixed'
             });
+            $( window ).resize(function() {
+                $( "body" ).css('height','600px');
+            });
+            //console.log(window.screen.height);
+            //console.log(window.screen.availHeight);
         }
 
         this.element
@@ -539,7 +591,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
         } else if (field.type === 'select') {
             input = $('<select />');
         } else if (field.type === 'div') {
-            input = $('<div value="source" />');
+            input = $('<div class = "quoteborder" />');
         }
 
         element.append(input);
@@ -724,7 +776,7 @@ function renderToString(source, data) {
 //var source   = $("#entry-template").html();
 //var template = Handlebars.compile(source);
 ddiEditor.template = Template.content;
-console.log(Template.content);
+//console.log(Template.content);
         //console.log(html); // here you'll store the html in a string if you want
         /*ddiEditor.template = [
             '<style>.question {background: rgba(211, 211, 211, 0.3);}</style>',
@@ -850,9 +902,12 @@ var dragTracker = exports.dragTracker = function dragTracker(handle, callback) {
         }
 
         var delta = {
-            y: e.pageY - lastPos.top,
-            x: e.pageX - lastPos.left
+            //y: e.pageY - lastPos.top,
+            //x: e.pageX - lastPos.left
+            y:200,
+            x:200
         };
+        //console.log(e.pageX);
 
         var trackLastMove = true;
         // The callback function can return false to indicate that the tracker
@@ -864,8 +919,10 @@ var dragTracker = exports.dragTracker = function dragTracker(handle, callback) {
 
         if (trackLastMove !== false) {
             lastPos = {
-                top: e.pageY,
-                left: e.pageX
+                //top: e.pageY,
+                //left: e.pageX
+                top:200,
+                left:200
             };
         }
 
@@ -890,8 +947,10 @@ var dragTracker = exports.dragTracker = function dragTracker(handle, callback) {
         }
 
         lastPos = {
-            top: e.pageY,
-            left: e.pageX
+            //top: e.pageY,
+            //left: e.pageX
+            top:200,
+            left:200
         };
 
         $(handle.ownerDocument)

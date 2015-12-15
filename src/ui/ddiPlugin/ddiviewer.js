@@ -470,7 +470,7 @@ ddiViewer.classes = {
 // HTML templates for this.widget and this.item properties.
 ddiViewer.template = [
     '<div class="annotator-outer annotator-viewer annotator-hide">',
-    '  <ul class="annotator-widget annotator-listing"></ul>',
+    '  <ul class="annotator-widgetview annotator-listing"></ul>',
     '</div>'
 ].join('\n');
 
