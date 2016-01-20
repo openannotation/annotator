@@ -126,6 +126,7 @@ var ddiAdder = Widget.extend({
     // Returns nothing.
     _onClick: function (event) {
         // Do nothing for right-clicks, middle-clicks, etc.
+
         if (event.which > 1) {
             return;
         }
@@ -152,7 +153,7 @@ var ddiAdder = Widget.extend({
 
 ddiAdder.template = [
     '<div class="annotator-adder annotator-hide">',
-    '  <button type="button" title="DDI">' + _t('Annotate') + '</button>',
+    '  <button type="button" title="DDI" onclick="showright()">' + _t('Annotate') + '</button>',
     '</div>'
 ].join('\n');
 

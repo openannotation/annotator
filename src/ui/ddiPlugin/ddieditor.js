@@ -35,6 +35,7 @@ function preventEventDefault(event) {
 
 // Public: Creates an element for editing annotations.
 var ddiEditor = exports.ddiEditor = Editor.extend({
+
     // Public: Creates an instance of the Editor object.
 // HTML template for this.element.
     /*ddiEditor.template = [
@@ -66,6 +67,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
         this.fields = [];
         this.annotation = {};
         var unknowitem = this;
+
 
         if (this.options.defaultFields) {
 
@@ -139,6 +141,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                     if(annotation.assertion_type=="DDI clinical trial")
                     {
                         $('#altersection').show();
+                        $('.moreinfo').show();
                         $('#Number_participants').val(annotation.Number_participants);
                         $('#Duration_object').val(annotation.Duration_object);
                         $('#Duration_precipitant').val(annotation.Duration_precipitant);
@@ -438,8 +441,8 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
             this.element.css({
                 //top: position.top,
                 //left: position.left
-                bottom:0,
-                left:100,
+                //bottom:0,
+                right:30,
                 position: 'fixed'
             });
             $( window ).resize(function() {
@@ -776,6 +779,7 @@ function renderToString(source, data) {
 //var source   = $("#entry-template").html();
 //var template = Handlebars.compile(source);
 ddiEditor.template = Template.content;
+
 //console.log(Template.content);
         //console.log(html); // here you'll store the html in a string if you want
         /*ddiEditor.template = [

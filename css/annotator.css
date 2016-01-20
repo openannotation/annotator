@@ -18,11 +18,12 @@
 	-webkit-box-shadow: none;
 	-o-box-shadow: none;
 	box-shadow: none;
-	color: rgb(144, 144, 144);
+	color: rgb(28, 33, 33);
 }
 
 /* Images
 -------------------------------------------------------------------- */
+
 
 .annotator-adder {
 	background-image: url(../img/annotator-icon-sprite.png?embed);
@@ -55,13 +56,13 @@
 }
 
 .quoteborder {
-	height: 60px;
+	height: 70px;
 	overflow-y: scroll;
 }
 
 #quotearea {
-	margin-right: 30px;
-	margin-left: 30px;
+	margin-right: 15px;
+	margin-left: 15px;
 	margin-top: 10px;
 	margin-bottom: 10px;
 	color: #303030;
@@ -239,7 +240,8 @@
 	padding: 0;
 	bottom: 15px;
 	left: -18px;
-	min-width: 1100px;
+	width: 400px;
+	height:600px;
 	background-color: #FBFBFB;
 	background-color: rgba(251, 251, 251, 0.98);
 	border: 1px solid #7A7A7A;
@@ -283,7 +285,8 @@
 	width: 18px;
 	height: 10px;
 	background-position: 0 0;
-	position: absolute;
+	/*-- position absolute
+	position: absolute;*/
 	bottom: -10px;
 	left: 8px;
 }
@@ -448,7 +451,7 @@
 	-webkit-border-radius: 4px;
 }
 
-.annotator-editor .annotator-item textarea::-webkit-scrollbar-thumb:vertical {
+/*.annotator-editor .annotator-item textarea::-webkit-scrollbar-thumb:vertical {
 	height: 25px;
 	background-color: #ccc;
 	-webkit-border-radius: 4px;
@@ -459,7 +462,7 @@
 	width: 25px;
 	background-color: #ccc;
 	-webkit-border-radius: 4px;
-}
+}*/
 
 .annotator-editor .annotator-item:first-child textarea {
 	min-height: 5.5em;
@@ -1019,4 +1022,36 @@
 	background: #007CFF;
 	background: rgba(0, 124, 255, 0.3);
 	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#4D007CFF, endColorstr=#4D007CFF)";  /* 0.3 == 4D in MS filters */
+}
+
+html, body
+{
+	height: 100%;
+	width: 100%;
+}
+
+.sidebar.right {
+	top: 0;
+	right: 0;
+	bottom: 0;
+	width: 270px;
+	background: #448AFF;
+}
+.btn-success {
+	position:fixed;
+	right: 0px;
+	background-color:#448AFF;
+}
+
+header {
+	background: #eeeeff;
+	position: fixed;
+	width: 100%;
+	height: 80px;
+	top: 0;
+	z-index: 1;
+
+}
+article {
+	margin-top: 80px;
 }

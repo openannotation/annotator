@@ -610,7 +610,8 @@ Editor.template = [
 // Configuration options
 Editor.options = {
     // Add the default field(s) to the editor.
-    defaultFields: true
+    defaultFields: true,
+    appendTo: '.secondsection'
 };
 
 // standalone is a module that uses the Editor to display an editor widget

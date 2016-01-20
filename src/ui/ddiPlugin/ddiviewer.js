@@ -482,7 +482,7 @@ ddiViewer.itemTemplate = [
     '       class="annotator-link">' + _t('View as webpage') + '</a>',
     '    <button type="button"',
     '            title="' + _t('Edit') + '"',
-    '            class="annotator-edit">' + _t('Edit') + '</button>',
+    '            class="annotator-edit" onclick="showright()">' + _t('Edit') + '</button>',
     '    <button type="button"',
     '            title="' + _t('Delete') + '"',
     '            class="annotator-delete">' + _t('Delete') + '</button>',
