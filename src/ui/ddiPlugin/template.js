@@ -10,26 +10,40 @@ Template.content = [
   '.annotator-widget {font-size:115%;}</style>',
 
   '<script type="text/javascript">',
+  /*'$(document).ready(function () {',
+    '$("#splitter").jqxSplitter({ width: 1270, height: "100%",  panels: [{ size: "65%", min: 100 }, { size: "35%", min: 0}] });',
+    '$(".btn-success").val("show");',
+  '});',*/
     'function changeFunc() {',
-    'if($("#assertion_type option:selected").text()=="DDI clinical trial") $("#altersection").show();',
-    'else $("#altersection").hide();}',
+
+    'if($("#assertion_type option:selected").text()=="DDI clinical trial"){ $("#altersection").show();$(".moreinfo").show();}',
+    'else{ $("#altersection").hide();$(".moreinfo").hide();}',
+    //'$("#splitter").jqxSplitter({ width: "100%", height: 650, orientation: "horizontal", panels: [{ size: "50%", min: 100 }, { size: "50%", min: 50}] });',
+    '}',
+
 
     'function changeRole1(role) {',
     '$(".Role2").each(function(){ if(this.value != role) this.checked = true; else this.checked = false;});}',
 
     'function changeRole2(role) {',
     '$(".Role1").each(function(){ if(this.value != role) this.checked = true; else this.checked = false;});}',
+
+
   '</script>',
-  '<div class="annotator-outer annotator-editor annotator-hide">',
+  '<div class="annotator-outer  annotator-editor ">',
   '  <form class="annotator-widget">',
   '    <ul class="annotator-listing"></ul>',
-  '<div class="annotationbody" style="margin-left: 10px;margin-right: 10px;margin-bottom: 10px;margin-top:0px">',
+
+  '<div class="annotationbody" style="margin-left:10px;margin-right:10px;height:485px;margin-top:0px;overflow-y:scroll;">',
+
     '<div id="tabs">',
     //'<ul>',
     //'<li><a href="#tabs-1">PK DDI</a></li>',
   //'</ul>',
-  '<div id="tabs-1" style="margin-bottom:30px">',
-  '<div  style="float:left;margin-bottom:0px">',
+
+  '<div id="tabs-1" style="margin-bottom:30px;">',
+  '<div  style="margin-bottom:0px;margin-left=5px">',
+
   '<div class="question">Drug 1 in DDI:</div>',
   '<div>Drug mentions:',
   '<select id="Drug1">',
@@ -77,7 +91,8 @@ Template.content = [
   '</div>',
 
 
-  '<div style="float:left;margin-left: 15px;">',
+
+  '<div style="margin-left: 5px;">',
 
   '<div class="question">DIKB Assertion type:</div>',
   '<div>',
@@ -106,7 +121,9 @@ Template.content = [
 
   '</div>',
 
-  '<div style="margin-left: 545px;">',
+
+  '<div style="margin-left: 5px;">',
+
   '<div id = "altersection" style="display: none;">',
 
   '<div class="question">The number of participants:</div>',
@@ -244,14 +261,15 @@ Template.content = [
   '</div>',
   '</div>',
   '    <div class="annotator-controls">',
-  '     <a href="#cancel" class="annotator-cancel" id="annotator-cancel">',
+  '     <a href="#cancel" class="annotator-cancel" onclick="showrightbyvalue()" id="annotator-cancel">',
   'Cancel',
   '</a>',
   '      <a href="#save"',
-  '         class="annotator-save annotator-focus">',
+  '         class="annotator-save annotator-focus" onclick="showrightbyvalue()">',
   'Save',
   '</a>',
   '    </div>',
+    '<div class="moreinfo" style="display: none;">  <b>Slide down to show more information</b></div>',
   '  </form>',
   '</div>'
 ].join('\n');
