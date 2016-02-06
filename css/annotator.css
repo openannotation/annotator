@@ -208,13 +208,35 @@
 	width: 0;
 	height: 0;
 }
+
+.annotator-clinicalwidgetview {
+	margin: 0;
+	padding: 0;
+	bottom: 15px;
+	left: -18px;
+	width: 400px;
+	height: 300px;
+	overflow: scroll;
+	background-color: #FBFBFB;
+	background-color: rgba(251, 251, 251, 0.98);
+	border: 1px solid #7A7A7A;
+	border: 1px solid rgba(122, 122, 122, 0.6);
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	-webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+	-moz-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+	-o-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
 /*ddi customize*/
 .annotator-widgetview {
 	margin: 0;
 	padding: 0;
 	bottom: 15px;
 	left: -18px;
-	min-width: 200px;
+	min-width: 400px;
 	background-color: #FBFBFB;
 	background-color: rgba(251, 251, 251, 0.98);
 	border: 1px solid #7A7A7A;
@@ -241,7 +263,7 @@
 	bottom: 15px;
 	left: -18px;
 	width: 400px;
-	height:600px;
+	height:580px;
 	background-color: #FBFBFB;
 	background-color: rgba(251, 251, 251, 0.98);
 	border: 1px solid #7A7A7A;
@@ -265,7 +287,7 @@
 
 .annotator-invert-y .annotator-widget {
 	bottom: auto;
-	top: 8px;
+	top: 0px;
 }
 
 .annotator-widget strong {
@@ -1043,15 +1065,19 @@ html, body
 	background-color:#448AFF;
 }
 
-header {
-	background: #eeeeff;
-	position: fixed;
-	width: 100%;
-	height: 80px;
-	top: 0;
-	z-index: 1;
 
-}
 article {
 	margin-top: 80px;
 }
+
+table {
+	font-size: small;
+	border-collapse: collapse;
+}
+
+
+table, tr, td{
+	border: 1px solid black;
+}
+
+table tr:nth-of-type(odd),table tr:nth-of-type(odd){background-color:#EEF9FF}.main-content .content-full table.alt tr:nth-of-type(odd){background-color:#FFF}.main-content .content-full table.alt tr:nth-of-type(even){background-color:#EEF9FF}.main-content .content-full .norows table tr:nth-of-type(odd),.norows table tr:nth-of-type(odd){background-color:#fff}

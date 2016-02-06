@@ -7,7 +7,7 @@ Template.content = [
   //'<script>function() {$( "#tabs" ).tabs();}</script>',
   '<style>.question {background: rgba(211, 211, 211, 0.3);font-weight: 800;font-size:13px;line-height:145%;font-color:#000000;}',
   '#tabs-1 {color:#000000;font-size:12px;font-weight:670;line-height:155%;}',
-  '.annotator-widget {font-size:115%;}</style>',
+  '.annotator-widget {font-size:115%;} input[type="radio"] { -webkit-appearance: radio; }</style>',
 
   '<script type="text/javascript">',
   /*'$(document).ready(function () {',
@@ -27,10 +27,10 @@ Template.content = [
     '$(".Role1").each(function(){ if(this.value != role) this.checked = true; else this.checked = false;});}',
 
   '</script>',
-  '<div class="annotator-outer  annotator-editor ">',
+  '<div class="annotator-outer  annotator-editor annotator-invert-y annotator-invert-x">',
   '  <form class="annotator-widget">',
   '    <ul class="annotator-listing"></ul>',
-  '<div class="annotationbody" style="margin-left:10px;margin-right:10px;height:485px;margin-top:0px;overflow-y:scroll;">',
+  '<div class="annotationbody" style="margin-left:10px;margin-right:10px;height:370px;margin-top:0px;overflow-y:scroll;">',
     '<div id="tabs">',
     //'<ul>',
     //'<li><a href="#tabs-1">PK DDI</a></li>',
@@ -84,7 +84,7 @@ Template.content = [
   '</div>',
 
 
-  '<div style="margin-left: 5px;">',
+  '<div style="margin-left: 0px;">',
 
   '<div class="question">DIKB Assertion type:</div>',
   '<div>',
@@ -113,7 +113,7 @@ Template.content = [
 
   '</div>',
 
-  '<div style="margin-left: 5px;">',
+  '<div style="margin-left: 0px;">',
   '<div id = "altersection" style="display: none;">',
 
   '<div class="question">The number of participants:</div>',

@@ -188,20 +188,23 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                         annotation.DoseMG_object = $('#DoseMG_object').val();
                         annotation.Duration_precipitant = $('#Duration_precipitant').val();
                         annotation.Duration_object = $('#Duration_object').val();
-                    }else{
-                        annotation.Number_participants = $('#Number_participants').val();
-                        annotation.DoseMG_precipitant = $('#DoseMG_precipitant').val();
-                        annotation.FormulationP = $('#FormulationP option:selected').text();
-                        annotation.Duration_precipitant = $('#Duration_precipitant').val();
                         annotation.RegimentsP = $('#RegimentsP option:selected').text();
-                        annotation.DoseMG_object = $('#DoseMG_object').val();
-                        annotation.FormulationO = $('#FormulationO option:selected').text();
-                        annotation.Duration_object = $('#Duration_object').val();
                         annotation.RegimentsO = $('#RegimentsO option:selected').text();
                         annotation.Aucval = $('#Auc').val();
                         annotation.AucType = $('#AucType option:selected').text();
                         annotation.AucDirection = $('#AucDirection option:selected').text();
-
+                        annotation.Clval = $('#Cl').val();
+                        annotation.ClType = $('#ClType option:selected').text();
+                        annotation.ClDirection = $('#ClDirection option:selected').text();
+                        annotation.cmaxval = $('#cmax').val();
+                        annotation.cmaxType = $('#cmaxType option:selected').text();
+                        annotation.cmaxDirection = $('#cmaxDirection option:selected').text();
+                        annotation.cminval = $('#cmin').val();
+                        annotation.cminType = $('#cminType option:selected').text();
+                        annotation.cminDirection = $('#cminDirection option:selected').text();
+                        annotation.t12 = $('#t12').val();
+                        annotation.t12Type = $('#t12Type option:selected').text();
+                        annotation.t12Direction = $('#t12Direction option:selected').text();
                     }
                 }
             });
