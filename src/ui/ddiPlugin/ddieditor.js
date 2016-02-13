@@ -1,7 +1,6 @@
 "use strict";
-
-var Widget = require('../widget').Widget,
-    util = require('../../util');
+var Widget = require('../widget').Widget;
+var util = require('../../util');
 
 var Editor = require('../editor').Editor;
 var Template = require('./template').Template;
@@ -66,6 +65,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
 
         this.fields = [];
         this.annotation = {};
+        this.annotations = {};
         var unknowitem = this;
 
 
@@ -77,7 +77,13 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                 type: 'div',
                 label: _t('Comments') + '\u2026',
                 id: 'quote',
-                load: function (field, annotation) {
+                load: function (field, annotation, annotations) {
+                    //console.log(annotations.length);
+                    //var annList = annotations.slice();
+                    //console.log(annList[0].quote);
+                    //var now = annList.splice(0, annotations.options.chunkSize);
+
+
                     $('#quote').empty();
                     var quoteobject = $( "<div id='quotearea'/>" );
                     $('#quote').append(quoteobject);
@@ -85,19 +91,45 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                     $('#Drug1 option').remove();
                     $('#Drug2 option').remove();
                     var flag = 0;
+                    var anns = annotations.slice();
+                    //console.log("(1):"+anns[0].quote);
+                    var quoteobject = $('#quotearea');
+                    var quotecontent = $('#quotearea').html();
+                    //console.log(quotecontent);
+                    for (var i = 0, len = anns.length; i < len; i++) {
+                        if(anns[i].annotationType=="DrugMention")
+                        {
+                            if(quotecontent.indexOf(anns[i].quote)>=0)
+                            {
+                                quotecontent = quotecontent.replace(anns[i].quote,"<span class='highlightdrug'>"+anns[i].quote+"</span>");
+                                $('#Drug1').append($('<option>', {
+                                    value: anns[i].quote,
+                                    text: anns[i].quote
+                                }));
+                                $('#Drug2').append($('<option>', {
+                                    value: anns[i].quote,
+                                    text: anns[i].quote
+                                }));
+                                flag = flag + 1;
+                            }
+                        }
 
-                    $('[name="annotator-hl"]').each(function(index){
+                    }
+                    quoteobject.html(quotecontent);
+                    /*$('[name="annotator-hl"]').each(function(index){
                         //alert(annotation.quote);
                         if(annotation.quote.indexOf($('[name="annotator-hl"]:eq('+index+')').text())>=0) {
 
                             //console.log($('[name="annotator-hl"]:eq('+index+')').text());
                             var tempdrug = $('[name="annotator-hl"]:eq(' + index + ')').text();
                             //var quoteobject = document.getElementById('quote');
+                            console.log(tempdrug);
                             var quotecontent = quoteobject.html();
                             //console.log( "1"+$('#quotearea').val());
                             //console.log( "2"+quoteobject.html());
                             quotecontent = quotecontent.replace(tempdrug,"<span class='highlightdrug'>"+tempdrug+"</span>");
                             quoteobject.html(quotecontent);
+                            console.log(quotecontent);
                             $('#Drug1').append($('<option>', {
                                 value: tempdrug,
                                 text: tempdrug
@@ -109,7 +141,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                             flag = flag + 1;
                         }
                             //alert($('.annotator-hl:eq('+index+')').html());
-                    });
+                    });*/
                     if(flag<2){
                         //if(flag){
                         alert("Should highlight at least two drugs.");
@@ -475,12 +507,14 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
     //
     // Returns a Promise that is resolved when the editor is submitted, or
     // rejected if editing is cancelled.
-    load: function (annotation, position) {
+    load: function (position, annotation, annotations) {
         this.annotation = annotation;
-            
+        this.annotations = annotations;
+
+
         for (var i = 0, len = this.fields.length; i < len; i++) {
             var field = this.fields[i];
-            field.load(field.element, this.annotation);
+            field.load(field.element, this.annotation, this.annotations);
         }
             
         var self = this;

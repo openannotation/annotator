@@ -17,6 +17,7 @@ var id = (function () {
     };
 }());
 
+var anns;
 
 /**
  * function:: debug()
@@ -637,6 +638,7 @@ StorageAdapter.prototype.load = function (query) {
     return this.query(query)
         .then(function (data) {
             self.runHook('annotationsLoaded', [data.results]);
+            anns = data.results;
         });
 };
 
@@ -649,7 +651,7 @@ StorageAdapter.prototype._cycle = function (
     afterEvent
 ) {
     var self = this;
-    return this.runHook(beforeEvent, [obj])
+    return this.runHook(beforeEvent, [obj,anns])
         .then(function () {
             var safeCopy = $.extend(true, {}, obj);
             delete safeCopy._local;

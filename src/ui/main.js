@@ -157,7 +157,7 @@ function addPermissionsCheckboxes(editor, ident, authz) {
             }
         };
     }
-
+/*
     editor.addField({
         type: 'checkbox',
         label: _t('Allow anyone to <strong>view</strong> this annotation'),
@@ -171,6 +171,7 @@ function addPermissionsCheckboxes(editor, ident, authz) {
         load: createLoadCallback('update'),
         submit: createSubmitCallback('update')
     });
+    */
 }
 
 
