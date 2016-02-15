@@ -16,7 +16,8 @@ var id = (function () {
         return counter += 1;
     };
 }());
-
+var tempquery;
+var anns;
 
 /**
  * function:: debug()
@@ -632,8 +633,10 @@ StorageAdapter.prototype.query = function (query) {
  *
  * :returns Promise: Resolves when loading is complete.
  */
+
 StorageAdapter.prototype.load = function (query) {
     var self = this;
+    tempquery = query;
     return this.query(query)
         .then(function (data) {
             self.runHook('annotationsLoaded', [data.results]);
@@ -649,7 +652,10 @@ StorageAdapter.prototype._cycle = function (
     afterEvent
 ) {
     var self = this;
-    return this.runHook(beforeEvent, [obj])
+    return this.query(tempquery)
+        .then(function (data) {
+            self.runHook(beforeEvent, [obj,data.results]);
+        })
         .then(function () {
             var safeCopy = $.extend(true, {}, obj);
             delete safeCopy._local;
