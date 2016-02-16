@@ -228,13 +228,13 @@ HttpStorage.prototype['delete'] = function (annotation) {
  * :rtype: Promise
  */
 HttpStorage.prototype.query = function (queryObj) {
-    console.log("storage - query : " + JSON.stringify(queryObj));
+    //console.log("storage - query : " + JSON.stringify(queryObj));
     return this._apiRequest('search', queryObj)
     .then(function (obj) {
         var rows = obj.rows;
         delete obj.rows;
 	
-	console.log("[DEBUG] storage.js - query results:" + JSON.stringify(rows));
+	//console.log("[DEBUG] storage.js - query results:" + JSON.stringify(rows));
 	
         return {results: rows, meta: obj};
     });
@@ -268,7 +268,7 @@ HttpStorage.prototype.setHeader = function (key, value) {
  */
 HttpStorage.prototype._apiRequest = function (action, obj) {
 
-    console.log("storage.js - apiRequest - obj:" + JSON.stringify(obj));
+    //console.log("storage.js - apiRequest - obj:" + JSON.stringify(obj));
     
     var id = obj && obj.id;
     var url = this._urlFor(action, id);
@@ -351,7 +351,7 @@ HttpStorage.prototype._urlFor = function (action, id) {
         id = '';
     }
 
-    console.log('storage - urlFor - this:' + JSON.stringify(this.options));
+    //console.log('storage - urlFor - this:' + JSON.stringify(this.options));
 
     var url = '';
     if (typeof this.options.prefix !== 'undefined' &&

@@ -31,6 +31,7 @@ function highlightRange(normedRange, cssClass) {
     for (var i = 0, len = nodes.length; i < len; i++) {
         var node = nodes[i];
         if (!white.test(node.nodeValue)) {
+            //console.log(node.nodeValue);
             var hl = global.document.createElement('span');
             hl.className = cssClass;
 
