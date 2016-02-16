@@ -37,8 +37,6 @@ function preventEventDefault(event) {
 // Public: Creates an element for editing annotations.
 var ddiEditor = exports.ddiEditor = Editor.extend({
 
-
-
     constructor: function (options) {
         Widget.call(this, options);
 
@@ -47,11 +45,6 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
         this.annotations = {};
 
 	//console.log("[INFO] ddi - editor - constructor");
-
-
-	// this:
-	//{"options":{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://130.49.206.139:5050","urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search"}}}
-
 
         if (this.options.defaultFields) {
 
@@ -63,9 +56,6 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                 id: 'quote',
                 load: function (field, annotation,annotations) {
 
-		    
-
-		    
                     //var annList = annotations.slice();
                     //console.log(annList[0].quote);
                     //var now = annList.splice(0, annotations.options.chunkSize);
@@ -315,7 +305,14 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
         var email = getURLParameter("email");
         //console.log('{"uri":"'+source+'","email":"'+email+'"}');
         var queryObj = JSON.parse('{"uri":"'+source+'","email":"'+email+'"}');
-        var queryOptions = JSON.parse('{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://localhost:5000","urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search"}}');
+
+	var annhost = config.store.host;
+	var annport = config.store.port;
+	var queryOptStr = '{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://' + annhost + ':' + annport + '","urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search"}}'
+	var queryOptions = JSON.parse(queryOptStr);
+	
+        //var queryOptions = JSON.parse('{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://localhost:5000","urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search"}}');
+	
         var storage = new HttpStorage(queryOptions);
         //console.log("ddieditor.js - constructor - load:" + JSON.stringify(app.annotations));
         //console.log("editor call storage");
