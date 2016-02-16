@@ -39,7 +39,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
 
     constructor: function (options) {
         Widget.call(this, options);
-
+        var editorSelf = this;
         this.fields = [];
         this.annotation = {};
         this.annotations = {};
@@ -120,7 +120,8 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                     if(flag<2){
                         //if(flag){
                         alert("Should highlight at least two drugs.");
-                        this.cancel();
+                        editorSelf.cancel();
+                        $('.btn-success').click();
                     }
                     if(annotation.Drug1!="")
                     {
@@ -296,9 +297,12 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
     // rejected if editing is cancelled.
     load: function (position, annotation) {
         this.annotation = annotation;
-        console.log(this.annotation.quote);
-        if(this.annotation.quote.length>100)
+        if(this.annotation.quote.length>100){
+            alert("Should highlight at least two drugs.");
+            $('.btn-success').click();
             this.cancel();
+
+        }
         var annotations;
         var sourceURL = getURLParameter("sourceURL").trim();
         var source = sourceURL.replace(/[\/\\\-\:\.]/g, "")
