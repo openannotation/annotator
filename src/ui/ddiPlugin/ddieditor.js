@@ -10,6 +10,9 @@ var _t = util.gettext;
 var Promise = util.Promise;
 var NS = "annotator-editor";
 
+// bring storage in
+var HttpStorage = require('../../storage').HttpStorage;
+
 // id returns an identifier unique within this session
 var id = (function () {
     var counter;
@@ -66,6 +69,27 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
         this.fields = [];
         this.annotation = {};
         this.annotations = {};
+
+	console.log("[INFO] ddi - editor - constructor");
+
+	var queryObj = JSON.parse('{"email":"yin2@gmail.com"}');
+	// this:
+	//{"options":{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://130.49.206.139:5050","urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search"}}}
+	
+	//alert("editor: " + JSON.stringify(JSON.parse(queryStr)));	
+	//var storeOptions = '{"prefix":"http://130.49.206.139:5000"}';
+	//var storage = annotator.storage.HttpStorage(storeOptions);
+	//alert(storage.query(JSON.parse(queryStr)));
+
+
+	var queryOptions = JSON.parse('{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://130.49.206.139:5050","urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search"}}');
+
+	var storage = new HttpStorage(queryOptions);
+
+	
+	//console.log("editor call results:" + JSON.stringify(storage._apiRequest('search', queryObj)));
+	//console.log("editor call results1:" + JSON.stringify(storage.query(queryObj)));
+	
         var unknowitem = this;
 
 
@@ -77,12 +101,17 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                 type: 'div',
                 label: _t('Comments') + '\u2026',
                 id: 'quote',
-                load: function (field, annotation, annotations) {
-                    //console.log(annotations.length);
+                load: function (field, annotation) {
+
+		    
+		    console.log("ddieditor.js - constructor - load:" + JSON.stringify(app.annotations));
+		    console.log("editor call storage");
+		    console.log("editor call results2:" + JSON.stringify(storage.query(queryObj).results));
+		    var annotations = null;
+		    
                     //var annList = annotations.slice();
                     //console.log(annList[0].quote);
                     //var now = annList.splice(0, annotations.options.chunkSize);
-
 
                     $('#quote').empty();
                     var quoteobject = $( "<div id='quotearea'/>" );
@@ -508,14 +537,13 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
     //
     // Returns a Promise that is resolved when the editor is submitted, or
     // rejected if editing is cancelled.
-    load: function (position, annotation, annotations) {
+    load: function (position, annotation) {
         this.annotation = annotation;
-        this.annotations = annotations;
-
 
         for (var i = 0, len = this.fields.length; i < len; i++) {
             var field = this.fields[i];
-            field.load(field.element, this.annotation, this.annotations);
+	    field.load(field.element, this.annotation);
+            //field.load(field.element, this.annotation, this.annotations);
         }
             
         var self = this;

@@ -16,8 +16,8 @@ var id = (function () {
         return counter += 1;
     };
 }());
-var tempquery;
-var anns;
+// var tempquery;
+// var anns;
 
 /**
  * function:: debug()
@@ -228,10 +228,14 @@ HttpStorage.prototype['delete'] = function (annotation) {
  * :rtype: Promise
  */
 HttpStorage.prototype.query = function (queryObj) {
+    console.log("storage - query : " + JSON.stringify(queryObj));
     return this._apiRequest('search', queryObj)
     .then(function (obj) {
         var rows = obj.rows;
         delete obj.rows;
+	
+	console.log("[DEBUG] storage.js - query results:" + JSON.stringify(rows));
+	
         return {results: rows, meta: obj};
     });
 };
@@ -263,6 +267,9 @@ HttpStorage.prototype.setHeader = function (key, value) {
  * :rtype: jqXHR
  */
 HttpStorage.prototype._apiRequest = function (action, obj) {
+
+    console.log("storage.js - apiRequest - obj:" + JSON.stringify(obj));
+    
     var id = obj && obj.id;
     var url = this._urlFor(action, id);
     var options = this._apiRequestOptions(action, obj);
@@ -343,6 +350,8 @@ HttpStorage.prototype._urlFor = function (action, id) {
     if (typeof id === 'undefined' || id === null) {
         id = '';
     }
+
+    console.log('storage - urlFor - this:' + JSON.stringify(this.options));
 
     var url = '';
     if (typeof this.options.prefix !== 'undefined' &&
@@ -636,10 +645,12 @@ StorageAdapter.prototype.query = function (query) {
 
 StorageAdapter.prototype.load = function (query) {
     var self = this;
-    tempquery = query;
+
+    // tempquery = query;
     return this.query(query)
         .then(function (data) {
             self.runHook('annotationsLoaded', [data.results]);
+	    //anns = data.results;
         });
 };
 
@@ -652,10 +663,14 @@ StorageAdapter.prototype._cycle = function (
     afterEvent
 ) {
     var self = this;
-    return this.query(tempquery)
-        .then(function (data) {
-            self.runHook(beforeEvent, [obj,data.results]);
-        })
+    return this.runHook(beforeEvent, [obj])
+    
+    // return this.runHook(beforeEvent, [obj,anns])
+    
+    // return this.query(tempquery)
+    //     .then(function (data) {
+    //         self.runHook(beforeEvent, [obj,data.results]);
+    //     })
         .then(function () {
             var safeCopy = $.extend(true, {}, obj);
             delete safeCopy._local;

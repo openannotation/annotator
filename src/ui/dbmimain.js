@@ -381,7 +381,7 @@ function main(options) {
 
         },
 
-        beforeAnnotationCreated: function (annotation,anns) {
+        beforeAnnotationCreated: function (annotation) {
             // Editor#load returns a promise that is resolved if editing
             // completes, and rejected if editing is cancelled. We return it
             // here to "stall" the annotation process until the editing is
@@ -389,7 +389,7 @@ function main(options) {
 
             // yifan: call different editor based on annotation type
             if (annotation.annotationType == "DDI"){
-                return s.ddieditor.load(s.interactionPoint,annotation, anns);
+                return s.ddieditor.load(s.interactionPoint,annotation);
             } else if (annotation.annotationType == "DrugMention") {
                 // return s.hleditor.load(annotation, s.interactionPoint);
                 // yifan: not show editor when typed as Drug mention
@@ -402,12 +402,12 @@ function main(options) {
 
         },
 
-        beforeAnnotationUpdated: function (annotation,anns) {
+        beforeAnnotationUpdated: function (annotation) {
 
             //alert('testmain.js - beforeAnnotationUpdated - annotation type defined: ' + annotation.annotationType);
 
             if (annotation.annotationType == "DDI"){
-                return s.ddieditor.load(s.interactionPoint,annotation, anns);
+                return s.ddieditor.load(s.interactionPoint,annotation);
             } else if (annotation.annotationType == "DrugMention") {
                 // return s.hleditor.load(annotation, s.interactionPoint);
                 return null;
