@@ -306,8 +306,15 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
     // rejected if editing is cancelled.
     load: function (position, annotation) {
         this.annotation = annotation;
+        console.log(this.annotation.quote);
+        if(this.annotation.quote.length>100)
+            this.cancel();
         var annotations;
-        var queryObj = JSON.parse('{"uri":"httplocalhost3000DDIlabels2f2db2f549d34d47a08a628df49d2120html","email":"wez61@pitt.edu"}');
+        var sourceURL = getURLParameter("sourceURL").trim();
+        var source = sourceURL.replace(/[\/\\\-\:\.]/g, "")
+        var email = getURLParameter("email");
+        //console.log('{"uri":"'+source+'","email":"'+email+'"}');
+        var queryObj = JSON.parse('{"uri":"'+source+'","email":"'+email+'"}');
         var queryOptions = JSON.parse('{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://localhost:5000","urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search"}}');
         var storage = new HttpStorage(queryOptions);
         //console.log("ddieditor.js - constructor - load:" + JSON.stringify(app.annotations));
