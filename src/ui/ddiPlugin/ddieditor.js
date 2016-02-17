@@ -297,8 +297,8 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
     // rejected if editing is cancelled.
     load: function (position, annotation) {
         this.annotation = annotation;
-        if(this.annotation.quote.length>100){
-            alert("Should highlight at least two drugs.");
+        if(this.annotation.quote.length>1600){
+            alert("[INFO] Exceeding max lenght of text 1600!");
             $('.btn-success').click();
             this.cancel();
 
