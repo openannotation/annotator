@@ -64,9 +64,9 @@ Template.content = [
   '<div class="question">Type</div>',
   '<div>',
   '<input type="radio" name="Type1" id="Type1" class="Type1" value="active ingredient">active ingredient',
-  '<input type="radio" name="Type1" class="Type1" value="metabolite">metabolite',
-  '<input type="radio" name="Type1" class="Type1" value="drug product">drug product',
-  '<input type="radio" name="Type1" class="Type1" value="drug group">drug group',
+  '<input type="radio" name="Type1" id="Type1" class="Type1" value="metabolite">metabolite',
+  '<input type="radio" name="Type1" id="Type1" class="Type1" value="drug product">drug product',
+  '<input type="radio" name="Type1" id="Type1" class="Type1" value="drug group">drug group',
   '</div>',
 
   '<div class="question">Role</div>',
@@ -85,10 +85,10 @@ Template.content = [
 
   '<div class="question">Type</div>',
   '<div>',
-  '<input type="radio" name="Type2" id="Type2" class="Type2" value="active_ingredient">active ingredient',
+  '<input type="radio" name="Type2" id="Type2" class="Type2" value="active ingredient">active ingredient',
   '<input type="radio" name="Type2" id="Type2" class="Type2" value="metabolite">metabolite',
-  '<input type="radio" name="Type2" id="Type2" class="Type2" value="drug_product">drug product',
-  '<input type="radio" name="Type2" id="Type2" class="Type2" value="drug_group">drug group',
+  '<input type="radio" name="Type2" id="Type2" class="Type2" value="drug product">drug product',
+  '<input type="radio" name="Type2" id="Type2" class="Type2" value="drug group">drug group',
   '</div>',
 
   '<div class="question">Role</div>',
