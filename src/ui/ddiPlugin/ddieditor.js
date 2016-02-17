@@ -42,7 +42,6 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
         var editorSelf = this;
         this.fields = [];
         this.annotation = {};
-        this.annotations = {};
 
 	//console.log("[INFO] ddi - editor - constructor");
 
@@ -67,6 +66,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                     $('#Drug1 option').remove();
                     $('#Drug2 option').remove();
                     var flag = 0;
+                    console.log(annotations.length);
                     var anns = annotations.slice();
                     //console.log("(1):"+anns[0].quote);
                     var quoteobject = $('#quotearea');
@@ -146,27 +146,63 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                     $(field).find('#clinical').on('selected',function() {
                         $('#ddisection').hide();
                     });*/
+                    console.debug("annotation.assertion_type:"+annotation.assertion_type);
                     if(annotation.assertion_type=="DDI clinical trial")
                     {
                         $('#altersection').show();
                         $('.moreinfo').show();
-                        $('#Number_participants').val(annotation.Number_participants);
-                        $('#Duration_object').val(annotation.Duration_object);
-                        $('#Duration_precipitant').val(annotation.Duration_precipitant);
-                        $('#DoseMG_object').val(annotation.DoseMG_object);
-                        $('#DoseMG_precipitant').val(annotation.DoseMG_precipitant);
-                        $('#Auc').val(annotation.Auc);
-                        $("#FormulationP > option").each(function(){ if(this.value === annotation.FormulationP) $(this).attr('selected',true);});
-                        $("#FormulationO > option").each(function(){ if(this.value === annotation.FormulationO) $(this).attr('selected',true);});
-                        $("#RegimentsP > option").each(function(){ if(this.value === annotation.RegimentsP) $(this).attr('selected',true);});
-                        $("#RegimentsO > option").each(function(){ if(this.value === annotation.RegimentsO) $(this).attr('selected',true);});
-                        $("#AucType > option").each(function(){ if(this.value === annotation.AucType) $(this).attr('selected',true);});
-                        $("#AucDirection > option").each(function(){ if(this.value === annotation.AucDirection) $(this).attr('selected',true);});
+
+                    }else
+                    {
+                        $('#altersection').hide();
                     }
+                    var signal = 1;
+                    $('#Number_participants').val(annotation.Number_participants);
+                    $('#Duration_object').val(annotation.Duration_object);
+                    $('#Duration_precipitant').val(annotation.Duration_precipitant);
+                    $('#DoseMG_object').val(annotation.DoseMG_object);
+                    $('#DoseMG_precipitant').val(annotation.DoseMG_precipitant);
+                    $('#Auc').val(annotation.Aucval);
+                    $('#Cl').val(annotation.Clval);
+                    $('#cmax').val(annotation.cmaxval);
+                    $('#cmin').val(annotation.cminval);
+                    $('#t12').val(annotation.t12);
+
+                    $("#FormulationP > option").each(function(){ if(this.value === annotation.FormulationP) { $(this).attr('selected',true);signal = 0;}});
+                    if(signal==1){$('#FormulationP > option')[0].selected = "selected"; }else{signal=1;}
+                    $("#FormulationO > option").each(function(){ if(this.value === annotation.FormulationO){ $(this).attr('selected',true);signal = 0;}});
+                    if(signal==1){$('#FormulationO > option')[0].selected = "selected"; }else{signal=1;}
+                    $("#RegimentsP > option").each(function(){ if(this.value === annotation.RegimentsP){ $(this).attr('selected',true);signal = 0;}});
+                    if(signal==1){$('#RegimentsP > option')[0].selected = "selected";  }else{signal=1;}
+                    $("#RegimentsO > option").each(function(){ if(this.value === annotation.RegimentsO) { $(this).attr('selected',true);signal = 0;}});
+                    if(signal==1){$('#RegimentsO > option')[0].selected = "selected"; }else{signal=1;}
+                    $("#AucType > option").each(function(){ if(this.value === annotation.AucType){ $(this).attr('selected',true);signal = 0;}});
+                    if(signal==1){$('#AucType > option')[0].selected = "selected";  }else{signal=1;}
+                    $("#AucDirection > option").each(function(){ if(this.value === annotation.AucDirection){ $(this).attr('selected',true);signal = 0;}});
+                    if(signal==1){$('#AucDirection > option')[0].selected = "selected";  }else{signal=1;}
+                    $("#ClType > option").each(function(){ if(this.value === annotation.ClType){ $(this).attr('selected',true);signal = 0;}});
+                    if(signal==1){$('#ClType > option')[0].selected = "selected";  }else{signal=1;}
+                    $("#ClDirection > option").each(function(){ if(this.value === annotation.ClDirection){ $(this).attr('selected',true);signal = 0;}});
+                    if(signal==1){$('#ClDirection > option')[0].selected = "selected";  }else{signal=1;}
+                    $("#cmaxType > option").each(function(){ if(this.value === annotation.cmaxType){ $(this).attr('selected',true);signal = 0;}});
+                    if(signal==1){$('#cmaxType > option')[0].selected = "selected";  }else{signal=1;}
+                    $("#cmaxDirection > option").each(function(){ if(this.value === annotation.cmaxDirection){ $(this).attr('selected',true);signal = 0;}});
+                    if(signal==1){$('#cmaxDirection > option')[0].selected = "selected";  }else{signal=1;}
+                    $("#cminType > option").each(function(){ if(this.value === annotation.cminType){ $(this).attr('selected',true);signal = 0;}});
+                    if(signal==1){$('#cminType > option')[0].selected = "selected";  }else{signal=1;}
+                    $("#cminDirection > option").each(function(){ if(this.value === annotation.cminDirection){ $(this).attr('selected',true);signal = 0;}});
+                    if(signal==1){$('#cminDirection > option')[0].selected = "selected";  }else{signal=1;}
+                    $("#t12Type > option").each(function(){ if(this.value === annotation.t12Type){ $(this).attr('selected',true);signal = 0;}});
+                    if(signal==1){$('#t12Type > option')[0].selected = "selected";  }else{signal=1;}
+                    $("#t12Direction > option").each(function(){ if(this.value === annotation.t12Direction){ $(this).attr('selected',true);signal = 0;}});
+                    if(signal==1){$('#t12Direction > option')[0].selected = "selected";  }else{signal=1;}
+
+
                     //load all content
                     $("#Drug1 > option").each(function(){ if(this.value === annotation.Drug1) $(this).attr('selected',true);});
                     $('#Drug2 > option').each(function(){ if(this.value === annotation.Drug2) $(this).attr('selected',true);});
-                    $('#assertion_type option').each(function(){ if(this.value === annotation.assertion_type) $(this).attr('selected',true);});
+                    $('#assertion_type option').each(function(){ if(this.value === annotation.assertion_type){ $(this).attr('selected',true);signal = 0;}});
+                    if(signal==1){$('#assertion_type option')[0].selected = "selected"; }else{signal=1;}
                     $('.Type1').each(function(){ if(this.value === annotation.Type1) this.checked = true; else this.checked = false;});
                     $('.Role1').each(function(){ if(this.value === annotation.Role1) this.checked = true; else this.checked = false;});
                     $('.Type2').each(function(){ if(this.value === annotation.Type2) this.checked = true; else this.checked = false;});
@@ -185,7 +221,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                     annotation.assertion_type = $('#assertion_type option:selected').text();
                     annotation.Modality = $('#Modality:checked').val();
                     annotation.Evidence_modality = $('#Evidence_modality:checked').val();
-                    annotation.Comment = $('#Comment:checked').val();
+                    annotation.Comment = $('#Comment').val();
                     annotation.annotationType = "DDI";
                     if(annotation.assertion_type=="DDI clinical trial")
                     {
