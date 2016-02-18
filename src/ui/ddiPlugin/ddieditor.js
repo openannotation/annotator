@@ -334,7 +334,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
     load: function (position, annotation) {
         this.annotation = annotation;
         if(this.annotation.quote.length>1600){
-            alert("[INFO] Exceeding max lenght of text 1600!");
+            alert("[INFO] Exceeding max lengh of text 1600!");
             $('.btn-success').click();
             this.cancel();
 
