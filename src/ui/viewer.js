@@ -94,6 +94,8 @@ var Viewer = exports.Viewer = Widget.extend({
             }
         };
 
+	console.log("");
+
         var self = this;
 
         if (this.options.defaultFields) {
@@ -120,16 +122,32 @@ var Viewer = exports.Viewer = Widget.extend({
         if (this.options.autoViewHighlights) {
             this.document = this.options.autoViewHighlights.ownerDocument;
 
-            $(this.options.autoViewHighlights)
-                .on("mouseover." + NS, '.annotator-hl', function (event) {
-                    // If there are many overlapping highlights, still only
-                    // call _onHighlightMouseover once.
+	    // mouse over event handling
+            // $(this.options.autoViewHighlights)
+            //     .on("mouseover." + NS, '.annotator-hl', function (event) {
+
+	    // 	    console.log("viewer - constructor - autoViewHighlights - mouseover");
+		    
+            //         // If there are many overlapping highlights, still only
+            //         // call _onHighlightMouseover once.
+            //         if (event.target === this) {
+            //             self._onHighlightMouseover(event);
+            //         }
+            //     })
+            //     .on("mouseleave." + NS, '.annotator-hl', function () {
+	    // 	    console.log("viewer - constructor - autoViewHighlights - mouseleave");
+            //         self._startHideTimer();
+            //     });
+
+	    // click event handling
+	    $(this.options.autoViewHighlights)
+                .on("click." + NS, '#annotator-hl', function (event) {
+
+	    	    console.log("viewer - constructor - autoViewHighlights - mouseover");
+
                     if (event.target === this) {
                         self._onHighlightMouseover(event);
                     }
-                })
-                .on("mouseleave." + NS, '.annotator-hl', function () {
-                    self._startHideTimer();
                 });
 
             $(this.document.body)
@@ -151,6 +169,9 @@ var Viewer = exports.Viewer = Widget.extend({
             })
             .on("click." + NS, '.annotator-delete', function (e) {
                 self._onDeleteClick(e);
+            })
+	    .on("click." + NS, '.annotator-cancel', function (e) {
+                self._onCancelClick(e);
             })
             .on("mouseenter." + NS, function () {
                 self._clearHideTimer();
@@ -355,7 +376,14 @@ var Viewer = exports.Viewer = Widget.extend({
         this.hide();
         this.options.onDelete(item);
     },
-
+    // Event callback: called when the cancel button is clicked.
+    //
+    // event - An Event object.
+    //
+    // Returns nothing.
+    _onCancelClick: function (event) {
+        this.hide();
+    },
     // Event callback: called when a user triggers `mouseover` on a highlight
     // element.
     //
@@ -473,6 +501,9 @@ Viewer.itemTemplate = [
     '    <button type="button"',
     '            title="' + _t('Delete') + '"',
     '            class="annotator-delete">' + _t('Delete') + '</button>',
+    '    <button type="button"',
+    '            title="' + _t('Cancel') + '"',
+    '            class="annotator-cancel">' + _t('Cancel') + '</button>',
     '  </span>',
     '</li>'
 ].join('\n');

@@ -36,6 +36,7 @@ function highlightRange(normedRange, cssClass) {
             hl.className = cssClass;
 
             // add attribute name for css
+	    hl.id = 'annotator-hl';
             hl.setAttribute("name", "annotator-hl");
             node.parentNode.replaceChild(hl, node);
             hl.appendChild(node);

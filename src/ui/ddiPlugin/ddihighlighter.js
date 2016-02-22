@@ -31,14 +31,14 @@ function highlightRange(normedRange, cssClass) {
     for (var i = 0, len = nodes.length; i < len; i++) {
         var node = nodes[i];
         if (!white.test(node.nodeValue)) {
-            var hl = global.document.createElement('span');
-            hl.className = cssClass;
+            var ddihl = global.document.createElement('span');
+            ddihl.className = cssClass;
 
             // add attribute id for css
-            hl.id = 'annotator-ddi';
-            node.parentNode.replaceChild(hl, node);
-            hl.appendChild(node);
-            results.push(hl);
+            ddihl.id = 'annotator-ddi';
+            node.parentNode.replaceChild(ddihl, node);
+            ddihl.appendChild(node);
+            results.push(ddihl);
         }
     }
     return results;

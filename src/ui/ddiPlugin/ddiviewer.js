@@ -76,6 +76,8 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
     constructor: function (options) {
         Widget.call(this, options);
 
+	console.log("ddiviewer - constructor");
+
         this.itemTemplate = ddiViewer.itemTemplate;
         this.fields = [];
         this.annotations = [];
@@ -85,7 +87,6 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
         this.mouseDown = false;
         this.render = function (annotation) {
 
-            //alert("success2");
 	    if (annotation.annotationType == "DDI" && annotation.Drug1 && annotation.Drug2) {
 
             var returnText =
@@ -142,26 +143,42 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
         if (this.options.autoViewHighlights) {
             this.document = this.options.autoViewHighlights.ownerDocument;
 
+	    // mouse over event handling
+            // $(this.options.autoViewHighlights)
+            //     .on("mouseover." + NS, '.annotator-hl', function (event) {
+            //         // If there are many overlapping highlights, still only
+            //         // call _onHighlightMouseover once.
+	    // 	    console.log("ddiviewer - constructor - autoView - mouseover");
+            //         if (event.target === this) {
+            //             self._onHighlightMouseover(event);
+            //         }
+            //     })
+            //     .on("mouseleave." + NS, '.annotator-hl', function () {
+	    // 	    console.log("ddiviewer - constructor - autoView - mouseleave");
+            //         self._startHideTimer();
+            //     });
+
+	    // click event handling
             $(this.options.autoViewHighlights)
-                .on("mouseover." + NS, '.annotator-hl', function (event) {
-                    // If there are many overlapping highlights, still only
-                    // call _onHighlightMouseover once.
+                .on("click." + NS, '#annotator-ddi', function (event) {
+
+		    console.log("ddiviewer - constructor - click on annotator-hl");
                     if (event.target === this) {
                         self._onHighlightMouseover(event);
                     }
-                })
-                .on("mouseleave." + NS, '.annotator-hl', function () {
-                    self._startHideTimer();
                 });
-
+	    
             $(this.document.body)
                 .on("mousedown." + NS, function (e) {
+		    console.log("ddiviewer - constructor - mouseDown = true");
                     if (e.which === 1) {
                         self.mouseDown = true;
                     }
                 })
                 .on("mouseup." + NS, function (e) {
+		    console.log("ddiviewer - constructor - mouseDown = false");
                     if (e.which === 1) {
+			console.log("ddiviewer - constructor - mouseDown = false");
                         self.mouseDown = false;
                     }
                 });
@@ -173,6 +190,9 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
             })
             .on("click." + NS, '.annotator-delete', function (e) {
                 self._onDeleteClick(e);
+            })
+	    .on("click." + NS, '.annotator-cancel', function (e) {
+                self._onCancelClick(e);
             })
             .on("mouseenter." + NS, function () {
                 self._clearHideTimer();
@@ -204,6 +224,8 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
     //
     // Returns nothing.
     show: function (position) {
+
+	console.log("ddiviewer - constructor - show the viewer called");
         if (typeof position !== 'undefined' && position !== null) {
             this.element.css({
                 top: position.top,
@@ -376,16 +398,28 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
         this.hide();
         this.options.onDelete(item);
     },
-
+    // Event callback: called when the cancel button is clicked.
+    //
+    // event - An Event object.
+    //
+    // Returns nothing.
+    
+    _onCancelClick: function (event) {
+        this.hide();
+    },
     // Event callback: called when a user triggers `mouseover` on a highlight
     // element.
     //
     // event - An Event object.
     //
     // Returns nothing.
+    
     _onHighlightMouseover: function (event) {
         // If the mouse button is currently depressed, we're probably trying to
         // make a selection, so we shouldn't show the viewer.
+
+	console.log("ddiviewer - _onHighlightMouseover called");
+	
         if (this.mouseDown) {
             return;
         }
@@ -393,6 +427,8 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
         var self = this;
         this._startHideTimer(true)
             .done(function () {
+		console.log("ddiviewer - _onHighlightMouseover - make selection - should not show the viewer");
+		
                 var annotations = $(event.target)
                     .parents('.annotator-hl')
                     .addBack()
@@ -416,6 +452,8 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
     //
     // Returns a Promise.
     _startHideTimer: function (activity) {
+
+	console.log("ddiviewer - _startHideTimer called");
         if (typeof activity === 'undefined' || activity === null) {
             activity = false;
         }
@@ -463,6 +501,9 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
     //
     // Returns nothing.
     _clearHideTimer: function () {
+
+	console.log("ddiviewer - _clearHideTimer called");
+	
         clearTimeout(this.hideTimer);
         this.hideTimer = null;
         this.hideTimerDfd.reject();
@@ -493,7 +534,10 @@ ddiViewer.itemTemplate = [
     '            class="annotator-edit" onclick="showright()">' + _t('Edit') + '</button>',
     '    <button type="button"',
     '            title="' + _t('Delete') + '"',
-    '            class="annotator-delete">' + _t('Delete') + '</button>',
+    '            class="annotator-delete">' + _t('Delete') + '</button> &nbsp;&nbsp;',
+    '    <button type="button"',
+    '            title="' + _t('Cancel') + '"',
+    '            class="annotator-cancel">' + _t('Cancel') + '</button>',
     '  </span>',
     '</li>'
 ].join('\n');
@@ -537,6 +581,8 @@ ddiViewer.options = {
 // element).
 exports.standalone = function standalone(options) {
     var widget;
+
+    console.log("ddiviewer - standalone called");
 
     if (typeof options === 'undefined' || options === null) {
         options = {};

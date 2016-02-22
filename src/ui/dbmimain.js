@@ -71,6 +71,8 @@ function maxZIndex(elements) {
 // Helper function to inject CSS into the page that ensures Annotator elements
 // are displayed with the highest z-index.
 function injectDynamicStyle() {
+
+    console.log("dbmimain.js - injectDynamicStyle called");
     util.$('#annotator-dynamic-style').remove();
 
     var sel = '*' +
