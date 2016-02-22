@@ -422,12 +422,16 @@
 	display: none;
 }
 
+.annotator-viewer .annotator-controls .annotator-cancel {
+	background-position: 0 -75px;
+}
+
 .annotator-viewer .annotator-controls .annotator-edit {
 	background-position: 0 -60px;
 }
 
 .annotator-viewer .annotator-controls .annotator-delete {
-	background-position: 0 -75px;
+	background-position: 0 -90px;
 }
 
 .annotator-viewer .annotator-controls .annotator-link {
