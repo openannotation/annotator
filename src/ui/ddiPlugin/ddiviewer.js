@@ -87,28 +87,34 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
         this.mouseDown = false;
         this.render = function (annotation) {
 
-	    if (annotation.annotationType == "DDI" && annotation.Drug1 && annotation.Drug2) {
+	if (annotation.annotationType == "DDI" && annotation.Drug1 && annotation.Drug2) {
 
             var returnText =
                 "<div  class='annotator-ddi'> By " + annotation.email + " on " + annotation.updated + "</div>" +
-                "<table style='float:left;'><tr><td>" + annotation.Role1 + "</td><td><span class='annotator-ddi-active'>" + annotation.Drug1 + "</span> (" +annotation.Type1 + ")</td></tr>" +
-                "<tr><td>" +  annotation.Role2 + "</td><td><span class='annotator-ddi-active'>" + annotation.Drug2 + "</span> (" +annotation.Type2 + ")</td></tr>" +
-                "<tr><td>Assertion Type</td><td>" + annotation.assertion_type + "</td></tr>" +
-                "<tr><td>Quote</td><td><span class='annotator-ddi'>" + annotation.quote + "</span></td></tr>" +
-                "<tr><td>Modality</td><td>" + annotation.Modality + "</td></tr>" +
-                "<tr><td>Evidence modality</td><td>" + annotation.Evidence_modality + "</td></tr>" +
-                "<tr><td>Comment</td><td>" + annotation.Comment + "</td></tr></table>";
-            if(annotation.assertion_type=="DDI clinical trial")
-            {
-                returnText += "<table><tr><td>Number of participants</td><td>" + annotation.Number_participants + "</td></tr>";
-                returnText += "<tr><td>Precipitant drug dosage</td><td>Dose in MG:" + annotation.DoseMG_precipitant + "<br>Formulation:" + annotation.FormulationP + "<br>Duration(days):" + annotation.Duration_precipitant + "<br>Regiments:" + annotation.RegimentsP + "</td></tr>";
-                returnText += "<tr><td>Object drug dosage:</td><td>Dose in MG:" + annotation.DoseMG_object + "<br>Formulation:" + annotation.FormulationO + "<br>Duration(days):" + annotation.Duration_object + "<br>Regiments:" + annotation.RegimentsO + "</td></tr>";
-                returnText += "<tr><td>AUC_i/AUC:</td><td>Auc:" + annotation.Aucval + "<br>Type:" + annotation.AucType + "<br>Direction:" + annotation.AucDirection + "</td></tr>";
-                returnText += "<tr><td>CL_i/CL:</td><td>Cl:" + annotation.Clval + "<br>Type:" + annotation.ClType + "<br>Direction:" + annotation.ClDirection + "</td></tr>";
-                returnText += "<tr><td>Cmax:</td><td>cmax:" + annotation.cmaxval + "<br>Type:" + annotation.cmaxType +"<br>Direction:" + annotation.cmaxDirection + "</td></tr>";
-                returnText += "<tr><td>Cmin:</td><td>cmax:" + annotation.cminval + "<br>Type:" + annotation.cminType + "<br>Direction:" + annotation.cminDirection + "</td></tr>";
-                returnText += "<tr><td>T1/2:</td><td>t12:" + annotation.t12 + "<br>Type:" + annotation.t12Type + "<br>Direction:" + annotation.t12Direction + "</td></tr></table>";
-            }
+		"<div  class='annotator-ddi'> Quote: " + annotation.quote + "</div>" +
+                "<table style='float:left;'>" +
+		"<tr><td>" + annotation.Role1 + "</td><td>" + annotation.Role2 + "</td><td>Asrt Type</td><td>Modality</td><td>Evidence</td><td>Comment</td></tr>"
+
+	    returnText = returnText +
+                "<tr><td><span class='annotator-ddi-active'>" + annotation.Drug1 + "</span> (" +annotation.Type1 + ")</td>" +
+		"<td><span class='annotator-ddi-active'>" + annotation.Drug2 + "</span> (" +annotation.Type2 + ")</td>" +
+                "<td>" + annotation.assertion_type + "</td>" +
+                "<td>" + annotation.Modality + "</td>" +
+                "<td>" + annotation.Evidence_modality + "</td>" +
+                "<td>" + annotation.Comment + "</td></tr></table>";
+
+		
+            // if(annotation.assertion_type=="DDI clinical trial")
+            // {
+            //     returnText += "<table><tr><td>Number of participants</td><td>" + annotation.Number_participants + "</td></tr>";
+            //     returnText += "<tr><td>Precipitant drug dosage</td><td>Dose in MG:" + annotation.DoseMG_precipitant + "<br>Formulation:" + annotation.FormulationP + "<br>Duration(days):" + annotation.Duration_precipitant + "<br>Regiments:" + annotation.RegimentsP + "</td></tr>";
+            //     returnText += "<tr><td>Object drug dosage:</td><td>Dose in MG:" + annotation.DoseMG_object + "<br>Formulation:" + annotation.FormulationO + "<br>Duration(days):" + annotation.Duration_object + "<br>Regiments:" + annotation.RegimentsO + "</td></tr>";
+            //     returnText += "<tr><td>AUC_i/AUC:</td><td>Auc:" + annotation.Aucval + "<br>Type:" + annotation.AucType + "<br>Direction:" + annotation.AucDirection + "</td></tr>";
+            //     returnText += "<tr><td>CL_i/CL:</td><td>Cl:" + annotation.Clval + "<br>Type:" + annotation.ClType + "<br>Direction:" + annotation.ClDirection + "</td></tr>";
+            //     returnText += "<tr><td>Cmax:</td><td>cmax:" + annotation.cmaxval + "<br>Type:" + annotation.cmaxType +"<br>Direction:" + annotation.cmaxDirection + "</td></tr>";
+            //     returnText += "<tr><td>Cmin:</td><td>cmax:" + annotation.cminval + "<br>Type:" + annotation.cminType + "<br>Direction:" + annotation.cminDirection + "</td></tr>";
+            //     returnText += "<tr><td>T1/2:</td><td>t12:" + annotation.t12 + "<br>Type:" + annotation.t12Type + "<br>Direction:" + annotation.t12Direction + "</td></tr></table>";
+            // }
 
             return returnText;
         } else {
@@ -576,8 +582,6 @@ ddiViewer.options = {
 // element).
 exports.standalone = function standalone(options) {
     var widget;
-
-    //console.log("ddiviewer - standalone called");
 
     if (typeof options === 'undefined' || options === null) {
         options = {};
