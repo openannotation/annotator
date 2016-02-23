@@ -72,7 +72,7 @@ function maxZIndex(elements) {
 // are displayed with the highest z-index.
 function injectDynamicStyle() {
 
-    console.log("dbmimain.js - injectDynamicStyle called");
+    //console.log("dbmimain.js - injectDynamicStyle called");
     util.$('#annotator-dynamic-style').remove();
 
     var sel = '*' +

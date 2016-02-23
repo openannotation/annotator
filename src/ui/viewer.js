@@ -94,7 +94,6 @@ var Viewer = exports.Viewer = Widget.extend({
             }
         };
 
-	console.log("");
 
         var self = this;
 
@@ -125,8 +124,6 @@ var Viewer = exports.Viewer = Widget.extend({
 	    // mouse over event handling
             // $(this.options.autoViewHighlights)
             //     .on("mouseover." + NS, '.annotator-hl', function (event) {
-
-	    // 	    console.log("viewer - constructor - autoViewHighlights - mouseover");
 		    
             //         // If there are many overlapping highlights, still only
             //         // call _onHighlightMouseover once.
@@ -135,7 +132,6 @@ var Viewer = exports.Viewer = Widget.extend({
             //         }
             //     })
             //     .on("mouseleave." + NS, '.annotator-hl', function () {
-	    // 	    console.log("viewer - constructor - autoViewHighlights - mouseleave");
             //         self._startHideTimer();
             //     });
 
@@ -143,9 +139,8 @@ var Viewer = exports.Viewer = Widget.extend({
 	    $(this.options.autoViewHighlights)
                 .on("click." + NS, '#annotator-hl', function (event) {
 
-	    	    console.log("viewer - constructor - autoViewHighlights - mouseover");
-
                     if (event.target === this) {
+			//console.log("viewer - constructor - autoViewHighlights - mouseover");
                         self._onHighlightMouseover(event);
                     }
                 });
@@ -153,11 +148,13 @@ var Viewer = exports.Viewer = Widget.extend({
             $(this.document.body)
                 .on("mousedown." + NS, function (e) {
                     if (e.which === 1) {
+			//console.log("HL change mousedown to true");
                         self.mouseDown = true;
                     }
                 })
                 .on("mouseup." + NS, function (e) {
                     if (e.which === 1) {
+			//console.log("HL change mousedown to false");
                         self.mouseDown = false;
                     }
                 });
@@ -393,6 +390,9 @@ var Viewer = exports.Viewer = Widget.extend({
     _onHighlightMouseover: function (event) {
         // If the mouse button is currently depressed, we're probably trying to
         // make a selection, so we shouldn't show the viewer.
+	
+	//console.log("hlviewer - _onHighlightMouseover called - mouseDown:" + this.mouseDown);
+	
         if (this.mouseDown) {
             return;
         }
