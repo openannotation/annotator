@@ -340,7 +340,10 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
 
         }
         var annotations;
-        var sourceURL = getURLParameter("sourceURL").trim();
+        if(getURLParameter("sourceURL")==null)
+            var sourceURL = getURLParameter("file").trim();
+        else
+            var sourceURL = getURLParameter("sourceURL").trim();
         var source = sourceURL.replace(/[\/\\\-\:\.]/g, "")
         var email = getURLParameter("email");
         //console.log('{"uri":"'+source+'","email":"'+email+'"}');
