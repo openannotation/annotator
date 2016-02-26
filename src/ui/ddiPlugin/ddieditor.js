@@ -346,12 +346,16 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
             var sourceURL = getURLParameter("sourceURL").trim();
         var source = sourceURL.replace(/[\/\\\-\:\.]/g, "")
         var email = getURLParameter("email");
-        //console.log('{"uri":"'+source+'","email":"'+email+'"}');
+
         var queryObj = JSON.parse('{"uri":"'+source+'","email":"'+email+'"}');
 
-	var annhost = config.store.host;
-	var annport = config.store.port;
-	var queryOptStr = '{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://' + annhost + ':' + annport + '","urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search"}}'
+	var annhost = config.annotator.host;
+	//var annport = config.store.port;
+	
+	// call apache for request annotator store
+	var queryOptStr = '{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://' + annhost + '/annotatorstore","urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search"}}';
+	console.log(queryOptStr);
+	
 	var queryOptions = JSON.parse(queryOptStr);
 	
         //var queryOptions = JSON.parse('{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://localhost:5000","urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search"}}');
