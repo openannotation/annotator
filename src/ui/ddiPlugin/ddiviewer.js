@@ -107,7 +107,7 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
 		var returnText =
                     "<div  class='annotator-ddi'> By " + annotation.email + " on " + annotation.updated + "</div>" +
 		    "<div  class='annotator-ddi'> Quote: " + annotation.quote + "</div>" +
-                    "<table style='float:left;'>" +
+                    "<table class='viewertable' style='float:left;'>" +
 		    "<tr><td>" + annotation.Role1 + "</td><td>" + annotation.Role2 + "</td><td>Asrt Type</td><td>Modality</td><td>Evidence</td><td>Comment</td></tr>" +
                     "<tr><td><span class='annotator-ddi-active'>" + annotation.Drug1 + "</span> (" +annotation.Type1 + ")</td>" +
 		    "<td><span class='annotator-ddi-active'>" + annotation.Drug2 + "</span> (" +annotation.Type2 + ")</td>" +
