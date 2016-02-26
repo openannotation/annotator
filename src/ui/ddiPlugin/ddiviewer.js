@@ -94,11 +94,11 @@ var ddiViewer = exports.ddiViewer = Viewer.extend({
 		var cTValue = "<tr><td>Dose in MG:" + annotation.DoseMG_precipitant + "<br>Formulation:" + annotation.FormulationP + "<br>Duration(days):" + annotation.Duration_precipitant + "<br>Regiments: " + annotation.RegimentsP + "</td>" +
 		    "<td>Dose in MG:" + annotation.DoseMG_object + "<br>Formulation:" + annotation.FormulationO + "<br>Duration(days):" + annotation.Duration_object + "<br>Regiments: " + annotation.RegimentsO + "</td>" +
 		    "<td>Number: " + annotation.Number_participants + "</td>" +
-		    "<td>Auc :" + annotation.Aucval + "<br>Type: " + annotation.AucType + "<br>Direction: " + annotation.AucDirection + "</td>" +
-		    "<td>Cl: " + annotation.Clval + "<br>Type: " + annotation.ClType + "<br>Direction: " + annotation.ClDirection + "</td>" +
-		    "<td>cmax: " + annotation.cmaxval + "<br>Type: " + annotation.cmaxType +"<br>Direction: " + annotation.cmaxDirection + "</td>" +
-		    "<td>cmin: " + annotation.cminval + "<br>Type: " + annotation.cminType + "<br>Direction: " + annotation.cminDirection + "</td>" +
-		    "<td>t12: " + annotation.t12 + "<br>Type: " + annotation.t12Type + "<br>Direction: " + annotation.t12Direction + "</td></tr>";
+		    "<td>Auc :" + annotation.Aucval + "<br>Type:" + annotation.AucType + "<br>Dire:" + annotation.AucDirection + "</td>" +
+		    "<td>Cl: " + annotation.Clval + "<br>Type:" + annotation.ClType + "<br>Dire:" + annotation.ClDirection + "</td>" +
+		    "<td>cmax: " + annotation.cmaxval + "<br>Type:" + annotation.cmaxType +"<br>Dire:" + annotation.cmaxDirection + "</td>" +
+		    "<td>cmin: " + annotation.cminval + "<br>Type:" + annotation.cminType + "<br>Dire:" + annotation.cminDirection + "</td>" +
+		    "<td>t12: " + annotation.t12 + "<br>Type:" + annotation.t12Type + "<br>Dire: " + annotation.t12Direction + "</td></tr>";
 		
 		clinicalTrialRows = cTHeader + cTValue;
 	    }
