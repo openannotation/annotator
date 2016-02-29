@@ -265,7 +265,8 @@
 	bottom: 15px;
 	left: -18px;
 	width: 400px;
-	height:620px;
+	height:90vh;
+	overflow-y: scroll;
 	background-color: #FFFFFF;
 	border: 0px solid #7A7A7A;
 	border: 0px solid rgba(122, 122, 122, 0.6);
@@ -1071,13 +1072,16 @@ article {
 	margin-top: 80px;
 }
 
-table {
+.viewertable {
 	font-size: small;
 	border-collapse: collapse;
 }
 
+.editortable, tr, td {
+	border: 1px solid black;
+}
 
-table, tr, td{
+.viewertable, tr, td{
 	border: 1px solid black;
 }
 
@@ -1099,5 +1103,33 @@ hr.style14 {
 	background-image: -o-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
 }
 
+.clear-user-agent-styles,
+.clear-user-agent-styles thead,
+.clear-user-agent-styles tbody,
+.clear-user-agent-styles tfoot,
+.clear-user-agent-styles tr,
+.clear-user-agent-styles th,
+.clear-user-agent-styles tr td {
+	display: block;
+	width: auto;
+	height: auto;
+	margin: 0;
+	padding: 0;
+	border: 0px;
+	border-collapse: inherit;
+	border-spacing: 0;
+	border-color: inherit;
+	vertical-align: inherit;
+	text-align: left;
+	font-size: 12px;
+	background: white;
+	background-color:white;
+	-webkit-border-horizontal-spacing: 0;
+	-webkit-border-vertical-spacing: 0;
+}
+th, td {
+	display: inline;
 
-table tr:nth-of-type(odd),table tr:nth-of-type(odd){background-color:#EEF9FF}.main-content .content-full table.alt tr:nth-of-type(odd){background-color:#FFF}.main-content .content-full table.alt tr:nth-of-type(even){background-color:#EEF9FF}.main-content .content-full .norows table tr:nth-of-type(odd),.norows table tr:nth-of-type(odd){background-color:#fff}
+}
+
+.viewertable tr:nth-of-type(odd),.viewertable tr:nth-of-type(odd){background-color:#EEF9FF}.main-content .content-full .viewertable.alt tr:nth-of-type(odd){background-color:#FFF}.main-content .content-full .viewertable.alt tr:nth-of-type(even){background-color:#EEF9FF}.main-content .content-full .norows .viewertable tr:nth-of-type(odd),.norows .viewertable tr:nth-of-type(odd){background-color:#fff}
