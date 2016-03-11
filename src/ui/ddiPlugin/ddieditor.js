@@ -72,24 +72,34 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                     var quoteobject = $('#quotearea');
                     var quotecontent = $('#quotearea').html();
                     //console.log(quotecontent);
-                    for (var i = 0, len = anns.length; i < len; i++) {
-                        if(anns[i].annotationType=="DrugMention")
+                    var index = 0;
+                    var list = [];
+                    //filter out duplicates
+                    for(var i=0,len = anns.length;i<len;i++)
+                    {
+                        if((anns[i].annotationType == "DrugMention") && (list.indexOf(anns[i].quote)<0))
                         {
-                            if(quotecontent.indexOf(anns[i].quote)>=0)
+                            list.push(anns[i].quote);
+                            //console.log(anns[i].quote);
+                        }
+                    }
+                    for (var i = 0, len = list.length; i < len; i++) {
+                            if(quotecontent.indexOf(list[i])>=0)
                             {
-                                quotecontent = quotecontent.replace(anns[i].quote,"<span class='highlightdrug'>"+anns[i].quote+"</span>");
+                                index++;
+                                //quotecontent.split(list[i]).join("<span class='highlightdrug'>"+list[i]+"<sup>"+index+"</sup></span>");
+                                //console.log(quotecontent);
+                                quotecontent = quotecontent.replace(list[i],"<span class='highlightdrug'>"+list[i]+"</span>");
                                 $('#Drug1').append($('<option>', {
-                                    value: anns[i].quote,
-                                    text: anns[i].quote
+                                    value: list[i],
+                                    text: list[i]
                                 }));
                                 $('#Drug2').append($('<option>', {
-                                    value: anns[i].quote,
-                                    text: anns[i].quote
+                                    value: list[i],
+                                    text: list[i]
                                 }));
                                 flag = flag + 1;
                             }
-                        }
-
                     }
                     quoteobject.html(quotecontent);
                     /*$('[name="annotator-hl"]').each(function(index){
