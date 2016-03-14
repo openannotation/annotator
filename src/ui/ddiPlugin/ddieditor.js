@@ -43,11 +43,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
         this.fields = [];
         this.annotation = {};
 
-	//console.log("[INFO] ddi - editor - constructor");
-
         if (this.options.defaultFields) {
-
-            //quote content + load and submit all content
 
             this.addField({
                 type: 'div',
@@ -67,6 +63,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                     $('#Drug2 option').remove();
                     var flag = 0;
                     console.log(annotations.length);
+
                     var anns = annotations.slice();
                     //console.log("(1):"+anns[0].quote);
                     var quoteobject = $('#quotearea');
@@ -74,13 +71,14 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                     //console.log(quotecontent);
                     var index = 0;
                     var list = [];
+
                     //filter out duplicates
                     for(var i=0,len = anns.length;i<len;i++)
                     {
                         if((anns[i].annotationType == "DrugMention") && (list.indexOf(anns[i].quote)<0))
                         {
                             list.push(anns[i].quote);
-                            //console.log(anns[i].quote);
+                            console.log(anns[i].quote);
                         }
                     }
                     for (var i = 0, len = list.length; i < len; i++) {
@@ -129,7 +127,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                     });*/
                     if(flag<2){
                         //if(flag){
-                        alert("Should highlight at least two drugs.");
+                        alert("Should highlight at least two different drugs." + flag);
                         editorSelf.cancel();
                         $('.btn-success').click();
                     }
