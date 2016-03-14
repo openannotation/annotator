@@ -127,7 +127,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                     });*/
                     if(flag<2){
                         //if(flag){
-                        alert("Should highlight at least two different drugs." + flag);
+                        alert("Should highlight at least two different drugs!");
                         editorSelf.cancel();
                         $('.btn-success').click();
                     }
