@@ -9,19 +9,16 @@ exports.textselector = require('./ui/textselector');
 exports.widget = require('./ui/widget');
 
 //drug mention
-
-exports.editor = require('./ui/editor');
-exports.viewer = require('./ui/viewer');
-exports.adder = require('./ui/adder');
-exports.highlighter = require('./ui/highlighter');
+exports.editor = require('./drugPlugin/editor');
+exports.viewer = require('./drugPlugin/viewer');
+exports.adder = require('./drugPlugin/adder');
+exports.highlighter = require('./drugPlugin/highlighter');
 
 //ddiPlugin
-//exports.main = require('./ui/ddiPlugin/ddimain').main;
-
-exports.ddieditor = require('./ui/ddiPlugin/ddieditor');
-exports.ddiviewer = require('./ui/ddiPlugin/ddiviewer');
-exports.ddiadder = require('./ui/ddiPlugin/ddiadder');
-exports.ddihighlighter = require('./ui/ddiPlugin/ddihighlighter');
+exports.ddieditor = require('./ddiPlugin/editor');
+exports.ddiviewer = require('./ddiPlugin/viewer');
+exports.ddiadder = require('./ddiPlugin/adder');
+exports.ddihighlighter = require('./ddiPlugin/highlighter');
 
 //dbmi main
 exports.dbmimain = require('./ui/dbmimain').main;

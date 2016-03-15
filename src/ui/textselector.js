@@ -65,11 +65,15 @@ TextSelector.prototype.captureDocumentSelection = function () {
         return [];
     }
 
+    console.log(selection);
+
     for (i = 0; i < selection.rangeCount; i++) {
         var r = selection.getRangeAt(i),
             browserRange = new Range.BrowserRange(r),
             normedRange = browserRange.normalize().limit(this.element);
      
+        console.log(browserRange);
+        console.log(normedRange);
 
         // If the new range falls fully outside our this.element, we should
         // add it back to the document but not return it from this method.

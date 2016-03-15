@@ -2,7 +2,7 @@
 
 var Range = require('xpath-range').Range;
 
-var util = require('../../util');
+var util = require('../util');
 
 var $ = util.$;
 var Promise = util.Promise;

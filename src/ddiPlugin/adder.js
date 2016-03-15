@@ -1,7 +1,7 @@
 "use strict";
 
-var Widget = require('../widget').Widget,
-    util = require('../../util');
+var Widget = require('./../ui/widget').Widget,
+    util = require('../util');
 
 var $ = util.$;
 var _t = util.gettext;

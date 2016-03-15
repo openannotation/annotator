@@ -5,16 +5,16 @@ var util = require('../util');
 var textselector = require('./textselector');
 
 // ddi
-var ddiadder = require('./ddiPlugin/ddiadder');
-var ddihighlighter = require('./ddiPlugin/ddihighlighter');
-var ddieditor = require('./ddiPlugin/ddieditor');
-var ddiviewer = require('./ddiPlugin/ddiviewer');
+var ddiadder = require('./../ddiPlugin/adder');
+var ddihighlighter = require('./../ddiPlugin/highlighter');
+var ddieditor = require('./../ddiPlugin/editor');
+var ddiviewer = require('./../ddiPlugin/viewer');
 
 // highlight
-var hladder = require('./adder');
-var hleditor = require('./editor');
-var hlhighlighter = require('./highlighter');
-var hlviewer = require('./viewer');
+var hladder = require('./../drugPlugin/adder');
+var hleditor = require('./../drugPlugin/editor');
+var hlhighlighter = require('./../drugPlugin/highlighter');
+var hlviewer = require('./../drugPlugin/viewer');
 
 var _t = util.gettext;
 

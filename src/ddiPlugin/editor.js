@@ -1,7 +1,7 @@
 "use strict";
-var Widget = require('../widget').Widget;
-var util = require('../../util');
-var Editor = require('../editor').Editor;
+var Widget = require('./../ui/widget').Widget;
+var util = require('../util');
+var Editor = require('../drugPlugin/editor').Editor;
 var Template = require('./template').Template;
 
 var $ = util.$;
@@ -10,7 +10,7 @@ var Promise = util.Promise;
 var NS = "annotator-editor";
 
 // bring storage in
-var HttpStorage = require('../../storage').HttpStorage;
+var HttpStorage = require('./../storage').HttpStorage;
 
 // id returns an identifier unique within this session
 var id = (function () {
@@ -43,6 +43,8 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
         this.fields = [];
         this.annotation = {};
 
+        console.log("[INFO] ddiEditor - consturctor");
+
         if (this.options.defaultFields) {
 
             this.addField({
@@ -51,18 +53,19 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                 id: 'quote',
                 load: function (field, annotation,annotations) {
 
+                    console.log("[INFO] ddiEditor - load");
+
                     //var annList = annotations.slice();
                     //console.log(annList[0].quote);
                     //var now = annList.splice(0, annotations.options.chunkSize);
 
                     $('#quote').empty();
-                    var quoteobject = $( "<div id='quotearea'/>" );
+                    var quoteobject = $("<div id='quotearea'/>");
                     $('#quote').append(quoteobject);
                     $('#quotearea').html(annotation.quote || '');
                     $('#Drug1 option').remove();
                     $('#Drug2 option').remove();
                     var flag = 0;
-                    console.log(annotations.length);
 
                     var anns = annotations.slice();
                     //console.log("(1):"+anns[0].quote);

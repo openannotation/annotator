@@ -1,6 +1,6 @@
 "use strict";
 
-var Widget = require('./widget').Widget,
+var Widget = require('./../ui/widget').Widget,
     util = require('../util');
 
 var $ = util.$,

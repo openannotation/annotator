@@ -1,9 +1,9 @@
 "use strict";
 
-var Widget = require('../widget').Widget,
-    util = require('../../util');
+var Widget = require('./../ui/widget').Widget,
+    util = require('../util');
 
-var Viewer = require('../viewer').Viewer
+//var Viewer = require('../viewer').Viewer
 
 var $ = util.$,
     _t = util.gettext;
@@ -57,7 +57,7 @@ function parseLinks(data, rel, cond) {
 
 
 // Public: Creates an element for viewing annotations.
-var ddiViewer = exports.ddiViewer = Viewer.extend({
+var ddiViewer = exports.ddiViewer = Widget.extend({
 
     // Public: Creates an instance of the Viewer object.
     //
