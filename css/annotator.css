@@ -257,15 +257,20 @@
 	clear: both;
 }
 
-
+.annotator-controls1 {
+	clear: both;
+	position:fixed;
+	margin-top:-40px;
+}
 
 .annotator-widget {
-	margin: 0;
+
+	margin-top:-70px;
 	padding: 0;
-	bottom: 15px;
-	left: -18px;
-	width: 400px;
-	height:90vh;
+	bottom: -30px;
+	right: 0px;
+	width: 800px;
+	height:180px;
 	overflow-y: scroll;
 	background-color: #FFFFFF;
 	border: 0px solid #7A7A7A;
@@ -366,7 +371,7 @@
 .annotator-viewer div:first-of-type,
 .annotator-editor .annotator-item:first-child textarea {
 	padding-top: 12px;
-	padding-bottom: 12px;
+	padding-bottom: 0px;
 	color: rgb(60, 60, 60);
 	font-size: 13px;
 	font-style: italic;
@@ -448,7 +453,7 @@
 .annotator-editor .annotator-item label {
 	top: 0;
 	display: inline;
-	cursor: pointer;
+	/*cursor: pointer;*/
 	font-size: 12px;
 }
 
@@ -470,7 +475,7 @@
 
 .annotator-editor .annotator-item textarea::-webkit-scrollbar {
 	height: 8px;
-	width: 8px;
+	width: 15px;
 }
 
 .annotator-editor .annotator-item textarea::-webkit-scrollbar-track-piece {
@@ -575,7 +580,7 @@
 
 .annotator-editor.annotator-invert-y .annotator-controls {
 	border-top: none;
-	border-bottom: 1px solid rgb(180, 180, 180);
+	/*border-bottom: 1px solid rgb(180, 180, 180);*/
 	-webkit-border-radius: 5px 5px 0 0;
 	-moz-border-radius: 5px 5px 0 0;
 	-o-border-radius: 5px 5px 0 0;
@@ -1092,6 +1097,12 @@ article {
 	font-color:#000000;
 }
 
+#quote {
+
+
+	width:100%;
+}
+
 hr.style14 {
 	border: 0;
 	height: 1px;
@@ -1131,8 +1142,20 @@ th, td {
 	display: inline;
 
 }
-
 */
+.clear-user-agent-styles,
+.clear-user-agent-styles thead,
+.clear-user-agent-styles tbody,
+.clear-user-agent-styles tfoot,
+.clear-user-agent-styles tr,
+.clear-user-agent-styles th,
+.clear-user-agent-styles tr td {
+	background: white;
+	background-color:white;
+	border-color: white;
+	text-align: right;
+}
+
 
 table tr:nth-of-type(odd),table tr:nth-of-type(odd){background-color:#EEF9FF}.main-content .content-full table.alt tr:nth-of-type(odd){background-color:#FFF}.main-content .content-full table.alt tr:nth-of-type(even){background-color:#EEF9FF}.main-content .content-full .norows table tr:nth-of-type(odd),.norows table tr:nth-of-type(odd){background-color:#fff}
 /*.viewertable tr:nth-of-type(odd),.viewertable tr:nth-of-type(odd){background-color:#EEF9FF}.main-content .content-full .viewertable.alt tr:nth-of-type(odd){background-color:#FFF}.main-content .content-full .viewertable.alt tr:nth-of-type(even){background-color:#EEF9FF}.main-content .content-full .norows .viewertable tr:nth-of-type(odd),.norows .viewertable tr:nth-of-type(odd){background-color:#fff}*/
