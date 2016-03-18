@@ -31,29 +31,6 @@ function trim(s) {
     }
 }
 
-// function lcs(lcstest, lcstarget) {
-//     var matchfound = 0
-//     var lsclen = lcstest.length
-//     for(var lcsi=0; lcsi<lcstest.length; lcsi++){
-//         var lscos=0
-//         for(var lcsj=0; lcsj<lcsi+1; lcsj++){
-//             var re = new RegExp("(?:.{" + lscos + "})(.{" + lsclen + "})", "i");
-//             var temp = re.test(lcstest);
-//             re = new RegExp("(" + RegExp.$1 + ")", "i");
-//             if(re.test(lcstarget)){
-//                 matchfound=1;
-//                 var result = RegExp.$1;
-//                 break;
-//             }
-//             lscos = lscos + 1;
-//         }
-//         if(matchfound==1){return result; break;}
-//         lsclen = lsclen - 1;
-//     }
-//     result = "";
-//     return result;
-// }
-
 // annotationFactory returns a function that can be used to construct an
 // annotation from a list of selected ranges.
 function annotationFactory(contextEl, ignoreSelector) {
