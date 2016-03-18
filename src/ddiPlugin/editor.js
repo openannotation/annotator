@@ -157,7 +157,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                     $(field).find('#clinical').on('selected',function() {
                         $('#ddisection').hide();
                     });*/
-                    console.debug("annotation.assertion_type:"+annotation.assertion_type);
+                    //console.debug("annotation.assertion_type:"+annotation.assertion_type);
                     if(annotation.assertion_type=="DDI clinical trial")
                     {
                         $('#altersection').show();
@@ -372,8 +372,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
         //var queryOptions = JSON.parse('{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://localhost:5000","urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search"}}');
 	
         var storage = new HttpStorage(queryOptions);
-        //console.log("ddieditor.js - constructor - load:" + JSON.stringify(app.annotations));
-        //console.log("editor call storage");
+
         var self = this;
         storage.query(queryObj)
         .then(function(data){

@@ -65,6 +65,10 @@ TextSelector.prototype.captureDocumentSelection = function () {
         return [];
     }
 
+    console.log(selection);
+    var fulltxt = selection.anchorNode.textContent;
+    //console.log("fulltxt:" + fulltxt) 
+
     for (i = 0; i < selection.rangeCount; i++) {
         var r = selection.getRangeAt(i),
             browserRange = new Range.BrowserRange(r),
@@ -85,6 +89,7 @@ TextSelector.prototype.captureDocumentSelection = function () {
     selection.removeAllRanges();
 
     for (i = 0, len = rangesToIgnore.length; i < len; i++) {
+        console.log("rangesToIgnore!");
         selection.addRange(rangesToIgnore[i]);
     }
 
@@ -92,12 +97,12 @@ TextSelector.prototype.captureDocumentSelection = function () {
     for (i = 0, len = ranges.length; i < len; i++) {
         var range = ranges[i],
             drange = this.document.createRange();
+
         drange.setStartBefore(range.start);
         drange.setEndAfter(range.end);
         selection.addRange(drange);
+
     }
-
-
     return ranges;
 };
 

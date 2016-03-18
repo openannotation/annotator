@@ -2,7 +2,9 @@
 "use strict";
 
 var util = require('../util');
-var textselector = require('./textselector');
+var xUtil = require('../xutil');
+//var textselector = require('./textselector');
+var textselector = require('./oaselector');
 
 // ddi
 var ddiadder = require('./../ddiPlugin/adder');
@@ -29,6 +31,28 @@ function trim(s) {
     }
 }
 
+// function lcs(lcstest, lcstarget) {
+//     var matchfound = 0
+//     var lsclen = lcstest.length
+//     for(var lcsi=0; lcsi<lcstest.length; lcsi++){
+//         var lscos=0
+//         for(var lcsj=0; lcsj<lcsi+1; lcsj++){
+//             var re = new RegExp("(?:.{" + lscos + "})(.{" + lsclen + "})", "i");
+//             var temp = re.test(lcstest);
+//             re = new RegExp("(" + RegExp.$1 + ")", "i");
+//             if(re.test(lcstarget)){
+//                 matchfound=1;
+//                 var result = RegExp.$1;
+//                 break;
+//             }
+//             lscos = lscos + 1;
+//         }
+//         if(matchfound==1){return result; break;}
+//         lsclen = lsclen - 1;
+//     }
+//     result = "";
+//     return result;
+// }
 
 // annotationFactory returns a function that can be used to construct an
 // annotation from a list of selected ranges.
@@ -40,11 +64,32 @@ function annotationFactory(contextEl, ignoreSelector) {
         for (var i = 0, len = ranges.length; i < len; i++) {
             var r = ranges[i];
             text.push(trim(r.text()));
-            serializedRanges.push(r.serialize(contextEl, ignoreSelector));
+            var serializedRange = r.serialize(contextEl, ignoreSelector)
+            serializedRanges.push(serializedRange);
         }
+
+        //console.log("dbmimain - annFac - seRanges:" + JSON.stringify(serializedRanges));
+
+        //console.log("dbmimain - exactTxt:" + text.join(' / ') + "|");
+        var prefix = "", suffix = "";
+        prefix = getTxtFromNode(ranges[0].start, false, ignoreSelector, 50);
+        suffix = getTxtFromNode(ranges[0].end, true, ignoreSelector, 50);
+
+        //console.log("dbmimain - prefix:" + prefix);
+        //console.log("dbmimain - suffix:" + suffix);
+
         return {
             quote: text.join(' / '),
-            ranges: serializedRanges
+            ranges: serializedRanges,
+            target: {
+                source: "url",
+                selector: {
+                    "@type": "TextQuoteSelector",
+                    "exact": text.join(' / '),
+                    "prefix": prefix, 
+                    "suffix": suffix 
+                }
+            }
         };
     };
 }
@@ -72,7 +117,6 @@ function maxZIndex(elements) {
 // are displayed with the highest z-index.
 function injectDynamicStyle() {
 
-    //console.log("dbmimain.js - injectDynamicStyle called");
     util.$('#annotator-dynamic-style').remove();
 
     var sel = '*' +
@@ -420,6 +464,45 @@ function main(options) {
         }
     };
 }
+
+
+function getTxtFromNode(node, isSuffix, ignoreSelector, maxLength){
+
+    var origParent;
+    if (ignoreSelector) {
+        origParent = $(node).parents(":not(" + ignoreSelector + ")").eq(0);
+    } else {
+        origParent = $(node).parent();
+    }
+    
+    var textNodes = xUtil.getTextNodes(origParent);
+    var nodes;
+    var contents = "";
+
+    if (!isSuffix){
+        nodes = textNodes.slice(0, textNodes.index(node));
+        for (var _i = 0, _len = nodes.length; _i < _len; _i++) {
+            contents += nodes[_i].nodeValue;
+        }
+        if (contents.length > maxLength){
+            contents = contents.substring(contents.length - maxLength);
+        }
+
+    } else {
+        nodes = textNodes.slice(textNodes.index(node) + 1, textNodes.length);   
+        for (var _i = 0, _len = nodes.length; _i < _len; _i++) {
+            contents += nodes[_i].nodeValue;
+        }
+        if (contents.length > maxLength){
+            contents = contents.substring(0, maxLength);
+        }
+        
+    }
+
+    return contents;
+}
+
+
 
 
 exports.main = main;
