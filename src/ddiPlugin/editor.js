@@ -223,12 +223,18 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                     $('#Comment').each(function(){ this.value = annotation.Comment;});
                 },
                 submit:function (field, annotation) {
+                    if($('#Drug1 option:selected').text()==$('#Drug2 option:selected').text()){
+                        //if(flag){
+                        alert("Should highlight two different drugs.");
+                        editorSelf.cancel();
+                        //$('.btn-success').click();
+                    }
                     annotation.Drug1 = $('#Drug1 option:selected').text();
                     annotation.Drug2 = $('#Drug2 option:selected').text();
                     annotation.Type1 = $('#Type1:checked').val();
                     annotation.Type2 = $('#Type2:checked').val();
-                    annotation.Role1 = $('#Role1:checked').val();
-                    annotation.Role2 = $('#Role2:checked').val();
+                    annotation.Role1 = "object";
+                    annotation.Role2 = "precipitant";
                     annotation.assertion_type = $('#assertion_type option:selected').text();
                     annotation.Modality = $('#Modality:checked').val();
                     annotation.Evidence_modality = $('#Evidence_modality:checked').val();
@@ -310,9 +316,8 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
             this.element.css({
                 //top: position.top,
                 //left: position.left
-                //bottom:0,
-                right:30,
-                position: 'fixed'
+                bottom:50,
+                right:100
             });
             $( window ).resize(function() {
                 $( "body" ).css('height','600px');
@@ -537,14 +542,14 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
     checkOrientation: function () {
         Widget.prototype.checkOrientation.call(this);
 
-        var list = this.element.find('ul').first(),
-            controls = this.element.find('.annotator-controls');
-
-        if (this.element.hasClass(this.classes.invert.y)) {
+        var list = this.element.find('ul').first();
+        var controls = this.element.find('.annotator-controls1');
+        controls.insertBefore(list);
+        /*if (this.element.hasClass(this.classes.invert.y)) {
             controls.insertBefore(list);
         } else if (controls.is(':first-child')) {
             controls.insertAfter(list);
-        }
+        }*/
 
         return this;
     },
