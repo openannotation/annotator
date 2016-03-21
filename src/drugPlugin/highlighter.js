@@ -31,18 +31,20 @@ function highlightRange(normedRange, cssClass) {
     for (var i = 0, len = nodes.length; i < len; i++) {
         var node = nodes[i];
         if (!white.test(node.nodeValue)) {
-            //console.log(node.nodeValue);
+
             var hl = global.document.createElement('span');
             hl.className = cssClass;
 
             // add attribute name for css
-	    hl.id = 'annotator-hl';
+	        hl.id = 'annotator-hl';
             hl.setAttribute("name", "annotator-hl");
             node.parentNode.replaceChild(hl, node);
             hl.appendChild(node);
             results.push(hl);
         }
     }
+    console.log(results);
+
     return results;
 }
 
@@ -59,6 +61,8 @@ function reanchorRange(range, rootElement) {
         }
         // Otherwise, we simply swallow the error. Callers are responsible
         // for only trying to draw valid annotations.
+        console.log("[ERROR] reanchor range failure!");
+        console.log(range);
     }
     return null;
 }
@@ -76,7 +80,6 @@ var Highlighter = exports.Highlighter = function Highlighter(element, options) {
     this.element = element;
     this.options = $.extend(true, {}, Highlighter.options, options);
 };
-
 Highlighter.prototype.destroy = function () {
     $(this.element)
         .find("." + this.options.highlightClass)
@@ -133,8 +136,6 @@ Highlighter.prototype.drawAll = function (annotations) {
 // Returns an Array of drawn highlight elements.
 Highlighter.prototype.draw = function (annotation) {
 
-    //alert('drug mention highlighter - draw anntype: ' + annotation.annotationType);
-
     if (annotation.annotationType != "DrugMention")
         return null;
 
@@ -160,6 +161,8 @@ Highlighter.prototype.draw = function (annotation) {
 
     for (var j = 0, jlen = normedRanges.length; j < jlen; j++) {
         var normed = normedRanges[j];
+        //console.log("drug hl - normed:" + normed);
+        
         $.merge(
             annotation._local.highlights,
             highlightRange(normed, this.options.highlightClass)
