@@ -52,63 +52,83 @@ function highlightRange(normedRange, cssClass) {
     return results;
 }
 
+function toUnicode(theString) {
+    var unicodeString = '';
+    for (var i=0; i < theString.length; i++) {
+        var theUnicode = theString.charCodeAt(i).toString(16).toUpperCase();
+        while (theUnicode.length < 4) {
+            theUnicode = '0' + theUnicode;
+        }
+        theUnicode = '\\u' + theUnicode;
+        unicodeString += theUnicode;
+    }
+    return unicodeString;
+}
 
-function highlightOA(node, annotation, cssClass, storage){
+
+function highlightOA(annotation, cssClass, storage){
     console.log("[INFO] begin xpath fixing by OA selector");
-
     var oaSelector = annotation.target.selector;
     var prefix = oaSelector.prefix, suffix = oaSelector.suffix, exact = oaSelector.exact;
-    var fullTxt = node.textContent.replace(/(?:\r\n|\r|\n)/g, ' ');
-    var results = [];
-	var re = new RegExp(exact,"g");
-
     try{
 
-        var res;
-	    while (res = re.exec(fullTxt)){
-            var index = res["index"];
-            var prefixSub, suffixSub;
+        var nodes = $("p:contains('" + exact + "')" );
+        for (var n = 0, nlen = nodes.length; n < nlen; n++){
+            var node = nodes[n];
             
-            prefixSub = fullTxt.substring(0,index);
-            suffixSub = fullTxt.substring(index + oaSelector.exact.length);
-
-            var b0 = (prefixSub.length > 0 && suffixSub.length > 0); 
-            var b1 = (prefixSub.indexOf(prefix) >= 0) || (prefix.indexOf(prefixSub) >= 0);
-            var b2 = (suffixSub.indexOf(suffix) >= 0) || (suffix.indexOf(suffixSub) >= 0);
-
-            if (b0 && b1 && b2) {
-
-                console.log("oaSelector:" + prefix + "|" + suffix);
-                console.log("node been found:" + prefixSub + "|" + suffixSub);
-
-                var path = xpath.fromNode($(node), $(document))[0];
-                path = path.replace("/html[1]/body[1]","");
-                //console.log(path);
+            var fullTxt = node.textContent.replace(/\s/g, " ");
+	        var re = new RegExp(exact,"g");
+            var res;
+            
+	        while (res = re.exec(fullTxt)){
+                var index = res["index"];
+                var prefixSub, suffixSub;
                 
-                if (annotation.ranges[0].start != path)
-                    annotation.ranges[0].start = path;
-                if (annotation.ranges[0].end != path)
-                    annotation.ranges[0].end = path;
-                if (annotation.ranges[0].startOffset != index)
-                    annotation.ranges[0].startOffset = index;
-                if (annotation.ranges[0].endOffset != index + exact.length)
-                    annotation.ranges[0].endOffset = index + exact.length;
+                prefixSub = fullTxt.substring(0,index);
+                suffixSub = fullTxt.substring(index + oaSelector.exact.length);
+                
+                var b0 = (prefixSub.length > 0 && suffixSub.length > 0); 
+                var b1 = (prefixSub.indexOf(prefix) >= 0) || (prefix.indexOf(prefixSub) >= 0);
+                var b2 = (suffixSub.indexOf(suffix) >= 0) || (suffix.indexOf(suffixSub) >= 0);
 
-                console.log(annotation);
-                storage.update(annotation);
-                this.redraw(annotation);
-                console.log("[INFO] xpath fixing completed!");
-            } else {
-                console.log("[WARN] xpath fixing failed, oa selector doesn't matched in this document!");
+                // if (b1 || b2) {
+                //     console.log(b1 + "|" + b2)
+                //     console.log("oaSelector:" + suffix + "|");
+                //     //console.log(toUnicode(suffix));
+                //     console.log("node hasn't been found:" + suffixSub + "|")
+                //     //console.log(toUnicode(suffixSub));
+                //     //console.log(suffix.indexOf("40 mg twice daily with fluvox"));   
+                // }
+                
+                if (b0 && b1 && b2) {
+                    
+                    console.log("oaSelector:" + prefix + "|" + suffix);
+                    console.log("node been found:" + prefixSub + "|" + suffixSub);
+                    
+                    var path = xpath.fromNode($(node), $(document))[0];
+                    path = path.replace("/html[1]/body[1]","");
+                    //console.log(path);
+                    
+                    if (annotation.ranges[0].start != path)
+                        annotation.ranges[0].start = path;
+                    if (annotation.ranges[0].end != path)
+                        annotation.ranges[0].end = path;
+                    if (annotation.ranges[0].startOffset != index)
+                        annotation.ranges[0].startOffset = index;
+                    if (annotation.ranges[0].endOffset != index + exact.length)
+                        annotation.ranges[0].endOffset = index + exact.length;
+                
+                    storage.update(annotation);
+                    //this.redraw(annotation);
+                    console.log("[INFO] xpath fixing completed!");
+                } 
             }
-       }
+            //if (!fixed) console.log("[WARN] xpath fixing failed, oa selecter doesn't matched in document!");
+        }
     }
     catch(err){
         console.log(err);
     }
-    if (results.length > 0) console.log(results);
-    return results;
-    
 }
 
 
@@ -237,7 +257,7 @@ Highlighter.prototype.draw = function (annotation) {
 
     // fix xpath by OA prefix suffix selector
     if (oaAnnotations.length > 0){
-        // bring storage in
+
         if (!storage){
 	        var queryOptStr = '{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://' + annhost + '/annotatorstore","urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search"}}';
 	        var queryOptions = JSON.parse(queryOptStr);
@@ -245,16 +265,7 @@ Highlighter.prototype.draw = function (annotation) {
         }
 
         for (var m = 0, mlen = oaAnnotations.length; m < mlen; m++) {
-            var nodes = $("p:contains('" + oaAnnotations[m].target.selector.exact + "')" );
-            //for (var n = 0, nlen = nodes.length; n < 5; n++){
-            for (var n = 0, nlen = nodes.length; n < nlen; n++){
-                var node = nodes[n];
-                
-                $.merge(
-                    annotation._local.highlights,
-                    highlightOA(node, oaAnnotations[m], this.options.highlightClass, storage)
-                );
-            }
+            highlightOA(oaAnnotations[m], this.options.highlightClass, storage);
         }
     }
 

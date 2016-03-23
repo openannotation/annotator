@@ -81,7 +81,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                         if((anns[i].annotationType == "DrugMention") && (list.indexOf(anns[i].quote)<0))
                         {
                             list.push(anns[i].quote);
-                            console.log(anns[i].quote);
+                            //console.log(anns[i].quote);
                         }
                     }
                     for (var i = 0, len = list.length; i < len; i++) {
@@ -365,7 +365,6 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
 	
 	// call apache for request annotator store
 	var queryOptStr = '{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://' + annhost + '/annotatorstore","urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search"}}';
-	console.log(queryOptStr);
 	
 	var queryOptions = JSON.parse(queryOptStr);
 	
