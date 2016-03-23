@@ -196,6 +196,10 @@ HttpStorage.prototype.create = function (annotation) {
  * :rtype: Promise
  */
 HttpStorage.prototype.update = function (annotation) {
+
+    console.log("storage - update!")
+    console.log(annotation);
+
     return this._apiRequest('update', annotation);
 };
 

@@ -1,12 +1,13 @@
 "use strict";
 
 var Range = require('xpath-range').Range;
-
+var xpath = require('xpath-range').xpath;
 var util = require('../util');
-
+var xUtil = require('../xutil');
 var $ = util.$;
 var Promise = util.Promise;
-
+var HttpStorage = require('./../storage').HttpStorage;
+var annhost = config.annotator.host;
 
 // highlightRange wraps the DOM Nodes within the provided range with a highlight
 // element of the specified class and returns the highlight Elements.
@@ -38,6 +39,9 @@ function highlightRange(normedRange, cssClass) {
             // add attribute name for css
 	        hl.id = 'annotator-hl';
             hl.setAttribute("name", "annotator-hl");
+
+            // console.log("replace node val:" + node.nodeValue);
+
             node.parentNode.replaceChild(hl, node);
             hl.appendChild(node);
             results.push(hl);
@@ -46,6 +50,65 @@ function highlightRange(normedRange, cssClass) {
     console.log(results);
 
     return results;
+}
+
+
+function highlightOA(node, annotation, cssClass, storage){
+    console.log("[INFO] begin xpath fixing by OA selector");
+
+    var oaSelector = annotation.target.selector;
+    var prefix = oaSelector.prefix, suffix = oaSelector.suffix, exact = oaSelector.exact;
+    var fullTxt = node.textContent.replace(/(?:\r\n|\r|\n)/g, ' ');
+    var results = [];
+	var re = new RegExp(exact,"g");
+
+    try{
+
+        var res;
+	    while (res = re.exec(fullTxt)){
+            var index = res["index"];
+            var prefixSub, suffixSub;
+            
+            prefixSub = fullTxt.substring(0,index);
+            suffixSub = fullTxt.substring(index + oaSelector.exact.length);
+
+            var b0 = (prefixSub.length > 0 && suffixSub.length > 0); 
+            var b1 = (prefixSub.indexOf(prefix) >= 0) || (prefix.indexOf(prefixSub) >= 0);
+            var b2 = (suffixSub.indexOf(suffix) >= 0) || (suffix.indexOf(suffixSub) >= 0);
+
+            if (b0 && b1 && b2) {
+
+                console.log("oaSelector:" + prefix + "|" + suffix);
+                console.log("node been found:" + prefixSub + "|" + suffixSub);
+
+                var path = xpath.fromNode($(node), $(document))[0];
+                path = path.replace("/html[1]/body[1]","");
+                //console.log(path);
+                
+                if (annotation.ranges[0].start != path)
+                    annotation.ranges[0].start = path;
+                if (annotation.ranges[0].end != path)
+                    annotation.ranges[0].end = path;
+                if (annotation.ranges[0].startOffset != index)
+                    annotation.ranges[0].startOffset = index;
+                if (annotation.ranges[0].endOffset != index + exact.length)
+                    annotation.ranges[0].endOffset = index + exact.length;
+
+                console.log(annotation);
+                storage.update(annotation);
+                this.redraw(annotation);
+                console.log("[INFO] xpath fixing completed!");
+            } else {
+                console.log("[WARN] xpath fixing failed, oa selector doesn't matched in this document!");
+            }
+       }
+    }
+    catch(err){
+        console.log(err);
+    }
+    if (results.length > 0) console.log(results);
+    return results;
+    
 }
 
 
@@ -140,11 +203,14 @@ Highlighter.prototype.draw = function (annotation) {
         return null;
 
     var normedRanges = [];
+    var oaAnnotations = [];
 
     for (var i = 0, ilen = annotation.ranges.length; i < ilen; i++) {
         var r = reanchorRange(annotation.ranges[i], this.element);
-        if (r !== null) {
+        if (r !== null) { // xpath reanchored by range
             normedRanges.push(r);
+        } else { // use OA prefix suffix approach
+            oaAnnotations.push(annotation);
         }
     }
 
@@ -159,14 +225,37 @@ Highlighter.prototype.draw = function (annotation) {
         annotation._local.highlights = [];
     }
 
+    // highlight by xpath range
     for (var j = 0, jlen = normedRanges.length; j < jlen; j++) {
         var normed = normedRanges[j];
-        //console.log("drug hl - normed:" + normed);
         
         $.merge(
             annotation._local.highlights,
             highlightRange(normed, this.options.highlightClass)
         );
+    }
+
+    // fix xpath by OA prefix suffix selector
+    if (oaAnnotations.length > 0){
+        // bring storage in
+        if (!storage){
+	        var queryOptStr = '{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://' + annhost + '/annotatorstore","urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search"}}';
+	        var queryOptions = JSON.parse(queryOptStr);
+            var storage = new HttpStorage(queryOptions);
+        }
+
+        for (var m = 0, mlen = oaAnnotations.length; m < mlen; m++) {
+            var nodes = $("p:contains('" + oaAnnotations[m].target.selector.exact + "')" );
+            //for (var n = 0, nlen = nodes.length; n < 5; n++){
+            for (var n = 0, nlen = nodes.length; n < nlen; n++){
+                var node = nodes[n];
+                
+                $.merge(
+                    annotation._local.highlights,
+                    highlightOA(node, oaAnnotations[m], this.options.highlightClass, storage)
+                );
+            }
+        }
     }
 
     // Save the annotation data on each highlighter element.

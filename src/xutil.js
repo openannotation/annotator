@@ -78,7 +78,7 @@
           }
         }
         return nodes.reverse();
-      } else {
+     } else {
         return node;
       }
     };
