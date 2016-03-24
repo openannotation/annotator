@@ -3,7 +3,6 @@
 var Range = require('xpath-range').Range;
 var xpath = require('xpath-range').xpath;
 var util = require('../util');
-var xUtil = require('../xutil');
 var $ = util.$;
 var Promise = util.Promise;
 var HttpStorage = require('./../storage').HttpStorage;
@@ -33,36 +32,21 @@ function highlightRange(normedRange, cssClass) {
         var node = nodes[i];
         if (!white.test(node.nodeValue)) {
 
-            var hl = global.document.createElement('span');
-            hl.className = cssClass;
-
-            // add attribute name for css
-	        hl.id = 'annotator-hl';
-            hl.setAttribute("name", "annotator-hl");
-
-            // console.log("replace node val:" + node.nodeValue);
-
-            node.parentNode.replaceChild(hl, node);
-            hl.appendChild(node);
-            results.push(hl);
+            //skip text node that been highlighted yet
+            if (node.parentNode.className != "annotator-hl"){
+                var hl = global.document.createElement('span');
+                hl.className = cssClass;
+	            hl.id = 'annotator-hl';
+                hl.setAttribute("name", "annotator-hl");
+                node.parentNode.replaceChild(hl, node);
+                hl.appendChild(node);
+                results.push(hl);
+            }
         }
     }
     console.log(results);
 
     return results;
-}
-
-function toUnicode(theString) {
-    var unicodeString = '';
-    for (var i=0; i < theString.length; i++) {
-        var theUnicode = theString.charCodeAt(i).toString(16).toUpperCase();
-        while (theUnicode.length < 4) {
-            theUnicode = '0' + theUnicode;
-        }
-        theUnicode = '\\u' + theUnicode;
-        unicodeString += theUnicode;
-    }
-    return unicodeString;
 }
 
 
@@ -71,7 +55,7 @@ function highlightOA(annotation, cssClass, storage){
     var oaSelector = annotation.target.selector;
     var prefix = oaSelector.prefix, suffix = oaSelector.suffix, exact = oaSelector.exact;
     try{
-
+        var isFixed = false;
         var nodes = $("p:contains('" + exact + "')" );
         for (var n = 0, nlen = nodes.length; n < nlen; n++){
             var node = nodes[n];
@@ -87,17 +71,16 @@ function highlightOA(annotation, cssClass, storage){
                 prefixSub = fullTxt.substring(0,index);
                 suffixSub = fullTxt.substring(index + oaSelector.exact.length);
                 
-                var b0 = (prefixSub.length > 0 && suffixSub.length > 0); 
+                var b0 = (prefixSub.length > 0 || suffixSub.length > 0); 
                 var b1 = (prefixSub.indexOf(prefix) >= 0) || (prefix.indexOf(prefixSub) >= 0);
                 var b2 = (suffixSub.indexOf(suffix) >= 0) || (suffix.indexOf(suffixSub) >= 0);
 
-                // if (b1 || b2) {
-                //     console.log(b1 + "|" + b2)
-                //     console.log("oaSelector:" + suffix + "|");
-                //     //console.log(toUnicode(suffix));
-                //     console.log("node hasn't been found:" + suffixSub + "|")
-                //     //console.log(toUnicode(suffixSub));
-                //     //console.log(suffix.indexOf("40 mg twice daily with fluvox"));   
+                // if (prefix.indexOf("Potent inhibitors of CYP2D6 may increase")>=0) {
+                //     console.log(b1 + "|" + b2);
+                //     console.log(node);
+                //     console.log("oaSelector:" + prefix + "|" + suffix);
+                //     console.log("node hasn't been found:" + prefixSub + "|" + suffixSub);
+                //     //console.log(suffix.indexOf("40 mg twice daily with fluvox"));  
                 // }
                 
                 if (b0 && b1 && b2) {
@@ -107,7 +90,6 @@ function highlightOA(annotation, cssClass, storage){
                     
                     var path = xpath.fromNode($(node), $(document))[0];
                     path = path.replace("/html[1]/body[1]","");
-                    //console.log(path);
                     
                     if (annotation.ranges[0].start != path)
                         annotation.ranges[0].start = path;
@@ -123,7 +105,10 @@ function highlightOA(annotation, cssClass, storage){
                     console.log("[INFO] xpath fixing completed!");
                 } 
             }
-            //if (!fixed) console.log("[WARN] xpath fixing failed, oa selecter doesn't matched in document!");
+        }
+        if (!isFixed) {
+            console.log("[WARN] xpath fixing failed, oa selecter doesn't matched in document!");
+            console.log("oaSelector:" + prefix + "|" + exact + "|" + suffix + "|");
         }
     }
     catch(err){
