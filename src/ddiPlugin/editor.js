@@ -10,7 +10,7 @@ var Promise = util.Promise;
 var NS = "annotator-editor";
 
 // bring storage in
-var HttpStorage = require('./../storage').HttpStorage;
+var HttpStorage = require('../storage').HttpStorage;
 
 // id returns an identifier unique within this session
 var id = (function () {
@@ -43,17 +43,17 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
         this.fields = [];
         this.annotation = {};
 
-        console.log("[INFO] ddiEditor - consturctor");
+        //console.log("[INFO] ddi - editor - constructor");
 
         if (this.options.defaultFields) {
+
+            //quote content + load and submit all content
 
             this.addField({
                 type: 'div',
                 label: _t('Comments') + '\u2026',
                 id: 'quote',
                 load: function (field, annotation,annotations) {
-
-                    console.log("[INFO] ddiEditor - load");
 
                     //var annList = annotations.slice();
                     //console.log(annList[0].quote);
@@ -66,7 +66,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                     $('#Drug1 option').remove();
                     $('#Drug2 option').remove();
                     var flag = 0;
-
+                    console.log(annotations.length);
                     var anns = annotations.slice();
                     //console.log("(1):"+anns[0].quote);
                     var quoteobject = $('#quotearea');
@@ -74,97 +74,89 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                     //console.log(quotecontent);
                     var index = 0;
                     var list = [];
-
                     //filter out duplicates
-                    for(var i=0,len = anns.length;i<len;i++)
-                    {
-                        if((anns[i].annotationType == "DrugMention") && (list.indexOf(anns[i].quote)<0))
-                        {
+                    for (var i = 0, len = anns.length; i < len; i++) {
+                        if ((anns[i].annotationType == "DrugMention") && (list.indexOf(anns[i].quote) < 0)) {
                             list.push(anns[i].quote);
                             //console.log(anns[i].quote);
                         }
                     }
                     for (var i = 0, len = list.length; i < len; i++) {
-                            if(quotecontent.indexOf(list[i])>=0)
-                            {
-                                index++;
-                                //quotecontent.split(list[i]).join("<span class='highlightdrug'>"+list[i]+"<sup>"+index+"</sup></span>");
-                                //console.log(quotecontent);
-                                quotecontent = quotecontent.replace(list[i],"<span class='highlightdrug'>"+list[i]+"</span>");
-                                $('#Drug1').append($('<option>', {
-                                    value: list[i],
-                                    text: list[i]
-                                }));
-                                $('#Drug2').append($('<option>', {
-                                    value: list[i],
-                                    text: list[i]
-                                }));
-                                flag = flag + 1;
-                            }
-                    }
-                    quoteobject.html(quotecontent);
-                    /*$('[name="annotator-hl"]').each(function(index){
-                        //alert(annotation.quote);
-                        if(annotation.quote.indexOf($('[name="annotator-hl"]:eq('+index+')').text())>=0) {
-
-                            //console.log($('[name="annotator-hl"]:eq('+index+')').text());
-                            var tempdrug = $('[name="annotator-hl"]:eq(' + index + ')').text();
-                            //var quoteobject = document.getElementById('quote');
-                            console.log(tempdrug);
-                            var quotecontent = quoteobject.html();
-                            //console.log( "1"+$('#quotearea').val());
-                            //console.log( "2"+quoteobject.html());
-                            quotecontent = quotecontent.replace(tempdrug,"<span class='highlightdrug'>"+tempdrug+"</span>");
-                            quoteobject.html(quotecontent);
-                            console.log(quotecontent);
+                        if (quotecontent.indexOf(list[i]) >= 0) {
+                            index++;
+                            //quotecontent.split(list[i]).join("<span class='highlightdrug'>"+list[i]+"<sup>"+index+"</sup></span>");
+                            //console.log(quotecontent);
+                            quotecontent = quotecontent.replace(list[i], "<span class='highlightdrug'>" + list[i] + "</span>");
                             $('#Drug1').append($('<option>', {
-                                value: tempdrug,
-                                text: tempdrug
+                                value: list[i],
+                                text: list[i]
                             }));
                             $('#Drug2').append($('<option>', {
-                                value: tempdrug,
-                                text: tempdrug
+                                value: list[i],
+                                text: list[i]
                             }));
                             flag = flag + 1;
                         }
-                    });*/
-                    if(flag<2){
+                    }
+                    quoteobject.html(quotecontent);
+                    /*$('[name="annotator-hl"]').each(function(index){
+                     //alert(annotation.quote);
+                     if(annotation.quote.indexOf($('[name="annotator-hl"]:eq('+index+')').text())>=0) {
+
+                     //console.log($('[name="annotator-hl"]:eq('+index+')').text());
+                     var tempdrug = $('[name="annotator-hl"]:eq(' + index + ')').text();
+                     //var quoteobject = document.getElementById('quote');
+                     console.log(tempdrug);
+                     var quotecontent = quoteobject.html();
+                     //console.log( "1"+$('#quotearea').val());
+                     //console.log( "2"+quoteobject.html());
+                     quotecontent = quotecontent.replace(tempdrug,"<span class='highlightdrug'>"+tempdrug+"</span>");
+                     quoteobject.html(quotecontent);
+                     console.log(quotecontent);
+                     $('#Drug1').append($('<option>', {
+                     value: tempdrug,
+                     text: tempdrug
+                     }));
+                     $('#Drug2').append($('<option>', {
+                     value: tempdrug,
+                     text: tempdrug
+                     }));
+                     flag = flag + 1;
+                     }
+                     });*/
+                    if (flag < 2) {
                         //if(flag){
-                        alert("Should highlight at least two different drugs!");
+                        alert("Should highlight at least two drugs.");
                         editorSelf.cancel();
                         $('.btn-success').click();
                     }
-                    if(annotation.Drug1!="")
-                    {
+                    if (annotation.Drug1 != "") {
                         var quotestring = quoteobject.html();
-                        quotestring = quotestring.replace(annotation.Drug1,"<span class='selecteddrug'>"+annotation.Drug1+"</span>");
+                        quotestring = quotestring.replace(annotation.Drug1, "<span class='selecteddrug'>" + annotation.Drug1 + "</span>");
                         quoteobject.html(quotestring);
                         //console.log(quotestring);
                     }
-                    if(annotation.Drug2!="")
-                    {
+                    if (annotation.Drug2 != "") {
                         var quotestring = quoteobject.html();
-                        quotestring = quotestring.replace(annotation.Drug2,"<span class='selecteddrug'>"+annotation.Drug2+"</span>");
+                        quotestring = quotestring.replace(annotation.Drug2, "<span class='selecteddrug'>" + annotation.Drug2 + "</span>");
                         quoteobject.html(quotestring);
                         //console.log(quotestring);
                     }
 
-                    $(field).find('#quote').css('background','#EDEDED');
+                    $(field).find('#quote').css('background', '#EDEDED');
 
                     /*$(field).find('#DDI').on('selected',function() {
-                        $('#ddisection').show("slow");
-                    });
-                    $(field).find('#clinical').on('selected',function() {
-                        $('#ddisection').hide();
-                    });*/
-                    //console.debug("annotation.assertion_type:"+annotation.assertion_type);
-                    if(annotation.assertion_type=="DDI clinical trial")
-                    {
+                     $('#ddisection').show("slow");
+                     });
+                     $(field).find('#clinical').on('selected',function() {
+                     $('#ddisection').hide();
+                     });*/
+                    console.debug("annotation.assertion_type:" + annotation.assertion_type);
+                    if (annotation.assertion_type == "DDI clinical trial") {
                         $('#altersection').show();
                         $('.moreinfo').show();
 
-                    }else
-                    {
+                    } else {
                         $('#altersection').hide();
                     }
                     var signal = 1;
@@ -179,56 +171,231 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                     $('#cmin').val(annotation.cminval);
                     $('#t12').val(annotation.t12);
 
-                    $("#FormulationP > option").each(function(){ if(this.value === annotation.FormulationP) { $(this).attr('selected',true);signal = 0;}});
-                    if(signal==1){$('#FormulationP > option')[0].selected = "selected"; }else{signal=1;}
-                    $("#FormulationO > option").each(function(){ if(this.value === annotation.FormulationO){ $(this).attr('selected',true);signal = 0;}});
-                    if(signal==1){$('#FormulationO > option')[0].selected = "selected"; }else{signal=1;}
-                    $("#RegimentsP > option").each(function(){ if(this.value === annotation.RegimentsP){ $(this).attr('selected',true);signal = 0;}});
-                    if(signal==1){$('#RegimentsP > option')[0].selected = "selected";  }else{signal=1;}
-                    $("#RegimentsO > option").each(function(){ if(this.value === annotation.RegimentsO) { $(this).attr('selected',true);signal = 0;}});
-                    if(signal==1){$('#RegimentsO > option')[0].selected = "selected"; }else{signal=1;}
-                    $("#AucType > option").each(function(){ if(this.value === annotation.AucType){ $(this).attr('selected',true);signal = 0;}});
-                    if(signal==1){$('#AucType > option')[0].selected = "selected";  }else{signal=1;}
-                    $("#AucDirection > option").each(function(){ if(this.value === annotation.AucDirection){ $(this).attr('selected',true);signal = 0;}});
-                    if(signal==1){$('#AucDirection > option')[0].selected = "selected";  }else{signal=1;}
-                    $("#ClType > option").each(function(){ if(this.value === annotation.ClType){ $(this).attr('selected',true);signal = 0;}});
-                    if(signal==1){$('#ClType > option')[0].selected = "selected";  }else{signal=1;}
-                    $("#ClDirection > option").each(function(){ if(this.value === annotation.ClDirection){ $(this).attr('selected',true);signal = 0;}});
-                    if(signal==1){$('#ClDirection > option')[0].selected = "selected";  }else{signal=1;}
-                    $("#cmaxType > option").each(function(){ if(this.value === annotation.cmaxType){ $(this).attr('selected',true);signal = 0;}});
-                    if(signal==1){$('#cmaxType > option')[0].selected = "selected";  }else{signal=1;}
-                    $("#cmaxDirection > option").each(function(){ if(this.value === annotation.cmaxDirection){ $(this).attr('selected',true);signal = 0;}});
-                    if(signal==1){$('#cmaxDirection > option')[0].selected = "selected";  }else{signal=1;}
-                    $("#cminType > option").each(function(){ if(this.value === annotation.cminType){ $(this).attr('selected',true);signal = 0;}});
-                    if(signal==1){$('#cminType > option')[0].selected = "selected";  }else{signal=1;}
-                    $("#cminDirection > option").each(function(){ if(this.value === annotation.cminDirection){ $(this).attr('selected',true);signal = 0;}});
-                    if(signal==1){$('#cminDirection > option')[0].selected = "selected";  }else{signal=1;}
-                    $("#t12Type > option").each(function(){ if(this.value === annotation.t12Type){ $(this).attr('selected',true);signal = 0;}});
-                    if(signal==1){$('#t12Type > option')[0].selected = "selected";  }else{signal=1;}
-                    $("#t12Direction > option").each(function(){ if(this.value === annotation.t12Direction){ $(this).attr('selected',true);signal = 0;}});
-                    if(signal==1){$('#t12Direction > option')[0].selected = "selected";  }else{signal=1;}
+                    $("#FormulationP > option").each(function () {
+                        if (this.value === annotation.FormulationP) {
+                            $(this).attr('selected', true);
+                            signal = 0;
+                        }
+                    });
+                    if (signal == 1) {
+                        $('#FormulationP > option')[0].selected = "selected";
+                    } else {
+                        signal = 1;
+                    }
+                    $("#FormulationO > option").each(function () {
+                        if (this.value === annotation.FormulationO) {
+                            $(this).attr('selected', true);
+                            signal = 0;
+                        }
+                    });
+                    if (signal == 1) {
+                        $('#FormulationO > option')[0].selected = "selected";
+                    } else {
+                        signal = 1;
+                    }
+                    $("#RegimentsP > option").each(function () {
+                        if (this.value === annotation.RegimentsP) {
+                            $(this).attr('selected', true);
+                            signal = 0;
+                        }
+                    });
+                    if (signal == 1) {
+                        $('#RegimentsP > option')[0].selected = "selected";
+                    } else {
+                        signal = 1;
+                    }
+                    $("#RegimentsO > option").each(function () {
+                        if (this.value === annotation.RegimentsO) {
+                            $(this).attr('selected', true);
+                            signal = 0;
+                        }
+                    });
+                    if (signal == 1) {
+                        $('#RegimentsO > option')[0].selected = "selected";
+                    } else {
+                        signal = 1;
+                    }
+                    $("#AucType > option").each(function () {
+                        if (this.value === annotation.AucType) {
+                            $(this).attr('selected', true);
+                            signal = 0;
+                        }
+                    });
+                    if (signal == 1) {
+                        $('#AucType > option')[0].selected = "selected";
+                    } else {
+                        signal = 1;
+                    }
+                    $("#AucDirection > option").each(function () {
+                        if (this.value === annotation.AucDirection) {
+                            $(this).attr('selected', true);
+                            signal = 0;
+                        }
+                    });
+                    if (signal == 1) {
+                        $('#AucDirection > option')[0].selected = "selected";
+                    } else {
+                        signal = 1;
+                    }
+                    $("#ClType > option").each(function () {
+                        if (this.value === annotation.ClType) {
+                            $(this).attr('selected', true);
+                            signal = 0;
+                        }
+                    });
+                    if (signal == 1) {
+                        $('#ClType > option')[0].selected = "selected";
+                    } else {
+                        signal = 1;
+                    }
+                    $("#ClDirection > option").each(function () {
+                        if (this.value === annotation.ClDirection) {
+                            $(this).attr('selected', true);
+                            signal = 0;
+                        }
+                    });
+                    if (signal == 1) {
+                        $('#ClDirection > option')[0].selected = "selected";
+                    } else {
+                        signal = 1;
+                    }
+                    $("#cmaxType > option").each(function () {
+                        if (this.value === annotation.cmaxType) {
+                            $(this).attr('selected', true);
+                            signal = 0;
+                        }
+                    });
+                    if (signal == 1) {
+                        $('#cmaxType > option')[0].selected = "selected";
+                    } else {
+                        signal = 1;
+                    }
+                    $("#cmaxDirection > option").each(function () {
+                        if (this.value === annotation.cmaxDirection) {
+                            $(this).attr('selected', true);
+                            signal = 0;
+                        }
+                    });
+                    if (signal == 1) {
+                        $('#cmaxDirection > option')[0].selected = "selected";
+                    } else {
+                        signal = 1;
+                    }
+                    $("#cminType > option").each(function () {
+                        if (this.value === annotation.cminType) {
+                            $(this).attr('selected', true);
+                            signal = 0;
+                        }
+                    });
+                    if (signal == 1) {
+                        $('#cminType > option')[0].selected = "selected";
+                    } else {
+                        signal = 1;
+                    }
+                    $("#cminDirection > option").each(function () {
+                        if (this.value === annotation.cminDirection) {
+                            $(this).attr('selected', true);
+                            signal = 0;
+                        }
+                    });
+                    if (signal == 1) {
+                        $('#cminDirection > option')[0].selected = "selected";
+                    } else {
+                        signal = 1;
+                    }
+                    $("#t12Type > option").each(function () {
+                        if (this.value === annotation.t12Type) {
+                            $(this).attr('selected', true);
+                            signal = 0;
+                        }
+                    });
+                    if (signal == 1) {
+                        $('#t12Type > option')[0].selected = "selected";
+                    } else {
+                        signal = 1;
+                    }
+                    $("#t12Direction > option").each(function () {
+                        if (this.value === annotation.t12Direction) {
+                            $(this).attr('selected', true);
+                            signal = 0;
+                        }
+                    });
+                    if (signal == 1) {
+                        $('#t12Direction > option')[0].selected = "selected";
+                    } else {
+                        signal = 1;
+                    }
 
 
                     //load all content
-                    $("#Drug1 > option").each(function(){ if(this.value === annotation.Drug1) $(this).attr('selected',true);});
-                    $('#Drug2 > option').each(function(){ if(this.value === annotation.Drug2) $(this).attr('selected',true);});
-                    $('#assertion_type option').each(function(){ if(this.value === annotation.assertion_type){ $(this).attr('selected',true);signal = 0;}});
-                    if(signal==1){$('#assertion_type option')[0].selected = "selected"; }else{signal=1;}
-                    $('.Type1').each(function(){ if(this.value === annotation.Type1) this.checked = true; else this.checked = false;});
-                    $('.Role1').each(function(){ if(this.value === annotation.Role1) this.checked = true; else this.checked = false;});
-                    $('.Type2').each(function(){ if(this.value === annotation.Type2) this.checked = true; else this.checked = false;});
-                    $('.Role2').each(function(){ if(this.value === annotation.Role2) this.checked = true; else this.checked = false;});
-                    $('.Modality').each(function(){ if(this.value === annotation.Modality) this.checked = true; else this.checked = false;});
-                    $('.Evidence_modality').each(function(){ if(this.value === annotation.Evidence_modality) this.checked = true; else this.checked = false;});
-                    $('#Comment').each(function(){ this.value = annotation.Comment;});
+                    $("#Drug1 > option").each(function () {
+                        if (this.value === annotation.Drug1) $(this).attr('selected', true);
+                    });
+                    $('#Drug2 > option').each(function () {
+                        if (this.value === annotation.Drug2) $(this).attr('selected', true);
+                    });
+                    $('#assertion_type option').each(function () {
+                        if (this.value === annotation.assertion_type) {
+                            $(this).attr('selected', true);
+                            signal = 0;
+                        }
+                    });
+                    if (signal == 1) {
+                        $('#assertion_type option')[0].selected = "selected";
+                    } else {
+                        signal = 1;
+                    }
+                    $('.Type1').each(function () {
+                        if (this.value === annotation.Type1) this.checked = true; else this.checked = false;
+                    });
+                    $('.Role1').each(function () {
+                        if (this.value === annotation.Role1) this.checked = true; else this.checked = false;
+                    });
+                    $('.Type2').each(function () {
+                        if (this.value === annotation.Type2) this.checked = true; else this.checked = false;
+                    });
+                    $('.Role2').each(function () {
+                        if (this.value === annotation.Role2) this.checked = true; else this.checked = false;
+                    });
+                    $('.Modality').each(function () {
+                        if (this.value === annotation.Modality) this.checked = true; else this.checked = false;
+                    });
+                    $('.Evidence_modality').each(function () {
+                        if (this.value === annotation.Evidence_modality) this.checked = true; else this.checked = false;
+                    });
+                    $('#Comment').each(function () {
+                        this.value = annotation.Comment;
+                    });
+                    if (annotation.assertion_type == "DDI clinical trial") {
+                        var object = $("#Drug1 option:selected").text();
+                        $("#objectinalter").html("Object: " + object);
+                        var precipt = $("#Drug2 option:selected").text();
+                        $("#preciptinalter").html("Precipt: " + precipt);
+                        $("#back").hide();
+                        $("#forward").show();
+                        var modal = $("#Modality:checked").val();
+                        $("#modalityinalter").html("Modality: " + modal);
+                        var evid = $("#Evidence_modality:checked").val();
+                        $("#evidenceinalter").html("Evidence: " + evid);
+                    }else{
+                        $("#forward").hide();
+                    }
+                    $('#firstsection').show();
+                    $('#altersection').hide();
                 },
                 submit:function (field, annotation) {
+                    if($('#Drug1 option:selected').text()==$('#Drug2 option:selected').text()){
+                        //if(flag){
+                        alert("Should highlight two different drugs.");
+                        editorSelf.cancel();
+                        //$('.btn-success').click();
+                    }
                     annotation.Drug1 = $('#Drug1 option:selected').text();
                     annotation.Drug2 = $('#Drug2 option:selected').text();
                     annotation.Type1 = $('#Type1:checked').val();
                     annotation.Type2 = $('#Type2:checked').val();
-                    annotation.Role1 = $('#Role1:checked').val();
-                    annotation.Role2 = $('#Role2:checked').val();
+                    annotation.Role1 = "object";
+                    annotation.Role2 = "precipitant";
                     annotation.assertion_type = $('#assertion_type option:selected').text();
                     annotation.Modality = $('#Modality:checked').val();
                     annotation.Evidence_modality = $('#Evidence_modality:checked').val();
@@ -310,9 +477,8 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
             this.element.css({
                 //top: position.top,
                 //left: position.left
-                //bottom:0,
-                right:30,
-                position: 'fixed'
+                bottom:50,
+                right:100
             });
             $( window ).resize(function() {
                 $( "body" ).css('height','600px');
@@ -360,21 +526,23 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
 
         var queryObj = JSON.parse('{"uri":"'+source+'","email":"'+email+'"}');
 
-	var annhost = config.annotator.host;
-	//var annport = config.store.port;
-	
-	// call apache for request annotator store
-	var queryOptStr = '{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://' + annhost + '/annotatorstore","urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search"}}';
-	
-	var queryOptions = JSON.parse(queryOptStr);
-	
-        //var queryOptions = JSON.parse('{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://localhost:5000","urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search"}}');
-	
-        var storage = new HttpStorage(queryOptions);
+        var annhost = config.annotator.host;
+        //var annport = config.store.port;
 
+        // call apache for request annotator store
+        var queryOptStr = '{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://' + annhost + '/annotatorstore","urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search"}}';
+        console.log(queryOptStr);
+
+        var queryOptions = JSON.parse(queryOptStr);
+
+        //var queryOptions = JSON.parse('{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://localhost:5000","urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search"}}');
+
+        var storage = new HttpStorage(queryOptions);
+        //console.log("ddieditor.js - constructor - load:" + JSON.stringify(app.annotations));
+        //console.log("editor call storage");
         var self = this;
         storage.query(queryObj)
-        .then(function(data){
+            .then(function(data){
                 //console.log("editor call results2:" + JSON.stringify(data.results));
                 annotations = data.results;
                 for (var i = 0, len = self.fields.length; i < len; i++) {
@@ -386,13 +554,13 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
         //console.log(r.length);
 
 
-            
+
         var self = this;
         return new Promise(function (resolve, reject) {
             self.dfd = {resolve: resolve, reject: reject};
             self.show(position);
         });
-     
+
     },
 
     // Public: Submits the editor and saves any changes made to the annotation.
@@ -487,7 +655,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
         }, options);
 
         var input = null,
-        element = $('<li class="annotator-item" />');
+            element = $('<li class="annotator-item" />');
 
 
         field.element = element[0];
@@ -536,14 +704,15 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
     checkOrientation: function () {
         Widget.prototype.checkOrientation.call(this);
 
-        var list = this.element.find('ul').first(),
-            controls = this.element.find('.annotator-controls');
-
-        if (this.element.hasClass(this.classes.invert.y)) {
-            controls.insertBefore(list);
-        } else if (controls.is(':first-child')) {
-            controls.insertAfter(list);
-        }
+        var list = this.element.find('ul').first();
+        var controls = this.element.find('.annotator-controls1');
+        var tabs = this.element.find('#tabs');
+        controls.insertAfter(tabs);
+        /*if (this.element.hasClass(this.classes.invert.y)) {
+         controls.insertBefore(list);
+         } else if (controls.is(':first-child')) {
+         controls.insertAfter(list);
+         }*/
 
         return this;
     },
@@ -621,12 +790,12 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
             cornerItem = this.element.find('.annotator-item:first');
         }
 
-        if (cornerItem) {
+        /*if (cornerItem) {
             $('<span class="annotator-resize"></span>').appendTo(cornerItem);
-        }
+        }*/
 
-        var controls = this.element.find('.annotator-controls')[0],
-            textarea = this.element.find('textarea:first')[0],
+        //var controls = this.element.find('.annotator-controls')[0];
+ /*        var   textarea = this.element.find('textarea:first')[0],
             resizeHandle = this.element.find('.annotator-resize')[0],
             self = this;
 
@@ -638,49 +807,49 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                 return self.element.hasClass(self.classes.invert.y);
             }
         });
-
-        this._mover = mover(this.element[0], controls);
+*/
+        //this._mover = mover(this.element[0], controls);
     }
 });
 /*
-//handlebars test
-var handlebars = require('handlebars');
-var fs = require('fs');
+ //handlebars test
+ var handlebars = require('handlebars');
+ var fs = require('fs');
 
-var fooJson = {
-    tags: ['express', 'node', 'javascript']
-}
+ var fooJson = {
+ tags: ['express', 'node', 'javascript']
+ }
 
-// get your data into a variable
-//var fooJson = require('path/to/foo.json');
+ // get your data into a variable
+ //var fooJson = require('path/to/foo.json');
 
-// read the file and use the callback to render
-fs.readFile('handlebars-example.hbs', function(err, data){
-    if (!err) {
-        // make the buffer into a string
-        var source = data.toString();
-        // call the render function
-        renderToString(source, fooJson);
-        //alert(testhandle);
-    } else {
-        // handle file read error
-    }
-});
+ // read the file and use the callback to render
+ fs.readFile('handlebars-example.hbs', function(err, data){
+ if (!err) {
+ // make the buffer into a string
+ var source = data.toString();
+ // call the render function
+ renderToString(source, fooJson);
+ //alert(testhandle);
+ } else {
+ // handle file read error
+ }
+ });
 
-// this will be called after the file is read
-function renderToString(source, data) {
-    var template = handlebars.compile(source);
-    var outputString = template(data);
-    //alert(outputString);
-    return outputString;
-}
-*/
+ // this will be called after the file is read
+ function renderToString(source, data) {
+ var template = handlebars.compile(source);
+ var outputString = template(data);
+ //alert(outputString);
+ return outputString;
+ }
+ */
 /*$.ajax({
-    url: "template.html", dataType: "html"
-}).done(function( responseHtml ) {
-    $("#mydiv").html(responseHtml);
-    console.log(responseHtml);
-});*/
+ url: "template.html", dataType: "html"
+ }).done(function( responseHtml ) {
+ $("#mydiv").html(responseHtml);
+ console.log(responseHtml);
+ });*/
 
 //var Handlebars = require("handlebars");
 //var source   = $("#entry-template").html();
