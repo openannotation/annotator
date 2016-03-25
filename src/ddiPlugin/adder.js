@@ -153,7 +153,7 @@ var ddiAdder = Widget.extend({
 
 ddiAdder.template = [
     '<div class="annotator-adder annotator-hide">',
-    '  <button type="button" title="DDI" onclick="showright()">' + _t('Annotate') + '</button>',
+    '  <button type="button" title="DDI" onclick="showright(),editorload()">' + _t('Annotate') + '</button>',
     '</div>'
 ].join('\n');
 
