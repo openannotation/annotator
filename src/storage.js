@@ -197,7 +197,7 @@ HttpStorage.prototype.create = function (annotation) {
  */
 HttpStorage.prototype.update = function (annotation) {
 
-    console.log("storage - update!")
+    console.log("[INFO] storage - update!")
     console.log(annotation);
 
     return this._apiRequest('update', annotation);
@@ -218,6 +218,10 @@ HttpStorage.prototype.update = function (annotation) {
  * :rtype: Promise
  */
 HttpStorage.prototype['delete'] = function (annotation) {
+
+    console.log("[INFO] storage - delete!")
+    console.log(annotation);
+
     return this._apiRequest('destroy', annotation);
 };
 
