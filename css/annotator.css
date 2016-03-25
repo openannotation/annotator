@@ -277,7 +277,7 @@
 	right: 0px;
 	width: 800px;
 	height:180px;
-	overflow-y: scroll;
+	overflow-y: hidden;
 	background-color: #FFFFFF;
 	border: 0px solid #7A7A7A;
 	border: 0px solid rgba(122, 122, 122, 0.6);
@@ -1165,7 +1165,7 @@ th, td {
 .clear-user-agent-styles th,
 .clear-user-agent-styles tr td {
 	background: white;
-	background-color:white;
+	background-color: white;
 	border-color: white;
 	text-align: right;
 	white-space:nowrap;
@@ -1184,6 +1184,14 @@ th, td {
 	width:100%;
 }
 
+.flipicon {
+	background-image: url(../img/arrows-reverse.png?embed);
+	width:20px;
+	height:30px;
+	display:block;
+	background-repeat:no-repeat;
+	background-size: 100% 100%;
+}
 
 table tr:nth-of-type(odd),table tr:nth-of-type(odd){background-color:#EEF9FF}.main-content .content-full table.alt tr:nth-of-type(odd){background-color:#FFF}.main-content .content-full table.alt tr:nth-of-type(even){background-color:#EEF9FF}.main-content .content-full .norows table tr:nth-of-type(odd),.norows table tr:nth-of-type(odd){background-color:#fff}
 /*.viewertable tr:nth-of-type(odd),.viewertable tr:nth-of-type(odd){background-color:#EEF9FF}.main-content .content-full .viewertable.alt tr:nth-of-type(odd){background-color:#FFF}.main-content .content-full .viewertable.alt tr:nth-of-type(even){background-color:#EEF9FF}.main-content .content-full .norows .viewertable tr:nth-of-type(odd),.norows .viewertable tr:nth-of-type(odd){background-color:#fff}*/
