@@ -44,7 +44,7 @@ function highlightRange(normedRange, cssClass) {
             }
         }
     }
-    console.log(results);
+    //console.log(results);
 
     return results;
 }
@@ -87,6 +87,7 @@ function highlightOA(annotation, cssClass, storage){
                     
                     console.log("oaSelector:" + prefix + "|" + suffix);
                     console.log("node been found:" + prefixSub + "|" + suffixSub);
+
                     isFixed = true;
                     var path = xpath.fromNode($(node), $(document))[0];
                     path = path.replace("/html[1]/body[1]","");
