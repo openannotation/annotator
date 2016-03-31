@@ -65,9 +65,7 @@ TextSelector.prototype.captureDocumentSelection = function () {
         return [];
     }
 
-    //console.log(selection);
     var fulltxt = selection.anchorNode.textContent;
-    //console.log("fulltxt:" + fulltxt) 
 
     for (i = 0; i < selection.rangeCount; i++) {
         var r = selection.getRangeAt(i),
@@ -89,7 +87,6 @@ TextSelector.prototype.captureDocumentSelection = function () {
     selection.removeAllRanges();
 
     for (i = 0, len = rangesToIgnore.length; i < len; i++) {
-        //console.log("rangesToIgnore!");
         selection.addRange(rangesToIgnore[i]);
     }
 

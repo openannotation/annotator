@@ -44,7 +44,7 @@ function highlightRange(normedRange, cssClass) {
             }
         }
     }
-    console.log(results);
+    //console.log(results);
 
     return results;
 }
@@ -87,7 +87,8 @@ function highlightOA(annotation, cssClass, storage){
                     
                     console.log("oaSelector:" + prefix + "|" + suffix);
                     console.log("node been found:" + prefixSub + "|" + suffixSub);
-                    
+
+                    isFixed = true;
                     var path = xpath.fromNode($(node), $(document))[0];
                     path = path.replace("/html[1]/body[1]","");
                     
@@ -103,12 +104,13 @@ function highlightOA(annotation, cssClass, storage){
                     storage.update(annotation);
                     //this.redraw(annotation);
                     console.log("[INFO] xpath fixing completed!");
-                } 
+                }
             }
         }
         if (!isFixed) {
             console.log("[WARN] xpath fixing failed, oa selecter doesn't matched in document!");
             console.log("oaSelector:" + prefix + "|" + exact + "|" + suffix + "|");
+            storage.delete({id : annotation.id});
         }
     }
     catch(err){
