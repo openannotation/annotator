@@ -437,12 +437,12 @@
 	background-position: 0 -75px;
 }
 
-.annotator-back {
-	background-position: 0 -90px;
+.annotator-controls1 .annotator-back {
+	background-position: 0 -105px;
 }
 
-.annotator-next {
-	background-position: 0 -90px;
+.annotator-controls1 .annotator-next {
+	background-position: 0 -120px;
 }
 
 .annotator-viewer .annotator-controls .annotator-edit {
@@ -1169,6 +1169,8 @@ th, td {
 	border-color: white;
 	text-align: right;
 	white-space:nowrap;
+	font-size: small;
+	font-family: Arial;
 }
 
 .clear-user-agent-styles td:nth-of-type(even) {
@@ -1191,6 +1193,11 @@ th, td {
 	display:block;
 	background-repeat:no-repeat;
 	background-size: 100% 100%;
+}
+
+table, tr, td {
+	font-style: italic;
+	border: 1px solid black;
 }
 
 table tr:nth-of-type(odd),table tr:nth-of-type(odd){background-color:#EEF9FF}.main-content .content-full table.alt tr:nth-of-type(odd){background-color:#FFF}.main-content .content-full table.alt tr:nth-of-type(even){background-color:#EEF9FF}.main-content .content-full .norows table tr:nth-of-type(odd),.norows table tr:nth-of-type(odd){background-color:#fff}
