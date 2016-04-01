@@ -166,7 +166,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                     $('#DoseMG_object').val(annotation.DoseMG_object);
                     $('#DoseMG_precipitant').val(annotation.DoseMG_precipitant);
                     $('#Auc').val(annotation.Aucval);
-                    $('#Cl').val(annotation.Clval);
+                    $('#Cli').val(annotation.Clval);
                     $('#cmax').val(annotation.cmaxval);
                     $('#cmin').val(annotation.cminval);
                     $('#t12').val(annotation.t12);
@@ -415,7 +415,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                         annotation.Aucval = $('#Auc').val();
                         annotation.AucType = $('#AucType option:selected').text();
                         annotation.AucDirection = $('#AucDirection option:selected').text();
-                        annotation.Clval = $('#Cl').val();
+                        annotation.Clval = $('#Cli').val();
                         annotation.ClType = $('#ClType option:selected').text();
                         annotation.ClDirection = $('#ClDirection option:selected').text();
                         annotation.cmaxval = $('#cmax').val();

@@ -129,7 +129,7 @@ Template.content = [
   '<div style="margin-left: 0px;">',
   '<div id = "altersection" style="display: none;">',
 
-  '<div style="float:left">',
+  '<div style="float:left;margin-right: 15px">',
   '<div><strong>Clinical Trial: </strong><strong id="modalityinalter"></strong>&nbsp<strong id="evidenceinalter"></strong></div>',
   '<strong id="objectinalter"></strong>',
   '<div>',
@@ -196,7 +196,7 @@ Template.content = [
   '</td></tr>',
 
   '<tr><td width="70px"><strong>CL_i/CL: </strong></td>',
-  '<td>Cl: <input style="width:30px;" type="text" id="Cl"></td>',
+  '<td>Cl: <input style="width:30px;" type="text" id="Cli"></td>',
   '<td>Type: <select id="ClType">',
   '<option value="UNK">UNK</option>',
   '<option value="Percent">Percent</option>',
@@ -249,7 +249,10 @@ Template.content = [
   '<option value="Increase">Increase</option>',
   '<option value="Decrease">Decrease</option>',
   '</select>',
-  '</td></tr></table></div>',
+  '</td></tr>',
+
+
+  '</table></div>',
   '</div>',
   '</div>',
 
