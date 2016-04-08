@@ -33,9 +33,9 @@ function highlightRange(normedRange, cssClass) {
         if (!white.test(node.nodeValue)) {
             var ddihl = global.document.createElement('span');
             ddihl.className = cssClass;
-
-            // add attribute id for css
-            ddihl.id = 'annotator-ddi';
+            // ddihl.id = 'annotator-ddi';
+            // name as annotator-ddi for blue highlighting
+            ddihl.setAttribute("name", "annotator-ddi");
             node.parentNode.replaceChild(ddihl, node);
             ddihl.appendChild(node);
             results.push(ddihl);
@@ -172,8 +172,11 @@ ddiHighlighter.prototype.draw = function (annotation) {
 
     // Add a data attribute for annotation id if the annotation has one
     if (typeof annotation.id !== 'undefined' && annotation.id !== null) {
+        //$(annotation._local.highlights)
+        //    .attr('data-annotation-id', annotation.id);
+
         $(annotation._local.highlights)
-            .attr('data-annotation-id', annotation.id);
+            .attr('id', annotation.id);
     }
 
     return annotation._local.highlights;

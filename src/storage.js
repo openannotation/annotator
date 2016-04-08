@@ -288,6 +288,8 @@ HttpStorage.prototype._apiRequest = function (action, obj) {
     // for use in the error callback.
     request._id = id;
     request._action = action;
+
+    console.log("_apiRequest");
     return request;
 };
 

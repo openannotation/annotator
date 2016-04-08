@@ -43,7 +43,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
         this.fields = [];
         this.annotation = {};
 
-        //console.log("[INFO] ddi - editor - constructor");
+        console.log("[INFO] ddi - editor - constructor");
 
         if (this.options.defaultFields) {
 
@@ -66,9 +66,11 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                     $('#Drug1 option').remove();
                     $('#Drug2 option').remove();
                     var flag = 0;
+
                     console.log(annotations.length);
+
                     var anns = annotations.slice();
-                    //console.log("(1):"+anns[0].quote);
+
                     var quoteobject = $('#quotearea');
                     var quotecontent = $('#quotearea').html();
                     //console.log(quotecontent);
@@ -78,13 +80,16 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                     for (var i = 0, len = anns.length; i < len; i++) {
                         if ((anns[i].annotationType == "DrugMention") && (list.indexOf(anns[i].quote) < 0)) {
                             list.push(anns[i].quote);
-                            //console.log(anns[i].quote);
                         }
                     }
+
+                    //console.log(list);
+
                     for (var i = 0, len = list.length; i < len; i++) {
                         if (quotecontent.indexOf(list[i]) >= 0) {
                             index++;
                             //quotecontent.split(list[i]).join("<span class='highlightdrug'>"+list[i]+"<sup>"+index+"</sup></span>");
+
                             //console.log(quotecontent);
                             quotecontent = quotecontent.replace(list[i], "<span class='highlightdrug'>" + list[i] + "</span>");
                             $('#Drug1').append($('<option>', {
