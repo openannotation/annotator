@@ -40,7 +40,7 @@ Template.content = [
   '}',
 
   'function showEnzyme() {',
-  'if($("#relationship option:selected").text()=="inhibit"||$("#relationship option:selected").text()=="substrate of") {$("#enzymesection1").show();$("#enzyme").show();}',
+  'if($("#relationship option:selected").text()=="inhibits"||$("#relationship option:selected").text()=="substrate of") { $("#enzymesection1").show();$("#enzyme").show();}',
   'if($("#relationship option:selected").text()=="interact with") {$("#enzymesection1").hide();$("#enzyme").hide();}',
   '}',
   'function flipdrug() {',
@@ -128,7 +128,7 @@ Template.content = [
   '<td><strong>Relationship: </strong></td><td>',
   '<select id="relationship" onchange="showEnzyme();">',
   '<option id="r2" value="interact with">interact with</option>',
-  '<option id="r0" value="inhibit">inhibit</option>',
+  '<option id="r0" value="inhibits">inhibits</option>',
   '<option id="r1" value="substrate of">substrate of</option>',
   '</select></td>',
 

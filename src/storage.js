@@ -289,7 +289,6 @@ HttpStorage.prototype._apiRequest = function (action, obj) {
     request._id = id;
     request._action = action;
 
-    console.log("_apiRequest");
     return request;
 };
 

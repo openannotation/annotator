@@ -156,7 +156,6 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                      $(field).find('#clinical').on('selected',function() {
                      $('#ddisection').hide();
                      });*/
-                    console.debug("annotation.assertion_type:" + annotation.assertion_type);
                     if (annotation.assertion_type == "DDI clinical trial") {
                         $('#altersection').show();
                         $('.moreinfo').show();
@@ -343,19 +342,23 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                         if (this.value === annotation.Drug2) $(this).attr('selected', true);
                     });
                     $('#relationship option').each(function () {
-                        if (this.value === annotation.relationship) {
+                        if (this.value === annotation.relationship) {                
                             $(this).attr('selected', true);
                             signal = 0;
                         }
                     });
+
                     if (signal == 1) {
                         $('#relationship option')[0].selected = "selected";
                     } else {
                         signal = 1;
                     }
 
-                    if(annotation.relationship == "inhibit"||annotation.relationship == "substrate of")
+                    if(annotation.relationship == "inhibits"||annotation.relationship == "substrate of")
                     {
+                        // show enzyme field if relationship is inhibits or substrate of
+                        $(document).ready(function() { showEnzyme(); });
+
                         $('#enzyme option').each(function () {
                             if (this.value === annotation.enzyme) {
                                 $(this).attr('selected', true);
@@ -437,10 +440,12 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                     annotation.Comment = $('#Comment').val();
                     annotation.annotationType = "DDI";
                     annotation.relationship = $('#relationship option:selected').text();
-                    if(annotation.relationship == "inhibit"||annotation.relationship == "substrate of")
+                    if(annotation.relationship == "inhibits"||annotation.relationship == "substrate of") {
                         annotation.enzyme = $('#enzyme option:selected').text();
-                    else
+                    } else {
                         annotation.enzyme = "";
+                    }
+
                     if(annotation.assertion_type=="DDI clinical trial")
                     {
                         annotation.Number_participants = $('#Number_participants').val();
@@ -554,8 +559,9 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
             alert("[INFO] Exceeding max lengh of text 1600!");
             $('.btn-success').click();
             this.cancel();
-
         }
+        
+
         var annotations;
         if(getURLParameter("sourceURL")==null)
             var sourceURL = getURLParameter("file").trim();
