@@ -25,7 +25,7 @@
 -------------------------------------------------------------------- */
 
 
-.annotator-adder {
+.annotator-adderddi {
 	background-image: url(../img/annotator-icon-sprite.png?embed);
 	background-repeat: no-repeat;
 }
@@ -135,7 +135,7 @@ span[name="annotator-ddi"] {
 /* NB: If you change the list of classes for which z-index is set,
        you should update setupDynamicStyle() in annotator.ui.main */
 .annotator-adderhl,
-.annotator-adder,
+.annotator-adderddi,
 .annotator-outer,
 .annotator-notice {
 	z-index: 1020;
@@ -145,7 +145,7 @@ span[name="annotator-ddi"] {
 	z-index: 1010;
 }
 .annotator-adderhl,
-.annotator-adder,
+.annotator-adderddi,
 .annotator-outer,
 .annotator-widget,
 .annotator-notice {
@@ -162,7 +162,7 @@ span[name="annotator-ddi"] {
 /* Annotator Adder
 -------------------------------------------------------------------- */
 .annotator-adderhl,
-.annotator-adder {
+.annotator-adderddi {
 	margin-top: -48px;
 	margin-left: -24px;
 	width: 48px;
@@ -174,7 +174,7 @@ span[name="annotator-ddi"] {
 	background-position: center top;
 }
 
-.annotator-adder:hover {
+.annotator-adderddi:hover {
 	background-position: center top;
 }
 
@@ -182,7 +182,7 @@ span[name="annotator-ddi"] {
 	background-position: center right;
 }
 
-.annotator-adder:active {
+.annotator-adderddi:active {
 	background-position: center right;
 }
 .annotator-adderhl button {
@@ -196,7 +196,7 @@ span[name="annotator-ddi"] {
 	cursor: pointer;
 }
 
-.annotator-adder button {
+.annotator-adderddi button {
 	display: block;
 	width: 36px;
 	height: 41px;
