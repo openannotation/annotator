@@ -38,6 +38,11 @@ Template.content = [
   'else{ $("#altersection").hide();$("#forward").hide();}',
   //'$("#splitter").jqxSplitter({ width: "100%", height: 650, orientation: "horizontal", panels: [{ size: "50%", min: 100 }, { size: "50%", min: 50}] });',
   '}',
+
+  'function showEnzyme() {',
+  'if($("#relationship option:selected").text()=="inhibit"||$("#relationship option:selected").text()=="substrate of") {$("#enzymesection1").show();$("#enzyme").show();}',
+  'if($("#relationship option:selected").text()=="interact with") {$("#enzymesection1").hide();$("#enzyme").hide();}',
+  '}',
   'function flipdrug() {',
   'var object = $("#Drug1 option:selected").text();',
   'var precip = $("#Drug2 option:selected").text();',
@@ -82,7 +87,15 @@ Template.content = [
   '<input type="radio" name="Type1" id="Type1" class="Type1" value="metabolite">metabolite',
   '<input type="radio" name="Type1" id="Type1" class="Type1" value="drug product">drug product',
   '<input type="radio" name="Type1" id="Type1" class="Type1" value="drug group">drug group',
-  '</td></tr>',
+  '</td>',
+
+  '<td><strong>Evidence: </strong></td><td>',
+  '<input type="radio" name="Evidence_modality" id="Evidence_modality" class="Evidence_modality" value="for">For',
+  '<input type="radio" name="Evidence_modality" id="Evidence_modality" class="Evidence_modality" value="against">Against',
+  '</td>',
+
+
+  '</tr>',
 
   '<tr><td><strong>Precipitant: </strong></td>',
   '<td><select id="Drug2" onmousedown="deselectDrug()" onchange="selectDrug()">',
@@ -91,35 +104,74 @@ Template.content = [
   '</select>',
   '</td>',
 
+
+
   '<td width="40px"><strong>Type: </strong></td>',
   '<td><input type="radio" name="Type2" id="Type2" class="Type2" value="active ingredient">active ingredient',
   '<input type="radio" name="Type2" id="Type2" class="Type2" value="metabolite">metabolite',
   '<input type="radio" name="Type2" id="Type2" class="Type2" value="drug product">drug product',
   '<input type="radio" name="Type2" id="Type2" class="Type2" value="drug group">drug group',
-  '</td></tr>',
-  //'</table>',
-
-  //'<table class="clear-user-agent-styles">',
-  '<tr><td><strong>Evidence: </strong></td><td>',
-  '<input type="radio" name="Evidence_modality" id="Evidence_modality" class="Evidence_modality" value="for">For',
-  '<input type="radio" name="Evidence_modality" id="Evidence_modality" class="Evidence_modality" value="against">Against',
   '</td>',
 
-  '<td><strong>Assertion Type: </strong></td><td>',
-  '<select id="assertion_type" onchange="changeFunc();">',
-  '<option id="DDI" value="Drug Drug Interaction">Drug Drug Interaction</option>',
-  '<option id="clinical" value="DDI clinical trial">DDI clinical trial</option>',
-  '</select></td></tr>',
 
-  '<tr><td width="40px"><strong>Modality: </strong></td><td>',
+  '<td width="40px"><strong>Modality: </strong></td><td>',
   '<input type="radio" name="Modality" id="Modality" class="Modality" value="Positive">Positive',
   '<input type="radio" name="Modality" id="Modality" class="Modality" value="Negative">Negative',
   '</td>',
 
 
+  '</tr>',
+  //'</table>',
+
+  //'<table class="clear-user-agent-styles">',
+  '<tr>',
+  '<td><strong>Relationship: </strong></td><td>',
+  '<select id="relationship" onchange="showEnzyme();">',
+  '<option id="r2" value="interact with">interact with</option>',
+  '<option id="r0" value="inhibit">inhibit</option>',
+  '<option id="r1" value="substrate of">substrate of</option>',
+  '</select></td>',
+
+  '<td><strong>Assertion Type: </strong></td><td>',
+  '<select id="assertion_type" onchange="changeFunc();">',
+  '<option id="DDI" value="Drug Drug Interaction">Drug Drug Interaction</option>',
+  '<option id="clinical" value="DDI clinical trial">DDI clinical trial</option>',
+  '</select></td>',
+
+
+
+  '</tr>',
+
+  '<tr>',
+
+  '<td><strong  id="enzymesection1"  style="display: none;">Enzyme: </strong></td><td>',
+  '<select id="enzyme"  style="display: none;">',
+  '<option value="cyp1a1">cyp1a1</option>',
+  '<option value="cyp1a2">cyp1a2</option>',
+  '<option value="cyp1b1">cyp1b1</option>',
+  '<option value="cyp2a6">cyp2a6</option>',
+  '<option value="cyp2a13">cyp2a13</option>',
+  '<option value="cyp2b6">cyp2b6</option>',
+  '<option value="cyp2c8">cyp2c8</option>',
+  '<option value="cyp2c9">cyp2c9</option>',
+  '<option value="cyp2c19">cyp2c19</option>',
+  '<option value="cyp2d6">cyp2d6</option>',
+  '<option value="cyp2e1">cyp2e1</option>',
+  '<option value="cyp2j2">cyp2j2</option>',
+  '<option value="cyp3a4">cyp3a4</option>',
+  '<option value="cyp3a5">cyp3a5</option>',
+  '<option value="cyp4a11">cyp4a11</option>',
+  '<option value="cyp2c8">cyp2c8</option>',
+  '<option value="cyp2c9">cyp2c9</option>',
+  '<option value="cyp2c19">cyp2c19</option>',
+  '</select></td>',
+
   '<td width="40px"><strong>Comment: </strong></td><td>',
   '<textarea id="Comment" class="Comment"></textarea>',
-  '</td></tr>',
+  '</td>',
+
+
+  '</tr>',
 
 
   '</table>',
