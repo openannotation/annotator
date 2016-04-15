@@ -3,7 +3,6 @@ var Widget = require('./../ui/widget').Widget;
 var util = require('../util');
 var Editor = require('../drugPlugin/editor').Editor;
 var Template = require('./template').Template;
-
 var $ = util.$;
 var _t = util.gettext;
 var Promise = util.Promise;
@@ -42,7 +41,6 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
         var editorSelf = this;
         this.fields = [];
         this.annotation = {};
-
         //console.log("[INFO] ddi - editor - constructor");
 
         if (this.options.defaultFields) {
@@ -846,52 +844,9 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
         //this._mover = mover(this.element[0], controls);
     }
 });
-/*
- //handlebars test
- var handlebars = require('handlebars');
- var fs = require('fs');
 
- var fooJson = {
- tags: ['express', 'node', 'javascript']
- }
 
- // get your data into a variable
- //var fooJson = require('path/to/foo.json');
-
- // read the file and use the callback to render
- fs.readFile('handlebars-example.hbs', function(err, data){
- if (!err) {
- // make the buffer into a string
- var source = data.toString();
- // call the render function
- renderToString(source, fooJson);
- //alert(testhandle);
- } else {
- // handle file read error
- }
- });
-
- // this will be called after the file is read
- function renderToString(source, data) {
- var template = handlebars.compile(source);
- var outputString = template(data);
- //alert(outputString);
- return outputString;
- }
- */
-/*$.ajax({
- url: "template.html", dataType: "html"
- }).done(function( responseHtml ) {
- $("#mydiv").html(responseHtml);
- console.log(responseHtml);
- });*/
-
-//var Handlebars = require("handlebars");
-//var source   = $("#entry-template").html();
-//var template = Handlebars.compile(source);
 ddiEditor.template = Template.content;
-
-
 
 
 

@@ -207,7 +207,7 @@
 }
 
 /* Annotator Widget
-   
+
    This applies to both the Viewer and the Editor
 -------------------------------------------------------------------- */
 
@@ -1198,6 +1198,29 @@ th, td {
 table, tr, td {
 
 	border: 1px solid black;
+}
+
+#enzymesection1{
+	display: none;
+}
+
+#enzyme{
+	display: none;
+}
+
+#tabs-1 {
+	color:#000000;
+	font-size:12px;
+	font-weight:670;
+	line-height:155%;
+}
+
+input[type="radio"] {
+	-webkit-appearance: radio;
+}
+
+.annotator-widget {
+	/*font-size:115%;*/
 }
 
 table tr:nth-of-type(odd),table tr:nth-of-type(odd){background-color:#EEF9FF}.main-content .content-full table.alt tr:nth-of-type(odd){background-color:#FFF}.main-content .content-full table.alt tr:nth-of-type(even){background-color:#EEF9FF}.main-content .content-full .norows table tr:nth-of-type(odd),.norows table tr:nth-of-type(odd){background-color:#fff}

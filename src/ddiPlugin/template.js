@@ -1,187 +1,182 @@
 "use strict";
 
+var Handlebars = require('handlebars');
+var fs = require("fs");
 var extend = require('backbone-extend-standalone');
 var Template = function(){console.log("success");};
+var $ = require('jquery');
+//var source = "<p>Hello, my name is {{name}}. I am from {{hometown}}. I have " +
+//    "{{kids.length}} kids:</p>" +
+//    "<ul>{{#kids}}<li>{{name}} is {{age}}</li>{{/kids}}</ul>";
+//var template = Handlebars.compile(source);
+//var source   = $("#entry-template").html();
+//var template = Handlebars.compile(source);
+var data = { "name": "Alan", "hometown": "Somewhere, TX",
+  "kids": [{"name": "Jimmy", "age": "12"}, {"name": "Sally", "age": "4"}]};
+
+//Template.result = template(data);
+/*var content;
+// First I want to read the file
+fs.readFile('./test.html', function read(err, data) {
+  if (err) {
+    throw err;
+  }
+  content = data;
+
+  // Invoke the next step here however you like
+  console.log(content);   // Put all of the code here (not the best solution)
+  //processFile();          // Or put the next step in a function and invoke it
+});*/
+
+
+var context1 = {
+    questions: [
+      {
+        type:"dropdown",
+        name:"Object: ",
+        id:"Drug1",
+        options:[],
+        optionsID:[]
+      },
+      {
+        type:"checkbox",
+        name:"Type: ",
+        id:"Type1",
+        options:["active ingredient", "metabolite", "drug product", "drug group"]
+      },
+      {
+        type:"checkbox",
+        name:"Evidence: ",
+        id:"Evidence_modality",
+        options:["for", "against"]
+      },
+      {
+        type:"dropdown",
+        name:"Precipitant: ",
+        id:"Drug2",
+        options:[],
+        optionsID:[]
+      },
+      {
+        type:"checkbox",
+        name:"Type: ",
+        id:"Type2",
+        options:["active ingredient", "metabolite", "drug product", "drug group"]
+      },
+      {
+        type:"checkbox",
+        name:"Modality: ",
+        id:"Modality",
+        options:["Positive", "Negative"]
+      },
+      {
+        type:"dropdown",
+        name:"Relationship: ",
+        id:"relationship",
+        options:["interact with","inhibit","substrate of"],
+        optionsID:["r2","r0","r1"]
+      },
+      {
+        type:"dropdown",
+        name:"Assertion Type: ",
+        id:"assertion_type",
+        options:["Drug Drug Interaction","DDI clinical trial"],
+        optionsID:["DDI","clinical"]
+      },
+      {
+        type:"space",
+        name:"",
+      },
+      {
+        type:"dropdown",
+        name:"Enzyme: ",
+        id:"enzyme",
+        options:["cyp1a1","cyp1a2","cyp1b1","cyp2a6","cyp2a13","cyp2b6","cyp2c8","cyp2c9","cyp2c19","cyp2d6","cyp2e1","cyp2j2","cyp3a4","cyp3a5","cyp4a11","cyp2c8","cyp2c9","cyp2c19"],
+        optionsID:[]
+      },
+      {
+        type:"textarea",
+        name:"Comment: ",
+        id:"Comment"
+      },
+      {
+        type:"space",
+        name:"",
+      }
+    ]
+};
+
+Handlebars.registerHelper('buildForm', function(items, options) {
+  var out = "";
+
+  for(var i=0, l=items.length; i<l; i++) {
+    if(((i)%3==0))
+      out = out + "<tr>";
+    if(items[i].id!="enzyme")
+      out = out + "<td><strong>" + items[i].name +"</strong></td><td>";
+    else
+      out = out + "<td><strong id='enzymesection1'>" + items[i].name +"</strong></td><td>";
+    if(items[i].type=="checkbox")
+    {
+      for (var j = 0, sl = items[i].options.length; j < sl; j++)
+        out = out + "<input type='radio' name='" + items[i].id + "' id='" + items[i].id + "' class='" + items[i].id + "' value='" + items[i].options[j] + "'>" + items[i].options[j] + "</input>";
+
+    }else if(items[i].type=="dropdown")
+    {
+      out = out + "<select id='" + items[i].id + "'>";
+      for(var j = 0, sl = items[i].options.length; j<sl; j++) {
+        if(items[i].optionsID.length==0)
+          out = out + "<option value='" + items[i].options[j] + "'>" + items[i].options[j] + "</option>";
+        else
+          out = out + "<option id='" + items[i].optionsID[j] + "' value='" + items[i].options[j] + "'>" + items[i].options[j] + "</option>";
+      }
+      out = out + "</select>";
+
+    }else if(items[i].type=="textarea")
+    {
+      out = out + "<textarea id='" + items[i].id + "' class='" + items[i].id + "'></textarea>";
+    }
+
+    out = out + "</td>";
+    if(((i+1)%3==0))
+      out = out + "</tr>";
+  }
+
+  return out + "";
+});
+
+var source = "{{#buildForm questions}}{{/buildForm}}";
+
+var template = Handlebars.compile(source);
+
+var form1 = template(context1);
+
 Template.content = [
-  //'<script src="./js/backups/jquery-1.11.1.min.js"></script>',
-  //'<script>function() {$( "#tabs" ).tabs();}</script>',
-  '<style>#tabs-1 {color:#000000;font-size:12px;font-weight:670;line-height:155%;}',
-  '.annotator-widget {font-size:115%;} input[type="radio"] { -webkit-appearance: radio; }</style>',
 
-  '<script type="text/javascript">',
-  '$(document).ready(function () {',
-   '$("#firstsection").show();$("#altersection").hide();',
-   '});',
-    'function editorload() {',
-    '$("#firstsection").show();',
-    '$("#altersection").hide();',
-    '}',
-  'function selectDrug() {',
-  'var drug1 = $("#Drug1").val();',
-  'var drug2 = $("#Drug2").val();',
-  'var quotestring = $("#quote").html();',
-  'quotestring = quotestring.replace(drug2, "<span class=\'selecteddrug\'>"+drug2+"</span>");',
-  'quotestring = quotestring.replace(drug1, "<span class=\'selecteddrug\'>"+drug1+"</span>");',
-  '$("#quote").html(quotestring);',
-  '}',
-  'function deselectDrug() {',
-  'var drug1 = $("#Drug1").val();',
-  'var drug2 = $("#Drug2").val();',
-  'var quotestring = $("#quote").html();',
-  'quotestring = quotestring.replace(\'<span class="selecteddrug">\'+drug2+\'</span>\', drug2);',
-  'quotestring = quotestring.replace(\'<span class="selecteddrug">\'+drug1+\'</span>\', drug1);',
-  '$("#quote").html(quotestring);',
-  '}',
-  'function changeFunc() {',
-  'if($("#assertion_type option:selected").text()=="DDI clinical trial"){ $("#firstsection").hide(); $("#altersection").show();var object = $("#Drug1 option:selected").text(); $("#objectinalter").html("Object: "+object);var precipt = $("#Drug2 option:selected").text(); $("#preciptinalter").html("Precipt: "+precipt);',
-  '$("#back").show();var modal = $("#Modality:checked").val();$("#modalityinalter").html("Modality: "+modal);var evid = $("#Evidence_modality:checked").val();$("#evidenceinalter").html("Evidence: "+evid);}',
-  'else{ $("#altersection").hide();$("#forward").hide();}',
-  //'$("#splitter").jqxSplitter({ width: "100%", height: 650, orientation: "horizontal", panels: [{ size: "50%", min: 100 }, { size: "50%", min: 50}] });',
-  '}',
-
-  'function showEnzyme() {',
-  'if($("#relationship option:selected").text()=="inhibit"||$("#relationship option:selected").text()=="substrate of") {$("#enzymesection1").show();$("#enzyme").show();}',
-  'if($("#relationship option:selected").text()=="interact with") {$("#enzymesection1").hide();$("#enzyme").hide();}',
-  '}',
-  'function flipdrug() {',
-  'var object = $("#Drug1 option:selected").text();',
-  'var precip = $("#Drug2 option:selected").text();',
-    '$("#Drug1 option").removeAttr("selected");$("#Drug2 option").removeAttr("selected");',
-  '$("#Drug1 > option").each(function () {if ($(this).text() == precip){ $(this).prop("selected", "selected");}});$("#Drug2 > option").each(function () {if ($(this).text() == object) $(this).prop("selected", "selected");});',
-  '}',
-  'function backtofirst() {',
-  '$("#firstsection").show(); $("#altersection").hide();$("#forward").show();$("#back").hide();}',
-  'function forwardtosecond() {',
-  '$("#firstsection").hide(); $("#altersection").show();$("#forward").hide();$("#back").show();',
-  'var object = $("#Drug1 option:selected").text(); $("#objectinalter").html("Object: "+object);var precipt = $("#Drug2 option:selected").text(); $("#preciptinalter").html("Precipt: "+precipt);',
-  'var modal = $("#Modality:checked").val();$("#modalityinalter").html("Modality: "+modal);var evid = $("#Evidence_modality:checked").val();$("#evidenceinalter").html("Evidence: "+evid);',
-  '}',
-
-  'function changeRole1(role) {',
-  '$(".Role2").each(function(){ if(this.value != role) this.checked = true; else this.checked = false;});}',
-
-  'function changeRole2(role) {',
-  '$(".Role1").each(function(){ if(this.value != role) this.checked = true; else this.checked = false;});}',
-
-  '</script>',
   '<div class="annotator-outer annotator-editor annotator-invert-y annotator-invert-x">',
   '  <form class="annotator-widget">',
   '    <ul class="annotator-listing"></ul>',
   '<div class="annotationbody" style="margin-left:5px;margin-right:0px;height:100%;line-height:200%;margin-top:0px;overflow-y: hidden">',
   '<div id="tabs">',
-  //'<ul>',
-  //'<li><a href="#tabs-1">PK DDI</a></li>',
-  //'</ul>',
+
   '<div id="tabs-1" style="margin-bottom:0px;">',
   '<div id="firstsection" style="margin-top:10px;margin-left:5px;">',
   '<div onclick="flipdrug()" style="float:left" class="flipicon"></div>',
-  '<table class="clear-user-agent-styles"><tr><td width="40px"><strong>Object: </strong></td>',
-  '<td><select id="Drug1" onmousedown="deselectDrug()" onchange="selectDrug()">',
-  //'<option value="simvastatin">simvastatin</option>',
-  //'<option value="ketoconazole">ketoconazole</option>',
-  '</select>',
-  '</td>',
-
-  '<td><strong>Type: </strong></td>',
-  '<td><input type="radio" name="Type1" id="Type1" class="Type1" value="active ingredient">active ingredient',
-  '<input type="radio" name="Type1" id="Type1" class="Type1" value="metabolite">metabolite',
-  '<input type="radio" name="Type1" id="Type1" class="Type1" value="drug product">drug product',
-  '<input type="radio" name="Type1" id="Type1" class="Type1" value="drug group">drug group',
-  '</td>',
-
-  '<td><strong>Evidence: </strong></td><td>',
-  '<input type="radio" name="Evidence_modality" id="Evidence_modality" class="Evidence_modality" value="for">For',
-  '<input type="radio" name="Evidence_modality" id="Evidence_modality" class="Evidence_modality" value="against">Against',
-  '</td>',
+  '<table class="clear-user-agent-styles">',
 
 
-  '</tr>',
-
-  '<tr><td><strong>Precipitant: </strong></td>',
-  '<td><select id="Drug2" onmousedown="deselectDrug()" onchange="selectDrug()">',
-  //'<option value="simvastatin">simvastatin</option>',
-  //'<option value="ketoconazole">ketoconazole</option>',
-  '</select>',
-  '</td>',
-
-
-
-  '<td width="40px"><strong>Type: </strong></td>',
-  '<td><input type="radio" name="Type2" id="Type2" class="Type2" value="active ingredient">active ingredient',
-  '<input type="radio" name="Type2" id="Type2" class="Type2" value="metabolite">metabolite',
-  '<input type="radio" name="Type2" id="Type2" class="Type2" value="drug product">drug product',
-  '<input type="radio" name="Type2" id="Type2" class="Type2" value="drug group">drug group',
-  '</td>',
-
-
-  '<td width="40px"><strong>Modality: </strong></td><td>',
-  '<input type="radio" name="Modality" id="Modality" class="Modality" value="Positive">Positive',
-  '<input type="radio" name="Modality" id="Modality" class="Modality" value="Negative">Negative',
-  '</td>',
-
-
-  '</tr>',
-  //'</table>',
-
-  //'<table class="clear-user-agent-styles">',
-  '<tr>',
-  '<td><strong>Relationship: </strong></td><td>',
-  '<select id="relationship" onchange="showEnzyme();">',
-  '<option id="r2" value="interact with">interact with</option>',
-  '<option id="r0" value="inhibit">inhibit</option>',
-  '<option id="r1" value="substrate of">substrate of</option>',
-  '</select></td>',
-
-  '<td><strong>Assertion Type: </strong></td><td>',
-  '<select id="assertion_type" onchange="changeFunc();">',
-  '<option id="DDI" value="Drug Drug Interaction">Drug Drug Interaction</option>',
-  '<option id="clinical" value="DDI clinical trial">DDI clinical trial</option>',
-  '</select></td>',
-
-
-
-  '</tr>',
-
-  '<tr>',
-
-  '<td><strong  id="enzymesection1"  style="display: none;">Enzyme: </strong></td><td>',
-  '<select id="enzyme"  style="display: none;">',
-  '<option value="cyp1a1">cyp1a1</option>',
-  '<option value="cyp1a2">cyp1a2</option>',
-  '<option value="cyp1b1">cyp1b1</option>',
-  '<option value="cyp2a6">cyp2a6</option>',
-  '<option value="cyp2a13">cyp2a13</option>',
-  '<option value="cyp2b6">cyp2b6</option>',
-  '<option value="cyp2c8">cyp2c8</option>',
-  '<option value="cyp2c9">cyp2c9</option>',
-  '<option value="cyp2c19">cyp2c19</option>',
-  '<option value="cyp2d6">cyp2d6</option>',
-  '<option value="cyp2e1">cyp2e1</option>',
-  '<option value="cyp2j2">cyp2j2</option>',
-  '<option value="cyp3a4">cyp3a4</option>',
-  '<option value="cyp3a5">cyp3a5</option>',
-  '<option value="cyp4a11">cyp4a11</option>',
-  '<option value="cyp2c8">cyp2c8</option>',
-  '<option value="cyp2c9">cyp2c9</option>',
-  '<option value="cyp2c19">cyp2c19</option>',
-  '</select></td>',
-
-  '<td width="40px"><strong>Comment: </strong></td><td>',
-  '<textarea id="Comment" class="Comment"></textarea>',
-  '</td>',
-
-
-  '</tr>',
+  form1,
 
 
   '</table>',
 
   '</div>',
 
-  '<div style="margin-left: 0px;">',
   '<div id = "altersection" style="display: none;">',
 
   '<div style="float:left;margin-right: 15px">',
+
+
   '<div><strong>Clinical Trial: </strong><strong id="modalityinalter"></strong>&nbsp<strong id="evidenceinalter"></strong></div>',
   '<strong id="objectinalter"></strong>',
   '<div>',
@@ -308,7 +303,6 @@ Template.content = [
   '</div>',
   '</div>',
 
-  '</div>',
   '</div>',
   '</div>',
   '    <div class="annotator-controls1">',
