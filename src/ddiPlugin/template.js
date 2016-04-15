@@ -152,7 +152,6 @@ var template = Handlebars.compile(source);
 var form1 = template(context1);
 
 Template.content = [
-
   '<div class="annotator-outer annotator-editor annotator-invert-y annotator-invert-x">',
   '  <form class="annotator-widget">',
   '    <ul class="annotator-listing"></ul>',
@@ -164,9 +163,7 @@ Template.content = [
   '<div onclick="flipdrug()" style="float:left" class="flipicon"></div>',
   '<table class="clear-user-agent-styles">',
 
-
   form1,
-
 
   '</table>',
 

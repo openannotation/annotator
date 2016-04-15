@@ -41,7 +41,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
         var editorSelf = this;
         this.fields = [];
         this.annotation = {};
-        //console.log("[INFO] ddi - editor - constructor");
+        console.log("[INFO] ddi - editor - constructor");
 
         if (this.options.defaultFields) {
 
@@ -64,9 +64,11 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                     $('#Drug1 option').remove();
                     $('#Drug2 option').remove();
                     var flag = 0;
+
                     console.log(annotations.length);
+
                     var anns = annotations.slice();
-                    //console.log("(1):"+anns[0].quote);
+
                     var quoteobject = $('#quotearea');
                     var quotecontent = $('#quotearea').html();
                     //console.log(quotecontent);
@@ -76,13 +78,16 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                     for (var i = 0, len = anns.length; i < len; i++) {
                         if ((anns[i].annotationType == "DrugMention") && (list.indexOf(anns[i].quote) < 0)) {
                             list.push(anns[i].quote);
-                            //console.log(anns[i].quote);
                         }
                     }
+
+                    //console.log(list);
+
                     for (var i = 0, len = list.length; i < len; i++) {
                         if (quotecontent.indexOf(list[i]) >= 0) {
                             index++;
                             //quotecontent.split(list[i]).join("<span class='highlightdrug'>"+list[i]+"<sup>"+index+"</sup></span>");
+
                             //console.log(quotecontent);
                             quotecontent = quotecontent.replace(list[i], "<span class='highlightdrug'>" + list[i] + "</span>");
                             $('#Drug1').append($('<option>', {
@@ -149,7 +154,6 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                      $(field).find('#clinical').on('selected',function() {
                      $('#ddisection').hide();
                      });*/
-                    console.debug("annotation.assertion_type:" + annotation.assertion_type);
                     if (annotation.assertion_type == "DDI clinical trial") {
                         $('#altersection').show();
                         $('.moreinfo').show();
@@ -336,19 +340,23 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                         if (this.value === annotation.Drug2) $(this).attr('selected', true);
                     });
                     $('#relationship option').each(function () {
-                        if (this.value === annotation.relationship) {
+                        if (this.value === annotation.relationship) {                
                             $(this).attr('selected', true);
                             signal = 0;
                         }
                     });
+
                     if (signal == 1) {
                         $('#relationship option')[0].selected = "selected";
                     } else {
                         signal = 1;
                     }
 
-                    if(annotation.relationship == "inhibit"||annotation.relationship == "substrate of")
+                    if(annotation.relationship == "inhibits"||annotation.relationship == "substrate of")
                     {
+                        // show enzyme field if relationship is inhibits or substrate of
+                        $(document).ready(function() { showEnzyme(); });
+
                         $('#enzyme option').each(function () {
                             if (this.value === annotation.enzyme) {
                                 $(this).attr('selected', true);
@@ -430,10 +438,12 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                     annotation.Comment = $('#Comment').val();
                     annotation.annotationType = "DDI";
                     annotation.relationship = $('#relationship option:selected').text();
-                    if(annotation.relationship == "inhibit"||annotation.relationship == "substrate of")
+                    if(annotation.relationship == "inhibits"||annotation.relationship == "substrate of") {
                         annotation.enzyme = $('#enzyme option:selected').text();
-                    else
+                    } else {
                         annotation.enzyme = "";
+                    }
+
                     if(annotation.assertion_type=="DDI clinical trial")
                     {
                         annotation.Number_participants = $('#Number_participants').val();
@@ -547,8 +557,9 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
             alert("[INFO] Exceeding max lengh of text 1600!");
             $('.btn-success').click();
             this.cancel();
-
         }
+        
+
         var annotations;
         if(getURLParameter("sourceURL")==null)
             var sourceURL = getURLParameter("file").trim();
