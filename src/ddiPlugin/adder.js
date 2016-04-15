@@ -6,7 +6,7 @@ var Widget = require('./../ui/widget').Widget,
 var $ = util.$;
 var _t = util.gettext;
 
-var NS = 'annotator-adder';
+var NS = 'annotator-adderddi';
 
 
 // Adder shows and hides an annotation adder button that can be clicked on to
@@ -133,8 +133,14 @@ var ddiAdder = Widget.extend({
 
         event.preventDefault();
 
+        console.log("[DEBUG] ddiadder - hide hl and ddi");
+
         // Hide the adder
         this.hide();
+        // Hide drug highlight dder
+        // $('.annotator-adderhl').hide();
+        $('.annotator-adderhl').removeClass().addClass('annotator-adderhl annotator-hide');
+
         this.ignoreMouseup = false;
 
         // Create a new annotation
@@ -152,7 +158,7 @@ var ddiAdder = Widget.extend({
 // });
 
 ddiAdder.template = [
-    '<div class="annotator-adder annotator-hide">',
+    '<div class="annotator-adderddi annotator-hide">',
     '  <button type="button" title="DDI" onclick="showright(),editorload()">' + _t('Annotate') + '</button>',
     '</div>'
 ].join('\n');

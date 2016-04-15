@@ -130,8 +130,14 @@ var Adder = Widget.extend({
 
         event.preventDefault();
 
+        console.log("[DEBUG] hladder - hide hl and ddi");
+
         // Hide the adder
         this.hide();
+        // Hide DDI adder
+        // $('.annotator-adderddi').hide();
+        $('.annotator-adderddi').removeClass().addClass('annotator-adderddi annotator-hide');
+
         this.ignoreMouseup = false;
 
         // Create a new annotation

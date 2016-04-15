@@ -137,10 +137,9 @@ var Viewer = exports.Viewer = Widget.extend({
 
 	    // click event handling
 	    $(this.options.autoViewHighlights)
-                .on("click." + NS, '#annotator-hl', function (event) {
-
+                //.on("click." + NS, '#annotator-hl', function (event) {
+                .on("click." + NS, 'span[name="annotator-hl"]', function (event) {
                     if (event.target === this) {
-			//console.log("viewer - constructor - autoViewHighlights - mouseover");
                         self._onHighlightMouseover(event);
                     }
                 });

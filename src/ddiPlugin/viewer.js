@@ -165,10 +165,9 @@ var ddiViewer = exports.ddiViewer = Widget.extend({
 
 	    // click event handling
             $(this.options.autoViewHighlights)
-                .on("click." + NS, '#annotator-ddi', function (event) {
-
+                //.on("click." + NS, '#annotator-ddi', function (event) {
+                .on("click." + NS, 'span[name="annotator-ddi"]', function (event) {
                     if (event.target === this) {
-			//console.log("ddiviewer - constructor - call autoViewHighlights");
                         self._onHighlightMouseover(event);
                     }
                 });
@@ -176,13 +175,11 @@ var ddiViewer = exports.ddiViewer = Widget.extend({
             $(this.document.body)
                 .on("mousedown." + NS, function (e) {
                     if (e.which === 1) {
-			//console.log("DDI change mousedown to true");
                         self.mouseDown = true;
                     }
                 })
                 .on("mouseup." + NS, function (e) {
                     if (e.which === 1) {
-			//console.log("DDI change mousedown to false");
                         self.mouseDown = false;
                     }
                 });

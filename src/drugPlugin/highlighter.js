@@ -36,7 +36,7 @@ function highlightRange(normedRange, cssClass) {
             if (node.parentNode.className != "annotator-hl"){
                 var hl = global.document.createElement('span');
                 hl.className = cssClass;
-	            hl.id = 'annotator-hl';
+	            //hl.id = 'annotator-hl';
                 hl.setAttribute("name", "annotator-hl");
                 node.parentNode.replaceChild(hl, node);
                 hl.appendChild(node);
@@ -44,8 +44,6 @@ function highlightRange(normedRange, cssClass) {
             }
         }
     }
-    //console.log(results);
-
     return results;
 }
 
@@ -261,8 +259,10 @@ Highlighter.prototype.draw = function (annotation) {
 
     // Add a data attribute for annotation id if the annotation has one
     if (typeof annotation.id !== 'undefined' && annotation.id !== null) {
+        // $(annotation._local.highlights)
+        //     .attr('data-annotation-id', annotation.id);
         $(annotation._local.highlights)
-            .attr('data-annotation-id', annotation.id);
+            .attr('id', annotation.id);
     }
 
     return annotation._local.highlights;
