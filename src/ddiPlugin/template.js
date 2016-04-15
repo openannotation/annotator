@@ -73,7 +73,7 @@ var context1 = {
         type:"dropdown",
         name:"Relationship: ",
         id:"relationship",
-        options:["interact with","inhibit","substrate of"],
+        options:["interact with","inhibits","substrate of"],
         optionsID:["r2","r0","r1"]
       },
       {
@@ -106,7 +106,179 @@ var context1 = {
     ]
 };
 
-Handlebars.registerHelper('buildForm', function(items, options) {
+var context2 = {
+  questions: [
+    {
+      type: "text",
+      id: "objectinalter"
+    },
+    {
+      type: "input",
+      name: "Dose in MG: ",
+      id: "DoseMG_object"
+    },
+    {
+      type: "dropdown",
+      name: "Formulation: ",
+      id: "FormulationO",
+      options:["UNK","Oral","IV","transdermal"]
+    },
+    {
+      type: "input",
+      name: "Duration(days): ",
+      id: "Duration_object"
+    },
+    {
+      type: "dropdown",
+      name: "Regiments: ",
+      id: "RegimentsO",
+      options:["UNK","SD","QD","BID","TID","QID","Q12","Q8","Q6","Daily"]
+    },
+    {
+      type: "text",
+      id: "preciptinalter"
+    },
+    {
+      type: "input",
+      name: "Dose in MG: ",
+      id: "DoseMG_precipitant"
+    },
+    {
+      type: "dropdown",
+      name: "Formulation: ",
+      id: "FormulationP",
+      options:["UNK","Oral","IV","transdermal"]
+    },
+    {
+      type: "input",
+      name: "Duration(days): ",
+      id: "Duration_precipitant"
+    },
+    {
+      type: "dropdown",
+      name: "Regiments: ",
+      id: "RegimentsP",
+      options:["UNK","SD","QD","BID","TID","QID","Q12","Q8","Q6","Daily"]
+    }
+  ]
+};
+
+var context3 = {
+  questions: [
+    {
+      type: "input",
+      name: "The number of participants: ",
+      id: "Number_participants"
+    },
+    {
+      type: "text",
+      name: "AUC_i/AUC: "
+    },
+    {
+      type: "input",
+      name: "Auc: ",
+      id: "Auc"
+    },
+    {
+      type: "dropdown",
+      name: "Type: ",
+      id: "AucType",
+      options:["UNK","Percent","Fold"]
+    },
+    {
+      type: "dropdown",
+      name: "Direction: ",
+      id: "AucDirection",
+      options:["UNK","Increase","Decrease"]
+    },
+    {
+      type: "text",
+      name: "CL_i/CL: "
+    },
+    {
+      type: "input",
+      name: "Cl: ",
+      id: "Cli"
+    },
+    {
+      type: "dropdown",
+      name: "Type: ",
+      id: "ClType",
+      options:["UNK","Percent","Fold"]
+    },
+    {
+      type: "dropdown",
+      name: "Direction: ",
+      id: "ClDirection",
+      options:["UNK","Increase","Decrease"]
+    },
+    {
+      type: "text",
+      name: "Cmax: "
+    },
+    {
+      type: "input",
+      name: "cmax: ",
+      id: "cmax"
+    },
+    {
+      type: "dropdown",
+      name: "Type: ",
+      id: "cmaxType",
+      options:["UNK","Percent","Fold"]
+    },
+    {
+      type: "dropdown",
+      name: "Direction: ",
+      id: "cmaxDirection",
+      options:["UNK","Increase","Decrease"]
+    },
+    {
+      type: "text",
+      name: "Cmin: "
+    },
+    {
+      type: "input",
+      name: "cmin: ",
+      id: "cmin"
+    },
+    {
+      type: "dropdown",
+      name: "Type: ",
+      id: "cminType",
+      options:["UNK","Percent","Fold"]
+    },
+    {
+      type: "dropdown",
+      name: "Direction: ",
+      id: "cminDirection",
+      options:["UNK","Increase","Decrease"]
+    },
+    {
+      type: "text",
+      name: "T1/2: "
+    },
+    {
+      type: "input",
+      name: "t12: ",
+      id: "t12"
+    },
+    {
+      type: "dropdown",
+      name: "Type: ",
+      id: "t12Type",
+      options:["UNK","Percent","Fold"]
+    },
+    {
+      type: "dropdown",
+      name: "Direction: ",
+      id: "t12Direction",
+      options:["UNK","Increase","Decrease"]
+    }
+  ]
+};
+
+Handlebars.registerHelper('buildForm1', function(items, options) {
   var out = "";
 
   for(var i=0, l=items.length; i<l; i++) {
@@ -145,7 +317,9 @@ Handlebars.registerHelper('buildForm', function(items, options) {
   return out + "";
 });
 
-var source = "{{#buildForm questions}}{{/buildForm}}";
+
+
+var source = "{{#buildForm1 questions}}{{/buildForm1}}";
 
 var template = Handlebars.compile(source);
 
@@ -170,11 +344,10 @@ Template.content = [
   '</div>',
 
   '<div id = "altersection" style="display: none;">',
-
   '<div style="float:left;margin-right: 15px">',
+  '<div><strong>Clinical Trial: </strong><br>',
+  '<strong id="modalityinalter"></strong>&nbsp<strong id="evidenceinalter"></strong></div>',
 
-
-  '<div><strong>Clinical Trial: </strong><strong id="modalityinalter"></strong>&nbsp<strong id="evidenceinalter"></strong></div>',
   '<strong id="objectinalter"></strong>',
   '<div>',
   'Dose in MG: <input style="width:30px;" type="text" id="DoseMG_precipitant">',
@@ -222,9 +395,8 @@ Template.content = [
   '<option value="Daily">Daily</option>',
   '</select>',
   '</div></div>',
-  '<div><div><strong>The number of participants: </strong>',
+  '<div><strong>The number of participants: </strong>',
   '<input type="text" id="Number_participants">',
-  '</div>',
   '<table class="clear-user-agent-styles auc"><tr><td width="70px"><strong>AUC_i/AUC: </strong></td>',
   '<td>Auc: <input style="width:30px;" type="text" id="Auc"></td>',
   '<td>Type: <select id="AucType">',
