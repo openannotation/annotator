@@ -1,7 +1,7 @@
 "use strict";
 
 var Handlebars = require('handlebars');
-var fs = require("fs");
+//var fs = require("fs");
 var extend = require('backbone-extend-standalone');
 var Template = function(){console.log("success");};
 var $ = require('jquery');
@@ -11,22 +11,8 @@ var $ = require('jquery');
 //var template = Handlebars.compile(source);
 //var source   = $("#entry-template").html();
 //var template = Handlebars.compile(source);
-var data = { "name": "Alan", "hometown": "Somewhere, TX",
-  "kids": [{"name": "Jimmy", "age": "12"}, {"name": "Sally", "age": "4"}]};
-
-//Template.result = template(data);
-/*var content;
-// First I want to read the file
-fs.readFile('./test.html', function read(err, data) {
-  if (err) {
-    throw err;
-  }
-  content = data;
-
-  // Invoke the next step here however you like
-  console.log(content);   // Put all of the code here (not the best solution)
-  //processFile();          // Or put the next step in a function and invoke it
-});*/
+/*var data = { "name": "Alan", "hometown": "Somewhere, TX",
+  "kids": [{"name": "Jimmy", "age": "12"}, {"name": "Sally", "age": "4"}]};*/
 
 
 var context1 = {
@@ -167,7 +153,7 @@ var context3 = {
   questions: [
     {
       type: "input",
-      name: "The number of participants: ",
+      name: "Number of participants: ",
       id: "Number_participants"
     },
     {
@@ -314,16 +300,67 @@ Handlebars.registerHelper('buildForm1', function(items, options) {
       out = out + "</tr>";
   }
 
-  return out + "";
+  return out;
 });
 
+Handlebars.registerHelper('buildForm3', function(items, options) {
+  var out = "";
+  out += "<strong>"+items[0].name+"</strong>";
+  out += "<input type='text' id='"+items[0].id+"'>";
+  out += "<table class='clear-user-agent-styles auc'>";
+  for(var i=1, l=items.length; i<l; i++) {
+    if((i-1)%4==0)
+      out += "<tr>";
+    if(items[i].type=="text")
+      out += "<td><strong>"+items[i].name+"</strong></td>";
+    else if(items[i].type=="input")
+      out += "<td>"+items[i].name + "<input style='width:30px;' type='text' id='"+items[i].id+"'></td>";
+    else if(items[i].type=="dropdown") {
+      out += "<td>"+items[i].name + "<select id='" + items[i].id + "'>";
+      for(var j=0, jl=items[i].options.length;j<jl;j++)
+      {
+        out += "<option value='"+items[i].options[j] +"'>"+ items[i].options[j]+"</option>";
+      }
+      out += "</select></td>";
+      if(i%4==0)
+        out += "</tr>";
+    }
+  }
+  return out + "</table>";
+});
 
+Handlebars.registerHelper('buildForm2', function(items, options) {
+  var out = "";
+  for(var i=0, l=items.length; i<l; i++) {
+    if(items[i].type=="text")
+      out += "<strong id='"+items[i].id+"'></strong><br>";
+    else if(items[i].type=="input")
+      out += items[i].name + "<input style='width:30px;' type='text' id='"+items[i].id+"'>";
+    else if(items[i].type=="dropdown") {
+      out += items[i].name + "<select id='" + items[i].id + "'>";
+      for(var j=0, jl=items[i].options.length;j<jl;j++)
+      {
+        out += "<option value='"+items[i].options[j] +"'>"+ items[i].options[j]+"</option>";
+      }
+      out += "</select>";
+      if(items[i].id=="RegimentsP"||items[i].id=="RegimentsO")
+        out += "<br>";
+    }
+  }
+  return out;
+});
 
 var source = "{{#buildForm1 questions}}{{/buildForm1}}";
-
 var template = Handlebars.compile(source);
-
 var form1 = template(context1);
+
+source = "{{#buildForm2 questions}}{{/buildForm2}}";
+template = Handlebars.compile(source);
+var form2 = template(context2);
+
+source = "{{#buildForm3 questions}}{{/buildForm3}}";
+template = Handlebars.compile(source);
+var form3 = template(context3);
 
 Template.content = [
   '<div class="annotator-outer annotator-editor annotator-invert-y annotator-invert-x">',
@@ -331,7 +368,6 @@ Template.content = [
   '    <ul class="annotator-listing"></ul>',
   '<div class="annotationbody" style="margin-left:5px;margin-right:0px;height:100%;line-height:200%;margin-top:0px;overflow-y: hidden">',
   '<div id="tabs">',
-
   '<div id="tabs-1" style="margin-bottom:0px;">',
   '<div id="firstsection" style="margin-top:10px;margin-left:5px;">',
   '<div onclick="flipdrug()" style="float:left" class="flipicon"></div>',
@@ -340,154 +376,29 @@ Template.content = [
   form1,
 
   '</table>',
-
   '</div>',
-
   '<div id = "altersection" style="display: none;">',
   '<div style="float:left;margin-right: 15px">',
   '<div><strong>Clinical Trial: </strong><br>',
   '<strong id="modalityinalter"></strong>&nbsp<strong id="evidenceinalter"></strong></div>',
 
-  '<strong id="objectinalter"></strong>',
+  form2,
+
+  '</div>',
   '<div>',
-  'Dose in MG: <input style="width:30px;" type="text" id="DoseMG_precipitant">',
-  'Formulation: <select id="FormulationP">',
-  '<option value="UNK">UNK</option>',
-  '<option value="Oral">Oral</option>',
-  '<option value="IV">IV</option>',
-  '<option value="transdermal">transdermal</option>',
-  '</select>',
-  'Duration(days): <input style="width:30px;" type="text" id="Duration_precipitant">',
-  'Regiments: <select id="RegimentsP">',
-  '<option value="UNK">UNK</option>',
-  '<option value="SD">SD</option>',
-  '<option value="QD">QD</option>',
-  '<option value="BID">BID</option>',
-  '<option value="TID">TID</option>',
-  '<option value="QID">QID</option>',
-  '<option value="Q12">Q12</option>',
-  '<option value="Q8">Q8</option>',
-  '<option value="Q6">Q6</option>',
-  '<option value="Daily">Daily</option>',
-  '</select>',
-  '</div>',
 
-  '<strong id="preciptinalter"></strong>',
-  '<div>',
-  'Dose in MG: <input style="width:30px;" type="text" id="DoseMG_object">',
-  'Formulation: <select id="FormulationO">',
-  '<option value="UNK">UNK</option>',
-  '<option value="Oral">Oral</option>',
-  '<option value="IV">IV</option>',
-  '<option value="transdermal">transdermal</option>',
-  '</select>',
-  'Duration(days): <input style="width:30px;" type="text" id="Duration_object">',
-  'Regiments: <select id="RegimentsO">',
-  '<option value="UNK">UNK</option>',
-  '<option value="SD">SD</option>',
-  '<option value="QD">QD</option>',
-  '<option value="BID">BID</option>',
-  '<option value="TID">TID</option>',
-  '<option value="QID">QID</option>',
-  '<option value="Q12">Q12</option>',
-  '<option value="Q8">Q8</option>',
-  '<option value="Q6">Q6</option>',
-  '<option value="Daily">Daily</option>',
-  '</select>',
-  '</div></div>',
-  '<div><strong>The number of participants: </strong>',
-  '<input type="text" id="Number_participants">',
-  '<table class="clear-user-agent-styles auc"><tr><td width="70px"><strong>AUC_i/AUC: </strong></td>',
-  '<td>Auc: <input style="width:30px;" type="text" id="Auc"></td>',
-  '<td>Type: <select id="AucType">',
-  '<option value="UNK">UNK</option>',
-  '<option value="Percent">Percent</option>',
-  '<option value="Fold">Fold</option>',
-  '</select></td>',
-  '<td>Direction: <select id="AucDirection">',
-  '<option value="UNK">UNK</option>',
-  '<option value="Increase">Increase</option>',
-  '<option value="Decrease">Decrease</option>',
-  '</select>',
-  '</td></tr>',
+  form3,
 
-  '<tr><td width="70px"><strong>CL_i/CL: </strong></td>',
-  '<td>Cl: <input style="width:30px;" type="text" id="Cli"></td>',
-  '<td>Type: <select id="ClType">',
-  '<option value="UNK">UNK</option>',
-  '<option value="Percent">Percent</option>',
-  '<option value="Fold">Fold</option>',
-  '</select></td>',
-  '<td>Direction: <select id="ClDirection">',
-  '<option value="UNK">UNK</option>',
-  '<option value="Increase">Increase</option>',
-  '<option value="Decrease">Decrease</option>',
-  '</select>',
-  '</td></tr>',
-
-  '<tr><td width="70px"><strong>Cmax:</strong></td>',
-  '<td>cmax: <input style="width:30px;" type="text" id="cmax"></td>',
-  '<td>Type: <select id="cmaxType">',
-  '<option value="UNK">UNK</option>',
-  '<option value="Percent">Percent</option>',
-  '<option value="Fold">Fold</option>',
-  '</select></td>',
-  '<td>Direction: <select id="cmaxDirection">',
-  '<option value="UNK">UNK</option>',
-  '<option value="Increase">Increase</option>',
-  '<option value="Decrease">Decrease</option>',
-  '</select>',
-  '</td></tr>',
-
-  '<tr><td width="70px"><strong>Cmin:</strong></td>',
-  '<td>cmin: <input style="width:30px;" type="text" id="cmin"></td>',
-  '<td>Type: <select id="cminType">',
-  '<option value="UNK">UNK</option>',
-  '<option value="Percent">Percent</option>',
-  '<option value="Fold">Fold</option>',
-  '</select></td>',
-  '<td>Direction: <select id="cminDirection">',
-  '<option value="UNK">UNK</option>',
-  '<option value="Increase">Increase</option>',
-  '<option value="Decrease">Decrease</option>',
-  '</select>',
-  '</td></tr>',
-
-  '<tr><td width="70px"><strong>T1/2:</strong></td>',
-  '<td>t12: <input style="width:30px;" type="text" id="t12"></td>',
-  '<td>Type: <select id="t12Type">',
-  '<option value="UNK">UNK</option>',
-  '<option value="Percent">Percent</option>',
-  '<option value="Fold">Fold</option>',
-  '</select></td>',
-  '<td>Direction: <select id="t12Direction">',
-  '<option value="UNK">UNK</option>',
-  '<option value="Increase">Increase</option>',
-  '<option value="Decrease">Decrease</option>',
-  '</select>',
-  '</td></tr>',
-
-
-  '</table></div>',
   '</div>',
   '</div>',
-
+  '</div>',
   '</div>',
   '</div>',
   '    <div class="annotator-controls1">',
-  '     <a href="#cancel" class="annotator-cancel" onclick="showrightbyvalue()" id="annotator-cancel">',
-  'Cancel',
-  '</a>',
-  '      <a href="#save"',
-  '         class="annotator-save annotator-focus" onclick="showrightbyvalue()">',
-  'Save',
-  '</a>',
-  '         <a class="annotator-back" id="back" onclick="backtofirst()" style="display:none">',
-  'Back',
-  '</a>',
-  '         <a class="annotator-next" id="forward" onclick="forwardtosecond()" style="display:none">',
-  'Next',
-  '</a>',
+  '     <a href="#cancel" class="annotator-cancel" onclick="showrightbyvalue()" id="annotator-cancel">Cancel</a>',
+  '     <a href="#save" class="annotator-save annotator-focus" onclick="showrightbyvalue()">Save</a>',
+  '     <a class="annotator-back" id="back" onclick="backtofirst()" style="display:none">Back</a>',
+  '     <a class="annotator-next" id="forward" onclick="forwardtosecond()" style="display:none">Next</a>',
   '    </div>',
   '  </form>',
   '</div>'
