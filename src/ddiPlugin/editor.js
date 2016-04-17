@@ -334,20 +334,22 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
 
                     //load all content
                     $("#Drug1 > option").each(function () {
-                        if (this.value === annotation.Drug1) $(this).attr('selected', true);
+                        if (this.value === annotation.Drug1) $(this).prop('selected', true);
                     });
                     $('#Drug2 > option').each(function () {
-                        if (this.value === annotation.Drug2) $(this).attr('selected', true);
+                        if (this.value === annotation.Drug2) $(this).prop('selected', true);
                     });
                     $('#relationship option').each(function () {
-                        if (this.value === annotation.relationship) {                
-                            $(this).attr('selected', true);
+                        //$(this).prop("selected", false);
+
+                        if (this.value == annotation.relationship) {
+                            $(this).prop("selected", true);
                             signal = 0;
                         }
                     });
 
                     if (signal == 1) {
-                        $('#relationship option')[0].selected = "selected";
+                        $('#relationship option')[0].prop("selected", true);
                     } else {
                         signal = 1;
                     }
@@ -359,25 +361,28 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
 
                         $('#enzyme option').each(function () {
                             if (this.value === annotation.enzyme) {
-                                $(this).attr('selected', true);
+                                $(this).prop('selected', true);
                                 signal = 0;
                             }
                         });
                         if (signal == 1) {
-                            $('#enzyme option')[0].selected = "selected";
+                            $('#enzyme option')[0].prop("selected",true);
                         } else {
                             signal = 1;
                         }
+                    }else {
+                        $("#enzymesection1").hide();
+                        $("#enzyme").hide();
                     }
 
                     $('#assertion_type option').each(function () {
-                        if (this.value === annotation.assertion_type) {
-                            $(this).attr('selected', true);
+                        if (this.value == annotation.assertion_type) {
+                            $(this).prop('selected', 'selected');
                             signal = 0;
                         }
                     });
                     if (signal == 1) {
-                        $('#assertion_type option')[0].selected = "selected";
+                        $('#assertion_type option')[0].prop("selected",true);
                     } else {
                         signal = 1;
                     }

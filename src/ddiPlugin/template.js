@@ -60,7 +60,7 @@ var context1 = {
         name:"Relationship: ",
         id:"relationship",
         options:["interact with","inhibits","substrate of"],
-        optionsID:["r2","r0","r1"]
+        optionsID:["r0","r1","r2"]
       },
       {
         type:"dropdown",
