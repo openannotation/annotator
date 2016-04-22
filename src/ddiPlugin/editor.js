@@ -331,7 +331,6 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                         signal = 1;
                     }
 
-
                     //load all content
                     $("#Drug1 > option").each(function () {
                         if (this.value === annotation.Drug1) $(this).prop('selected', true);
@@ -339,50 +338,53 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                     $('#Drug2 > option').each(function () {
                         if (this.value === annotation.Drug2) $(this).prop('selected', true);
                     });
-                    $('#relationship option').each(function () {
+
+                    $('#relationship > option').each(function () {
                         //$(this).prop("selected", false);
 
                         if (this.value == annotation.relationship) {
                             $(this).prop("selected", true);
                             signal = 0;
-                        }
+                        }else
+                            $(this).prop("selected", false);
                     });
 
                     if (signal == 1) {
-                        $('#relationship option')[0].prop("selected", true);
+                        $('#relationship option:eq(0)').prop("selected", true);
                     } else {
                         signal = 1;
                     }
 
-                    if(annotation.relationship == "inhibits"||annotation.relationship == "substrate of")
+                    if(1)
                     {
                         // show enzyme field if relationship is inhibits or substrate of
                         $(document).ready(function() { showEnzyme(); });
-
                         $('#enzyme option').each(function () {
                             if (this.value === annotation.enzyme) {
                                 $(this).prop('selected', true);
                                 signal = 0;
-                            }
+                            }else
+                                $(this).prop('selected', false);
                         });
                         if (signal == 1) {
-                            $('#enzyme option')[0].prop("selected",true);
+                            $('#enzyme option:eq(0)').prop("selected",true);
+
                         } else {
                             signal = 1;
                         }
-                    }else {
-                        $("#enzymesection1").hide();
-                        $("#enzyme").hide();
                     }
 
                     $('#assertion_type option').each(function () {
                         if (this.value == annotation.assertion_type) {
-                            $(this).prop('selected', 'selected');
+                            $(this).prop('selected', true);
                             signal = 0;
+                        }else {
+                            $(this).prop('selected', false);
                         }
                     });
                     if (signal == 1) {
-                        $('#assertion_type option')[0].prop("selected",true);
+                        $('#assertion_type option:eq(0)').prop("selected",true);
+                        $("#altersection").hide();$("#forward").hide();
                     } else {
                         signal = 1;
                     }
@@ -393,7 +395,7 @@ var ddiEditor = exports.ddiEditor = Editor.extend({
                         if (this.value === annotation.Role1) this.checked = true; else this.checked = false;
                     });
                     $('.Type2').each(function () {
-                        if (this.value === annotation.Type2) this.checked = true; else this.checked = false;
+                        if (this.value === annotation.Type2) $(this).prop('checked',true); else $(this).prop('checked',false);
                     });
                     $('.Role2').each(function () {
                         if (this.value === annotation.Role2) this.checked = true; else this.checked = false;
