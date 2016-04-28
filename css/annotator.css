@@ -24,14 +24,18 @@
 /* Images
 -------------------------------------------------------------------- */
 
+.annotator-addermp {
+	background-image: url(../img/annotator-icon-spriteMP.png?embed);
+	background-repeat: no-repeat;
+}
 
 .annotator-adderddi {
-	background-image: url(../img/annotator-icon-sprite.png?embed);
+	background-image: url(../img/annotator-icon-spriteDDI.png?embed);
 	background-repeat: no-repeat;
 }
 
 .annotator-adderhl {
-	background-image: url(../img/annotator-icon-spritehl.png?embed);
+	background-image: url(../img/annotator-icon-spriteDrug.png?embed);
 	background-repeat: no-repeat;
 }
 
@@ -125,6 +129,37 @@ span[name="annotator-ddi"] {
 	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#4D007CFF, endColorstr=#4D007CFF)";  /* 0.3 == 4D in MS filters */
 }
 
+
+/* Annotator Micropublication
+-------------------------------------------------------------------- */
+.annotator-mp {
+	background: #B0C4DE;
+	background: rgba(176, 196, 222, 0.4);
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#4DFFFF0A, endColorstr=#4DFFFF0A)";  /* 0.3 == 4D in MS filters */
+}
+
+.annotator-mp-temporary {
+	background: #007CFF;
+	background: rgba(0, 124, 255, 0.3);
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#4D007CFF, endColorstr=#4D007CFF)";  /* 0.3 == 4D in MS filters */
+}
+
+/* #annotator-mp { */
+span[name="annotator-mp"] {
+ 	background: #B0C4DE;
+	background: rgba(176, 196, 222, 0.4);
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#4DFFFF0A, endColorstr=#4DFFFF0A)";  /* 0.3 == 4D in MS filters */
+}
+
+#annotator-mp-temporary {
+	background: #007CFF;
+	background: rgba(0, 124, 255, 0.3);
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#4D007CFF, endColorstr=#4D007CFF)";  /* 0.3 == 4D in MS filters */
+}
+
+
+
+
 /* Annotator Wrapper
 -------------------------------------------------------------------- */
 
@@ -136,6 +171,7 @@ span[name="annotator-ddi"] {
        you should update setupDynamicStyle() in annotator.ui.main */
 .annotator-adderhl,
 .annotator-adderddi,
+.annotator-addermp,
 .annotator-outer,
 .annotator-notice {
 	z-index: 1020;
@@ -146,6 +182,7 @@ span[name="annotator-ddi"] {
 }
 .annotator-adderhl,
 .annotator-adderddi,
+.annotator-addermp,
 .annotator-outer,
 .annotator-widget,
 .annotator-notice {
@@ -169,22 +206,35 @@ span[name="annotator-ddi"] {
 	height: 48px;
 	background-position: left top;
 }
+.annotator-addermp {
+	margin-top: -48px;
+	margin-left: -24px;
+	width: 48px;
+	height: 48px;
+	background-position: left top;
+}
 
 .annotator-adderhl:hover {
 	background-position: center top;
 }
-
 .annotator-adderddi:hover {
+	background-position: center top;
+}
+.annotator-addermp:hover {
 	background-position: center top;
 }
 
 .annotator-adderhl:active {
 	background-position: center right;
 }
-
 .annotator-adderddi:active {
 	background-position: center right;
 }
+.annotator-addermp:active {
+	background-position: center right;
+}
+
+
 .annotator-adderhl button {
 	display: block;
 	width: 36px;
@@ -197,6 +247,17 @@ span[name="annotator-ddi"] {
 }
 
 .annotator-adderddi button {
+	display: block;
+	width: 36px;
+	height: 41px;
+	margin: 0 auto;
+	border: none;
+	background: none;
+	text-indent: -999em;
+	cursor: pointer;
+}
+
+.annotator-addermp button {
 	display: block;
 	width: 36px;
 	height: 41px;

@@ -20,6 +20,15 @@ exports.ddiviewer = require('./ddiPlugin/viewer');
 exports.ddiadder = require('./ddiPlugin/adder');
 exports.ddihighlighter = require('./ddiPlugin/highlighter');
 
+//mpPlugin
+exports.mpeditor = require('./mpPlugin/editor');
+exports.mpviewer = require('./mpPlugin/viewer');
+exports.mpadder = require('./mpPlugin/adder');
+exports.mphighlighter = require('./mpPlugin/highlighter');
+
 //dbmi main
 exports.dbmimain = require('./ui/dbmimain').main;
+
+//mp main
+exports.mpmain = require('./ui/mpmain').main;
 

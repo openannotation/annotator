@@ -6,11 +6,11 @@ var xUtil = require('../xutil');
 //var textselector = require('./textselector');
 var textselector = require('./oaselector');
 
-// ddi
-var ddiadder = require('./../ddiPlugin/adder');
-var ddihighlighter = require('./../ddiPlugin/highlighter');
-var ddieditor = require('./../ddiPlugin/editor');
-var ddiviewer = require('./../ddiPlugin/viewer');
+// mp
+var mpadder = require('./../mpPlugin/adder');
+var mphighlighter = require('./../mpPlugin/highlighter');
+var mpeditor = require('./../mpPlugin/editor');
+var mpviewer = require('./../mpPlugin/viewer');
 
 // highlight
 var hladder = require('./../drugPlugin/adder');
@@ -142,7 +142,7 @@ function addPermissionsCheckboxes(editor, ident, authz) {
             var u = ident.who();
             var input = field.find('input');
 
-            //alert('ddi main - load - user ident:' + u)
+            //alert('mp main - load - user ident:' + u)
 
             // Do not show field if no user is set
             if (typeof u === 'undefined' || u === null || u == "") {
@@ -220,6 +220,9 @@ function addPermissionsCheckboxes(editor, ident, authz) {
 
  */
 function main(options) {
+
+    console.log("[INFO] mpmain start()");
+
     if (typeof options === 'undefined' || options === null) {
         options = {};
     }
@@ -230,7 +233,7 @@ function main(options) {
 
     // Local helpers
     var makeHLAnnotation = annotationFactory(options.element, '.annotator-hl');
-    //var makeDDIAnnotation = annotationFactory(options.element, '.annotator-ddi');
+    //var makeMPAnnotation = annotationFactory(options.element, '.annotator-mp');
 
 
     // Object to hold local state
@@ -242,15 +245,13 @@ function main(options) {
         var ident = app.registry.getUtility('identityPolicy');
         var authz = app.registry.getUtility('authorizationPolicy');
 
-        console.log("[INFO] dbmimain start()");
-
-        // ddi adder
-        s.ddiadder = new ddiadder.ddiAdder({
+        // mp adder
+        s.mpadder = new mpadder.mpAdder({
             onCreate: function (ann) {
                 app.annotations.create(ann);
             }
         });
-        s.ddiadder.attach();
+        s.mpadder.attach();
 
         // highlight adder
         s.hladder = new hladder.Adder({
@@ -260,51 +261,51 @@ function main(options) {
         });
         s.hladder.attach();
 
-        // highlight ddi editor
-        s.ddieditor = new ddieditor.ddiEditor({
+        // highlight mp editor
+        s.mpeditor = new mpeditor.mpEditor({
             extensions: options.editorExtensions
         });
-        s.ddieditor.attach();
+        s.mpeditor.attach();
 
         s.hleditor = new hleditor.Editor({
             extensions: options.editorExtensions
         });
         s.hleditor.attach();
 
-        addPermissionsCheckboxes(s.ddieditor, ident, authz);
+        addPermissionsCheckboxes(s.mpeditor, ident, authz);
         //addPermissionsCheckboxes(s.hleditor, ident, authz);
 
         //highlighter
         s.hlhighlighter = new hlhighlighter.Highlighter(options.element);
-        s.ddihighlighter = new ddihighlighter.ddiHighlighter(options.element);
+        s.mphighlighter = new mphighlighter.mpHighlighter(options.element);
 
 
         s.textselector = new textselector.TextSelector(options.element, {
             onSelection: function (ranges, event) {
                 if (ranges.length > 0) {
-                    //var ddiAnnotation = makeDDIAnnotation(ranges);
+                    //var mpAnnotation = makeMPAnnotation(ranges);
                     var hlAnnotation = makeHLAnnotation(ranges);
 
                     s.interactionPoint = util.mousePosition(event);
                     s.hladder.load(hlAnnotation, s.interactionPoint);
-                    s.ddiadder.load(hlAnnotation, s.interactionPoint);
-                    //s.ddiadder.load(ddiAnnotation, s.interactionPoint);
+                    s.mpadder.load(hlAnnotation, s.interactionPoint);
+                    //s.mpadder.load(mpAnnotation, s.interactionPoint);
 
                 } else {
                     s.hladder.hide();
-                    s.ddiadder.hide();
+                    s.mpadder.hide();
 
                 }
             }
         });
 
-        // ddi viewer
-        s.ddiviewer = new ddiviewer.ddiViewer({
+        // mp viewer
+        s.mpviewer = new mpviewer.mpViewer({
             onEdit: function (ann) {
                 // Copy the interaction point from the shown viewer:
-                s.interactionPoint = util.$(s.ddiviewer.element)
+                s.interactionPoint = util.$(s.mpviewer.element)
                     .css(['top', 'left']);
-                if (ann.annotationType == "DDI"){
+                if (ann.annotationType == "MP"){
                     app.annotations.update(ann);
                 }
             },
@@ -321,7 +322,7 @@ function main(options) {
             extensions: options.viewerExtensions
         });
 
-        s.ddiviewer.attach();
+        s.mpviewer.attach();
 
         // highlight viewer
 
@@ -366,22 +367,22 @@ function main(options) {
             s.hladder.destroy();
             s.textselector.destroy();
             s.hlviewer.destroy();
-            s.ddiadder.destroy();
-            s.ddieditor.destroy();
-            s.ddihighlighter.destroy();
-            s.ddiviewer.destroy();
+            s.mpadder.destroy();
+            s.mpeditor.destroy();
+            s.mphighlighter.destroy();
+            s.mpviewer.destroy();
             removeDynamicStyle();
         },
 
         annotationsLoaded: function (anns) {
             s.hlhighlighter.drawAll(anns);
-            s.ddihighlighter.drawAll(anns);
+            s.mphighlighter.drawAll(anns);
 
         },
         annotationCreated: function (ann) {
             // yifan draw annotation on text 
-            if (ann.annotationType == "DDI"){
-                s.ddihighlighter.draw(ann);
+            if (ann.annotationType == "MP"){
+                s.mphighlighter.draw(ann);
 
             } else if (ann.annotationType == "DrugMention"){
                 s.hlhighlighter.draw(ann);
@@ -391,13 +392,13 @@ function main(options) {
         },
         annotationDeleted: function (ann) {
             s.hlhighlighter.undraw(ann);
-            s.ddihighlighter.undraw(ann);
+            s.mphighlighter.undraw(ann);
 
         },
         annotationUpdated: function (ann) {
 
-            if (ann.annotationType == "DDI"){
-                s.ddihighlighter.redraw(ann);
+            if (ann.annotationType == "MP"){
+                s.mphighlighter.redraw(ann);
             } else if (ann.annotationType == "DrugMention"){
                 s.hlhighlighter.redraw(ann);
             } else {
@@ -413,14 +414,14 @@ function main(options) {
             // done.
 
             // yifan: call different editor based on annotation type
-            if (annotation.annotationType == "DDI"){
-                return s.ddieditor.load(s.interactionPoint,annotation);
+            if (annotation.annotationType == "MP"){
+                return s.mpeditor.load(s.interactionPoint,annotation);
             } else if (annotation.annotationType == "DrugMention") {
                 // return s.hleditor.load(annotation, s.interactionPoint);
                 // yifan: not show editor when typed as Drug mention
                 return null;
             } else {
-                //return s.ddieditor.load(annotation, s.interactionPoint);
+                //return s.mpeditor.load(annotation, s.interactionPoint);
                 return null;
             }
 
@@ -431,13 +432,13 @@ function main(options) {
 
             //alert('testmain.js - beforeAnnotationUpdated - annotation type defined: ' + annotation.annotationType);
 
-            if (annotation.annotationType == "DDI"){
-                return s.ddieditor.load(s.interactionPoint,annotation);
+            if (annotation.annotationType == "MP"){
+                return s.mpeditor.load(s.interactionPoint,annotation);
             } else if (annotation.annotationType == "DrugMention") {
                 // return s.hleditor.load(annotation, s.interactionPoint);
                 return null;
             } else {
-                //return s.ddieditor.load(annotation, s.interactionPoint);
+                //return s.mpeditor.load(annotation, s.interactionPoint);
                 return null;
             }
         }
