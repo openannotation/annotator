@@ -23,10 +23,19 @@ var mpAdder = Widget.extend({
 
         var self = this;
         this.element
-            .on("click." + NS, 'button', function (e) {
+
+        // MP: add menu for create claim and add data
+
+        // .on("click." + NS, 'button', function (e) {
+        //     self._onClick(e);
+        // })
+            .on("click." + NS, 'li', function (e) {
                 self._onClick(e);
             })
-            .on("mousedown." + NS, 'button', function (e) {
+        // .on("mousedown." + NS, 'button', function (e) {
+        //     self._onMousedown(e);
+        // });
+            .on("mousedown." + NS, 'li', function (e) {
                 self._onMousedown(e);
             });
 
@@ -92,7 +101,6 @@ var mpAdder = Widget.extend({
         if (event.which > 1) {
             return;
         }
-
         event.preventDefault();
         // Prevent the selection code from firing when the mouse button is
         // released
@@ -125,8 +133,12 @@ var mpAdder = Widget.extend({
     //
     // Returns nothing.
     _onClick: function (event) {
-        // Do nothing for right-clicks, middle-clicks, etc.
 
+        console.log("mp adder: _onclick called");
+        // close MP menu after click action 
+        $('.mp-main-menu').hide();
+
+        // Do nothing for right-clicks, middle-clicks, etc.
         if (event.which > 1) {
             return;
         }
@@ -149,14 +161,28 @@ var mpAdder = Widget.extend({
     }
 });
 
-// from hypothesis
-// Guest.prototype.html = jQuery.extend({}, Annotator.prototype.html, {
-//   adder: '<div class="annotator-adder">\n  <button class="h-icon-insert-comment" data-action="comment" title="New Note"></button>\n  <button class="h-icon-border-color" data-action="highlight" title="Highlight"></button>\n</div>'
-// });
 
 mpAdder.template = [
     '<div class="annotator-addermp annotator-hide">',
-    '  <button type="button" title="MP" onclick="showright(),editorload()">' + _t('Annotate') + '</button>',
+    //'<button type="button" title="MP" onclick="showright(),editorload()">' + _t('Annotate') + '</button>', 
+
+    // MP: add menu for create claim and add data
+    '<button class="mp-menu-btn" type="button">' + _t('Annotate') + '</button>',
+    '<ul class="mp-main-menu" style="display: none;">',
+    '<li class="mp-main-menu-1" onclick="showright(),editorload()">',
+    'create claim',
+    '</li>',
+    '<li class="mp-main-menu-2">',
+    'add data for',
+    '<ul class="mp-sub-menu-2" style="display: none;">',
+    '<li><a href="#">claim1</a></li>',
+    '<li><a href="#">claim2</a></li>',
+    '<li><a href="#">claim3</a></li>',
+    '</ul>',
+    '</li>',
+    '</ul>',
+
+
     '</div>'
 ].join('\n');
 

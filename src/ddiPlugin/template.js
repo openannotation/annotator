@@ -14,7 +14,7 @@ var $ = require('jquery');
 /*var data = { "name": "Alan", "hometown": "Somewhere, TX",
   "kids": [{"name": "Jimmy", "age": "12"}, {"name": "Sally", "age": "4"}]};*/
 
-
+// JSON fields configuration - define form
 var context1 = {
     questions: [
       {
@@ -264,6 +264,10 @@ var context3 = {
   ]
 };
 
+
+// handlerbar - build form1 function
+// @inputs: JSON config - context1
+// @outputs: form1 in html
 Handlebars.registerHelper('buildForm1', function(items, options) {
   var out = "";
 

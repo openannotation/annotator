@@ -125,160 +125,160 @@ var mpEditor = exports.mpEditor = Editor.extend({
                     $(field).find('#quote').css('background', '#EDEDED');
 
 
-                    if (annotation.assertion_type == "DDI clinical trial") {
-                        $('#altersection').show();
-                        $('.moreinfo').show();
-
-                    } else {
-                        $('#altersection').hide();
-                    }
-
-
-                    var signal = 1;
-                    $('#Number_participants').val(annotation.Number_participants);
-                    $('#Duration_object').val(annotation.Duration_object);
-                    $('#Duration_precipitant').val(annotation.Duration_precipitant);
-                    $('#DoseMG_object').val(annotation.DoseMG_object);
-                    $('#DoseMG_precipitant').val(annotation.DoseMG_precipitant);
-                    $('#Auc').val(annotation.Aucval);
-                    $('#Cli').val(annotation.Clval);
-                    $('#cmax').val(annotation.cmaxval);
-                    $('#t12').val(annotation.t12);
+                    // if (annotation.assertion_type == "DDI clinical trial") {
+                    //     $('#altersection').show();
+                    //     $('.moreinfo').show();
+                    // } else {
+                    //     $('#altersection').hide();
+                    // }
 
 
-                    $("#FormulationP > option").each(function () {
-                        if (this.value === annotation.FormulationP) {
-                            $(this).attr('selected', true);
-                            signal = 0;
-                        }
-                    });
-                    if (signal == 1) {
-                        $('#FormulationP > option')[0].selected = "selected";
-                    } else {
-                        signal = 1;
-                    }
-                    $("#FormulationO > option").each(function () {
-                        if (this.value === annotation.FormulationO) {
-                            $(this).attr('selected', true);
-                            signal = 0;
-                        }
-                    });
-                    if (signal == 1) {
-                        $('#FormulationO > option')[0].selected = "selected";
-                    } else {
-                        signal = 1;
-                    }
-                    $("#RegimentsP > option").each(function () {
-                        if (this.value === annotation.RegimentsP) {
-                            $(this).attr('selected', true);
-                            signal = 0;
-                        }
-                    });
-                    if (signal == 1) {
-                        $('#RegimentsP > option')[0].selected = "selected";
-                    } else {
-                        signal = 1;
-                    }
-                    $("#RegimentsO > option").each(function () {
-                        if (this.value === annotation.RegimentsO) {
-                            $(this).attr('selected', true);
-                            signal = 0;
-                        }
-                    });
-                    if (signal == 1) {
-                        $('#RegimentsO > option')[0].selected = "selected";
-                    } else {
-                        signal = 1;
-                    }
-                    $("#AucType > option").each(function () {
-                        if (this.value === annotation.AucType) {
-                            $(this).attr('selected', true);
-                            signal = 0;
-                        }
-                    });
-                    if (signal == 1) {
-                        $('#AucType > option')[0].selected = "selected";
-                    } else {
-                        signal = 1;
-                    }
-                    $("#AucDirection > option").each(function () {
-                        if (this.value === annotation.AucDirection) {
-                            $(this).attr('selected', true);
-                            signal = 0;
-                        }
-                    });
-                    if (signal == 1) {
-                        $('#AucDirection > option')[0].selected = "selected";
-                    } else {
-                        signal = 1;
-                    }
-                    $("#ClType > option").each(function () {
-                        if (this.value === annotation.ClType) {
-                            $(this).attr('selected', true);
-                            signal = 0;
-                        }
-                    });
-                    if (signal == 1) {
-                        $('#ClType > option')[0].selected = "selected";
-                    } else {
-                        signal = 1;
-                    }
-                    $("#ClDirection > option").each(function () {
-                        if (this.value === annotation.ClDirection) {
-                            $(this).attr('selected', true);
-                            signal = 0;
-                        }
-                    });
-                    if (signal == 1) {
-                        $('#ClDirection > option')[0].selected = "selected";
-                    } else {
-                        signal = 1;
-                    }
-                    $("#cmaxType > option").each(function () {
-                        if (this.value === annotation.cmaxType) {
-                            $(this).attr('selected', true);
-                            signal = 0;
-                        }
-                    });
-                    if (signal == 1) {
-                        $('#cmaxType > option')[0].selected = "selected";
-                    } else {
-                        signal = 1;
-                    }
-                    $("#cmaxDirection > option").each(function () {
-                        if (this.value === annotation.cmaxDirection) {
-                            $(this).attr('selected', true);
-                            signal = 0;
-                        }
-                    });
-                    if (signal == 1) {
-                        $('#cmaxDirection > option')[0].selected = "selected";
-                    } else {
-                        signal = 1;
-                    }
+                     var signal = 1;
 
-                    $("#t12Type > option").each(function () {
-                        if (this.value === annotation.t12Type) {
-                            $(this).attr('selected', true);
-                            signal = 0;
-                        }
-                    });
-                    if (signal == 1) {
-                        $('#t12Type > option')[0].selected = "selected";
-                    } else {
-                        signal = 1;
-                    }
-                    $("#t12Direction > option").each(function () {
-                        if (this.value === annotation.t12Direction) {
-                            $(this).attr('selected', true);
-                            signal = 0;
-                        }
-                    });
-                    if (signal == 1) {
-                        $('#t12Direction > option')[0].selected = "selected";
-                    } else {
-                        signal = 1;
-                    }
+
+                    // $('#Number_participants').val(annotation.Number_participants);
+                    // $('#Duration_object').val(annotation.Duration_object);
+                    // $('#Duration_precipitant').val(annotation.Duration_precipitant);
+                    // $('#DoseMG_object').val(annotation.DoseMG_object);
+                    // $('#DoseMG_precipitant').val(annotation.DoseMG_precipitant);
+                    // $('#Auc').val(annotation.Aucval);
+                    // $('#Cli').val(annotation.Clval);
+                    // $('#cmax').val(annotation.cmaxval);
+                    // $('#t12').val(annotation.t12);
+
+                    // $("#FormulationP > option").each(function () {
+                    //     if (this.value === annotation.FormulationP) {
+                    //         $(this).attr('selected', true);
+                    //         signal = 0;
+                    //     }
+                    // });
+                    // if (signal == 1) {
+                    //     $('#FormulationP > option')[0].selected = "selected";
+                    // } else {
+                    //     signal = 1;
+                    // }
+                    // $("#FormulationO > option").each(function () {
+                    //     if (this.value === annotation.FormulationO) {
+                    //         $(this).attr('selected', true);
+                    //         signal = 0;
+                    //     }
+                    // });
+                    // if (signal == 1) {
+                    //     $('#FormulationO > option')[0].selected = "selected";
+                    // } else {
+                    //     signal = 1;
+                    // }
+                    // $("#RegimentsP > option").each(function () {
+                    //     if (this.value === annotation.RegimentsP) {
+                    //         $(this).attr('selected', true);
+                    //         signal = 0;
+                    //     }
+                    // });
+                    // if (signal == 1) {
+                    //     $('#RegimentsP > option')[0].selected = "selected";
+                    // } else {
+                    //     signal = 1;
+                    // }
+                    // $("#RegimentsO > option").each(function () {
+                    //     if (this.value === annotation.RegimentsO) {
+                    //         $(this).attr('selected', true);
+                    //         signal = 0;
+                    //     }
+                    // });
+                    // if (signal == 1) {
+                    //     $('#RegimentsO > option')[0].selected = "selected";
+                    // } else {
+                    //     signal = 1;
+                    // }
+                    // $("#AucType > option").each(function () {
+                    //     if (this.value === annotation.AucType) {
+                    //         $(this).attr('selected', true);
+                    //         signal = 0;
+                    //     }
+                    // });
+                    // if (signal == 1) {
+                    //     $('#AucType > option')[0].selected = "selected";
+                    // } else {
+                    //     signal = 1;
+                    // }
+                    // $("#AucDirection > option").each(function () {
+                    //     if (this.value === annotation.AucDirection) {
+                    //         $(this).attr('selected', true);
+                    //         signal = 0;
+                    //     }
+                    // });
+                    // if (signal == 1) {
+                    //     $('#AucDirection > option')[0].selected = "selected";
+                    // } else {
+                    //     signal = 1;
+                    // }
+                    // $("#ClType > option").each(function () {
+                    //     if (this.value === annotation.ClType) {
+                    //         $(this).attr('selected', true);
+                    //         signal = 0;
+                    //     }
+                    // });
+                    // if (signal == 1) {
+                    //     $('#ClType > option')[0].selected = "selected";
+                    // } else {
+                    //     signal = 1;
+                    // }
+                    // $("#ClDirection > option").each(function () {
+                    //     if (this.value === annotation.ClDirection) {
+                    //         $(this).attr('selected', true);
+                    //         signal = 0;
+                    //     }
+                    // });
+                    // if (signal == 1) {
+                    //     $('#ClDirection > option')[0].selected = "selected";
+                    // } else {
+                    //     signal = 1;
+                    // }
+                    // $("#cmaxType > option").each(function () {
+                    //     if (this.value === annotation.cmaxType) {
+                    //         $(this).attr('selected', true);
+                    //         signal = 0;
+                    //     }
+                    // });
+                    // if (signal == 1) {
+                    //     $('#cmaxType > option')[0].selected = "selected";
+                    // } else {
+                    //     signal = 1;
+                    // }
+                    // $("#cmaxDirection > option").each(function () {
+                    //     if (this.value === annotation.cmaxDirection) {
+                    //         $(this).attr('selected', true);
+                    //         signal = 0;
+                    //     }
+                    // });
+                    // if (signal == 1) {
+                    //     $('#cmaxDirection > option')[0].selected = "selected";
+                    // } else {
+                    //     signal = 1;
+                    // }
+
+                    // $("#t12Type > option").each(function () {
+                    //     if (this.value === annotation.t12Type) {
+                    //         $(this).attr('selected', true);
+                    //         signal = 0;
+                    //     }
+                    // });
+                    // if (signal == 1) {
+                    //     $('#t12Type > option')[0].selected = "selected";
+                    // } else {
+                    //     signal = 1;
+                    // }
+                    // $("#t12Direction > option").each(function () {
+                    //     if (this.value === annotation.t12Direction) {
+                    //         $(this).attr('selected', true);
+                    //         signal = 0;
+                    //     }
+                    // });
+                    // if (signal == 1) {
+                    //     $('#t12Direction > option')[0].selected = "selected";
+                    // } else {
+                    //     signal = 1;
+                    // }
 
 
                     //load all content
@@ -319,54 +319,56 @@ var mpEditor = exports.mpEditor = Editor.extend({
                         }
                     }
 
-                    $('#assertion_type option').each(function () {
-                        if (this.value === annotation.assertion_type) {
-                            $(this).attr('selected', true);
-                            signal = 0;
-                        }
-                    });
-                    if (signal == 1) {
-                        $('#assertion_type option')[0].selected = "selected";
-                    } else {
-                        signal = 1;
-                    }
-                    $('.Type1').each(function () {
-                        if (this.value === annotation.Type1) this.checked = true; else this.checked = false;
-                    });
+                    // $('#assertion_type option').each(function () {
+                    //     if (this.value === annotation.assertion_type) {
+                    //         $(this).attr('selected', true);
+                    //         signal = 0;
+                    //     }
+                    // });
+
+                    // if (signal == 1) {
+                    //     $('#assertion_type option')[0].selected = "selected";
+                    // } else {
+                    //     signal = 1;
+                    // }
+                    // $('.Type1').each(function () {
+                    //     if (this.value === annotation.Type1) this.checked = true; else this.checked = false;
+                    //});
+
                     $('.Role1').each(function () {
                         if (this.value === annotation.Role1) this.checked = true; else this.checked = false;
                     });
-                    $('.Type2').each(function () {
-                        if (this.value === annotation.Type2) this.checked = true; else this.checked = false;
-                    });
+                    // $('.Type2').each(function () {
+                    //     if (this.value === annotation.Type2) this.checked = true; else this.checked = false;
+                    //});
                     $('.Role2').each(function () {
                         if (this.value === annotation.Role2) this.checked = true; else this.checked = false;
                     });
-                    $('.Modality').each(function () {
-                        if (this.value === annotation.Modality) this.checked = true; else this.checked = false;
-                    });
-                    $('.Evidence_modality').each(function () {
-                        if (this.value === annotation.Evidence_modality) this.checked = true; else this.checked = false;
-                    });
-                    $('#Comment').each(function () {
-                        this.value = annotation.Comment;
-                    });
-                    if (annotation.assertion_type == "DDI clinical trial") {
-                        var object = $("#Drug1 option:selected").text();
-                        $("#objectinalter").html("Object: " + object);
-                        var precipt = $("#Drug2 option:selected").text();
-                        $("#preciptinalter").html("Precipt: " + precipt);
-                        $("#back").hide();
-                        $("#forward").show();
-                        var modal = $("#Modality:checked").val();
-                        $("#modalityinalter").html("Modality: " + modal);
-                        var evid = $("#Evidence_modality:checked").val();
-                        $("#evidenceinalter").html("Evidence: " + evid);
-                    }else{
-                        $("#forward").hide();
-                    }
-                    $('#firstsection').show();
-                    $('#altersection').hide();
+                    // $('.Modality').each(function () {
+                    //     if (this.value === annotation.Modality) this.checked = true; else this.checked = false;
+                    // });
+                    // $('.Evidence_modality').each(function () {
+                    //     if (this.value === annotation.Evidence_modality) this.checked = true; else this.checked = false;
+                    // });
+                    // $('#Comment').each(function () {
+                    //     this.value = annotation.Comment;
+                    // });
+                    // if (annotation.assertion_type == "DDI clinical trial") {
+                    //     var object = $("#Drug1 option:selected").text();
+                    //     $("#objectinalter").html("Object: " + object);
+                    //     var precipt = $("#Drug2 option:selected").text();
+                    //     $("#preciptinalter").html("Precipt: " + precipt);
+                    //     $("#back").hide();
+                    //     $("#forward").show();
+                    //     var modal = $("#Modality:checked").val();
+                    //     $("#modalityinalter").html("Modality: " + modal);
+                    //     var evid = $("#Evidence_modality:checked").val();
+                    //     $("#evidenceinalter").html("Evidence: " + evid);
+                    // }else{
+                    //     $("#forward").hide();
+                    // }
+                    // $('#firstsection').show();
+                    // $('#altersection').hide();
                 },
                 submit:function (field, annotation) {
                     if($('#Drug1 option:selected').text()==$('#Drug2 option:selected').text()){
@@ -377,14 +379,14 @@ var mpEditor = exports.mpEditor = Editor.extend({
                     }
                     annotation.Drug1 = $('#Drug1 option:selected').text();
                     annotation.Drug2 = $('#Drug2 option:selected').text();
-                    annotation.Type1 = $('#Type1:checked').val();
-                    annotation.Type2 = $('#Type2:checked').val();
+                    // annotation.Type1 = $('#Type1:checked').val();
+                    // annotation.Type2 = $('#Type2:checked').val();
                     annotation.Role1 = "object";
                     annotation.Role2 = "precipitant";
-                    annotation.assertion_type = $('#assertion_type option:selected').text();
-                    annotation.Modality = $('#Modality:checked').val();
-                    annotation.Evidence_modality = $('#Evidence_modality:checked').val();
-                    annotation.Comment = $('#Comment').val();
+                    //annotation.assertion_type = $('#assertion_type option:selected').text();
+                    //annotation.Modality = $('#Modality:checked').val();
+                    //annotation.Evidence_modality = $('#Evidence_modality:checked').val();
+                    //annotation.Comment = $('#Comment').val();
                     annotation.annotationType = "MP";
                     annotation.relationship = $('#relationship option:selected').text();
                     if(annotation.relationship == "inhibits"||annotation.relationship == "substrate of") {
@@ -393,30 +395,30 @@ var mpEditor = exports.mpEditor = Editor.extend({
                         annotation.enzyme = "";
                     }
 
-                    if(annotation.assertion_type=="DDI clinical trial")
-                    {
-                        annotation.Number_participants = $('#Number_participants').val();
-                        annotation.FormulationP = $('#FormulationP option:selected').text();
-                        annotation.FormulationO = $('#FormulationO option:selected').text();
-                        annotation.DoseMG_precipitant = $('#DoseMG_precipitant').val();
-                        annotation.DoseMG_object = $('#DoseMG_object').val();
-                        annotation.Duration_precipitant = $('#Duration_precipitant').val();
-                        annotation.Duration_object = $('#Duration_object').val();
-                        annotation.RegimentsP = $('#RegimentsP option:selected').text();
-                        annotation.RegimentsO = $('#RegimentsO option:selected').text();
-                        annotation.Aucval = $('#Auc').val();
-                        annotation.AucType = $('#AucType option:selected').text();
-                        annotation.AucDirection = $('#AucDirection option:selected').text();
-                        annotation.Clval = $('#Cli').val();
-                        annotation.ClType = $('#ClType option:selected').text();
-                        annotation.ClDirection = $('#ClDirection option:selected').text();
-                        annotation.cmaxval = $('#cmax').val();
-                        annotation.cmaxType = $('#cmaxType option:selected').text();
-                        annotation.cmaxDirection = $('#cmaxDirection option:selected').text();
-                        annotation.t12 = $('#t12').val();
-                        annotation.t12Type = $('#t12Type option:selected').text();
-                        annotation.t12Direction = $('#t12Direction option:selected').text();
-                    }
+                    // if(annotation.assertion_type=="DDI clinical trial")
+                    // {
+                    //     annotation.Number_participants = $('#Number_participants').val();
+                    //     annotation.FormulationP = $('#FormulationP option:selected').text();
+                    //     annotation.FormulationO = $('#FormulationO option:selected').text();
+                    //     annotation.DoseMG_precipitant = $('#DoseMG_precipitant').val();
+                    //     annotation.DoseMG_object = $('#DoseMG_object').val();
+                    //     annotation.Duration_precipitant = $('#Duration_precipitant').val();
+                    //     annotation.Duration_object = $('#Duration_object').val();
+                    //     annotation.RegimentsP = $('#RegimentsP option:selected').text();
+                    //     annotation.RegimentsO = $('#RegimentsO option:selected').text();
+                    //     annotation.Aucval = $('#Auc').val();
+                    //     annotation.AucType = $('#AucType option:selected').text();
+                    //     annotation.AucDirection = $('#AucDirection option:selected').text();
+                    //     annotation.Clval = $('#Cli').val();
+                    //     annotation.ClType = $('#ClType option:selected').text();
+                    //     annotation.ClDirection = $('#ClDirection option:selected').text();
+                    //     annotation.cmaxval = $('#cmax').val();
+                    //     annotation.cmaxType = $('#cmaxType option:selected').text();
+                    //     annotation.cmaxDirection = $('#cmaxDirection option:selected').text();
+                    //     annotation.t12 = $('#t12').val();
+                    //     annotation.t12Type = $('#t12Type option:selected').text();
+                    //     annotation.t12Direction = $('#t12Direction option:selected').text();
+                    // }
                 }
             });
 

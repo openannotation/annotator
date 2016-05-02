@@ -102,7 +102,8 @@ mpHighlighter.prototype.drawAll = function (annotations) {
 
             var now = annList.splice(0, self.options.chunkSize);
             for (var i = 0, len = now.length; i < len; i++) {
-                highlights = highlights.concat(self.draw(now[i]));
+                if (now[i].annotationType == "MP")
+                    highlights = highlights.concat(self.draw(now[i]));
             }
 
             // If there are more to do, do them after a delay
@@ -129,10 +130,10 @@ mpHighlighter.prototype.drawAll = function (annotations) {
 // Returns an Array of drawn highlight elements.
 mpHighlighter.prototype.draw = function (annotation) {
 
-    console.log('mphighlighter - draw anntype: ' + annotation.annotationType);
-
     if (annotation.annotationType != "MP")
         return null;
+
+    console.log('mphighlighter - draw anntype: ' + annotation.annotationType);
 
     var normedRanges = [];
 

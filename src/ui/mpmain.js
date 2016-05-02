@@ -45,15 +45,12 @@ function annotationFactory(contextEl, ignoreSelector) {
             serializedRanges.push(serializedRange);
         }
 
-        //console.log("dbmimain - annFac - seRanges:" + JSON.stringify(serializedRanges));
+        //console.log("mpmain - annFac - seRanges:" + JSON.stringify(serializedRanges));
 
-        //console.log("dbmimain - exactTxt:" + text.join(' / ') + "|");
+        //console.log("mpmain - exactTxt:" + text.join(' / ') + "|");
         var prefix = "", suffix = "";
         prefix = getTxtFromNode(ranges[0].start, false, ignoreSelector, 50);
         suffix = getTxtFromNode(ranges[0].end, true, ignoreSelector, 50);
-
-        //console.log("dbmimain - prefix:" + prefix);
-        //console.log("dbmimain - suffix:" + suffix);
 
         return {
             quote: text.join(' / '),
