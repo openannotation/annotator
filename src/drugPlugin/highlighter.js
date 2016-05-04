@@ -50,7 +50,7 @@ function highlightRange(normedRange, cssClass) {
 
 function highlightOA(annotation, cssClass, storage){
     console.log("[INFO] begin xpath fixing by OA selector");
-    var oaSelector = annotation.target.selector;
+    var oaSelector = annotation.argues.hasTarget.hasSelector;
     var prefix = oaSelector.prefix, suffix = oaSelector.suffix, exact = oaSelector.exact;
     try{
         var isFixed = false;
@@ -90,14 +90,14 @@ function highlightOA(annotation, cssClass, storage){
                     var path = xpath.fromNode($(node), $(document))[0];
                     path = path.replace("/html[1]/body[1]","");
                     
-                    if (annotation.ranges[0].start != path)
-                        annotation.ranges[0].start = path;
-                    if (annotation.ranges[0].end != path)
-                        annotation.ranges[0].end = path;
-                    if (annotation.ranges[0].startOffset != index)
-                        annotation.ranges[0].startOffset = index;
-                    if (annotation.ranges[0].endOffset != index + exact.length)
-                        annotation.ranges[0].endOffset = index + exact.length;
+                    if (annotation.argues.ranges[0].start != path)
+                        annotation.argues.ranges[0].start = path;
+                    if (annotation.argues.ranges[0].end != path)
+                        annotation.argues.ranges[0].end = path;
+                    if (annotation.argues.ranges[0].startOffset != index)
+                        annotation.argues.ranges[0].startOffset = index;
+                    if (annotation.argues.ranges[0].endOffset != index + exact.length)
+                        annotation.argues.ranges[0].endOffset = index + exact.length;
                 
                     storage.update(annotation);
                     //this.redraw(annotation);
@@ -210,8 +210,8 @@ Highlighter.prototype.draw = function (annotation) {
     var normedRanges = [];
     var oaAnnotations = [];
 
-    for (var i = 0, ilen = annotation.ranges.length; i < ilen; i++) {
-        var r = reanchorRange(annotation.ranges[i], this.element);
+    for (var i = 0, ilen = annotation.argues.ranges.length; i < ilen; i++) {
+        var r = reanchorRange(annotation.argues.ranges[i], this.element);
         if (r !== null) { // xpath reanchored by range
             normedRanges.push(r);
         } else { // use OA prefix suffix approach

@@ -21,7 +21,8 @@ exports.ddiadder = require('./ddiPlugin/adder');
 exports.ddihighlighter = require('./ddiPlugin/highlighter');
 
 //mpPlugin
-exports.mpeditor = require('./mpPlugin/editor');
+//exports.mpeditor = require('./mpPlugin/editor');
+exports.mpclaimeditor = require('./mpPlugin/claim-editor');
 exports.mpviewer = require('./mpPlugin/viewer');
 exports.mpadder = require('./mpPlugin/adder');
 exports.mphighlighter = require('./mpPlugin/highlighter');

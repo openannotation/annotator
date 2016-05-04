@@ -164,8 +164,6 @@ var mpAdder = Widget.extend({
 
 mpAdder.template = [
     '<div class="annotator-addermp annotator-hide">',
-    //'<button type="button" title="MP" onclick="showright(),editorload()">' + _t('Annotate') + '</button>', 
-
     // MP: add menu for create claim and add data
     '<button class="mp-menu-btn" type="button">' + _t('Annotate') + '</button>',
     '<ul class="mp-main-menu" style="display: none;">',
@@ -174,15 +172,9 @@ mpAdder.template = [
     '</li>',
     '<li class="mp-main-menu-2">',
     'add data for',
-    '<ul class="mp-sub-menu-2" style="display: none;">',
-    '<li><a href="#">claim1</a></li>',
-    '<li><a href="#">claim2</a></li>',
-    '<li><a href="#">claim3</a></li>',
-    '</ul>',
+    '<ul class="mp-sub-menu-2" style="display: none;"><ul>',
     '</li>',
     '</ul>',
-
-
     '</div>'
 ].join('\n');
 

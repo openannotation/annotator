@@ -9,7 +9,8 @@ var textselector = require('./oaselector');
 // mp
 var mpadder = require('./../mpPlugin/adder');
 var mphighlighter = require('./../mpPlugin/highlighter');
-var mpeditor = require('./../mpPlugin/editor');
+//var mpeditor = require('./../mpPlugin/editor');
+var mpclaimeditor = require('./../mpPlugin/claim-editor');
 var mpviewer = require('./../mpPlugin/viewer');
 
 // highlight
@@ -46,22 +47,23 @@ function annotationFactory(contextEl, ignoreSelector) {
         }
 
         //console.log("mpmain - annFac - seRanges:" + JSON.stringify(serializedRanges));
-
         //console.log("mpmain - exactTxt:" + text.join(' / ') + "|");
+
         var prefix = "", suffix = "";
         prefix = getTxtFromNode(ranges[0].start, false, ignoreSelector, 50);
         suffix = getTxtFromNode(ranges[0].end, true, ignoreSelector, 50);
 
         return {
-            quote: text.join(' / '),
-            ranges: serializedRanges,
-            target: {
-                source: "url",
-                selector: {
-                    "@type": "TextQuoteSelector",
-                    "exact": text.join(' / '),
-                    "prefix": prefix, 
-                    "suffix": suffix 
+            argues : {
+                ranges: serializedRanges,
+                hasTarget: {
+                    source: "url",
+                    hasSelector: {
+                        "@type": "TextQuoteSelector",
+                        "exact": text.join(' / '),
+                        "prefix": prefix, 
+                        "suffix": suffix 
+                    }
                 }
             }
         };
@@ -232,7 +234,6 @@ function main(options) {
     var makeHLAnnotation = annotationFactory(options.element, '.annotator-hl');
     //var makeMPAnnotation = annotationFactory(options.element, '.annotator-mp');
 
-
     // Object to hold local state
     var s = {
         interactionPoint: null
@@ -259,17 +260,21 @@ function main(options) {
         s.hladder.attach();
 
         // highlight mp editor
-        s.mpeditor = new mpeditor.mpEditor({
+        // s.mpeditor = new mpeditor.mpEditor({
+        //     extensions: options.editorExtensions
+        // });
+        // s.mpeditor.attach();
+        s.mpclaimeditor = new mpclaimeditor.mpClaimEditor({
             extensions: options.editorExtensions
         });
-        s.mpeditor.attach();
+        s.mpclaimeditor.attach();
 
         s.hleditor = new hleditor.Editor({
             extensions: options.editorExtensions
         });
         s.hleditor.attach();
 
-        addPermissionsCheckboxes(s.mpeditor, ident, authz);
+        addPermissionsCheckboxes(s.mpclaimeditor, ident, authz);
         //addPermissionsCheckboxes(s.hleditor, ident, authz);
 
         //highlighter
@@ -318,11 +323,10 @@ function main(options) {
             autoViewHighlights: options.element,
             extensions: options.viewerExtensions
         });
-
         s.mpviewer.attach();
 
-        // highlight viewer
 
+        // highlight viewer
         s.hlviewer = new hlviewer.Viewer({
             onEdit: function (ann) {
                 // Copy the interaction point from the shown viewer:
@@ -354,18 +358,13 @@ function main(options) {
         start: start,
 
         destroy: function () {
-            /*s.adder.destroy();
-            s.editor.destroy();
-            s.highlighter.destroy();
-            s.textselector.destroy();
-            s.viewer.destroy();*/
             s.hleditor.destroy();
             s.hlhighlighter.destroy();
             s.hladder.destroy();
             s.textselector.destroy();
             s.hlviewer.destroy();
             s.mpadder.destroy();
-            s.mpeditor.destroy();
+            s.mpclaimeditor.destroy();
             s.mphighlighter.destroy();
             s.mpviewer.destroy();
             removeDynamicStyle();
@@ -412,7 +411,7 @@ function main(options) {
 
             // yifan: call different editor based on annotation type
             if (annotation.annotationType == "MP"){
-                return s.mpeditor.load(s.interactionPoint,annotation);
+                return s.mpclaimeditor.load(s.interactionPoint,annotation);
             } else if (annotation.annotationType == "DrugMention") {
                 // return s.hleditor.load(annotation, s.interactionPoint);
                 // yifan: not show editor when typed as Drug mention
@@ -430,7 +429,7 @@ function main(options) {
             //alert('testmain.js - beforeAnnotationUpdated - annotation type defined: ' + annotation.annotationType);
 
             if (annotation.annotationType == "MP"){
-                return s.mpeditor.load(s.interactionPoint,annotation);
+                return s.mpclaimeditor.load(s.interactionPoint,annotation);
             } else if (annotation.annotationType == "DrugMention") {
                 // return s.hleditor.load(annotation, s.interactionPoint);
                 return null;

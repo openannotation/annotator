@@ -137,8 +137,8 @@ mpHighlighter.prototype.draw = function (annotation) {
 
     var normedRanges = [];
 
-    for (var i = 0, ilen = annotation.ranges.length; i < ilen; i++) {
-        var r = reanchorRange(annotation.ranges[i], this.element);
+    for (var i = 0, ilen = annotation.argues.ranges.length; i < ilen; i++) {
+        var r = reanchorRange(annotation.argues.ranges[i], this.element);
         if (r !== null) {
             normedRanges.push(r);
         }
