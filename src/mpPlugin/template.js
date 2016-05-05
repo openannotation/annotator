@@ -139,6 +139,9 @@ Template.content = [
     '<div class="annotationbody" style="margin-left:5px;margin-right:0px;height:100%;line-height:200%;margin-top:0px;overflow-y: hidden">',
     '<div id="tabs">',
     '<div id="tabs-1" style="margin-bottom:0px;">',
+
+    // Type of editor
+    '<div id="mp-editor-type"></div>',
     
     // Claim form
     '<div id="mp-claim-form" style="margin-top:10px;margin-left:5px;">',

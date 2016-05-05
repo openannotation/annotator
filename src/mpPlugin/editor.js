@@ -53,125 +53,129 @@ var mpEditor = exports.mpEditor = Widget.extend({
                 id: 'quote',
                 load: function (field, annotation, annotations) {
                     
-                    var claim = annotation.argues;
-                    console.log("mp - editor - load");
-                    console.log(claim);
+                    var editorType = $("#mp-editor-type").html();
+                    console.log("mpeditor - load - type: " + editorType);
+                    // claim
+                    if(editorType == "claim"){
 
-                    $('#quote').empty();
-                    var quoteobject = $("<div id='quotearea'/>");
-                    $('#quote').append(quoteobject);
-                    $('#quotearea').html(claim.hasTarget.hasSelector.exact || '');
-                    $('#Drug1 option').remove();
-                    $('#Drug2 option').remove();
-                    var flag = 0;
-
-                    var anns = annotations.slice();
-
-                    var quoteobject = $('#quotearea');
-                    var quotecontent = $('#quotearea').html();
-                    //console.log(quotecontent);
-                    var index = 0;
-                    var list = [];
-                    //filter out duplicates
-                    for (var i = 0, len = anns.length; i < len; i++) {
-                        if ((anns[i].annotationType == "DrugMention") && (list.indexOf(anns[i].argues.hasTarget.hasSelector.exact) < 0)) {
-                            list.push(anns[i].argues.hasTarget.hasSelector.exact);
-                        }
-                    }
-
-                    console.log(list);
-
-                    for (var i = 0, len = list.length; i < len; i++) {
-                        if (quotecontent.indexOf(list[i]) >= 0) {
-                            index++;
-                            //quotecontent.split(list[i]).join("<span class='highlightdrug'>"+list[i]+"<sup>"+index+"</sup></span>");
-
-                            //console.log(quotecontent);
-                            quotecontent = quotecontent.replace(list[i], "<span class='highlightdrug'>" + list[i] + "</span>");
-                            $('#Drug1').append($('<option>', {
-                                value: list[i],
-                                text: list[i]
-                            }));
-                            $('#Drug2').append($('<option>', {
-                                value: list[i],
-                                text: list[i]
-                            }));
-                            flag = flag + 1;
-                        }
-                    }
-                    quoteobject.html(quotecontent);
-
-                    if (flag < 1) {
-                        alert("Should highlight at least one drug.");
-                        editorSelf.cancel();
-                        $('.btn-success').click();
-                    }
-                    // highlight drug selections on text quote
-                    if (claim.qualifiedBy != null){
-                        if (claim.qualifiedBy.drug1 != "") {
-                            var quotestring = quoteobject.html();
-                            quotestring = quotestring.replace(claim.qualifiedBy.drug1, "<span class='selecteddrug'>" + claim.qualifiedBy.drug1 + "</span>");
-                            quoteobject.html(quotestring);
-                            //console.log(quotestring);
-                        }
-                        if (claim.qualifiedBy.Drug2 != "") {
-                            var quotestring = quoteobject.html();
-                            quotestring = quotestring.replace(claim.qualifiedBy.Drug2, "<span class='selecteddrug'>" + claim.qualifiedBy.Drug2 + "</span>");
-                            quoteobject.html(quotestring);
-                            //console.log(quotestring);
-                        }
-
-                        $(field).find('#quote').css('background', '#EDEDED');
-                        var signal = 1;
+                        console.log("mpeditor - load - claim");
+                        var claim = annotation.argues;                       
                         
-                        //load fields from annotation.claim
-                        $("#Drug1 > option").each(function () {
-                            if (this.value === claim.qualifiedBy.drug1) $(this).attr('selected', true);
-                        });
-                        $('#Drug2 > option').each(function () {
-                            if (this.value === claim.qualifiedBy.drug2) $(this).attr('selected', true);
-                        });
-                        $('#relationship option').each(function () {
-                            if (this.value === claim.qualifiedBy.relationship) {                
-                                $(this).attr('selected', true);
-                                signal = 0;
+                        $('#quote').empty();
+                        var quoteobject = $("<div id='quotearea'/>");
+                        $('#quote').append(quoteobject);
+                        $('#quotearea').html(claim.hasTarget.hasSelector.exact || '');
+                        $('#Drug1 option').remove();
+                        $('#Drug2 option').remove();
+                        var flag = 0;
+                        
+                        var anns = annotations.slice();
+                        
+                        var quoteobject = $('#quotearea');
+                        var quotecontent = $('#quotearea').html();
+                        //console.log(quotecontent);
+                        var index = 0;
+                        var list = [];
+                        //filter out duplicates
+                        for (var i = 0, len = anns.length; i < len; i++) {
+                            if ((anns[i].annotationType == "DrugMention") && (list.indexOf(anns[i].argues.hasTarget.hasSelector.exact) < 0)) {
+                                list.push(anns[i].argues.hasTarget.hasSelector.exact);
                             }
-                        });
-                        
-                        if (signal == 1) {
-                            $('#relationship option')[0].selected = "selected";
-                        } else {
-                            signal = 1;
                         }
                         
-                        if(claim.qualifiedBy.relationship == "inhibits" || claim.qualifiedBy.relationship == "substrate of")
-                        {
-                            // show enzyme field if relationship is inhibits or substrate of
-                            $(document).ready(function() { showEnzyme(); });
+                        //console.log(list);
+                        
+                        for (var i = 0, len = list.length; i < len; i++) {
+                            if (quotecontent.indexOf(list[i]) >= 0) {
+                                index++;
+                                quotecontent = quotecontent.replace(list[i], "<span class='highlightdrug'>" + list[i] + "</span>");
+                                $('#Drug1').append($('<option>', {
+                                    value: list[i],
+                                    text: list[i]
+                                }));
+                                $('#Drug2').append($('<option>', {
+                                    value: list[i],
+                                    text: list[i]
+                                }));
+                                flag = flag + 1;
+                            }
+                        }
+                        quoteobject.html(quotecontent);
+                        
+                        if (flag < 1) {
+                            alert("Should highlight at least one drug.");
+                            editorSelf.cancel();
+                            $('.btn-success').click();
+                        }
+                        // highlight drug selections on text quote
+                        if (claim.qualifiedBy != null){
+                            if (claim.qualifiedBy.drug1 != "") {
+                                var quotestring = quoteobject.html();
+                                quotestring = quotestring.replace(claim.qualifiedBy.drug1, "<span class='selecteddrug'>" + claim.qualifiedBy.drug1 + "</span>");
+                                quoteobject.html(quotestring);
+                                //console.log(quotestring);
+                            }
+                            if (claim.qualifiedBy.Drug2 != "") {
+                                var quotestring = quoteobject.html();
+                                quotestring = quotestring.replace(claim.qualifiedBy.Drug2, "<span class='selecteddrug'>" + claim.qualifiedBy.Drug2 + "</span>");
+                                quoteobject.html(quotestring);
+                                //console.log(quotestring);
+                            }
+                            
+                            $(field).find('#quote').css('background', '#EDEDED');
+                            var signal = 1;
+                            
+                            //load fields from annotation.claim
+                            $("#Drug1 > option").each(function () {
+                                if (this.value === claim.qualifiedBy.drug1) $(this).attr('selected', true);
+                            });
+                            $('#Drug2 > option').each(function () {
+                                if (this.value === claim.qualifiedBy.drug2) $(this).attr('selected', true);
+                            });
+                            $('#relationship option').each(function () {
+                                if (this.value === claim.qualifiedBy.relationship) {                
+                                    $(this).attr('selected', true);
+                                    signal = 0;
+                                }
+                            });
+                            
+                            if (signal == 1) {
+                                $('#relationship option')[0].selected = "selected";
+                            } else {
+                                signal = 1;
+                            }
+                        
+                            if(claim.qualifiedBy.relationship == "inhibits" || claim.qualifiedBy.relationship == "substrate of")
+                            {
+                                // show enzyme field if relationship is inhibits or substrate of
+                                $(document).ready(function() { showEnzyme(); });
                             $('#enzyme option').each(function () {
                                 if (this.value === claim.qualifiedBy.enzyme) {
                                     $(this).attr('selected', true);
                                     signal = 0;
                                 }
                             });
-                            if (signal == 1) {
-                                $('#enzyme option')[0].selected = "selected";
-                            } else {
-                                signal = 1;
-                            }
-                        }                                                
+                                if (signal == 1) {
+                                    $('#enzyme option')[0].selected = "selected";
+                                } else {
+                                    signal = 1;
+                                }
+                            }                                                
+                        }
+                        
+                        // $('.Role1').each(function () {
+                        //     if (this.value === annotation.Role1) this.checked = true; else this.checked = false;
+                        // });
+                    } else if (editorType == "participants"){
+                        console.log("mpeditor - load - participants");
                     }
-                                   
-                    // $('.Role1').each(function () {
-                    //     if (this.value === annotation.Role1) this.checked = true; else this.checked = false;
-                    // });
-                    // $('.Role2').each(function () {
-                    //     if (this.value === annotation.Role2) this.checked = true; else this.checked = false;
-                    // });
 
+                        
                 },
                 
                 submit:function (field, annotation) {
+
+                    // mp claim
                     if($('#Drug1 option:selected').text()==$('#Drug2 option:selected').text()){
                         alert("Should highlight two different drugs.");
                         editorSelf.cancel();

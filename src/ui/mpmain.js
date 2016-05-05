@@ -3,8 +3,8 @@
 
 var util = require('../util');
 var xUtil = require('../xutil');
-//var textselector = require('./textselector');
-var textselector = require('./oaselector');
+var textselector = require('./textselector');
+//var textselector = require('./oaselector');
 
 // mp
 var mpadder = require('./../mpPlugin/adder');
