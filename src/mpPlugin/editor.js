@@ -1,7 +1,6 @@
 "use strict";
 var Widget = require('./../ui/widget').Widget;
 var util = require('../util');
-var Editor = require('../drugPlugin/editor').Editor;
 var Template = require('./template').Template;
 var $ = util.$;
 var _t = util.gettext;
@@ -34,14 +33,15 @@ function preventEventDefault(event) {
 
 
 // Public: Creates an element for editing annotations.
-var mpEditor = exports.mpEditor = Editor.extend({
+//var mpEditor = exports.mpEditor = Editor.extend({
+var mpEditor = exports.mpEditor = Widget.extend({
 
     constructor: function (options) {
         Widget.call(this, options);
         var editorSelf = this;
         this.fields = [];
         this.annotation = {};
-        console.log("[INFO] mp - editor - constructor");
+        console.log("[INFO] mp - claimeditor - constructor");
 
         if (this.options.defaultFields) {
 
@@ -51,21 +51,19 @@ var mpEditor = exports.mpEditor = Editor.extend({
                 type: 'div',
                 label: _t('Comments') + '\u2026',
                 id: 'quote',
-                load: function (field, annotation,annotations) {
-
-                    //var annList = annotations.slice();
-                    //console.log(annList[0].quote);
-                    //var now = annList.splice(0, annotations.options.chunkSize);
+                load: function (field, annotation, annotations) {
+                    
+                    var claim = annotation.argues;
+                    console.log("mp - editor - load");
+                    console.log(claim);
 
                     $('#quote').empty();
                     var quoteobject = $("<div id='quotearea'/>");
                     $('#quote').append(quoteobject);
-                    $('#quotearea').html(annotation.quote || '');
+                    $('#quotearea').html(claim.hasTarget.hasSelector.exact || '');
                     $('#Drug1 option').remove();
                     $('#Drug2 option').remove();
                     var flag = 0;
-
-                    console.log(annotations.length);
 
                     var anns = annotations.slice();
 
@@ -76,12 +74,12 @@ var mpEditor = exports.mpEditor = Editor.extend({
                     var list = [];
                     //filter out duplicates
                     for (var i = 0, len = anns.length; i < len; i++) {
-                        if ((anns[i].annotationType == "DrugMention") && (list.indexOf(anns[i].quote) < 0)) {
-                            list.push(anns[i].quote);
+                        if ((anns[i].annotationType == "DrugMention") && (list.indexOf(anns[i].argues.hasTarget.hasSelector.exact) < 0)) {
+                            list.push(anns[i].argues.hasTarget.hasSelector.exact);
                         }
                     }
 
-                    //console.log(list);
+                    console.log(list);
 
                     for (var i = 0, len = list.length; i < len; i++) {
                         if (quotecontent.indexOf(list[i]) >= 0) {
@@ -103,322 +101,101 @@ var mpEditor = exports.mpEditor = Editor.extend({
                     }
                     quoteobject.html(quotecontent);
 
-                    if (flag < 2) {
-                        //if(flag){
-                        alert("Should highlight at least two drugs.");
+                    if (flag < 1) {
+                        alert("Should highlight at least one drug.");
                         editorSelf.cancel();
                         $('.btn-success').click();
                     }
-                    if (annotation.Drug1 != "") {
-                        var quotestring = quoteobject.html();
-                        quotestring = quotestring.replace(annotation.Drug1, "<span class='selecteddrug'>" + annotation.Drug1 + "</span>");
-                        quoteobject.html(quotestring);
-                        //console.log(quotestring);
-                    }
-                    if (annotation.Drug2 != "") {
-                        var quotestring = quoteobject.html();
-                        quotestring = quotestring.replace(annotation.Drug2, "<span class='selecteddrug'>" + annotation.Drug2 + "</span>");
-                        quoteobject.html(quotestring);
-                        //console.log(quotestring);
-                    }
-
-                    $(field).find('#quote').css('background', '#EDEDED');
-
-
-                    // if (annotation.assertion_type == "DDI clinical trial") {
-                    //     $('#altersection').show();
-                    //     $('.moreinfo').show();
-                    // } else {
-                    //     $('#altersection').hide();
-                    // }
-
-
-                     var signal = 1;
-
-
-                    // $('#Number_participants').val(annotation.Number_participants);
-                    // $('#Duration_object').val(annotation.Duration_object);
-                    // $('#Duration_precipitant').val(annotation.Duration_precipitant);
-                    // $('#DoseMG_object').val(annotation.DoseMG_object);
-                    // $('#DoseMG_precipitant').val(annotation.DoseMG_precipitant);
-                    // $('#Auc').val(annotation.Aucval);
-                    // $('#Cli').val(annotation.Clval);
-                    // $('#cmax').val(annotation.cmaxval);
-                    // $('#t12').val(annotation.t12);
-
-                    // $("#FormulationP > option").each(function () {
-                    //     if (this.value === annotation.FormulationP) {
-                    //         $(this).attr('selected', true);
-                    //         signal = 0;
-                    //     }
-                    // });
-                    // if (signal == 1) {
-                    //     $('#FormulationP > option')[0].selected = "selected";
-                    // } else {
-                    //     signal = 1;
-                    // }
-                    // $("#FormulationO > option").each(function () {
-                    //     if (this.value === annotation.FormulationO) {
-                    //         $(this).attr('selected', true);
-                    //         signal = 0;
-                    //     }
-                    // });
-                    // if (signal == 1) {
-                    //     $('#FormulationO > option')[0].selected = "selected";
-                    // } else {
-                    //     signal = 1;
-                    // }
-                    // $("#RegimentsP > option").each(function () {
-                    //     if (this.value === annotation.RegimentsP) {
-                    //         $(this).attr('selected', true);
-                    //         signal = 0;
-                    //     }
-                    // });
-                    // if (signal == 1) {
-                    //     $('#RegimentsP > option')[0].selected = "selected";
-                    // } else {
-                    //     signal = 1;
-                    // }
-                    // $("#RegimentsO > option").each(function () {
-                    //     if (this.value === annotation.RegimentsO) {
-                    //         $(this).attr('selected', true);
-                    //         signal = 0;
-                    //     }
-                    // });
-                    // if (signal == 1) {
-                    //     $('#RegimentsO > option')[0].selected = "selected";
-                    // } else {
-                    //     signal = 1;
-                    // }
-                    // $("#AucType > option").each(function () {
-                    //     if (this.value === annotation.AucType) {
-                    //         $(this).attr('selected', true);
-                    //         signal = 0;
-                    //     }
-                    // });
-                    // if (signal == 1) {
-                    //     $('#AucType > option')[0].selected = "selected";
-                    // } else {
-                    //     signal = 1;
-                    // }
-                    // $("#AucDirection > option").each(function () {
-                    //     if (this.value === annotation.AucDirection) {
-                    //         $(this).attr('selected', true);
-                    //         signal = 0;
-                    //     }
-                    // });
-                    // if (signal == 1) {
-                    //     $('#AucDirection > option')[0].selected = "selected";
-                    // } else {
-                    //     signal = 1;
-                    // }
-                    // $("#ClType > option").each(function () {
-                    //     if (this.value === annotation.ClType) {
-                    //         $(this).attr('selected', true);
-                    //         signal = 0;
-                    //     }
-                    // });
-                    // if (signal == 1) {
-                    //     $('#ClType > option')[0].selected = "selected";
-                    // } else {
-                    //     signal = 1;
-                    // }
-                    // $("#ClDirection > option").each(function () {
-                    //     if (this.value === annotation.ClDirection) {
-                    //         $(this).attr('selected', true);
-                    //         signal = 0;
-                    //     }
-                    // });
-                    // if (signal == 1) {
-                    //     $('#ClDirection > option')[0].selected = "selected";
-                    // } else {
-                    //     signal = 1;
-                    // }
-                    // $("#cmaxType > option").each(function () {
-                    //     if (this.value === annotation.cmaxType) {
-                    //         $(this).attr('selected', true);
-                    //         signal = 0;
-                    //     }
-                    // });
-                    // if (signal == 1) {
-                    //     $('#cmaxType > option')[0].selected = "selected";
-                    // } else {
-                    //     signal = 1;
-                    // }
-                    // $("#cmaxDirection > option").each(function () {
-                    //     if (this.value === annotation.cmaxDirection) {
-                    //         $(this).attr('selected', true);
-                    //         signal = 0;
-                    //     }
-                    // });
-                    // if (signal == 1) {
-                    //     $('#cmaxDirection > option')[0].selected = "selected";
-                    // } else {
-                    //     signal = 1;
-                    // }
-
-                    // $("#t12Type > option").each(function () {
-                    //     if (this.value === annotation.t12Type) {
-                    //         $(this).attr('selected', true);
-                    //         signal = 0;
-                    //     }
-                    // });
-                    // if (signal == 1) {
-                    //     $('#t12Type > option')[0].selected = "selected";
-                    // } else {
-                    //     signal = 1;
-                    // }
-                    // $("#t12Direction > option").each(function () {
-                    //     if (this.value === annotation.t12Direction) {
-                    //         $(this).attr('selected', true);
-                    //         signal = 0;
-                    //     }
-                    // });
-                    // if (signal == 1) {
-                    //     $('#t12Direction > option')[0].selected = "selected";
-                    // } else {
-                    //     signal = 1;
-                    // }
-
-
-                    //load all content
-                    $("#Drug1 > option").each(function () {
-                        if (this.value === annotation.Drug1) $(this).attr('selected', true);
-                    });
-                    $('#Drug2 > option').each(function () {
-                        if (this.value === annotation.Drug2) $(this).attr('selected', true);
-                    });
-                    $('#relationship option').each(function () {
-                        if (this.value === annotation.relationship) {                
-                            $(this).attr('selected', true);
-                            signal = 0;
+                    // highlight drug selections on text quote
+                    if (claim.qualifiedBy != null){
+                        if (claim.qualifiedBy.drug1 != "") {
+                            var quotestring = quoteobject.html();
+                            quotestring = quotestring.replace(claim.qualifiedBy.drug1, "<span class='selecteddrug'>" + claim.qualifiedBy.drug1 + "</span>");
+                            quoteobject.html(quotestring);
+                            //console.log(quotestring);
                         }
-                    });
+                        if (claim.qualifiedBy.Drug2 != "") {
+                            var quotestring = quoteobject.html();
+                            quotestring = quotestring.replace(claim.qualifiedBy.Drug2, "<span class='selecteddrug'>" + claim.qualifiedBy.Drug2 + "</span>");
+                            quoteobject.html(quotestring);
+                            //console.log(quotestring);
+                        }
 
-                    if (signal == 1) {
-                        $('#relationship option')[0].selected = "selected";
-                    } else {
-                        signal = 1;
-                    }
-
-                    if(annotation.relationship == "inhibits"||annotation.relationship == "substrate of")
-                    {
-                        // show enzyme field if relationship is inhibits or substrate of
-                        $(document).ready(function() { showEnzyme(); });
-
-                        $('#enzyme option').each(function () {
-                            if (this.value === annotation.enzyme) {
+                        $(field).find('#quote').css('background', '#EDEDED');
+                        var signal = 1;
+                        
+                        //load fields from annotation.claim
+                        $("#Drug1 > option").each(function () {
+                            if (this.value === claim.qualifiedBy.drug1) $(this).attr('selected', true);
+                        });
+                        $('#Drug2 > option').each(function () {
+                            if (this.value === claim.qualifiedBy.drug2) $(this).attr('selected', true);
+                        });
+                        $('#relationship option').each(function () {
+                            if (this.value === claim.qualifiedBy.relationship) {                
                                 $(this).attr('selected', true);
                                 signal = 0;
                             }
                         });
+                        
                         if (signal == 1) {
-                            $('#enzyme option')[0].selected = "selected";
+                            $('#relationship option')[0].selected = "selected";
                         } else {
                             signal = 1;
                         }
+                        
+                        if(claim.qualifiedBy.relationship == "inhibits" || claim.qualifiedBy.relationship == "substrate of")
+                        {
+                            // show enzyme field if relationship is inhibits or substrate of
+                            $(document).ready(function() { showEnzyme(); });
+                            $('#enzyme option').each(function () {
+                                if (this.value === claim.qualifiedBy.enzyme) {
+                                    $(this).attr('selected', true);
+                                    signal = 0;
+                                }
+                            });
+                            if (signal == 1) {
+                                $('#enzyme option')[0].selected = "selected";
+                            } else {
+                                signal = 1;
+                            }
+                        }                                                
                     }
-
-                    // $('#assertion_type option').each(function () {
-                    //     if (this.value === annotation.assertion_type) {
-                    //         $(this).attr('selected', true);
-                    //         signal = 0;
-                    //     }
+                                   
+                    // $('.Role1').each(function () {
+                    //     if (this.value === annotation.Role1) this.checked = true; else this.checked = false;
+                    // });
+                    // $('.Role2').each(function () {
+                    //     if (this.value === annotation.Role2) this.checked = true; else this.checked = false;
                     // });
 
-                    // if (signal == 1) {
-                    //     $('#assertion_type option')[0].selected = "selected";
-                    // } else {
-                    //     signal = 1;
-                    // }
-                    // $('.Type1').each(function () {
-                    //     if (this.value === annotation.Type1) this.checked = true; else this.checked = false;
-                    //});
-
-                    $('.Role1').each(function () {
-                        if (this.value === annotation.Role1) this.checked = true; else this.checked = false;
-                    });
-                    // $('.Type2').each(function () {
-                    //     if (this.value === annotation.Type2) this.checked = true; else this.checked = false;
-                    //});
-                    $('.Role2').each(function () {
-                        if (this.value === annotation.Role2) this.checked = true; else this.checked = false;
-                    });
-                    // $('.Modality').each(function () {
-                    //     if (this.value === annotation.Modality) this.checked = true; else this.checked = false;
-                    // });
-                    // $('.Evidence_modality').each(function () {
-                    //     if (this.value === annotation.Evidence_modality) this.checked = true; else this.checked = false;
-                    // });
-                    // $('#Comment').each(function () {
-                    //     this.value = annotation.Comment;
-                    // });
-                    // if (annotation.assertion_type == "DDI clinical trial") {
-                    //     var object = $("#Drug1 option:selected").text();
-                    //     $("#objectinalter").html("Object: " + object);
-                    //     var precipt = $("#Drug2 option:selected").text();
-                    //     $("#preciptinalter").html("Precipt: " + precipt);
-                    //     $("#back").hide();
-                    //     $("#forward").show();
-                    //     var modal = $("#Modality:checked").val();
-                    //     $("#modalityinalter").html("Modality: " + modal);
-                    //     var evid = $("#Evidence_modality:checked").val();
-                    //     $("#evidenceinalter").html("Evidence: " + evid);
-                    // }else{
-                    //     $("#forward").hide();
-                    // }
-                    // $('#firstsection').show();
-                    // $('#altersection').hide();
                 },
+                
                 submit:function (field, annotation) {
                     if($('#Drug1 option:selected').text()==$('#Drug2 option:selected').text()){
-                        //if(flag){
                         alert("Should highlight two different drugs.");
                         editorSelf.cancel();
                         $('.btn-success').click();
                     }
-                    annotation.Drug1 = $('#Drug1 option:selected').text();
-                    annotation.Drug2 = $('#Drug2 option:selected').text();
-                    // annotation.Type1 = $('#Type1:checked').val();
-                    // annotation.Type2 = $('#Type2:checked').val();
-                    annotation.Role1 = "object";
-                    annotation.Role2 = "precipitant";
-                    //annotation.assertion_type = $('#assertion_type option:selected').text();
-                    //annotation.Modality = $('#Modality:checked').val();
-                    //annotation.Evidence_modality = $('#Evidence_modality:checked').val();
-                    //annotation.Comment = $('#Comment').val();
+                    
                     annotation.annotationType = "MP";
-                    annotation.relationship = $('#relationship option:selected').text();
-                    if(annotation.relationship == "inhibits"||annotation.relationship == "substrate of") {
-                        annotation.enzyme = $('#enzyme option:selected').text();
-                    } else {
-                        annotation.enzyme = "";
-                    }
+                    
+                    // MP argues claim, claim qualified by ?s ?p ?o
+                    var qualifiedBy = {drug1 : "", drug2 : "", relationship : "", enzyme : ""};                    
+                    qualifiedBy.drug1 = $('#Drug1 option:selected').text();
+                    qualifiedBy.drug2 = $('#Drug2 option:selected').text();
+                    qualifiedBy.relationship = $('#relationship option:selected').text();
+                    var claimStatement = qualifiedBy.drug1 + "_" + qualifiedBy.relationship + "_" + qualifiedBy.drug2;
 
-                    // if(annotation.assertion_type=="DDI clinical trial")
-                    // {
-                    //     annotation.Number_participants = $('#Number_participants').val();
-                    //     annotation.FormulationP = $('#FormulationP option:selected').text();
-                    //     annotation.FormulationO = $('#FormulationO option:selected').text();
-                    //     annotation.DoseMG_precipitant = $('#DoseMG_precipitant').val();
-                    //     annotation.DoseMG_object = $('#DoseMG_object').val();
-                    //     annotation.Duration_precipitant = $('#Duration_precipitant').val();
-                    //     annotation.Duration_object = $('#Duration_object').val();
-                    //     annotation.RegimentsP = $('#RegimentsP option:selected').text();
-                    //     annotation.RegimentsO = $('#RegimentsO option:selected').text();
-                    //     annotation.Aucval = $('#Auc').val();
-                    //     annotation.AucType = $('#AucType option:selected').text();
-                    //     annotation.AucDirection = $('#AucDirection option:selected').text();
-                    //     annotation.Clval = $('#Cli').val();
-                    //     annotation.ClType = $('#ClType option:selected').text();
-                    //     annotation.ClDirection = $('#ClDirection option:selected').text();
-                    //     annotation.cmaxval = $('#cmax').val();
-                    //     annotation.cmaxType = $('#cmaxType option:selected').text();
-                    //     annotation.cmaxDirection = $('#cmaxDirection option:selected').text();
-                    //     annotation.t12 = $('#t12').val();
-                    //     annotation.t12Type = $('#t12Type option:selected').text();
-                    //     annotation.t12Direction = $('#t12Direction option:selected').text();
-                    // }
+                    if(qualifiedBy.relationship == "inhibits" || qualifiedBy.relationship == "substrate of") {
+                        qualifiedBy.enzyme = $('#enzyme option:selected').text();
+                    } 
+                    annotation.argues.qualifiedBy = qualifiedBy;
+                    annotation.argues.type = "mp:claim";
+                    annotation.argues.label = claimStatement;
+
+                    console.log("submit mp annotation");
+                    console.log(annotation);
                 }
             });
 
@@ -501,13 +278,18 @@ var mpEditor = exports.mpEditor = Editor.extend({
     // rejected if editing is cancelled.
     load: function (position, annotation) {
         this.annotation = annotation;
-        if(this.annotation.quote.length>1600){
+
+        console.log("mp-editor -load");
+        console.log(annotation);
+
+        var claim = annotation.argues;        
+
+        if(claim.hasTarget.hasSelector.exact.length>1600){
             alert("[INFO] Exceeding max lengh of text 1600!");
             $('.btn-success').click();
             this.cancel();
         }
         
-
         var annotations;
         if(getURLParameter("sourceURL")==null)
             var sourceURL = getURLParameter("file").trim();
@@ -519,33 +301,24 @@ var mpEditor = exports.mpEditor = Editor.extend({
         var queryObj = JSON.parse('{"uri":"'+source+'","email":"'+email+'"}');
 
         var annhost = config.annotator.host;
-        //var annport = config.store.port;
 
         // call apache for request annotator store
         var queryOptStr = '{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://' + annhost + '/annotatorstore","urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search"}}';
-        console.log(queryOptStr);
 
         var queryOptions = JSON.parse(queryOptStr);
-
-        //var queryOptions = JSON.parse('{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://localhost:5000","urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search"}}');
-
         var storage = new HttpStorage(queryOptions);
 
         //console.log("editor call storage");
         var self = this;
         storage.query(queryObj)
             .then(function(data){
-                //console.log("editor call results2:" + JSON.stringify(data.results));
                 annotations = data.results;
                 for (var i = 0, len = self.fields.length; i < len; i++) {
                     var field = self.fields[i];
                     field.load(field.element, self.annotation,annotations);
-                    //field.load(field.element, this.annotation, this.annotations);
                 }
             });
         //console.log(r.length);
-
-
 
         var self = this;
         return new Promise(function (resolve, reject) {
@@ -598,44 +371,7 @@ var mpEditor = exports.mpEditor = Editor.extend({
     //           submit - Callback Function called when the editor is submitted.
     //                    Receives the field <li> element and the annotation to
     //                    be updated.
-    //
-    // Examples
 
-    //   # Add a new input element.
-    //   editor.addField({
-    //     label: "Tags",
-    //
-    //     # This is called when the editor is loaded use it to update your
-    //     # input.
-    //     load: (field, annotation) ->
-    //       # Do something with the annotation.
-    //       value = getTagString(annotation.tags)
-    //       $(field).find('input').val(value)
-    //
-    //     # This is called when the editor is submitted use it to retrieve data
-    //     # from your input and save it to the annotation.
-    //     submit: (field, annotation) ->
-    //       value = $(field).find('input').val()
-    //       annotation.tags = getTagsFromString(value)
-    //   })
-    //
-    //   # Add a new checkbox element.
-    //   editor.addField({
-    //     type: 'checkbox',
-    //     id: 'annotator-field-my-checkbox',
-    //     label: 'Allow anyone to see this annotation',
-    //     load: (field, annotation) ->
-    //       # Check what state of input should be.
-    //       if checked
-    //         $(field).find('input').attr('checked', 'checked')
-    //       else
-    //         $(field).find('input').removeAttr('checked')
-
-    //     submit: (field, annotation) ->
-    //       checked = $(field).find('input').is(':checked')
-    //       # Do something.
-    //   })
-    //
     // Returns the created <li> Element.
     addField: function (options) {
         var field = $.extend({
@@ -807,7 +543,12 @@ var mpEditor = exports.mpEditor = Editor.extend({
 
 mpEditor.template = Template.content;
 
-
+// Configuration options
+mpEditor.options = {
+    // Add the default field(s) to the editor.
+    defaultFields: true,
+    appendTo: '.mpeditorsection'
+};
 
 // dragTracker is a function which allows a callback to track changes made to
 // the position of a draggable "handle" element.

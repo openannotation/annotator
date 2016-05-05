@@ -5,7 +5,8 @@ var extend = require('backbone-extend-standalone');
 var Template = function(){console.log("success");};
 var $ = require('jquery');
 
-// JSON fields configuration - define form
+// JSON fields configuration
+// Claim form
 var context1 = {
     questions: [
       {
@@ -47,16 +48,22 @@ var context1 = {
         type:"space",
         name:"",
       },
-      // {
-      //   type:"textarea",
-      //   name:"Comment: ",
-      //   id:"Comment"
-      // },
       {
         type:"space",
         name:"",
       }
     ]
+};
+
+// Data - Number of participants form
+var context2 = {
+  questions: [
+      {
+          type: "input",
+          name: "Number of Participants: ",
+          id: "participants"
+      }
+  ]
 };
 
 
@@ -93,7 +100,6 @@ Handlebars.registerHelper('buildForm1', function(items, options) {
     {
       out = out + "<textarea id='" + items[i].id + "' class='" + items[i].id + "'></textarea>";
     }
-
     out = out + "</td>";
     if(((i+1)%3==0))
       out = out + "</tr>";
@@ -102,81 +108,60 @@ Handlebars.registerHelper('buildForm1', function(items, options) {
   return out;
 });
 
-// Handlebars.registerHelper('buildForm3', function(items, options) {
-//   var out = "";
-//   out += "<strong>"+items[0].name+"</strong>";
-//   out += "<input type='text' id='"+items[0].id+"'>";
-//   out += "<table class='clear-user-agent-styles auc'>";
-//   for(var i=1, l=items.length; i<l; i++) {
-//     if((i-1)%4==0)
-//       out += "<tr>";
-//     if(items[i].type=="text")
-//       out += "<td><strong>"+items[i].name+"</strong></td>";
-//     else if(items[i].type=="input")
-//       out += "<td>"+items[i].name + "<input style='width:30px;' type='text' id='"+items[i].id+"'></td>";
-//     else if(items[i].type=="dropdown") {
-//       out += "<td>"+items[i].name + "<select id='" + items[i].id + "'>";
-//       for(var j=0, jl=items[i].options.length;j<jl;j++)
-//       {
-//         out += "<option value='"+items[i].options[j] +"'>"+ items[i].options[j]+"</option>";
-//       }
-//       out += "</select></td>";
-//       if(i%4==0)
-//         out += "</tr>";
-//     }
-//   }
-//   return out + "</table>";
-// });
+Handlebars.registerHelper('buildForm2', function(items, options) {
+    var out = "";
+    for(var i=0, l=items.length; i<l; i++) {
+        if(items[i].type=="text")
+            out += "<strong id='"+items[i].id+"'></strong><br>";
+        else if(items[i].type=="input")
+            out += items[i].name + "<input style='width:30px;' type='text' id='"+items[i].id+"'>";
+    }
+    return out;
+});
 
-// Handlebars.registerHelper('buildForm2', function(items, options) {
-//   var out = "";
-//   for(var i=0, l=items.length; i<l; i++) {
-//     if(items[i].type=="text")
-//       out += "<strong id='"+items[i].id+"'></strong><br>";
-//     else if(items[i].type=="input")
-//       out += items[i].name + "<input style='width:30px;' type='text' id='"+items[i].id+"'>";
-//     else if(items[i].type=="dropdown") {
-//       out += items[i].name + "<select id='" + items[i].id + "'>";
-//       for(var j=0, jl=items[i].options.length;j<jl;j++)
-//       {
-//         out += "<option value='"+items[i].options[j] +"'>"+ items[i].options[j]+"</option>";
-//       }
-//       out += "</select>";
-//       if(items[i].id=="RegimentsP"||items[i].id=="RegimentsO")
-//         out += "<br>";
-//     }
-//   }
-//   return out;
-// });
 
+// Claim
 var source = "{{#buildForm1 questions}}{{/buildForm1}}";
 var template = Handlebars.compile(source);
 var form1 = template(context1);
 
+// Data - number of participants
+source = "{{#buildForm2 questions}}{{/buildForm2}}";
+template = Handlebars.compile(source);
+var form2 = template(context2);
+
+
+
 Template.content = [
-  '<div class="annotator-outer annotator-editor annotator-invert-y annotator-invert-x">',
-  '  <form class="annotator-widget">',
-  '    <ul class="annotator-listing"></ul>',
-  '<div class="annotationbody" style="margin-left:5px;margin-right:0px;height:100%;line-height:200%;margin-top:0px;overflow-y: hidden">',
-  '<div id="tabs">',
-  '<div id="tabs-1" style="margin-bottom:0px;">',
-  '<div id="firstsection" style="margin-top:10px;margin-left:5px;">',
-  '<div onclick="flipdrug()" style="float:left" class="flipicon"></div>',
-  '<table class="clear-user-agent-styles">',
-
-  form1,
-
-  '</table>',
-  '</div>',
-  '</div>',
-  '</div>',
-  '</div>',
-  '    <div class="annotator-controls1">',
-  '     <a href="#cancel" class="annotator-cancel" onclick="showrightbyvalue()" id="annotator-cancel">Cancel</a>',
-  '     <a href="#save" class="annotator-save annotator-focus" onclick="showrightbyvalue()">Save</a>',
+    '<div class="annotator-outer annotator-editor annotator-invert-y annotator-invert-x">',
+    '<form class="annotator-widget">',
+    '<ul class="annotator-listing"></ul>',
+    '<div class="annotationbody" style="margin-left:5px;margin-right:0px;height:100%;line-height:200%;margin-top:0px;overflow-y: hidden">',
+    '<div id="tabs">',
+    '<div id="tabs-1" style="margin-bottom:0px;">',
+    
+    // Claim form
+    '<div id="mp-claim-form" style="margin-top:10px;margin-left:5px;">',
+    '<div onclick="flipdrug()" style="float:left" class="flipicon"></div>',
+    '<table class="clear-user-agent-styles">',
+    form1,
+    '</table>',
+    '</div>',
+    
+    // Data & material - Num of Participants
+    '<div id="mp-data-form-np" style="margin-top:10px;margin-left:5px;">',
+    form2,
+    '</div>',
+    
+    '</div>',
+    '</div>',
+    '</div>',
+    '    <div class="annotator-controls1">',
+    '     <a href="#cancel" class="annotator-cancel" onclick="showrightbyvalue()" id="annotator-cancel">Cancel</a>',
+    '     <a href="#save" class="annotator-save annotator-focus" onclick="showrightbyvalue()">Save</a>',
   '    </div>',
-  '  </form>',
-  '</div>'
+    '  </form>',
+    '</div>'
 ].join('\n');
 
 

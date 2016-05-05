@@ -9,8 +9,7 @@ var textselector = require('./oaselector');
 // mp
 var mpadder = require('./../mpPlugin/adder');
 var mphighlighter = require('./../mpPlugin/highlighter');
-//var mpeditor = require('./../mpPlugin/editor');
-var mpclaimeditor = require('./../mpPlugin/claim-editor');
+var mpeditor = require('./../mpPlugin/editor');
 var mpviewer = require('./../mpPlugin/viewer');
 
 // highlight
@@ -264,17 +263,17 @@ function main(options) {
         //     extensions: options.editorExtensions
         // });
         // s.mpeditor.attach();
-        s.mpclaimeditor = new mpclaimeditor.mpClaimEditor({
+        s.mpeditor = new mpeditor.mpEditor({
             extensions: options.editorExtensions
         });
-        s.mpclaimeditor.attach();
+        s.mpeditor.attach();
 
         s.hleditor = new hleditor.Editor({
             extensions: options.editorExtensions
         });
         s.hleditor.attach();
 
-        addPermissionsCheckboxes(s.mpclaimeditor, ident, authz);
+        addPermissionsCheckboxes(s.mpeditor, ident, authz);
         //addPermissionsCheckboxes(s.hleditor, ident, authz);
 
         //highlighter
@@ -364,7 +363,7 @@ function main(options) {
             s.textselector.destroy();
             s.hlviewer.destroy();
             s.mpadder.destroy();
-            s.mpclaimeditor.destroy();
+            s.mpeditor.destroy();
             s.mphighlighter.destroy();
             s.mpviewer.destroy();
             removeDynamicStyle();
@@ -411,7 +410,7 @@ function main(options) {
 
             // yifan: call different editor based on annotation type
             if (annotation.annotationType == "MP"){
-                return s.mpclaimeditor.load(s.interactionPoint,annotation);
+                return s.mpeditor.load(s.interactionPoint,annotation);
             } else if (annotation.annotationType == "DrugMention") {
                 // return s.hleditor.load(annotation, s.interactionPoint);
                 // yifan: not show editor when typed as Drug mention
@@ -429,7 +428,7 @@ function main(options) {
             //alert('testmain.js - beforeAnnotationUpdated - annotation type defined: ' + annotation.annotationType);
 
             if (annotation.annotationType == "MP"){
-                return s.mpclaimeditor.load(s.interactionPoint,annotation);
+                return s.mpeditor.load(s.interactionPoint,annotation);
             } else if (annotation.annotationType == "DrugMention") {
                 // return s.hleditor.load(annotation, s.interactionPoint);
                 return null;
