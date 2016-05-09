@@ -382,6 +382,10 @@ var mpViewer = exports.mpViewer = Widget.extend({
         var item = $(event.target)
             .parents('.annotator-annotation')
             .data('annotation');
+
+        console.log("mp viewer - onEditClick");
+        console.log(item);
+
         this.hide();
         this.options.onEdit(item);
     },

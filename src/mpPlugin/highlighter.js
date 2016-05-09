@@ -134,15 +134,30 @@ mpHighlighter.prototype.draw = function (annotation) {
         return null;
 
     console.log('mphighlighter - draw anntype: ' + annotation.annotationType);
+    console.log(annotation);
 
     var normedRanges = [];
 
+    // draw MP claim
     for (var i = 0, ilen = annotation.argues.ranges.length; i < ilen; i++) {
         var r = reanchorRange(annotation.argues.ranges[i], this.element);
         if (r !== null) {
             normedRanges.push(r);
         }
     }
+    // draw MP data
+    // if (annotation.argues.supportsBy != null){
+    //     // draw MP Material
+    //     if (annotation.argues.supportsBy.supportsBy.supportsBy != null){
+    //         // participants for testing
+    //         console.log(annotation.argues.supportsBy.supportsBy.supportsBy.numOfParticipants.ranges[0]);
+    //         var r = reanchorRange(annotation.argues.supportsBy.supportsBy.supportsBy.numOfParticipants.ranges[0], this.element);
+    //         if (r !== null) {
+    //             normedRanges.push(r);
+    //         }
+    //     }
+    // }
+
 
     var hasLocal = (typeof annotation._local !== 'undefined' &&
 

@@ -141,7 +141,9 @@ Template.content = [
     '<div id="tabs-1" style="margin-bottom:0px;">',
 
     // Type of editor
-    '<div id="mp-editor-type"></div>',
+    '<div id="mp-editor-type" style="display: none;"></div>',
+    // The Claim currently working on
+    'Current annotation id: <div id="mp-annotation-work-on"></div>',
     
     // Claim form
     '<div id="mp-claim-form" style="margin-top:10px;margin-left:5px;">',

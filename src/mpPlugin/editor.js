@@ -41,11 +41,9 @@ var mpEditor = exports.mpEditor = Widget.extend({
         var editorSelf = this;
         this.fields = [];
         this.annotation = {};
-        console.log("[INFO] mp - claimeditor - constructor");
+        console.log("[INFO] mpeditor - constructor");
 
         if (this.options.defaultFields) {
-
-            //quote content + load and submit all content
 
             this.addField({
                 type: 'div',
@@ -54,8 +52,10 @@ var mpEditor = exports.mpEditor = Widget.extend({
                 load: function (field, annotation, annotations) {
                     
                     var editorType = $("#mp-editor-type").html();
+                    var annotationId = $("#mp-annotation-work-on").html();
                     console.log("mpeditor - load - type: " + editorType);
-                    // claim
+
+                    // load MP Claim
                     if(editorType == "claim"){
 
                         console.log("mpeditor - load - claim");
@@ -82,7 +82,6 @@ var mpEditor = exports.mpEditor = Widget.extend({
                                 list.push(anns[i].argues.hasTarget.hasSelector.exact);
                             }
                         }
-                        
                         //console.log(list);
                         
                         for (var i = 0, len = list.length; i < len; i++) {
@@ -163,50 +162,68 @@ var mpEditor = exports.mpEditor = Widget.extend({
                             }                                                
                         }
                         
-                        // $('.Role1').each(function () {
-                        //     if (this.value === annotation.Role1) this.checked = true; else this.checked = false;
-                        // });
-                    } else if (editorType == "participants"){
-                        console.log("mpeditor - load - participants");
-                    }
+                    } else if (editorType == "participants" && annotationId != null && annotation.argues.supportsBy !=null){
 
+                        if(annotation.argues.supportsBy.supportsBy.supportsBy.numOfParticipants.value !=null){
+                            $("#participants").empty();
+                            $("#participants").html(annotation.argues.supportsBy.supportsBy.supportsBy.numOfParticipants.value);
+                        }
+                    }
                         
                 },
                 
                 submit:function (field, annotation) {
 
-                    // mp claim
-                    if($('#Drug1 option:selected').text()==$('#Drug2 option:selected').text()){
-                        alert("Should highlight two different drugs.");
-                        editorSelf.cancel();
-                        $('.btn-success').click();
-                    }
-                    
-                    annotation.annotationType = "MP";
-                    
-                    // MP argues claim, claim qualified by ?s ?p ?o
-                    var qualifiedBy = {drug1 : "", drug2 : "", relationship : "", enzyme : ""};                    
-                    qualifiedBy.drug1 = $('#Drug1 option:selected').text();
-                    qualifiedBy.drug2 = $('#Drug2 option:selected').text();
-                    qualifiedBy.relationship = $('#relationship option:selected').text();
-                    var claimStatement = qualifiedBy.drug1 + "_" + qualifiedBy.relationship + "_" + qualifiedBy.drug2;
+                    var editorType = $("#mp-editor-type").html();
+                    var annotationId = $("#mp-annotation-work-on").html();
 
-                    if(qualifiedBy.relationship == "inhibits" || qualifiedBy.relationship == "substrate of") {
-                        qualifiedBy.enzyme = $('#enzyme option:selected').text();
+                    console.log("mpeditor - load - type: " + editorType);
+                    if (editorType == "claim"){
+
+                        // MP Claim
+                        if($('#Drug1 option:selected').text()==$('#Drug2 option:selected').text()){
+                            alert("Should highlight two different drugs.");
+                            editorSelf.cancel();
+                            $('.btn-success').click();
+                        }
+                        
+                        annotation.annotationType = "MP";
+                    
+                        // MP argues claim, claim qualified by ?s ?p ?o
+                        var qualifiedBy = {drug1 : "", drug2 : "", relationship : "", enzyme : ""};                    
+                        qualifiedBy.drug1 = $('#Drug1 option:selected').text();
+                        qualifiedBy.drug2 = $('#Drug2 option:selected').text();
+                        qualifiedBy.relationship = $('#relationship option:selected').text();
+                        var claimStatement = qualifiedBy.drug1 + "_" + qualifiedBy.relationship + "_" + qualifiedBy.drug2;
+                        
+                        if(qualifiedBy.relationship == "inhibits" || qualifiedBy.relationship == "substrate of") {
+                            qualifiedBy.enzyme = $('#enzyme option:selected').text();
+                        } 
+                        annotation.argues.qualifiedBy = qualifiedBy;
+                        annotation.argues.type = "mp:claim";
+                        annotation.argues.label = claimStatement;
+                        annotation.argues.supportsBy = [];
+                        
+                        console.log("submit mp annotation");
+
                     } 
-                    annotation.argues.qualifiedBy = qualifiedBy;
-                    annotation.argues.type = "mp:claim";
-                    annotation.argues.label = claimStatement;
-
-                    console.log("submit mp annotation");
-                    console.log(annotation);
+                    // MP add data-method-material num of participants
+                    else if (editorType = "participants" && annotationId != null) {
+                        console.log("mpeditor - submit - add new data");
+                        annotation.argues.supportsBy.supportsBy.supportsBy.numOfParticipants.value = $('#participants').val();                         
+                        
+                    }
+                    // clean editor status
+                    $("#mp-annotation-work-on").html('');
+                    $("#mp-editor-type").html('');
                 }
+                
             });
-
+            
         }
-
+        
         var self = this;
-
+        
         this.element
             .on("submit." + NS, 'form', function (e) {
                 self._onFormSubmit(e);
@@ -354,6 +371,10 @@ var mpEditor = exports.mpEditor = Widget.extend({
     cancel: function () {
         if (typeof this.dfd !== 'undefined' && this.dfd !== null) {
             this.dfd.reject('editing cancelled');
+
+            // clean editor status
+            $("#mp-annotation-work-on").html('');
+            $("#mp-editor-type").html('');
         }
         this.hide();
     },

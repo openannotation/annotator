@@ -4,7 +4,6 @@
 var util = require('../util');
 var xUtil = require('../xutil');
 var textselector = require('./textselector');
-//var textselector = require('./oaselector');
 
 // mp
 var mpadder = require('./../mpPlugin/adder');
@@ -245,7 +244,12 @@ function main(options) {
         // mp adder
         s.mpadder = new mpadder.mpAdder({
             onCreate: function (ann) {
+                console.log("mpmain - onCreate function");
                 app.annotations.create(ann);
+            },
+            onUpdate: function (ann) {
+                console.log("mpmain - onUpdate function");
+                app.annotations.update(ann);
             }
         });
         s.mpadder.attach();
@@ -254,6 +258,9 @@ function main(options) {
         s.hladder = new hladder.Adder({
             onCreate: function (ann) {
                 app.annotations.create(ann);
+            },
+            onUpdate: function (ann) {
+                app.annotations.update(ann);
             }
         });
         s.hladder.attach();
@@ -280,7 +287,7 @@ function main(options) {
         s.hlhighlighter = new hlhighlighter.Highlighter(options.element);
         s.mphighlighter = new mphighlighter.mpHighlighter(options.element);
 
-
+        // select text, then load normed ranges to adder
         s.textselector = new textselector.TextSelector(options.element, {
             onSelection: function (ranges, event) {
                 if (ranges.length > 0) {
@@ -295,7 +302,6 @@ function main(options) {
                 } else {
                     s.hladder.hide();
                     s.mpadder.hide();
-
                 }
             }
         });

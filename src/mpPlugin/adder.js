@@ -8,6 +8,8 @@ var _t = util.gettext;
 
 var NS = 'annotator-addermp';
 
+// bring storage in
+var HttpStorage = require('../storage').HttpStorage;
 
 // Adder shows and hides an annotation adder button that can be clicked on to
 // create an annotation.
@@ -19,6 +21,7 @@ var mpAdder = Widget.extend({
         this.ignoreMouseup = false;
         this.annotation = null;
 
+        this.onUpdate = this.options.onUpdate;
         this.onCreate = this.options.onCreate;
 
         var self = this;
@@ -29,13 +32,14 @@ var mpAdder = Widget.extend({
         // .on("click." + NS, 'button', function (e) {
         //     self._onClick(e);
         // })
-            .on("click." + NS, 'li', function (e) {
+            .on("click." + NS, '.mp-main-menu', function (e) {
                 self._onClick(e);
             })
+
         // .on("mousedown." + NS, 'button', function (e) {
         //     self._onMousedown(e);
         // });
-            .on("mousedown." + NS, 'li', function (e) {
+            .on("mousedown." + NS, '.mp-main-menu', function (e) {
                 self._onMousedown(e);
             });
 
@@ -135,6 +139,7 @@ var mpAdder = Widget.extend({
     _onClick: function (event) {
 
         console.log("mp adder: _onclick called");
+
         // close MP menu after click action 
         $('.mp-main-menu').hide();
 
@@ -152,13 +157,48 @@ var mpAdder = Widget.extend({
 
         this.ignoreMouseup = false;
 
-        // Create a new annotation
+        var editorType = $("#mp-editor-type").html();
+        console.log("mpadder - onclick: " + editorType);
 
-        if (this.annotation !== null && typeof this.onCreate === 'function') {
+        if (this.annotation !== null && editorType == "claim" && typeof this.onCreate === 'function') { // if type is claim, then  create annotation
             this.annotation.annotationType = "MP";
             this.onCreate(this.annotation, event);
+        }        
+        else if (editorType == "participants" && typeof this.onUpdate === 'function') { // add data to claim: 1) query MP annotation, 2) enable data editor, 3) load existing MP annotation            
+            
+            var annotationId = $("#mp-annotation-work-on").html();
+            console.log("mpadder - participants for - annotationId:" + annotationId);
+            var annhost = config.annotator.host;
+            var queryOptStr = '{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://' + annhost + '/annotatorstore" ,"urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search?_id=' + annotationId +'"}}';
+            
+            var queryOptions = JSON.parse(queryOptStr);
+            var storage = new HttpStorage(queryOptions);
+            
+            var temp = this;
+            storage.query()
+                .then(function(data){
+                    var oriAnnotation = data.results[0];
+
+                    console.log(temp);             
+                    // get selection for data
+                    var target = temp.annotation.argues.hasTarget;
+                    var ranges = temp.annotation.argues.ranges;
+
+                    if (temp.annotation.argues.supportsBy == null){ // data exists
+                        var data = {type : "mp:data", supportsBy : {type : "mp:method", supportsBy : {type : "mp:material"}}};
+                        var numOfParticipants = {value : "", hasTarget : target, ranges : ranges};
+                        data.supportsBy.supportsBy.numOfParticipants = numOfParticipants;
+                        oriAnnotation.argues.supportsBy = data;                            
+                    } else { // no data avaliable
+                        oriAnnotation.argues.supportsBy.supportsBy.supportsBy.numOfParticipants.hasTarget = target;
+                        oriAnnotation.argues.supportsBy.supportsBy.supportsBy.numOfParticipants.ranges = ranges;
+                    }                    
+
+                    temp.onUpdate(oriAnnotation, event);
+                });                            
         }
     }
+    
 });
 
 
@@ -182,7 +222,9 @@ mpAdder.template = [
 mpAdder.options = {
     // Callback, called when the user clicks the adder when an
     // annotation is loaded.
+    onUpdate: null,
     onCreate: null
+
 };
 
 exports.mpAdder = mpAdder;
