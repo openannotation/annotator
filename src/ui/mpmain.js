@@ -55,14 +55,14 @@ function annotationFactory(contextEl, ignoreSelector) {
             argues : {
                 ranges: serializedRanges,
                 hasTarget: {
-                    source: "url",
                     hasSelector: {
                         "@type": "TextQuoteSelector",
                         "exact": text.join(' / '),
                         "prefix": prefix, 
                         "suffix": suffix 
                     }
-                }
+                },
+                supportsBy : []
             }
         };
     };

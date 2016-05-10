@@ -160,14 +160,16 @@ var mpAdder = Widget.extend({
         var editorType = $("#mp-editor-type").html();
         console.log("mpadder - onclick: " + editorType);
 
-        if (this.annotation !== null && editorType == "claim" && typeof this.onCreate === 'function') { // if type is claim, then  create annotation
+        // if type is claim, then  create annotation
+        if (this.annotation !== null && editorType == "claim" && typeof this.onCreate === 'function') { 
             this.annotation.annotationType = "MP";
             this.onCreate(this.annotation, event);
         }        
-        else if (editorType == "participants" && typeof this.onUpdate === 'function') { // add data to claim: 1) query MP annotation, 2) enable data editor, 3) load existing MP annotation            
-            
+
+        // add data to claim: 1) query MP annotation, 2) enable data editor, 3) load existing MP annotation                        
+        else if (editorType != "claim" && typeof this.onUpdate === 'function') { 
+            // query MP annotation
             var annotationId = $("#mp-annotation-work-on").html();
-            console.log("mpadder - participants for - annotationId:" + annotationId);
             var annhost = config.annotator.host;
             var queryOptStr = '{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://' + annhost + '/annotatorstore" ,"urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search?_id=' + annotationId +'"}}';
             
@@ -178,21 +180,29 @@ var mpAdder = Widget.extend({
             storage.query()
                 .then(function(data){
                     var oriAnnotation = data.results[0];
-
-                    console.log(temp);             
+   
                     // get selection for data
                     var target = temp.annotation.argues.hasTarget;
                     var ranges = temp.annotation.argues.ranges;
 
-                    if (temp.annotation.argues.supportsBy == null){ // data exists
-                        var data = {type : "mp:data", supportsBy : {type : "mp:method", supportsBy : {type : "mp:material"}}};
-                        var numOfParticipants = {value : "", hasTarget : target, ranges : ranges};
-                        data.supportsBy.supportsBy.numOfParticipants = numOfParticipants;
-                        oriAnnotation.argues.supportsBy = data;                            
-                    } else { // no data avaliable
-                        oriAnnotation.argues.supportsBy.supportsBy.supportsBy.numOfParticipants.hasTarget = target;
-                        oriAnnotation.argues.supportsBy.supportsBy.supportsBy.numOfParticipants.ranges = ranges;
-                    }                    
+                    // add data if not avaliable  
+                    if (temp.annotation.argues.supportsBy.length == 0){ 
+                        var data = {type : "mp:data", auc : {}, cmax : {}, clearance : {}, halflife : {}, supportsBy : {type : "mp:method", supportsBy : {type : "mp:material", participants : {}, drug1Dose : {}, drug2Dose : {}}}};
+                        oriAnnotation.argues.supportsBy.push(data); // append data to []
+                    } 
+                    // add target & ranges for data attributes 
+                    if (editorType == "participants"){                         
+                        oriAnnotation.argues.supportsBy[0].supportsBy.supportsBy.participants.hasTarget = target;
+                        oriAnnotation.argues.supportsBy[0].supportsBy.supportsBy.participants.ranges = ranges;
+                    } else if (editorType == "participants" || editorType == "dose1" || editorType == "dose2") {
+                        oriAnnotation.argues.supportsBy[0].supportsBy.supportsBy[editorType].hasTarget = target;
+                        oriAnnotation.argues.supportsBy[0].supportsBy.supportsBy[editorType].ranges = ranges;       
+                    } else if (editorType == "auc" || editorType == "cmax" || editorType == "clearance" || editorType == "halflife") {
+                        oriAnnotation.argues.supportsBy[0][editorType].hasTarget = target;   
+                        oriAnnotation.argues.supportsBy[0][editorType].ranges = ranges;     
+                    } else {
+                        console.log("[ERROR]: editorType not existing!");
+                    }                                    
 
                     temp.onUpdate(oriAnnotation, event);
                 });                            

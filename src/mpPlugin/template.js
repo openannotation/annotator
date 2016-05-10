@@ -46,91 +46,163 @@ var context1 = {
       },
       {
         type:"space",
-        name:"",
-      },
-      {
-        type:"space",
-        name:"",
+        name:""
       }
     ]
 };
 
 // Data - Number of participants form
 var context2 = {
-  questions: [
-      {
-          type: "input",
-          name: "Number of Participants: ",
-          id: "participants"
-      }
-  ]
+    questions: [
+        {
+            type: "input",
+            name: "Number of Participants: ",
+            id: "participants"
+        }
+    ]
 };
 
+// Data - Drug 1 dosage form
+var context3 = {
+    questions: [
+        {
+            type: "input",
+            name: "Dose: ",
+            id: "drug1Dose"
+        },
+        {
+            type:"dropdown",
+            name:"Formulation: ",
+            id:"drug1Formulation",
+            options:["UNK","Oral","IV","transdermal"],
+            optionsID:[]
+        },
+        {
+            type: "input",
+            name: "Duration: ",
+            id: "drug1Duration"
+        },
+        {
+            type:"dropdown",
+            name:"Regimens: ",
+            id:"drug1Regimens",
+            options:["UNK","SD","QD","BID", "TID", "QID", "Q12", "Q8", "Q6", "Daily"],
+            optionsID:[]
+      }
+    ]
+};
+
+// Data - Drug 2 dosage form
+var context4 = {
+    questions: [
+        {
+            type: "input",
+            name: "Dose: ",
+            id: "drug2Dose"
+        },
+        {
+            type:"dropdown",
+        name:"Formulation: ",
+            id:"drug2Formulation",
+            options:["UNK","Oral","IV","transdermal"],
+            optionsID:[]
+        },
+        {
+            type: "input",
+            name: "Duration: ",
+            id: "drug2Duration"
+        },
+        {
+            type:"dropdown",
+            name:"Regimens: ",
+            id:"drug2Regimens",
+            options:["UNK","SD","QD","BID", "TID", "QID", "Q22", "Q8", "Q6", "Daily"],
+            optionsID:[]
+        }
+    ]
+};
 
 // handlerbar - build form1 function
 // @inputs: JSON config - context1
 // @outputs: form1 in html
-Handlebars.registerHelper('buildForm1', function(items, options) {
-  var out = "";
-
-  for(var i=0, l=items.length; i<l; i++) {
-    if(((i)%3==0))
-      out = out + "<tr>";
-    if(items[i].id!="enzyme")
-      out = out + "<td><strong>" + items[i].name +"</strong></td><td>";
-    else
-      out = out + "<td><strong id='enzymesection1'>" + items[i].name +"</strong></td><td>";
-    if(items[i].type=="checkbox")
-    {
-      for (var j = 0, sl = items[i].options.length; j < sl; j++)
-        out = out + "<input type='radio' name='" + items[i].id + "' id='" + items[i].id + "' class='" + items[i].id + "' value='" + items[i].options[j] + "'>" + items[i].options[j] + "</input>";
-
-    }else if(items[i].type=="dropdown")
-    {
-      out = out + "<select id='" + items[i].id + "'>";
-      for(var j = 0, sl = items[i].options.length; j<sl; j++) {
-        if(items[i].optionsID.length==0)
-          out = out + "<option value='" + items[i].options[j] + "'>" + items[i].options[j] + "</option>";
+Handlebars.registerHelper('buildFormClaim', function(items, options) {
+    var out = "";
+    
+    for (var i=0, l=items.length; i<l; i++) {
+        if (((i)%3==0))
+            out = out + "<tr>";
+        if(items[i].id!="enzyme")
+            out = out + "<td><strong>" + items[i].name +"</strong></td><td>";
         else
-          out = out + "<option id='" + items[i].optionsID[j] + "' value='" + items[i].options[j] + "'>" + items[i].options[j] + "</option>";
-      }
-      out = out + "</select>";
-
-    }else if(items[i].type=="textarea")
-    {
-      out = out + "<textarea id='" + items[i].id + "' class='" + items[i].id + "'></textarea>";
+            out = out + "<td><strong id='enzymesection1'>" + items[i].name +"</strong></td><td>";
+        if (items[i].type=="checkbox")
+        {
+            for (var j = 0, sl = items[i].options.length; j < sl; j++)
+                out = out + "<input type='radio' name='" + items[i].id + "' id='" + items[i].id + "' class='" + items[i].id + "' value='" + items[i].options[j] + "'>" + items[i].options[j] + "</input>";
+            
+        } 
+        else if (items[i].type=="dropdown") {
+            out = out + "<select id='" + items[i].id + "'>";
+            for(var j = 0, sl = items[i].options.length; j<sl; j++) {
+                if(items[i].optionsID.length==0)
+                    out = out + "<option value='" + items[i].options[j] + "'>" + items[i].options[j] + "</option>";
+                else
+                    out = out + "<option id='" + items[i].optionsID[j] + "' value='" + items[i].options[j] + "'>" + items[i].options[j] + "</option>";
+            }
+            out = out + "</select>";
+        } 
+        else if(items[i].type=="textarea")
+        {
+            out = out + "<textarea id='" + items[i].id + "' class='" + items[i].id + "'></textarea>";
+        }
+        out = out + "</td>";
+        if(((i+1)%3==0))
+            out = out + "</tr>";
     }
-    out = out + "</td>";
-    if(((i+1)%3==0))
-      out = out + "</tr>";
-  }
-
-  return out;
+    return out;
 });
 
-Handlebars.registerHelper('buildForm2', function(items, options) {
+Handlebars.registerHelper('buildFormData', function(items, options) {
     var out = "";
     for(var i=0, l=items.length; i<l; i++) {
         if(items[i].type=="text")
             out += "<strong id='"+items[i].id+"'></strong><br>";
         else if(items[i].type=="input")
             out += items[i].name + "<input style='width:30px;' type='text' id='"+items[i].id+"'>";
+        else if (items[i].type=="dropdown") {
+            out = out + "<select id='" + items[i].id + "'>";
+            for(var j = 0, sl = items[i].options.length; j<sl; j++) {
+                if(items[i].optionsID.length==0)
+                    out = out + "<option value='" + items[i].options[j] + "'>" + items[i].options[j] + "</option>";
+                else
+                    out = out + "<option id='" + items[i].optionsID[j] + "' value='" + items[i].options[j] + "'>" + items[i].options[j] + "</option>";
+            }
+            out = out + "</select>";
+        } 
     }
     return out;
 });
 
 
 // Claim
-var source = "{{#buildForm1 questions}}{{/buildForm1}}";
+var source = "{{#buildFormClaim questions}}{{/buildFormClaim}}";
 var template = Handlebars.compile(source);
 var form1 = template(context1);
 
 // Data - number of participants
-source = "{{#buildForm2 questions}}{{/buildForm2}}";
+source = "{{#buildFormData questions}}{{/buildFormData}}";
 template = Handlebars.compile(source);
 var form2 = template(context2);
 
+// Data - dosage 1
+source = "{{#buildFormData questions}}{{/buildFormData}}";
+template = Handlebars.compile(source);
+var form3 = template(context3);
 
+// Data - dosage 2
+source = "{{#buildFormData questions}}{{/buildFormData}}";
+template = Handlebars.compile(source);
+var form4 = template(context4);
 
 Template.content = [
     '<div class="annotator-outer annotator-editor annotator-invert-y annotator-invert-x">',
@@ -143,19 +215,34 @@ Template.content = [
     // Type of editor
     '<div id="mp-editor-type" style="display: none;"></div>',
     // The Claim currently working on
-    'Current annotation id: <div id="mp-annotation-work-on"></div>',
-    
+    '<div id="mp-annotation-work-on" style="display: none;"></div>',
+
+    // links 
+    '<div id="mp-data-nav">',
+    '<a href="#" onclick="dataEditorLoad(\'participants\')" >Participants</a> &nbsp;->&nbsp;',
+    '<a href="#" onclick="dataEditorLoad(\'dose1\')" >Drug 1 Dose</a>',
+    '</div>',
+
     // Claim form
     '<div id="mp-claim-form" style="margin-top:10px;margin-left:5px;">',
-    '<div onclick="flipdrug()" style="float:left" class="flipicon"></div>',
     '<table class="clear-user-agent-styles">',
     form1,
     '</table>',
     '</div>',
     
     // Data & material - Num of Participants
-    '<div id="mp-data-form-np" style="margin-top:10px;margin-left:5px;">',
+    '<div id="mp-data-form-participants" style="margin-top:10px;margin-left:5px;">',
     form2,
+    '</div>',
+
+    // Data & material - Drug1 Dosage
+    '<div id="mp-data-form-dose1" style="margin-top:10px;margin-left:5px;">',
+    form3,
+    '</div>',
+
+    // Data & material - Drug2 Dosage
+    '<div id="mp-data-form-dose2" style="margin-top:10px;margin-left:5px;">',
+    form4,
     '</div>',
     
     '</div>',

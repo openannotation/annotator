@@ -162,11 +162,11 @@ var mpEditor = exports.mpEditor = Widget.extend({
                             }                                                
                         }
                         
-                    } else if (editorType == "participants" && annotationId != null && annotation.argues.supportsBy !=null){
+                    } else if (editorType == "participants" && annotationId != null && annotation.argues.supportsBy.length != 0){
 
-                        if(annotation.argues.supportsBy.supportsBy.supportsBy.numOfParticipants.value !=null){
+                        if(annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.value !=null){
                             $("#participants").empty();
-                            $("#participants").html(annotation.argues.supportsBy.supportsBy.supportsBy.numOfParticipants.value);
+                            $("#participants").html(annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.value);
                         }
                     }
                         
@@ -210,7 +210,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                     // MP add data-method-material num of participants
                     else if (editorType = "participants" && annotationId != null) {
                         console.log("mpeditor - submit - add new data");
-                        annotation.argues.supportsBy.supportsBy.supportsBy.numOfParticipants.value = $('#participants').val();                         
+                        annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.value = $('#participants').val();                         
                         
                     }
                     // clean editor status
@@ -301,7 +301,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
         this.annotation = annotation;
 
         console.log("mp-editor -load");
-        console.log(annotation);
+        //console.log(annotation);
 
         var claim = annotation.argues;        
 
