@@ -163,11 +163,11 @@ var mpEditor = exports.mpEditor = Widget.extend({
                         }
                         
                     } else if (editorType == "participants" && annotationId != null && annotation.argues.supportsBy.length != 0){
-
-                        if(annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.value !=null){
-                            $("#participants").empty();
-                            $("#participants").html(annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.value);
-                        }
+                        $("#participants").empty();
+                        if(annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.value !=null)
+                            $("#participants").html(annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.value);                                                    
+                    } else if (editorType == "dose1" && annotationId != null && annotation.argues.supportsBy.length != 0){
+                        
                     }
                         
                 },
@@ -206,13 +206,41 @@ var mpEditor = exports.mpEditor = Widget.extend({
                         
                         console.log("submit mp annotation");
 
-                    } 
-                    // MP add data-method-material num of participants
-                    else if (editorType = "participants" && annotationId != null) {
-                        console.log("mpeditor - submit - add new data");
-                        annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.value = $('#participants').val();                         
+                    } else { // MP add data-method-material 
+
+                        if (editorType == "participants" && annotationId != null) {
+                            console.log("mpeditor - submit - add participants");
+                            annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.value = $('#participants').val(); 
+                            
+                            annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.hasTarget = annotation.dataTarget;
+                            annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.ranges = annotation.dataRanges;                            
+                        } 
+                        else if (editorType == "dose1" && annotationId != null) {
+                            console.log("mpeditor - submit - add dose1");
+                            annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.value = $('#drug1Dose').val(); 
+                            annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.formulation = $('#drug1Formulation option:selected').text(); 
+                            annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.duration = $('#drug1Duration').val(); 
+                            annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.regimens = $('#drug1Regimens option:selected').text(); 
+                            
+                            annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.hasTarget = annotation.dataTarget;
+                            annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.ranges = annotation.dataRanges;                            
+                        }
+                        else if (editorType == "dose2" && annotationId != null) {
+                            console.log("mpeditor - submit - add dose2");
+                            annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.value = $('#drug2Dose').val(); 
+                            annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.formulation = $('#drug2Formulation option:selected').text(); 
+                            annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.duration = $('#drug2Duration').val(); 
+                            annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.regimens = $('#drug2Regimens option:selected').text(); 
+                            
+                            annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.hasTarget = annotation.dataTarget;
+                            annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.ranges = annotation.dataRanges;                            
+                        }
                         
+                        delete annotation.dataTarget;
+                        delete annotation.dataRanges;
                     }
+                    
+
                     // clean editor status
                     $("#mp-annotation-work-on").html('');
                     $("#mp-editor-type").html('');

@@ -147,17 +147,32 @@ mpHighlighter.prototype.draw = function (annotation) {
     }
     // draw MP data
     try {
-    if (annotation.argues.supportsBy.length != 0){
-        // draw MP Material
-        if (annotation.argues.supportsBy[0].supportsBy.supportsBy != null){
-            // participants for testing
-            console.log(annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.ranges[0]);
-            var r = reanchorRange(annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.ranges[0], this.element);
-            if (r !== null) {
-                normedRanges.push(r);
+        if (annotation.argues.supportsBy.length != 0){
+            // draw MP Material
+            var material = annotation.argues.supportsBy[0].supportsBy.supportsBy;
+            if (material != null){
+                if (material.participants.ranges != null) {
+                    var r = reanchorRange(annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.ranges[0], this.element);
+                    if (r !== null) {
+                        normedRanges.push(r);
+                    }
+                }
+                if (material.drug1Dose.ranges != null) {
+                    var r = reanchorRange(annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.ranges[0], this.element);
+                    if (r !== null) {
+                        normedRanges.push(r);
+                    }
+                }
+                if (material.drug2Dose.ranges != null) {
+                    var r = reanchorRange(annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.ranges[0], this.element);
+                    if (r !== null) {
+                        normedRanges.push(r);
+                    }
+                }
+                
+                
             }
         }
-    }
     } catch (err) {
         console.log(err);
     }

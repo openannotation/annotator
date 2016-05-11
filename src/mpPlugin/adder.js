@@ -190,19 +190,20 @@ var mpAdder = Widget.extend({
                         var data = {type : "mp:data", auc : {}, cmax : {}, clearance : {}, halflife : {}, supportsBy : {type : "mp:method", supportsBy : {type : "mp:material", participants : {}, drug1Dose : {}, drug2Dose : {}}}};
                         oriAnnotation.argues.supportsBy.push(data); // append data to []
                     } 
+
                     // add target & ranges for data attributes 
-                    if (editorType == "participants"){                         
-                        oriAnnotation.argues.supportsBy[0].supportsBy.supportsBy.participants.hasTarget = target;
-                        oriAnnotation.argues.supportsBy[0].supportsBy.supportsBy.participants.ranges = ranges;
-                    } else if (editorType == "participants" || editorType == "dose1" || editorType == "dose2") {
-                        oriAnnotation.argues.supportsBy[0].supportsBy.supportsBy[editorType].hasTarget = target;
-                        oriAnnotation.argues.supportsBy[0].supportsBy.supportsBy[editorType].ranges = ranges;       
-                    } else if (editorType == "auc" || editorType == "cmax" || editorType == "clearance" || editorType == "halflife") {
-                        oriAnnotation.argues.supportsBy[0][editorType].hasTarget = target;   
-                        oriAnnotation.argues.supportsBy[0][editorType].ranges = ranges;     
-                    } else {
-                        console.log("[ERROR]: editorType not existing!");
-                    }                                    
+                    oriAnnotation.dataTarget = target;
+                    oriAnnotation.dataRanges = ranges;
+
+                    // if (editorType == "participants" || editorType == "dose1" || editorType == "dose2") {
+                    //     oriAnnotation.argues.supportsBy[0].supportsBy.supportsBy[editorType].hasTarget = target;
+                    //     oriAnnotation.argues.supportsBy[0].supportsBy.supportsBy[editorType].ranges = ranges;       
+                    // } else if (editorType == "auc" || editorType == "cmax" || editorType == "clearance" || editorType == "halflife") {
+                    //     oriAnnotation.argues.supportsBy[0][editorType].hasTarget = target;   
+                    //     oriAnnotation.argues.supportsBy[0][editorType].ranges = ranges;     
+                    // } else {
+                    //     console.log("[ERROR]: editorType not existing!");
+                    // }                                    
 
                     temp.onUpdate(oriAnnotation, event);
                 });                            

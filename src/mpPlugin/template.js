@@ -218,30 +218,31 @@ Template.content = [
     '<div id="mp-annotation-work-on" style="display: none;"></div>',
 
     // links 
-    '<div id="mp-data-nav">',
+    '<div id="mp-data-nav" style="display: none;">',
     '<a href="#" onclick="dataEditorLoad(\'participants\')" >Participants</a> &nbsp;->&nbsp;',
-    '<a href="#" onclick="dataEditorLoad(\'dose1\')" >Drug 1 Dose</a>',
+    '<a href="#" onclick="dataEditorLoad(\'dose1\')" >Drug 1 Dose</a> &nbsp;->&nbsp;',
+    '<a href="#" onclick="dataEditorLoad(\'dose2\')" >Drug 2 Dose</a>',
     '</div>',
 
     // Claim form
-    '<div id="mp-claim-form" style="margin-top:10px;margin-left:5px;">',
+    '<div id="mp-claim-form" style="margin-top:10px;margin-left:5px";display: none;>',
     '<table class="clear-user-agent-styles">',
     form1,
     '</table>',
     '</div>',
     
     // Data & material - Num of Participants
-    '<div id="mp-data-form-participants" style="margin-top:10px;margin-left:5px;">',
+    '<div id="mp-data-form-participants" style="margin-top:10px;margin-left:5px;display: none;">',
     form2,
     '</div>',
 
     // Data & material - Drug1 Dosage
-    '<div id="mp-data-form-dose1" style="margin-top:10px;margin-left:5px;">',
+    '<div id="mp-data-form-dose1" style="margin-top:10px;margin-left:5px;display: none;">',
     form3,
     '</div>',
 
     // Data & material - Drug2 Dosage
-    '<div id="mp-data-form-dose2" style="margin-top:10px;margin-left:5px;">',
+    '<div id="mp-data-form-dose2" style="margin-top:10px;margin-left:5px;display: none;">',
     form4,
     '</div>',
     
