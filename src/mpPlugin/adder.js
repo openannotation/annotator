@@ -193,18 +193,7 @@ var mpAdder = Widget.extend({
 
                     // add target & ranges for data attributes 
                     oriAnnotation.dataTarget = target;
-                    oriAnnotation.dataRanges = ranges;
-
-                    // if (editorType == "participants" || editorType == "dose1" || editorType == "dose2") {
-                    //     oriAnnotation.argues.supportsBy[0].supportsBy.supportsBy[editorType].hasTarget = target;
-                    //     oriAnnotation.argues.supportsBy[0].supportsBy.supportsBy[editorType].ranges = ranges;       
-                    // } else if (editorType == "auc" || editorType == "cmax" || editorType == "clearance" || editorType == "halflife") {
-                    //     oriAnnotation.argues.supportsBy[0][editorType].hasTarget = target;   
-                    //     oriAnnotation.argues.supportsBy[0][editorType].ranges = ranges;     
-                    // } else {
-                    //     console.log("[ERROR]: editorType not existing!");
-                    // }                                    
-
+                    oriAnnotation.dataRanges = ranges;                                           
                     temp.onUpdate(oriAnnotation, event);
                 });                            
         }

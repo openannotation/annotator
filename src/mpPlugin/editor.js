@@ -132,7 +132,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                                 if (this.value === claim.qualifiedBy.drug2) $(this).attr('selected', true);
                             });
                             $('#relationship option').each(function () {
-                                if (this.value === claim.qualifiedBy.relationship) {                
+                                if (this.value === claim.qualifiedBy.relationship) { 
                                     $(this).attr('selected', true);
                                     signal = 0;
                                 }
@@ -162,12 +162,32 @@ var mpEditor = exports.mpEditor = Widget.extend({
                             }                                                
                         }
                         
-                    } else if (editorType == "participants" && annotationId != null && annotation.argues.supportsBy.length != 0){
-                        $("#participants").empty();
-                        if(annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.value !=null)
-                            $("#participants").html(annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.value);                                                    
-                    } else if (editorType == "dose1" && annotationId != null && annotation.argues.supportsBy.length != 0){
-                        
+                    } else if (editorType == "participants" && annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.ranges !=null){
+                        //$("#participants").empty();
+                        $("#participants").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.value);                                                    
+                    } else if (editorType == "dose1" && annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.ranges !=null) {
+                        $("#drug1Dose").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.value);
+                        $("#drug1Duration").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.value);
+                        $("#drug1Formulation > option").each(function () {
+                            if (this.value === annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.formulation) {
+                                $(this).attr('selected', true);                                                  }
+                        });
+                        $("#drug1Regimens > option").each(function () {
+                            if (this.value === annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.regimens) {
+                                $(this).attr('selected', true);                                                  }
+                        });
+                    }
+                    else if (editorType == "dose2" && annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.ranges !=null) {
+                        $("#drug2Dose").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.value);
+                        $("#drug2Duration").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.value);
+                        $("#drug2Formulation > option").each(function () {
+                            if (this.value === annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.formulation) {
+                                $(this).attr('selected', true);                                                  }
+                        });
+                        $("#drug2Regimens > option").each(function () {
+                            if (this.value === annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.regimens) {
+                                $(this).attr('selected', true);                                                  }
+                        });
                     }
                         
                 },
@@ -177,7 +197,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                     var editorType = $("#mp-editor-type").html();
                     var annotationId = $("#mp-annotation-work-on").html();
 
-                    console.log("mpeditor - load - type: " + editorType);
+                    console.log("mpeditor - submit - type: " + editorType);
                     if (editorType == "claim"){
 
                         // MP Claim
@@ -202,9 +222,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                         annotation.argues.qualifiedBy = qualifiedBy;
                         annotation.argues.type = "mp:claim";
                         annotation.argues.label = claimStatement;
-                        annotation.argues.supportsBy = [];
-                        
-                        console.log("submit mp annotation");
+                        annotation.argues.supportsBy = [];                       
 
                     } else { // MP add data-method-material 
 

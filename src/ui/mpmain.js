@@ -381,10 +381,9 @@ function main(options) {
 
         },
         annotationCreated: function (ann) {
-            // yifan draw annotation on text 
             if (ann.annotationType == "MP"){
+                console.log("mpmain - annotationCreated called");
                 s.mphighlighter.draw(ann);
-
             } else if (ann.annotationType == "DrugMention"){
                 s.hlhighlighter.draw(ann);
             } else {
@@ -392,11 +391,14 @@ function main(options) {
             }
         },
         annotationDeleted: function (ann) {
-            s.hlhighlighter.undraw(ann);
+            console.log("mpmain - annotationDeleted called");
             s.mphighlighter.undraw(ann);
-
+            if (ann.annotationType == "DrugMention"){
+                s.hlhighlighter.undraw(ann);
+            }
         },
         annotationUpdated: function (ann) {
+            console.log("mpmain - annotationUpdated called");
 
             if (ann.annotationType == "MP"){
                 s.mphighlighter.redraw(ann);
@@ -439,7 +441,6 @@ function main(options) {
                 // return s.hleditor.load(annotation, s.interactionPoint);
                 return null;
             } else {
-                //return s.mpeditor.load(annotation, s.interactionPoint);
                 return null;
             }
         }

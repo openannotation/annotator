@@ -279,10 +279,13 @@ Highlighter.prototype.undraw = function (annotation) {
     typeof annotation._local.highlights !== 'undefined' &&
     annotation._local.highlights !== null);
 
+    console.log("drughighlighter - undraw");
+
     if (!hasHighlights) {
         return;
     }
 
+    console.log(annotation._local.highlights);
     for (var i = 0, len = annotation._local.highlights.length; i < len; i++) {
         var h = annotation._local.highlights[i];
         if (h.parentNode !== null) {

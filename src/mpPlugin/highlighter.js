@@ -33,8 +33,6 @@ function highlightRange(normedRange, cssClass) {
         if (!white.test(node.nodeValue)) {
             var mphl = global.document.createElement('span');
             mphl.className = cssClass;
-            // mphl.id = 'annotator-ddi';
-            // name as annotator-ddi for blue highlighting
             mphl.setAttribute("name", "annotator-mp");
             node.parentNode.replaceChild(mphl, node);
             mphl.appendChild(node);
@@ -123,8 +121,8 @@ mpHighlighter.prototype.drawAll = function (annotations) {
     return p;
 };
 
-// Public: Draw highlights for the annotation.
-//
+// Public: Draw highlights for the MP annotation.
+// Including: claim, [{data, method, material}, {..}]
 // annotation - An annotation Object for which to draw highlights.
 //
 // Returns an Array of drawn highlight elements.
@@ -178,9 +176,7 @@ mpHighlighter.prototype.draw = function (annotation) {
     }
 
 
-    var hasLocal = (typeof annotation._local !== 'undefined' &&
-
-    annotation._local !== null);
+    var hasLocal = (typeof annotation._local !== 'undefined' && annotation._local !== null);
 
     if (!hasLocal) {
         annotation._local = {};
@@ -208,39 +204,45 @@ mpHighlighter.prototype.draw = function (annotation) {
     if (typeof annotation.id !== 'undefined' && annotation.id !== null) {
         //$(annotation._local.highlights)
         //    .attr('data-annotation-id', annotation.id);
-
-        $(annotation._local.highlights)
-            .attr('id', annotation.id);
+        $(annotation._local.highlights).attr('id', annotation.id);
     }
-
+    console.log(annotation._local.highlights);
     return annotation._local.highlights;
 };
 
-// Public: Remove the drawn highlights for the given annotation.
-//
+// Public: Remove the drawn highlights for the given MP annotation.
 // annotation - An annotation Object for which to purge highlights.
-//
-// Returns nothing.
+// if local highlights is null, find all span by annotaiton id, then replace with child Nodes
 mpHighlighter.prototype.undraw = function (annotation) {
+    console.log("mphighlighter - undraw");
+    console.log(annotation);
 
-    if (annotation.annotationType == "MP"){
-    var hasHighlights = (typeof annotation._local !== 'undefined' &&
+    try {
+        var hasHighlights = (typeof annotation._local !== 'undefined' && annotation._local !== null && typeof annotation._local.highlights !== 'undefined' && annotation._local.highlights !== null);
 
-    annotation._local !== null &&
-    typeof annotation._local.highlights !== 'undefined' &&
-    annotation._local.highlights !== null);
-
-    if (!hasHighlights) {
-        return;
-    }
-
-    for (var i = 0, len = annotation._local.highlights.length; i < len; i++) {
-        var h = annotation._local.highlights[i];
-        if (h.parentNode !== null) {
-            $(h).replaceWith(h.childNodes);
-        }
-    }
-    delete annotation._local.highlights;
+        console.log(hasHighlights);
+        // when add mp data, 
+        // add all highlights to annotation._local.highlights           
+        if (!hasHighlights) {
+            var localhighlights = $('span[id^="'+annotation.id+'"]');
+            for (i = 0; i < localhighlights.length; i++){
+                var mpSpan = localhighlights[i];
+                if (mpSpan.parentNode !== null) 
+                    $(mpSpan).replaceWith(mpSpan.childNodes);
+            }
+        } else {        
+            //console.log(annotation._local.highlights);
+            for (var i = 0, len = annotation._local.highlights.length; i < len; i++) 
+            {
+                var h = annotation._local.highlights[i];
+                if (h.parentNode !== null) {
+                    $(h).replaceWith(h.childNodes);
+                }
+            }
+            delete annotation._local.highlights;
+        }        
+    } catch (err) {
+        console.log(err);
     }
 };
 
