@@ -149,26 +149,27 @@ mpHighlighter.prototype.draw = function (annotation) {
             // draw MP Material
             var material = annotation.argues.supportsBy[0].supportsBy.supportsBy;
             if (material != null){
+
                 if (material.participants.ranges != null) {
-                    var r = reanchorRange(annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.ranges[0], this.element);
-                    if (r !== null) {
-                        normedRanges.push(r);
-                    }
+                    for (var i = 0, ilen = material.participants.ranges.length; i < ilen; i++) {
+                    var r = reanchorRange(material.participants.ranges[i], this.element);
+                    if (r !== null) normedRanges.push(r);  
+                    }                      
                 }
+
                 if (material.drug1Dose.ranges != null) {
-                    var r = reanchorRange(annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.ranges[0], this.element);
-                    if (r !== null) {
-                        normedRanges.push(r);
+                    for (var i = 0, ilen = material.drug1Dose.ranges.length; i < ilen; i++) {
+                    var r = reanchorRange(material.drug1Dose.ranges[i], this.element);
+                    if (r !== null) normedRanges.push(r);                   
                     }
                 }
                 if (material.drug2Dose.ranges != null) {
-                    var r = reanchorRange(annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.ranges[0], this.element);
-                    if (r !== null) {
-                        normedRanges.push(r);
+                    for (var i = 0, ilen = material.drug2Dose.ranges.length; i < ilen; i++) {
+                    var r = reanchorRange(material.drug2Dose.ranges[i], this.element);
+                    if (r !== null) normedRanges.push(r);                   
                     }
                 }
-                
-                
+                             
             }
         }
     } catch (err) {
@@ -221,8 +222,8 @@ mpHighlighter.prototype.undraw = function (annotation) {
         var hasHighlights = (typeof annotation._local !== 'undefined' && annotation._local !== null && typeof annotation._local.highlights !== 'undefined' && annotation._local.highlights !== null);
 
         console.log(hasHighlights);
-        // when add mp data, 
-        // add all highlights to annotation._local.highlights           
+        // when add mp data, annotation._local.highlights is null
+        // find highlights of MP annotation, clean span 
         if (!hasHighlights) {
             var localhighlights = $('span[id^="'+annotation.id+'"]');
             for (i = 0; i < localhighlights.length; i++){

@@ -179,6 +179,9 @@ var mpAdder = Widget.extend({
             var temp = this;
             storage.query()
                 .then(function(data){
+                    if (data.results.length == 0)
+                        return;
+
                     var oriAnnotation = data.results[0];
    
                     // get selection for data
@@ -186,7 +189,7 @@ var mpAdder = Widget.extend({
                     var ranges = temp.annotation.argues.ranges;
 
                     // add data if not avaliable  
-                    if (temp.annotation.argues.supportsBy.length == 0){ 
+                    if (oriAnnotation.argues.supportsBy.length == 0){ 
                         var data = {type : "mp:data", auc : {}, cmax : {}, clearance : {}, halflife : {}, supportsBy : {type : "mp:method", supportsBy : {type : "mp:material", participants : {}, drug1Dose : {}, drug2Dose : {}}}};
                         oriAnnotation.argues.supportsBy.push(data); // append data to []
                     } 

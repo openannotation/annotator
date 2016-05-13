@@ -378,7 +378,6 @@ function main(options) {
         annotationsLoaded: function (anns) {
             s.hlhighlighter.drawAll(anns);
             s.mphighlighter.drawAll(anns);
-
         },
         annotationCreated: function (ann) {
             if (ann.annotationType == "MP"){

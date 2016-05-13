@@ -219,13 +219,13 @@ Template.content = [
 
     // links 
     '<div id="mp-data-nav" style="display: none;">',
-    '<a href="#" onclick="dataEditorLoad(\'participants\')" >Participants</a> &nbsp;->&nbsp;',
-    '<a href="#" onclick="dataEditorLoad(\'dose1\')" >Drug 1 Dose</a> &nbsp;->&nbsp;',
-    '<a href="#" onclick="dataEditorLoad(\'dose2\')" >Drug 2 Dose</a>',
+    '<button type="button" onclick="dataEditorLoad(\'participants\')" >Participants</button> &nbsp;->&nbsp;',
+    '<button type="button" onclick="dataEditorLoad(\'dose1\')" >Drug 1 Dose</button> &nbsp;->&nbsp;',
+    '<button type="button" onclick="dataEditorLoad(\'dose2\')" >Drug 2 Dose</button>',
     '</div>',
 
     // Claim form
-    '<div id="mp-claim-form" style="margin-top:10px;margin-left:5px";display: none;>',
+    '<div id="mp-claim-form" style="margin-top:10px;margin-left:5px;display: none;">',
     '<table class="clear-user-agent-styles">',
     form1,
     '</table>',

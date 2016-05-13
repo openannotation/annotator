@@ -260,7 +260,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                     
 
                     // clean editor status
-                    $("#mp-annotation-work-on").html('');
+                    // $("#mp-annotation-work-on").html('');
                     $("#mp-editor-type").html('');
                 }
                 
