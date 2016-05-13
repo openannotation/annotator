@@ -54,6 +54,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                     var editorType = $("#mp-editor-type").html();
                     var annotationId = $("#mp-annotation-work-on").html();
                     console.log("mpeditor - load - type: " + editorType);
+                    console.log(annotation);
 
                     // load MP Claim
                     if(editorType == "claim"){
@@ -162,10 +163,13 @@ var mpEditor = exports.mpEditor = Widget.extend({
                             }                                                
                         }
                         
-                    } else if (editorType == "participants" && annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.ranges !=null){
-                        //$("#participants").empty();
-                        $("#participants").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.value);                                                    
-                    } else if (editorType == "dose1" && annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.ranges !=null) {
+                    } 
+
+                    // load MP list of data 
+                    if (annotation.argues.supportsBy.length > 0) {
+
+                        // load first data for testing 
+                        $("#participants").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.value);                                                 
                         $("#drug1Dose").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.value);
                         $("#drug1Duration").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.value);
                         $("#drug1Formulation > option").each(function () {
@@ -176,8 +180,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                             if (this.value === annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.regimens) {
                                 $(this).attr('selected', true);                                                  }
                         });
-                    }
-                    else if (editorType == "dose2" && annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.ranges !=null) {
+                        
                         $("#drug2Dose").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.value);
                         $("#drug2Duration").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.value);
                         $("#drug2Formulation > option").each(function () {
@@ -188,8 +191,18 @@ var mpEditor = exports.mpEditor = Widget.extend({
                             if (this.value === annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.regimens) {
                                 $(this).attr('selected', true);                                                  }
                         });
+                    } else { // clean data editor
+                        $("#participants").empty();
+                        $("#drug1Dose").empty();
+                        $("#drug1Duration").empty();
+                        $("#drug1Formulation")[0].selectedIndex = -1;
+                        $("#drug1Regimens")[0].selectedIndex = -1;
+                        $("#drug2Dose").empty();
+                        $("#drug2Duration").empty();
+                        $("#drug2Formulation")[0].selectedIndex = -1;
+                        $("#drug2Regimens")[0].selectedIndex = -1;
                     }
-                        
+                    
                 },
                 
                 submit:function (field, annotation) {
