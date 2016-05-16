@@ -138,8 +138,6 @@ var mpAdder = Widget.extend({
     // Returns nothing.
     _onClick: function (event) {
 
-        console.log("mp adder: _onclick called");
-
         // close MP menu after click action 
         $('.mp-main-menu').hide();
 
@@ -158,7 +156,11 @@ var mpAdder = Widget.extend({
         this.ignoreMouseup = false;
 
         var editorType = $("#mp-editor-type").html();
-        console.log("mpadder - onclick: " + editorType);
+        if (editorType == null){
+            editorType = "participants";
+        }
+
+        console.log("mp adder: _onclick called: " + editorType);
 
         // if type is claim, then  create annotation
         if (this.annotation !== null && editorType == "claim" && typeof this.onCreate === 'function') { 
@@ -168,6 +170,7 @@ var mpAdder = Widget.extend({
 
         // add data to claim: 1) query MP annotation, 2) enable data editor, 3) load existing MP annotation                        
         else if (editorType != "claim" && typeof this.onUpdate === 'function') { 
+
             // query MP annotation
             var annotationId = $("#mp-annotation-work-on").html();
             var annhost = config.annotator.host;
@@ -196,8 +199,13 @@ var mpAdder = Widget.extend({
 
                     // add target & ranges for data attributes 
                     oriAnnotation.dataTarget = target;
-                    oriAnnotation.dataRanges = ranges;                                           
-                    temp.onUpdate(oriAnnotation, event);
+                    oriAnnotation.dataRanges = ranges;                               
+                    
+                    // open data editor, load MP annotation
+                    showright();
+                    dataEditorLoad(oriAnnotation, "participants", annotationId);
+                    //temp.onUpdate(oriAnnotation, event);
+                    //app.annotations.update(oriAnnotation);       
                 });                            
         }
     }

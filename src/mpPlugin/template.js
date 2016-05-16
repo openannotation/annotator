@@ -217,11 +217,16 @@ Template.content = [
     // The Claim currently working on
     '<div id="mp-annotation-work-on" style="display: none;"></div>',
 
+    // warning box for options
+    '<div id="claim-dialog-confirm" title="finished create claim?">',
+    '<p>allowing add more claim or data on the same span</p>',
+    '</div>',
+
     // links 
     '<div id="mp-data-nav" style="display: none;">',
-    '<button type="button" onclick="dataEditorLoad(\'participants\')" >Participants</button> &nbsp;->&nbsp;',
-    '<button type="button" onclick="dataEditorLoad(\'dose1\')" >Drug 1 Dose</button> &nbsp;->&nbsp;',
-    '<button type="button" onclick="dataEditorLoad(\'dose2\')" >Drug 2 Dose</button>',
+    '<button type="button" onclick="switchDataForm(\'participants\')" >Participants</button> &nbsp;->&nbsp;',
+    '<button type="button" onclick="switchDataForm(\'dose1\')" >Drug 1 Dose</button> &nbsp;->&nbsp;',
+    '<button type="button" onclick="switchDataForm(\'dose2\')" >Drug 2 Dose</button>',
     '</div>',
 
     // Claim form
@@ -251,7 +256,7 @@ Template.content = [
     '</div>',
     '    <div class="annotator-controls1">',
     '     <a href="#cancel" class="annotator-cancel" onclick="showrightbyvalue()" id="annotator-cancel">Cancel</a>',
-    '     <a href="#save" class="annotator-save annotator-focus" onclick="showrightbyvalue()">Save</a>',
+    '     <a href="#save" class="annotator-save annotator-focus" onclick="serveClaimOptions()">Save</a>',
   '    </div>',
     '  </form>',
     '</div>'

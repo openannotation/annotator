@@ -132,7 +132,6 @@ mpHighlighter.prototype.draw = function (annotation) {
         return null;
 
     console.log('mphighlighter - draw anntype: ' + annotation.annotationType);
-    console.log(annotation);
 
     var normedRanges = [];
 
@@ -207,7 +206,7 @@ mpHighlighter.prototype.draw = function (annotation) {
         //    .attr('data-annotation-id', annotation.id);
         $(annotation._local.highlights).attr('id', annotation.id);
     }
-    console.log(annotation._local.highlights);
+    //console.log(annotation._local.highlights);
     return annotation._local.highlights;
 };
 
@@ -216,12 +215,11 @@ mpHighlighter.prototype.draw = function (annotation) {
 // if local highlights is null, find all span by annotaiton id, then replace with child Nodes
 mpHighlighter.prototype.undraw = function (annotation) {
     console.log("mphighlighter - undraw");
-    console.log(annotation);
+    //console.log(annotation);
 
     try {
         var hasHighlights = (typeof annotation._local !== 'undefined' && annotation._local !== null && typeof annotation._local.highlights !== 'undefined' && annotation._local.highlights !== null);
 
-        console.log(hasHighlights);
         // when add mp data, annotation._local.highlights is null
         // find highlights of MP annotation, clean span 
         if (!hasHighlights) {
