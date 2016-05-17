@@ -74,7 +74,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                         
                         var quoteobject = $('#quotearea');
                         var quotecontent = $('#quotearea').html();
-                        //console.log(quotecontent);
+
                         var index = 0;
                         var list = [];
                         //filter out duplicates
@@ -437,7 +437,6 @@ var mpEditor = exports.mpEditor = Widget.extend({
             this.dfd.reject('editing cancelled');
 
             // clean editor status
-            $("#mp-annotation-work-on").html('');
             $("#mp-editor-type").html('');
         }
         this.hide();

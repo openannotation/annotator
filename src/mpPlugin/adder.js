@@ -156,7 +156,7 @@ var mpAdder = Widget.extend({
         this.ignoreMouseup = false;
 
         var editorType = $("#mp-editor-type").html();
-        if (editorType == null){
+        if (editorType == null || editorType.trim() == ""){
             editorType = "participants";
         }
 
@@ -173,6 +173,7 @@ var mpAdder = Widget.extend({
 
             // query MP annotation
             var annotationId = $("#mp-annotation-work-on").html();
+
             var annhost = config.annotator.host;
             var queryOptStr = '{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://' + annhost + '/annotatorstore" ,"urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search?_id=' + annotationId +'"}}';
             
@@ -182,11 +183,15 @@ var mpAdder = Widget.extend({
             var temp = this;
             storage.query()
                 .then(function(data){
-                    if (data.results.length == 0)
-                        return;
 
+                    if (data.results.length == 0)
+                        return;                    
+                    
                     var oriAnnotation = data.results[0];
-   
+                    // set current mp annotation
+                    $('#mp-annotation-work-on').html(oriAnnotation.id);
+                    console.log("mpadder - data - annotationId: " + annotationId);
+
                     // get selection for data
                     var target = temp.annotation.argues.hasTarget;
                     var ranges = temp.annotation.argues.ranges;
@@ -203,9 +208,9 @@ var mpAdder = Widget.extend({
                     
                     // open data editor, load MP annotation
                     showright();
-                    dataEditorLoad(oriAnnotation, "participants", annotationId);
+                    dataEditorLoad(oriAnnotation, editorType, annotationId);
                     //temp.onUpdate(oriAnnotation, event);
-                    //app.annotations.update(oriAnnotation);       
+  
                 });                            
         }
     }
