@@ -32,16 +32,16 @@ var mpAdder = Widget.extend({
         // .on("click." + NS, 'button', function (e) {
         //     self._onClick(e);
         // })
-            .on("click." + NS, '.mp-main-menu', function (e) {
-                self._onClick(e);
-            })
+        .on("click." + NS, '.mp-main-menu', function (e) {
+            self._onClick(e);
+        })
 
         // .on("mousedown." + NS, 'button', function (e) {
         //     self._onMousedown(e);
         // });
-            .on("mousedown." + NS, '.mp-main-menu', function (e) {
-                self._onMousedown(e);
-            });
+        .on("mousedown." + NS, '.mp-main-menu', function (e) {
+            self._onMousedown(e);
+        });
 
         this.document = this.element[0].ownerDocument;
         $(this.document.body).on("mouseup." + NS, function (e) {

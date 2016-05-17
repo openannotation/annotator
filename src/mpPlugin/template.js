@@ -219,7 +219,6 @@ Template.content = [
 
     // warning box for options
     '<div id="claim-dialog-confirm" title="finished create claim?">',
-    '<p>allowing add more claim or data on the same span</p>',
     '</div>',
 
     // links 
