@@ -327,13 +327,16 @@ var mpEditor = exports.mpEditor = Widget.extend({
     //
     // Returns nothing.
     show: function (position) {
-        if (typeof position !== 'undefined' && position !== null) {
+
+        //if (typeof position !== 'undefined' && position !== null) {
+        if (typeof position !== 'undefined') {
             this.element.css({
                 //top: position.top,
                 //left: position.left
                 bottom:50,
                 right:100
             });
+
             $( window ).resize(function() {
                 $( "body" ).css('height','600px');
             });
@@ -364,8 +367,6 @@ var mpEditor = exports.mpEditor = Widget.extend({
     // rejected if editing is cancelled.
     load: function (position, annotation) {
         this.annotation = annotation;
-
-        console.log("mp - editor - load function");
 
         var claim = annotation.argues;        
 
