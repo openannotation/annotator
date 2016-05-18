@@ -217,10 +217,6 @@ Template.content = [
     // The Claim currently working on
     '<div id="mp-annotation-work-on" style="display: none;"></div>',
 
-    // warning box for options
-    '<div id="claim-dialog-confirm" title="finished create claim?">',
-    '</div>',
-
     // links 
     '<div id="mp-data-nav" style="display: none;">',
     '<button type="button" onclick="switchDataForm(\'participants\')" >Participants</button> &nbsp;->&nbsp;',

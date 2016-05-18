@@ -44,7 +44,7 @@ var mpAdder = Widget.extend({
         });
 
         this.document = this.element[0].ownerDocument;
-        $(this.document.body).on("mouseup." + NS, function (e) {
+        $(this.document.body).on("mouseup." + NS, '.mp-main-menu', function (e) {
             self._onMouseup(e);
         });
     },
