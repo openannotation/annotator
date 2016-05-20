@@ -251,7 +251,10 @@ Template.content = [
     '</div>',
     '    <div class="annotator-controls1">',
     '     <a href="#cancel" class="annotator-cancel" onclick="showrightbyvalue()" id="annotator-cancel">Cancel</a>',
-    '     <a href="#save" class="annotator-save annotator-focus" onclick="serveClaimOptions()">Save</a>',
+    '     <a href="#delete" class="annotator-delete" onclick="" id="annotator-delete">Delete</a>',
+    '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+    '     <a href="#save" class="annotator-save annotator-focus" onclick="postEditorSave()">Save</a>',
+    '     <a href="#save-close" class="annotator-save-close" onclick="postEditorSaveAndClose()" id="annotator-save-close">Save and Close</a>',
   '    </div>',
     '  </form>',
     '</div>'

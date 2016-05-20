@@ -207,7 +207,7 @@ var mpAdder = Widget.extend({
                     oriAnnotation.dataRanges = ranges;                               
                     
                     // open data editor, load MP annotation
-                    showright();
+                    showEditor();
                     dataEditorLoad(oriAnnotation, editorType, annotationId);
                     //temp.onUpdate(oriAnnotation, event);
   
@@ -223,7 +223,7 @@ mpAdder.template = [
     // MP: add menu for create claim and add data
     '<button class="mp-menu-btn" type="button">' + _t('Annotate') + '</button>',
     '<ul class="mp-main-menu" style="display: none;">',
-    '<li class="mp-main-menu-1" onclick="showright(),claimEditorLoad()">',
+    '<li class="mp-main-menu-1" onclick="showEditor(),claimEditorLoad()">',
     'create claim',
     '</li>',
     '<li class="mp-main-menu-2">',

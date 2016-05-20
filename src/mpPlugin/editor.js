@@ -240,51 +240,58 @@ var mpEditor = exports.mpEditor = Widget.extend({
                         annotation.argues.label = claimStatement;
                         annotation.argues.supportsBy = [];                       
 
-                    } else { // MP add data-method-material 
+                    } else if (annotationId != null && annotation.dataTarget != null && annotation.dataRanges != null) { 
+                        // MP add data-method-material 
+                        var partTmp = annotation.argues.supportsBy[0].supportsBy.supportsBy.participants;
+                        if (partTmp.value != $('#participants').val()) {                            
+                            partTmp.value = $('#participants').val();
+                            // if field not binded with text, then assign current span to it
+                            if (partTmp.ranges == null && partTmp.hasTarget == null) {
+                                partTmp.ranges = annotation.dataRanges;                     
+                                partTmp.hasTarget = annotation.dataTarget;                                
+                            }
+                            annotation.argues.supportsBy[0].supportsBy.supportsBy.participants = partTmp;
+                            console.log("mpeditor - submit - update participants");
+                        }
 
-                        if (editorType == "participants" && annotationId != null) {
-                            console.log("mpeditor - submit - add participants");
-                            annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.value = $('#participants').val(); 
-                            if (annotation.dataTarget != null && annotation.dataRanges != null) {
-                                annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.hasTarget = annotation.dataTarget;
-                                annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.ranges = annotation.dataRanges;                            
+                        var dose1Tmp = annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose;
+                        if (dose1Tmp.value != $('#drug1Dose').val() || dose1Tmp.formulation != $('#drug1Formulation option:selected').text() || dose1Tmp.duration != $('#drug1Duration').val() || dose1Tmp.regimens != $('#drug1Regimens option:selected').text()) {
+                            console.log("mpeditor - submit - add dose1");                                           
+                            dose1Tmp.value = $('#drug1Dose').val(); 
+                            dose1Tmp.formulation = $('#drug1Formulation option:selected').text();
+                            dose1Tmp.duration = $('#drug1Duration').val();
+                            dose1Tmp.regimens = $('#drug1Regimens option:selected').text();
+                            if (dose1Tmp.ranges == null && dose1Tmp.hasTarget == null) {
+                                dose1Tmp.hasTarget = annotation.dataTarget;
+                                dose1Tmp.ranges = annotation.dataRanges;
                             }
-                        } 
-                        else if (editorType == "dose1" && annotationId != null) {
-                            console.log("mpeditor - submit - add dose1");
-                            annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.value = $('#drug1Dose').val(); 
-                            annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.formulation = $('#drug1Formulation option:selected').text(); 
-                            annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.duration = $('#drug1Duration').val(); 
-                            annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.regimens = $('#drug1Regimens option:selected').text(); 
-                            if (annotation.dataTarget != null && annotation.dataRanges != null){
-                                annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.hasTarget = annotation.dataTarget;
-                                annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.ranges = annotation.dataRanges;     
-                            }                       
+                            annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose = dose1Tmp;   
+                            console.log("mpeditor - submit - update drug 1 dose");             
                         }
-                        else if (editorType == "dose2" && annotationId != null) {
-                            console.log("mpeditor - submit - add dose2");
-                            annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.value = $('#drug2Dose').val(); 
-                            annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.formulation = $('#drug2Formulation option:selected').text(); 
-                            annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.duration = $('#drug2Duration').val(); 
-                            annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.regimens = $('#drug2Regimens option:selected').text(); 
-                            if (annotation.dataTarget != null && annotation.dataRanges != null) {
-                                annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.hasTarget = annotation.dataTarget;
-                                annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.ranges = annotation.dataRanges;                            
+
+                        var dose2Tmp = annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose;
+                        if (dose2Tmp.value != $('#drug2Dose').val() || dose2Tmp.formulation != $('#drug2Formulation option:selected').text() || dose2Tmp.duration != $('#drug2Duration').val() || dose2Tmp.regimens != $('#drug2Regimens option:selected').text()) {
+                            console.log("mpeditor - submit - add dose2");                                           
+                            dose2Tmp.value = $('#drug2Dose').val(); 
+                            dose2Tmp.formulation = $('#drug2Formulation option:selected').text();
+                            dose2Tmp.duration = $('#drug2Duration').val();
+                            dose2Tmp.regimens = $('#drug2Regimens option:selected').text();
+                            if (dose2Tmp.ranges == null && dose2Tmp.hasTarget == null) {
+                                dose2Tmp.hasTarget = annotation.dataTarget;
+                                dose2Tmp.ranges = annotation.dataRanges;
                             }
+                            annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose = dose2Tmp;   
+                            console.log("mpeditor - submit - update drug 2 dose");     
                         }
-                        
+                        // clean current text selection
                         delete annotation.dataTarget;
                         delete annotation.dataRanges;
                     }
                     
-
                     // clean editor status
-                    // $("#mp-annotation-work-on").html('');
                     $("#mp-editor-type").html('');
-                }
-                
-            });
-            
+                }                
+            });            
         }
         
         var self = this;
@@ -295,6 +302,10 @@ var mpEditor = exports.mpEditor = Widget.extend({
             })
             .on("click." + NS, '.annotator-save', function (e) {
                 self._onSaveClick(e);
+            })
+            .on("click." + NS, '.annotator-save-close', function (e) {
+                self._onSaveClick(e);
+                self.hide();
             })
             .on("click." + NS, '.annotator-cancel', function (e) {
                 self._onCancelClick(e);
@@ -426,7 +437,8 @@ var mpEditor = exports.mpEditor = Widget.extend({
         if (typeof this.dfd !== 'undefined' && this.dfd !== null) {
             this.dfd.resolve();
         }
-        this.hide();
+        // submit will not hide the editor
+        //this.hide();
     },
 
     // Public: Cancels the editing process, discarding any edits made to the
