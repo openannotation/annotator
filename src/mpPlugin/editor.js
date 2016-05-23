@@ -243,7 +243,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                     } else if (annotationId != null && annotation.dataTarget != null && annotation.dataRanges != null) { 
                         // MP add data-method-material 
                         var partTmp = annotation.argues.supportsBy[0].supportsBy.supportsBy.participants;
-                        if (partTmp.value != $('#participants').val()) {                            
+                        if ($('#participants').val().trim() != "" &&  partTmp.value != $('#participants').val()) {                            
                             partTmp.value = $('#participants').val();
                             // if field not binded with text, then assign current span to it
                             if (partTmp.ranges == null && partTmp.hasTarget == null) {
@@ -255,7 +255,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                         }
 
                         var dose1Tmp = annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose;
-                        if (dose1Tmp.value != $('#drug1Dose').val() || dose1Tmp.formulation != $('#drug1Formulation option:selected').text() || dose1Tmp.duration != $('#drug1Duration').val() || dose1Tmp.regimens != $('#drug1Regimens option:selected').text()) {
+                        if (($('#drug1Dose').val().trim() != "") && (dose1Tmp.value != $('#drug1Dose').val() || dose1Tmp.formulation != $('#drug1Formulation option:selected').text() || dose1Tmp.duration != $('#drug1Duration').val() || dose1Tmp.regimens != $('#drug1Regimens option:selected').text())) {
                             console.log("mpeditor - submit - add dose1");                                           
                             dose1Tmp.value = $('#drug1Dose').val(); 
                             dose1Tmp.formulation = $('#drug1Formulation option:selected').text();
@@ -270,7 +270,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                         }
 
                         var dose2Tmp = annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose;
-                        if (dose2Tmp.value != $('#drug2Dose').val() || dose2Tmp.formulation != $('#drug2Formulation option:selected').text() || dose2Tmp.duration != $('#drug2Duration').val() || dose2Tmp.regimens != $('#drug2Regimens option:selected').text()) {
+                        if (($('#drug2Dose').val().trim() != "") && (dose2Tmp.value != $('#drug2Dose').val() || dose2Tmp.formulation != $('#drug2Formulation option:selected').text() || dose2Tmp.duration != $('#drug2Duration').val() || dose2Tmp.regimens != $('#drug2Regimens option:selected').text())) {
                             console.log("mpeditor - submit - add dose2");                                           
                             dose2Tmp.value = $('#drug2Dose').val(); 
                             dose2Tmp.formulation = $('#drug2Formulation option:selected').text();

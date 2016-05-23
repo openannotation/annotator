@@ -8,6 +8,13 @@ var $ = util.$;
 var Promise = util.Promise;
 
 
+function DataRange(range, field) {
+    this.range = range;
+    this.field = field;
+}
+
+
+
 // highlightRange wraps the DOM Nodes within the provided range with a highlight
 // element of the specified class and returns the highlight Elements.
 //
@@ -15,7 +22,7 @@ var Promise = util.Promise;
 // cssClass - A CSS class to use for the highlight (default: 'annotator-hl')
 //
 // Returns an array of highlight Elements.
-function highlightRange(normedRange, cssClass) {
+function highlightRange(normedRange, cssClass, field) {
     if (typeof cssClass === 'undefined' || cssClass === null) {
         cssClass = 'annotator-hl';
     }
@@ -34,6 +41,8 @@ function highlightRange(normedRange, cssClass) {
             var mphl = global.document.createElement('span');
             mphl.className = cssClass;
             mphl.setAttribute("name", "annotator-mp");
+            // add data field for mp annotation 
+            mphl.setAttribute("fieldName", field);
             node.parentNode.replaceChild(mphl, node);
             mphl.appendChild(node);
             results.push(mphl);
@@ -133,17 +142,21 @@ mpHighlighter.prototype.draw = function (annotation) {
 
     console.log('mphighlighter - draw anntype: ' + annotation.annotationType);
 
-    var normedRanges = [];
+    //var normedRanges = [];
+    var dataRangesL = [];
 
-    // draw MP claim
-    for (var i = 0, ilen = annotation.argues.ranges.length; i < ilen; i++) {
-        var r = reanchorRange(annotation.argues.ranges[i], this.element);
-        if (r !== null) {
-            normedRanges.push(r);
-        }
-    }
-    // draw MP data
     try {
+
+        // draw MP claim
+        for (var i = 0, ilen = annotation.argues.ranges.length; i < ilen; i++) {
+            var r = reanchorRange(annotation.argues.ranges[i], this.element);
+            if (r !== null) {
+                //normedRanges.push(r);
+                dataRangesL.push(new DataRange(r, "claim"));
+            }
+        }
+        // draw MP data
+
         if (annotation.argues.supportsBy.length != 0){
             // draw MP Material
             var material = annotation.argues.supportsBy[0].supportsBy.supportsBy;
@@ -151,29 +164,34 @@ mpHighlighter.prototype.draw = function (annotation) {
 
                 if (material.participants.ranges != null) {
                     for (var i = 0, ilen = material.participants.ranges.length; i < ilen; i++) {
-                    var r = reanchorRange(material.participants.ranges[i], this.element);
-                    if (r !== null) normedRanges.push(r);  
+                        var r = reanchorRange(material.participants.ranges[i], this.element);
+                        //if (r !== null) normedRanges.push(r);  
+                        if (r !== null) dataRangesL.push(new DataRange(r, "precipitants"));  
                     }                      
                 }
 
                 if (material.drug1Dose.ranges != null) {
                     for (var i = 0, ilen = material.drug1Dose.ranges.length; i < ilen; i++) {
-                    var r = reanchorRange(material.drug1Dose.ranges[i], this.element);
-                    if (r !== null) normedRanges.push(r);                   
+                        var r = reanchorRange(material.drug1Dose.ranges[i], this.element);
+                        //if (r !== null) normedRanges.push(r);    
+                        if (r !== null) dataRangesL.push(new DataRange(r, "dose1"));
                     }
                 }
                 if (material.drug2Dose.ranges != null) {
                     for (var i = 0, ilen = material.drug2Dose.ranges.length; i < ilen; i++) {
-                    var r = reanchorRange(material.drug2Dose.ranges[i], this.element);
-                    if (r !== null) normedRanges.push(r);                   
+                        var r = reanchorRange(material.drug2Dose.ranges[i], this.element);
+                        //if (r !== null) normedRanges.push(r);     
+                        if (r !== null) dataRangesL.push(new DataRange(r, "dose2"));
                     }
                 }
                              
             }
         }
+        //console.log(dataRangesL);
     } catch (err) {
         console.log(err);
     }
+
 
 
     var hasLocal = (typeof annotation._local !== 'undefined' && annotation._local !== null);
@@ -189,23 +207,37 @@ mpHighlighter.prototype.draw = function (annotation) {
         annotation._local.highlights = [];
     }
 
-    for (var j = 0, jlen = normedRanges.length; j < jlen; j++) {
-        var normed = normedRanges[j];
+    // for (var j = 0, jlen = normedRanges.length; j < jlen; j++) {
+    //     var normed = normedRanges[j];
+    //     $.merge(
+    //         annotation._local.highlights,
+    //         highlightRange(normed, this.options.highlightClass)
+    //     );
+    // }
+
+    for (var j = 0, jlen = dataRangesL.length; j < jlen; j++) {
+        var dataNormed = dataRangesL[j];
+
         $.merge(
             annotation._local.highlights,
-            highlightRange(normed, this.options.highlightClass)
-        );
+            highlightRange(dataNormed.range, this.options.highlightClass, dataNormed.field));
     }
 
     // Save the annotation data on each highlighter element.
     $(annotation._local.highlights).data('annotation', annotation);
 
     // Add a data attribute for annotation id if the annotation has one
+    // if (typeof annotation.id !== 'undefined' && annotation.id !== null) {
+    //     $(annotation._local.highlights).attr('id', annotation.id);
+    // }
     if (typeof annotation.id !== 'undefined' && annotation.id !== null) {
-        //$(annotation._local.highlights)
-        //    .attr('data-annotation-id', annotation.id);
-        $(annotation._local.highlights).attr('id', annotation.id);
+        for (var p =0; p < annotation._local.highlights.length; p++) {
+            var fieldName = annotation._local.highlights[p].getAttribute("fieldName");
+            annotation._local.highlights[p].setAttribute("id", annotation.id+fieldName);
+        }
     }
+
+    //console.log("annotation._local.highlights:");
     //console.log(annotation._local.highlights);
     return annotation._local.highlights;
 };

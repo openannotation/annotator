@@ -75,9 +75,9 @@ var mpViewer = exports.mpViewer = Widget.extend({
     // Returns a new Viewer instance.
     constructor: function (options) {
         Widget.call(this, options);
-
+        
 	    console.log("mpviewer - constructor");
-
+        
         this.itemTemplate = mpViewer.itemTemplate;
         this.fields = [];
         this.annotations = [];
@@ -86,42 +86,19 @@ var mpViewer = exports.mpViewer = Widget.extend({
         this.hideTimerActivity = null;
         this.mouseDown = false;
         this.render = function (annotation) {
-
-	    var clinicalTrialRows = "";
-            if(annotation.assertion_type=="DDI clinical trial")
-            {
-		var cTHeader = "<tr><td>Dosage</td><td>Dosage</td><td>participants</td><td>AUC_i/AUC</td><td>CL_i/CL:</td><td>Cmax</td><td>Cmin</td><td>T1/2:</td></tr>"
-		var cTValue = "<tr><td>Dose in MG:" + annotation.DoseMG_precipitant + "<br>Formulation:" + annotation.FormulationP + "<br>Duration(days):" + annotation.Duration_precipitant + "<br>Regiments: " + annotation.RegimentsP + "</td>" +
-		    "<td>Dose in MG:" + annotation.DoseMG_object + "<br>Formulation:" + annotation.FormulationO + "<br>Duration(days):" + annotation.Duration_object + "<br>Regiments: " + annotation.RegimentsO + "</td>" +
-		    "<td>Number: " + annotation.Number_participants + "</td>" +
-		    "<td>Auc :" + annotation.Aucval + "<br>Type:" + annotation.AucType + "<br>Dire:" + annotation.AucDirection + "</td>" +
-		    "<td>Cl: " + annotation.Clval + "<br>Type:" + annotation.ClType + "<br>Dire:" + annotation.ClDirection + "</td>" +
-		    "<td>cmax: " + annotation.cmaxval + "<br>Type:" + annotation.cmaxType +"<br>Dire:" + annotation.cmaxDirection + "</td>" +
-		    "<td>cmin: " + annotation.cminval + "<br>Type:" + annotation.cminType + "<br>Dire:" + annotation.cminDirection + "</td>" +
-		    "<td>t12: " + annotation.t12 + "<br>Type:" + annotation.t12Type + "<br>Dire: " + annotation.t12Direction + "</td></tr>";
-		
-		clinicalTrialRows = cTHeader + cTValue;
-	    }
-	    
-	    if (annotation.Drug1 && annotation.Drug2) {
-		var returnText =
+	        var claim = annotation.argues
+	        if (claim.label) {
+                
+		        var returnText =
                     "<div  class='annotator-mp'> By " + annotation.email + " on " + annotation.updated + "</div>" +
-		    "<div  class='annotator-mp'> Quote: " + annotation.quote + "</div>" +
                     "<table class='viewertable' style='float:left;'>" +
-		    "<tr><td>" + annotation.Role1 + "</td><td>" + annotation.Role2 + "</td><td>Relationship</td><td>Asrt Type</td><td>Modality</td><td>Evidence</td><td>Comment</td></tr>" +
-                    "<tr><td><span class='annotator-mp-active'>" + annotation.Drug1 + "</span> (" +annotation.Type1 + ")</td>" +
-		    "<td><span class='annotator-mp-active'>" + annotation.Drug2 + "</span> (" +annotation.Type2 + ")</td>" +
-                    "<td>" + annotation.relationship + "<br>" + annotation.enzyme + "</td>" +
-                    "<td>" + annotation.assertion_type + "</td>" +
-                    "<td>" + annotation.Modality + "</td>" +
-                    "<td>" + annotation.Evidence_modality + "</td>" +
-                    "<td>" + annotation.Comment + "</td></tr> " + clinicalTrialRows + "</table>";
-		
- 		return returnText;
-        } else {
-            return null;
-        }
-	    
+                    "<tr><td>Claim: " + claim.label + "</td></tr></table>";
+		        
+ 		        return returnText;
+            } else {
+                return null;
+            }
+	        
         };
         
         var self = this;
