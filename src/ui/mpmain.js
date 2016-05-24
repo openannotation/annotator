@@ -265,13 +265,23 @@ function main(options) {
         });
         s.hladder.attach();
 
-        // highlight mp editor
-        // s.mpeditor = new mpeditor.mpEditor({
-        //     extensions: options.editorExtensions
-        // });
-        // s.mpeditor.attach();
+        // mp editor
         s.mpeditor = new mpeditor.mpEditor({
-            extensions: options.editorExtensions
+            extensions: options.editorExtensions,
+            onDelete: function (ann) {
+                console.log("mpmain - mpeditor - onDelete");
+
+                app.annotations.delete(ann);
+                showAnnTable();
+                s.mphighlighter.undraw(ann);
+            },
+            onUpdate: function (ann) {
+                console.log("mpmain - mpeditor - onUpdate");
+
+                // app.annotations.update(ann);
+                showAnnTable();
+                s.mphighlighter.redraw(ann);
+            }
         });
         s.mpeditor.attach();
 
@@ -391,13 +401,16 @@ function main(options) {
         },
         annotationDeleted: function (ann) {
             console.log("mpmain - annotationDeleted called");
-            s.mphighlighter.undraw(ann);
-            if (ann.annotationType == "DrugMention"){
+            if (ann.annotationType == "MP") {
+                s.mphighlighter.undraw(ann);
+            }
+            else if (ann.annotationType == "DrugMention"){
                 s.hlhighlighter.undraw(ann);
             }
         },
         annotationUpdated: function (ann) {
             console.log("mpmain - annotationUpdated called");
+            console.log("participants: " + ann.argues.supportsBy[0].supportsBy.supportsBy.participants.value);
 
             if (ann.annotationType == "MP"){
                 s.mphighlighter.redraw(ann);
@@ -426,13 +439,11 @@ function main(options) {
                 //return s.mpeditor.load(annotation, s.interactionPoint);
                 return null;
             }
-
-
         },
 
         beforeAnnotationUpdated: function (annotation) {
-
-            //alert('testmain.js - beforeAnnotationUpdated - annotation type defined: ' + annotation.annotationType);
+            console.log("mpmain - beforeAnnotationUpdated");
+            console.log("participants: " + annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.value);
 
             if (annotation.annotationType == "MP"){
                 return s.mpeditor.load(s.interactionPoint,annotation);

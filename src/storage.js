@@ -197,8 +197,7 @@ HttpStorage.prototype.create = function (annotation) {
  */
 HttpStorage.prototype.update = function (annotation) {
 
-    //console.log("[INFO] storage - update!")
-    //console.log(annotation);
+    console.log("[INFO] storage - update!")    
 
     return this._apiRequest('update', annotation);
 };
@@ -219,8 +218,7 @@ HttpStorage.prototype.update = function (annotation) {
  */
 HttpStorage.prototype['delete'] = function (annotation) {
 
-    //console.log("[INFO] storage - delete!")
-    //console.log(annotation);
+    console.log("[INFO] storage - delete!")
 
     return this._apiRequest('destroy', annotation);
 };
@@ -586,6 +584,9 @@ StorageAdapter.prototype.create = function (obj) {
  * :returns Promise: Resolves to annotation object when stored.
  */
 StorageAdapter.prototype.update = function (obj) {
+
+    console.log("storage - StorageAdapter - update");
+
     if (typeof obj.id === 'undefined' || obj.id === null) {
         throw new TypeError("annotation must have an id for update()");
     }
@@ -613,6 +614,9 @@ StorageAdapter.prototype.update = function (obj) {
  * :returns Promise: Resolves to annotation object when deleted.
  */
 StorageAdapter.prototype['delete'] = function (obj) {
+
+    console.log("storage - StorageAdapter - delete");
+
     if (typeof obj.id === 'undefined' || obj.id === null) {
         throw new TypeError("annotation must have an id for delete()");
     }
@@ -680,6 +684,7 @@ StorageAdapter.prototype._cycle = function (
     //         self.runHook(beforeEvent, [obj,data.results]);
     //     })
         .then(function () {
+            //console.log("storage - StorageAdapter - _cycle - safeCopy");
             var safeCopy = $.extend(true, {}, obj);
             delete safeCopy._local;
 

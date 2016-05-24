@@ -9,6 +9,8 @@ var NS = "annotator-editor";
 
 // bring storage in
 var HttpStorage = require('../storage').HttpStorage;
+// storage query options 
+var queryOptStr = '{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://' + config.annotator.host + '/annotatorstore","urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search"}}';
 
 // id returns an identifier unique within this session
 var id = (function () {
@@ -53,8 +55,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                     
                     var editorType = $("#mp-editor-type").html();
                     var annotationId = $("#mp-annotation-work-on").html();
-                    console.log("mpeditor load annotation:");
-                    console.log(annotation);
+                    // console.log("mpeditor load annotation:");
 
                     // load MP Claim
                     if(editorType == "claim"){
@@ -83,7 +84,6 @@ var mpEditor = exports.mpEditor = Widget.extend({
                                 list.push(anns[i].argues.hasTarget.hasSelector.exact);
                             }
                         }
-                        //console.log(list);
                         
                         for (var i = 0, len = list.length; i < len; i++) {
                             if (quotecontent.indexOf(list[i]) >= 0) {
@@ -212,7 +212,6 @@ var mpEditor = exports.mpEditor = Widget.extend({
                     var annotationId = $("#mp-annotation-work-on").html();
 
                     console.log("mpeditor - submit - type: " + editorType);
-                    console.log(annotation);
 
                     if (editorType == "claim"){
 
@@ -240,15 +239,19 @@ var mpEditor = exports.mpEditor = Widget.extend({
                         annotation.argues.label = claimStatement;
                         annotation.argues.supportsBy = [];                       
 
-                    } else if (annotationId != null && annotation.dataTarget != null && annotation.dataRanges != null) { 
+                    } else if (annotationId != null) { 
+
+                        console.log("mpeditor update data & material");
+
                         // MP add data-method-material 
                         var partTmp = annotation.argues.supportsBy[0].supportsBy.supportsBy.participants;
                         if ($('#participants').val().trim() != "" &&  partTmp.value != $('#participants').val()) {                            
                             partTmp.value = $('#participants').val();
+                            console.log(partTmp.value);
                             // if field not binded with text, then assign current span to it
-                            if (partTmp.ranges == null && partTmp.hasTarget == null) {
-                                partTmp.ranges = annotation.dataRanges;                     
-                                partTmp.hasTarget = annotation.dataTarget;                                
+                            if (partTmp.ranges == null && partTmp.hasTarget == null  && annotation.dataTarget != null && annotation.dataRanges != null) {
+                                partTmp.ranges = annotation.dataRanges;           
+                                partTmp.hasTarget = annotation.dataTarget;    
                             }
                             annotation.argues.supportsBy[0].supportsBy.supportsBy.participants = partTmp;
                             console.log("mpeditor - submit - update participants");
@@ -306,6 +309,10 @@ var mpEditor = exports.mpEditor = Widget.extend({
             .on("click." + NS, '.annotator-save-close', function (e) {
                 self._onSaveClick(e);
                 self.hide();
+            })
+            .on("click." + NS, '.annotator-delete', function (e) {
+                self._onDeleteClick(e);
+                self.hide();                
             })
             .on("click." + NS, '.annotator-cancel', function (e) {
                 self._onCancelClick(e);
@@ -400,12 +407,8 @@ var mpEditor = exports.mpEditor = Widget.extend({
         var annhost = config.annotator.host;
 
         // call apache for request annotator store
-        var queryOptStr = '{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://' + annhost + '/annotatorstore","urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search"}}';
+        var storage = new HttpStorage(JSON.parse(queryOptStr));
 
-        var queryOptions = JSON.parse(queryOptStr);
-        var storage = new HttpStorage(queryOptions);
-
-        //console.log("editor call storage");
         var self = this;
         storage.query(queryObj)
             .then(function(data){
@@ -415,7 +418,6 @@ var mpEditor = exports.mpEditor = Widget.extend({
                     field.load(field.element, self.annotation,annotations);
                 }
             });
-        //console.log(r.length);
 
         var self = this;
         return new Promise(function (resolve, reject) {
@@ -563,6 +565,30 @@ var mpEditor = exports.mpEditor = Widget.extend({
         this.submit();
     },
 
+    // Event callback: called when a user clicks the editor's delete button.
+    //
+    // Returns nothing
+    // if it's data form, delete current data
+    // if claim form, delete claim and data
+    _onDeleteClick: function (event) {
+        preventEventDefault(event);
+        var editorType = $("#mp-editor-type").html();
+        console.log("mpeditor - onDeleteClick - type: " + editorType);
+        if (editorType == "claim") {
+            this.options.onDelete(self.annotation);
+        } else {
+            if (editorType == "participants" || editorType == "dose1" || editorType === "dose2") {
+                self.annotation.argues.supportsBy[0].supportsBy.supportsBy[editorType] = {};       
+            } 
+
+            delete self.annotation._local;
+            this.options.onUpdate(self.annotation);
+            
+            var storage = new HttpStorage(JSON.parse(queryOptStr));
+            storage.update(self.annotation);            
+        }
+    },
+
     // Event callback: called when a user clicks the editor's cancel button.
     //
     // Returns nothing
@@ -648,7 +674,11 @@ mpEditor.template = Template.content;
 mpEditor.options = {
     // Add the default field(s) to the editor.
     defaultFields: true,
-    appendTo: '.mpeditorsection'
+    appendTo: '.mpeditorsection',
+    // Callback, called when the user clicks the delete button for an
+    // annotation.
+    onDelete: function () {},
+    onUpdate: function () {} 
 };
 
 // dragTracker is a function which allows a callback to track changes made to

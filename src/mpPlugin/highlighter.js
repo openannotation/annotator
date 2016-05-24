@@ -247,34 +247,29 @@ mpHighlighter.prototype.draw = function (annotation) {
 // if local highlights is null, find all span by annotaiton id, then replace with child Nodes
 mpHighlighter.prototype.undraw = function (annotation) {
     console.log("mphighlighter - undraw");
-    //console.log(annotation);
 
-    try {
-        var hasHighlights = (typeof annotation._local !== 'undefined' && annotation._local !== null && typeof annotation._local.highlights !== 'undefined' && annotation._local.highlights !== null);
+    var hasHighlights = (typeof annotation._local !== 'undefined' && annotation._local !== null && typeof annotation._local.highlights !== 'undefined' && annotation._local.highlights !== null);
 
-        // when add mp data, annotation._local.highlights is null
-        // find highlights of MP annotation, clean span 
-        if (!hasHighlights) {
-            var localhighlights = $('span[id^="'+annotation.id+'"]');
-            for (i = 0; i < localhighlights.length; i++){
-                var mpSpan = localhighlights[i];
-                if (mpSpan.parentNode !== null) 
-                    $(mpSpan).replaceWith(mpSpan.childNodes);
+    // when add mp data, annotation._local.highlights is null
+    // find highlights of MP annotation, clean span 
+    if (!hasHighlights) {
+        var localhighlights = $('span[id^="'+annotation.id+'"]');
+        for (i = 0; i < localhighlights.length; i++){
+            var mpSpan = localhighlights[i];
+            if (mpSpan.parentNode !== null) 
+                $(mpSpan).replaceWith(mpSpan.childNodes);
+        }
+    } else {        
+        //console.log(annotation._local.highlights);
+        for (var i = 0, len = annotation._local.highlights.length; i < len; i++) 
+        {
+            var h = annotation._local.highlights[i];
+            if (h.parentNode !== null) {
+                $(h).replaceWith(h.childNodes);
             }
-        } else {        
-            //console.log(annotation._local.highlights);
-            for (var i = 0, len = annotation._local.highlights.length; i < len; i++) 
-            {
-                var h = annotation._local.highlights[i];
-                if (h.parentNode !== null) {
-                    $(h).replaceWith(h.childNodes);
-                }
-            }
-            delete annotation._local.highlights;
-        }        
-    } catch (err) {
-        console.log(err);
-    }
+        }
+        delete annotation._local.highlights;
+    }            
 };
 
 // Public: Redraw the highlights for the given annotation.
