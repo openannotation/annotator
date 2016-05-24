@@ -276,13 +276,13 @@ span[name="annotator-mp"] {
 	height: 0;
 }
 
-.annotator-clinicalwidgetview {
+.annotator-mpwidgetview {
 	margin: 0;
 	padding: 0;
 	bottom: 5px;
 	left: -18px;
-	width: 600px;
-	height: 250px;
+	width: 380px;
+	/* height: 250px; */
 	overflow: scroll;
 	background-color: #FBFBFB;
 	background-color: rgba(251, 251, 251, 0.98);

@@ -166,7 +166,7 @@ mpHighlighter.prototype.draw = function (annotation) {
                     for (var i = 0, ilen = material.participants.ranges.length; i < ilen; i++) {
                         var r = reanchorRange(material.participants.ranges[i], this.element);
                         //if (r !== null) normedRanges.push(r);  
-                        if (r !== null) dataRangesL.push(new DataRange(r, "precipitants"));  
+                        if (r !== null) dataRangesL.push(new DataRange(r, "participants"));  
                     }                      
                 }
 

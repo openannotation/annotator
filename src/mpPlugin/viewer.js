@@ -85,14 +85,16 @@ var mpViewer = exports.mpViewer = Widget.extend({
         this.hideTimerDfd = null;
         this.hideTimerActivity = null;
         this.mouseDown = false;
-        this.render = function (annotation) {
+        this.render = function (annotation, fieldName) {
 	        var claim = annotation.argues
 	        if (claim.label) {
                 
 		        var returnText =
                     "<div  class='annotator-mp'> By " + annotation.email + " on " + annotation.updated + "</div>" +
                     "<table class='viewertable' style='float:left;'>" +
-                    "<tr><td>Claim: " + claim.label + "</td></tr></table>";
+                    "<tr><td>Claim: " + claim.label + "</td></tr>" +
+                    "<tr><td>" + fieldName + "</td></tr>" + 
+                "</table>";
 		        
  		        return returnText;
             } else {
@@ -105,8 +107,8 @@ var mpViewer = exports.mpViewer = Widget.extend({
 
         if (this.options.defaultFields) {
             this.addField({
-                load: function (field, annotation) {
-                    $(field).html(self.render(annotation));
+                load: function (field, annotation, controller, fieldName) {   
+                    $(field).html(self.render(annotation, fieldName));
                 }
             });
         }
@@ -228,28 +230,26 @@ var mpViewer = exports.mpViewer = Widget.extend({
     //
     // Examples
     //
-    //   viewer.load([annotation1, annotation2, annotation3])
+    //   viewer.load([{annotation: annotation1, fieldName: dose1}, annotation2, annotation3])
     //
     // Returns nothing.
     load: function (annotations, position) {
-
 
         this.annotations = annotations || [];
 
         var list = this.element.find('ul:first').empty();
 
         for (var i = 0, len = this.annotations.length; i < len; i++) {
-            var annotation = this.annotations[i];
+            var annotation = this.annotations[i].annotation;
+            var fieldName = this.annotations[i].fieldName;
 
             if (annotation.annotationType == "MP"){
-            this._annotationItem(annotation)
-              .appendTo(list)
-              .data('annotation', annotation);
+                this._annotationItem(annotation, fieldName)
+                    .appendTo(list)
+                    .data('annotation', annotation);
                 this.show(position);
             }
         }
-        //if(this.annotations.length != 0)
-
     },
 
     // Public: Set the annotation renderer.
@@ -262,7 +262,7 @@ var mpViewer = exports.mpViewer = Widget.extend({
     },
 
     // Private: create the list item for a single annotation
-    _annotationItem: function (annotation) {
+    _annotationItem: function (annotation, fieldName) {
         var item = $(this.itemTemplate).clone();
 
         var controls = item.find('.annotator-controls'),
@@ -310,7 +310,7 @@ var mpViewer = exports.mpViewer = Widget.extend({
         for (var i = 0, len = this.fields.length; i < len; i++) {
             var field = this.fields[i];
             var element = $(field.element).clone().appendTo(item)[0];
-            field.load(element, annotation, controller);
+            field.load(element, annotation, controller, fieldName);
         }
 
         return item;
@@ -361,7 +361,6 @@ var mpViewer = exports.mpViewer = Widget.extend({
             .data('annotation');
 
         console.log("mp viewer - onEditClick");
-        console.log(item);
 
         this.hide();
         this.options.onEdit(item);
@@ -406,12 +405,15 @@ var mpViewer = exports.mpViewer = Widget.extend({
         var self = this;
         this._startHideTimer(true)
             .done(function () {
+
+                console.log("mpviewer - _onHighlightMouseover");
 		
                 var annotations = $(event.target)
                     .parents('.annotator-hl')
                     .addBack()
                     .map(function (_, elem) {
-                        return $(elem).data("annotation");
+                        //return $(elem).data("annotation");
+                        return { annotation: $(elem).data("annotation"), fieldName: $(elem).attr("fieldname")};
                     })
                     .toArray();
 
@@ -494,7 +496,7 @@ mpViewer.classes = {
 // HTML templates for this.widget and this.item properties.
 mpViewer.template = [
     '<div class="annotator-outer annotator-viewer annotator-hide">',
-    '  <ul class="annotator-clinicalwidgetview annotator-listing"></ul>',
+    '  <ul class="annotator-mpwidgetview annotator-listing"></ul>',
     '</div>'
 ].join('\n');
 
