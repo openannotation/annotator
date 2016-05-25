@@ -443,6 +443,30 @@ var mpEditor = exports.mpEditor = Widget.extend({
         //this.hide();
     },
 
+
+    // Public: Submits the editor and delete specific data field to the annotation.
+    // @input: data field from editorType
+    // Returns nothing.
+    deleteDataSubmit: function (editorType) {
+        console.log("mpeditor - deleteDataSubmit");
+        for (var i = 0, len = this.fields.length; i < len; i++) {
+            var field = this.fields[i];
+
+            if (editorType == "participants") {
+                this.annotation.argues.supportsBy[0].supportsBy.supportsBy.participants = {};
+            } else if (editorType == "dose1") {
+                this.annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose = {};        
+            } else if (editorType == "dose2") {
+                this.annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose = {};         
+            }                        
+            //field.submit(field.element, this.annotation);
+        }
+        if (typeof this.dfd !== 'undefined' && this.dfd !== null) {
+            this.dfd.resolve();
+        }        
+        this.hide();
+    },
+
     // Public: Cancels the editing process, discarding any edits made to the
     // annotation.
     //
@@ -577,15 +601,14 @@ var mpEditor = exports.mpEditor = Widget.extend({
         if (editorType == "claim") {
             this.options.onDelete(self.annotation);
         } else {
-            if (editorType == "participants" || editorType == "dose1" || editorType === "dose2") {
-                self.annotation.argues.supportsBy[0].supportsBy.supportsBy[editorType] = {};       
-            } 
+            //this.submit()
+            this.deleteDataSubmit(editorType);
 
-            var tempAnn = self.annotation;
-            delete tempAnn._local
-            this.options.onUpdate(tempAnn);
+            // var tempAnn = self.annotation;
+            // delete tempAnn._local
+            // this.options.onUpdate(tempAnn);
             
-            console.log("mpeditor - _onDeleteClick - call storage");
+            // console.log("mpeditor - _onDeleteClick - call storage");
             // var storage = new HttpStorage(JSON.parse(queryOptStr));
             // storage.update(tempAnn);        
             

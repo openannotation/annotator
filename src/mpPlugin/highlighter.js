@@ -64,7 +64,11 @@ function reanchorRange(range, rootElement) {
         }
         // Otherwise, we simply swallow the error. Callers are responsible
         // for only trying to draw valid annotations.
+        console.log(e);
     }
+
+    console.log("[ERROR] mphighlighter - reanchorRange - return null");
+    console.log(range);
     return null;
 }
 
@@ -153,6 +157,9 @@ mpHighlighter.prototype.draw = function (annotation) {
             if (r !== null) {
                 //normedRanges.push(r);
                 dataRangesL.push(new DataRange(r, "claim"));
+            } else {
+                console.log("[ERROR] range failed to reanchor");
+                console.log(r);
             }
         }
         // draw MP data
