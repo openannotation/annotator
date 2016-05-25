@@ -601,17 +601,8 @@ var mpEditor = exports.mpEditor = Widget.extend({
         if (editorType == "claim") {
             this.options.onDelete(self.annotation);
         } else {
-            //this.submit()
+            showAnnTable();
             this.deleteDataSubmit(editorType);
-
-            // var tempAnn = self.annotation;
-            // delete tempAnn._local
-            // this.options.onUpdate(tempAnn);
-            
-            // console.log("mpeditor - _onDeleteClick - call storage");
-            // var storage = new HttpStorage(JSON.parse(queryOptStr));
-            // storage.update(tempAnn);        
-            
         }
     },
 
@@ -703,8 +694,7 @@ mpEditor.options = {
     appendTo: '.mpeditorsection',
     // Callback, called when the user clicks the delete button for an
     // annotation.
-    onDelete: function () {},
-    onUpdate: function () {} 
+    onDelete: function () {}
 };
 
 // dragTracker is a function which allows a callback to track changes made to

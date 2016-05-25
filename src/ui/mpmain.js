@@ -274,13 +274,6 @@ function main(options) {
                 app.annotations.delete(ann);
                 showAnnTable();
                 s.mphighlighter.undraw(ann);
-            },
-            onUpdate: function (ann) {
-                console.log("mpmain - mpeditor - onUpdate");
-
-                app.annotations.update(ann);
-                showAnnTable();
-                s.mphighlighter.redraw(ann);
             }
         });
         s.mpeditor.attach();
@@ -401,12 +394,9 @@ function main(options) {
         },
         annotationDeleted: function (ann) {
             console.log("mpmain - annotationDeleted called");
-            if (ann.annotationType == "MP") {
-                s.mphighlighter.undraw(ann);
-            }
-            else if (ann.annotationType == "DrugMention"){
-                s.hlhighlighter.undraw(ann);
-            }
+            s.mphighlighter.undraw(ann);
+            s.hlhighlighter.undraw(ann);
+            
         },
         annotationUpdated: function (ann) {
             console.log("mpmain - annotationUpdated called");
