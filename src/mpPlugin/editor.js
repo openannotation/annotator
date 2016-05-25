@@ -581,11 +581,14 @@ var mpEditor = exports.mpEditor = Widget.extend({
                 self.annotation.argues.supportsBy[0].supportsBy.supportsBy[editorType] = {};       
             } 
 
-            delete self.annotation._local;
-            this.options.onUpdate(self.annotation);
+            var tempAnn = self.annotation;
+            delete tempAnn._local
+            this.options.onUpdate(tempAnn);
             
-            var storage = new HttpStorage(JSON.parse(queryOptStr));
-            storage.update(self.annotation);            
+            console.log("mpeditor - _onDeleteClick - call storage");
+            // var storage = new HttpStorage(JSON.parse(queryOptStr));
+            // storage.update(tempAnn);        
+            
         }
     },
 

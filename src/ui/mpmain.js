@@ -278,7 +278,7 @@ function main(options) {
             onUpdate: function (ann) {
                 console.log("mpmain - mpeditor - onUpdate");
 
-                // app.annotations.update(ann);
+                app.annotations.update(ann);
                 showAnnTable();
                 s.mphighlighter.redraw(ann);
             }
@@ -410,7 +410,6 @@ function main(options) {
         },
         annotationUpdated: function (ann) {
             console.log("mpmain - annotationUpdated called");
-            console.log("participants: " + ann.argues.supportsBy[0].supportsBy.supportsBy.participants.value);
 
             if (ann.annotationType == "MP"){
                 s.mphighlighter.redraw(ann);
@@ -443,7 +442,6 @@ function main(options) {
 
         beforeAnnotationUpdated: function (annotation) {
             console.log("mpmain - beforeAnnotationUpdated");
-            console.log("participants: " + annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.value);
 
             if (annotation.annotationType == "MP"){
                 return s.mpeditor.load(s.interactionPoint,annotation);

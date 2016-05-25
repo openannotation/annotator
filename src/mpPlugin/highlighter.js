@@ -137,10 +137,10 @@ mpHighlighter.prototype.drawAll = function (annotations) {
 // Returns an Array of drawn highlight elements.
 mpHighlighter.prototype.draw = function (annotation) {
 
+    console.log('mphighlighter - draw anntype: ' + annotation.annotationType);
+
     if (annotation.annotationType != "MP")
         return null;
-
-    console.log('mphighlighter - draw anntype: ' + annotation.annotationType);
 
     //var normedRanges = [];
     var dataRangesL = [];
