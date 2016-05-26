@@ -52,25 +52,32 @@ var mpEditor = exports.mpEditor = Widget.extend({
                 label: _t('Comments') + '\u2026',
                 id: 'quote',
                 load: function (field, annotation, annotations) {
+                 
+
                     
                     var editorType = $("#mp-editor-type").html();
                     var annotationId = $("#mp-annotation-work-on").html();
-                    // console.log("mpeditor load annotation:");
 
                     // load MP Claim
                     if(editorType == "claim"){
-
                         console.log("mpeditor - load - claim");
-                        var claim = annotation.argues;                       
-                        
+
+                        // clean claim editor
                         $('#quote').empty();
+                        $("#relationship")[0].selectedIndex = 0;
+
+                        $("#enzyme")[0].selectedIndex = 0;
+                        $("#enzyme").hide();
+                        $("#enzymesection1").hide();
+
+                        $('#Drug1 option').remove();
+                        $('#Drug2 option').remove();                      
+
+                        var claim = annotation.argues;                        
                         var quoteobject = $("<div id='quotearea'/>");
                         $('#quote').append(quoteobject);
                         $('#quotearea').html(claim.hasTarget.hasSelector.exact || '');
-                        $('#Drug1 option').remove();
-                        $('#Drug2 option').remove();
-                        var flag = 0;
-                        
+                        var flag = 0;                        
                         var anns = annotations.slice();
                         
                         var quoteobject = $('#quotearea');
@@ -123,44 +130,38 @@ var mpEditor = exports.mpEditor = Widget.extend({
                             }
                             
                             $(field).find('#quote').css('background', '#EDEDED');
-                            var signal = 1;
+
                             
                             //load fields from annotation.claim
                             $("#Drug1 > option").each(function () {
-                                if (this.value === claim.qualifiedBy.drug1) $(this).attr('selected', true);
+                                if (this.value === claim.qualifiedBy.drug1) $(this).prop('selected', true);
                             });
                             $('#Drug2 > option').each(function () {
-                                if (this.value === claim.qualifiedBy.drug2) $(this).attr('selected', true);
+                                if (this.value === claim.qualifiedBy.drug2) $(this).prop('selected', true);
                             });
-                            $('#relationship option').each(function () {
-                                if (this.value === claim.qualifiedBy.relationship) { 
-                                    $(this).attr('selected', true);
-                                    signal = 0;
+
+                            $('#relationship > option').each(function () {
+                                if (this.value == claim.qualifiedBy.relationship) {
+                                    $(this).prop('selected', true);
+                                }
+                                else {
+                                    $(this).prop('selected', false);
                                 }
                             });
-                            
-                            if (signal == 1) {
-                                $('#relationship option')[0].selected = "selected";
-                            } else {
-                                signal = 1;
-                            }
-                        
+                            // show enzyme if relationship is inhibits/substrate of
                             if(claim.qualifiedBy.relationship == "inhibits" || claim.qualifiedBy.relationship == "substrate of")
                             {
-                                // show enzyme field if relationship is inhibits or substrate of
-                                $(document).ready(function() { showEnzyme(); });
-                            $('#enzyme option').each(function () {
-                                if (this.value === claim.qualifiedBy.enzyme) {
-                                    $(this).attr('selected', true);
-                                    signal = 0;
-                                }
-                            });
-                                if (signal == 1) {
-                                    $('#enzyme option')[0].selected = "selected";
-                                } else {
-                                    signal = 1;
-                                }
-                            }                                                
+                                $("#enzyme").show();
+                                $("#enzymesection1").show();
+
+                                $('#enzyme option').each(function () {
+                                    if (this.value == claim.qualifiedBy.enzyme) {
+                                        $(this).prop('selected', true);            
+                                    } else {
+                                        $(this).prop('selected', false);
+                                    }
+                                });
+                            }                           
                         }
                         
                     } 
@@ -168,31 +169,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                     // load MP list of data 
                     if (annotation.argues.supportsBy.length > 0) {
 
-                        console.log("mp editor load data");
-                        // load first data for testing 
-                        $("#participants").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.value);                                                 
-                        $("#drug1Dose").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.value);
-                        $("#drug1Duration").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.duration);
-                        $("#drug1Formulation > option").each(function () {
-                            if (this.value === annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.formulation) {
-                                $(this).attr('selected', true);                                                  }
-                        });
-                        $("#drug1Regimens > option").each(function () {
-                            if (this.value === annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.regimens) {
-                                $(this).attr('selected', true);                                                  }
-                        });
-                        
-                        $("#drug2Dose").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.value);
-                        $("#drug2Duration").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.duration);
-                        $("#drug2Formulation > option").each(function () {
-                            if (this.value === annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.formulation) {
-                                $(this).attr('selected', true);                                                  }
-                        });
-                        $("#drug2Regimens > option").each(function () {
-                            if (this.value === annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.regimens) {
-                                $(this).attr('selected', true);                                                  }
-                        });
-                    } else { // clean data editor
+                        // clean data editor
                         $("#participants").empty();
                         $("#drug1Dose").empty();
                         $("#drug1Duration").empty();
@@ -201,9 +178,32 @@ var mpEditor = exports.mpEditor = Widget.extend({
                         $("#drug2Dose").empty();
                         $("#drug2Duration").empty();
                         $("#drug2Formulation")[0].selectedIndex = -1;
-                        $("#drug2Regimens")[0].selectedIndex = -1;
-                    }
-                    
+                        $("#drug2Regimens")[0].selectedIndex = -1;   
+                        
+                        console.log("mp editor load data");
+                        $("#participants").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.value);                                                 
+                        $("#drug1Dose").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.value);
+                        $("#drug1Duration").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.duration);
+                        $("#drug1Formulation > option").each(function () {
+                            if (this.value === annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.formulation) {
+                                $(this).prop('selected', true);                                                  }
+                        });
+                        $("#drug1Regimens > option").each(function () {
+                            if (this.value === annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.regimens) {
+                                $(this).prop('selected', true);                                                  }
+                        });
+                        
+                        $("#drug2Dose").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.value);
+                        $("#drug2Duration").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.duration);
+                        $("#drug2Formulation > option").each(function () {
+                            if (this.value === annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.formulation) {
+                                $(this).prop('selected', true);                                                  }
+                        });
+                        $("#drug2Regimens > option").each(function () {
+                            if (this.value === annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.regimens) {
+                                $(this).prop('selected', true);                                                  }
+                        });
+                    }                     
                 },
                 
                 submit:function (field, annotation) {
