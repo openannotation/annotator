@@ -39,14 +39,18 @@ var mpAdder = Widget.extend({
         // .on("mousedown." + NS, 'button', function (e) {
         //     self._onMousedown(e);
         // });
-        .on("mousedown." + NS, '.mp-main-menu', function (e) {
+        .on("mousedown", '#mp-main-menu', function (e) {
             self._onMousedown(e);
         });
 
         this.document = this.element[0].ownerDocument;
-        $(this.document.body).on("mouseup." + NS, '.mp-main-menu', function (e) {
+        $(this.document.body).on("mouseup." + NS, function (e) {
             self._onMouseup(e);
         });
+
+        // $(this.document.body).on("mouseup." + NS, '.mp-main-menu', function (e) {
+        //     self._onMouseup(e);
+        // });
     },
 
     destroy: function () {
@@ -87,7 +91,6 @@ var mpAdder = Widget.extend({
         if (typeof position !== 'undefined' && position !== null) {
             this.element.css({
                 top: position.top,
-
                 // avoid overlapping with drug mention editor
                 left: position.left + 35
             });
@@ -101,6 +104,7 @@ var mpAdder = Widget.extend({
     //
     // Returns nothing.
     _onMousedown: function (event) {
+
         // Do nothing for right-clicks, middle-clicks, etc.
         if (event.which > 1) {
             return;
@@ -117,6 +121,7 @@ var mpAdder = Widget.extend({
     //
     // Returns nothing.
     _onMouseup: function (event) {
+
         // Do nothing for right-clicks, middle-clicks, etc.
         if (event.which > 1) {
             return;
@@ -160,10 +165,9 @@ var mpAdder = Widget.extend({
             editorType = "participants";
         }
 
-        console.log("mp adder: _onclick called: " + editorType);
-
         // if type is claim, then  create annotation
         if (this.annotation !== null && editorType == "claim" && typeof this.onCreate === 'function') { 
+            // console.log("DEBUG: mpadder - _onclick called: " + editorType);
             this.annotation.annotationType = "MP";
             this.onCreate(this.annotation, event);
         }        
@@ -190,7 +194,6 @@ var mpAdder = Widget.extend({
                     var oriAnnotation = data.results[0];
                     // set current mp annotation
                     $('#mp-annotation-work-on').html(oriAnnotation.id);
-                    console.log("mpadder - data - annotationId: " + annotationId);
 
                     // get selection for data
                     var target = temp.annotation.argues.hasTarget;
@@ -206,11 +209,10 @@ var mpAdder = Widget.extend({
                     oriAnnotation.dataTarget = target;
                     oriAnnotation.dataRanges = ranges;                               
                     
-                    // open data editor, load MP annotation
+                    // open data editor, load MP annotation, call app.update
                     showEditor();
                     dataEditorLoad(oriAnnotation, editorType, annotationId);
-                    //temp.onUpdate(oriAnnotation, event);
-  
+
                 });                            
         }
     }
