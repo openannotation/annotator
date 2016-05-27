@@ -360,10 +360,11 @@ var mpViewer = exports.mpViewer = Widget.extend({
             .parents('.annotator-annotation')
             .data('annotation');
 
-        console.log("mp viewer - onEditClick");
-
-        this.hide();
-        this.options.onEdit(item);
+        if (this.annotations.length > 0) {
+            var fieldName = this.annotations[0].fieldName;
+            this.hide();
+            this.options.onEdit(item, fieldName);
+        }
     },
 
     // Event callback: called when the delete button is clicked.
@@ -509,9 +510,9 @@ mpViewer.itemTemplate = [
     '    <button type="button"',
     '            title="' + _t('Edit') + '"',
     '            class="annotator-edit" onclick="showEditor()">' + _t('Edit') + '</button>',
-    '    <button type="button"',
-    '            title="' + _t('Delete') + '"',
-    '            class="annotator-delete">' + _t('Delete') + '</button> &nbsp;&nbsp;',
+    // '    <button type="button"',
+    // '            title="' + _t('Delete') + '"',
+    // '            class="annotator-delete">' + _t('Delete') + '</button> &nbsp;&nbsp;',
     '    <button type="button"',
     '            title="' + _t('Cancel') + '"',
     '            class="annotator-cancel">' + _t('Cancel') + '</button>',

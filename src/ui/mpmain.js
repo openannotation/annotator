@@ -311,11 +311,18 @@ function main(options) {
 
         // mp viewer
         s.mpviewer = new mpviewer.mpViewer({
-            onEdit: function (ann) {
+            onEdit: function (ann, field) {
                 // Copy the interaction point from the shown viewer:
                 s.interactionPoint = util.$(s.mpviewer.element)
                     .css(['top', 'left']);
                 if (ann.annotationType == "MP"){
+                    var annotationId = ann.id;
+                    //console.log("mpviewer - onEdit - annId: " + annotationId + " | field: " + field);
+                    document.getElementById(annotationId + field).scrollIntoView(true);
+                    if (field == "claim")
+                        claimEditorLoad();
+                    else 
+                        switchDataForm(field);                               
                     app.annotations.update(ann);
                 }
             },
