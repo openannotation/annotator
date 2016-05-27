@@ -51,9 +51,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                 type: 'div',
                 label: _t('Comments') + '\u2026',
                 id: 'quote',
-                load: function (field, annotation, annotations) {
-                 
-
+                load: function (field, annotation, annotations) {               
                     
                     var editorType = $("#mp-editor-type").html();
                     var annotationId = $("#mp-annotation-work-on").html();
@@ -448,7 +446,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
     // @input: data field from editorType
     // Returns nothing.
     deleteDataSubmit: function (editorType) {
-        console.log("mpeditor - deleteDataSubmit");
+        console.log("mpeditor - deleteDataSubmit - editorType: " + editorType);
         for (var i = 0, len = this.fields.length; i < len; i++) {
             var field = this.fields[i];
 
@@ -598,7 +596,40 @@ var mpEditor = exports.mpEditor = Widget.extend({
         preventEventDefault(event);
         var editorType = $("#mp-editor-type").html();
         console.log("mpeditor - onDeleteClick - type: " + editorType);
+
         if (editorType == "claim") {
+  
+            // if(!window.jQuery)
+            // {
+            //     console.log("jquery is not avaliable");
+            //     var script1 = document.createElement('script');
+            //     script1.type = "text/javascript";
+            //     script1.src = "http://code.jquery.com/jquery-1.11.1.min.js";
+            //     document.getElementsByTagName('head')[0].appendChild(script1);
+
+            //     var script2 = document.createElement('script');
+            //     script2.type = "text/javascript";
+            //     script2.src = "http://code.jquery.com/ui/1.11.1/jquery-ui.min.js";
+            //     document.getElementsByTagName('head')[0].appendChild(script2);
+            // }
+
+
+            // $("#dialog-claim-delete-confirm").dialog({
+            //     resizable: false,
+            //     height: 'auto',
+            //     width: '400px',
+            //     modal: true,
+            //     buttons: {
+            //         "confirm delete": function() {
+            //             $("#dialog-claim-delete-confirm").dialog( "close" );
+            //             //this.options.onDelete(self.annotation);
+            //             //showrightbyvalue();
+            //         },
+            //         "Cancel": function() {
+            //             $("#dialog-claim-delete-confirm").dialog( "close" );
+            //         }
+            //     }
+            // });
             this.options.onDelete(self.annotation);
         } else {
             showAnnTable();

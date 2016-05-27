@@ -205,12 +205,17 @@ template = Handlebars.compile(source);
 var form4 = template(context4);
 
 Template.content = [
+
     '<div class="annotator-outer annotator-editor annotator-invert-y annotator-invert-x">',
     '<form class="annotator-widget">',
     '<ul class="annotator-listing"></ul>',
     '<div class="annotationbody" style="margin-left:5px;margin-right:0px;height:100%;line-height:200%;margin-top:0px;overflow-y: hidden">',
     '<div id="tabs">',
     '<div id="tabs-1" style="margin-bottom:0px;">',
+    // confirmation dialog
+    // '<div id="dialog-claim-delete-confirm" title="Delete Confirmation" style="display: none;">',
+    // '<p> Delete claim will trancate all data & material assigned on it! </p>',
+    // '</div>',
 
     // Type of editor
     '<div id="mp-editor-type" style="display: none;"></div>',
@@ -251,7 +256,8 @@ Template.content = [
     '</div>',
     '    <div class="annotator-controls1">',
     '     <a href="#cancel" class="annotator-cancel" onclick="showrightbyvalue()" id="annotator-cancel">Cancel</a>',
-    '     <a href="#delete" class="annotator-delete" onclick="" id="annotator-delete">Delete</a>',
+    //'     <a href="#delete" class="annotator-delete" onclick="postEditorDelete()" id="annotator-delete">Delete</a>',
+    '     <a href="#delete" class="annotator-delete" id="annotator-delete">Delete</a>',
     '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
     '     <a href="#save" class="annotator-save annotator-focus" onclick="postEditorSave()">Save</a>',
     '     <a href="#save-close" class="annotator-save-close" onclick="postEditorSaveAndClose()" id="annotator-save-close">Save and Close</a>',
