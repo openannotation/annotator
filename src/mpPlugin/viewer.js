@@ -363,6 +363,9 @@ var mpViewer = exports.mpViewer = Widget.extend({
         if (this.annotations.length > 0) {
             var fieldName = this.annotations[0].fieldName;
             this.hide();
+            // show delete button in editor
+            console.log("mpviewer - onEditClick - show delete");
+            $("#annotator-delete").show();
             this.options.onEdit(item, fieldName);
         }
     },

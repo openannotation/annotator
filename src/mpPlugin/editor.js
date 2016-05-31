@@ -237,7 +237,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                         annotation.argues.label = claimStatement;
                         annotation.argues.supportsBy = [];                       
 
-                    } else if (annotationId != null) { 
+                    } else if (editorType != "claim" && annotationId != null) { 
 
                         console.log("mpeditor update data & material");
 
@@ -286,9 +286,8 @@ var mpEditor = exports.mpEditor = Widget.extend({
                         }
                         // clean current text selection
                         delete annotation.dataTarget;
-                        delete annotation.dataRanges;
+                        delete annotation.dataRanges;                             
                     }
-                    
                     // clean editor status
                     $("#mp-editor-type").html('');
                 }                
@@ -310,7 +309,10 @@ var mpEditor = exports.mpEditor = Widget.extend({
             })
             .on("click." + NS, '.annotator-delete', function (e) {
                 self._onDeleteClick(e);
-                self.hide();                
+                self.hide();   
+                // clean current editing field name and annotation id
+                $("#mp-editor-type").html('');           
+                $("#mp-annotation-work-on").html('');  
             })
             .on("click." + NS, '.annotator-cancel', function (e) {
                 self._onCancelClick(e);
@@ -630,7 +632,8 @@ var mpEditor = exports.mpEditor = Widget.extend({
             //         }
             //     }
             // });
-            this.options.onDelete(self.annotation);
+            console.log(this.annotation);
+            this.options.onDelete(this.annotation);
         } else {
             showAnnTable();
             this.deleteDataSubmit(editorType);
