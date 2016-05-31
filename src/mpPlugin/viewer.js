@@ -94,7 +94,7 @@ var mpViewer = exports.mpViewer = Widget.extend({
                     "<table class='viewertable' style='float:left;'>" +
                     "<tr><td>Claim: " + claim.label + "</td></tr>" +
                     "<tr><td>" + fieldName + "</td></tr>" + 
-                "</table>";
+                    "</table><br>";
 		        
  		        return returnText;
             } else {

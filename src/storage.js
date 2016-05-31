@@ -198,6 +198,8 @@ HttpStorage.prototype.create = function (annotation) {
 HttpStorage.prototype.update = function (annotation) {
 
     console.log("[INFO] storage - update!")    
+    // delete annotation.dataTarget;
+    // delete annotation.dataRanges;   
 
     return this._apiRequest('update', annotation);
 };

@@ -245,7 +245,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                         var partTmp = annotation.argues.supportsBy[0].supportsBy.supportsBy.participants;
                         if ($('#participants').val().trim() != "" &&  partTmp.value != $('#participants').val()) {                            
                             partTmp.value = $('#participants').val();
-                            console.log(partTmp.value);
+
                             // if field not binded with text, then assign current span to it
                             if (partTmp.ranges == null && partTmp.hasTarget == null  && annotation.dataTarget != null && annotation.dataRanges != null) {
                                 partTmp.ranges = annotation.dataRanges;           
@@ -257,7 +257,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
 
                         var dose1Tmp = annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose;
                         if (($('#drug1Dose').val().trim() != "") && (dose1Tmp.value != $('#drug1Dose').val() || dose1Tmp.formulation != $('#drug1Formulation option:selected').text() || dose1Tmp.duration != $('#drug1Duration').val() || dose1Tmp.regimens != $('#drug1Regimens option:selected').text())) {
-                            console.log("mpeditor - submit - add dose1");                                           
+                                       
                             dose1Tmp.value = $('#drug1Dose').val(); 
                             dose1Tmp.formulation = $('#drug1Formulation option:selected').text();
                             dose1Tmp.duration = $('#drug1Duration').val();
@@ -272,7 +272,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
 
                         var dose2Tmp = annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose;
                         if (($('#drug2Dose').val().trim() != "") && (dose2Tmp.value != $('#drug2Dose').val() || dose2Tmp.formulation != $('#drug2Formulation option:selected').text() || dose2Tmp.duration != $('#drug2Duration').val() || dose2Tmp.regimens != $('#drug2Regimens option:selected').text())) {
-                            console.log("mpeditor - submit - add dose2");                                           
+                                     
                             dose2Tmp.value = $('#drug2Dose').val(); 
                             dose2Tmp.formulation = $('#drug2Formulation option:selected').text();
                             dose2Tmp.duration = $('#drug2Duration').val();
@@ -284,9 +284,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                             annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose = dose2Tmp;   
                             console.log("mpeditor - submit - update drug 2 dose");     
                         }
-                        // clean current text selection
-                        delete annotation.dataTarget;
-                        delete annotation.dataRanges;                             
+                          
                     }
                     // clean editor status
                     $("#mp-editor-type").html('');
@@ -304,7 +302,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                 self._onSaveClick(e);
             })
             .on("click." + NS, '.annotator-save-close', function (e) {
-                self._onSaveClick(e);
+                self._onSaveCloseClick(e);
                 self.hide();
             })
             .on("click." + NS, '.annotator-delete', function (e) {
@@ -431,6 +429,8 @@ var mpEditor = exports.mpEditor = Widget.extend({
     //
     // Returns nothing.
     submit: function () {
+        console.log("mpeditor - submit called");
+
         for (var i = 0, len = this.fields.length; i < len; i++) {
             var field = this.fields[i];
 
@@ -439,6 +439,28 @@ var mpEditor = exports.mpEditor = Widget.extend({
         if (typeof this.dfd !== 'undefined' && this.dfd !== null) {
             this.dfd.resolve();
         }
+        
+        this.hide();
+    },
+    // Public: Submits the editor and saves any changes made to the annotation.
+    //
+    // Returns nothing.
+    submitNotClose: function () {
+        console.log("mpeditor - submitNotClose called");
+        for (var i = 0, len = this.fields.length; i < len; i++) {
+            var field = this.fields[i];
+
+            field.submit(field.element, this.annotation);
+        }
+
+        if (typeof this.dfd !== 'undefined' && this.dfd !== null) {
+            this.dfd.resolve();
+        }
+
+        app.annotations.update(this.annotation);
+        // if (typeof this.dfd !== 'undefined' && this.dfd !== null) {
+        //     this.dfd.resolve();
+        // }
         // submit will not hide the editor
         //this.hide();
     },
@@ -471,7 +493,8 @@ var mpEditor = exports.mpEditor = Widget.extend({
     // annotation.
     //
     // Returns itself.
-    cancel: function () {
+    cancel: function () {  
+
         if (typeof this.dfd !== 'undefined' && this.dfd !== null) {
             this.dfd.reject('editing cancelled');
 
@@ -581,12 +604,19 @@ var mpEditor = exports.mpEditor = Widget.extend({
         this.submit();
     },
 
+    // Event callback: called when a user clicks the editor's save and close button.
+    //
+    // Returns nothing
+    _onSaveCloseClick: function (event) {
+        preventEventDefault(event);
+        this.submit();
+    },
     // Event callback: called when a user clicks the editor's save button.
     //
     // Returns nothing
     _onSaveClick: function (event) {
         preventEventDefault(event);
-        this.submit();
+        this.submitNotClose();
     },
 
     // Event callback: called when a user clicks the editor's delete button.
@@ -597,7 +627,6 @@ var mpEditor = exports.mpEditor = Widget.extend({
     _onDeleteClick: function (event) {
         preventEventDefault(event);
         var editorType = $("#mp-editor-type").html();
-        console.log("mpeditor - onDeleteClick - type: " + editorType);
 
         if (editorType == "claim") {
   
@@ -632,7 +661,6 @@ var mpEditor = exports.mpEditor = Widget.extend({
             //         }
             //     }
             // });
-            console.log(this.annotation);
             this.options.onDelete(this.annotation);
         } else {
             showAnnTable();
