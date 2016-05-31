@@ -166,8 +166,9 @@ var mpEditor = exports.mpEditor = Widget.extend({
 
                     // load MP list of data 
                     if (annotation.argues.supportsBy.length > 0) {
+                        console.log("mp editor load data");
 
-                        // clean data editor
+                        // clean material : participants, dose1, dose2
                         $("#participants").empty();
                         $("#drug1Dose").empty();
                         $("#drug1Duration").empty();
@@ -177,8 +178,22 @@ var mpEditor = exports.mpEditor = Widget.extend({
                         $("#drug2Duration").empty();
                         $("#drug2Formulation")[0].selectedIndex = -1;
                         $("#drug2Regimens")[0].selectedIndex = -1;   
-                        
-                        console.log("mp editor load data");
+
+                        // clean data : auc, cmax, cl, half life
+                        $("#auc").empty();
+                        $("#aucType")[0].selectedIndex = -1;
+                        $("#aucDirection")[0].selectedIndex = -1;
+                        $("#cmax").empty();
+                        $("#cmaxType")[0].selectedIndex = -1;
+                        $("#cmaxDirection")[0].selectedIndex = -1;
+                        $("#cl").empty();
+                        $("#clType")[0].selectedIndex = -1;
+                        $("#clDirection")[0].selectedIndex = -1;
+                        $("#halflife").empty();
+                        $("#halflifeType")[0].selectedIndex = -1;
+                        $("#halflifeDirection")[0].selectedIndex = -1;
+
+                        // load mp material field  
                         $("#participants").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.value);                                                 
                         $("#drug1Dose").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.value);
                         $("#drug1Duration").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.duration);
@@ -201,6 +216,52 @@ var mpEditor = exports.mpEditor = Widget.extend({
                             if (this.value === annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.regimens) {
                                 $(this).prop('selected', true);                                                  }
                         });
+
+                        // load mp data fields
+                        // AUC
+                        $("auc").val(annotation.argues.supportsBy[0].auc.value);
+                        $("#aucType > option").each(function () {
+                            if (this.value === annotation.argues.supportsBy[0].auc.type) {
+                                $(this).prop('selected', true);                                                  }
+                        });
+                        $("#aucDirection > option").each(function () {
+                            if (this.value === annotation.argues.supportsBy[0].auc.direction) {
+                                $(this).prop('selected', true);                                                  }
+                        });
+
+                        // CMAX
+                        $("cmax").val(annotation.argues.supportsBy[0].cmax.value);
+                        $("#cmaxType > option").each(function () {
+                            if (this.value === annotation.argues.supportsBy[0].cmax.type) {
+                                $(this).prop('selected', true);                                                  }
+                        });
+                        $("#cmaxDirection > option").each(function () {
+                            if (this.value === annotation.argues.supportsBy[0].cmax.direction) {
+                                $(this).prop('selected', true);                                                  }
+                        });
+
+                        // CL
+                        $("cl").val(annotation.argues.supportsBy[0].cl.value);
+                        $("#clType > option").each(function () {
+                            if (this.value === annotation.argues.supportsBy[0].cl.type) {
+                                $(this).prop('selected', true);                                                  }
+                        });
+                        $("#clDirection > option").each(function () {
+                            if (this.value === annotation.argues.supportsBy[0].cl.direction) {
+                                $(this).prop('selected', true);                                                  }
+                        });
+
+                        // HALFLIFE
+                        $("halflife").val(annotation.argues.supportsBy[0].halflife.value);
+                        $("#halflifeType > option").each(function () {
+                            if (this.value === annotation.argues.supportsBy[0].halflife.type) {
+                                $(this).prop('selected', true);                                                  }
+                        });
+                        $("#halflifeDirection > option").each(function () {
+                            if (this.value === annotation.argues.supportsBy[0].halflife.direction) {
+                                $(this).prop('selected', true);                                                  }
+                        });
+
                     }                     
                 },
                 
@@ -240,9 +301,10 @@ var mpEditor = exports.mpEditor = Widget.extend({
                     } else if (editorType != "claim" && annotationId != null) { 
 
                         console.log("mpeditor update data & material");
+                        var mpData = annotation.argues.supportsBy[0];
 
                         // MP add data-method-material 
-                        var partTmp = annotation.argues.supportsBy[0].supportsBy.supportsBy.participants;
+                        var partTmp = mpData.supportsBy.supportsBy.participants;
                         if ($('#participants').val().trim() != "" &&  partTmp.value != $('#participants').val()) {                            
                             partTmp.value = $('#participants').val();
 
@@ -251,11 +313,11 @@ var mpEditor = exports.mpEditor = Widget.extend({
                                 partTmp.ranges = annotation.dataRanges;           
                                 partTmp.hasTarget = annotation.dataTarget;    
                             }
-                            annotation.argues.supportsBy[0].supportsBy.supportsBy.participants = partTmp;
+                            mpData.supportsBy.supportsBy.participants = partTmp;
                             console.log("mpeditor - submit - update participants");
                         }
 
-                        var dose1Tmp = annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose;
+                        var dose1Tmp = mpData.supportsBy.supportsBy.drug1Dose;
                         if (($('#drug1Dose').val().trim() != "") && (dose1Tmp.value != $('#drug1Dose').val() || dose1Tmp.formulation != $('#drug1Formulation option:selected').text() || dose1Tmp.duration != $('#drug1Duration').val() || dose1Tmp.regimens != $('#drug1Regimens option:selected').text())) {
                                        
                             dose1Tmp.value = $('#drug1Dose').val(); 
@@ -266,11 +328,11 @@ var mpEditor = exports.mpEditor = Widget.extend({
                                 dose1Tmp.hasTarget = annotation.dataTarget;
                                 dose1Tmp.ranges = annotation.dataRanges;
                             }
-                            annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose = dose1Tmp;   
+                            mpData.supportsBy.supportsBy.drug1Dose = dose1Tmp;   
                             console.log("mpeditor - submit - update drug 1 dose");             
                         }
 
-                        var dose2Tmp = annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose;
+                        var dose2Tmp = mpData.supportsBy.supportsBy.drug2Dose;
                         if (($('#drug2Dose').val().trim() != "") && (dose2Tmp.value != $('#drug2Dose').val() || dose2Tmp.formulation != $('#drug2Formulation option:selected').text() || dose2Tmp.duration != $('#drug2Duration').val() || dose2Tmp.regimens != $('#drug2Regimens option:selected').text())) {
                                      
                             dose2Tmp.value = $('#drug2Dose').val(); 
@@ -281,10 +343,58 @@ var mpEditor = exports.mpEditor = Widget.extend({
                                 dose2Tmp.hasTarget = annotation.dataTarget;
                                 dose2Tmp.ranges = annotation.dataRanges;
                             }
-                            annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose = dose2Tmp;   
+                            mpData.supportsBy.supportsBy.drug2Dose = dose2Tmp;   
                             console.log("mpeditor - submit - update drug 2 dose");     
                         }
-                          
+
+                        var auc = mpData.auc;
+                        if (($('#auc').val().trim() != "" && auc.value != $('#auc').val().trim()) || (auc.type != $('#aucType option:selected').text()) || (auc.direction != $('#aucDirection option:selected').text())) {
+                            auc.value = $('#auc').val().trim();
+                            auc.type = $('#aucType option:selected').text()
+                            auc.direction = $('#aucDirection option:selected').text();
+                            if (auc.ranges == null && auc.hasTarget == null) {
+                                auc.hasTarget = annotation.dataTarget;
+                                auc.ranges = annotation.dataRanges;
+                            }
+                            mpData.auc = auc;
+                        }
+
+                        var cmax = mpData.cmax;
+                        if (($('#cmax').val().trim() != "" && cmax.value != $('#cmax').val().trim()) || (cmax.type != $('#cmaxType option:selected').text()) || (cmax.direction != $('#cmaxDirection option:selected').text())) {
+                            cmax.value = $('#cmax').val().trim();
+                            cmax.type = $('#cmaxType option:selected').text()
+                            cmax.direction = $('#cmaxDirection option:selected').text();
+                            if (cmax.ranges == null && cmax.hasTarget == null) {
+                                cmax.hasTarget = annotation.dataTarget;
+                                cmax.ranges = annotation.dataRanges;
+                            }
+                            mpData.cmax = cmax;
+                        }
+
+                        var cl = mpData.cl;
+                        if (($('#cl').val().trim() != "" && cl.value != $('#cl').val().trim()) || (cl.type != $('#clType option:selected').text()) || (cl.direction != $('#clDirection option:selected').text())) {
+                            cl.value = $('#cl').val().trim();
+                            cl.type = $('#clType option:selected').text()
+                            cl.direction = $('#clDirection option:selected').text();
+                            if (cl.ranges == null && cl.hasTarget == null) {
+                                cl.hasTarget = annotation.dataTarget;
+                                cl.ranges = annotation.dataRanges;
+                            }
+                            mpData.cl = cl;
+                        }
+
+                        var halflife = mpData.halflife;
+                        if (($('#halflife').val().trim() != "" && halflife.value != $('#halflife').val().trim()) || (halflife.type != $('#halflifeType option:selected').text()) || (halflife.direction != $('#halflifeDirection option:selected').text())) {
+                            halflife.value = $('#halflife').val().trim();
+                            halflife.type = $('#halflifeType option:selected').text()
+                            halflife.direction = $('#halflifeDirection option:selected').text();
+                            if (halflife.ranges == null && halflife.hasTarget == null) {
+                                halflife.hasTarget = annotation.dataTarget;
+                                halflife.ranges = annotation.dataRanges;
+                            }
+                            mpData.halflife = halflife;
+                        }
+                        annotation.argues.supportsBy[0] = mpData;
                     }
                     // clean editor status
                     $("#mp-editor-type").html('');

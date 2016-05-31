@@ -102,7 +102,7 @@ var context4 = {
         },
         {
             type:"dropdown",
-        name:"Formulation: ",
+            name:"Formulation: ",
             id:"drug2Formulation",
             options:["UNK","Oral","IV","transdermal"],
             optionsID:[]
@@ -117,6 +117,110 @@ var context4 = {
             name:"Regimens: ",
             id:"drug2Regimens",
             options:["UNK","SD","QD","BID", "TID", "QID", "Q22", "Q8", "Q6", "Daily"],
+            optionsID:[]
+        }
+    ]
+};
+
+
+// Data - AUC form
+var context5 = {
+    questions: [
+        {
+            type: "input",
+            name: "AUC: ",
+            id: "auc"
+        },
+        {
+            type:"dropdown",
+            name:"Type: ",
+            id:"aucType",
+            options:["UNK","percent","fold"],
+            optionsID:[]
+        },
+        {
+            type:"dropdown",
+            name:"Direction: ",
+            id:"aucDirection",
+            options:["UNK","increase","decrease"],
+            optionsID:[]
+        }
+    ]
+};
+
+// Data - CMAX form
+var context6 = {
+    questions: [
+        {
+            type: "input",
+            name: "CMAX: ",
+            id: "cmax"
+        },
+        {
+            type:"dropdown",
+            name:"Type: ",
+            id:"cmaxType",
+            options:["UNK","percent","fold"],
+            optionsID:[]
+        },
+        {
+            type:"dropdown",
+            name:"Direction: ",
+            id:"cmaxDirection",
+            options:["UNK","increase","decrease"],
+            optionsID:[]
+        }
+    ]
+};
+
+
+// Data - Clearance form
+var context7 = {
+    questions: [
+        {
+            type: "input",
+            name: "Clearance: ",
+            id: "cl"
+        },
+        {
+            type:"dropdown",
+            name:"Type: ",
+            id:"clType",
+            options:["UNK","percent","fold"],
+            optionsID:[]
+        },
+        {
+            type:"dropdown",
+            name:"Direction: ",
+            id:"clDirection",
+            options:["UNK","increase","decrease"],
+            optionsID:[]
+        }
+    ]
+};
+
+
+
+// Data - half life form
+var context8 = {
+    questions: [
+        {
+            type: "input",
+            name: "Half life: ",
+            id: "halflife"
+        },
+        {
+            type:"dropdown",
+            name:"Type: ",
+            id:"halflifeType",
+            options:["UNK","percent","fold"],
+            optionsID:[]
+        },
+        {
+            type:"dropdown",
+            name:"Direction: ",
+            id:"halflifeDirection",
+            options:["UNK","increase","decrease"],
             optionsID:[]
         }
     ]
@@ -204,6 +308,28 @@ source = "{{#buildFormData questions}}{{/buildFormData}}";
 template = Handlebars.compile(source);
 var form4 = template(context4);
 
+// Data - auc
+source = "{{#buildFormData questions}}{{/buildFormData}}";
+template = Handlebars.compile(source);
+var form5 = template(context5);
+
+// Data - cmax
+source = "{{#buildFormData questions}}{{/buildFormData}}";
+template = Handlebars.compile(source);
+var form6 = template(context6);
+
+// Data - cl
+source = "{{#buildFormData questions}}{{/buildFormData}}";
+template = Handlebars.compile(source);
+var form7 = template(context7);
+
+// Data - half life
+source = "{{#buildFormData questions}}{{/buildFormData}}";
+template = Handlebars.compile(source);
+var form8 = template(context8);
+
+
+
 Template.content = [
 
     '<div class="annotator-outer annotator-editor annotator-invert-y annotator-invert-x">',
@@ -226,7 +352,11 @@ Template.content = [
     '<div id="mp-data-nav" style="display: none;">',
     '<button type="button" onclick="switchDataForm(\'participants\')" >Participants</button> &nbsp;->&nbsp;',
     '<button type="button" onclick="switchDataForm(\'dose1\')" >Drug 1 Dose</button> &nbsp;->&nbsp;',
-    '<button type="button" onclick="switchDataForm(\'dose2\')" >Drug 2 Dose</button>',
+    '<button type="button" onclick="switchDataForm(\'dose2\')" >Drug 2 Dose</button>&nbsp;->&nbsp;',    
+    '<button type="button" onclick="switchDataForm(\'auc\')" >Auc</button> &nbsp;->&nbsp;',
+    '<button type="button" onclick="switchDataForm(\'cmax\')" >Cmax</button> &nbsp;->&nbsp;',
+    '<button type="button" onclick="switchDataForm(\'cl\')" >Clearance</button> &nbsp;->&nbsp;',
+    '<button type="button" onclick="switchDataForm(\'halflife\')" >Half-life</button>',
     '</div>',
 
     // Claim form
@@ -250,6 +380,27 @@ Template.content = [
     '<div id="mp-data-form-dose2" style="margin-top:10px;margin-left:5px;display: none;">',
     form4,
     '</div>',
+
+    // Data & material - AUC
+    '<div id="mp-data-form-auc" style="margin-top:10px;margin-left:5px;display: none;">',
+    form5,
+    '</div>',
+
+    // Data & material - CMAX
+    '<div id="mp-data-form-cmax" style="margin-top:10px;margin-left:5px;display: none;">',
+    form6,
+    '</div>',
+
+    // Data & material - CL
+    '<div id="mp-data-form-cl" style="margin-top:10px;margin-left:5px;display: none;">',
+    form7,
+    '</div>',
+
+    // Data & material - half life
+    '<div id="mp-data-form-halflife" style="margin-top:10px;margin-left:5px;display: none;">',
+    form8,
+    '</div>',
+
     
     '</div>',
     '</div>',
