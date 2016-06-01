@@ -167,6 +167,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                     // load MP list of data 
                     if (annotation.argues.supportsBy.length > 0) {
                         console.log("mp editor load data");
+                        var loadData = annotation.argues.supportsBy[0];
 
                         // clean material : participants, dose1, dose2
                         $("#participants").empty();
@@ -194,71 +195,71 @@ var mpEditor = exports.mpEditor = Widget.extend({
                         $("#halflifeDirection")[0].selectedIndex = -1;
 
                         // load mp material field  
-                        $("#participants").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.participants.value);                                                 
-                        $("#drug1Dose").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.value);
-                        $("#drug1Duration").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.duration);
+                        $("#participants").val(loadData.supportsBy.supportsBy.participants.value);                                                 
+                        $("#drug1Dose").val(loadData.supportsBy.supportsBy.drug1Dose.value);
+                        $("#drug1Duration").val(loadData.supportsBy.supportsBy.drug1Dose.duration);
                         $("#drug1Formulation > option").each(function () {
-                            if (this.value === annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.formulation) {
+                            if (this.value === loadData.supportsBy.supportsBy.drug1Dose.formulation) {
                                 $(this).prop('selected', true);                                                  }
                         });
                         $("#drug1Regimens > option").each(function () {
-                            if (this.value === annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose.regimens) {
+                            if (this.value === loadData.supportsBy.supportsBy.drug1Dose.regimens) {
                                 $(this).prop('selected', true);                                                  }
                         });
                         
-                        $("#drug2Dose").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.value);
-                        $("#drug2Duration").val(annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.duration);
+                        $("#drug2Dose").val(loadData.supportsBy.supportsBy.drug2Dose.value);
+                        $("#drug2Duration").val(loadData.supportsBy.supportsBy.drug2Dose.duration);
                         $("#drug2Formulation > option").each(function () {
-                            if (this.value === annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.formulation) {
+                            if (this.value === loadData.supportsBy.supportsBy.drug2Dose.formulation) {
                                 $(this).prop('selected', true);                                                  }
                         });
                         $("#drug2Regimens > option").each(function () {
-                            if (this.value === annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose.regimens) {
+                            if (this.value === loadData.supportsBy.supportsBy.drug2Dose.regimens) {
                                 $(this).prop('selected', true);                                                  }
                         });
 
                         // load mp data fields
                         // AUC
-                        $("auc").val(annotation.argues.supportsBy[0].auc.value);
+                        $("#auc").val(loadData.auc.value);
                         $("#aucType > option").each(function () {
-                            if (this.value === annotation.argues.supportsBy[0].auc.type) {
+                            if (this.value === loadData.auc.type) {
                                 $(this).prop('selected', true);                                                  }
                         });
                         $("#aucDirection > option").each(function () {
-                            if (this.value === annotation.argues.supportsBy[0].auc.direction) {
+                            if (this.value === loadData.auc.direction) {
                                 $(this).prop('selected', true);                                                  }
                         });
 
                         // CMAX
-                        $("cmax").val(annotation.argues.supportsBy[0].cmax.value);
+                        $("#cmax").val(loadData.cmax.value);
                         $("#cmaxType > option").each(function () {
-                            if (this.value === annotation.argues.supportsBy[0].cmax.type) {
+                            if (this.value === loadData.cmax.type) {
                                 $(this).prop('selected', true);                                                  }
                         });
                         $("#cmaxDirection > option").each(function () {
-                            if (this.value === annotation.argues.supportsBy[0].cmax.direction) {
+                            if (this.value === loadData.cmax.direction) {
                                 $(this).prop('selected', true);                                                  }
                         });
 
                         // CL
-                        $("cl").val(annotation.argues.supportsBy[0].cl.value);
+                        $("cl").val(loadData.cl.value);
                         $("#clType > option").each(function () {
-                            if (this.value === annotation.argues.supportsBy[0].cl.type) {
+                            if (this.value === loadData.cl.type) {
                                 $(this).prop('selected', true);                                                  }
                         });
                         $("#clDirection > option").each(function () {
-                            if (this.value === annotation.argues.supportsBy[0].cl.direction) {
+                            if (this.value === loadData.cl.direction) {
                                 $(this).prop('selected', true);                                                  }
                         });
 
                         // HALFLIFE
-                        $("halflife").val(annotation.argues.supportsBy[0].halflife.value);
+                        $("#halflife").val(loadData.halflife.value);
                         $("#halflifeType > option").each(function () {
-                            if (this.value === annotation.argues.supportsBy[0].halflife.type) {
+                            if (this.value === loadData.halflife.type) {
                                 $(this).prop('selected', true);                                                  }
                         });
                         $("#halflifeDirection > option").each(function () {
-                            if (this.value === annotation.argues.supportsBy[0].halflife.direction) {
+                            if (this.value === loadData.halflife.direction) {
                                 $(this).prop('selected', true);                                                  }
                         });
 
@@ -344,56 +345,71 @@ var mpEditor = exports.mpEditor = Widget.extend({
                                 dose2Tmp.ranges = annotation.dataRanges;
                             }
                             mpData.supportsBy.supportsBy.drug2Dose = dose2Tmp;   
-                            console.log("mpeditor - submit - update drug 2 dose");     
+                            console.log("mpeditor - submit - update drug 2 dose");
                         }
 
                         var auc = mpData.auc;
-                        if (($('#auc').val().trim() != "" && auc.value != $('#auc').val().trim()) || (auc.type != $('#aucType option:selected').text()) || (auc.direction != $('#aucDirection option:selected').text())) {
-                            auc.value = $('#auc').val().trim();
-                            auc.type = $('#aucType option:selected').text()
-                            auc.direction = $('#aucDirection option:selected').text();
-                            if (auc.ranges == null && auc.hasTarget == null) {
-                                auc.hasTarget = annotation.dataTarget;
-                                auc.ranges = annotation.dataRanges;
+                        var aucValue = $('#auc').val().trim();
+                        var aucType = $('#aucType option:selected').text();
+                        var aucDirection = $('#aucDirection option:selected').text();
+
+                        if ((aucValue != "" && mpData.auc.value != aucValue) && (aucType != "" && mpData.auc.type != aucType) && (aucDirection != "" && mpData.auc.direction != aucDirection)) {
+                            mpData.auc.value = aucValue;
+                            mpData.auc.type = aucType
+                            mpData.auc.direction = aucDirection;
+                            if (mpData.auc.ranges == null && mpData.auc.hasTarget == null) {
+                                mpData.auc.hasTarget = annotation.dataTarget;
+                                mpData.auc.ranges = annotation.dataRanges;
                             }
-                            mpData.auc = auc;
+                            console.log("mpeditor - submit - update auc");
                         }
 
                         var cmax = mpData.cmax;
-                        if (($('#cmax').val().trim() != "" && cmax.value != $('#cmax').val().trim()) || (cmax.type != $('#cmaxType option:selected').text()) || (cmax.direction != $('#cmaxDirection option:selected').text())) {
-                            cmax.value = $('#cmax').val().trim();
-                            cmax.type = $('#cmaxType option:selected').text()
-                            cmax.direction = $('#cmaxDirection option:selected').text();
-                            if (cmax.ranges == null && cmax.hasTarget == null) {
-                                cmax.hasTarget = annotation.dataTarget;
-                                cmax.ranges = annotation.dataRanges;
+                        var cmaxValue = $('#cmax').val().trim();
+                        var cmaxType = $('#cmaxType option:selected').text();
+                        var cmaxDirection = $('#cmaxDirection option:selected').text();
+                        if ((cmaxValue != "" && mpData.cmax.value != cmaxValue) && (cmaxType != "" && mpData.cmax.type != cmaxType) && (cmaxDirection != "" && mpData.cmax.direction != cmaxDirection)) {
+                            mpData.cmax.value = cmaxValue;
+                            mpData.cmax.type = cmaxType
+                            mpData.cmax.direction = cmaxDirection;
+                            if (mpData.cmax.ranges == null && mpData.cmax.hasTarget == null) {
+                                mpData.cmax.hasTarget = annotation.dataTarget;
+                                mpData.cmax.ranges = annotation.dataRanges;
                             }
-                            mpData.cmax = cmax;
+                            console.log("mpeditor - submit - update cmax");
                         }
 
                         var cl = mpData.cl;
-                        if (($('#cl').val().trim() != "" && cl.value != $('#cl').val().trim()) || (cl.type != $('#clType option:selected').text()) || (cl.direction != $('#clDirection option:selected').text())) {
-                            cl.value = $('#cl').val().trim();
-                            cl.type = $('#clType option:selected').text()
-                            cl.direction = $('#clDirection option:selected').text();
-                            if (cl.ranges == null && cl.hasTarget == null) {
-                                cl.hasTarget = annotation.dataTarget;
-                                cl.ranges = annotation.dataRanges;
+                        var clValue = $('#cl').val().trim();
+                        var clType = $('#clType option:selected').text();
+                        var clDirection = $('#clDirection option:selected').text();
+
+                        if ((clValue != "" && mpData.cl.value != clValue) && (clType != "" && mpData.cl.type != clType) && (clDirection != "" && mpData.cl.direction != clDirection)) {
+                            mpData.cl.value = clValue;
+                            mpData.cl.type = clType
+                            mpData.cl.direction = clDirection;
+                            if (mpData.cl.ranges == null && mpData.cl.hasTarget == null) {
+                                mpData.cl.hasTarget = annotation.dataTarget;
+                                mpData.cl.ranges = annotation.dataRanges;
                             }
-                            mpData.cl = cl;
+                            console.log("mpeditor - submit - update cl");
                         }
 
                         var halflife = mpData.halflife;
-                        if (($('#halflife').val().trim() != "" && halflife.value != $('#halflife').val().trim()) || (halflife.type != $('#halflifeType option:selected').text()) || (halflife.direction != $('#halflifeDirection option:selected').text())) {
-                            halflife.value = $('#halflife').val().trim();
-                            halflife.type = $('#halflifeType option:selected').text()
-                            halflife.direction = $('#halflifeDirection option:selected').text();
-                            if (halflife.ranges == null && halflife.hasTarget == null) {
-                                halflife.hasTarget = annotation.dataTarget;
-                                halflife.ranges = annotation.dataRanges;
+                        var halflifeValue = $('#halflife').val().trim();
+                        var halflifeType = $('#halflifeType option:selected').text();
+                        var halflifeDirection = $('#halflifeDirection option:selected').text();
+                        if ((halflifeValue != "" && mpData.halflife.value != halflifeValue) && (halflifeType != "" && mpData.halflife.type != halflifeType) && (halflifeDirection != "" && mpData.halflife.direction != halflifeDirection)) {
+                            mpData.halflife.value = halflifeValue;
+                            mpData.halflife.type = halflifeType
+                            mpData.halflife.direction = halflifeDirection;
+                            if (mpData.halflife.ranges == null && mpData.halflife.hasTarget == null) {
+                                mpData.halflife.hasTarget = annotation.dataTarget;
+                                mpData.halflife.ranges = annotation.dataRanges;
                             }
-                            mpData.halflife = halflife;
+                            console.log("mpeditor - submit - update half life");
                         }
+
                         annotation.argues.supportsBy[0] = mpData;
                     }
                     // clean editor status

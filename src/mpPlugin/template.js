@@ -269,10 +269,11 @@ Handlebars.registerHelper('buildFormClaim', function(items, options) {
 Handlebars.registerHelper('buildFormData', function(items, options) {
     var out = "";
     for(var i=0, l=items.length; i<l; i++) {
+        out += "<strong>" + items[i].name +"</strong>";
         if(items[i].type=="text")
             out += "<strong id='"+items[i].id+"'></strong><br>";
         else if(items[i].type=="input")
-            out += items[i].name + "<input style='width:30px;' type='text' id='"+items[i].id+"'>";
+            out += "<input style='width:30px;' type='text' id='"+items[i].id+"'>";
         else if (items[i].type=="dropdown") {
             out = out + "<select id='" + items[i].id + "'>";
             for(var j = 0, sl = items[i].options.length; j<sl; j++) {

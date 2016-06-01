@@ -162,11 +162,41 @@ mpHighlighter.prototype.draw = function (annotation) {
                 console.log(r);
             }
         }
-        // draw MP data
 
+        // draw MP data
         if (annotation.argues.supportsBy.length != 0){
+            // draw MP single data
+            var data = annotation.argues.supportsBy[0];
+            if (data.auc.ranges != null) {
+                for (var i = 0, ilen = data.auc.ranges.length; i < ilen; i++) {
+                    var r = reanchorRange(data.auc.ranges[i], this.element);   
+                    if (r !== null) dataRangesL.push(new DataRange(r, "auc"));
+                }
+            }
+
+            if (data.cmax.ranges != null) {
+                for (var i = 0, ilen = data.cmax.ranges.length; i < ilen; i++) {
+                    var r = reanchorRange(data.cmax.ranges[i], this.element);   
+                    if (r !== null) dataRangesL.push(new DataRange(r, "cmax"));
+                }
+            }
+
+            if (data.cl.ranges != null) {
+                for (var i = 0, ilen = data.cl.ranges.length; i < ilen; i++) {
+                    var r = reanchorRange(data.cl.ranges[i], this.element);   
+                    if (r !== null) dataRangesL.push(new DataRange(r, "cl"));
+                }
+            }            
+
+            if (data.halflife.ranges != null) {
+                for (var i = 0, ilen = data.halflife.ranges.length; i < ilen; i++) {
+                    var r = reanchorRange(data.halflife.ranges[i], this.element);   
+                    if (r !== null) dataRangesL.push(new DataRange(r, "halflife"));
+                }
+            }
+
             // draw MP Material
-            var material = annotation.argues.supportsBy[0].supportsBy.supportsBy;
+            var material = data.supportsBy.supportsBy;
             if (material != null){
 
                 if (material.participants.ranges != null) {
@@ -180,14 +210,12 @@ mpHighlighter.prototype.draw = function (annotation) {
                 if (material.drug1Dose.ranges != null) {
                     for (var i = 0, ilen = material.drug1Dose.ranges.length; i < ilen; i++) {
                         var r = reanchorRange(material.drug1Dose.ranges[i], this.element);
-                        //if (r !== null) normedRanges.push(r);    
                         if (r !== null) dataRangesL.push(new DataRange(r, "dose1"));
                     }
                 }
                 if (material.drug2Dose.ranges != null) {
                     for (var i = 0, ilen = material.drug2Dose.ranges.length; i < ilen; i++) {
-                        var r = reanchorRange(material.drug2Dose.ranges[i], this.element);
-                        //if (r !== null) normedRanges.push(r);     
+                        var r = reanchorRange(material.drug2Dose.ranges[i], this.element);   
                         if (r !== null) dataRangesL.push(new DataRange(r, "dose2"));
                     }
                 }
