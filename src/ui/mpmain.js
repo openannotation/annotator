@@ -319,11 +319,16 @@ function main(options) {
                     var annotationId = ann.id;
                     //console.log("mpviewer - onEdit - annId: " + annotationId + " | field: " + field);
                     document.getElementById(annotationId + field).scrollIntoView(true);
-                    if (field == "claim")
+                    if (field == "claim") {
+                        $('#quote').show();
                         claimEditorLoad();
-                    else 
+                    }
+                    else { 
+                        $('#quote').hide();
                         switchDataForm(field);                               
+                    }
                     app.annotations.update(ann);
+
                 }
             },
             onDelete: function (ann) {
