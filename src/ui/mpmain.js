@@ -414,7 +414,7 @@ function main(options) {
                             app.annotations.create(newAnn);
  
                         },
-                        "Add data (not ready)": function() {
+                        "Add data": function() {
                             $( this ).dialog( "close" );
                             console.log("mpmain - add data to claim span");
 
