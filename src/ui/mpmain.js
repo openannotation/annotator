@@ -393,6 +393,44 @@ function main(options) {
             if (ann.annotationType == "MP"){
                 console.log("mpmain - annotationCreated called");
                 s.mphighlighter.draw(ann);
+
+                $( "#claim-dialog-confirm" ).dialog({
+                    resizable: false,
+                    height: 'auto',
+                    width: '400px',
+                    modal: true,
+                    buttons: {
+                        "Add another claim": function() {
+                            $( this ).dialog( "close" );                            
+                            console.log("mpmain - create another claim");
+                            $("#mp-editor-type").html("claim");
+                            var newAnn = (JSON.parse(JSON.stringify(ann)));
+                            newAnn.argues.qualifiedBy = {};
+                            app.annotations.create(newAnn);
+ 
+                        },
+                        "Add data (not ready)": function() {
+                            $( this ).dialog( "close" );
+                            console.log("mpmain - add data to claim span");
+
+                            if (ann.argues.supportsBy.length == 0){ 
+                                var data = {type : "mp:data", auc : {}, cmax : {}, cl : {}, halflife : {}, supportsBy : {type : "mp:method", supportsBy : {type : "mp:material", participants : {}, drug1Dose : {}, drug2Dose : {}}}};
+                                ann.argues.supportsBy.push(data); 
+                                // copy text selector as default span for data
+                                ann.dataTarget = ann.argues.hasTarget;
+                                ann.dataRanges = ann.argues.ranges;
+                            } 
+                            showEditor();
+                            dataEditorLoad(ann, "participants", ann.id);
+                        },
+                        "Done": function() {
+                            $( this ).dialog( "close" );
+                            showAnnTable();    
+                        }
+                    }
+                });
+                
+
             } else if (ann.annotationType == "DrugMention"){
                 s.hlhighlighter.draw(ann);
             } else {
@@ -415,7 +453,7 @@ function main(options) {
             } else {
                 alert('[WARNING] main.js - annotationUpdated - annot type not defined: ' + ann.annotationType);
             }
-
+            showAnnTable();    
         },
 
         beforeAnnotationCreated: function (annotation) {

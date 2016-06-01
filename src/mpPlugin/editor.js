@@ -297,9 +297,9 @@ var mpEditor = exports.mpEditor = Widget.extend({
                         annotation.argues.qualifiedBy = qualifiedBy;
                         annotation.argues.type = "mp:claim";
                         annotation.argues.label = claimStatement;
-                        annotation.argues.supportsBy = [];                       
+                        annotation.argues.supportsBy = [];                  
 
-                    } else if (editorType != "claim" && annotationId != null) { 
+                    } else if (editorType != "claim" && annotationId != null && annotation.argues.supportsBy.length > 0) { 
 
                         console.log("mpeditor update data & material");
                         var mpData = annotation.argues.supportsBy[0];
@@ -562,10 +562,10 @@ var mpEditor = exports.mpEditor = Widget.extend({
 
             field.submit(field.element, this.annotation);
         }
+
         if (typeof this.dfd !== 'undefined' && this.dfd !== null) {
             this.dfd.resolve();
-        }
-        
+        }        
         this.hide();
     },
     // Public: Submits the editor and saves any changes made to the annotation.
