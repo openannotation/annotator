@@ -24,6 +24,7 @@ var Adder = Widget.extend({
         var self = this;
         this.element
             .on("click." + NS, 'button', function (e) {
+                $('.mp-main-menu').hide(); 
                 self._onClick(e);
             })
             .on("mousedown." + NS, 'button', function (e) {
@@ -134,9 +135,11 @@ var Adder = Widget.extend({
 
         // Hide the adder
         this.hide();
-        // Hide DDI adder
+        // Hide drug mention, mp and ddi adder
         // $('.annotator-adderddi').hide();
-        $('.annotator-adderddi').removeClass().addClass('annotator-adderddi annotator-hide');
+        $('.annotator-addermp').removeClass().addClass('annotator-addermp annotator-hide');
+        $('.annotator-adderhl').removeClass().addClass('annotator-adderhl annotator-hide');
+        //$('.annotator-adderddi').removeClass().addClass('annotator-adderhl annotator-hide');
 
         this.ignoreMouseup = false;
 

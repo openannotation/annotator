@@ -154,9 +154,10 @@ var mpAdder = Widget.extend({
 
         // Hide the MP adder
         this.hide();
-        // Hide drug mention adder and DDI adder
-        $('.annotator-adderhl').removeClass().addClass('annotator-adderhl annotator-hide');
-        $('.annotator-adderddi').removeClass().addClass('annotator-adderhl annotator-hide');
+        // Hide drug mention, mp and DDI adder
+        $('.annotator-addermp').removeClass().addClass('annotator-addermp annotator-hide');
+        $('.annotator-adderhl').removeClass().addClass('annotator-adderhl annotator-hide');     
+        //$('.annotator-adderddi').removeClass().addClass('annotator-adderhl annotator-hide');
 
         this.ignoreMouseup = false;
 
@@ -215,6 +216,7 @@ var mpAdder = Widget.extend({
 
                 });                            
         }
+
     }
     
 });
