@@ -219,6 +219,8 @@ function addPermissionsCheckboxes(editor, ident, authz) {
 function main(options) {
 
     console.log("[INFO] mpmain start()");
+    console.log(options.email);
+    console.log(options.source);
 
     if (typeof options === 'undefined' || options === null) {
         options = {};
@@ -398,6 +400,8 @@ function main(options) {
             if (ann.annotationType == "MP"){
                 console.log("mpmain - annotationCreated called");
                 s.mphighlighter.draw(ann);
+                $("#mp-annotation-work-on").html(ann.id);
+                annotationTable(ann.rawurl, ann.email);
 
                 $( "#claim-dialog-confirm" ).dialog({
                     resizable: false,
@@ -406,7 +410,10 @@ function main(options) {
                     modal: true,
                     buttons: {
                         "Add another claim": function() {
-                            $( this ).dialog( "close" );                            
+                            $( this ).dialog( "close" ); 
+                            showEditor();
+                            claimEditorLoad();
+                           
                             console.log("mpmain - create another claim");
                             $("#mp-editor-type").html("claim");
                             var newAnn = (JSON.parse(JSON.stringify(ann)));
@@ -427,10 +434,11 @@ function main(options) {
                             } 
                             showEditor();
                             dataEditorLoad(ann, "participants", ann.id);
+
                         },
                         "Done": function() {
                             $( this ).dialog( "close" );
-                            showAnnTable();    
+                            showAnnTable();  
                         }
                     }
                 });
@@ -447,11 +455,18 @@ function main(options) {
             s.mphighlighter.undraw(ann);
             s.hlhighlighter.undraw(ann);
             showAnnTable();
+            setTimeout(function(){
+                annotationTable(options.source, options.email);
+            },1000);
         },
         annotationUpdated: function (ann) {
             console.log("mpmain - annotationUpdated called");
             if (ann.annotationType == "MP"){
                 s.mphighlighter.redraw(ann);
+                $("#mp-annotation-work-on").html(ann.id);
+                showAnnTable();
+                annotationTable(ann.rawurl, ann.email);
+                
             } else if (ann.annotationType == "DrugMention"){
                 s.hlhighlighter.redraw(ann);
             } else {
@@ -465,12 +480,16 @@ function main(options) {
             // here to "stall" the annotation process until the editing is
             // done.
 
+		    annotation.rawurl = options.source;
+    		annotation.uri = options.source.replace(/[\/\\\-\:\.]/g, "");		
+		    annotation.email = options.email;
+
             // yifan: call different editor based on annotation type
             if (annotation.annotationType == "MP"){
                 return s.mpeditor.load(s.interactionPoint,annotation);
             } else if (annotation.annotationType == "DrugMention") {
                 // return s.hleditor.load(annotation, s.interactionPoint);
-                // yifan: not show editor when typed as Drug mention
+                // not show editor when typed as Drug mention
                 return null;
             } else {
                 //return s.mpeditor.load(annotation, s.interactionPoint);
