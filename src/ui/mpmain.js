@@ -446,11 +446,10 @@ function main(options) {
             console.log("mpmain - annotationDeleted called");
             s.mphighlighter.undraw(ann);
             s.hlhighlighter.undraw(ann);
-            
+            showAnnTable();
         },
         annotationUpdated: function (ann) {
             console.log("mpmain - annotationUpdated called");
-
             if (ann.annotationType == "MP"){
                 s.mphighlighter.redraw(ann);
             } else if (ann.annotationType == "DrugMention"){
@@ -458,7 +457,6 @@ function main(options) {
             } else {
                 alert('[WARNING] main.js - annotationUpdated - annot type not defined: ' + ann.annotationType);
             }
-            showAnnTable();    
         },
 
         beforeAnnotationCreated: function (annotation) {

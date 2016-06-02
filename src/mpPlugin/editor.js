@@ -735,6 +735,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
     // Returns nothing
     _onSaveCloseClick: function (event) {
         preventEventDefault(event);
+        showAnnTable();    
         this.submit();
     },
     // Event callback: called when a user clicks the editor's save button.
@@ -789,7 +790,6 @@ var mpEditor = exports.mpEditor = Widget.extend({
             // });
             this.options.onDelete(this.annotation);
         } else {
-            showAnnTable();
             this.deleteDataSubmit(editorType);
         }
     },
