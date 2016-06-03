@@ -166,7 +166,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
 
                     // load MP list of data 
                     if (annotation.argues.supportsBy.length > 0) {
-                        console.log("mp editor load data");
+                        console.log("mpeditor - load data");
                         var loadData = annotation.argues.supportsBy[0];
 
                         // clean material : participants, dose1, dose2
@@ -433,10 +433,6 @@ var mpEditor = exports.mpEditor = Widget.extend({
             })
             .on("click." + NS, '.annotator-delete', function (e) {
                 self._onDeleteClick(e);
-                self.hide();   
-                // clean current editing field name and annotation id
-                $("#mp-editor-type").html('');           
-                $("#mp-annotation-work-on").html('');  
             })
             .on("click." + NS, '.annotator-cancel', function (e) {
                 self._onCancelClick(e);
@@ -567,6 +563,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
             this.dfd.resolve();
         }        
         this.hide();
+        showAnnTable();
     },
     // Public: Submits the editor and saves any changes made to the annotation.
     //
@@ -582,8 +579,10 @@ var mpEditor = exports.mpEditor = Widget.extend({
         if (typeof this.dfd !== 'undefined' && this.dfd !== null) {
             this.dfd.resolve();
         }
-
+        console.log("TEST");
+        showEditor();
         app.annotations.update(this.annotation);
+
         // if (typeof this.dfd !== 'undefined' && this.dfd !== null) {
         //     this.dfd.resolve();
         // }
@@ -595,26 +594,9 @@ var mpEditor = exports.mpEditor = Widget.extend({
     // Public: Submits the editor and delete specific data field to the annotation.
     // @input: data field from editorType
     // Returns nothing.
-    deleteDataSubmit: function (editorType) {
-        console.log("mpeditor - deleteDataSubmit - editorType: " + editorType);
-        for (var i = 0, len = this.fields.length; i < len; i++) {
-            var field = this.fields[i];
-
-            if (editorType == "participants") {
-                this.annotation.argues.supportsBy[0].supportsBy.supportsBy.participants = {};
-            } else if (editorType == "dose1") {
-                this.annotation.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose = {};        
-            } else if (editorType == "dose2") {
-                this.annotation.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose = {};         
-            }                        
-            //field.submit(field.element, this.annotation);
-        }
-        if (typeof this.dfd !== 'undefined' && this.dfd !== null) {
-            this.dfd.resolve();
-        }        
-        this.hide();
-    },
-
+    // deleteDataSubmit: function (editorType) {
+    // },
+    
     // Public: Cancels the editing process, discarding any edits made to the
     // annotation.
     //
@@ -753,45 +735,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
     // if claim form, delete claim and data
     _onDeleteClick: function (event) {
         preventEventDefault(event);
-        var editorType = $("#mp-editor-type").html();
-
-        if (editorType == "claim") {
-  
-            // if(!window.jQuery)
-            // {
-            //     console.log("jquery is not avaliable");
-            //     var script1 = document.createElement('script');
-            //     script1.type = "text/javascript";
-            //     script1.src = "http://code.jquery.com/jquery-1.11.1.min.js";
-            //     document.getElementsByTagName('head')[0].appendChild(script1);
-
-            //     var script2 = document.createElement('script');
-            //     script2.type = "text/javascript";
-            //     script2.src = "http://code.jquery.com/ui/1.11.1/jquery-ui.min.js";
-            //     document.getElementsByTagName('head')[0].appendChild(script2);
-            // }
-
-
-            // $("#dialog-claim-delete-confirm").dialog({
-            //     resizable: false,
-            //     height: 'auto',
-            //     width: '400px',
-            //     modal: true,
-            //     buttons: {
-            //         "confirm delete": function() {
-            //             $("#dialog-claim-delete-confirm").dialog( "close" );
-            //             //this.options.onDelete(self.annotation);
-            //             //showrightbyvalue();
-            //         },
-            //         "Cancel": function() {
-            //             $("#dialog-claim-delete-confirm").dialog( "close" );
-            //         }
-            //     }
-            // });
-            this.options.onDelete(this.annotation);
-        } else {
-            this.deleteDataSubmit(editorType);
-        }
+        this.options.onDelete(this.annotation);
     },
 
     // Event callback: called when a user clicks the editor's cancel button.
