@@ -202,7 +202,7 @@ var mpAdder = Widget.extend({
 
                     // add data if not avaliable  
                     if (oriAnnotation.argues.supportsBy.length == 0){ 
-                        var data = {type : "mp:data", auc : {}, cmax : {}, cl : {}, halflife : {}, supportsBy : {type : "mp:method", supportsBy : {type : "mp:material", participants : {}, drug1Dose : {}, drug2Dose : {}}}};
+                        var data = {type : "mp:data", auc : {}, cmax : {}, clearance : {}, halflife : {}, supportsBy : {type : "mp:method", supportsBy : {type : "mp:material", participants : {}, drug1Dose : {}, drug2Dose : {}}}};
                         oriAnnotation.argues.supportsBy.push(data); 
                     } 
 

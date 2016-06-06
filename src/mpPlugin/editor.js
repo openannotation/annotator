@@ -187,9 +187,9 @@ var mpEditor = exports.mpEditor = Widget.extend({
                         $("#cmax").empty();
                         $("#cmaxType")[0].selectedIndex = -1;
                         $("#cmaxDirection")[0].selectedIndex = -1;
-                        $("#cl").empty();
-                        $("#clType")[0].selectedIndex = -1;
-                        $("#clDirection")[0].selectedIndex = -1;
+                        $("#clearance").empty();
+                        $("#clearanceType")[0].selectedIndex = -1;
+                        $("#clearanceDirection")[0].selectedIndex = -1;
                         $("#halflife").empty();
                         $("#halflifeType")[0].selectedIndex = -1;
                         $("#halflifeDirection")[0].selectedIndex = -1;
@@ -241,14 +241,14 @@ var mpEditor = exports.mpEditor = Widget.extend({
                                 $(this).prop('selected', true);                                                  }
                         });
 
-                        // CL
-                        $("cl").val(loadData.cl.value);
-                        $("#clType > option").each(function () {
-                            if (this.value === loadData.cl.type) {
+                        // Clearance
+                        $("#clearance").val(loadData.clearance.value);
+                        $("#clearanceType > option").each(function () {
+                            if (this.value === loadData.clearance.type) {
                                 $(this).prop('selected', true);                                                  }
                         });
-                        $("#clDirection > option").each(function () {
-                            if (this.value === loadData.cl.direction) {
+                        $("#clearanceDirection > option").each(function () {
+                            if (this.value === loadData.clearance.direction) {
                                 $(this).prop('selected', true);                                                  }
                         });
 
@@ -379,20 +379,20 @@ var mpEditor = exports.mpEditor = Widget.extend({
                             console.log("mpeditor - submit - update cmax");
                         }
 
-                        var cl = mpData.cl;
-                        var clValue = $('#cl').val().trim();
-                        var clType = $('#clType option:selected').text();
-                        var clDirection = $('#clDirection option:selected').text();
+                        var clearance = mpData.clearance;
+                        var clearanceValue = $('#clearance').val().trim();
+                        var clearanceType = $('#clearanceType option:selected').text();
+                        var clearanceDirection = $('#clearanceDirection option:selected').text();
 
-                        if ((clValue != "" && mpData.cl.value != clValue) && (clType != "" && mpData.cl.type != clType) && (clDirection != "" && mpData.cl.direction != clDirection)) {
-                            mpData.cl.value = clValue;
-                            mpData.cl.type = clType
-                            mpData.cl.direction = clDirection;
-                            if (mpData.cl.ranges == null && mpData.cl.hasTarget == null) {
-                                mpData.cl.hasTarget = annotation.dataTarget;
-                                mpData.cl.ranges = annotation.dataRanges;
+                        if ((clearanceValue != "" && mpData.clearance.value != clearanceValue) && (clearanceType != "" && mpData.clearance.type != clearanceType) && (clearanceDirection != "" && mpData.clearance.direction != clearanceDirection)) {
+                            mpData.clearance.value = clearanceValue;
+                            mpData.clearance.type = clearanceType
+                            mpData.clearance.direction = clearanceDirection;
+                            if (mpData.clearance.ranges == null && mpData.clearance.hasTarget == null) {
+                                mpData.clearance.hasTarget = annotation.dataTarget;
+                                mpData.clearance.ranges = annotation.dataRanges;
                             }
-                            console.log("mpeditor - submit - update cl");
+                            console.log("mpeditor - submit - update clearance");
                         }
 
                         var halflife = mpData.halflife;

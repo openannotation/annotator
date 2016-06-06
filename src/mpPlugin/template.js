@@ -180,19 +180,19 @@ var context7 = {
         {
             type: "input",
             name: "Clearance: ",
-            id: "cl"
+            id: "clearance"
         },
         {
             type:"dropdown",
             name:"Type: ",
-            id:"clType",
+            id:"clearanceType",
             options:["UNK","percent","fold"],
             optionsID:[]
         },
         {
             type:"dropdown",
             name:"Direction: ",
-            id:"clDirection",
+            id:"clearanceDirection",
             options:["UNK","increase","decrease"],
             optionsID:[]
         }
@@ -352,7 +352,7 @@ Template.content = [
     '<button type="button" onclick="switchDataForm(\'dose2\')" >Drug 2 Dose</button>&nbsp;->&nbsp;',    
     '<button type="button" onclick="switchDataForm(\'auc\')" >Auc</button> &nbsp;->&nbsp;',
     '<button type="button" onclick="switchDataForm(\'cmax\')" >Cmax</button> &nbsp;->&nbsp;',
-    '<button type="button" onclick="switchDataForm(\'cl\')" >Clearance</button> &nbsp;->&nbsp;',
+    '<button type="button" onclick="switchDataForm(\'clearance\')" >Clearance</button> &nbsp;->&nbsp;',
     '<button type="button" onclick="switchDataForm(\'halflife\')" >Half-life</button>',
     '</div>',
 
@@ -388,8 +388,8 @@ Template.content = [
     form6,
     '</div>',
 
-    // Data & material - CL
-    '<div id="mp-data-form-cl" style="margin-top:10px;margin-left:5px;display: none;">',
+    // Data & material - Clearance
+    '<div id="mp-data-form-clearance" style="margin-top:10px;margin-left:5px;display: none;">',
     form7,
     '</div>',
 

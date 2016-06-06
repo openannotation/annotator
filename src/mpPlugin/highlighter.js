@@ -181,10 +181,10 @@ mpHighlighter.prototype.draw = function (annotation) {
                 }
             }
 
-            if (data.cl.ranges != null) {
-                for (var i = 0, ilen = data.cl.ranges.length; i < ilen; i++) {
-                    var r = reanchorRange(data.cl.ranges[i], this.element);   
-                    if (r !== null) dataRangesL.push(new DataRange(r, "cl"));
+            if (data.clearance.ranges != null) {
+                for (var i = 0, ilen = data.clearance.ranges.length; i < ilen; i++) {
+                    var r = reanchorRange(data.clearance.ranges[i], this.element);   
+                    if (r !== null) dataRangesL.push(new DataRange(r, "clearance"));
                 }
             }            
 

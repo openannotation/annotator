@@ -5,7 +5,7 @@
 exports.filter = require('./ui/filter');
 exports.markdown = require('./ui/markdown');
 exports.tags = require('./ui/tags');
-exports.textselector = require('./ui/oaselector');
+exports.textselector = require('./ui/textselector');
 exports.widget = require('./ui/widget');
 
 //drug mention
