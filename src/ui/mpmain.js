@@ -19,6 +19,7 @@ var hlviewer = require('./../drugPlugin/viewer');
 
 var _t = util.gettext;
 
+
 // trim strips whitespace from either end of a string.
 //
 // This usually exists in native code, but not in IE8.
@@ -44,8 +45,6 @@ function annotationFactory(contextEl, ignoreSelector) {
             serializedRanges.push(serializedRange);
         }
 
-        //console.log("mpmain - annFac - seRanges:" + JSON.stringify(serializedRanges));
-        //console.log("mpmain - exactTxt:" + text.join(' / ') + "|");
 
         var prefix = "", suffix = "";
         prefix = getTxtFromNode(ranges[0].start, false, ignoreSelector, 50);
@@ -173,7 +172,6 @@ function addPermissionsCheckboxes(editor, ident, authz) {
                 annotation.permissions = {};
             }
 
-
             if (util.$(field).find('input').is(':checked')) {
                 delete annotation.permissions[action];
             } else {
@@ -219,8 +217,6 @@ function addPermissionsCheckboxes(editor, ident, authz) {
 function main(options) {
 
     console.log("[INFO] mpmain start()");
-    console.log(options.email);
-    console.log(options.source);
 
     if (typeof options === 'undefined' || options === null) {
         options = {};
@@ -246,11 +242,9 @@ function main(options) {
         // mp adder
         s.mpadder = new mpadder.mpAdder({
             onCreate: function (ann) {
-                console.log("mpmain - onCreate function");
                 app.annotations.create(ann);
             },
             onUpdate: function (ann) {
-                console.log("mpmain - onUpdate function");
                 app.annotations.update(ann);
             }
         });
@@ -491,30 +485,28 @@ function main(options) {
                             var newAnn = (JSON.parse(JSON.stringify(ann)));
                             newAnn.argues.qualifiedBy = {};
                             app.annotations.create(newAnn);
- 
+                            
                         },
                         "Add data": function() {
-                            $( this ).dialog( "close" );
+                            $( this ).dialog( "close" );        
+                            // keep using the same text span
+                            isTextSelected = true;
+                            cachedOATarget = ann.argues.hasTarget;
+                            cachedOARanges = ann.argues.ranges;                 
 
-                            if (ann.argues.supportsBy.length == 0){ 
-                                var data = {type : "mp:data", auc : {}, cmax : {}, cl : {}, halflife : {}, supportsBy : {type : "mp:method", supportsBy : {type : "mp:material", participants : {}, drug1Dose : {}, drug2Dose : {}}}};
-                                ann.argues.supportsBy.push(data); 
-                                // copy text selector as default span for data
-                                ann.dataTarget = ann.argues.hasTarget;
-                                ann.dataRanges = ann.argues.ranges;
-                            } 
-                            showEditor();
-                            dataEditorLoad(ann, "participants", ann.id);
-
-                        },
+                            addDataCellByEditor("participants");
+                        }, 
                         "Done": function() {
                             $( this ).dialog( "close" );
                             showAnnTable();  
+
+                            // clean cached text selection
+                            isTextSelected = false;
+                            cachedOATarget = "";
+                            cachedOARanges = "";
                         }
                     }
-                });
-                
-
+                });              
             } else if (ann.annotationType == "DrugMention"){
                 s.hlhighlighter.draw(ann);
             } else {
@@ -540,7 +532,7 @@ function main(options) {
                 s.mphighlighter.redraw(ann);
                 $("#mp-annotation-work-on").html(ann.id);
                 annotationTable(ann.rawurl, ann.email);
-                
+           
             } else if (ann.annotationType == "DrugMention"){
                 s.hlhighlighter.redraw(ann);
             } else {

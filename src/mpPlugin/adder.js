@@ -168,7 +168,10 @@ var mpAdder = Widget.extend({
 
         // if type is claim, then  create annotation
         if (this.annotation !== null && editorType == "claim" && typeof this.onCreate === 'function') { 
-            // console.log("DEBUG: mpadder - _onclick called: " + editorType);
+            isTextSelected = true;
+            cachedOATarget = this.annotation.argues.hasTarget;
+            cachedOARanges = this.annotation.argues.ranges;
+
             this.annotation.annotationType = "MP";
             this.onCreate(this.annotation, event);
         }        
@@ -178,7 +181,6 @@ var mpAdder = Widget.extend({
 
             // query MP annotation
             var annotationId = $("#mp-annotation-work-on").html();
-
             var annhost = config.annotator.host;
             var queryOptStr = '{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://' + annhost + '/annotatorstore" ,"urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search?_id=' + annotationId +'"}}';
             
@@ -196,29 +198,17 @@ var mpAdder = Widget.extend({
                     // set current mp annotation
                     $('#mp-annotation-work-on').html(oriAnnotation.id);
 
+                    // show annotation table, click data cell to trigger editor
+                    showAnnTable();
+
+                    // text has been selected, cached selector                    
+                    isTextSelected = true;
                     // get selection for data
-                    var target = temp.annotation.argues.hasTarget;
-                    var ranges = temp.annotation.argues.ranges;
-
-                    // add data if not avaliable  
-                    if (oriAnnotation.argues.supportsBy.length == 0){ 
-                        var data = {type : "mp:data", auc : {}, cmax : {}, clearance : {}, halflife : {}, supportsBy : {type : "mp:method", supportsBy : {type : "mp:material", participants : {}, drug1Dose : {}, drug2Dose : {}}}};
-                        oriAnnotation.argues.supportsBy.push(data); 
-                    } 
-
-                    // add target & ranges for data attributes 
-                    oriAnnotation.dataTarget = target;
-                    oriAnnotation.dataRanges = ranges;                               
-                    
-                    // open data editor, load MP annotation, call app.update
-                    showEditor();
-                    dataEditorLoad(oriAnnotation, editorType, annotationId);
-
+                    cachedOATarget = temp.annotation.argues.hasTarget;
+                    cachedOARanges = temp.annotation.argues.ranges;                    
                 });                            
         }
-
-    }
-    
+    }   
 });
 
 

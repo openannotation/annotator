@@ -62,6 +62,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
 
                         // clean claim editor
                         $('#quote').empty();
+                        $("#method")[0].selectedIndex = 0;
                         $("#relationship")[0].selectedIndex = 0;
 
                         $("#enzyme")[0].selectedIndex = 0;
@@ -167,6 +168,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                     // load MP list of data 
                     if (annotation.argues.supportsBy.length > 0) {
                         console.log("mpeditor - load data");
+
                         var loadData = annotation.argues.supportsBy[0];
 
                         // clean material : participants, dose1, dose2
@@ -262,7 +264,6 @@ var mpEditor = exports.mpEditor = Widget.extend({
                             if (this.value === loadData.halflife.direction) {
                                 $(this).prop('selected', true);                                                  }
                         });
-
                     }                     
                 },
                 
@@ -270,8 +271,6 @@ var mpEditor = exports.mpEditor = Widget.extend({
 
                     var editorType = $("#mp-editor-type").html();
                     var annotationId = $("#mp-annotation-work-on").html();
-
-                    console.log("mpeditor - submit - type: " + editorType);
 
                     if (editorType == "claim"){
 
@@ -310,9 +309,9 @@ var mpEditor = exports.mpEditor = Widget.extend({
                             partTmp.value = $('#participants').val();
 
                             // if field not binded with text, then assign current span to it
-                            if (partTmp.ranges == null && partTmp.hasTarget == null  && annotation.dataTarget != null && annotation.dataRanges != null) {
-                                partTmp.ranges = annotation.dataRanges;           
-                                partTmp.hasTarget = annotation.dataTarget;    
+                            if (partTmp.ranges == null && partTmp.hasTarget == null  && cachedOATarget != null && cachedOARanges != null) {
+                                partTmp.ranges = cachedOARanges;           
+                                partTmp.hasTarget = cachedOATarget;    
                             }
                             mpData.supportsBy.supportsBy.participants = partTmp;
                             console.log("mpeditor - submit - update participants");
@@ -320,18 +319,19 @@ var mpEditor = exports.mpEditor = Widget.extend({
 
                         var dose1Tmp = mpData.supportsBy.supportsBy.drug1Dose;
                         if (($('#drug1Dose').val().trim() != "") && (dose1Tmp.value != $('#drug1Dose').val() || dose1Tmp.formulation != $('#drug1Formulation option:selected').text() || dose1Tmp.duration != $('#drug1Duration').val() || dose1Tmp.regimens != $('#drug1Regimens option:selected').text())) {
-                                       
+                                     
                             dose1Tmp.value = $('#drug1Dose').val(); 
                             dose1Tmp.formulation = $('#drug1Formulation option:selected').text();
                             dose1Tmp.duration = $('#drug1Duration').val();
                             dose1Tmp.regimens = $('#drug1Regimens option:selected').text();
                             if (dose1Tmp.ranges == null && dose1Tmp.hasTarget == null) {
-                                dose1Tmp.hasTarget = annotation.dataTarget;
-                                dose1Tmp.ranges = annotation.dataRanges;
+                                dose1Tmp.hasTarget = cachedOATarget;
+                                dose1Tmp.ranges = cachedOARanges;
                             }
                             mpData.supportsBy.supportsBy.drug1Dose = dose1Tmp;   
-                            console.log("mpeditor - submit - update drug 1 dose");             
+                            console.log("mpeditor - submit - update drug 1 dose");
                         }
+
 
                         var dose2Tmp = mpData.supportsBy.supportsBy.drug2Dose;
                         if (($('#drug2Dose').val().trim() != "") && (dose2Tmp.value != $('#drug2Dose').val() || dose2Tmp.formulation != $('#drug2Formulation option:selected').text() || dose2Tmp.duration != $('#drug2Duration').val() || dose2Tmp.regimens != $('#drug2Regimens option:selected').text())) {
@@ -341,8 +341,8 @@ var mpEditor = exports.mpEditor = Widget.extend({
                             dose2Tmp.duration = $('#drug2Duration').val();
                             dose2Tmp.regimens = $('#drug2Regimens option:selected').text();
                             if (dose2Tmp.ranges == null && dose2Tmp.hasTarget == null) {
-                                dose2Tmp.hasTarget = annotation.dataTarget;
-                                dose2Tmp.ranges = annotation.dataRanges;
+                                dose2Tmp.hasTarget = cachedOATarget;
+                                dose2Tmp.ranges = cachedOARanges;
                             }
                             mpData.supportsBy.supportsBy.drug2Dose = dose2Tmp;   
                             console.log("mpeditor - submit - update drug 2 dose");
@@ -358,8 +358,8 @@ var mpEditor = exports.mpEditor = Widget.extend({
                             mpData.auc.type = aucType
                             mpData.auc.direction = aucDirection;
                             if (mpData.auc.ranges == null && mpData.auc.hasTarget == null) {
-                                mpData.auc.hasTarget = annotation.dataTarget;
-                                mpData.auc.ranges = annotation.dataRanges;
+                                mpData.auc.hasTarget = cachedOATarget;
+                                mpData.auc.ranges = cachedOARanges;
                             }
                             console.log("mpeditor - submit - update auc");
                         }
@@ -373,8 +373,8 @@ var mpEditor = exports.mpEditor = Widget.extend({
                             mpData.cmax.type = cmaxType
                             mpData.cmax.direction = cmaxDirection;
                             if (mpData.cmax.ranges == null && mpData.cmax.hasTarget == null) {
-                                mpData.cmax.hasTarget = annotation.dataTarget;
-                                mpData.cmax.ranges = annotation.dataRanges;
+                                mpData.cmax.hasTarget = cachedOATarget;
+                                mpData.cmax.ranges = cachedOARanges;
                             }
                             console.log("mpeditor - submit - update cmax");
                         }
@@ -389,8 +389,8 @@ var mpEditor = exports.mpEditor = Widget.extend({
                             mpData.clearance.type = clearanceType
                             mpData.clearance.direction = clearanceDirection;
                             if (mpData.clearance.ranges == null && mpData.clearance.hasTarget == null) {
-                                mpData.clearance.hasTarget = annotation.dataTarget;
-                                mpData.clearance.ranges = annotation.dataRanges;
+                                mpData.clearance.hasTarget = cachedOATarget;
+                                mpData.clearance.ranges = cachedOARanges;
                             }
                             console.log("mpeditor - submit - update clearance");
                         }
@@ -404,8 +404,8 @@ var mpEditor = exports.mpEditor = Widget.extend({
                             mpData.halflife.type = halflifeType
                             mpData.halflife.direction = halflifeDirection;
                             if (mpData.halflife.ranges == null && mpData.halflife.hasTarget == null) {
-                                mpData.halflife.hasTarget = annotation.dataTarget;
-                                mpData.halflife.ranges = annotation.dataRanges;
+                                mpData.halflife.hasTarget = cachedOATarget;
+                                mpData.halflife.ranges = cachedOARanges;
                             }
                             console.log("mpeditor - submit - update half life");
                         }
@@ -538,7 +538,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                     field.load(field.element, self.annotation,annotations);
                 }
             });
-
+        
         var self = this;
         return new Promise(function (resolve, reject) {
             self.dfd = {resolve: resolve, reject: reject};
@@ -559,11 +559,15 @@ var mpEditor = exports.mpEditor = Widget.extend({
             field.submit(field.element, this.annotation);
         }
 
+        // clean cached text selection
+        isTextSelected = false;
+        cachedOATarget = "";
+        cachedOARanges = "";      
+        
         if (typeof this.dfd !== 'undefined' && this.dfd !== null) {
             this.dfd.resolve();
         }        
         this.hide();
-        showAnnTable();
     },
     // Public: Submits the editor and saves any changes made to the annotation.
     //
@@ -579,15 +583,9 @@ var mpEditor = exports.mpEditor = Widget.extend({
         if (typeof this.dfd !== 'undefined' && this.dfd !== null) {
             this.dfd.resolve();
         }
-        console.log("TEST");
+
         showEditor();
         app.annotations.update(this.annotation);
-
-        // if (typeof this.dfd !== 'undefined' && this.dfd !== null) {
-        //     this.dfd.resolve();
-        // }
-        // submit will not hide the editor
-        //this.hide();
     },
 
 
