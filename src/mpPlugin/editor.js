@@ -167,9 +167,9 @@ var mpEditor = exports.mpEditor = Widget.extend({
 
                     // load MP list of data 
                     if (annotation.argues.supportsBy.length > 0) {
-                        console.log("mpeditor - load data");
-
-                        var loadData = annotation.argues.supportsBy[0];
+                        console.log("mpeditor - load data - num: " + currDataNum);
+                        
+                        var loadData = annotation.argues.supportsBy[currDataNum];
 
                         // clean material : participants, dose1, dose2
                         $("#participants").empty();
@@ -300,8 +300,8 @@ var mpEditor = exports.mpEditor = Widget.extend({
 
                     } else if (editorType != "claim" && annotationId != null && annotation.argues.supportsBy.length > 0) { 
 
-                        console.log("mpeditor update data & material");
-                        var mpData = annotation.argues.supportsBy[0];
+                        console.log("mpeditor update data & material - num: " + currDataNum);
+                        var mpData = annotation.argues.supportsBy[currDataNum];
 
                         // MP add data-method-material 
                         var partTmp = mpData.supportsBy.supportsBy.participants;
@@ -352,8 +352,8 @@ var mpEditor = exports.mpEditor = Widget.extend({
                         var aucValue = $('#auc').val().trim();
                         var aucType = $('#aucType option:selected').text();
                         var aucDirection = $('#aucDirection option:selected').text();
-
-                        if ((aucValue != "" && mpData.auc.value != aucValue) && (aucType != "" && mpData.auc.type != aucType) && (aucDirection != "" && mpData.auc.direction != aucDirection)) {
+                        
+                        if ((aucValue != "" && mpData.auc.value != aucValue) || (aucType != "" && mpData.auc.type != aucType) || (aucDirection != "" && mpData.auc.direction != aucDirection)) {
                             mpData.auc.value = aucValue;
                             mpData.auc.type = aucType
                             mpData.auc.direction = aucDirection;
@@ -368,7 +368,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                         var cmaxValue = $('#cmax').val().trim();
                         var cmaxType = $('#cmaxType option:selected').text();
                         var cmaxDirection = $('#cmaxDirection option:selected').text();
-                        if ((cmaxValue != "" && mpData.cmax.value != cmaxValue) && (cmaxType != "" && mpData.cmax.type != cmaxType) && (cmaxDirection != "" && mpData.cmax.direction != cmaxDirection)) {
+                        if ((cmaxValue != "" && mpData.cmax.value != cmaxValue) || (cmaxType != "" && mpData.cmax.type != cmaxType) || (cmaxDirection != "" && mpData.cmax.direction != cmaxDirection)) {
                             mpData.cmax.value = cmaxValue;
                             mpData.cmax.type = cmaxType
                             mpData.cmax.direction = cmaxDirection;
@@ -384,7 +384,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                         var clearanceType = $('#clearanceType option:selected').text();
                         var clearanceDirection = $('#clearanceDirection option:selected').text();
 
-                        if ((clearanceValue != "" && mpData.clearance.value != clearanceValue) && (clearanceType != "" && mpData.clearance.type != clearanceType) && (clearanceDirection != "" && mpData.clearance.direction != clearanceDirection)) {
+                        if ((clearanceValue != "" && mpData.clearance.value != clearanceValue) || (clearanceType != "" && mpData.clearance.type != clearanceType) || (clearanceDirection != "" && mpData.clearance.direction != clearanceDirection)) {
                             mpData.clearance.value = clearanceValue;
                             mpData.clearance.type = clearanceType
                             mpData.clearance.direction = clearanceDirection;
@@ -399,7 +399,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                         var halflifeValue = $('#halflife').val().trim();
                         var halflifeType = $('#halflifeType option:selected').text();
                         var halflifeDirection = $('#halflifeDirection option:selected').text();
-                        if ((halflifeValue != "" && mpData.halflife.value != halflifeValue) && (halflifeType != "" && mpData.halflife.type != halflifeType) && (halflifeDirection != "" && mpData.halflife.direction != halflifeDirection)) {
+                        if ((halflifeValue != "" && mpData.halflife.value != halflifeValue) || (halflifeType != "" && mpData.halflife.type != halflifeType) || (halflifeDirection != "" && mpData.halflife.direction != halflifeDirection)) {
                             mpData.halflife.value = halflifeValue;
                             mpData.halflife.type = halflifeType
                             mpData.halflife.direction = halflifeDirection;
@@ -410,7 +410,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                             console.log("mpeditor - submit - update half life");
                         }
 
-                        annotation.argues.supportsBy[0] = mpData;
+                        annotation.argues.supportsBy[currDataNum] = mpData;
                     }
                     // clean editor status
                     $("#mp-editor-type").html('');

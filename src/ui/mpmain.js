@@ -302,13 +302,13 @@ function main(options) {
                             "Confirm": function() {
                                 $( this ).dialog( "close" );
                                 if (editorType == "participants") {
-                                    ann.argues.supportsBy[0].supportsBy.supportsBy.participants = {};
+                                    ann.argues.supportsBy[currDataNum].supportsBy.supportsBy.participants = {};
                                 } else if (editorType == "dose1") {
-                                    ann.argues.supportsBy[0].supportsBy.supportsBy.drug1Dose = {};        
+                                    ann.argues.supportsBy[currDataNum].supportsBy.supportsBy.drug1Dose = {};        
                                 } else if (editorType == "dose2") {
-                                    ann.argues.supportsBy[0].supportsBy.supportsBy.drug2Dose = {};         
-                                } else if (editorType == "auc" || editorType == "cmax" || editorType == "cl" || editorType == "halflife") {
-                                    ann.argues.supportsBy[0][editorType] = {}; 
+                                    ann.argues.supportsBy[currDataNum].supportsBy.supportsBy.drug2Dose = {};         
+                                } else if (editorType == "auc" || editorType == "cmax" || editorType == "clearance" || editorType == "halflife") {
+                                    ann.argues.supportsBy[currDataNum][editorType] = {}; 
                                 }                                            
                                 if (typeof s.mpeditor.dfd !== 'undefined' && s.mpeditor.dfd !== null) {
                                     s.mpeditor.dfd.resolve();
@@ -494,7 +494,7 @@ function main(options) {
                             cachedOATarget = ann.argues.hasTarget;
                             cachedOARanges = ann.argues.ranges;                 
 
-                            addDataCellByEditor("participants");
+                            addDataCellByEditor("participants", 0);
                         }, 
                         "Done": function() {
                             $( this ).dialog( "close" );
