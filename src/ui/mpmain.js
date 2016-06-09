@@ -340,9 +340,12 @@ function main(options) {
         // select text, then load normed ranges to adder
         s.textselector = new textselector.TextSelector(options.element, {
             onSelection: function (ranges, event) {
+                console.log("mpmain - textselector - onSelection");
+
                 if (ranges.length > 0) {
                     //var mpAnnotation = makeMPAnnotation(ranges);
                     var hlAnnotation = makeHLAnnotation(ranges);
+                    console.log("mpmain - textselector - hladder and mp adder load");
 
                     s.interactionPoint = util.mousePosition(event);
                     s.hladder.load(hlAnnotation, s.interactionPoint);

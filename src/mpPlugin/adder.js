@@ -32,25 +32,25 @@ var mpAdder = Widget.extend({
         // .on("click." + NS, 'button', function (e) {
         //     self._onClick(e);
         // })
-        .on("click." + NS, '.mp-main-menu', function (e) {
+        .on("click." + NS, '.mp-main-menu', function (e) {         
             self._onClick(e);
         })
 
-        // .on("mousedown." + NS, 'button', function (e) {
+        // .on("mousedown." + NS, function (e) {
+        //     console.log("mpadder - self._onMousedown(e)");
         //     self._onMousedown(e);
         // });
-        .on("mousedown", '#mp-main-menu', function (e) {
+
+        .on("mousedown." + NS, 'li', function (e) {
+            // console.log("mpadder - self._onMousedown(e)");
             self._onMousedown(e);
         });
 
         this.document = this.element[0].ownerDocument;
         $(this.document.body).on("mouseup." + NS, function (e) {
+            // console.log("mpadder - self._onMouseup(e)");
             self._onMouseup(e);
         });
-
-        // $(this.document.body).on("mouseup." + NS, '.mp-main-menu', function (e) {
-        //     self._onMouseup(e);
-        // });
     },
 
     destroy: function () {
@@ -152,6 +152,9 @@ var mpAdder = Widget.extend({
         }
         event.preventDefault();
 
+        this.ignoreMouseup = false;
+        // this.ignoreMouseup = true;
+
         // Hide the MP adder
         this.hide();
         // Hide drug mention, mp and DDI adder
@@ -159,7 +162,6 @@ var mpAdder = Widget.extend({
         $('.annotator-adderhl').removeClass().addClass('annotator-adderhl annotator-hide');     
         //$('.annotator-adderddi').removeClass().addClass('annotator-adderhl annotator-hide');
 
-        this.ignoreMouseup = false;
 
         var editorType = $("#mp-editor-type").html();
         if (editorType == null || editorType.trim() == ""){

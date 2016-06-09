@@ -166,7 +166,8 @@ var mpEditor = exports.mpEditor = Widget.extend({
                     } 
 
                     // load MP list of data 
-                    if (annotation.argues.supportsBy.length > 0) {
+                    if (annotation.argues.supportsBy.length > 0 && currDataNum !== "") {                   
+
                         console.log("mpeditor - load data - num: " + currDataNum);
                         
                         var loadData = annotation.argues.supportsBy[currDataNum];

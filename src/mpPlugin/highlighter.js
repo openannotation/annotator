@@ -172,7 +172,8 @@ mpHighlighter.prototype.draw = function (annotation) {
             var dataL = annotation.argues.supportsBy;
 
             for (var idx = 0; idx < dataL.length; idx++) {
-                data = dataL[idx];
+                var data = dataL[idx];
+
                 if (data.auc.ranges != null) {
                     for (var i = 0, ilen = data.auc.ranges.length; i < ilen; i++) {
                         var r = reanchorRange(data.auc.ranges[i], this.element);   
