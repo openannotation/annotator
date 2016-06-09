@@ -309,7 +309,18 @@ function main(options) {
                                     ann.argues.supportsBy[currDataNum].supportsBy.supportsBy.drug2Dose = {};         
                                 } else if (editorType == "auc" || editorType == "cmax" || editorType == "clearance" || editorType == "halflife") {
                                     ann.argues.supportsBy[currDataNum][editorType] = {}; 
-                                }                                            
+                                } else {
+                                    alert("[ERROR] editor type is not avaliable!");
+                                }       
+
+                                // after deletion, if this row is empty, then delete
+                                var boo = isDataRowEmpty(ann.argues.supportsBy[currDataNum]);
+                                if (boo) {
+                                    console.log("mpmain - delete empty row!");
+                                    ann.argues.supportsBy.splice(currDataNum, 1);
+                                    totalDataNum = totalDataNum -1;
+                                }
+                                    
                                 if (typeof s.mpeditor.dfd !== 'undefined' && s.mpeditor.dfd !== null) {
                                     s.mpeditor.dfd.resolve();
                                 }        
@@ -556,6 +567,24 @@ function main(options) {
         }
     };
 }
+
+// called when delete data
+// return false if data row not empty, otherwise, return true
+function isDataRowEmpty(data) {
+
+    console.log("delete data - call isDataRowEmpty");
+    fieldL = ["auc","cmax","clearance","halflife"];
+    
+    for (i = 0; i < fieldL.length; i++) {
+        if (data[fieldL[i]].value != null)
+            return false;
+    }
+    
+    if (data.supportsBy.supportsBy.participants.value != null || data.supportsBy.supportsBy.drug1Dose.value != null || data.supportsBy.supportsBy.drug2Dose.value !=null)
+        return false;
+    return true   
+}
+
 
 
 function getTxtFromNode(node, isSuffix, ignoreSelector, maxLength){
