@@ -358,24 +358,24 @@ function main(options) {
 
         // mp viewer
         s.mpviewer = new mpviewer.mpViewer({
-            onEdit: function (ann, field) {
+            onEdit: function (ann, field, dataNum) {
                 // Copy the interaction point from the shown viewer:
                 s.interactionPoint = util.$(s.mpviewer.element)
                     .css(['top', 'left']);
+
+                $("#annotator-delete").show();
                 if (ann.annotationType == "MP"){
                     var annotationId = ann.id;
-                    if (document.getElementById(annotationId + field))
-                        document.getElementById(annotationId + field).scrollIntoView(true);
+
                     if (field == "claim") {
                         $('#quote').show();
                         claimEditorLoad();
-                    }
-                    else { 
+                    } else { 
                         $('#quote').hide();
-                        switchDataForm(field);                               
+                        switchDataForm(field);   
+                        currDataNum = dataNum;
                     }
                     app.annotations.update(ann);
-
                 }
             },
             onDelete: function (ann) {
