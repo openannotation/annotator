@@ -608,6 +608,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
             $("#mp-editor-type").html('');
         }
         this.hide();
+        showAnnTable();
     },
 
     // Public: Adds an additional form field to the editor. Callbacks can be

@@ -155,7 +155,7 @@ Adder.template = [
 
     '<div class="annotator-adderhl annotator-hide">',
 
-    '  <button type="button" title="Highlight">' + _t('Annotate') + '</button>',
+    '  <button class="hl-adder-btn" type="button" title="Highlight">' + _t('Annotate') + '</button>',
     '</div>'
 ].join('\n');
 
