@@ -95,9 +95,12 @@ var mpEditor = exports.mpEditor = Widget.extend({
                         }
                         
                         for (var i = 0, len = list.length; i < len; i++) {
-                            if (quotecontent.indexOf(list[i]) >= 0) {
+                            // avoid replacing span itself
+                            if (quotecontent.indexOf(list[i]) >= 0 && "<span class='highlightdrug'>".indexOf(list[i]) < 0) {
                                 index++;
                                 quotecontent = quotecontent.replace(list[i], "<span class='highlightdrug'>" + list[i] + "</span>");
+
+                                // add to dropdown box
                                 $('#Drug1').append($('<option>', {
                                     value: list[i],
                                     text: list[i]
@@ -109,6 +112,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                                 flag = flag + 1;
                             }
                         }
+
                         quoteobject.html(quotecontent);
                         
                         if (flag < 2) {

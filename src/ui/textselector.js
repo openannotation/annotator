@@ -36,7 +36,6 @@ function TextSelector(element, options) {
         // $(this.document.body)
         $(element)
             .on("mouseup." + TEXTSELECTOR_NS, function (e) {
-                console.log("TextSelector - mouseup - self._checkForEndSelection");
                 self._checkForEndSelection(e);
             });
     } else {
