@@ -69,6 +69,9 @@ var mpEditor = exports.mpEditor = Widget.extend({
                         $("#enzyme").hide();
                         $("#enzymesection1").hide();
 
+                        $('input[name=precipitant][id=drug1precipitant]').prop('checked', false);
+                        $('input[name=precipitant][id=drug2precipitant]').prop('checked', false);
+
                         $('#Drug1 option').remove();
                         $('#Drug2 option').remove();                
 
@@ -169,8 +172,13 @@ var mpEditor = exports.mpEditor = Widget.extend({
                                         $(this).prop('selected', false);
                                     }
                                 });
+
+                                $('input[type=radio][name=precipitant]').hide();
+                                $('.precipitantLabel').hide();
                                 
                             } else if (claim.qualifiedBy.relationship == "interact with") {                                     
+                                $('input[type=radio][name=precipitant]').show();
+                                $('.precipitantLabel').show();
                                 if (claim.qualifiedBy.precipitant == "drug1")
                                     $('input[name=precipitant][id=drug1precipitant]').prop('checked', true);
                                 else if (claim.qualifiedBy.precipitant == "drug2")
