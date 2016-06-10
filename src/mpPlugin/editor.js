@@ -70,7 +70,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                         $("#enzymesection1").hide();
 
                         $('#Drug1 option').remove();
-                        $('#Drug2 option').remove();                      
+                        $('#Drug2 option').remove();                
 
                         var claim = annotation.argues;                        
                         var quoteobject = $("<div id='quotearea'/>");
@@ -108,13 +108,21 @@ var mpEditor = exports.mpEditor = Widget.extend({
                         }
                         quoteobject.html(quotecontent);
                         
-                        if (flag < 1) {
-                            alert("Should highlight at least one drug.");
+                        if (flag < 2) {
+                            alert("please highlight two different drugs in the text span you selected!");
                             editorSelf.cancel();
                             $('.btn-success').click();
                         }
+
+                        // load method
+                        if (claim.method != null) {
+                            $("#method > option").each(function () {
+                                if (this.value === claim.method) $(this).prop('selected', true);
+                            });
+                        } 
+
                         // highlight drug selections on text quote
-                        if (claim.qualifiedBy != null){
+                        if (claim.qualifiedBy != null) {
                             if (claim.qualifiedBy.drug1 != "") {
                                 var quotestring = quoteobject.html();
                                 quotestring = quotestring.replace(claim.qualifiedBy.drug1, "<span class='selecteddrug'>" + claim.qualifiedBy.drug1 + "</span>");
@@ -148,6 +156,7 @@ var mpEditor = exports.mpEditor = Widget.extend({
                                 }
                             });
                             // show enzyme if relationship is inhibits/substrate of
+                            // show precipitant if relationship is interact with 
                             if(claim.qualifiedBy.relationship == "inhibits" || claim.qualifiedBy.relationship == "substrate of")
                             {
                                 $("#enzyme").show();
@@ -160,14 +169,21 @@ var mpEditor = exports.mpEditor = Widget.extend({
                                         $(this).prop('selected', false);
                                     }
                                 });
-                            }                           
+                                
+                            } else if (claim.qualifiedBy.relationship == "interact with") {                                     
+                                if (claim.qualifiedBy.precipitant == "drug1")
+                                    $('input[name=precipitant][id=drug1precipitant]').prop('checked', true);
+                                else if (claim.qualifiedBy.precipitant == "drug2")
+                                    $('input[name=precipitant][id=drug2precipitant]').prop('checked', true);      
+                                else 
+                                    console.log("precipitant information not avaliable");
+                            }                         
                         }
                         
                     } 
 
                     // load MP list of data 
                     if (annotation.argues.supportsBy.length > 0 && currDataNum !== "") {                   
-
                         console.log("mpeditor - load data - num: " + currDataNum);
                         
                         var loadData = annotation.argues.supportsBy[currDataNum];
@@ -283,9 +299,13 @@ var mpEditor = exports.mpEditor = Widget.extend({
                         }
                         
                         annotation.annotationType = "MP";
+
+                        console.log($('#method option:selected').text());
+                        // MP method - keep with claim
+                        annotation.argues.method = $('#method option:selected').text();
                     
                         // MP argues claim, claim qualified by ?s ?p ?o
-                        var qualifiedBy = {drug1 : "", drug2 : "", relationship : "", enzyme : ""};                    
+                        var qualifiedBy = {drug1 : "", drug2 : "", relationship : "", enzyme : "", precipitant : ""};                    
                         qualifiedBy.drug1 = $('#Drug1 option:selected').text();
                         qualifiedBy.drug2 = $('#Drug2 option:selected').text();
                         qualifiedBy.relationship = $('#relationship option:selected').text();
@@ -293,7 +313,10 @@ var mpEditor = exports.mpEditor = Widget.extend({
                         
                         if(qualifiedBy.relationship == "inhibits" || qualifiedBy.relationship == "substrate of") {
                             qualifiedBy.enzyme = $('#enzyme option:selected').text();
-                        } 
+                        }  else if (qualifiedBy.relationship == "interact with") {
+                            qualifiedBy.precipitant = $("input[name=precipitant]:checked").val();
+                        }
+
                         annotation.argues.qualifiedBy = qualifiedBy;
                         annotation.argues.type = "mp:claim";
                         annotation.argues.label = claimStatement;

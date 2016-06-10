@@ -17,6 +17,14 @@ var context1 = {
         optionsID:[]
       },
       {
+          type:"checkbox",
+          name:"Precipitant: ",
+          classname: "precipitant",
+          id:"drug1precipitant",
+          options:["drug1"],
+          optionsID:[]
+      },
+      {
         type:"dropdown",
         name:"Relationship: ",
         id:"relationship",
@@ -27,8 +35,8 @@ var context1 = {
         type:"dropdown",
         name:"Method: ",
         id:"method",
-        options:["DDI clinical trial"],
-        optionsID:["clinical"]
+        options:["UNK","DDI clinical trial"],
+        optionsID:[]
       },
       {
         type:"dropdown",
@@ -36,6 +44,14 @@ var context1 = {
         id:"Drug2",
         options:[],
         optionsID:[]
+      },
+      {
+          type:"checkbox",
+          name:"Precipitant: ",
+          classname: "precipitant",
+          id:"drug2precipitant",
+          options:["drug2"],
+          optionsID:[]
       },
       {
         type:"dropdown",
@@ -233,17 +249,19 @@ Handlebars.registerHelper('buildFormClaim', function(items, options) {
     var out = "";
     
     for (var i=0, l=items.length; i<l; i++) {
-        if (((i)%3==0))
+        if (((i)%4==0))
             out = out + "<tr>";
-        if(items[i].id!="enzyme")
+
+        if (items[i].id == "enzyme") 
+            out += "<td><strong id='enzymesection1'>" + items[i].name +"</strong></td><td>";
+        else if (items[i].id == "drug1precipitant" || items[i].id == "drug2precipitant") 
+            out += "<td><strong class='precipitantLabel'>" + items[i].name +"</strong></td><td>"
+        else 
             out = out + "<td><strong>" + items[i].name +"</strong></td><td>";
-        else
-            out = out + "<td><strong id='enzymesection1'>" + items[i].name +"</strong></td><td>";
-        if (items[i].type=="checkbox")
-        {
-            for (var j = 0, sl = items[i].options.length; j < sl; j++)
-                out = out + "<input type='radio' name='" + items[i].id + "' id='" + items[i].id + "' class='" + items[i].id + "' value='" + items[i].options[j] + "'>" + items[i].options[j] + "</input>";
             
+        if (items[i].type=="checkbox") {
+            for (var j = 0, sl = items[i].options.length; j < sl; j++)
+                out = out + "<input type='radio' name='" + items[i].classname + "' id='" + items[i].id + "' value='" + items[i].options[j] + "'></input>";            
         } 
         else if (items[i].type=="dropdown") {
             out = out + "<select id='" + items[i].id + "'>";
@@ -255,12 +273,12 @@ Handlebars.registerHelper('buildFormClaim', function(items, options) {
             }
             out = out + "</select>";
         } 
-        else if(items[i].type=="textarea")
-        {
+        else if(items[i].type=="textarea") {
             out = out + "<textarea id='" + items[i].id + "' class='" + items[i].id + "'></textarea>";
         }
+
         out = out + "</td>";
-        if(((i+1)%3==0))
+        if(((i+1)%4==0))
             out = out + "</tr>";
     }
     return out;
