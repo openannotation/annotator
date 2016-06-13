@@ -1,6 +1,6 @@
 var assert = require('assertive-chai').assert;
 
-var Range = require('xpath-range').Range;
+var xpathRange = require('xpath-range');
 
 var highlighter = require('../../../src/ui/highlighter'),
     util = require('../../../src/util');
@@ -89,8 +89,8 @@ describe('ui.highlighter.Highlighter', function () {
         });
 
         afterEach(function () {
-            if (typeof Range.sniff.restore === 'function') {
-                Range.sniff.restore();
+            if (typeof xpathRange.Range.sniff.restore === 'function') {
+                xpathRange.Range.sniff.restore();
             }
         });
 
@@ -120,8 +120,8 @@ describe('ui.highlighter.Highlighter', function () {
         });
 
         it("should swallow errors if the annotation fails to normalize", function () {
-            var e = new Range.RangeError("typ", "RangeError should have been caught!");
-            sinon.stub(Range, 'sniff').returns({
+            var e = new xpathRange.Range.RangeError("typ", "RangeError should have been caught!");
+            sinon.stub(xpathRange.Range, 'sniff').returns({
                 normalize: sinon.stub().throws(e)
             });
             hl.draw({

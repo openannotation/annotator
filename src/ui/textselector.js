@@ -1,6 +1,6 @@
 "use strict";
 
-var Range = require('xpath-range').Range;
+var xpathRange = require('xpath-range');
 
 var util = require('../util');
 
@@ -67,7 +67,7 @@ TextSelector.prototype.captureDocumentSelection = function () {
 
     for (i = 0; i < selection.rangeCount; i++) {
         var r = selection.getRangeAt(i),
-            browserRange = new Range.BrowserRange(r),
+            browserRange = new xpathRange.Range.BrowserRange(r),
             normedRange = browserRange.normalize().limit(this.element);
 
         // If the new range falls fully outside our this.element, we should
