@@ -1145,10 +1145,9 @@ html, body
 	background: #448AFF;
 }
 
-
-
+/* margin for PMC articles */
 article {
-	margin-top: 80px;
+	margin-top: 7px;
 }
 
 .viewertable {
@@ -1156,6 +1155,9 @@ article {
 	border-collapse: collapse;
 }
 
+/* editor table and viewer */
+
+/*
 .editortable, tr, td {
 	border: 1px solid black;
 }
@@ -1163,6 +1165,7 @@ article {
 .viewertable, tr, td{
 	border: 1px solid black;
 }
+*/
 
 .question {
 	/*background: rgba(211, 211, 211, 0.3);*/
@@ -1172,7 +1175,6 @@ article {
 }
 
 #quote {
-
 
 	width:80%;
 }
@@ -1254,11 +1256,13 @@ th, td {
 	background-repeat:no-repeat;
 	background-size: 100% 100%;
 }
-
+/* tables */
+/*
 table, tr, td {
 
 	border: 1px solid black;
 }
+*/
 
 #enzymesection1{
 	display: none;
@@ -1283,5 +1287,5 @@ input[type="radio"] {
 	/*font-size:115%;*/
 }
 
-table tr:nth-of-type(odd),table tr:nth-of-type(odd){background-color:#EEF9FF}.main-content .content-full table.alt tr:nth-of-type(odd){background-color:#FFF}.main-content .content-full table.alt tr:nth-of-type(even){background-color:#EEF9FF}.main-content .content-full .norows table tr:nth-of-type(odd),.norows table tr:nth-of-type(odd){background-color:#fff}
+/*table tr:nth-of-type(odd),table tr:nth-of-type(odd){background-color:#EEF9FF}.main-content .content-full table.alt tr:nth-of-type(odd){background-color:#FFF}.main-content .content-full table.alt tr:nth-of-type(even){background-color:#EEF9FF}.main-content .content-full .norows table tr:nth-of-type(odd),.norows table tr:nth-of-type(odd){background-color:#fff}
 /*.viewertable tr:nth-of-type(odd),.viewertable tr:nth-of-type(odd){background-color:#EEF9FF}.main-content .content-full .viewertable.alt tr:nth-of-type(odd){background-color:#FFF}.main-content .content-full .viewertable.alt tr:nth-of-type(even){background-color:#EEF9FF}.main-content .content-full .norows .viewertable tr:nth-of-type(odd),.norows .viewertable tr:nth-of-type(odd){background-color:#fff}*/
