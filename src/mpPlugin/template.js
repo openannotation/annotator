@@ -17,6 +17,14 @@ var context1 = {
         optionsID:[]
       },
       {
+          type:"checkbox",
+          name:"Precipitant: ",
+          classname: "precipitant",
+          id:"drug1precipitant",
+          options:["drug1"],
+          optionsID:[]
+      },
+      {
         type:"dropdown",
         name:"Relationship: ",
         id:"relationship",
@@ -27,8 +35,8 @@ var context1 = {
         type:"dropdown",
         name:"Method: ",
         id:"method",
-        options:["DDI clinical trial"],
-        optionsID:["clinical"]
+        options:["UNK","DDI clinical trial"],
+        optionsID:[]
       },
       {
         type:"dropdown",
@@ -36,6 +44,14 @@ var context1 = {
         id:"Drug2",
         options:[],
         optionsID:[]
+      },
+      {
+          type:"checkbox",
+          name:"Precipitant: ",
+          classname: "precipitant",
+          id:"drug2precipitant",
+          options:["drug2"],
+          optionsID:[]
       },
       {
         type:"dropdown",
@@ -102,7 +118,7 @@ var context4 = {
         },
         {
             type:"dropdown",
-        name:"Formulation: ",
+            name:"Formulation: ",
             id:"drug2Formulation",
             options:["UNK","Oral","IV","transdermal"],
             optionsID:[]
@@ -122,6 +138,110 @@ var context4 = {
     ]
 };
 
+
+// Data - AUC form
+var context5 = {
+    questions: [
+        {
+            type: "input",
+            name: "AUC: ",
+            id: "auc"
+        },
+        {
+            type:"dropdown",
+            name:"Type: ",
+            id:"aucType",
+            options:["UNK","percent","fold"],
+            optionsID:[]
+        },
+        {
+            type:"dropdown",
+            name:"Direction: ",
+            id:"aucDirection",
+            options:["UNK","increase","decrease"],
+            optionsID:[]
+        }
+    ]
+};
+
+// Data - CMAX form
+var context6 = {
+    questions: [
+        {
+            type: "input",
+            name: "CMAX: ",
+            id: "cmax"
+        },
+        {
+            type:"dropdown",
+            name:"Type: ",
+            id:"cmaxType",
+            options:["UNK","percent","fold"],
+            optionsID:[]
+        },
+        {
+            type:"dropdown",
+            name:"Direction: ",
+            id:"cmaxDirection",
+            options:["UNK","increase","decrease"],
+            optionsID:[]
+        }
+    ]
+};
+
+
+// Data - Clearance form
+var context7 = {
+    questions: [
+        {
+            type: "input",
+            name: "Clearance: ",
+            id: "clearance"
+        },
+        {
+            type:"dropdown",
+            name:"Type: ",
+            id:"clearanceType",
+            options:["UNK","percent","fold"],
+            optionsID:[]
+        },
+        {
+            type:"dropdown",
+            name:"Direction: ",
+            id:"clearanceDirection",
+            options:["UNK","increase","decrease"],
+            optionsID:[]
+        }
+    ]
+};
+
+
+
+// Data - half life form
+var context8 = {
+    questions: [
+        {
+            type: "input",
+            name: "Half life: ",
+            id: "halflife"
+        },
+        {
+            type:"dropdown",
+            name:"Type: ",
+            id:"halflifeType",
+            options:["UNK","percent","fold"],
+            optionsID:[]
+        },
+        {
+            type:"dropdown",
+            name:"Direction: ",
+            id:"halflifeDirection",
+            options:["UNK","increase","decrease"],
+            optionsID:[]
+        }
+    ]
+};
+
 // handlerbar - build form1 function
 // @inputs: JSON config - context1
 // @outputs: form1 in html
@@ -129,17 +249,19 @@ Handlebars.registerHelper('buildFormClaim', function(items, options) {
     var out = "";
     
     for (var i=0, l=items.length; i<l; i++) {
-        if (((i)%3==0))
+        if (((i)%4==0))
             out = out + "<tr>";
-        if(items[i].id!="enzyme")
+
+        if (items[i].id == "enzyme") 
+            out += "<td><strong id='enzymesection1'>" + items[i].name +"</strong></td><td>";
+        else if (items[i].id == "drug1precipitant" || items[i].id == "drug2precipitant") 
+            out += "<td><strong class='precipitantLabel'>" + items[i].name +"</strong></td><td>"
+        else 
             out = out + "<td><strong>" + items[i].name +"</strong></td><td>";
-        else
-            out = out + "<td><strong id='enzymesection1'>" + items[i].name +"</strong></td><td>";
-        if (items[i].type=="checkbox")
-        {
-            for (var j = 0, sl = items[i].options.length; j < sl; j++)
-                out = out + "<input type='radio' name='" + items[i].id + "' id='" + items[i].id + "' class='" + items[i].id + "' value='" + items[i].options[j] + "'>" + items[i].options[j] + "</input>";
             
+        if (items[i].type=="checkbox") {
+            for (var j = 0, sl = items[i].options.length; j < sl; j++)
+                out = out + "<input type='radio' name='" + items[i].classname + "' id='" + items[i].id + "' value='" + items[i].options[j] + "'></input>";            
         } 
         else if (items[i].type=="dropdown") {
             out = out + "<select id='" + items[i].id + "'>";
@@ -151,12 +273,12 @@ Handlebars.registerHelper('buildFormClaim', function(items, options) {
             }
             out = out + "</select>";
         } 
-        else if(items[i].type=="textarea")
-        {
+        else if(items[i].type=="textarea") {
             out = out + "<textarea id='" + items[i].id + "' class='" + items[i].id + "'></textarea>";
         }
+
         out = out + "</td>";
-        if(((i+1)%3==0))
+        if(((i+1)%4==0))
             out = out + "</tr>";
     }
     return out;
@@ -165,10 +287,11 @@ Handlebars.registerHelper('buildFormClaim', function(items, options) {
 Handlebars.registerHelper('buildFormData', function(items, options) {
     var out = "";
     for(var i=0, l=items.length; i<l; i++) {
+        out += "<strong>" + items[i].name +"</strong>";
         if(items[i].type=="text")
             out += "<strong id='"+items[i].id+"'></strong><br>";
         else if(items[i].type=="input")
-            out += items[i].name + "<input style='width:30px;' type='text' id='"+items[i].id+"'>";
+            out += "<input style='width:30px;' type='text' id='"+items[i].id+"'>";
         else if (items[i].type=="dropdown") {
             out = out + "<select id='" + items[i].id + "'>";
             for(var j = 0, sl = items[i].options.length; j<sl; j++) {
@@ -204,6 +327,28 @@ source = "{{#buildFormData questions}}{{/buildFormData}}";
 template = Handlebars.compile(source);
 var form4 = template(context4);
 
+// Data - auc
+source = "{{#buildFormData questions}}{{/buildFormData}}";
+template = Handlebars.compile(source);
+var form5 = template(context5);
+
+// Data - cmax
+source = "{{#buildFormData questions}}{{/buildFormData}}";
+template = Handlebars.compile(source);
+var form6 = template(context6);
+
+// Data - cl
+source = "{{#buildFormData questions}}{{/buildFormData}}";
+template = Handlebars.compile(source);
+var form7 = template(context7);
+
+// Data - half life
+source = "{{#buildFormData questions}}{{/buildFormData}}";
+template = Handlebars.compile(source);
+var form8 = template(context8);
+
+
+
 Template.content = [
 
     '<div class="annotator-outer annotator-editor annotator-invert-y annotator-invert-x">',
@@ -212,10 +357,6 @@ Template.content = [
     '<div class="annotationbody" style="margin-left:5px;margin-right:0px;height:100%;line-height:200%;margin-top:0px;overflow-y: hidden">',
     '<div id="tabs">',
     '<div id="tabs-1" style="margin-bottom:0px;">',
-    // confirmation dialog
-    // '<div id="dialog-claim-delete-confirm" title="Delete Confirmation" style="display: none;">',
-    // '<p> Delete claim will trancate all data & material assigned on it! </p>',
-    // '</div>',
 
     // Type of editor
     '<div id="mp-editor-type" style="display: none;"></div>',
@@ -226,7 +367,11 @@ Template.content = [
     '<div id="mp-data-nav" style="display: none;">',
     '<button type="button" onclick="switchDataForm(\'participants\')" >Participants</button> &nbsp;->&nbsp;',
     '<button type="button" onclick="switchDataForm(\'dose1\')" >Drug 1 Dose</button> &nbsp;->&nbsp;',
-    '<button type="button" onclick="switchDataForm(\'dose2\')" >Drug 2 Dose</button>',
+    '<button type="button" onclick="switchDataForm(\'dose2\')" >Drug 2 Dose</button>&nbsp;->&nbsp;',    
+    '<button type="button" onclick="switchDataForm(\'auc\')" >Auc</button> &nbsp;->&nbsp;',
+    '<button type="button" onclick="switchDataForm(\'cmax\')" >Cmax</button> &nbsp;->&nbsp;',
+    '<button type="button" onclick="switchDataForm(\'clearance\')" >Clearance</button> &nbsp;->&nbsp;',
+    '<button type="button" onclick="switchDataForm(\'halflife\')" >Half-life</button>',
     '</div>',
 
     // Claim form
@@ -250,17 +395,37 @@ Template.content = [
     '<div id="mp-data-form-dose2" style="margin-top:10px;margin-left:5px;display: none;">',
     form4,
     '</div>',
+
+    // Data & material - AUC
+    '<div id="mp-data-form-auc" style="margin-top:10px;margin-left:5px;display: none;">',
+    form5,
+    '</div>',
+
+    // Data & material - CMAX
+    '<div id="mp-data-form-cmax" style="margin-top:10px;margin-left:5px;display: none;">',
+    form6,
+    '</div>',
+
+    // Data & material - Clearance
+    '<div id="mp-data-form-clearance" style="margin-top:10px;margin-left:5px;display: none;">',
+    form7,
+    '</div>',
+
+    // Data & material - half life
+    '<div id="mp-data-form-halflife" style="margin-top:10px;margin-left:5px;display: none;">',
+    form8,
+    '</div>',
+
     
     '</div>',
     '</div>',
     '</div>',
     '    <div class="annotator-controls1">',
-    '     <a href="#cancel" class="annotator-cancel" onclick="showrightbyvalue()" id="annotator-cancel">Cancel</a>',
-    //'     <a href="#delete" class="annotator-delete" onclick="postEditorDelete()" id="annotator-delete">Delete</a>',
+    '     <br><a href="#cancel" class="annotator-cancel" onclick="showrightbyvalue()" id="annotator-cancel">Cancel</a>',
     '     <a href="#delete" class="annotator-delete" id="annotator-delete">Delete</a>',
     '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
-    '     <a href="#save" class="annotator-save annotator-focus" onclick="postEditorSave()">Save</a>',
-    '     <a href="#save-close" class="annotator-save-close" onclick="postEditorSaveAndClose()" id="annotator-save-close">Save and Close</a>',
+    '     <a href="#save" class="annotator-save annotator-focus">Save</a>',
+    '     <a href="#save-close" class="annotator-save-close" id="annotator-save-close">Save and Close</a>',
   '    </div>',
     '  </form>',
     '</div>'

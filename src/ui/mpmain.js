@@ -19,6 +19,7 @@ var hlviewer = require('./../drugPlugin/viewer');
 
 var _t = util.gettext;
 
+
 // trim strips whitespace from either end of a string.
 //
 // This usually exists in native code, but not in IE8.
@@ -44,8 +45,6 @@ function annotationFactory(contextEl, ignoreSelector) {
             serializedRanges.push(serializedRange);
         }
 
-        //console.log("mpmain - annFac - seRanges:" + JSON.stringify(serializedRanges));
-        //console.log("mpmain - exactTxt:" + text.join(' / ') + "|");
 
         var prefix = "", suffix = "";
         prefix = getTxtFromNode(ranges[0].start, false, ignoreSelector, 50);
@@ -173,7 +172,6 @@ function addPermissionsCheckboxes(editor, ident, authz) {
                 annotation.permissions = {};
             }
 
-
             if (util.$(field).find('input').is(':checked')) {
                 delete annotation.permissions[action];
             } else {
@@ -244,11 +242,9 @@ function main(options) {
         // mp adder
         s.mpadder = new mpadder.mpAdder({
             onCreate: function (ann) {
-                console.log("mpmain - onCreate function");
                 app.annotations.create(ann);
             },
             onUpdate: function (ann) {
-                console.log("mpmain - onUpdate function");
                 app.annotations.update(ann);
             }
         });
@@ -269,11 +265,73 @@ function main(options) {
         s.mpeditor = new mpeditor.mpEditor({
             extensions: options.editorExtensions,
             onDelete: function (ann) {
-                console.log("mpmain - mpeditor - onDelete");
+                var editorType = $("#mp-editor-type").html();
+                if (editorType == "claim") { 
+                    // delete confirmation for claim
+                    $( "#dialog-claim-delete-confirm" ).dialog({
+                        resizable: false,
+                        height: 'auto',
+                        width: '400px',
+                        modal: true,
+                        buttons: {
+                            "Confirm": function() {
+                                $( this ).dialog( "close" );
+                                console.log("mpmain - confirm deletion");
 
-                app.annotations.delete(ann);
-                showAnnTable();
-                s.mphighlighter.undraw(ann);
+                                app.annotations.delete(ann);
+                                showAnnTable();
+                                s.mphighlighter.undraw(ann);  
+
+                                // clean field name and annotation id
+                                $("#mp-editor-type").html('');           
+                                $("#mp-annotation-work-on").html('');         
+                            },
+                            "Cancel": function() {
+                            $( this ).dialog( "close" );
+                            }
+                        }
+                    });
+                } else {
+                    // delete confirmation for data & material
+                    $( "#dialog-data-delete-confirm" ).dialog({
+                        resizable: false,
+                        height: 'auto',
+                        width: '400px',
+                        modal: true,
+                        buttons: {                        
+                            "Confirm": function() {
+                                $( this ).dialog( "close" );
+                                if (editorType == "participants") {
+                                    ann.argues.supportsBy[currDataNum].supportsBy.supportsBy.participants = {};
+                                } else if (editorType == "dose1") {
+                                    ann.argues.supportsBy[currDataNum].supportsBy.supportsBy.drug1Dose = {};        
+                                } else if (editorType == "dose2") {
+                                    ann.argues.supportsBy[currDataNum].supportsBy.supportsBy.drug2Dose = {};         
+                                } else if (editorType == "auc" || editorType == "cmax" || editorType == "clearance" || editorType == "halflife") {
+                                    ann.argues.supportsBy[currDataNum][editorType] = {}; 
+                                } else {
+                                    alert("[ERROR] editor type is not avaliable!");
+                                }       
+
+                                // after deletion, if this row is empty, then delete
+                                var boo = isDataRowEmpty(ann.argues.supportsBy[currDataNum]);
+                                if (boo) {
+                                    console.log("mpmain - delete empty row!");
+                                    ann.argues.supportsBy.splice(currDataNum, 1);
+                                    totalDataNum = totalDataNum -1;
+                                }
+                                    
+                                if (typeof s.mpeditor.dfd !== 'undefined' && s.mpeditor.dfd !== null) {
+                                    s.mpeditor.dfd.resolve();
+                                }        
+                                showAnnTable();                                   
+                            },
+                            "Cancel": function() {
+                                $( this ).dialog( "close" );
+                            }
+                        }
+                    });                    
+                }                
             }
         });
         s.mpeditor.attach();
@@ -293,9 +351,12 @@ function main(options) {
         // select text, then load normed ranges to adder
         s.textselector = new textselector.TextSelector(options.element, {
             onSelection: function (ranges, event) {
+                console.log("mpmain - textselector - onSelection");
+
                 if (ranges.length > 0) {
                     //var mpAnnotation = makeMPAnnotation(ranges);
                     var hlAnnotation = makeHLAnnotation(ranges);
+                    console.log("mpmain - textselector - hladder and mp adder load");
 
                     s.interactionPoint = util.mousePosition(event);
                     s.hladder.load(hlAnnotation, s.interactionPoint);
@@ -311,18 +372,23 @@ function main(options) {
 
         // mp viewer
         s.mpviewer = new mpviewer.mpViewer({
-            onEdit: function (ann, field) {
+            onEdit: function (ann, field, dataNum) {
                 // Copy the interaction point from the shown viewer:
                 s.interactionPoint = util.$(s.mpviewer.element)
                     .css(['top', 'left']);
+
+                $("#annotator-delete").show();
                 if (ann.annotationType == "MP"){
                     var annotationId = ann.id;
-                    //console.log("mpviewer - onEdit - annId: " + annotationId + " | field: " + field);
-                    document.getElementById(annotationId + field).scrollIntoView(true);
-                    if (field == "claim")
+
+                    if (field == "claim") {
+                        $('#quote').show();
                         claimEditorLoad();
-                    else 
-                        switchDataForm(field);                               
+                    } else { 
+                        $('#quote').hide();
+                        switchDataForm(field);   
+                        currDataNum = dataNum;
+                    }
                     app.annotations.update(ann);
                 }
             },
@@ -389,34 +455,6 @@ function main(options) {
             s.hlhighlighter.drawAll(anns);
             s.mphighlighter.drawAll(anns);
         },
-        annotationCreated: function (ann) {
-            if (ann.annotationType == "MP"){
-                console.log("mpmain - annotationCreated called");
-                s.mphighlighter.draw(ann);
-            } else if (ann.annotationType == "DrugMention"){
-                s.hlhighlighter.draw(ann);
-            } else {
-                alert('[WARNING] main.js - annotationCreated - annot type not defined: ' + ann.annotationType);
-            }
-        },
-        annotationDeleted: function (ann) {
-            console.log("mpmain - annotationDeleted called");
-            s.mphighlighter.undraw(ann);
-            s.hlhighlighter.undraw(ann);
-            
-        },
-        annotationUpdated: function (ann) {
-            console.log("mpmain - annotationUpdated called");
-
-            if (ann.annotationType == "MP"){
-                s.mphighlighter.redraw(ann);
-            } else if (ann.annotationType == "DrugMention"){
-                s.hlhighlighter.redraw(ann);
-            } else {
-                alert('[WARNING] main.js - annotationUpdated - annot type not defined: ' + ann.annotationType);
-            }
-
-        },
 
         beforeAnnotationCreated: function (annotation) {
             // Editor#load returns a promise that is resolved if editing
@@ -424,16 +462,69 @@ function main(options) {
             // here to "stall" the annotation process until the editing is
             // done.
 
-            // yifan: call different editor based on annotation type
+		    annotation.rawurl = options.source;
+    		annotation.uri = options.source.replace(/[\/\\\-\:\.]/g, "");		
+		    annotation.email = options.email;
+
+            // call different editor based on annotation type
             if (annotation.annotationType == "MP"){
                 return s.mpeditor.load(s.interactionPoint,annotation);
             } else if (annotation.annotationType == "DrugMention") {
                 // return s.hleditor.load(annotation, s.interactionPoint);
-                // yifan: not show editor when typed as Drug mention
+                // not show editor when typed as Drug mention
                 return null;
             } else {
                 //return s.mpeditor.load(annotation, s.interactionPoint);
                 return null;
+            }
+        },
+        annotationCreated: function (ann) {
+            if (ann.annotationType == "MP"){
+                console.log("mpmain - annotationCreated called");
+                s.mphighlighter.draw(ann);
+                $("#mp-annotation-work-on").html(ann.id);
+                annotationTable(ann.rawurl, ann.email);
+                // providing options of add another claim or data on current span
+                $( "#claim-dialog-confirm" ).dialog({
+                    resizable: false,
+                    height: 'auto',
+                    width: '400px',
+                    modal: true,
+                    buttons: {
+                        "Add another claim": function() {
+                            $( this ).dialog( "close" ); 
+                            showEditor();
+                            claimEditorLoad();
+                            $("#mp-editor-type").html("claim");
+                            var newAnn = (JSON.parse(JSON.stringify(ann)));
+                            newAnn.argues.qualifiedBy = {};
+                            app.annotations.create(newAnn);
+                            
+                        },
+                        "Add data": function() {
+                            $( this ).dialog( "close" );        
+                            // keep using the same text span
+                            isTextSelected = true;
+                            cachedOATarget = ann.argues.hasTarget;
+                            cachedOARanges = ann.argues.ranges;                 
+
+                            addDataCellByEditor("participants", 0);
+                        }, 
+                        "Done": function() {
+                            $( this ).dialog( "close" );
+                            showAnnTable();  
+
+                            // clean cached text selection
+                            isTextSelected = false;
+                            cachedOATarget = "";
+                            cachedOARanges = "";
+                        }
+                    }
+                });              
+            } else if (ann.annotationType == "DrugMention"){
+                s.hlhighlighter.draw(ann);
+            } else {
+                alert('[WARNING] main.js - annotationCreated - annot type not defined: ' + ann.annotationType);
             }
         },
 
@@ -448,9 +539,52 @@ function main(options) {
             } else {
                 return null;
             }
+        },
+        annotationUpdated: function (ann) {
+            console.log("mpmain - annotationUpdated called");
+            if (ann.annotationType == "MP"){
+                s.mphighlighter.redraw(ann);
+                $("#mp-annotation-work-on").html(ann.id);
+                annotationTable(ann.rawurl, ann.email);
+           
+            } else if (ann.annotationType == "DrugMention"){
+                s.hlhighlighter.redraw(ann);
+            } else {
+                alert('[WARNING] main.js - annotationUpdated - annot type not defined: ' + ann.annotationType);
+            }
+        },
+
+        // beforeAnnotationDeleted: function(ann){
+        // },
+        annotationDeleted: function (ann) {
+            console.log("mpmain - annotationDeleted called");
+            s.mphighlighter.undraw(ann);
+            s.hlhighlighter.undraw(ann);
+            showAnnTable();
+            setTimeout(function(){
+                annotationTable(options.source, options.email);
+            },1000);
         }
     };
 }
+
+// called when delete data
+// return false if data row not empty, otherwise, return true
+function isDataRowEmpty(data) {
+
+    console.log("delete data - call isDataRowEmpty");
+    fieldL = ["auc","cmax","clearance","halflife"];
+    
+    for (i = 0; i < fieldL.length; i++) {
+        if (data[fieldL[i]].value != null)
+            return false;
+    }
+    
+    if (data.supportsBy.supportsBy.participants.value != null || data.supportsBy.supportsBy.drug1Dose.value != null || data.supportsBy.supportsBy.drug2Dose.value !=null)
+        return false;
+    return true   
+}
+
 
 
 function getTxtFromNode(node, isSuffix, ignoreSelector, maxLength){

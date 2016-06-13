@@ -32,25 +32,25 @@ var mpAdder = Widget.extend({
         // .on("click." + NS, 'button', function (e) {
         //     self._onClick(e);
         // })
-        .on("click." + NS, '.mp-main-menu', function (e) {
+        .on("click." + NS, '.mp-main-menu', function (e) {         
             self._onClick(e);
         })
 
-        // .on("mousedown." + NS, 'button', function (e) {
+        // .on("mousedown." + NS, function (e) {
+        //     console.log("mpadder - self._onMousedown(e)");
         //     self._onMousedown(e);
         // });
-        .on("mousedown", '#mp-main-menu', function (e) {
+
+        .on("mousedown." + NS, 'li', function (e) {
+            // console.log("mpadder - self._onMousedown(e)");
             self._onMousedown(e);
         });
 
         this.document = this.element[0].ownerDocument;
         $(this.document.body).on("mouseup." + NS, function (e) {
+            // console.log("mpadder - self._onMouseup(e)");
             self._onMouseup(e);
         });
-
-        // $(this.document.body).on("mouseup." + NS, '.mp-main-menu', function (e) {
-        //     self._onMouseup(e);
-        // });
     },
 
     destroy: function () {
@@ -152,13 +152,16 @@ var mpAdder = Widget.extend({
         }
         event.preventDefault();
 
+        this.ignoreMouseup = false;
+        // this.ignoreMouseup = true;
+
         // Hide the MP adder
         this.hide();
-        // Hide drug mention adder and DDI adder
-        $('.annotator-adderhl').removeClass().addClass('annotator-adderhl annotator-hide');
-        $('.annotator-adderddi').removeClass().addClass('annotator-adderhl annotator-hide');
+        // Hide drug mention, mp and DDI adder
+        $('.annotator-addermp').removeClass().addClass('annotator-addermp annotator-hide');
+        $('.annotator-adderhl').removeClass().addClass('annotator-adderhl annotator-hide');     
+        //$('.annotator-adderddi').removeClass().addClass('annotator-adderhl annotator-hide');
 
-        this.ignoreMouseup = false;
 
         var editorType = $("#mp-editor-type").html();
         if (editorType == null || editorType.trim() == ""){
@@ -167,7 +170,10 @@ var mpAdder = Widget.extend({
 
         // if type is claim, then  create annotation
         if (this.annotation !== null && editorType == "claim" && typeof this.onCreate === 'function') { 
-            // console.log("DEBUG: mpadder - _onclick called: " + editorType);
+            isTextSelected = true;
+            cachedOATarget = this.annotation.argues.hasTarget;
+            cachedOARanges = this.annotation.argues.ranges;
+
             this.annotation.annotationType = "MP";
             this.onCreate(this.annotation, event);
         }        
@@ -177,7 +183,6 @@ var mpAdder = Widget.extend({
 
             // query MP annotation
             var annotationId = $("#mp-annotation-work-on").html();
-
             var annhost = config.annotator.host;
             var queryOptStr = '{"emulateHTTP":false,"emulateJSON":false,"headers":{},"prefix":"http://' + annhost + '/annotatorstore" ,"urls":{"create":"/annotations","update":"/annotations/{id}","destroy":"/annotations/{id}","search":"/search?_id=' + annotationId +'"}}';
             
@@ -195,28 +200,17 @@ var mpAdder = Widget.extend({
                     // set current mp annotation
                     $('#mp-annotation-work-on').html(oriAnnotation.id);
 
+                    // show annotation table, click data cell to trigger editor
+                    showAnnTable();
+
+                    // text has been selected, cached selector                    
+                    isTextSelected = true;
                     // get selection for data
-                    var target = temp.annotation.argues.hasTarget;
-                    var ranges = temp.annotation.argues.ranges;
-
-                    // add data if not avaliable  
-                    if (oriAnnotation.argues.supportsBy.length == 0){ 
-                        var data = {type : "mp:data", auc : {}, cmax : {}, clearance : {}, halflife : {}, supportsBy : {type : "mp:method", supportsBy : {type : "mp:material", participants : {}, drug1Dose : {}, drug2Dose : {}}}};
-                        oriAnnotation.argues.supportsBy.push(data); 
-                    } 
-
-                    // add target & ranges for data attributes 
-                    oriAnnotation.dataTarget = target;
-                    oriAnnotation.dataRanges = ranges;                               
-                    
-                    // open data editor, load MP annotation, call app.update
-                    showEditor();
-                    dataEditorLoad(oriAnnotation, editorType, annotationId);
-
+                    cachedOATarget = temp.annotation.argues.hasTarget;
+                    cachedOARanges = temp.annotation.argues.ranges;                    
                 });                            
         }
-    }
-    
+    }   
 });
 
 

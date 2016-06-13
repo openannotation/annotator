@@ -85,16 +85,19 @@ var mpViewer = exports.mpViewer = Widget.extend({
         this.hideTimerDfd = null;
         this.hideTimerActivity = null;
         this.mouseDown = false;
-        this.render = function (annotation, fieldName) {
+        this.render = function (annotation, fieldName, dataNum) {
 	        var claim = annotation.argues
 	        if (claim.label) {
                 
 		        var returnText =
-                    "<div  class='annotator-mp'> By " + annotation.email + " on " + annotation.updated + "</div>" +
-                    "<table class='viewertable' style='float:left;'>" +
-                    "<tr><td>Claim: " + claim.label + "</td></tr>" +
-                    "<tr><td>" + fieldName + "</td></tr>" + 
-                    "</table><br>";
+                    "<div  class='annotator-mp'> By " + annotation.email + " on " + annotation.updated + "</div>" + "<table class='viewertable' style='float:left;'>";
+
+                returnText += "<tr><td>Claim: " + claim.label + "</td></tr>";
+
+                if (fieldName !== "claim" && dataNum != null) {
+                    returnText += "<tr><td>Data: " + (parseInt(dataNum)+1) + " Field: " + fieldName + "</td></tr>";
+                }                    
+                returnText += "</table><br>";
 		        
  		        return returnText;
             } else {
@@ -107,8 +110,8 @@ var mpViewer = exports.mpViewer = Widget.extend({
 
         if (this.options.defaultFields) {
             this.addField({
-                load: function (field, annotation, controller, fieldName) {   
-                    $(field).html(self.render(annotation, fieldName));
+                load: function (field, annotation, controller, fieldName, dataNum) {   
+                    $(field).html(self.render(annotation, fieldName, dataNum));
                 }
             });
         }
@@ -242,9 +245,10 @@ var mpViewer = exports.mpViewer = Widget.extend({
         for (var i = 0, len = this.annotations.length; i < len; i++) {
             var annotation = this.annotations[i].annotation;
             var fieldName = this.annotations[i].fieldName;
+            var dataNum = this.annotations[i].dataNum;
 
             if (annotation.annotationType == "MP"){
-                this._annotationItem(annotation, fieldName)
+                this._annotationItem(annotation, fieldName, dataNum)
                     .appendTo(list)
                     .data('annotation', annotation);
                 this.show(position);
@@ -262,7 +266,7 @@ var mpViewer = exports.mpViewer = Widget.extend({
     },
 
     // Private: create the list item for a single annotation
-    _annotationItem: function (annotation, fieldName) {
+    _annotationItem: function (annotation, fieldName, dataNum) {
         var item = $(this.itemTemplate).clone();
 
         var controls = item.find('.annotator-controls'),
@@ -310,7 +314,7 @@ var mpViewer = exports.mpViewer = Widget.extend({
         for (var i = 0, len = this.fields.length; i < len; i++) {
             var field = this.fields[i];
             var element = $(field.element).clone().appendTo(item)[0];
-            field.load(element, annotation, controller, fieldName);
+            field.load(element, annotation, controller, fieldName, dataNum);
         }
 
         return item;
@@ -362,11 +366,10 @@ var mpViewer = exports.mpViewer = Widget.extend({
 
         if (this.annotations.length > 0) {
             var fieldName = this.annotations[0].fieldName;
+            var dataNum = this.annotations[0].dataNum;
             this.hide();
-            // show delete button in editor
-            console.log("mpviewer - onEditClick - show delete");
-            $("#annotator-delete").show();
-            this.options.onEdit(item, fieldName);
+
+            this.options.onEdit(item, fieldName, dataNum);
         }
     },
 
@@ -417,7 +420,7 @@ var mpViewer = exports.mpViewer = Widget.extend({
                     .addBack()
                     .map(function (_, elem) {
                         //return $(elem).data("annotation");
-                        return { annotation: $(elem).data("annotation"), fieldName: $(elem).attr("fieldname")};
+                        return { annotation: $(elem).data("annotation"), fieldName: $(elem).attr("fieldname"), dataNum: $(elem).attr("datanum")};
                     })
                     .toArray();
 

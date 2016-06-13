@@ -8,9 +8,10 @@ var $ = util.$;
 var Promise = util.Promise;
 
 
-function DataRange(range, field) {
+function DataRange(range, field, dataNum) {
     this.range = range;
     this.field = field;
+    this.dataNum = dataNum;
 }
 
 
@@ -22,7 +23,7 @@ function DataRange(range, field) {
 // cssClass - A CSS class to use for the highlight (default: 'annotator-hl')
 //
 // Returns an array of highlight Elements.
-function highlightRange(normedRange, cssClass, field) {
+function highlightRange(normedRange, cssClass, dataRange) {
     if (typeof cssClass === 'undefined' || cssClass === null) {
         cssClass = 'annotator-hl';
     }
@@ -41,8 +42,9 @@ function highlightRange(normedRange, cssClass, field) {
             var mphl = global.document.createElement('span');
             mphl.className = cssClass;
             mphl.setAttribute("name", "annotator-mp");
-            // add data field for mp annotation 
-            mphl.setAttribute("fieldName", field);
+            // add data field and data num for mp highlights 
+            mphl.setAttribute("fieldName", dataRange.field);
+            mphl.setAttribute("dataNum", dataRange.dataNum);
             node.parentNode.replaceChild(mphl, node);
             mphl.appendChild(node);
             results.push(mphl);
@@ -156,49 +158,83 @@ mpHighlighter.prototype.draw = function (annotation) {
             var r = reanchorRange(annotation.argues.ranges[i], this.element);
             if (r !== null) {
                 //normedRanges.push(r);
-                dataRangesL.push(new DataRange(r, "claim"));
+                dataRangesL.push(new DataRange(r, "claim", 0));
             } else {
                 console.log("[ERROR] range failed to reanchor");
                 console.log(r);
             }
         }
+
         // draw MP data
-
         if (annotation.argues.supportsBy.length != 0){
-            // draw MP Material
-            var material = annotation.argues.supportsBy[0].supportsBy.supportsBy;
-            if (material != null){
+            
+            // draw MP data
+            var dataL = annotation.argues.supportsBy;
 
-                if (material.participants.ranges != null) {
-                    for (var i = 0, ilen = material.participants.ranges.length; i < ilen; i++) {
-                        var r = reanchorRange(material.participants.ranges[i], this.element);
-                        //if (r !== null) normedRanges.push(r);  
-                        if (r !== null) dataRangesL.push(new DataRange(r, "participants"));  
-                    }                      
-                }
+            for (var idx = 0; idx < dataL.length; idx++) {
+                var data = dataL[idx];
 
-                if (material.drug1Dose.ranges != null) {
-                    for (var i = 0, ilen = material.drug1Dose.ranges.length; i < ilen; i++) {
-                        var r = reanchorRange(material.drug1Dose.ranges[i], this.element);
-                        //if (r !== null) normedRanges.push(r);    
-                        if (r !== null) dataRangesL.push(new DataRange(r, "dose1"));
+                if (data.auc.ranges != null) {
+                    for (var i = 0, ilen = data.auc.ranges.length; i < ilen; i++) {
+                        var r = reanchorRange(data.auc.ranges[i], this.element);   
+                        if (r !== null) dataRangesL.push(new DataRange(r, "auc", idx));
                     }
                 }
-                if (material.drug2Dose.ranges != null) {
-                    for (var i = 0, ilen = material.drug2Dose.ranges.length; i < ilen; i++) {
-                        var r = reanchorRange(material.drug2Dose.ranges[i], this.element);
-                        //if (r !== null) normedRanges.push(r);     
-                        if (r !== null) dataRangesL.push(new DataRange(r, "dose2"));
+
+                if (data.cmax.ranges != null) {
+                    for (var i = 0, ilen = data.cmax.ranges.length; i < ilen; i++) {
+                        var r = reanchorRange(data.cmax.ranges[i], this.element);   
+                        if (r !== null) dataRangesL.push(new DataRange(r, "cmax", idx));
                     }
                 }
-                             
+
+                if (data.clearance.ranges != null) {
+                    for (var i = 0, ilen = data.clearance.ranges.length; i < ilen; i++) {
+                        var r = reanchorRange(data.clearance.ranges[i], this.element);   
+                        if (r !== null) dataRangesL.push(new DataRange(r, "clearance", idx));
+                    }
+                }            
+
+                if (data.halflife.ranges != null) {
+                    for (var i = 0, ilen = data.halflife.ranges.length; i < ilen; i++) {
+                        var r = reanchorRange(data.halflife.ranges[i], this.element);   
+                        if (r !== null) dataRangesL.push(new DataRange(r, "halflife", idx));
+                    }
+                }
+                
+                // draw MP Material
+                var material = data.supportsBy.supportsBy;
+                if (material != null){
+                    
+                    if (material.participants.ranges != null) {
+                        for (var i = 0, ilen = material.participants.ranges.length; i < ilen; i++) {
+                            var r = reanchorRange(material.participants.ranges[i], this.element);
+                            //if (r !== null) normedRanges.push(r);  
+                            if (r !== null) dataRangesL.push(new DataRange(r, "participants", idx));  
+                        }                      
+                    }
+                    
+                    if (material.drug1Dose.ranges != null) {
+                        for (var i = 0, ilen = material.drug1Dose.ranges.length; i < ilen; i++) {
+                            var r = reanchorRange(material.drug1Dose.ranges[i], this.element);
+                            if (r !== null) dataRangesL.push(new DataRange(r, "dose1", idx));
+                        }
+                    }
+                    if (material.drug2Dose.ranges != null) {
+                        for (var i = 0, ilen = material.drug2Dose.ranges.length; i < ilen; i++) {
+                            var r = reanchorRange(material.drug2Dose.ranges[i], this.element);   
+                            if (r !== null) dataRangesL.push(new DataRange(r, "dose2", idx));
+                        }
+                    }
+                    
+                }
             }
         }
         //console.log(dataRangesL);
     } catch (err) {
         console.log(err);
     }
-
+        
 
 
     var hasLocal = (typeof annotation._local !== 'undefined' && annotation._local !== null);
@@ -227,7 +263,7 @@ mpHighlighter.prototype.draw = function (annotation) {
 
         $.merge(
             annotation._local.highlights,
-            highlightRange(dataNormed.range, this.options.highlightClass, dataNormed.field));
+            highlightRange(dataNormed.range, this.options.highlightClass, dataNormed));
     }
 
     // Save the annotation data on each highlighter element.
@@ -240,7 +276,8 @@ mpHighlighter.prototype.draw = function (annotation) {
     if (typeof annotation.id !== 'undefined' && annotation.id !== null) {
         for (var p =0; p < annotation._local.highlights.length; p++) {
             var fieldName = annotation._local.highlights[p].getAttribute("fieldName");
-            annotation._local.highlights[p].setAttribute("id", annotation.id+fieldName);
+            var dataNum = annotation._local.highlights[p].getAttribute("dataNum");
+            annotation._local.highlights[p].setAttribute("id", annotation.id + "-" + fieldName + "-" + dataNum);
         }
     }
 

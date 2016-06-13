@@ -32,7 +32,9 @@ function TextSelector(element, options) {
         var self = this;
         this.document = this.element.ownerDocument;
 
-        $(this.document.body)
+        // enable text selection only on context within configured element
+        // $(this.document.body)
+        $(element)
             .on("mouseup." + TEXTSELECTOR_NS, function (e) {
                 self._checkForEndSelection(e);
             });

@@ -24,16 +24,25 @@ var Adder = Widget.extend({
         var self = this;
         this.element
             .on("click." + NS, 'button', function (e) {
+                // console.log("hladder - self._onClick(e)");  
+                $('.mp-main-menu').hide();                 
                 self._onClick(e);
             })
             .on("mousedown." + NS, 'button', function (e) {
+                // console.log("hladder - self._onMousedown(e)");
                 self._onMousedown(e);
             });
 
         this.document = this.element[0].ownerDocument;
         $(this.document.body).on("mouseup." + NS, function (e) {
+            // console.log("hladder - self._onMouseup(e)");
             self._onMouseup(e);
         });
+        // this.document = this.element[0].ownerDocument;
+        // $( ".annotator-adderhl" ).on("mouseup." + NS, function (e) {
+        //     console.log("hladder - self._onMouseup(e)");
+        //     self._onMouseup(e);
+        // });
     },
 
     destroy: function () {
@@ -134,9 +143,11 @@ var Adder = Widget.extend({
 
         // Hide the adder
         this.hide();
-        // Hide DDI adder
+        // Hide drug mention, mp and ddi adder
         // $('.annotator-adderddi').hide();
-        $('.annotator-adderddi').removeClass().addClass('annotator-adderddi annotator-hide');
+        $('.annotator-addermp').removeClass().addClass('annotator-addermp annotator-hide');
+        $('.annotator-adderhl').removeClass().addClass('annotator-adderhl annotator-hide');
+        //$('.annotator-adderddi').removeClass().addClass('annotator-adderhl annotator-hide');
 
         this.ignoreMouseup = false;
 
@@ -152,7 +163,7 @@ Adder.template = [
 
     '<div class="annotator-adderhl annotator-hide">',
 
-    '  <button type="button" title="Highlight">' + _t('Annotate') + '</button>',
+    '  <button class="hl-adder-btn" type="button" title="Highlight">' + _t('Annotate') + '</button>',
     '</div>'
 ].join('\n');
 
