@@ -1,7 +1,6 @@
-/* global window */
 "use strict";
 
-var Widget = require('./widget').Widget,
+var Widget = require('./../ui/widget').Widget,
     util = require('../util');
 
 var $ = util.$,
@@ -83,12 +82,18 @@ var Viewer = exports.Viewer = Widget.extend({
         this.hideTimerActivity = null;
         this.mouseDown = false;
         this.render = function (annotation) {
-            if (annotation.text) {
-                return util.escapeHtml(annotation.text);
+
+            if (annotation.annotationType == "DrugMention" && annotation.created) {
+                var returnText = "<div class='annotator-ddi'>By " + annotation.email + " on " + annotation.updated + "</div>" +
+                    annotation.annotationType +
+                    ": <span class='annotator-ddi-active'>" + annotation.argues.hasTarget.hasSelector.exact + "</span>"
+
+                return returnText;
             } else {
-                return "<i>" + _t('No comment') + "</i>";
+                return null;
             }
         };
+
 
         var self = this;
 
@@ -116,26 +121,39 @@ var Viewer = exports.Viewer = Widget.extend({
         if (this.options.autoViewHighlights) {
             this.document = this.options.autoViewHighlights.ownerDocument;
 
-            $(this.options.autoViewHighlights)
-                .on("mouseover." + NS, '.annotator-hl', function (event) {
-                    // If there are many overlapping highlights, still only
-                    // call _onHighlightMouseover once.
+	    // mouse over event handling
+            // $(this.options.autoViewHighlights)
+            //     .on("mouseover." + NS, '.annotator-hl', function (event) {
+		    
+            //         // If there are many overlapping highlights, still only
+            //         // call _onHighlightMouseover once.
+            //         if (event.target === this) {
+            //             self._onHighlightMouseover(event);
+            //         }
+            //     })
+            //     .on("mouseleave." + NS, '.annotator-hl', function () {
+            //         self._startHideTimer();
+            //     });
+
+	    // click event handling
+	    $(this.options.autoViewHighlights)
+                //.on("click." + NS, '#annotator-hl', function (event) {
+                .on("click." + NS, 'span[name="annotator-hl"]', function (event) {
                     if (event.target === this) {
                         self._onHighlightMouseover(event);
                     }
-                })
-                .on("mouseleave." + NS, '.annotator-hl', function () {
-                    self._startHideTimer();
                 });
 
             $(this.document.body)
                 .on("mousedown." + NS, function (e) {
                     if (e.which === 1) {
+			//console.log("HL change mousedown to true");
                         self.mouseDown = true;
                     }
                 })
                 .on("mouseup." + NS, function (e) {
                     if (e.which === 1) {
+			//console.log("HL change mousedown to false");
                         self.mouseDown = false;
                     }
                 });
@@ -147,6 +165,9 @@ var Viewer = exports.Viewer = Widget.extend({
             })
             .on("click." + NS, '.annotator-delete', function (e) {
                 self._onDeleteClick(e);
+            })
+	    .on("click." + NS, '.annotator-cancel', function (e) {
+                self._onCancelClick(e);
             })
             .on("mouseenter." + NS, function () {
                 self._clearHideTimer();
@@ -180,8 +201,11 @@ var Viewer = exports.Viewer = Widget.extend({
     show: function (position) {
         if (typeof position !== 'undefined' && position !== null) {
             this.element.css({
-                top: position.top,
-                left: position.left
+                //top: position.top,
+                left: position.left,
+                top:position.top
+                //left:200,
+                //width:200px
             });
         }
 
@@ -213,9 +237,13 @@ var Viewer = exports.Viewer = Widget.extend({
 
         for (var i = 0, len = this.annotations.length; i < len; i++) {
             var annotation = this.annotations[i];
-            this._annotationItem(annotation)
-              .appendTo(list)
-              .data('annotation', annotation);
+
+            // skip load ddi annotation
+            if (annotation.annotationType == "DrugMention"){
+                this._annotationItem(annotation)
+                    .appendTo(list)
+                    .data('annotation', annotation);
+            }
         }
 
         this.show(position);
@@ -245,8 +273,8 @@ var Viewer = exports.Viewer = Widget.extend({
             {'type': 'text/html'}
         );
         var hasValidLink = (links.length > 0 &&
-                            typeof links[0].href !== 'undefined' &&
-                            links[0].href !== null);
+        typeof links[0].href !== 'undefined' &&
+        links[0].href !== null);
 
         if (hasValidLink) {
             link.attr('href', links[0].href);
@@ -338,15 +366,20 @@ var Viewer = exports.Viewer = Widget.extend({
     //
     // Returns nothing.
     _onDeleteClick: function (event) {
-        if (window.confirm(_t('Delete this annotation?'))) {
-            var item = $(event.target)
-                .parents('.annotator-annotation')
-                .data('annotation');
-            this.hide();
-            this.options.onDelete(item);
-        }
+        var item = $(event.target)
+            .parents('.annotator-annotation')
+            .data('annotation');
+        this.hide();
+        this.options.onDelete(item);
     },
-
+    // Event callback: called when the cancel button is clicked.
+    //
+    // event - An Event object.
+    //
+    // Returns nothing.
+    _onCancelClick: function (event) {
+        this.hide();
+    },
     // Event callback: called when a user triggers `mouseover` on a highlight
     // element.
     //
@@ -356,6 +389,9 @@ var Viewer = exports.Viewer = Widget.extend({
     _onHighlightMouseover: function (event) {
         // If the mouse button is currently depressed, we're probably trying to
         // make a selection, so we shouldn't show the viewer.
+	
+	//console.log("hlviewer - _onHighlightMouseover called - mouseDown:" + this.mouseDown);
+	
         if (this.mouseDown) {
             return;
         }
@@ -448,7 +484,7 @@ Viewer.classes = {
 // HTML templates for this.widget and this.item properties.
 Viewer.template = [
     '<div class="annotator-outer annotator-viewer annotator-hide">',
-    '  <ul class="annotator-widget annotator-listing"></ul>',
+    '  <ul class="annotator-widgetview annotator-listing"></ul>',
     '</div>'
 ].join('\n');
 
@@ -458,12 +494,15 @@ Viewer.itemTemplate = [
     '    <a href="#"',
     '       title="' + _t('View as webpage') + '"',
     '       class="annotator-link">' + _t('View as webpage') + '</a>',
-    '    <button type="button"',
+    '    <button style="display:none" type="button"',
     '            title="' + _t('Edit') + '"',
     '            class="annotator-edit">' + _t('Edit') + '</button>',
     '    <button type="button"',
     '            title="' + _t('Delete') + '"',
-    '            class="annotator-delete">' + _t('Delete') + '</button>',
+    '            class="annotator-delete">' + _t('Delete') + '</button> &nbsp;&nbsp;',
+    '    <button type="button"',
+    '            title="' + _t('Cancel') + '"',
+    '            class="annotator-cancel">' + _t('Cancel') + '</button>',
     '  </span>',
     '</li>'
 ].join('\n');

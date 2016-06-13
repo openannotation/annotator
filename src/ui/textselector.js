@@ -1,6 +1,6 @@
 "use strict";
 
-var xpathRange = require('xpath-range');
+var Range = require('xpath-range').Range;
 
 var util = require('../util');
 
@@ -32,7 +32,9 @@ function TextSelector(element, options) {
         var self = this;
         this.document = this.element.ownerDocument;
 
-        $(this.document.body)
+        // enable text selection only on context within configured element
+        // $(this.document.body)
+        $(element)
             .on("mouseup." + TEXTSELECTOR_NS, function (e) {
                 self._checkForEndSelection(e);
             });
@@ -67,7 +69,7 @@ TextSelector.prototype.captureDocumentSelection = function () {
 
     for (i = 0; i < selection.rangeCount; i++) {
         var r = selection.getRangeAt(i),
-            browserRange = new xpathRange.Range.BrowserRange(r),
+            browserRange = new Range.BrowserRange(r),
             normedRange = browserRange.normalize().limit(this.element);
 
         // If the new range falls fully outside our this.element, we should
@@ -130,6 +132,9 @@ TextSelector.prototype._checkForEndSelection = function (event) {
         if ($(container).hasClass('annotator-hl')) {
             container = $(container).parents('[class!=annotator-hl]')[0];
         }
+        // if ($(container).hasClass('annotator-ddi')) {
+        //     container = $(container).parents('[class!=annotator-ddi]')[0];
+        // }
         if (isAnnotator(container)) {
             _nullSelection();
             return;

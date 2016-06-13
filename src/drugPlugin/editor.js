@@ -1,6 +1,6 @@
 "use strict";
 
-var Widget = require('./widget').Widget,
+var Widget = require('./../ui/widget').Widget,
     util = require('../util');
 
 var $ = util.$;
@@ -229,18 +229,36 @@ var Editor = exports.Editor = Widget.extend({
         this.fields = [];
         this.annotation = {};
 
-        if (this.options.defaultFields) {
-            this.addField({
-                type: 'textarea',
-                label: _t('Comments') + '\u2026',
-                load: function (field, annotation) {
-                    $(field).find('textarea').val(annotation.text || '');
-                },
-                submit: function (field, annotation) {
-                    annotation.text = $(field).find('textarea').val();
-                }
-            });
-        }
+
+        // if (this.options.defaultFields) {
+        //     this.addField({
+        //         type: 'textarea',
+        //         label: _t('Comments') + '\u2026',
+        //         load: function (field, annotation) {
+        //             $(field).find('#annotator-field-0').val(annotation.text || '');
+        //         },
+        //         submit: function (field, annotation) {
+        //             annotation.text = $(field).find('#annotator-field-0').val();
+
+        //     if (annotation.text == '') {
+        // 	annotation.text = $(field).find('textarea').val()
+        //     }
+        //         }
+        //     });
+
+        // }
+
+        this.addField({
+            label: _t('Annotation type') + '\u2026' + _t('DrugMention'),
+            type: 'div',
+            id: 'annotationType',
+            load: function (field, annotation) {
+                //$(field).find('#annotationType').val(annotation.annotationType || '');
+            },
+            submit: function (field, annotation){
+                annotation.annotationType = _t('DrugMention');
+            }
+        });
 
         var self = this;
 
@@ -425,7 +443,12 @@ var Editor = exports.Editor = Widget.extend({
             input = $('<input />');
         } else if (field.type === 'select') {
             input = $('<select />');
+        } else if (field.type === 'div') {
+            input = $('<div value="source" />');
+        } else if (field.type === 'radio') {
+            input = $('<input type="radio" name="'+field.name+'"/>');
         }
+
 
         element.append(input);
 
@@ -434,12 +457,19 @@ var Editor = exports.Editor = Widget.extend({
             placeholder: field.label
         });
 
-        if (field.type === 'checkbox') {
-            element.addClass('annotator-checkbox');
-            element.append($('<label />', {
-                'for': field.id,
-                'html': field.label
-            }));
+        // if (field.type === 'checkbox') {
+        //     element.addClass('annotator-checkbox');
+        //     element.append($('<label />', {
+        //         'for': field.id,
+        //         'html': field.label
+        //     }));
+        // }
+
+        if (field.type === 'div') {
+            input.attr({
+
+                html: field.label
+            });
         }
 
         this.element.find('ul:first').append(element);
@@ -581,7 +611,8 @@ Editor.template = [
 // Configuration options
 Editor.options = {
     // Add the default field(s) to the editor.
-    defaultFields: true
+    defaultFields: true,
+    appendTo: '.secondsection'
 };
 
 // standalone is a module that uses the Editor to display an editor widget

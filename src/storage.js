@@ -16,7 +16,8 @@ var id = (function () {
         return counter += 1;
     };
 }());
-
+// var tempquery;
+// var anns;
 
 /**
  * function:: debug()
@@ -195,6 +196,9 @@ HttpStorage.prototype.create = function (annotation) {
  * :rtype: Promise
  */
 HttpStorage.prototype.update = function (annotation) {
+
+    console.log("[INFO] storage - update!");    
+
     return this._apiRequest('update', annotation);
 };
 
@@ -213,6 +217,9 @@ HttpStorage.prototype.update = function (annotation) {
  * :rtype: Promise
  */
 HttpStorage.prototype['delete'] = function (annotation) {
+
+    console.log("[INFO] storage - delete!")
+
     return this._apiRequest('destroy', annotation);
 };
 
@@ -227,10 +234,14 @@ HttpStorage.prototype['delete'] = function (annotation) {
  * :rtype: Promise
  */
 HttpStorage.prototype.query = function (queryObj) {
+    //console.log("storage - query : " + JSON.stringify(queryObj));
     return this._apiRequest('search', queryObj)
     .then(function (obj) {
         var rows = obj.rows;
         delete obj.rows;
+	
+	//console.log("[DEBUG] storage.js - query results:" + JSON.stringify(rows));
+	
         return {results: rows, meta: obj};
     });
 };
@@ -262,6 +273,9 @@ HttpStorage.prototype.setHeader = function (key, value) {
  * :rtype: jqXHR
  */
 HttpStorage.prototype._apiRequest = function (action, obj) {
+
+    //console.log("storage.js - apiRequest - obj:" + JSON.stringify(obj));
+    
     var id = obj && obj.id;
     var url = this._urlFor(action, id);
     var options = this._apiRequestOptions(action, obj);
@@ -342,6 +356,8 @@ HttpStorage.prototype._urlFor = function (action, id) {
     if (typeof id === 'undefined' || id === null) {
         id = '';
     }
+
+    //console.log('storage - urlFor - this:' + JSON.stringify(this.options));
 
     var url = '';
     if (typeof this.options.prefix !== 'undefined' &&
@@ -568,6 +584,9 @@ StorageAdapter.prototype.create = function (obj) {
  * :returns Promise: Resolves to annotation object when stored.
  */
 StorageAdapter.prototype.update = function (obj) {
+
+    console.log("storage - StorageAdapter - update");
+
     if (typeof obj.id === 'undefined' || obj.id === null) {
         throw new TypeError("annotation must have an id for update()");
     }
@@ -595,6 +614,9 @@ StorageAdapter.prototype.update = function (obj) {
  * :returns Promise: Resolves to annotation object when deleted.
  */
 StorageAdapter.prototype['delete'] = function (obj) {
+
+    console.log("storage - StorageAdapter - delete");
+
     if (typeof obj.id === 'undefined' || obj.id === null) {
         throw new TypeError("annotation must have an id for delete()");
     }
@@ -632,11 +654,15 @@ StorageAdapter.prototype.query = function (query) {
  *
  * :returns Promise: Resolves when loading is complete.
  */
+
 StorageAdapter.prototype.load = function (query) {
     var self = this;
+
+    // tempquery = query;
     return this.query(query)
         .then(function (data) {
             self.runHook('annotationsLoaded', [data.results]);
+	    //anns = data.results;
         });
 };
 
@@ -650,7 +676,15 @@ StorageAdapter.prototype._cycle = function (
 ) {
     var self = this;
     return this.runHook(beforeEvent, [obj])
+    
+    // return this.runHook(beforeEvent, [obj,anns])
+    
+    // return this.query(tempquery)
+    //     .then(function (data) {
+    //         self.runHook(beforeEvent, [obj,data.results]);
+    //     })
         .then(function () {
+            //console.log("storage - StorageAdapter - _cycle - safeCopy");
             var safeCopy = $.extend(true, {}, obj);
             delete safeCopy._local;
 
