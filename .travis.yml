@@ -27,10 +27,3 @@ script:
 cache:
   directories:
   - node_modules
-notifications:
-  email: false
-  irc:
-    channels:
-    - chat.freenode.net#annotator
-    on_success: change
-    on_failure: change

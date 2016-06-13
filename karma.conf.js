@@ -24,10 +24,7 @@ module.exports = function (karma) {
         },
 
         browserify: {
-            debug: true,
-            configure: function (bundle) {
-              bundle.require('.', {expose: 'annotator'});
-            }
+            debug: true
         },
 
         browsers: ['PhantomJS'],

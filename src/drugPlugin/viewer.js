@@ -1,4 +1,3 @@
-/* global window */
 "use strict";
 
 var Widget = require('./../ui/widget').Widget,
@@ -367,13 +366,11 @@ var Viewer = exports.Viewer = Widget.extend({
     //
     // Returns nothing.
     _onDeleteClick: function (event) {
-        if (window.confirm(_t('Delete this annotation?'))) {
-            var item = $(event.target)
-                .parents('.annotator-annotation')
-                .data('annotation');
-            this.hide();
-            this.options.onDelete(item);
-        }
+        var item = $(event.target)
+            .parents('.annotator-annotation')
+            .data('annotation');
+        this.hide();
+        this.options.onDelete(item);
     },
     // Event callback: called when the cancel button is clicked.
     //

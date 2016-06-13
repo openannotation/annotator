@@ -196,8 +196,7 @@ describe('ui.viewer.Viewer', function () {
     });
 
     describe('when the permitDelete function returns true', function () {
-        var onDelete = null,
-            sandbox = null;
+        var onDelete = null;
 
         beforeEach(function () {
             onDelete = sinon.stub();
@@ -206,11 +205,9 @@ describe('ui.viewer.Viewer', function () {
                 onDelete: onDelete
             });
             v.attach();
-            sandbox = sinon.sandbox.create();
         });
 
         afterEach(function () {
-            sandbox.restore();
             v.destroy();
         });
 
@@ -230,24 +227,13 @@ describe('ui.viewer.Viewer', function () {
             assert.property(callArgs[2], 'hideDelete');
         });
 
-        it('clicking on the delete button and confirming should trigger an annotation delete', function () {
+        it('clicking on the delete button should trigger an annotation delete', function () {
             var ann = {
                 text: "Rabbits with cloaks"
             };
             v.load([ann]);
-            sandbox.stub(window, 'confirm').returns(true);
             v.element.find('.annotator-delete').click();
             sinon.assert.calledWith(onDelete, ann);
-        });
-
-        it('clicking on the delete button without confirming shouldn\'t trigger an annotation delete', function () {
-            var ann = {
-                text: "Rabbits with cloaks"
-            };
-            v.load([ann]);
-            sandbox.stub(window, 'confirm').returns(false);
-            v.element.find('.annotator-delete').click();
-            sinon.assert.neverCalledWith(onDelete, ann);
         });
     });
 

@@ -1,5 +1,4 @@
 {
-    "es3": true,
     "excludeFiles": [
         "node_modules/**",
         "lib/**",

@@ -1,6 +1,6 @@
 "use strict";
 
-var xpathRange = require('xpath-range');
+var Range = require('xpath-range').Range;
 
 var util = require('../util');
 
@@ -49,9 +49,9 @@ function highlightRange(normedRange, cssClass) {
 // for those ranges which are not reanchorable in the current document.
 function reanchorRange(range, rootElement) {
     try {
-        return xpathRange.Range.sniff(range).normalize(rootElement);
+        return Range.sniff(range).normalize(rootElement);
     } catch (e) {
-        if (!(e instanceof xpathRange.Range.RangeError)) {
+        if (!(e instanceof Range.RangeError)) {
             // Oh Javascript, why you so crap? This will lose the traceback.
             throw(e);
         }
