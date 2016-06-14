@@ -88,7 +88,7 @@ function highlightOA(annotation, cssClass, storage){
 
                     isFixed = true;
                     var path = xpath.fromNode($(node), $(document))[0];
-                    path = path.replace("/html[1]/body[1]","");
+                    path = path.replace("/html[1]/body[1]/article[1]/div[5]/div[1]/div[1]","");
                     
                     if (annotation.argues.ranges[0].start != path)
                         annotation.argues.ranges[0].start = path;
