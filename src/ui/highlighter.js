@@ -48,6 +48,7 @@ function reanchorRange(range, rootElement) {
     try {
         return xpathRange.Range.sniff(range).normalize(rootElement);
     } catch (e) {
+    	console.error(e);
         if (!(e instanceof xpathRange.Range.RangeError)) {
             // Oh Javascript, why you so crap? This will lose the traceback.
             throw(e);
