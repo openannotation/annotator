@@ -85,8 +85,28 @@ Highlighter.prototype.destroy = function () {
 //
 // annotations - An Array of annotation Objects for which to draw highlights.
 //
-// Returns nothing.
-Highlighter.prototype.drawAll = function (annotations) {
+// Returns a Promise.
+Highlighter.prototype.drawAll = function(annotations) {
+  return this.forAll(annotations, this.draw);
+};
+
+// Public: Draw highlights for all the given annotations
+//
+// annotations - An Array of annotation Objects for which to draw highlights.
+//
+// Returns a Promise.
+Highlighter.prototype.undrawAll = function(annotations) {
+  return this.forAll(annotations, this.undraw);
+};
+
+// Public: Run a function on for all the given annotations
+//
+// annotations - An Array of annotation Objects for which to draw highlights.
+// fun - A callback function that receives the current Highlighter as `this`
+// and a single annotation object.
+//
+// Returns a Promise.
+Highlighter.prototype.forAll = function (annotations, fun) {
     var self = this;
 
     var p = new Promise(function (resolve) {
@@ -99,7 +119,7 @@ Highlighter.prototype.drawAll = function (annotations) {
 
             var now = annList.splice(0, self.options.chunkSize);
             for (var i = 0, len = now.length; i < len; i++) {
-                highlights = highlights.concat(self.draw(now[i]));
+                highlights = highlights.concat(fun.call(self, now[i]));
             }
 
             // If there are more to do, do them after a delay
