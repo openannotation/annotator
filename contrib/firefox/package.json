@@ -1,0 +1,9 @@
+{
+  "name": "annotateit",
+  "title": "Annotate It",
+  "id": "firefox@annotateit.org",
+  "description": "Web Annotation with AnnotatorJS.org & storage at AnnotateIt.org",
+  "author": "Benjamin Young <byoung@bigbluehat.com>",
+  "license": "MIT",
+  "version": "0.1.3"
+}
