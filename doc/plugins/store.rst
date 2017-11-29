@@ -151,6 +151,9 @@ Methods for actions are as follows:
     update:  PUT
     destroy: DELETE
     search:  GET
+    read: GET 
+    
+read is called by default, if ``loadFromSearch`` is not specified.
 
 Example:
 
