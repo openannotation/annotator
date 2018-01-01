@@ -411,15 +411,19 @@ class Annotator extends Delegator
   highlightRange: (normedRange, cssClass='annotator-hl') ->
     white = /^\s*$/
 
-    hl = $("<span class='#{cssClass}'></span>")
-
+    results = []
     # Ignore text nodes that contain only whitespace characters. This prevents
     # spans being injected between elements that can only contain a restricted
     # subset of nodes such as table rows and lists. This does mean that there
     # may be the odd abandoned whitespace node in a paragraph that is skipped
     # but better than breaking table layouts.
     for node in normedRange.textNodes() when not white.test(node.nodeValue)
-      $(node).wrapAll(hl).parent().show()[0]
+      hl = document.createElement('span')
+      hl.className = cssClass
+      node.parentNode.replaceChild(hl, node)
+      hl.appendChild(node)
+      results.push(hl)
+    return results
 
   # Public: highlight a list of ranges
   #
