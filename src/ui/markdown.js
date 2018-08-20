@@ -25,7 +25,7 @@ var render = exports.render = function render(annotation) {
     if (annotation.text) {
         return convert(annotation.text);
     } else {
-        return "<i>" + _t('No comment') + "</i>";
+        return "<i>" + _t('Sem comentário') + "</i>";
     }
 };
 

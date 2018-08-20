@@ -86,7 +86,7 @@ var Viewer = exports.Viewer = Widget.extend({
             if (annotation.text) {
                 return util.escapeHtml(annotation.text);
             } else {
-                return "<i>" + _t('No comment') + "</i>";
+                return "<i>" + _t('Sem comentário') + "</i>";
             }
         };
 
@@ -338,13 +338,13 @@ var Viewer = exports.Viewer = Widget.extend({
     //
     // Returns nothing.
     _onDeleteClick: function (event) {
-        if (window.confirm(_t('Delete this annotation?'))) {
+        //if (window.confirm(_t('Delete this annotation?'))) {
             var item = $(event.target)
                 .parents('.annotator-annotation')
                 .data('annotation');
             this.hide();
             this.options.onDelete(item);
-        }
+        //}
     },
 
     // Event callback: called when a user triggers `mouseover` on a highlight

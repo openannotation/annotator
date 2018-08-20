@@ -890,3 +890,15 @@
 .annotator-hl-filtered {
 	background-color: transparent;
 }
+
+.annotator-editor .annotator-item textarea, .annotator-editor .annotator-item select {
+	margin-bottom: 10px;
+}
+.annotator-editor .annotator-item select {
+	height: 25px;
+	padding: 5px;
+	margin: 0 5px 10px 5px;
+}
+.annotator-editor .annotator-item textarea {
+	resize: none;
+}

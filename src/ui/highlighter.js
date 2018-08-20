@@ -15,7 +15,7 @@ var Promise = util.Promise;
 // cssClass - A CSS class to use for the highlight (default: 'annotator-hl')
 //
 // Returns an array of highlight Elements.
-function highlightRange(normedRange, cssClass) {
+function highlightRange(normedRange, cssClass, categoryClass) {
     if (typeof cssClass === 'undefined' || cssClass === null) {
         cssClass = 'annotator-hl';
     }
@@ -32,6 +32,9 @@ function highlightRange(normedRange, cssClass) {
         var node = nodes[i];
         if (!white.test(node.nodeValue)) {
             var hl = global.document.createElement('span');
+            if ( categoryClass != undefined ) {
+                hl.style.backgroundColor = categoryClass;
+            }
             hl.className = cssClass;
             node.parentNode.replaceChild(hl, node);
             hl.appendChild(node);
@@ -147,9 +150,13 @@ Highlighter.prototype.draw = function (annotation) {
 
     for (var j = 0, jlen = normedRanges.length; j < jlen; j++) {
         var normed = normedRanges[j];
+        var bgColor = undefined;
+        if (annotation.category !== 'undefined' && annotation.category !== null ) {
+           bgColor = annotation.category.color;
+        }
         $.merge(
             annotation._local.highlights,
-            highlightRange(normed, this.options.highlightClass)
+            highlightRange(normed, this.options.highlightClass, bgColor)
         );
     }
 
