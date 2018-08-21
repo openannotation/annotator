@@ -459,11 +459,11 @@ Viewer.itemTemplate = [
     '       title="' + _t('View as webpage') + '"',
     '       class="annotator-link">' + _t('View as webpage') + '</a>',
     '    <button type="button"',
-    '            title="' + _t('Edit') + '"',
-    '            class="annotator-edit">' + _t('Edit') + '</button>',
+    '            title="' + _t('Editar') + '"',
+    '            class="annotator-edit">' + _t('Editar') + '</button>',
     '    <button type="button"',
-    '            title="' + _t('Delete') + '"',
-    '            class="annotator-delete">' + _t('Delete') + '</button>',
+    '            title="' + _t('Remover') + '"',
+    '            class="annotator-delete">' + _t('Remover') + '</button>',
     '  </span>',
     '</li>'
 ].join('\n');
