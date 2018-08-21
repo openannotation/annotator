@@ -232,7 +232,7 @@ var Editor = exports.Editor = Widget.extend({
         if (this.options.defaultFields) {
             this.addField({
                 type: 'textarea',
-                label: _t('Comments') + '\u2026',
+                label: _t('Comentário') + '\u2026',
                 load: function (field, annotation) {
                     $(field).find('textarea').val(annotation.text || '');
                 },
@@ -296,7 +296,7 @@ var Editor = exports.Editor = Widget.extend({
         // give main textarea focus
         this.element.find(":input:first").focus();
 
-        this._setupDraggables();
+       // this._setupDraggables();
     },
 
     // Public: Load an annotation into the editor and display it.
@@ -326,6 +326,7 @@ var Editor = exports.Editor = Widget.extend({
     //
     // Returns nothing.
     submit: function () {
+        
         for (var i = 0, len = this.fields.length; i < len; i++) {
             var field = this.fields[i];
             field.submit(field.element, this.annotation);
@@ -418,13 +419,13 @@ var Editor = exports.Editor = Widget.extend({
         field.element = element[0];
 
         if (field.type === 'textarea') {
-            input = $('<textarea />');
+            input = $('<textarea required />');
         } else if (field.type === 'checkbox') {
-            input = $('<input type="checkbox" />');
+            input = $('<input required type="checkbox" />');
         } else if (field.type === 'input') {
-            input = $('<input />');
+            input = $('<input required />');
         } else if (field.type === 'select') {
-            input = $('<select />');
+            input = $('<select required />');
         }
 
         element.append(input);
@@ -570,9 +571,9 @@ Editor.template = [
     '  <form class="annotator-widget">',
     '    <ul class="annotator-listing"></ul>',
     '    <div class="annotator-controls">',
-    '     <a href="#cancel" class="annotator-cancel">' + _t('Cancel') + '</a>',
+    '     <a href="#cancel" class="btn btn-danger annotator-cancel">' + _t('Cancelar') + '</a>',
     '      <a href="#save"',
-    '         class="annotator-save annotator-focus">' + _t('Save') + '</a>',
+    '         class="btn btn-primary annotator-save">' + _t('Salvar') + '</a>',
     '    </div>',
     '  </form>',
     '</div>'

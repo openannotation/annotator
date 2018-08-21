@@ -86,7 +86,7 @@ var Viewer = exports.Viewer = Widget.extend({
             if (annotation.text) {
                 return util.escapeHtml(annotation.text);
             } else {
-                return "<i>" + _t('No comment') + "</i>";
+                return "<i>" + _t('Sem comentário') + "</i>";
             }
         };
 
@@ -338,13 +338,13 @@ var Viewer = exports.Viewer = Widget.extend({
     //
     // Returns nothing.
     _onDeleteClick: function (event) {
-        if (window.confirm(_t('Delete this annotation?'))) {
+        //if (window.confirm(_t('Delete this annotation?'))) {
             var item = $(event.target)
                 .parents('.annotator-annotation')
                 .data('annotation');
             this.hide();
             this.options.onDelete(item);
-        }
+        //}
     },
 
     // Event callback: called when a user triggers `mouseover` on a highlight
@@ -459,11 +459,11 @@ Viewer.itemTemplate = [
     '       title="' + _t('View as webpage') + '"',
     '       class="annotator-link">' + _t('View as webpage') + '</a>',
     '    <button type="button"',
-    '            title="' + _t('Edit') + '"',
-    '            class="annotator-edit">' + _t('Edit') + '</button>',
+    '            title="' + _t('Editar') + '"',
+    '            class="annotator-edit">' + _t('Editar') + '</button>',
     '    <button type="button"',
-    '            title="' + _t('Delete') + '"',
-    '            class="annotator-delete">' + _t('Delete') + '</button>',
+    '            title="' + _t('Remover') + '"',
+    '            class="annotator-delete">' + _t('Remover') + '</button>',
     '  </span>',
     '</li>'
 ].join('\n');

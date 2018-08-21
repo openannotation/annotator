@@ -3,7 +3,8 @@
 
 .annotator-notice,
 .annotator-filter *,
-.annotator-widget * {
+.annotator-widget *, 
+a:not('.btn') {
 	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
 	font-weight: normal;
 	text-align: left;
@@ -31,9 +32,7 @@
 
 .annotator-resize,
 .annotator-widget:after,
-.annotator-editor a:after,
 .annotator-viewer .annotator-controls button,
-.annotator-viewer .annotator-controls a,
 .annotator-filter .annotator-filter-navigation button:after,
 .annotator-filter .annotator-filter-property .annotator-filter-clear {
 	background-image: url(../img/annotator-glyph-sprite.png?embed);
@@ -442,7 +441,6 @@
 	border-radius: 5px 5px 0 0;
 }
 
-.annotator-editor a,
 .annotator-filter .annotator-filter-property label {
 	position: relative;
 	display: inline-block;
@@ -501,21 +499,6 @@
 	border-radius: 5px;
 }
 
-.annotator-editor a:after {
-	position: absolute;
-	top: 50%;
-	left: 5px;
-	display: block;
-	content: "";
-	width: 15px;
-	height: 15px;
-	margin-top: -7px;
-	background-position: 0 -90px;
-}
-
-.annotator-editor a:hover,
-.annotator-editor a:focus,
-.annotator-editor a.annotator-focus,
 .annotator-filter .annotator-filter-active label,
 .annotator-filter .annotator-filter-navigation button:hover {
 	outline: none;
@@ -553,13 +536,6 @@
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.42);
 }
 
-.annotator-editor a:hover:after,
-.annotator-editor a:focus:after {
-	margin-top: -8px;
-	background-position: 0 -105px;
-}
-
-.annotator-editor a:active,
 .annotator-filter .annotator-filter-navigation button:active {
 	border-color: rgb(112, 12, 73);
 	background-color: rgb(209, 46, 142);
@@ -591,17 +567,6 @@
 	    rgb(209, 46, 142) 50%,
 	    rgb(255, 0, 156)
 	);
-}
-
-.annotator-editor a.annotator-save:after {
-	background-position: 0 -120px;
-}
-
-.annotator-editor a.annotator-save:hover:after,
-.annotator-editor a.annotator-save:focus:after,
-.annotator-editor a.annotator-save.annotator-focus:after {
-	margin-top: -8px;
-	background-position: 0 -135px;
 }
 
 .annotator-editor .annotator-widget:after {
@@ -889,4 +854,28 @@
 
 .annotator-hl-filtered {
 	background-color: transparent;
+}
+
+.annotator-editor .annotator-item textarea, .annotator-editor .annotator-item select {
+	margin-bottom: 10px;
+}
+.annotator-editor .annotator-item select {
+	height: 25px;
+	padding: 5px;
+	margin: 0 5px 10px 5px;
+}
+.annotator-editor .annotator-item textarea {
+	resize: none;
+}
+
+a.btn {
+	padding: 3px 6px;
+	font-size: 15px;
+	width: 70px;
+}
+a.btn[href="#cancel"] {
+	margin-right: 10px;
+}
+a.btn.focus, a.btn:focus {
+    box-shadow: unset !important;
 }

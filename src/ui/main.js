@@ -231,7 +231,9 @@ function main(options) {
                 app.annotations.create(ann);
             }
         });
-        s.adder.attach();
+        if (!app.is_read_only) {
+            s.adder.attach();
+        }
 
         s.editor = new editor.Editor({
             extensions: options.editorExtensions
@@ -266,10 +268,10 @@ function main(options) {
                 app.annotations['delete'](ann);
             },
             permitEdit: function (ann) {
-                return authz.permits('update', ann, ident.who());
+                return !app.is_read_only; //authz.permits('update', ann, ident.who());
             },
             permitDelete: function (ann) {
-                return authz.permits('delete', ann, ident.who());
+                return !app.is_read_only; //authz.permits('delete', ann, ident.who());
             },
             autoViewHighlights: options.element,
             extensions: options.viewerExtensions
