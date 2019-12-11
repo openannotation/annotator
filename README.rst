@@ -5,6 +5,8 @@ Annotator
 
 |Build Matrix|
 
+This project is no longer maintained here: it has moved to https://annotator.apache.org/ .
+
 Annotator is a JavaScript library for building annotation applications in
 browsers. It provides a set of interoperable tools for annotating content in
 webpages. For a simple demonstration, visit the `Annotator home page`_ or
