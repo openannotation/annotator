@@ -1,3 +1,4 @@
+# Change the format of End of Line char
 cd "$(dirname "$0")"
 
 DATE=$(date -u "+%Y-%m-%d %H:%M:%SZ")
