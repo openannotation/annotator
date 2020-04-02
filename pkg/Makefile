@@ -25,7 +25,14 @@ PLUGINS=\
 	plugin/permissions.coffee \
 	plugin/store.coffee \
 	plugin/tags.coffee \
-	plugin/unsupported.coffee
+	plugin/unsupported.coffee \
+	plugin/touch/touch.coffee \
+	plugin/touch/touch_editor.coffee \
+	plugin/touch/touch_utils.coffee \
+	plugin/touch/touch_viewer.coffee
+
+PLUGINS_RESOURCES=\
+	plugin/touch/annotator.touch.css
 
 ANNOTATOR_FULL=\
 	$(ANNOTATOR) \
@@ -37,7 +44,11 @@ ANNOTATOR_FULL=\
 	plugin/filter.coffee \
 	plugin/markdown.coffee \
 	plugin/tags.coffee \
-	plugin/kitchensink.coffee
+	plugin/kitchensink.coffee \
+	plugin/touch/touch.coffee \
+	plugin/touch/touch_editor.coffee \
+	plugin/touch/touch_utils.coffee \
+	plugin/touch/touch_viewer.coffee
 
 BOOKMARKLET=\
 	$(ANNOTATOR) \
@@ -51,13 +62,17 @@ BOOKMARKLET=\
 BOOKMARKLET_CFG=../contrib/bookmarklet/config.json
 BOOKMARKLET_SRC=../contrib/bookmarklet/src/bookmarklet.js
 
-all: annotator plugins annotator-full bookmarklet
+all: annotator plugins plugins-resources annotator-full bookmarklet
 
 annotator: annotator.min.js annotator.min.css
 
 PLUGIN_NAMES=$(notdir $(PLUGINS))
 plugins: $(addprefix annotator.,$(PLUGIN_NAMES:.coffee=.min.js))
 
+plugins-resources:
+	@echo "Plugin resource:" ../src/$(PLUGINS_RESOURCES)
+	@cp ../src/$(PLUGINS_RESOURCES) ../css/`echo $(PLUGINS_RESOURCES) | sed 's:.*/::'`
+	
 annotator-full: annotator-full.min.js
 
 _preamble.map:

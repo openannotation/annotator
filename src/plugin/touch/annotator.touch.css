@@ -1,0 +1,641 @@
+.annotator-viewer .annotator-touch-controls .annotator-edit::after {
+	/* Assign the image once to ensure data uri is not repeated. */
+	background-image: url(../images/icon-sprite.png);
+}
+
+.annotator-selection-handle::after {
+	background-image: url(../images/handle.png);
+}
+
+.annotator-button::after {
+	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAEiCAYAAAD0w4JOAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RkREQjU5NUUzRTREMTFFMUJCQThENjQ1NDg5Q0U3NUYiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RkREQjU5NUYzRTREMTFFMUJCQThENjQ1NDg5Q0U3NUYiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpDMkY4NEM4QjNERkExMUUxQkJBOEQ2NDU0ODlDRTc1RiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpDMkY4NEM4QzNERkExMUUxQkJBOEQ2NDU0ODlDRTc1RiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PoUNah0AABE5SURBVHja7JwJWFXX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');
+}
+
+/* Generic Touch Widget Styles */
+.annotator-touch-widget {
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	border: 1px solid rgba(0, 0, 0, 0.8);
+	background: rgba(0, 0, 0, 0.85);
+	background: -webkit-gradient(
+		linear, left top, left bottom,
+		from(rgba(57, 57, 57, 0.85)),
+		color-stop(0.5, rgba(58, 58, 58, 0.85)),
+		color-stop(0.5, rgba(0, 0, 0, 0.85)),
+		to(rgba(0, 0, 0, 0.85))
+	);
+	background: -moz-linear-gradient(
+		-90deg,
+		from(rgba(57, 57, 57, 0.85)),
+		color-stop(0.5, rgba(58, 58, 58, 0.85)),
+		color-stop(0.5, rgba(0, 0, 0, 0.85)) 50%,
+		to(rgba(0, 0, 0, 0.85))
+	);
+	background: -webkit-linear-gradient(
+		-90deg,
+		from(rgba(57, 57, 57, 0.85)),
+		color-stop(0.5, rgba(58, 58, 58, 0.85)) 50%,
+		color-stop(0.5, rgba(0, 0, 0, 0.85)) 50%,
+		to(rgba(0, 0, 0, 0.85))
+	);
+	background: linear-gradient(
+		to bottom,
+		from(rgba(57, 57, 57, 0.85)),
+		color-stop(0.5, rgba(58, 58, 58, 0.85)) 50%,
+		color-stop(0.5, rgba(0, 0, 0, 0.85)) 50%,
+		to(rgba(0, 0, 0, 0.85))
+	);
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-ms-border-radius: 4px;
+	-o-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+	-moz-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+	-ms-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+	-o-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+	/* Removes the tap outline on elements that have bound touch events */
+	-webkit-tap-highlight-color: transparent;
+}
+
+.annotator-touch-widget-inner {
+	background: #efefef;
+	border: 1px solid rgba(0, 0, 0, 0.8);
+	margin: 7px;
+	padding: 6px;
+	line-height: 0;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-ms-border-radius: 3px;
+	-o-border-radius: 3px;
+	border-radius: 3px;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.8);
+	-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.8);
+	-ms-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.8);
+	-o-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.8);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.8);
+}
+
+.annotator-touch-widget .annotator-button {
+	cursor: pointer;
+	font-size: 16px;
+	line-height: 44px;
+	padding-left: 40px;
+	padding-right: 20px;
+	-webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+	-moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+	-ms-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+	-o-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+	box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+}
+
+.annotator-touch-widget .annotator-button[disabled] {
+	opacity: 0.3;
+	cursor: default;
+}
+
+.annotator-touch-widget .annotator-button::after {
+	left: 15px;
+}
+
+.annotator-touch-widget .annotator-add::after,
+.annotator-touch-widget .annotator-add:hover::after,
+.annotator-touch-widget .annotator-add:focus::after,
+.annotator-touch-widget .annotator-add.annotator-focus::after {
+	margin-top: -7px;
+	background-position: 0 -270px;
+}
+
+/* Adder Styles */
+
+.annotator-touch-controls {
+	position: fixed;
+	bottom: 15px;
+	right: 15px;
+	min-width: auto;
+}
+
+.annotator-touch-controls.annotator-touch-hide {
+	right: -9999em;
+	opacity: 0;
+	-webkit-transition: opacity 0.2s 0 ease-in, right 0s 0.3s linear;
+	-moz-transition: opacity 0.2s 0 ease-in, right 0s 0.3s linear;
+	-ms-transition: opacity 0.2s 0 ease-in, right 0s 0.3s linear;
+	-o-transition: opacity 0.2s 0 ease-in, right 0s 0.3s linear;
+	transition: opacity 0.2s 0 ease-in, right 0s 0.3s linear;
+}
+
+.annotator-touch-controls .annotator-button {
+	line-height: 56px;
+}
+
+/* Viewer Overrides*/
+
+.annotator-touch-viewer .annotator-widget {
+	min-width: 380px;
+}
+
+.annotator-touch-viewer div {
+	padding: 12px;
+}
+
+.annotator-touch-viewer div:first-of-type {
+	font-size: 18px;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+.annotator-touch-viewer .annotator-touch-controls {
+	position: absolute;
+	top: 0;
+	left: auto;
+	right: 0;
+	display: none;
+	background: rgba(255, 255, 255, 0.6);
+	background: -webkit-gradient(
+		linear, right top, left top,
+		from(rgba(255, 255, 255, 0.8)),
+		color-stop(0.9, rgba(255, 255, 255, 0.8)),
+		to(rgba(255, 255, 255, 0))
+	);
+	background: -moz-linear-gradient(
+		0deg,
+		from(rgba(255, 255, 255, 0.8)) 90%,
+		to(rgba(255, 255, 255, 0))
+	);
+	background: -webkit-linear-gradient(
+		0deg,
+		from(rgba(255, 255, 255, 0.8)) 90%,
+		to(rgba(255, 255, 255, 0))
+	);
+	background: linear-gradient(
+		to bottom,
+		from(rgba(255, 255, 255, 0.8)) 90%,
+		to(rgba(255, 255, 255, 0))
+	);
+	-webkit-box-pack: end;
+	-webkit-box-align: center;
+	-webkit-box-orient: horizontal;
+	-moz-box-pack: end;
+	-moz-box-align: center;
+	-moz-box-orient: horizontal;
+	box-pack: end;
+	box-align: center;
+	box-orient: horizontal;
+	padding: 10px;
+	bottom: 0;
+	padding: 0 10px 0 20px;
+}
+
+.annotator-touch-viewer li.annotator-visible .annotator-touch-controls {
+	display: -webkit-box;
+	display: -moz-box;
+	display: box;
+}
+
+.annotator-touch-viewer .annotator-touch-controls button {
+	line-height: 44px;
+	padding-left: 40px;
+	padding-right: 20px;
+	margin-left: 6px;
+}
+
+.annotator-touch-viewer .annotator-touch-controls .annotator-edit::after {
+	background-position: 0 -15px;
+}
+
+.annotator-touch-viewer .annotator-touch-controls .annotator-edit:hover::after,
+.annotator-touch-viewer .annotator-touch-controls .annotator-edit:focus::after,
+.annotator-touch-viewer .annotator-touch-controls .annotator-edit:active::after,
+.annotator-touch-viewer .annotator-touch-controls .annotator-edit.annotator-focus::after {
+	background-position: 0 -30px;
+}
+
+.annotator-touch-viewer .annotator-touch-controls button::after {
+	left: 15px;
+}
+
+/* Editor Overrides */
+
+.annotator-touch-editor {
+	position: fixed;
+	top: -1000px !important;
+	left: 0 !important;
+	right: 0;
+	bottom: -1000px;
+	padding: 1000px 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(255, 255, 255, 0.6);
+	display: -webkit-box;
+	display: -moz-box;
+	display: box;
+	-webkit-box-pack: center;
+	-webkit-box-align: center;
+	-moz-box-pack: center;
+	-moz-box-align: center;
+	box-pack: center;
+	box-align: center;
+}
+
+.annotator-touch-editor .annotator-touch-widget {
+	pointer-events: all;
+	position: relative;
+	width: 80%;
+	max-width: 680px;
+}
+
+.annotator-touch-editor .annotator-touch-widget-inner {
+	position: static;
+	width: auto;
+	padding: 0;
+	background: #fff;
+}
+
+.annotator-touch-editor .annotator-widget::after {
+	display: none;
+}
+
+.annotator-touch-editor .annotator-widget .annotator-item {
+	border-top-color: rgba(0, 0, 0, 0.15);
+}
+
+.annotator-touch-editor .annotator-widget .annotator-item,
+.annotator-touch-editor.annotator-editor .annotator-item label,
+.annotator-touch-editor.annotator-editor .annotator-item input,
+.annotator-touch-editor.annotator-editor .annotator-item textarea {
+	font-size: 18px;
+}
+
+.annotator-touch-editor.annotator-editor .annotator-item input,
+.annotator-touch-editor.annotator-editor .annotator-item label {
+	line-height: 30px;
+	margin-left: 8px;
+}
+
+.annotator-touch-editor.annotator-editor .annotator-item input[checkbox] {
+	font-size: large;
+}
+
+.annotator-touch-editor .annotator-widget .annotator-item:first-child textarea {
+	font-size: 18px;
+	background-color: #fff;
+	-webkit-border-radius: 3px 3px 0 0;
+	-moz-border-radius: 3px 3px 0 0;
+	-o-border-radius: 3px 3px 0 0;
+	border-radius: 3px 3px 0 0;
+}
+
+.annotator-touch-editor .annotator-resize {
+	display: none;
+}
+
+.annotator-touch-editor .annotator-controls {
+	padding: 7px;
+	background-color: #efefef;
+	background-image: none;
+}
+
+.annotator-touch-editor .annotator-item-quote {
+	font-size: 16px;
+	line-height: 1.2;
+	border-color: #cebfa2;
+	background-color: #fbfae9;
+	color: #a58129;
+	padding: 10px 7px;
+}
+
+.annotator-item-quote span {
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: #a58129;
+	font-family: Georgia, serif;
+}
+
+.annotator-item-quote.annotator-touch-expand span {
+	overflow: visible;
+	text-overflow: inherit;
+	white-space: inherit;
+}
+
+.annotator-item-quote button {
+	font-size: 14px;
+	line-height: 44px;
+	margin-top: -13px;
+	float: right;
+	text-transform: uppercase;
+	font-weight: bold;
+	color: #a58129;
+	border: none;
+	background: none;
+	margin-left: 10px;
+	cursor: pointer;
+}
+
+.annotator-button::after {
+	background-repeat: no-repeat;
+}
+
+.annotator-button {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+	position: relative;
+	display: inline-block;
+	padding: 0 6px 0 22px;
+	color: rgb(54, 54, 54);
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
+	text-decoration: none;
+	line-height: 24px;
+	font-size: 12px;
+	font-weight: bold;
+	border: 1px solid rgb(162, 162, 162);
+	background-color: rgb(212, 212, 212);
+	background-image: -webkit-gradient(
+		linear, left top, left bottom,
+		from(rgb(245, 245, 245)),
+		color-stop(0.5, rgb(210, 210, 210)),
+		color-stop(0.5, rgb(190, 190, 190)),
+		to(rgb(210, 210, 210))
+	);
+	background-image: -moz-linear-gradient(
+	    -90deg,
+	    rgb(245, 245, 245),
+	    rgb(210, 210, 210) 50%,
+	    rgb(190, 190, 190) 50%,
+	    rgb(210, 210, 210)
+	);
+	background-image: -webkit-linear-gradient(
+	    -90deg,
+	    rgb(245, 245, 245),
+	    rgb(210, 210, 210) 50%,
+	    rgb(190, 190, 190) 50%,
+	    rgb(210, 210, 210)
+	);
+	background-image: linear-gradient(
+	    to bottom,
+	    rgb(245, 245, 245),
+	    rgb(210, 210, 210) 50%,
+	    rgb(190, 190, 190) 50%,
+	    rgb(210, 210, 210)
+	);
+	-webkit-box-shadow:
+		inset 0 0 5px rgba(255, 255, 255, 0.2),
+		inset 0 0 1px rgba(255, 255, 255, 0.8);
+	-moz-box-shadow:
+		inset 0 0 5px rgba(255, 255, 255, 0.2),
+		inset 0 0 1px rgba(255, 255, 255, 0.8);
+	-o-box-shadow:
+		inset 0 0 5px rgba(255, 255, 255, 0.2),
+		inset 0 0 1px rgba(255, 255, 255, 0.8);
+	box-shadow:
+		inset 0 0 5px rgba(255, 255, 255, 0.2),
+		inset 0 0 1px rgba(255, 255, 255, 0.8);
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-o-border-radius: 5px;
+	border-radius: 5px;
+}
+
+.annotator-button::after {
+	position: absolute;
+	top: 50%;
+	left: 5px;
+	display: block;
+	content: "";
+	width: 15px;
+	height: 15px;
+	margin-top: -7px;
+	background-position: 0 -90px;
+}
+
+.annotator-button:hover,
+.annotator-button:focus,
+.annotator-button.annotator-focus {
+	outline: none;
+	border-color: rgb(67, 90, 160);
+	background-color: rgb(56, 101, 249);
+	background-image: -webkit-gradient(
+		linear, left top, left bottom,
+		from(rgb(118, 145, 251)),
+		color-stop(0.5, rgb(80, 117, 251)),
+		color-stop(0.5, rgb(56, 101, 249)),
+		to(rgb(54, 101, 250))
+	);
+	background-image: -moz-linear-gradient(
+	    -90deg,
+	    rgb(118, 145, 251),
+	    rgb(80, 117, 251) 50%,
+	    rgb(56, 101, 249) 50%,
+	    rgb(54, 101, 250)
+	);
+	background-image: -webkit-linear-gradient(
+	    -90deg,
+	    rgb(118, 145, 251),
+	    rgb(80, 117, 251) 50%,
+	    rgb(56, 101, 249) 50%,
+	    rgb(54, 101, 250)
+	);
+	background-image: linear-gradient(
+	    to bottom,
+	    rgb(118, 145, 251),
+	    rgb(80, 117, 251) 50%,
+	    rgb(56, 101, 249) 50%,
+	    rgb(54, 101, 250)
+	);
+	color: rgb(255, 255, 255);
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.42);
+}
+
+.annotator-button:hover::after,
+.annotator-button:focus::after {
+	margin-top: -8px;
+	background-position: 0 -105px;
+}
+
+.annotator-button:active {
+	border-color: rgb(112, 12, 73);
+	background-color: rgb(209, 46, 142);
+	background-image: -webkit-gradient(
+		linear, left top, left bottom,
+		from(rgb(252, 124, 202)),
+		color-stop(0.5, rgb(232, 93, 178)),
+		color-stop(0.5, rgb(209, 46, 142)),
+		to(rgb(255, 0, 156))
+	);
+	background-image: -moz-linear-gradient(
+	    -90deg,
+	    rgb(252, 124, 202),
+	    rgb(232, 93, 178) 50%,
+	    rgb(209, 46, 142) 50%,
+	    rgb(255, 0, 156)
+	);
+	background-image: -webkit-linear-gradient(
+	    -90deg,
+	    rgb(252, 124, 202),
+	    rgb(232, 93, 178) 50%,
+	    rgb(209, 46, 142) 50%,
+	    rgb(255, 0, 156)
+	);
+	background-image: linear-gradient(
+	    to bottom,
+	    rgb(252, 124, 202),
+	    rgb(232, 93, 178) 50%,
+	    rgb(209, 46, 142) 50%,
+	    rgb(255, 0, 156)
+	);
+}
+
+.annotator-button.annotator-save::after {
+	background-position: 0 -120px;
+}
+
+.annotator-button.annotator-save::after,
+.annotator-button.annotator-save:focus::after,
+.annotator-button.annotator-save.annotator-focus::after {
+	margin-top: -8px;
+	background-position: 0 -135px;
+}
+
+/* Icon only button styles */
+
+[data-annotator-use-icons] .annotator-touch-widget .annotator-button {
+	/* width & overflow is required by Android WebKit */
+	width: 1px;
+	overflow: hidden;
+	text-indent: -999em;
+	padding-left: 25px;
+}
+
+[data-annotator-use-icons] .annotator-touch-controls .annotator-button {
+	padding-left: 35px;
+}
+
+[data-annotator-use-icons] .annotator-touch-controls .annotator-button::after {
+	left: 20px;
+}
+
+[data-annotator-use-icons] .annotator-touch-viewer .annotator-touch-controls button {
+	padding-left: 25px;
+	text-indent: -9000em;
+}
+
+[data-annotator-use-icons] .annotator-touch-viewer .annotator-touch-controls button::after {
+	left: 15px;
+}
+
+[data-annotator-use-icons] .annotator-touch-viewer .annotator-widget {
+	min-width: 320px;
+}
+
+/* Highlighter Selection Styles */
+
+.annotator-selection-handle {
+	cursor: pointer;
+	display: block;
+	position: absolute;
+	width: 44px;
+	height: 44px;
+	top: 0;
+	left: 0;
+	padding: 0;
+	margin-left: -22px;
+	margin-top: -22px;
+	border-radius: 50%;
+	/* Removes the tap outline on elements that have bound touch events */
+	-webkit-tap-highlight-color: transparent;
+}
+
+.annotator-selection-handle::after {
+	content: "";
+	display: block;
+	width: 20px;
+	height: 20px;
+	position: absolute;
+	left: 50%;
+	margin-left: -10px;
+	bottom: -5px;
+	background-position: 0 0;
+	background-repeat: no-repeat;
+}
+
+.annotator-selection-start::after {
+  top: -5px;
+  bottom: auto;
+  background-position: 0 -20px;
+}
+
+.annotator-selection-hide .annotator-selection-handle {
+  display: none;
+}
+
+/* Styles for smaller screens */
+
+@media only screen and (max-width: 480px) {
+	.annotator-touch-viewer {
+		left: 0 !important;
+		width: 100%;
+		background: none;
+		min-width: 0;
+		border: none;
+	}
+
+	.annotator-touch-viewer .annotator-widget {
+		position: static;
+		left: 0;
+		width: 100%;
+		height: auto;
+		min-width: 0;
+		-webkit-box-sizing: border-box;
+		-webkit-border-radius: none;
+		border-radius: none;
+	}
+
+	.annotator-touch-viewer .annotator-widget::after {
+		display: none;
+	}
+
+	.annotator-touch-editor {
+		border: none;
+		-webkit-box-align: start;
+		-moz-box-align: start;
+		box-align: start;
+	}
+
+	.annotator-touch-editor .annotator-touch-widget {
+		width: 100%;
+		max-width: auto;
+		margin: 0;
+		border-color: #333;
+		border-left: none;
+		border-right: none;
+		-webkit-box-shadow: none;
+		-moz-box-shadow: none;
+		-ms-box-shadow: none;
+		-o-box-shadow: none;
+		box-shadow: none;
+	}
+
+	.annotator-touch-editor .annotator-touch-widget-inner {
+		width: 100%;
+		max-width: auto;
+		margin: 0;
+		border: 0;
+	}
+
+	.annotator-touch-editor .annotator-controls {
+		border-bottom: 1px solid #D4D4D4;
+	}
+
+	.annotator-touch-editor .annotator-touch-widget,
+	.annotator-touch-editor .annotator-touch-widget-inner,
+	.annotator-touch-editor .annotator-touch-widget .annotator-item:first-child textarea,
+	.annotator-touch-editor .annotator-controls {
+		border-radius: 0;
+	}
+}
