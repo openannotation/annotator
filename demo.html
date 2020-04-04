@@ -35,6 +35,9 @@
     <!-- The Tags plugin. Edit and display tag keywords on annotations -->
     <script src="pkg/annotator.tags.min.js"></script>
 
+    <!-- The Filter plugin. -->
+    <script src="pkg/annotator.filter.min.js"></script>
+
     <!-- The Markdown plugin. Treat annotation text as Markdown -->
     <script src="lib/vendor/showdown.js"></script>
     <script src="pkg/annotator.markdown.min.js"></script>
@@ -94,6 +97,26 @@
                        .annotator('addPlugin', 'Permissions')
                        .annotator('addPlugin', 'Markdown')
                        .annotator('addPlugin', 'Tags')
+					   .annotator('addPlugin', 'Filter', {
+						  filters: [
+							{
+							  label: 'Tag',
+							  property: 'tags',
+							  isFiltered: function (input, tags) {
+								if (input && tags && tags.length) {
+								  var keywords = input.split(/\s+/g);
+								  for (var i = 0; i < keywords.length; i += 1) {
+									for (var j = 0; j < tags.length; j += 1) {
+									  if (tags[j].indexOf(keywords[i]) !== -1) {
+										return true;
+									  }
+									}
+								  }
+								}
+								return false;
+							}}
+						  ]
+						})
 					   .annotator('addPlugin', 'Touch', {
 						force: location.search.indexOf('force') > -1,
 						useHighlighter: location.search.indexOf('highlighter') > -1
