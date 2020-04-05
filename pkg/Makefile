@@ -36,6 +36,9 @@ PLUGINS=\
 PLUGINS_RESOURCES=\
 	plugin/annotator.touch.css
 
+PLUGINS_JAVASCRIPT=\
+	plugin/richText
+	
 ANNOTATOR_FULL=\
 	$(ANNOTATOR) \
 	plugin/unsupported.coffee \
@@ -66,7 +69,7 @@ BOOKMARKLET=\
 BOOKMARKLET_CFG=../contrib/bookmarklet/config.json
 BOOKMARKLET_SRC=../contrib/bookmarklet/src/bookmarklet.js
 
-all: annotator plugins plugins-resources annotator-full bookmarklet
+all: annotator plugins plugins-resources plugins_javascript annotator-full bookmarklet
 
 annotator: annotator.min.js annotator.min.css
 
@@ -76,7 +79,11 @@ plugins: $(addprefix annotator.,$(PLUGIN_NAMES:.coffee=.min.js))
 plugins-resources:
 	@echo "Plugin resource:" ../src/$(PLUGINS_RESOURCES)
 	@cp ../src/$(PLUGINS_RESOURCES) ../css/`echo $(PLUGINS_RESOURCES) | sed 's:.*/::'`
-	
+
+plugins_javascript:
+	@mkdir -p $(PLUGINS_JAVASCRIPT)
+	@cp -r ../src/$(PLUGINS_JAVASCRIPT) plugin
+
 annotator-full: annotator-full.min.js
 
 _preamble.map:

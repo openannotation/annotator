@@ -52,6 +52,11 @@
 	<!-- The Elasticsearch plugin. -->
     <script src="pkg/annotator.elasticsearch.js"></script>
     <script src="pkg/annotator.elasticsearch_store.js"></script>
+	
+	<!-- The RichText plugin. -->
+    <script src="pkg/plugin/richText/richText-annotator.js"></script>
+	<script src="pkg/plugin/richText/tinymce/tinymce.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="pkg/plugin/richText/richText-annotator.css">
 
   </head>
 
@@ -136,6 +141,16 @@
 						  },
 						  url: "http://localhost:9200",
 						  index: "annotation"
+						})
+						.annotator('addPlugin','RichText',{
+							tinymce:{
+								selector: "li.annotator-item textarea",
+								plugins: "media image insertdatetime link code",
+								menubar: false,
+								toolbar_items_size: 'small',
+								extended_valid_elements : "iframe[src|frameborder|style|scrolling|class|width|height|name|align|id]",
+								toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media rubric | code ",
+							}
 						});
 						
           //$('#airlock').data('annotator').plugins['Permissions'].setUser("Joe Bloggs");
