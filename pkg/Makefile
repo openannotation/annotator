@@ -37,7 +37,8 @@ PLUGINS_RESOURCES=\
 	plugin/annotator.touch.css
 
 PLUGINS_JAVASCRIPT=\
-	plugin/richText
+	plugin/richText \
+	plugin/categories
 	
 ANNOTATOR_FULL=\
 	$(ANNOTATOR) \
@@ -81,8 +82,10 @@ plugins-resources:
 	@cp ../src/$(PLUGINS_RESOURCES) ../css/`echo $(PLUGINS_RESOURCES) | sed 's:.*/::'`
 
 plugins_javascript:
-	@mkdir -p $(PLUGINS_JAVASCRIPT)
-	@cp -r ../src/$(PLUGINS_JAVASCRIPT) plugin
+	@for f in $(PLUGINS_JAVASCRIPT); do \
+		mkdir -p $$f; \
+		cp -r ../src/$$f plugin; \
+	done
 
 annotator-full: annotator-full.min.js
 

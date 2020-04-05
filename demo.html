@@ -58,6 +58,12 @@
 	<script src="pkg/plugin/richText/tinymce/tinymce.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="pkg/plugin/richText/richText-annotator.css">
 
+	<!-- The Categories plugin. -->
+    <script src="pkg/plugin/categories/categories.js"></script>
+	<script src="pkg/plugin/categories/locale/en/annotator.js"></script>
+    <script src="pkg/plugin/categories/jquery-i18n-master/jquery.i18n.min.js"></script>
+	<link rel="stylesheet" href="pkg/plugin/categories/categories.css">
+
   </head>
 
   <body>
@@ -131,6 +137,12 @@
 					   .annotator('addPlugin', 'Touch', {
 						force: location.search.indexOf('force') > -1,
 						useHighlighter: location.search.indexOf('highlighter') > -1
+						})
+						// Categories plugin need to be initicated before the Elasticsearch plugin
+					   .annotator('addPlugin', 'Categories',{
+                           errata:'annotator-hl-errata',
+                           destacat:'annotator-hl-destacat',
+                           subratllat:'annotator-hl-subratllat'
 						})
 					   .annotator('addPlugin', 'Elasticsearch', {
 						  online: function() {
