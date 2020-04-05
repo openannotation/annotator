@@ -26,13 +26,15 @@ PLUGINS=\
 	plugin/store.coffee \
 	plugin/tags.coffee \
 	plugin/unsupported.coffee \
-	plugin/touch/touch.coffee \
-	plugin/touch/touch_editor.coffee \
-	plugin/touch/touch_utils.coffee \
-	plugin/touch/touch_viewer.coffee
+	plugin/touch.coffee \
+	plugin/touch_editor.coffee \
+	plugin/touch_utils.coffee \
+	plugin/touch_viewer.coffee \
+	plugin/elasticsearch.coffee \
+	plugin/elasticsearch_store.coffee
 
 PLUGINS_RESOURCES=\
-	plugin/touch/annotator.touch.css
+	plugin/annotator.touch.css
 
 ANNOTATOR_FULL=\
 	$(ANNOTATOR) \
@@ -45,10 +47,12 @@ ANNOTATOR_FULL=\
 	plugin/markdown.coffee \
 	plugin/tags.coffee \
 	plugin/kitchensink.coffee \
-	plugin/touch/touch.coffee \
-	plugin/touch/touch_editor.coffee \
-	plugin/touch/touch_utils.coffee \
-	plugin/touch/touch_viewer.coffee
+	plugin/touch.coffee \
+	plugin/touch_editor.coffee \
+	plugin/touch_utils.coffee \
+	plugin/touch_viewer.coffee \
+	plugin/elasticsearch.coffee \
+	plugin/elasticsearch_store.coffee
 
 BOOKMARKLET=\
 	$(ANNOTATOR) \
