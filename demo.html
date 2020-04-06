@@ -140,9 +140,9 @@
 						})
 						// Categories plugin need to be initicated before the Elasticsearch plugin
 					   .annotator('addPlugin', 'Categories',{
+                           subratllat:'annotator-hl-subratllat',
                            errata:'annotator-hl-errata',
-                           destacat:'annotator-hl-destacat',
-                           subratllat:'annotator-hl-subratllat'
+                           destacat:'annotator-hl-destacat'
 						})
 					   .annotator('addPlugin', 'Elasticsearch', {
 						  online: function() {
