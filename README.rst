@@ -1,6 +1,8 @@
 Annotator
 =========
 
+:point_up: Deprecated in favor of [Apache Annotator](https://annotator.apache.org)
+
 |Build Status| |Version on NPM| |IRC Channel|
 
 |Build Matrix|
