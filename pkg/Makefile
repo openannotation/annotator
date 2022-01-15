@@ -13,6 +13,7 @@ ANNOTATOR=\
 	widget.coffee \
 	editor.coffee \
 	viewer.coffee \
+	dictionary.coffee \
 	notification.coffee
 
 PLUGINS=\

@@ -35,7 +35,8 @@ Annotator.Plugin.RichText = (function(_super) {
 			menubar: false,
 			toolbar_items_size: 'small',
 			extended_valid_elements : "iframe[src|frameborder|style|scrolling|class|width|height|name|align|id]",
-    		toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media rubric | code ",
+			toolbar: "insertfile undo redo | styleselect | fontsizeselect | italic bold | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media rubric | code ",
+			fontsize_formats: "8pt 10pt"
 		}
 	};
 
