@@ -1,15 +1,13 @@
+# Change the format of End of Line char
 cd "$(dirname "$0")"
-
 DATE=$(date -u "+%Y-%m-%d %H:%M:%SZ")
 YEAR=$(date -u "+%Y")
-
 # ./tools/make_release exports VERSION, so use that if available
 if [ -n "$VERSION" ]; then
   VERSION="v${VERSION}"
 else
   VERSION="v$(echo "$(grep version ../package.json | cut -d\" -f4)-dev-$(git describe --always)")"
 fi
-
 # print preamble, substituting variables
 cat ../src/preamble.coffee |
 sed -e "s/{{VERSION}}/$VERSION/g" \

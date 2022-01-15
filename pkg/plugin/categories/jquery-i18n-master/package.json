@@ -1,0 +1,17 @@
+{
+  "name": "jquery-i18n",
+  "description": "A jQuery plugin for doing client-side translations in javascript.",
+  "repository": "git@github.com:recurser/jquery-i18n.git",
+  "version": "1.1.1",
+  "main": "Gruntfile.js",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "grunt-contrib-uglify": "~0.2.0",
+    "grunt": "~0.4.0"
+  },
+  "peerDependencies": {
+    "grunt": "~0.4.0"
+  }
+}
+

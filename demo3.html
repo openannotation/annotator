@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- This line is necessary for Touch to work -->
+    <title>JS annotation test</title>
+
+    <!-- jQuery must be included before Annotator -->
+    <script src="lib/vendor/jquery.js"></script>
+	
+    <!-- If you're sure your users will only be using browsers modern
+         enough to have their own JSON.parse and JSON.stringify
+         implementations you can skip this -->
+    <script src="lib/vendor/json2.js"></script>
+
+    <!-- The main Annotator script -->
+    <script src="pkg/annotator.min.js"></script>
+
+    <!-- Annotator's styling and images -->
+    <link rel="stylesheet" type="text/css" href="css/annotator.css">
+
+  </head>
+
+  <body>
+    <header>
+      <h1>Javascript annotation service test</h1>
+    </header>
+
+	<p>Current Connectivity: <span id="status"></span></p>
+	
+    <div id="airlock">
+      <p><strong>Pellentesque habitant morbi tristique</strong> senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. <em>Aenean ultricies mi vitae est.</em> Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, <code>commodo vitae</code>, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. <a href="#">Donec non enim</a> in turpis pulvinar facilisis. Ut felis.</p>
+
+      <h2>Header Level 2</h2>
+
+      <ol>
+         <li>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</li>
+         <li>Aliquam tincidunt mauris eu risus.</li>
+      </ol>
+
+      <blockquote><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus magna. Cras in mi at felis aliquet congue. Ut a est eget ligula molestie gravida. Curabitur massa. Donec eleifend, libero at sagittis mollis, tellus est malesuada tellus, at luctus turpis elit sit amet quam. Vivamus pretium ornare est.</p></blockquote>
+
+      <h3>Header Level 3</h3>
+
+      <ul>
+         <li id="listone">Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</li>
+         <li id="listtwo">Aliquam tincidunt mauris eu risus.</li>
+      </ul>
+
+      <pre><code>
+      #header h1 a {
+        display: block;
+        width: 300px;
+        height: 80px;
+      }
+      </code></pre>
+	  
+	  <p>
+	  如是我闻。一时佛在室罗筏城，只桓精舍。与大比丘众，千二百五十人俱。皆是无漏大阿罗汉。佛子住持，善超诸有。能于国土，成就威仪。从佛转轮，妙堪遗嘱。严净毗尼，弘范三界。应身无量，度脱众生。拔济未来，越诸尘累。其名曰。大智舍利弗。摩诃目犍连。摩诃拘絺罗。富楼那弥多罗尼子。须菩提。优波尼沙陀等。而为上首。复有无量辟支无学。并其初心。同来佛所。属诸比丘休夏自恣。十方菩萨咨决心疑。钦奉慈严将求密义。即时如来敷座宴安。为诸会中，宣示深奥。法筵清众，得未曾有。迦陵仙音，遍十方界。恒沙菩萨，来聚道场。文殊师利而为上首。
+
+ 
+
+		时波斯匿王，为其父王讳日营斋。请佛宫掖。自迎如来。广设珍羞无上妙味。兼复亲延诸大菩萨。城中复有长者居士同时饭僧。伫佛来应。佛敕大殊，分领菩萨及阿罗汉，应诸斋主。唯有阿难，先受别请。远游未还，不遑僧次。既无上座，及阿阇黎。途中独归。其日无供。即时阿难，执持应器，于所游城，次第循乞。心中初求最后檀越，以为斋主。无问净秽，刹利尊姓。及旃陀罗。方行等慈，不择微贱。发意圆成，一切众生，无量功德。阿难已知如来世尊，诃须菩提，及大迦叶，为阿罗汉，心不均平。钦仰如来，开阐无遮，度诸疑谤。经彼城隍，徐步郭门。严整威仪，肃恭斋法。尔时阿难，因乞食次，经历淫室，遭大幻术。摩登伽女，以娑毗迦罗先梵天咒，摄入淫席。淫躬抚摩，将毁戒体。
+
+ 
+
+		如来知彼淫术所加，斋毕旋归。王及大臣长者居士，俱来随佛，愿闻法要。于时世尊。顶放百宝无畏光明，光中出生千叶宝莲，有佛化身，结跏趺坐，宣说神咒。敕文殊师利将咒往护。恶咒消灭。提奖阿难，及摩登伽，归来佛所。阿难见佛。顶礼悲泣。恨无始来。一向多闻，未全道力。殷勤启请，十方如来得成菩提，妙奢摩他，三摩，禅那，最初方便。于时复有恒沙菩萨。及诸十方大阿罗汉。辟支佛等。俱愿乐闻。退坐默然。承受圣旨。
+
+ 
+
+		佛告阿难。汝我同气，情均天伦。当初发心，于我法中，见何胜相，顿舍世间深重恩爱。阿难白佛我见如来三十二相。胜妙殊绝。形体映彻犹如琉璃。常自思惟，此相非是欲爱所生。何以故。欲气粗浊，腥臊交遘，脓血杂乱，不能发生胜净妙明紫金光聚。是以渴仰，从佛剃落。佛言：善哉阿难。汝等当知一切众生，从无始来。生死相续，皆由不知常住真心性净明体。用诸妄想。此想不真，故有轮转。汝今欲研无上菩提真发明性。应当直心詶我所问。十方如来同一道故，出离生死，皆以直心。心言直故，如是乃至终始地位，中间永无诸委曲相。
+
+	  </p>
+    </div>
+
+    <script>
+      jQuery(function ($) {
+        if (typeof $.fn.annotator !== 'function') {
+          alert("Ooops! it looks like you haven't built the Annotator concatenation file. " +
+                "Either download a tagged release from GitHub, or modify the Cakefile to point " +
+                "at your copy of the YUI compressor and run `cake package`.");
+        } else {
+          // This is the important bit: how to create the annotator and add
+          // plugins
+          $('#airlock').annotator();
+						
+          //$('#airlock').data('annotator').plugins['Permissions'].setUser("Joe Bloggs");
+        }
+      });
+    </script>
+  </body>
+
+
+</html>
