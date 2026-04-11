@@ -1,9 +1,9 @@
 # Selection and range creation reference for the following code:
 # http://www.quirksmode.org/dom/range_intro.html
-#
+#              
 # I've removed any support for IE TextRange (see commit d7085bf2 for code)
 # for the moment, having no means of testing it.
-
+  
 # Store a reference to the current Annotator object.
 _Annotator = this.Annotator
 
@@ -12,11 +12,14 @@ class Annotator extends Delegator
   events:
     ".annotator-adder button click":     "onAdderClick"
     ".annotator-adder button mousedown": "onAdderMousedown"
+    ".annotator-dict button click":     "onDictClick"
+    ".annotator-dict button mousedown": "onDictMousedown"
     ".annotator-hl mouseover":           "onHighlightMouseover"
     ".annotator-hl mouseout":            "startViewerHideTimer"
 
   html:
-    adder:   '<div class="annotator-adder"><button>' + _t('Annotate') + '</button></div>'
+    adder:   '<div class="annotator-adder"><button>注释</button></div>'
+    dict:   '<div class="annotator-dict"><button>查询</button></div>'
     wrapper: '<div class="annotator-wrapper"></div>'
 
   options: # Configuration options
@@ -27,6 +30,8 @@ class Annotator extends Delegator
   editor: null
 
   viewer: null
+
+  dictionary: null
 
   selectedRanges: null
 
@@ -66,11 +71,12 @@ class Annotator extends Delegator
     # Return early if the annotator is not supported.
     return this unless Annotator.supported()
     this._setupDocumentEvents() unless @options.readOnly
-    this._setupWrapper()._setupViewer()._setupEditor()
+    this._setupWrapper()._setupViewer()._setupEditor()._setupDictionary()
     this._setupDynamicStyle()
 
     # Create adder
     this.adder = $(this.html.adder).appendTo(@wrapper).hide()
+    this.dict = $(this.html.dict).appendTo(@wrapper).hide()
 
     Annotator._instances.push(this)
 
@@ -135,6 +141,21 @@ class Annotator extends Delegator
     @editor.element.appendTo(@wrapper)
     this
 
+  # Creates an instance of the Annotator.Dictionary and assigns it to @dictionary.
+  # Appends this to the @wrapper and sets up event listeners.
+  #
+  # Returns itself for chaining.
+  _setupDictionary: ->
+    @dictionary = new Annotator.Dictionary()
+    @dictionary.hide()
+      .on('hide', this.onDictionaryHide)
+      .addField({
+        parameter: 'test123'
+      })
+
+    @dictionary.element.appendTo(@wrapper)
+    this
+
   # Sets up the selection event listeners to watch mouse actions on the document.
   #
   # Returns itself for chaining.
@@ -154,7 +175,7 @@ class Annotator extends Delegator
     if (!style.length)
       style = $('<style id="annotator-dynamic-style"></style>').appendTo(document.head)
 
-    sel = '*' + (":not(.annotator-#{x})" for x in ['adder', 'outer', 'notice', 'filter']).join('')
+    sel = '*' + (":not(.annotator-#{x})" for x in ['adder','dict', 'outer', 'notice', 'filter']).join('')
 
     # use the maximum z-index in the page
     max = Util.maxZIndex($(document.body).find(sel))
@@ -165,7 +186,7 @@ class Annotator extends Delegator
     max = Math.max(max, 1000)
 
     style.text [
-      ".annotator-adder, .annotator-outer, .annotator-notice {"
+      ".annotator-adder, .annotator-dict, .annotator-outer, .annotator-notice {"
       "  z-index: #{max + 20};"
       "}"
       ".annotator-filter {"
@@ -190,6 +211,7 @@ class Annotator extends Delegator
     $('#annotator-dynamic-style').remove()
 
     @adder.remove()
+    @dict.remove()
     @viewer.destroy()
     @editor.destroy()
 
@@ -321,6 +343,32 @@ class Annotator extends Delegator
     $(annotation.highlights).data('annotation', annotation)
     $(annotation.highlights).attr('data-annotation-id', annotation.id)
 
+    annotation
+
+  setupSelected: (annotation) ->
+    root = @wrapper[0]
+    annotation.ranges or= @selectedRanges
+
+    normedRanges = []
+    for r in annotation.ranges
+      try
+        normedRanges.push(Range.sniff(r).normalize(root))
+      catch e
+        if e instanceof Range.RangeError
+          this.publish('rangeNormalizeFail', [annotation, r, e])
+        else
+          # Oh Javascript, why you so crap? This will lose the traceback.
+          throw e
+
+    annotation.quote      = []
+    annotation.ranges     = []
+
+    for normed in normedRanges
+      annotation.quote.push      $.trim(normed.text())
+      annotation.ranges.push     normed.serialize(@wrapper[0], '.annotator-hl')
+
+    # Join all the quotes into one string.
+    annotation.quote = annotation.quote.join(' / ')
     annotation
 
   # Public: Publishes the 'beforeAnnotationUpdated' and 'annotationUpdated'
@@ -553,6 +601,15 @@ class Annotator extends Delegator
       this.startViewerHideTimer()
     @mouseIsDown = true
 
+  showDictionary: (annotation, location) =>
+    @dictionary.element.css(location)
+    @dictionary.load(annotation)
+    this
+
+  onDictionaryHide: =>
+    this.publish('annotationDictionaryHidden', [@dictionary])
+    @ignoreMouseup = false
+
   # Annotator#element callback. Checks to see if a selection has been made
   # on mouseup and if so displays the Annotator#adder. If @ignoreMouseup is
   # set will do nothing. Also resets the @mouseIsDown property.
@@ -579,8 +636,12 @@ class Annotator extends Delegator
       @adder
         .css(Util.mousePosition(event, @wrapper[0]))
         .show()
+      @dict
+        .css(Util.mousePosition(event, @wrapper[0]))
+        .show()
     else
       @adder.hide()
+      @dict.hide()
 
   # Public: Determines if the provided element is part of the annotator plugin.
   # Useful for ignoring mouse actions on the annotator elements.
@@ -652,6 +713,7 @@ class Annotator extends Delegator
 
     # Hide the adder
     position = @adder.position()
+    @dict.hide()
     @adder.hide()
 
     # Show a temporary highlight so the user can see what they selected
@@ -683,6 +745,22 @@ class Annotator extends Delegator
 
     # Display the editor.
     this.showEditor(annotation, position)
+
+  onDictMousedown: (event) =>
+    event?.preventDefault()
+    @ignoreMouseup = true
+
+  onDictClick: (event) =>
+    event?.preventDefault()
+
+    # Hide the adder
+    position = @dict.position()
+    @dict.hide()
+    @adder.hide()
+
+    annotation = this.setupSelected(this.createAnnotation())
+
+    this.showDictionary(annotation, position)
 
   # Annotator#viewer callback function. Displays the Annotator#editor in the
   # positions of the Annotator#viewer and loads the passed annotation for

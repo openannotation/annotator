@@ -1,0 +1,23 @@
+{
+  "name": "jquery-i18n",
+  "version": "1.1.0",
+  "homepage": "https://github.com/recurser/jquery-i18n",
+  "authors": [
+    "Dave Perrett <hello@daveperrett.com>"
+  ],
+  "description": "A jQuery plugin for doing client-side translations in javascript.",
+  "main": "jquery.i18n.js",
+  "keywords": [
+    "jquery",
+    "i18n",
+    "translation"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

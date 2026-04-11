@@ -1,0 +1,17 @@
+.annotator-hl-errata {
+    background:  #ffcfbf;
+    cursor:pointer;
+}
+
+.annotator-hl-destacat {
+    background:  #dfffbf;
+    cursor:pointer;
+}
+
+.annotator-hl-subratllat {
+    background: rgba(255, 255, 10, 0.3);
+    text-decoration:underline;
+    text-decoration-color: red;
+    text-decoration-style: wavy;
+    cursor:pointer;
+} 

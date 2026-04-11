@@ -24,10 +24,12 @@
 /* Images
 -------------------------------------------------------------------- */
 
+/*
 .annotator-adder {
 	background-image: url(../img/annotator-icon-sprite.png);
 	background-repeat: no-repeat;
 }
+*/
 
 .annotator-resize,
 .annotator-widget::after,
@@ -61,6 +63,7 @@
 /* NB: If you change the list of classes for which z-index is set,
        you should update Annotator._setupDynamicStyle() */
 .annotator-adder,
+.annotator-dict,
 .annotator-outer,
 .annotator-notice {
 	z-index: 1020;
@@ -71,6 +74,7 @@
 }
 
 .annotator-adder,
+.annotator-dict,
 .annotator-outer,
 .annotator-widget,
 .annotator-notice {
@@ -89,29 +93,62 @@
 
 .annotator-adder {
 	margin-top: -48px;
-	margin-left: -24px;
-	width: 48px;
+	margin-left: -64px;
+	width: 64px;
 	height: 48px;
 	background-position: left top;
 }
 
-.annotator-adder:hover {
-	background-position: center top;
-}
-
-.annotator-adder:active {
-	background-position: center right;
-}
-
 .annotator-adder button {
 	display: block;
-	width: 36px;
+	width: 60px;
 	height: 41px;
 	margin: 0 auto;
 	border: none;
 	background: none;
-	text-indent: -999em;
+	text-indent: 0em;
 	cursor: pointer;
+	background-position: center top;
+	background-color: #e6e6e6;
+}
+
+.annotator-adder button:hover {
+	background-color: lightgrey;
+}
+
+.annotator-adder button:active {
+	background-color: grey;
+}
+
+/* Annotator Dict
+-------------------------------------------------------------------- */
+
+.annotator-dict {
+	margin-top: -48px;
+	margin-left: -0px;
+	width: 64px;
+	height: 48px;
+}
+
+.annotator-dict button {
+	display: block;
+	width: 60px;
+	height: 41px;
+	margin: 0 auto;
+	border: none;
+	background: none;
+	text-indent: 0em;
+	cursor: pointer;
+	background-position: center top;
+	background-color: #e6e6e6;
+}
+
+.annotator-dict button:hover {
+	background-color: lightgrey;
+}
+
+.annotator-dict button:active {
+	background-color: grey;
 }
 
 /* Annotator Widget

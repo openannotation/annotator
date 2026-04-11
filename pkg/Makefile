@@ -13,6 +13,7 @@ ANNOTATOR=\
 	widget.coffee \
 	editor.coffee \
 	viewer.coffee \
+	dictionary.coffee \
 	notification.coffee
 
 PLUGINS=\
@@ -25,8 +26,21 @@ PLUGINS=\
 	plugin/permissions.coffee \
 	plugin/store.coffee \
 	plugin/tags.coffee \
-	plugin/unsupported.coffee
+	plugin/unsupported.coffee \
+	plugin/touch.coffee \
+	plugin/touch_editor.coffee \
+	plugin/touch_utils.coffee \
+	plugin/touch_viewer.coffee \
+	plugin/elasticsearch.coffee \
+	plugin/elasticsearch_store.coffee
 
+PLUGINS_RESOURCES=\
+	plugin/annotator.touch.css
+
+PLUGINS_JAVASCRIPT=\
+	plugin/richText \
+	plugin/categories
+	
 ANNOTATOR_FULL=\
 	$(ANNOTATOR) \
 	plugin/unsupported.coffee \
@@ -37,7 +51,13 @@ ANNOTATOR_FULL=\
 	plugin/filter.coffee \
 	plugin/markdown.coffee \
 	plugin/tags.coffee \
-	plugin/kitchensink.coffee
+	plugin/kitchensink.coffee \
+	plugin/touch.coffee \
+	plugin/touch_editor.coffee \
+	plugin/touch_utils.coffee \
+	plugin/touch_viewer.coffee \
+	plugin/elasticsearch.coffee \
+	plugin/elasticsearch_store.coffee
 
 BOOKMARKLET=\
 	$(ANNOTATOR) \
@@ -51,12 +71,22 @@ BOOKMARKLET=\
 BOOKMARKLET_CFG=../contrib/bookmarklet/config.json
 BOOKMARKLET_SRC=../contrib/bookmarklet/src/bookmarklet.js
 
-all: annotator plugins annotator-full bookmarklet
+all: annotator plugins plugins-resources plugins_javascript annotator-full bookmarklet
 
 annotator: annotator.min.js annotator.min.css
 
 PLUGIN_NAMES=$(notdir $(PLUGINS))
 plugins: $(addprefix annotator.,$(PLUGIN_NAMES:.coffee=.min.js))
+
+plugins-resources:
+	@echo "Plugin resource:" ../src/$(PLUGINS_RESOURCES)
+	@cp ../src/$(PLUGINS_RESOURCES) ../css/`echo $(PLUGINS_RESOURCES) | sed 's:.*/::'`
+
+plugins_javascript:
+	@for f in $(PLUGINS_JAVASCRIPT); do \
+		mkdir -p $$f; \
+		cp -r ../src/$$f plugin; \
+	done
 
 annotator-full: annotator-full.min.js
 
