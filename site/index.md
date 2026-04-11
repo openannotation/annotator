@@ -1,4 +1,7 @@
-# Annotator
+---
+title: Home
+layout: plain
+---
 
 <section class="relative overflow-hidden rounded-3xl border border-stone-200 bg-gradient-to-br from-stone-950 via-slate-900 to-emerald-950 px-8 py-12 text-stone-50 shadow-2xl shadow-stone-950/20 md:px-12 md:py-16">
   <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.14),_transparent_32%),radial-gradient(circle_at_bottom_right,_rgba(16,185,129,0.22),_transparent_28%)]"></div>
@@ -82,8 +85,6 @@
   </div>
 </div>
 
-## Explore
-
 <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
   <a href="docs/README.md" class="group rounded-3xl border border-stone-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
     <div class="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">Documentation</div>
@@ -110,8 +111,6 @@
     <div class="mt-4 text-sm font-semibold text-rose-700">Read archive</div>
   </a>
 </div>
-
-## Repository
 
 <div class="rounded-3xl border border-stone-200 bg-stone-950 px-7 py-8 text-stone-100">
   <h2 class="text-2xl font-bold tracking-tight text-white">One repository, one source of truth</h2>
