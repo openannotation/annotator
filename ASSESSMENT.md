@@ -185,6 +185,8 @@ Fix applied:
 
 - added `karma-chrome-launcher`
 - switched local Karma runs to Chrome headless instead of PhantomJS
+- removed the obsolete `karma-phantomjs-launcher` dependency
+- simplified the Karma config to use `ChromeHeadless` by default, with `TEST_BROWSER` available as an override
 
 Current result:
 
