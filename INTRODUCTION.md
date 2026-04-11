@@ -98,7 +98,7 @@ That means Annotator is designed to be embedded into other systems rather than f
   - core library code
 - `test/`
   - unit/browser tests
-- `doc/`
+- `docs/`
   - project documentation in plain Markdown
 - `demo.html`
   - local demo page for the browser bundle

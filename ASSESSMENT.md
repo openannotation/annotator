@@ -34,7 +34,7 @@ The repo contains:
 
 - a browser library in `src/`
 - tests in `test/`
-- documentation in `doc/`
+- documentation in `docs/`
 - a demo page in `demo.html`
 - build helpers in `tools/`
 

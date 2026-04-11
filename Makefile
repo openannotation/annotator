@@ -32,11 +32,11 @@ develop:
 	npm start
 
 doc:
-	@echo "Documentation is plain Markdown in ./doc; no Sphinx build step is configured."
+	@echo "Documentation is plain Markdown in ./docs; no build step is configured."
 
-apidoc: $(patsubst src/%.js,doc/api/%.md,$(SRC))
+apidoc: $(patsubst src/%.js,docs/api/%.md,$(SRC))
 
-doc/api/%.md: src/%.js
+docs/api/%.md: src/%.js
 	@mkdir -p $(@D)
 	tools/apidoc $< $@
 
