@@ -44,7 +44,7 @@ Annotator and require the new jQuery, you can use the [jQuery Migrate Plugin][$m
 The quickest way to get going with Annotator is to include the following in the
 `<head>` of your document (paths relative to the root of the unzipped download):
 
-    <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.9/jquery.min.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src='annotator.min.js'></script>
     <link rel='stylesheet' href='annotator.min.css'>
     
