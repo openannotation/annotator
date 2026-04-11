@@ -6,6 +6,12 @@ created: 2026-04-11
 
 This document is a working note for figuring out whether and how to revive Annotator. It captures the core framing for the reboot effort: the current situation, what makes it complicated, the key question to answer, and a first hypothesis about the cheapest sensible way forward. It also includes a lightweight appendix with the small amount of assessment work done so far.
 
+Related working documents:
+
+- [INTRODUCTION.md](./INTRODUCTION.md)
+- [ASSESSMENT.md](./ASSESSMENT.md)
+- [REVIVAL-PLAN.md](./REVIVAL-PLAN.md)
+
 ## SCQH
 
 ### Situation

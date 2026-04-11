@@ -3,7 +3,6 @@
 var path = require('path');
 
 var EnhanceCSS = require('enhance-css');
-var CleanCSS = require('clean-css');
 var through = require('through');
 
 
@@ -22,10 +21,16 @@ module.exports = function (filename) {
             var enhance = new EnhanceCSS({
                 rootPath: path.dirname(filename)
             });
-            var clean = new CleanCSS();
 
             css = enhance.process(css).embedded.plain;
-            css = clean.minify(css).styles;
+
+            // clean-css 3.x crashes on modern Node because it relies on
+            // util.isRegExp(). Keep the build working by treating minification
+            // as an optional optimization rather than a hard requirement.
+            try {
+                var CleanCSS = require('clean-css');
+                css = new CleanCSS().minify(css).styles;
+            } catch (err) {}
 
             var body = "module.exports = " + JSON.stringify(css);
 

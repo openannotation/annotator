@@ -1,3 +1,11 @@
+var fs = require('fs');
+
+var localChromeBin = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+
+if (!process.env.CHROME_BIN && fs.existsSync(localChromeBin)) {
+    process.env.CHROME_BIN = localChromeBin;
+}
+
 module.exports = function (karma) {
     karma.set({
         frameworks: ["mocha", "browserify"],
@@ -30,11 +38,21 @@ module.exports = function (karma) {
             }
         },
 
-        browsers: ['PhantomJS'],
+        browsers: ['ChromeHeadlessNoSandbox'],
 
         reporters: ['dots'],
 
         customLaunchers: {
+            'ChromeHeadlessNoSandbox': {
+                base: 'Chrome',
+                flags: [
+                    '--headless=new',
+                    '--disable-gpu',
+                    '--disable-dev-shm-usage',
+                    '--no-sandbox',
+                    '--remote-debugging-port=9222'
+                ]
+            },
             'SL_Chrome': {
                 base: 'SauceLabs',
                 browserName: 'chrome',
