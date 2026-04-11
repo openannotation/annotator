@@ -100,6 +100,8 @@ That means Annotator is designed to be embedded into other systems rather than f
   - unit/browser tests
 - `docs/`
   - project documentation in plain Markdown
+- `site/`
+  - simplified site content migrated from the historical `annotatorjs.org` site
 - `demo.html`
   - local demo page for the browser bundle
 - `tools/`
