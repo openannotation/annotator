@@ -5,7 +5,7 @@
   "showEditLink": true,
   "showSidebar": true,
   "nav": {
-    "title": "Annotator",
+    "title": "AnnotatorJS",
     "links": [
       {
         "href": "/",
@@ -38,52 +38,5 @@
         "href": "https://github.com/openannotation/annotator"
       }
     ]
-  },
-  "footer": {
-    "navigation": {
-      "Project": [
-        {
-          "href": "/docs",
-          "name": "Documentation"
-        },
-        {
-          "href": "/showcase",
-          "name": "Showcase"
-        },
-        {
-          "href": "/plugins",
-          "name": "Plugins"
-        },
-        {
-          "href": "/releases",
-          "name": "Releases"
-        }
-      ],
-      "Community": [
-        {
-          "href": "https://github.com/openannotation/annotator",
-          "name": "GitHub"
-        },
-        {
-          "href": "/news",
-          "name": "News Archive"
-        }
-      ],
-      "Reboot": [
-        {
-          "href": "https://annotatorjs.com",
-          "name": "annotatorjs.com"
-        }
-      ]
-    }
-  },
-  "contentInclude": [
-    "README.md",
-    "showcase.md",
-    "plugins.md",
-    "releases.md",
-    "news",
-    "docs",
-    "assets"
-  ]
+  }
 }
