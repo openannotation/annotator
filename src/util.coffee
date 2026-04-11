@@ -50,27 +50,13 @@ Util.contains = (parent, child) ->
 #
 # Returns a new jQuery collection of text nodes.
 Util.getTextNodes = (jq) ->
-  getTextNodes = (node) ->
-    if node and node.nodeType != Node.TEXT_NODE
-      nodes = []
+  getTextNodes = (root) ->
+    document = root.ownerDocument
+    walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
+    nodes = (node while node = walker.nextNode())
+    return nodes
 
-      # If not a comment then traverse children collecting text nodes.
-      # We traverse the child nodes manually rather than using the .childNodes
-      # property because IE9 does not update the .childNodes property after
-      # .splitText() is called on a child text node.
-      if node.nodeType != Node.COMMENT_NODE
-        # Start at the last child and walk backwards through siblings.
-        node = node.lastChild
-        while node
-          nodes.push getTextNodes(node)
-          node = node.previousSibling
-
-      # Finally reverse the array so that nodes are in the correct order.
-      return nodes.reverse()
-    else
-      return node
-
-  jq.map -> Util.flatten(getTextNodes(this))
+  jq.map -> getTextNodes(this)
 
 # Public: determine the last text node inside or before the given node
 Util.getLastTextNodeUpTo = (n) ->
