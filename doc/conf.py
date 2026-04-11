@@ -20,7 +20,7 @@ if os.environ.get('READTHEDOCS') != 'True':
 # -- General configuration
 
 # The suffix of source filenames.
-source_suffix = '.rst'
+source_suffix = '.md'
 
 # The master toctree document.
 master_doc = 'index'
@@ -60,6 +60,7 @@ highlight_language = 'javascript'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'myst_parser',
     'sphinx.ext.extlinks',
     'sphinx.ext.todo',
     'sphinxcontrib.httpdomain',

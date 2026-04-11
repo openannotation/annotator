@@ -1,15 +1,16 @@
 #!/bin/sh
 #
-# Usage: doc path/to/filename.js output.rst
+# Usage: doc path/to/filename.js output.md
 #
-# doc generates reStructuredText documentation for JavaScript files. It is a
-# thin wrapper over the js2rst tool, which extracts docstrings from the code.
+# doc generates Markdown documentation for JavaScript files. It uses js2rst to
+# extract docstrings from the code, then converts the resulting reStructuredText
+# to Markdown with pandoc.
 #
 
 set -eu
 
 usage () {
-    echo "$(basename "$0") path/to/filename.js >output.rst"
+    echo "$(basename "$0") path/to/filename.js >output.md"
 }
 
 abort () {
@@ -65,7 +66,7 @@ main () {
         echo
         preamble $pkgname
         tools/js2rst $pkgname <"$src"
-    } >"$dst"
+    } | pandoc -f rst -t gfm -o "$dst"
 }
 
 main "$@"

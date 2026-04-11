@@ -34,9 +34,9 @@ develop:
 doc:
 	cd doc && $(MAKE) html
 
-apidoc: $(patsubst src/%.js,doc/api/%.rst,$(SRC))
+apidoc: $(patsubst src/%.js,doc/api/%.md,$(SRC))
 
-doc/api/%.rst: src/%.js
+doc/api/%.md: src/%.js
 	@mkdir -p $(@D)
 	tools/apidoc $< $@
 

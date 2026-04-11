@@ -157,7 +157,7 @@ Make the project understandable again for someone new.
 1. Keep `REBOOT.md` as the framing note
 2. Maintain `INTRODUCTION.md` as the architecture overview
 3. Maintain `ASSESSMENT.md` as the factual current-state report
-4. Update `README.rst` once the practical path is clearer
+4. Update `README.md` once the practical path is clearer
 5. Add modern local-development instructions after the build/test baseline is restored
 
 ## Phase 6: Re-establish Public Presence
