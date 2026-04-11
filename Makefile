@@ -32,7 +32,7 @@ develop:
 	npm start
 
 doc:
-	cd doc && $(MAKE) html
+	@echo "Documentation is plain Markdown in ./doc; no Sphinx build step is configured."
 
 apidoc: $(patsubst src/%.js,doc/api/%.md,$(SRC))
 

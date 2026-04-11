@@ -1,27 +1,29 @@
 # Glossary
 
-```{glossary}
-application
-  An application is an instance of `annotator.App`. It is the primary
-  object that coordinates annotation activities. It can be extended by
-  passing a `module` reference to its `~annotator.App.prototype.include`
-  method. Typically, you will create at least one application when using
-  Annotator. See the API documentation for `annotator.App` for details on
-  construction and methods.
+## application
 
-hook
-  A function that handles work delegated to a `module` by the
-  `application`. A hook function can return a value or a `Promise`. The
-  arguments to hook functions can vary. See `module-hooks` for a
-  description of the core hooks provided by Annotator.
+An application is an instance of `annotator.App`. It is the primary
+object that coordinates annotation activities. It can be extended by
+passing a `module` reference to its `~annotator.App.prototype.include`
+method. Typically, you will create at least one application when using
+Annotator. See the API documentation for `annotator.App` for details on
+construction and methods.
 
-module
-  A module extends the functionality of an `application`, primarily
-  through `hook` functions. See the section `module-development` for
-  details about writing modules.
+## hook
 
-Promise
-  An object used for deferred and asynchronous computations. See
-  <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise>
-  for more information.
-```
+A function that handles work delegated to a `module` by the
+`application`. A hook function can return a value or a `Promise`. The
+arguments to hook functions can vary. See `module-hooks` for a
+description of the core hooks provided by Annotator.
+
+## module
+
+A module extends the functionality of an `application`, primarily
+through `hook` functions. See the section `module-development` for
+details about writing modules.
+
+## Promise
+
+An object used for deferred and asynchronous computations. See
+<https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise>
+for more information.

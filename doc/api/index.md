@@ -1,13 +1,9 @@
 # API documentation
 
-```{toctree}
-:maxdepth: 2
-
-app
-registry
-storage
-authz
-identity
-notification
-ui
-```
+- [App](app.md)
+- [Registry](registry.md)
+- [Storage](storage.md)
+- [Authz](authz.md)
+- [Identity](identity.md)
+- [Notification](notification.md)
+- [UI](ui.md)

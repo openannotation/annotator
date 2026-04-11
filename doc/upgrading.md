@@ -7,9 +7,6 @@ upgrade existing installations.
 In addition, plugin authors will want to read this document in order to
 understand how to update their plugins to work with the new Annotator.
 
-```{contents}
-```
-
 ## Motivation
 
 The architecture of the first version of Annotator dates back to 2009,

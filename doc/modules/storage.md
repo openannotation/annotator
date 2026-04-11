@@ -32,10 +32,6 @@ The storage API attempts to follow the principles of
 [REST](http://en.wikipedia.org/wiki/Representational_state_transfer),
 and uses JSON as its primary interchange format.
 
-```{contents}
-:local:
-```
-
 ### Endpoints
 
 #### root
