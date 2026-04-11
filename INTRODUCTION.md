@@ -98,8 +98,8 @@ That means Annotator is designed to be embedded into other systems rather than f
   - core library code
 - `test/`
   - unit/browser tests
-- `docs/`
-  - project documentation in plain Markdown
+- `site/docs/`
+  - public-facing documentation in plain Markdown
 - `site/`
   - simplified site content migrated from the historical `annotatorjs.org` site
 - `demo.html`

@@ -32,11 +32,11 @@ develop:
 	npm start
 
 doc:
-	@echo "Documentation is plain Markdown in ./docs; no build step is configured."
+	@echo "Public documentation is plain Markdown in ./site/docs; internal docs live in ./docs."
 
-apidoc: $(patsubst src/%.js,docs/api/%.md,$(SRC))
+apidoc: $(patsubst src/%.js,site/docs/api/%.md,$(SRC))
 
-docs/api/%.md: src/%.js
+site/docs/api/%.md: src/%.js
 	@mkdir -p $(@D)
 	tools/apidoc $< $@
 
