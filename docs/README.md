@@ -2,7 +2,7 @@
 
 This directory is reserved for repository-internal documentation.
 
-Public-facing documentation for the site now lives in [site/docs](../site/docs/index.md).
+Public-facing documentation for the site now lives in [site/docs](../site/docs/README.md).
 
 Good candidates for this directory include:
 
